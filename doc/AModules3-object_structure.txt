@@ -1,0 +1,87 @@
+Object structure is a very basic topic of amodules3. New flexible way to define objects
+and adding childs to them allows us to flexibly use framework for any tasks yet provide
+a ways to re-use existing controls and build powerful frameworks on top of amodules3
+
+
+As example you can check ApiAdmin, which implements a very flexible yet easy to use
+administration system on top of AModules3.
+
+
+First of all, you need an Api if you want to use the framework at all. There are 2
+basic Api's:
+ - ApiBase: this provides a bare minimum. Use if you already have everything covered
+ and you are not willing to take any functionality from AModules3 such as GET processing.
+
+ - ApiStd: this is a minimal api for normal AModules3 application. If you want to make
+ something what looks customized but do not use any other Api, this is what you should
+ use. All the basic functionality is provided for you, but we avoid to include any code
+ there, which you might not want.
+
+There could be some custom Api's, where one example is ApiAdmin allowing you to build
+administration systems easy. Another Api could be "ApiInstaller" which would allow
+you to create Installer packages.
+
+When you are starting your project you should pick one of those Apis as a base for your
+new Api.
+
+
+Then you must know, about few other classes: Container and BaseObject.
+
+BaseObject:
+This one provides a base for all sorts of simple controls such as buttons.
+Notable things this class introduces and all other classes inherits are:
+ - object always have a name, which should be unique. When you use add() you only give sub-name, see below.
+ - object have $parent property, pointing at parent's object (except for Api class,
+         which does not have parent)
+ - object have $api property, pointing at api
+ - object supports up/down event handling
+ - session management functions memorize(), recal()
+ - object support hook framework
+ - object provides some additional methods such as error()
+ - object provides abstract rendering/submission events
+
+
+If you have looked at BaseObject.php you would notice that it's an empty class inherited
+from AbstractObject. The thing is that you may replace BaseObject class with your own.
+That would allow you to make changes affecting all the classes inside AModules3, for instance,
+count total number of created objects. If you replace BaseObject make sure you call 
+parent methods and return their output untouched (unless you know what you doing). If you do
+not, you would break the way library work.
+
+Container:
+ can additionaly contain child objects. Api and Page are some classical examples,
+api will contain pages inside it, while Page will contain controls or forms.
+
+You can be creative about structure of your objects, you may add controls into Api
+directly, for instance "Menu" is added directly into Api and therefore present on
+all pages. 
+
+Each object have it's template associated, see document explaining template system
+for more info.
+Those are set when calling $this->add(). Oh, You have to use add() to create new
+child objects.
+
+Class Naming
+
+Classes are named with one or few words. First letter is capitalized, except some cases when the first
+word is used as a group and separated with underscope. Some samples:
+ AbstractObject
+ ApiAdmin
+ MyApi
+ Preferences
+ 
+with prefixes:
+
+ page_AboutThisApplication
+ page_Help
+
+When class name containts "_", it's replaced with "/" when we try to include the file holding class source,
+so source for page_Help would be located inside page/Help.php
+
+when you add() sub-object, 2nd argument is it's child's sub-name. If you omit it (use null), name of class will be used.
+Each object is built by putting together parent's name and child's sub-name.
+
+ ApiAdmin_MyPage_Preferences_default_replyto
+
+would be a name of form's control called "default_replyto" located on from Preferences on page MyPage.
+

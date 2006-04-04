@@ -1,0 +1,3 @@
+<?
+class AbstractModel extends AbstractObject {
+}

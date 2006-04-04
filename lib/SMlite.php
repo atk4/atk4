@@ -1,0 +1,457 @@
+<?
+/**
+ * ==[ About SMlite ]==========================================================
+ * This class is a lightweight template engine. It's based around operating with
+ * chunks of HTML code and the main aims are:
+ *
+ *  - completely remove any code from templates
+ *  - make templates editable with HTML editor
+ *
+ * @author      Romans <romans@adevel.com>
+ * @copyright   LGPL. See http://www.gnu.org/copyleft/lesser.html
+ * @version     1.1
+ * @compat      php5 (perhaps php4 untested)
+ *
+ * ==[ Version History ]=======================================================
+ * 1.0          First public version (released with AModules3 alpha)
+ * 1.1          Added support for "_top" tag
+ *              Removed support for permanent tags
+ *              Much more comments and other fixes
+ *
+ * ==[ Description ]===========================================================
+ * SMlite templates are HTML pages containing tags to mark certain regions.
+ * <html><head>
+ *   <title>MySite.com - <?page_name?>unknown page<?/page_name?></title>
+ * </head>
+ *
+ * Inside your application regions may be manipulated in a few ways:
+ *
+ *  - you can replace region with other content. Using this you can replace
+ *   name of sub-page or put a date on your template.
+ *
+ *  - you can clone whole template or part of it. This is useful if you are
+ *   working with objects
+ *
+ *  - you can manipulate with regions from different files.
+ *  
+ * Traditional recipe to work with lists in our templates are:
+ *
+ *  1. clone template of generic line
+ *  2. delete content of the list
+ *  3. inside loop
+ *   3a. insert values into cloned template
+ *   3b. render cloned template
+ *   3c. insert rendered HTML into list template
+ *  4. render list template
+ *
+ * Inside the code I use terms 'region' and 'spot'. They refer to the same thing,
+ * but I use 'spot' to refer to a location inside template (such as <?$date?>),
+ * however I use 'region' when I am refering to a chunk of HTML code or sub-template.
+ * Sometimes I also use term 'tag' which is like a pointer to region or spot.
+ *
+ * When template is loaded it's parsed and converted into array. It's possible to
+ * cache parsed template serialized inside array.
+ *
+ * Tag name looks like this:
+ * 
+ *  "misc/listings:student_list"
+ *
+ * Which means to seek tag <?student_list?> inside misc/listings.html
+ *  
+ * You may have same tag several times inside template. For example you can
+ * use tag <?$title?> inside <head><title> and <h1>. 
+ *
+ * If you would set('title','My Title'); it will insert that value in
+ * all those regions.
+ *
+ * ==[ AModules3 integration ]=================================================
+ * Rule of thumb in object oriented programming is data / code separation. In
+ * our case HTML is data and our PHP files are code. SMlite helps to completely
+ * cut out the code from templates (smarty promotes idea about integrating
+ * logic inside templates and I decided not to use it for that reason)
+ *
+ * Inside AModules3, each object have it's own template or may have even several
+ * templates. When object is created, it's assigned to region inside template.
+ * Later object operates with assigned template.
+ *
+ * Each object is also assigned to a spot on their parent's template. When
+ * object is rendered, it's HTML is inserted into parent's template.
+ *
+ * ==[ Non-AModules3 integration ]=============================================
+ * SMlite have no strict bindings or requirements for AModules3. You are free
+ * to use it inside any other library as long as you follow license agreements.
+ */
+
+class SMlite extends AbstractModel {
+
+    var $tags = array();
+    /*
+     * This array contains list of all tags found inside template.
+     */
+
+    var $top_tag = null;
+    /*
+     * When cloning region inside a template, it's tag becomes a top_tag of a new
+     * template. Since SMlite 1.1 it's present in new template and can be used.
+     */
+
+    var $template=array();  // private
+    /*
+     * This is a parsed contents of the template.
+     */
+
+    var $settings=array();
+    function getDefaultSettings(){
+        /*
+         * This function specifies default settings for SMlite. Use
+         * 2nd argument for constructor to redefine those settings.
+         *
+         * A small note why I decided on .html extension. I want to
+         * point out that template files are and should be valid HTML
+         * documents. With .html extension those files will be properly
+         * rendered inside web browser, properly understood inside text
+         * editor or will be properly treated with wysiwyg html editors.
+         */
+        return array(
+                     'templates'=>'templates',      // directory where templates are located.
+                                                    // You may specify multiple directories
+                                                    // by separating them with ':'
+                     'ldelim'=>'<?',                // tag delimiter
+                     'rdelim'=>'?>',
+                     'extension'=>'.html',          // template file extension
+                    );
+    }
+
+    // Template creation, interface functions
+    function init(){
+        $path=array();
+
+        if(isset($this->api->layout) && $this->api->layout){
+            $path[]=$this->api->getConfig('smlite/template_dir','templates').'/'.$this->api->layout;
+        }
+        $path[]=$this->api->getConfig('smlite/template_dir','templates');
+
+        if(defined('AMODULES3_DIR')){
+            if(isset($this->api->layout) && $this->api->layout){
+                $path[]=AMODULES3_DIR.'/templates/'.$this->api->layout;
+            }
+            $path[]=AMODULES3_DIR.'/templates/shared';
+        }
+        $this->settings=$this->getDefaultSettings();
+        $this->settings['templates']=join(PATH_SEPARATOR,$path);
+        $this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
+    }
+    function SMlite($template=array(),$settings=array()){
+        /*
+         * This method creates new instance of SMlite. The proper way to
+         * all it is:
+         *
+         *  $template new SMlite();
+         *
+         * As argument you should point a tag for top-level region. You may
+         * also customize settings by passing them as 2nd argument.
+         */
+        if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
+    }
+    function cloneRegion($tag){
+        /*
+         * Sometimes you will want to put branch into different class. This function will create
+         * new class for you.
+         */
+        if($this->isTopTag($tag)){
+            return clone $this;
+        }
+
+        if(!$this->is_set($tag)){
+            $o=$this->owner?" for ".$this->owner->__toString():"";
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+        }
+        $class_name=get_class($this);
+        $new=new $class_name();
+        $new->template=$this->tags[$tag][0];
+        $new->owner=$this->owner;
+        $new->top_tag=$tag;
+        $new->settings=$this->settings;
+        return $new->rebuildTags();
+    }
+
+    // Misc functions
+	function dumpTags(){
+        /*
+         * This function is used for debug. It will output all tag names inside
+         * current templates
+         */
+		echo "<pre>";
+		var_Dump(array_keys($this->tags));
+		echo "</pre>";
+	}
+
+    // Operation with regions inside template
+    function get($tag){
+        /*
+         * Finds tag and returns contents.
+         *
+         * THIS FUNTION IS DANGEROUS!
+         *  - if you want a rendered region, use renderRegion()
+         *  - if you want a sub-template use cloneRegion()
+         *
+         *  - if you want to copy part of template to other SMlite object,
+         *   do not forget to call rebuildTags() if you plan to refer them.
+         *   Not calling rebuildTags() will render template properly anyway.
+         *
+         * If tag is defined multiple times, first region is returned.
+         */
+        if($this->isTopTag($tag))return $this->template;
+        $v=$this->tags[$tag][0];
+        if(is_array($v) && count($v)==1)$v=array_shift($v);
+        return $v;
+    }
+    function append($tag,$value,$delim=""){
+        /*
+         * This appends static content to region refered by a tag. This function
+         * is useful when you are adding more rows to a list or table.
+         *
+         * If you have specified $delim, it will be used as a separator
+         * between existing content and newly appended.
+         *
+         * If tag is used for several regions inide template, they all will be
+         * appended with new data.
+         */
+        if($this->isTopTag($tag)){
+            if ($this->template){
+                $this->template[]=$delim;
+            }
+            $this->template[]=$value;
+            return $this;
+        }
+        if(!isset($this->tags[$tag]) || !is_array($this->tags[$tag])){
+            $this->fatal("Cannot append to tag $tag");
+        }
+        foreach($this->tags[$tag] as $key=>$_){
+            
+            if ($this->tags[$tag][$key]){
+                $this->tags[$tag][$key][]=$delim;
+            }
+            $this->tags[$tag][$key][]=$value;
+        }
+        return $this;
+    }
+    function set($tag,$value=null){
+        /*
+         * This function will replace region refered by $tag to a new content.
+         *
+         * If tag is used several times, all regions are replaced.
+         *
+         * ALTERNATIVE USE(2) of this function is to pass associative array as
+         * a single argument. This will assign multiple tags with one call.
+         * Sample use is:
+         *
+         *  set($_GET);
+         *
+         * would read and set multiple region values from $_GET array.
+         *
+         * ALTERNATIVE USE(3) of this function is to pass 2 arrays. First array
+         * will contain tag names and 2nd array will contain their values.
+         */
+        if(is_array($tag)){
+            if(is_null($value)){
+                // USE(2)
+                foreach($tag as $s=>$v){
+                    $this->trySet($s,$v);
+                }
+                return $this;
+            }
+            if(is_array($value)){
+                // USE(2)
+                reset($tag);reset($value);
+                while(list(,$s)=each($tag)){
+                    list(,$v)=each($value);
+                    $this->set($s,$v);
+                }
+                return $this;
+            }
+            $this->fatal("Incorrect argument types when calling SMlite::set(). Check documentation.");
+        }
+        if($this->isTopTag($tag)){
+            $this->template=$value;
+            return $this;
+        }
+        if(!isset($this->tags[$tag])||!is_array($this->tags[$tag])){
+            return $this->fatal("No such tag '$tag' inside SMlite::set()");
+        }
+        foreach($this->tags[$tag] as $key=>$_){
+            $this->tags[$tag][$key]=$value;
+        }
+        return $this;
+    }
+    function is_set($tag){
+        /*
+         * Check if tag is present inside template
+         */
+        if($this->isTopTag($tag))return true;
+        return isset($this->tags[$tag]) && is_array($this->tags[$tag]);
+    }
+    function trySet($tag,$value=null){
+        /*
+         * Check if tag is present inside template. If it does, execute set(); See documentation
+         * for set()
+         */
+        if(is_array($tag))return $this->set($tag,$value);
+        return $this->is_set($tag)?$this->set($tag,$value):$this;
+    }
+    function del($tag){
+        /*
+         * This deletes content of a region, however tag remains and you can still refer to it.
+         *
+         * If tag is defined multiple times, content of all regions are deleted.
+         */
+        if($this->isTopTag($tag)){
+            $this->loadTemplateFromString('<?$'.$tag.'?>');
+            return $this;
+            //return $this->fatal("SMlite::del() is trying to delete top tag: $tag");
+        }
+        if(!$this->tags[$tag]){
+            $o=$this->owner?" for ".$this->owner->__toString():"";
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+        }
+        foreach($this->tags[$tag] as $key=>$val){
+            $this->tags[$tag][$key]=array();
+        }
+        return $this;
+    }
+
+    // template loading and parsing
+    function findTemplate($template_name){
+        /*
+         * Find template location inside search directory path
+         */
+        $tmp_locations = split(PATH_SEPARATOR,$this->settings['templates']);
+        foreach($tmp_locations as $loc)if($loc){
+            if(file_exists($f=$loc.'/'.$template_name.$this->settings['extension'])){
+                return join('',file($f));
+            }
+        }
+        return null;
+    }
+    function loadTemplateFromString($template_string){
+        $this->template=array();
+        $this->tags=array();
+        $this->tmp_template=$template_string;
+        $this->parseTemplate($this->template);
+        return $this;
+    }
+    function loadTemplate($template_name){
+        /*
+         * Load template from file
+         */
+        $this->tmp_template = $this->findTemplate($template_name);
+        if(!isset($this->tmp_template))$this->fatal("Template not found (".$template_name.$this->settings['extension'].") in (".
+                                                    $this->settings['templates'].")");
+        $this->parseTemplate($this->template);
+        return $this;
+    }
+    function parseTemplate(&$template){
+        /*
+         * private function
+         *
+         * This is a main function, which actually parses template. It's recursive and it
+         * calls itself. Empty array should be passed
+         */
+        while(strlen($this->tmp_template)){
+            $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
+            if($text)$template[]=$text;
+            $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
+            $c=count($template);
+            if(substr($tag,0,1)=='$'){
+                $tag = substr($tag,1);
+                $template[$tag.'#'.$c]=array();
+                $this->registerTag($tag,$template[$tag.'#'.$c]);
+            }elseif(substr($tag,0,1)=='/'){
+                $tag = substr($tag,1);
+                return $tag;
+            }elseif(substr($tag,-1,1)=='/'){
+                $tag = substr($tag,0,-1);
+                $template[$tag.'#'.$c]=array();
+                $this->registerTag($tag,$template[$tag.'#'.$c]);
+            }elseif(isset($tag) && $tag){
+                $template[$tag.'#'.$c]=array();
+                $this->registerTag($tag,$template[$tag.'#'.$c]);
+                $xtag = $this->parseTemplate($template[$tag.'#'.$c]);
+                if($xtag && $tag!=$xtag){
+                    echo "Tag missmatch. $tag is closed with $xtag";
+                    exit;
+                }
+            }
+        }
+        return "end_of_file";
+    }
+    function registerTag($key,&$ref){
+        if(!$key)return;
+        $this->tags[$key][]=&$ref;
+    }
+    function isTopTag($tag){
+        return 
+            (isset($this->top_tag) && ($tag==$this->top_tag)) ||
+            ($tag=='_top');
+    }
+
+    // rebuild tags of existing array structure
+    function rebuildTags(){
+        /*
+         * This function walks through template and rebuilds list of tags. You need it in case you
+         * changed already parsed template.
+         */
+        $this->tags=array();
+        $this->rebuildTagsRegion($this->template);
+        return $this;
+    }
+    function rebuildTagsRegion(&$branch){
+        if(!isset($branch))throw new BaseException("Cannot rebuild tags, because template is empty");
+        foreach($branch as $key=>$val){
+            if(is_int($key))continue;
+            list($real_key,$junk)=split('#',$key);
+            $this->registerTag($real_key,$branch[$key]);
+            if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);
+        }
+    }
+
+    // Template rendering (array -> string)
+    function render(){
+        /*
+         * This function should be used to convert template into string representation.
+         */
+        return $this->renderRegion($this->template);
+    }
+    function renderRegion(&$chunk){
+        $result = '';
+        if(!is_array($chunk))return $chunk;
+        foreach($chunk as $key=>$_chunk){
+            if(is_array($result)){
+                $result[]=$this->renderRegion($_chunk);
+            }else{
+                $tmp=$this->renderRegion($_chunk);
+                if(is_array($tmp)){
+                    $result=array($result);
+                    $result[]=$tmp;
+                }else{
+                    $result.=$tmp;
+                }
+            }
+        }
+        return $result;
+    }
+
+    // Misc functions
+    function myStrTok(&$string,$tok){
+        if(!$string)return '';
+        $pos = strpos($string,$tok);
+        if($pos===false){
+            $chunk=$string;
+            $string='';
+            return $chunk;  // nothing left
+        }
+        $chunk = substr($string,0,$pos);
+        $string = substr($string,$pos+strlen($tok));
+        return $chunk;
+    }
+}

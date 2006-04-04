@@ -1,0 +1,3 @@
+<?
+class AbstractController extends AbstractObject {
+}

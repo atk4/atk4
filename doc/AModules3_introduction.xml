@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+"http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<article>
+  <title>AModules3 Introduction</title>
+
+  <articleinfo>
+    <volumenum>Document revision 1.1</volumenum>
+  </articleinfo>
+
+  <section>
+    <title>What are AModules3?</title>
+
+    <para>AModules3 is a number of layers which can be used to speed up
+    development of web application. AModules3 provides multipurpose framework
+    and many different extentions for a more specific applications.</para>
+
+    <para>As a framework, AModules3 provides basics for object hierarchy,
+    database access layer, simple template engine. On top of this it provides
+    classes for working with forms, listings, menues and more. Additionally
+    AModules3 allows you to extend it's framework by adding more controls on a
+    forms, or making new type of form or new type of menu or listing. You can
+    as well add a new application class for a more specific purpose. AModules3
+    at the moment provides 3 api classes you can use - a very basic one,
+    standard class (useful for writing frontends or extending it) and
+    administration system class (for writing administration systems)</para>
+
+    <para>If you are familiar with AModules2, then a similar functionality is
+    provided by administration system api (ApiAdmin). While few things might
+    seem similar, the internal implementation is completely different.</para>
+
+    <para>This document is only an introduction. Consult manual or read code
+    if you need more detailed information.</para>
+
+    <note>
+      <para>I will be using notation func( [ $optional_argument ] ); for
+      optional arguments. Do not think it's a magic or some sort of array.
+      That means you can use function like this: func(123) or func();</para>
+    </note>
+  </section>
+
+  <section>
+    <title>Base classes</title>
+
+    <para>There are few very basic classes I want to talk first</para>
+
+    <section>
+      <title>BaseObject</title>
+
+      <para>BaseObject is a minimalistic class which provides base for all
+      other classes in AModules3. Mostly all objects descends from
+      BaseObject.</para>
+
+      <note>
+        <para>BaseObject is a dummy object which is inherited from
+        AbstractObject. This is done to allow you to replace "BaseObject" with
+        your own. It's like inserting a new baseclass for all other classes of
+        AModules.</para>
+
+        <para>I am not going to mention AbstractObject here, but will talk
+        about BaseObject instead. Howether if you need to look at the code -
+        see AbstractObject.php.</para>
+      </note>
+
+      <para>If you are creating some type of control or any other object and
+      unless you want to inherit it from some other class - use
+      BaseObject.</para>
+
+      <section>
+        <title>Structure</title>
+
+        <para>BaseObject (and therefore every class in AModules3) have 3 base
+        properties:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis role="bold">name</emphasis> - unique object name
+            used as a key to store/access session data, post etc</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">owner</emphasis> - reference to
+            object's owner. Every object should have owner (except Api).
+            Sample structure would be: Api -- Page -- Forms -- Controls</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">api</emphasis> - direct link to
+            application. Any object can access api's function by calling
+            $this-&gt;api-&gt;functionName();j</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section>
+        <title>Initializing</title>
+
+        <para>When you initialize object, you are inserting it into structure
+        at the same time. For instance, when you create form, you insert it
+        into page by calling:</para>
+
+        <screen>$page-&gt;add('MyForm');</screen>
+
+        <para>where <emphasis role="bold">MyForm</emphasis> is your own class
+        inherited from Form. You can only insert something into object of
+        class "Container" and it's child classes such as Api, Page and Form
+        are in fact containers. "<emphasis role="bold">add</emphasis>" method
+        belongs to Container class and we'll get back to it in the next
+        section.</para>
+
+        <para>When you create your own class, instead of re-defining
+        constructor, you should re-define function named "init". This function
+        is called right after object is inserted into it's parent. This is a
+        good place to initialize class or insert some more objects into it.
+        For example if you are redefining MyForm::init(), you can add fields
+        into a form. You should always call <emphasis
+        role="bold">parent::init()</emphasis> before you do anything else.
+        Here is sample:</para>
+
+        <screen>function init(){
+  parent::init();
+  ... // initialize our stuff here
+}</screen>
+
+        <para>You'll see more examples latter.</para>
+      </section>
+
+      <section>
+        <title>Saving variables</title>
+
+        <para>You have few functions you can use to store values into session
+        data and get them back. You'll have to specify $name to each function.
+        You can use any value for the name, even if you have two different
+        objects using the same name, saved values will not intersect. If you
+        want to share data with another class, use $api-&gt;_function_
+        instead:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis role="bold">memrize</emphasis>($name,$value); -
+            record $value under $name</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">recal</emphasis>($name,
+            [$default_value]); - retrieve $value saved under $name. If no name
+            present, will return $default_value.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Those are basic functions, but there are two more:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis role="bold">forget</emphasis>( [ $name ] ); -
+            delete recorded value for $name. If $name is not specified will
+            delete any saved values associated with this object.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="bold">learn</emphasis>( $name, $value1, [
+            $value2 , [$value3]]); - this is a handy function when you want to
+            use different sources for a variable with precendence. For
+            example, let's see how you can choose between hardcoded default
+            value, value from configuration or value from $_GET:</para>
+
+            <screen>$val = $this-&gt;learn('val',$_GET['val'], $this-&gt;api-&gt;config['val'], 123);</screen>
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section>
+        <title>Recursive calls</title>
+
+        <para>AModules3 provides you the way to send calls or messages up and
+        down your object hierarchy. For instance, Api in order to render
+        everything would send a recursive call to it's childs asking them to
+        render themselves. Container would pass this call to it's own childs
+        and this will make all objects to render themselves. A call like this
+        is called <emphasis role="bold">downCall</emphasis>.</para>
+
+        <para>In contrast, a dropdown in a form may want to get list of
+        available items. It might be sending <emphasis
+        role="bold">upCall</emphasis> to try and get this list. This call
+        would be sent to Form, then Api. I'm not saying dropdowns are
+        implemented this way, it's only one posibility.</para>
+      </section>
+
+      <section>
+        <title>Hooks</title>
+
+        <para>BaseObject implements base hooking system. There are 2 basic
+        functions:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>hook($hook_spot); - this one defines a palce for
+            hooking.</para>
+          </listitem>
+
+          <listitem>
+            <para>addHook($hook_spot, $class, $method, [ $priority ]) - this
+            will register user's class/method for a callback. It will be
+            called when hook($hook_spot); is executed.</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+    </section>
+
+    <section>
+      <title>Container</title>
+
+      <para>is an object class which is allowed to have childs. Container
+      introduces "add" function which initializes sub-object from specified
+      class.</para>
+    </section>
+
+    <section>
+      <title>Templates and Rendering</title>
+
+      <para>Rendering is another important topic. AModules3 uses SMlite to
+      parse templates and display itself. Aims:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Make templates editable by designers in a simpliest
+          way.</para>
+        </listitem>
+
+        <listitem>
+          <para>Provide high flexibility to developer</para>
+        </listitem>
+
+        <listitem>
+          <para>Completely separate templates from the code</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>If you have used smarty, then most probably you had to add tags
+      into templates such as {for} or {if}. Those tags inside {} would not be
+      ignored by browsers and i'm not sure if they are respected by HTML
+      editors properly. SMlite uses &lt;??&gt; tags, which are the same tags
+      PHP uses. It does not put any code inside HTML only define sections and
+      the whole file remains inact and would look just the same as it was
+      before editing. For instance, if you open tpl in browser your page title
+      would say {$title} or something like that. If templates are done by
+      SMlite it would still say the same thing before .html was made into
+      template.</para>
+
+      <para>AModules3 and SMlite together give you great flexibility on
+      defining where templates are located. For example you can use layout
+      from page1.html and form from page2.html or you can use layout from
+      page2.html as well (assuming it have needed tags). Now let me explain
+      how it works.</para>
+
+      <section>
+        <title>How template looks</title>
+
+        <para>Here is how page looked before adding SMlite tags:</para>
+
+        <screen>&lt;html&gt;
+&lt;head&gt;
+ &lt;title&gt;Page Sample&lt;/title&gt;
+&lt;/head&gt;
+&lt;html&gt;
+&lt;table&gt;
+&lt;h1&gt;Page Sample&lt;/h1&gt;
+ &lt;tr&gt;&lt;td&gt;
+   Hello world
+ &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/html&gt;</screen>
+
+        <para>after:</para>
+
+        <screen>&lt;html&gt;
+&lt;head&gt;
+ &lt;title&gt;&lt;?page_title?&gt;Page Sample&lt;?/?&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;html&gt;
+&lt;h1&gt;&lt;?page_title?&gt;Page Sample&lt;?/?&gt;&lt;/h1&gt;
+&lt;table&gt;
+ &lt;tr&gt;&lt;td&gt;
+  &lt;?content?&gt;
+   Hello world
+   &lt;?/content?&gt;
+ &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/html&gt;</screen>
+
+        <para>&lt;??&gt; tags are ignored by browser, page will look exactly
+        the same, designer will be more comfortable with editing this page.
+        Even if he would change title it wouldn't affect the way template
+        work. Designer can update the page with new items on it and developer
+        will only have to add more tags.</para>
+
+        <para>The &lt;??&gt; tags defines region. In the example there are 3
+        regions defined: page_title (2 times) and "content". Contents of
+        regions may be re-used or replaced. In this example contents would be
+        replaced only. See SMlite manual to learn how to use it.</para>
+      </section>
+
+      <section>
+        <title>Assigning templates to objects</title>
+
+        <para>When class is defined, usually it's not certain what template
+        and from which file it is going to use. Instead of overriding
+        templates we have an option to specify different one. Sections on
+        template are used as a builting bloks manipulated by objects. When you
+        create new object with $this-&gt;add(), you will give him 2 arguments
+        related to templates. First argument defines "spot" on owner's
+        template. If you assign template above to Api's class and
+        &lt;?content?&gt; will be generated by the Page class, then you would
+        call it like this:</para>
+
+        <screen> $this-&gt;add('Page',$api-&gt;page,'content',array($api-&gt;page,'content'));</screen>
+
+        <para>$api-&gt;page is name of requested page. If URL is like
+        http://example.com/Preferences then $this-&gt;page would be
+        'Preferences'. That's a little similar to Wiki.</para>
+
+        <para>Next, this would assign a spot for "page" to "content". That
+        means whatever class Page will return as rendered info will be placed
+        inside &lt;?content?&gt;...&lt;?/content?&gt; by Api class.</para>
+
+        <para>Last argument which here is array($api-&gt;page,'content')
+        defines where to search for template. It is accepted in several ways.
+        You can specify a region from api's template by passing a string. That
+        region will be "cloned" and re-used as a standalone template. In our
+        example we are using different file with the same name as requested
+        page. SMlite will open templates/Preferences.html and will search for
+        &lt;?content?&gt;. It will then re-use sub-branch 'content' as a
+        template for the Page.</para>
+
+        <para>Some classes will look for some sub-tags to present in their
+        templates. If you still do not understand how templates work, see
+        example code.</para>
+      </section>
+
+      <section>
+        <title>Manipulating templates</title>
+
+        <para>SMlite allows you to manually change any region, consider the
+        following template / code</para>
+
+        <screen>&lt;?lister?&gt;
+&lt;table&gt;
+ &lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Surname&lt;/th&gt;&lt;/tr&gt;
+ &lt;?rows?&gt;
+  &lt;?row?&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;?id?&gt;1&lt;?/?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?name?&gt;John&lt;?/?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?surname?&gt;Smith&lt;?/?&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+  &lt;?/row?&gt;
+   &lt;tr&gt;
+    &lt;td&gt;2&lt;/td&gt;
+    &lt;td&gt;Bill&lt;/td&gt;
+    &lt;td&gt;Stivens&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;3&lt;/td&gt;
+    &lt;td&gt;Dorothy&lt;/td&gt;
+    &lt;td&gt;Atkinson&lt;/td&gt;
+   &lt;/tr&gt;
+  &lt;?/rows?&gt;
+&lt;/table&gt;
+&lt;?/lister?&gt;
+
+--------code--------
+
+// Initialize main template
+$lister = new SMlite('templates/lister');
+
+// Create clone of template with root = row (chroot?)
+$row = $lister-&gt;cloneBranch('row');
+
+// remove region from this template
+$lister -&gt; del('rows');
+
+// we are going to render row's template and insert it into main template inside "rows"
+// region
+while($row_data = getAssocDataRow()){
+    $row-&gt;set($row_data);
+    $lister-&gt;append('rows',$row-&gt;render());
+}
+
+// now when it's ready we can render it
+echo $lister-&gt;render();</screen>
+      </section>
+    </section>
+
+    <section>
+      <title>Building working application</title>
+
+      <para>AModules3 is about saving your time writing code. You don't have
+      to write much, really.</para>
+
+      <section>
+        <title>Initializing</title>
+
+        <para>You'll need two things. Include 'loader.php', initialize API and
+        execute it. Here is how it can look like:</para>
+
+        <screen>include 'amodules3/lib/loader.php';
+$api=new ApiStd('myapi');
+$api-&gt;main();</screen>
+
+        <para>That's all. 'myapi' defines a "realm". If you are running
+        multiple AModules3 applications on the same domain, it's a good idea
+        to keep unique realms, otherwise they'll share authentication info,
+        session variables etc.</para>
+
+        <para>Next you would need to define basic template. You don't have to
+        if you use ApiAdmin, it already have template by default. However you
+        need something like this for a ApiStd:</para>
+
+        <screen>$api-&gt;template = $api-&gt;newSMlite('index');</screen>
+
+        <para>This could be replaced by a dedicated function. Now how about
+        putting hello world on the page? There are many ways, let's start with
+        simplest.</para>
+      </section>
+
+      <section>
+        <title>Hello World 1</title>
+
+        <para>Let's just use this template:</para>
+
+        <screen>&lt;html&gt;
+&lt;body&gt;Hello World&lt;/body&gt;
+&lt;/html&gt;</screen>
+      </section>
+
+      <section>
+        <title>Hello World 2</title>
+
+        <para>Consider this template:</para>
+
+        <screen>&lt;html&gt;
+&lt;body&gt;
+&lt;?content?&gt;
+ Lorem ipsum sit dor...
+&lt;?/?&gt;
+&lt;/body&gt;
+&lt;/html&gt;</screen>
+
+        <para>Now you'll need to have this code:</para>
+
+        <screen>include 'amodules3/lib/loader.php';
+$api=new ApiStd('myapi');
+
+$api-&gt;template-&gt;set('content','Hello World');
+
+$api-&gt;main();</screen>
+      </section>
+
+      <section>
+        <title>Hello World 3</title>
+
+        <para>Same template as hello world 2.</para>
+
+        <screen>class MyObject extends BaseObject {
+  function call_render(){
+     $this-&gt;output('Hello World');
+  }
+}
+
+
+include 'amodules3/lib/loader.php';
+$api=new ApiStd('myapi');
+
+$api-&gt;add('MyObject',null,'content');
+
+$api-&gt;main();</screen>
+      </section>
+    </section>
+
+    <section>
+      <title>Database abstraction layer</title>
+
+      <para>One of the most popular database abstraction layers nowadays would
+      be PEAR::DB. However, it's implementation is too bloated and drags in
+      complicated PEAR framework. PEAR::DB also does not provide anything else
+      but abstraction layer. To deal with those faults, I have designed
+      DBlite. This is a database abstraction layer similar to PEAR::DB in it's
+      syntax and could be used as replacement with minor modification to the
+      code. However several differences of DBlite are:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Clean and modular code - the principle is not to drag into
+          code which won't be used. DBlite provides generic PHP which is
+          extended to support functionality of chosen database.</para>
+        </listitem>
+
+        <listitem>
+          <para>More useful features - while the core code is minimalistic,
+          it's possible to add more complex modules on top of it. Such are
+          "debug" module designed on top of "mysql" which provides query
+          debugging and profiling capabilities. Also it have several query
+          building techniques: dynamic queries and parametric queries. DBlite
+          features support for mysql cluster and other features.</para>
+        </listitem>
+
+        <listitem>
+          <para>Easiest integration into existing framework - instead of
+          dragging and forcing our own framework, DBlite can be easily
+          integrated into any other framework.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>DBlite operates quite similar to how it's done by PEAR::DB,
+      consider a small sample:</para>
+
+      <screen>include'DBlite.php';
+$db = DBlite::connect("mysql://root@127.0.0.1/test");
+$value = $db-&gt;getOne("select password from users where login='john'");</screen>
+
+      <section>
+        <title>Dynamic query class</title>
+
+        <para>DBlite allows you to create and use dynamically generated
+        queries. The idea is that components of query are stored in arrays
+        while building query and are combined together when query is executed.
+        Having those parts stored dynamically it's much easier to change any
+        part of a query. This possibility is very effective in libraries and
+        frameworks and is primarily used in AModules3. The same query as
+        before would look like:</para>
+
+        <screen>$d = $db-&gt;dsql();
+$d -&gt; table("users");
+$d -&gt; field("password");
+$d -&gt; where("login='john');
+$value = $d -&gt; do_getOne();</screen>
+
+        <para>It might look more complicated, however there is a good example.
+        Inside AModules3 there is a class called "Paginator". This class can
+        be attached to any other class which produces listings (Lister,
+        CompleteLister, etc). Paginator would automatically adjust your query
+        to separate it per-page and skip necessary amount of records. It will
+        also figure out total count of records returned from a query to
+        display itself properly.</para>
+
+        <para>More detailed information on dynamic queries can me found in
+        manual.</para>
+      </section>
+
+      <section>
+        <title>Parametric queries</title>
+
+        <para>Using this class you can make sure what type of data you are
+        passing to the database. Instead of putting values (such as in where
+        clause or insert statement) inside the query you supply them inside
+        array of parameters. Some databases will be able to cache query and
+        will work faster, it also gives a little bit of security because it
+        casts types properly before putting them into query.</para>
+      </section>
+    </section>
+  </section>
+</article>

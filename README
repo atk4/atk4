@@ -1,0 +1,53 @@
+===============================================================================
+                    Web Administration library AModules3
+                    Website: http://adevel.com/amodules3
+    Copyright (C) 1999-2005 romans@adevel.com and contributors
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+===============================================================================
+
+1. About
+
+ AModules3 library is aimed to help development of administration systems,
+ web pages, web portals, web systems and other web applications. It provides
+ a flexible and extendable framework to simplify application development and
+ maintenance.
+
+2. What's new in AModules3
+
+ Version 3 brings complete rewrite of the library and now targets much wider
+ range of web applications. Major new improvements include:
+  - Template support through SMlite
+  - Flexible and modular API system
+  - PHP5+ (using exceptions and other new features)
+  - AJAX support, many other improvements
+
+3. Licensing
+
+ lib/       Code of AModules3 is licensed under terms of LGPL
+ samples/   Samples are public domain unless they cary different LICENSE
+ doc/       Docs are licensed under terms of GPL
+ templates/ Templates and images are public domain
+ ajax.js    JavaScript code is under terms of GPL
+
+ GPL is General Public License, http://www.gnu.org/copyleft/gpl.html
+  (software derived or based on GPL code must be GPL)
+ LPGL is Lesser General Public License, http://www.gnu.org/copyleft/lesser.html
+  (derived software must be LPGL, howether you may use library inside
+   proprietary code)
+ Public domain means no rigts are reserved, any use of code is allowed
+
+ Code author(s) are noted inside file headers
+

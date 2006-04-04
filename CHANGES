@@ -1,0 +1,37 @@
+AModules3 beta2 comes with some changes to the libraries and if you are
+switching from earlier version, you should read this section carefully.
+
+
+==[ ApiAdmin ]==
+I have decided to create more initialization functions. Now you don't
+have to initialize completely everything inside function init(), and
+I have introduced initialization order you should follow.
+
+ First you should initialize the Page. If your page relies on
+ some sort of frameworks those should be loaded on demand.
+
+ After page is initialized, you shoud try to insert additional
+ elements to the page such as menues, advertisements etc. Basic
+ actions don't need that stuff initialized
+
+Page initialization sequence:
+
+ Sometimes on the page you want to have filters, dialogs listers,
+ paginators. There are some rules on initialization sequence:
+
+  - initialize forms first.
+  - initialize lister
+  - initialize filters and paginators, give lister to them as
+     reference and they will be able to adjust the query.
+
+LAYOUT
+ ApiAdmin::__construct now takes 2nd argumen which is layout. After giving
+ it some thought I decided that layout shouldn't be configurable, 
+ layouts are quite flexible anyway - one layout can have menu, other
+ can live without. If your application is designed for particular layout
+ it should be changed by developer only.
+
+ kt2: is a new layout which is used by default. It's developed as a
+ clean, nice, css/ajax friendly layout. I'll try to patch up am3
+ to follow the changes and so that it is also usable.
+

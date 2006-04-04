@@ -1,0 +1,144 @@
+AModules3 relies on SMlite template engine, which is designed to be flexible
+for developers and acceptable for lazy designers. The main idea behind is
+to define on existing HTML page "regions" which are manipulated inside
+PHP code. Only basic tags are possible keeping all the logic away from
+templates and making templates easier to write. Also replacing templates with
+new ones is very easy, since you do not have to copy any code.
+
+By default we use <?...?> tags to inside templates. Those tags should be
+respected by major HTML visual editors and left untouched. Here is a sample
+html mockup:
+
+<html>
+<head>
+ <title>Page Sample</title>
+</head>
+<html>
+<table>
+<h1>Page Sample</h1>
+ <tr><td>
+   Hello world
+ </td></tr>
+</table>
+</html>
+
+To make it work we need to define some regions, by adding tags, like this:
+
+<title><?page_title?>Page Sample<?/page_title?></title>
+
+Notice, that original text stays on the page. Template with the tags inserted will
+look just the same as it was before insterting tags in browsers and editors. With
+other template engines the look of the page would have been transformed and hard to
+understand for designer.
+
+To close template tags you may also use <?/?>, which closes most recent opened tag,
+but i suggest you to use closing tags in their full form if you opened it on the different
+line and it have lots of info in it. Just to make sure you don't forget or mix up any
+tags, template engine would validate full-form closing tags
+
+<html>
+<head>
+ <title><?page_title?>Page Sample<?/?></title>
+</head>
+<html>
+<h1><?page_title?>Page Sample<?/?></h1>
+<table>
+ <tr><td>
+  <?content?>
+   Hello world
+   <?/content?>
+ </td></tr>
+</table>
+</html>
+
+Notice that same tag may be defined several times. In this case, the same text will be inserted
+in multiple places, when you try to change it from PHP.
+
+Now, some tag content may be useless, other tag content might be useful. For example "Page Sample"
+text is of no use for us and we would simple replace it, howether check the following example:
+
+<?lister?>
+<table>
+ <tr><th>ID</th><th>Name</th><th>Surname</th></tr>
+ <?rows?>
+  <?row?>
+   <tr>
+    <td><?id?>1<?/?></td>
+    <td><?name?>John<?/?></td>
+    <td><?surname?>Smith<?/?></td>
+   </tr>
+  <?/row?>
+   <tr>
+    <td>2</td>
+    <td>Bill</td>
+    <td>Stivens</td>
+   </tr>
+   <tr>
+    <td>3</td>
+    <td>Dorothy</td>
+    <td>Atkinson</td>
+   </tr>
+  <?/rows?>
+</table>
+<?/lister?>
+
+In this example, we have the following tag structure
+ lister -> rows -> row -> id/name/surname
+
+Here we would want have no need for John, Smith, Bill or Dorothy text. We would also need only one
+row to define our template and 2nd and 3rd row is of no need. The overal structure(<table>) is interesting,
+so we'll do the following:
+1) clone structure of "row"
+2) delete content of "rows"
+
+then for each record we:
+
+3) render "row" for to build each row
+4) add rendered text into "rows" spot
+    
+and after that we:
+
+5) render "lister"
+
+In the code this might look like this:
+
+$lister = new SMlite('templates/lister');
+$row = $lister->cloneBranch('row');
+$lister -> del('rows');
+
+while($row_data = getAssocDataRow()){
+    $row->set($row_data);
+    $lister->append('rows',$row->render());
+}
+
+echo $lister->render();
+
+
+Well, it might look a bit complicated, howether inside AModules3, this is wraped up into it's framework and you
+probably won't have to deal with SMlite directly.
+
+Ok, next important thing is that each object have it's template. Just now you saw how template is defined for
+"lister". This is a perfect example to use with standard Lister class.
+
+See object_structure to learn about object structure. Now when you add a new object you may use a part of parent's
+template as child template. For instance you may create object Row. When you call add(), you need to specify
+2 parameters - 2 tags. First tag is used to get subtree for child (used in cloneBranch), 2nd argument is
+used as a spot on the parent's template, where rendered child will be placed. In case of our lister, you
+would use "row" as a template for child and "rows" as a spot where to place rendered result.
+
+Note that we should always keep in mind, that creating lots of object might be CPU intensive. Do not create
+new branch for every row in the lister, instead re-use the same one. See documentation on Lister class how to
+use it effectively.
+
+I might have choosen another sample as to place forms on the page, but that would be too complicated and lots of
+text for this help file :)
+
+
+BTW you may also use tags in form <?$page_title?> or <?page_title/?>. Which is the same as <?page_title?><?/?>
+but shorter.
+
+
+
+
+You might see some unusual ways the templates are used. For example when using template with Page, tag called
+<?frame_this?> is used for puting frame around the page. See Page:frame_this.txt for more information.

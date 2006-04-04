@@ -1,0 +1,69 @@
+MySQL Cluster driver for DBlite library and tools
+
+MySQL Cluster is a pack of several standalone servers each running the same
+version of MySQL. One of them is called 'master', and the rest (0+) are
+called 'slaves'. All databases (except for 'mysql') are replicated from
+master to slaves. Master will accept all non-select queries; selects will
+go to a random slave. Each user has only one database with the same name.
+
+The Cluster has its own config file (mysql_cluster_config) and a status
+file (mysql_cluster_status). Status file contains just one symbol:
+'0': master and slaves are OK
+'1': master is down; slaves are OK. All non-select queries are spooled.
+'2': everything is down.
+The cluster daemon clusterd.php is responsible for setting the value.
+Although sysadmin may also interfere. Inside a PHP script, $obj->status
+variable holds the current value.
+
+The config file is updated by the daemon (to exclude slaves that are down)
+and by developer/admin. It can contain the following:
+# comments
+master=host
+slave=host
+slave=host
+...
+statusX = user // sends status 'X' to 'user'
+statusX // without user, sends status 'X' to everyone
+# X can be '1' or '2'
+
+Just like mysql.php, cluster.php is a driver for DBlite. There are no new
+methods in it as compared to mysql.php, however, some of them may return
+unusual values and/or return the same values but for totally different
+reasons. For example, affectedRows() will return -1 if the current status
+is '1'. But usually FALSE is returned when you absolutely cannot do
+something. :) During development, you can define the DEBUG constant and
+set it to TRUE to make the library very talkative.
+
+INSTALLATION
+To make everything work, have the following:
+- several servers running the same version of MySQL;
+- replication one-to-many running smoothly;
+- mysql database MUST NOT replicate;
+- create and put config and status files to /etc/ or somewhere else and
+change the define statements in cluster.php and clusterd.php;
+- create a directory for spool files, make sure it is writable by Apache
+user, change SPOOLDIR definition accordingly (cluster.php and clusterd.php);
+- include the clusterd.php call to local Cron (every 1-5 min);
+- copy config to master host;
+- copy user4cluster.php to htdocs on master and change web auth
+login/password there;
+- run the following on all MySQL servers:
+grant all on mysql.* to granter identified by 'f3l0cv]';
+grant reload,REPLICATION CLIENT on *.* to granter identified by 'f3l0cv]';
+grant all on *.* to spooler identified by 'sp00ler';
+grant REPLICATION CLIENT on *.* to spooler identified by 'sp00ler';
+- create users/databases using user4cluster interface.
+
+user4cluster.php is a simple script allowing creation/revokation of users.
+Please keep in mind that the database will not be deleted when you revoke
+a user: you better do it manually (on master only).
+
+
+clusterd.php: MySQL Cluster Daemon.
+
+clusterd.php is run from Cron. It connects to the master and all slaves
+found in mysql_clusterd_config, runs 'show slave status' on every live
+host, and updates status and config files to be read by cluster.php.
+
+Note: on earlier versions of MySQL (3.x) 'show slave status' returns a
+field with a different name (Slave_Running instead of Slave_IO_Running).

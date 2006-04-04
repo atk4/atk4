@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="amodules3/templates/am3/style.css"/>
+</head>
+<body>
+<?content?>
+<?form?>
+<center>
+<table cellspacing=0 cellpadding=0 border=0 class="Form_Outer" bgcolor=white>
+    <tr height=5>
+        <td background='amodules3/templates/am3/images/hu.gif'>
+            <table cellspacing=0 cellpadding=0 border=0 width=100%>
+            <tr><td align=left><img src='amodules3/templates/am3/images/hc1a.gif'></td>
+            <td align=right><img src='amodules3/templates/am3/images/hc2a.gif'></td>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td><table cellspacing=0 cellpadding=0 border=0 width=100%>
+        <tr><td align=left width=5 background="amodules3/templates/am3/images/ll.gif" valign=top>
+            <img src='amodules3/templates/am3/images/hc1b.gif' width=5 height=6 align=left></td>
+        <td width=6 valign=top class='Title_color'><img src='amodules3/templates/am3/images/hc1c.gif' width=5 height=6></td>
+        <td class="Title"><?form_title?>Set 'form_title' to change this text<?/?></td>
+        <!--
+        <td class="Title" width=15><a href=#><img class=HelpIcon src="amodules3/templates/am3/images/help.gif" border=0></a></td>
+        -->
+        <td width=5 valign=top class='Title_color'><img src='amodules3/templates/am3/images/hc2c.gif' width=5 height=6></td>
+        <td background="amodules3/templates/am3/images/lr.gif" width=5 valign=top><img src='amodules3/templates/am3/images/hc2b.gif' width=5 height=6 align=right></td>
+        </tr></table></td>
+    </tr>
+        <td><table cellspacing=0 cellpadding=0 border=0 width=100%>
+        <tr><td align=left width=5 background="amodules3/templates/am3/images/ll.gif"><img src="amodules3/templates/am3/images/ll.gif"></td>
+        <td class="Form_Inner"><div class='Frame1'>
+		<form action="javascript:submit_<?$form_id?>()" name="<?$form_name?>" id="<?$form_id?>" method=post>
+					<script language="JavaScript">
+					<!--
+						function submit_<?$form_id?>(button) {
+							// start the dial first
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/loading.gif';
+
+							succ = function(response_text, response_xml){
+								success_<?$form_id?>(response_text);
+							}
+							aasf ('<?$form_id?>','<?$form_action?>&submited=<?$form_id?>',succ);
+						}
+						function dump_<?$form_id?>(button) {
+							// start the dial first
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/loading.gif';
+
+							succ = function(response_text, response_xml){
+								alert(response_text);
+								success_<?$form_id?>();
+							}
+							url='<?$form_action?>';
+							alert(url);
+							aasf ('<?$form_id?>',url,succ);
+						}
+						function success_<?$form_id?>(js) {
+							// stop dialing and execute optional js code
+							// (redirect for example)
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/not_loading.gif';
+							if(js)eval(js);
+						}
+						function reload_field_<?$form_id?>(field_name) {
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/loading.gif';
+
+							succ = function(response_text, response_xml){
+								aafc("td_"+field_name,response_text);
+								im=aagi('loading_<?$form_id?>');
+								im.src='amodules3/img/not_loading.gif';
+							}
+							aarq ('<?$form_action?>&reload_field_<?$form_id?>='+field_name,succ);
+						}
+
+						function reload_campaign_field_add_<?$form_id?>(field_name) {
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/loading.gif';
+
+							succ = function(response_text, response_xml){
+								aafc("td_"+field_name,response_text);
+								im=aagi('loading_<?$form_id?>');
+								im.src='amodules3/img/not_loading.gif';
+							}
+							ptr=aagi(field_name + "_new");
+							aarq ('<?$form_action?>&reload_field_<?$form_id?>='+field_name+'&val='+ptr.value,succ);
+						}
+						function reload_campaign_field_drop_<?$form_id?>(field_name) {
+							im=aagi('loading_<?$form_id?>');
+							im.src='amodules3/img/loading.gif';
+
+							succ = function(response_text, response_xml){
+								aafc("td_"+field_name,response_text);
+								im=aagi('loading_<?$form_id?>');
+								im.src='amodules3/img/not_loading.gif';
+							}
+							ptr=aagi(field_name);
+							aarq ('<?$form_action?>&reload_field_<?$form_id?>='+field_name+'&drop='+ptr.options[ptr.selectedIndex].value,succ);
+						}
+
+					//-->
+					</script>
+                <table width=100% cellspacing=0 cellpadding=0 border=0>
+                <?form_body?>
+                <?form_line?>
+                <tr class="row">
+					<td class="label"><?field_caption?>Name:<?/?> <a href='javascript:reload_field_<?$form_id?>("<?$field_name?>")'>reload</a></td>
+					<td nowrap class="Field" id="td_<?$field_name?>"><?field_input?><input type="text" size="25" /><?/?>
+                    <?field_error?><br><font color=red>^ <?field_error_str?>Sample error the field<?/?></font><?/?>
+                    </td>
+                </tr>
+                <?/form_line?>
+				<?hidden_form_line?>
+					<?hidden_field_input?> <?/?>
+				<?/hidden_form_line?>
+                <tr class="row">
+                    <td class="label">Age:</span>
+                    <td class="Field"><input type="text" size="25" /></span>
+                </tr>
+                <tr class="row">
+                    <td class="label">Shoe size:</span>
+                    <td class="Field"><input type="text"/></span>
+                </tr>
+                <tr class="row">
+                    <td class="label" valign=top>Comments:</span>
+                    <td class="Field">
+                        <textarea cols="125" rows="8">Go ahead - write something...</textarea>
+                    </td>
+                </tr>
+                <?/form_body?>
+                <tr><td colspan=2>
+                 <table width=100% border=0 cellspacing=0 cellpadding=0><tr class="buttonrow">
+                  <td class="left">
+					  <img id="loading_<?$form_id?>" src="amodules3/img/not_loading.gif" border=0>
+				</td><td align=center style="text-align: center;">
+					  <b id="msg_<?$form_id?>"></b>
+                  </td>
+                  <td class="right">
+                    <?form_buttons?>
+                    <input type=submit value=Cancel>
+                    <input type=submit value=Save>
+                    <?/form_buttons?>
+                  </td>
+                </tr></table></td>
+                </table>
+            </form></div>
+
+         </td>
+        <td background="amodules3/templates/am3/images/lr.gif" width=5><img src='amodules3/templates/am3/images/lr.gif' width=5 align=right></td>
+        </tr></table></td>
+    </tr><tr>
+    <tr height=11>
+        <td background='amodules3/templates/am3/images/shdd.gif'>
+            <table cellspacing=0 cellpadding=0 border=0 width=100%>
+            <tr><td align=left><img src='amodules3/templates/am3/images/wt3.gif'></td>
+            <td align=right><img src='amodules3/templates/am3/images/wt4.gif'></td>
+            </table>
+        </td>
+    </tr>
+</table>
+</center>
+<?/form?>
+<?/content?>
+</body>
+</html>

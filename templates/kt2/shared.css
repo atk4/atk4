@@ -1,0 +1,132 @@
+  /* generic styles */
+a { text-decoration: none;
+color:#38A2E1;
+}
+body, td { font-family: helvetica, arial,sans-serif;
+font-size: 9pt;
+}
+p { margin-top: 0px;
+margin-bottom: 0.5em;
+}
+
+ /* menu */
+.menu { border-color: 
+border-width: 2px 1px;
+border-top: 2px solid rgb(142, 142, 142);
+border-bottom: 2px solid #00CC00;
+font-size: 10pt;
+background-color: #EEEEEE;
+margin-bottom: 4px;
+}
+.menu td.separator { border-right: 1px dotted rgb(142, 142, 142);
+padding-left: 5px;
+padding-right: 5px;
+}
+.menu td.about { font-size: 8pt;
+text-align: right;
+}
+
+.menu td.current { background: white;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+border-right: 1px dotted rgb(142, 142, 142);
+padding-left: 5px;
+padding-right: 5px;
+}
+
+ /* locator */
+.locator { padding-top: 0.5em;
+font-weight: bold;
+font-family: Arial,Helvetica,sans-serif;
+font-size: 9pt;
+padding-bottom: 0.5em;
+}
+.msgbox { border-style: none solid solid;
+border-color: -moz-use-text-color rgb(142, 142, 142) rgb(142, 142, 142);
+border-width: 0px 1px 1px;
+background-color: rgb(228, 228, 228);
+margin-bottom: 1em;
+}
+.msgbox td.header { background-repeat: repeat-x;
+background-image: url(tabledescrowbg.gif);
+height: 22px;
+}
+.msgbox td { padding-left: 5px;
+padding-right: 5px;
+text-align: justify;
+}
+.layout { }
+.layout td.content { padding-left: 1em;
+padding-right: 1em;
+text-align: justify;
+}
+.lister { border-bottom: 1px solid rgb(142, 142, 142);
+}
+.lister tr.header td { 
+border-bottom: 1px solid rgb(142, 142, 142);
+border-top: 1px solid rgb(142, 142, 142);
+border-right: 1px solid rgb(180, 180, 180);
+border-left: 1px solid rgb(180, 180, 180);
+background-image: url(tabledescbg.gif);
+background-repeat: repeat-x;
+padding-left: 3px;
+padding-right: 3px;
+height: 20px;
+}
+.lister tr.header:hover td { 
+border-bottom: 1px solid rgb(142, 142, 142);
+border-top: 1px solid rgb(142, 142, 142);
+border-right: 1px solid rgb(180, 180, 180);
+border-left: 1px solid rgb(180, 180, 180);
+background-image: url(tabledescbg.gif);
+background-repeat: repeat-x;
+padding-left: 3px;
+padding-right: 3px;
+height: 20px;
+}
+.lister td { 
+border-right: 1px solid rgb(200, 200, 200);
+border-left: 1px solid rgb(200, 200, 200);
+padding-left: 3px;
+padding-right: 3px;
+}
+.lister tr.odd td { 
+border-bottom: 1px solid rgb(210, 210, 210);
+background: rgb(225, 225, 225) none repeat scroll 0% 50%;
+}
+.lister td { i
+border-bottom: 1px solid rgb(210, 210, 210);
+background: rgb(255, 255, 255) none repeat scroll 0% 50%;
+}
+.lister tr:hover td { 
+background: rgb(255, 240, 170) none repeat scroll 0% 50%;
+}
+
+.lister td.not_expanded {
+    border-right: 1px solid rgb(200, 200, 200);
+    border-left: 1px solid rgb(200, 200, 200);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.lister td.expanded_this {
+    border: 1px solid black;
+    background: white;
+    border-bottom: 0px;
+
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.lister td.expanded_other {
+    border-bottom: 1px solid black;
+    border-right: 1px solid rgb(200, 200, 200);
+    border-left: 1px solid rgb(200, 200, 200);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.lister tr.total td { 
+border-top: 1px solid rgb(142, 142, 142);
+font-family: Arial,Helvetica,sans-serif;
+font-size: 9pt;
+font-weight: bold;
+}
