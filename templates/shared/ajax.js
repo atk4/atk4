@@ -59,7 +59,7 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
 	var url = '';
 	var method = 'get';
 	
-	if ( !frm )	
+	if ( !frm )
 		return false;	
 	if( !custom_url ) {
 		if(frm.action )	
@@ -68,6 +68,7 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
 	else{
 		url = custom_url;
 	}
+	
 	if( url == '' )	 
 		return false;
 	if( frm.method )
@@ -117,7 +118,6 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
         }
         aadc( form_id );
     }
-    
     return true;
 }
 

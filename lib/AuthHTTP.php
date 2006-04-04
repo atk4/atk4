@@ -1,5 +1,5 @@
 <?
-class AuthHTTP {
+class AuthHTTP extends AbstractController{
     /*
      * This class will add authentication to your web application. All you need to do is:
      * $this->api->add('AuthWeb');
@@ -8,15 +8,20 @@ class AuthHTTP {
     public $owner;
     public $dq;
     public $auth_data;
+    private $name_field;
+    private $pwd_field;
     
     function init(){
-        $this->api->addHook('post-init',array($this,'authenticate'));
+        $this->api->addHook('pre-exec',array($this,'authenticate'));
     }
     function setSource($table,$login='login',$password='password'){
+    	$this->name_field = $login;
+    	$this->pwd_field = $password;
         $this->dq=$this->api->db->dsql()
             ->table($table)
-            ->field($login)
-            ->field($password);
+            ->field($this->name_field)
+            ->field($this->pwd_field);
+        return $this;
     }
     function authenticate(){
 		if(!isset($_SERVER['PHP_AUTH_USER'])||(!isset($_SERVER['PHP_AUTH_PW']))){
@@ -25,13 +30,13 @@ class AuthHTTP {
 		}else{
 			//checking user
             $this->auth_data = $this->dq
-                ->where('name',$_SERVER['PHP_AUTH_USER'])
+                ->where($this->name_field,$_SERVER['PHP_AUTH_USER'])
                 ->do_getHash();
-
-			$this->authenticated = $this->auth_data['password'] == $_SERVER['PHP_AUTH_PW'];
+			echo "!";
+			$this->authenticated = $this->auth_data[$this->pwd_field] == $_SERVER['PHP_AUTH_PW'];
                     // TODO - add cryptfunc support
-            unset($this->auth_data['password']);
+            unset($this->auth_data[$this->pwd_field]);
 		}
-		if(!$this->authenticated)throw new AuthException('Authorization Required');
+		if(!$this->authenticated)throw new BaseException('Authorization Required');
 	}
 }

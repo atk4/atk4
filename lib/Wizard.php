@@ -18,7 +18,12 @@ class FormButtons extends Form{
 			$this->owner->showPage();
 		}
 		if($this->owner->getCurrentIndex() != 0)$this->addSubmit('Previous');
-		if($this->owner->getCurrentIndex() != $this->owner->getPageCount() - 1)$this->addSubmit('Next');
+		if($this->owner->getCurrentIndex() != $this->owner->getPageCount() - 1){
+			$next = $this->addSubmit('Next');
+			$page = $this->owner->getPage($this->owner->getCurrentIndex());
+			if($page['submit']!='')
+				$next->setProperty('form_onsubmit', "document.".$page['submit'].".submit();");
+		}
     }
     
 }
@@ -29,6 +34,7 @@ class Wizard extends Page{
 	 */
 	private $pages = array();
 	private $current_index = -1;
+	private $page;
 
     function init() {
 		parent::init();
@@ -81,22 +87,22 @@ class Wizard extends Page{
 	function showButtons(){
 		$this->add('FormButtons', null, 'buttons');
 	}
+	function showPage(){
 	/**
 	 * Shows <b>current</b> page
 	 */
-	function showPage(){
 		$class = $this->pages[$this->getCurrentIndex()]['class']==''?'SomePage':
 			$this->pages[$this->getCurrentIndex()]['class'];
-		$page = $this->add($class, null, 'Content', 
+		$this->page = $this->add($class, null, 'Content', 
 			array($this->pages[$this->getCurrentIndex()]['template'], 'Content'));
 		$this->template->set('Title', $this->pages[$this->getCurrentIndex()]['title']);
 		$this->memorize('current_page', $this->current_index);
 	}
+	function proceed($forward){
 	/**
 	 * Changes the current page index.
 	 * @param bool forward
 	 */
-	function proceed($forward){
 		if($forward)$this->current_index = $this->getNextPage();
 		else $this->current_index = $this->getPrevPage();
 		$this->showPage();

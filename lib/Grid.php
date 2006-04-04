@@ -83,7 +83,7 @@ class Grid extends CompleteLister {
                 'expander_flip("'.$this->name.'",'.$this->current_row['id'].',"'.
                     $field.'","'.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
-                            'cut_object'=>$this->api->page.'_'.$field)).'&id=")\'');
+                            'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=")\'');
         if($this->current_row[$field]){
             $this->current_row[$field]='<font color="blue">'.$this->current_row[$field].'</font>';
         }else{

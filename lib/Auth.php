@@ -36,12 +36,18 @@ class LoginForm extends Form{
 		$this->api->memorize('remember', $this->elements['remember']->name);
 	}
 	function validateName(){
-		if($this->data['name'] == '')
+		if($this->get('name') == ''){
 			$this->elements['name']->displayFieldError('Your name should NOT be empty!');
+			return false;
+		}
+		return true;
 	}
 	function validatePass(){
-		if($this->data['pass'] == ''||strlen($this->data['pass']) < 1)
-			$this->elements['pass']->displayFieldError('Your password should NOT be empty or too simple!');
+		if($this->get('pass') == ''||strlen($this->get('pass')) < 1){
+			$this->elements['pass']->displayFieldError('Your password should NOT be empty!');
+			return false;
+		}
+		return true;
 	}
 }
 class Auth extends AbstractController{//extends Page{
@@ -53,6 +59,7 @@ class Auth extends AbstractController{//extends Page{
     private $pass_field;
     private $form;
     public $auth_data;
+    private $secure = true;
 
     function init(){
 		$this->auth_data = $this->api->recall('auth_data');
@@ -68,6 +75,9 @@ class Auth extends AbstractController{//extends Page{
             ->field($this->pass_field);
         return $this;
     }
+	private function sec($str){
+		return $this->secure?sha1($str):$str;
+	}
 	function doLogin($plogin = null, $ppassword = null){
 		//getting stored auth_data
 		if(!$this->auth_data['authenticated']){
@@ -77,7 +87,7 @@ class Auth extends AbstractController{//extends Page{
 				if(isset($_POST[$this->api->recall('authname')])){
 					//getting from POST
 					$user = $_POST[$this->api->recall('authname')];
-					$pass = sha1($_POST[$this->api->recall('authpass')]);
+					$pass = $this->sec($_POST[$this->api->recall('authpass')]);
 					//echo "$user : $pass";
 					$remember = isset($_POST[$this->api->recall('remember')]);
 				}
@@ -98,17 +108,23 @@ class Auth extends AbstractController{//extends Page{
 				$this->auth_data['authenticated'] = $this->auth_data[$this->pass_field] == $pass;
 			}
 			if(!$this->auth_data['authenticated']){
+				if(isset($user))$this->api->add('Text', null, 'Content')
+					->set("<div align=center>Your login is incorrect</div>");
 				$this->showLoginForm();
 			}else{
 				$this->api->memorize('auth_data', $this->auth_data);
 				//storing in cookies for a month
 				if($remember){
-					setcookie('username', $this->auth_data['username'], time()+60*60*24*30);
-					setcookie('password', $this->auth_data['password'], time()+60*60*24*30);
+					setcookie('username', $this->auth_data[$this->name_field], time()+60*60*24*30);
+					setcookie('password', $this->auth_data[$this->pass_field], time()+60*60*24*30);
 				}
 				$this->onLogin();
 			}
 		}
+	}
+	function setNoCrypt(){
+		$this->secure = false;
+		return $this;
 	}
 	function logout(){
 		$this->api->forget('auth_data');
@@ -120,7 +136,7 @@ class Auth extends AbstractController{//extends Page{
 		$this->api->redirect($this->api->page);
 	}
 	function showLoginForm(){
-		$this->owner->frame('Content', 'Login')->add('LoginForm', null, 'content');
+		$this->api->frame('Content', 'Login')->add('LoginForm', null, 'content');
 	}
 }
 ?>

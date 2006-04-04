@@ -77,6 +77,10 @@ class Ajax extends AbstractModel {
     function submit($button='default'){
         $this->notImplemented('submit');
     }
+	function submitForm($form){
+		$this->ajaxFunc("aasf('$form->name')");
+		return $this;
+	}
 
     function displayFormError($fld,$message){
         $this->ajaxFunc("alert('$field: $message')");
