@@ -35,7 +35,7 @@ class VersionControl extends AbstractController{
 					if($this->neededFile($file)){
 						//executing scripts
 						$sql = split(';',file_get_contents($this->dirname.$file));
-						foreach($sql as $query)$this->api->db->query($query);
+						foreach($sql as $query)if(trim($query) != '')$this->api->db->query($query);
 						if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
 					}
 				}
