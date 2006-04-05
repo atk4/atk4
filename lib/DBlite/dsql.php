@@ -239,7 +239,7 @@ class DBlite_dsql  {
         return $this;
     }
     function join ($table,$on,$type='inner'){
-        $this->args['join'][]="$type join $table on $on";
+        $this->args['join'][]="$type join ".DTP.$table." on $on";
         return $this;
     }
     function order($order,$desc=null,$prepend=null){

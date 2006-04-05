@@ -39,7 +39,7 @@ class Lister extends AbstractView {
     function render(){
         while($this->fetchRow()){
             $this->formatRow();
-            $this->template->set($this->current_row);
+            $this->template->set('content', $this->current_row);
             $this->output($this->template->render());
         }
     }

@@ -331,10 +331,10 @@ class Form_Field_Date extends Form_Field {
 	private $sep = '-';
 	private $is_valid = false;
 	
-	function getInput($attr=array()){
+	/*function getInput($attr=array()){
         return parent::getInput(array_merge(array('type'=>'text', 
 			'value'=>($this->is_valid ? date('Y-m-d', $this->value) : $this->value)),$attr));
-	}
+	}*/
 	private function invalid(){
         return $this->displayFieldError('Not a valid date');
 	}
@@ -355,7 +355,8 @@ class Form_Field_Date extends Form_Field {
 			if(strtotime($this->value)==''){
 				$this->invalid();
 			}else{
-				$this->set(strtotime($this->value));
+				//$this->set(strtotime($this->value));
+				$this->set($this->value);
 				$this->is_valid=true;
 			}
 		}

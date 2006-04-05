@@ -12,8 +12,8 @@
 class RegisterLink extends Text{
 	function init(){
 		parent::init();
-		$this->set('<tr><td></td><td><a href='.
-			$this->api->getDestinationURL($this->api->page,array('register'=>1)).'>Register</a></td></tr>');
+		$this->set('<tr><td align=left><a href='.
+			$this->api->getDestinationURL($this->api->page,array('register'=>1)).'>Register</a></td><td></td></tr>');
 	}
 }
 class LoginForm extends Form{
@@ -26,8 +26,6 @@ class LoginForm extends Form{
 	
 			->addSubmit('Login')
 		;
-		//adding a link to the registration page
-		$this->add('RegisterLink', null, 'form_body');
 		$this->elements['name']->addHook('validate', array($this, 'validateName'));
 		$this->elements['pass']->addHook('validate', array($this, 'validatePass'));
 		//storing field names to have them checked by api
@@ -60,6 +58,7 @@ class Auth extends AbstractController{//extends Page{
     private $form;
     public $auth_data;
     private $secure = true;
+    private $can_register = false;
 
     function init(){
 		$this->auth_data = $this->api->recall('auth_data');
@@ -135,8 +134,17 @@ class Auth extends AbstractController{//extends Page{
 	function onLogin(){
 		$this->api->redirect($this->api->page);
 	}
+	function addRegisterLink(){
+		$this->can_register = true;
+		return $this;
+	}
 	function showLoginForm(){
-		$this->api->frame('Content', 'Login')->add('LoginForm', null, 'content');
+		$form = $this->api->frame('Content', 'Login')->add('LoginForm', null, 'content');
+		//adding a link to the registration page
+		if($this->can_register){
+			$form->addSeparator()
+				->add('RegisterLink', null, 'form_body');
+		}
 	}
 }
 ?>
