@@ -37,18 +37,6 @@ class DBlite_mysql extends DBlite {
             return('Could not switch db to '.$db);
     }
     function realQuery($query, $params=null, $allow_extra=null){
-    	//TODO Need think about disadvantages with save/restore cursor if delete/update queries
-    	if (
-    	      (substr_compare('update',$query,0,6,true)==0) 
-    	         or 
-    	      (substr_compare('delete',$query,0,6,true)==0)   
-    	    ) {
-    	    	$update_query = true;
-    	    	$tmp_cursor_upd = $this->cursor;
-    	}
-    	else
-    		$update_query = false;
-    		 
         $this->last_query=$query;
         if(!$this->cursor = mysql_query($query,$this->handle)){
             $this->fatal('Could not execute query: '."\n".$query."\n");
@@ -59,11 +47,7 @@ class DBlite_mysql extends DBlite {
             $tmp_row = @mysql_fetch_row($tmp_cursor);
             @mysql_free_result($tmp_cursor);
             $this->found_rows=$tmp_row[0];
-            echo caller_lookup(3); // TODO! What is? Debug code???
         }
-        
-        // restore cursor for updates queries
-        if ($update_query == true) $this->cursor = $tmp_cursor_upd;
         
         return $this;
     }

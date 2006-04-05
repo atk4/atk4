@@ -104,5 +104,13 @@ class ApiCLI extends AbstractView {
         if(isset($this->config['table_prefix'])){
             define('DTP',$this->config['table_prefix']);
         }
+
+        $tz = $this->getConfig('timezone',null);
+        if(!is_null($tz) && function_exists('date_default_timezone_set')){
+            // with seting default timezone
+            date_default_timezone_set($tz);
+        }
+
+
     }
 }
