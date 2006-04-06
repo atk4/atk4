@@ -77,6 +77,9 @@ class Grid extends CompleteLister {
 	function format_time($field){
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
+    function format_wrap($field){
+    	$this->row_t->set("tdparam_$field", "");
+    }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']
             ->set($this->current_row)
