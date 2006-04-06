@@ -350,8 +350,8 @@ function aaej(src_url, spinner, argument){
 function submitForm(form,spinner){
 	var callback = function(response_text, response_xml){
         if(response_text){
-                eval(response_text);
             try {
+                eval(response_text);
             }catch(e){
                 w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
                 w.document.write('<h2>Error in AJAX response: '+e+'</h2>');

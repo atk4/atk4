@@ -286,6 +286,13 @@ class Form_Field_Checkbox extends Form_Field {
                         ),$attr
                     ));
     }
+    function loadPOST(){
+        if(isset($_POST[$this->name])){
+            $this->set('Y');
+        }else{
+            $this->set('');
+        }
+    }
 }
 class Form_Field_Password extends Form_Field {
     function getInput($attr=array()){
