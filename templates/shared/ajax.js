@@ -189,8 +189,7 @@ function aasv(element_id, src_url){
 
 
 // represents form params as a string
-// supports text, textarea, radiobuttons, select (not multiple).. 
-// checkboxes are not checked yet..
+// supports text, textarea, radiobuttons, select (not multiple), checkboxes.. 
 // ajaxComposeParams
 function aacp( form_id ){
 	var j;
@@ -204,6 +203,9 @@ function aacp( form_id ){
 		for(var i=0; i<frm.elements.length; i++){
 			if(res != '')
 				res+='&';
+			if(frm.elements[i].type == 'checkbox'){
+                if(!frm.elements[i].checked)continue;
+            }
 			if(frm.elements[i].type == 'radio'){
 				elem = frm.elements[frm.elements[i].name];
 				val = 'null';
@@ -343,4 +345,21 @@ function aaej(src_url, spinner, argument){
     };
 
 	return aarq( src_url, callback);
+}
+
+function submitForm(form,spinner){
+	var callback = function(response_text, response_xml){
+        if(response_text){
+                eval(response_text);
+            try {
+            }catch(e){
+                w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+                w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
+                w.document.write(response_text);
+                w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+            }
+        }
+        if(spinner)spinner_off(spinner);
+    };
+    return aasf(form,null,callback);
 }

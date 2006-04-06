@@ -56,8 +56,13 @@ class Ajax extends AbstractModel {
         $this->ajaxFunc("aasv('$field_id','$url')");
         return $this;
     }
+    function setInnerHTML($field_id,$value){
+        $value=str_replace("'",'',$value);
+        $value=str_replace("\n",'\\n',$value);
+        return $this->ajaxFunc("aafc('$field_id','$value')");
+    }
     function notImplemented($msg){
-        $this->ajaxFunc("alert('not implemented: $msg')");
+        return $this->ajaxFunc("alert('not implemented: $msg')");
     }
     function closeExpander($lister){
         $page=preg_replace('/.*_/','',$this->api->page());
@@ -78,7 +83,8 @@ class Ajax extends AbstractModel {
         $this->notImplemented('submit');
     }
 	function submitForm($form){
-		$this->ajaxFunc("aasf('$form->name')");
+		$this->ajaxFunc("submitForm('$form->name','".$this->spinner."')");
+        $this->spinner=null;
 		return $this;
 	}
 

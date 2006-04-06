@@ -120,11 +120,11 @@ class Form extends AbstractView {
                 foreach($field_or_array as $key=>$val){
                     if(isset($this->elements[$key]))$this->set($key,$val);
                 }
+                return $this;
             }else{
                 $value=$field_or_array;
                 $field_or_array=$this->last_field->short_name;
             }
-            return $this;
         }
 
         if(!isset($this->elements[$field_or_array]))

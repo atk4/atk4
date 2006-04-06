@@ -77,6 +77,12 @@ class Grid extends CompleteLister {
 	function format_time($field){
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
+    function format_template($field){
+        $this->current_row[$field]=$this->columns[$field]['template']
+            ->set($this->current_row)
+            ->trySet('_value_',$this->current_row[$field])
+            ->render();
+    }
     function format_expander($field){
         $n=$this->name.'_'.$field.'_'.$this->current_row['id'];
         $this->row_t->set('tdparam_'.$field,'id="'.$n.'" style="cursor: hand" nowrap onclick=\''.
@@ -103,6 +109,13 @@ class Grid extends CompleteLister {
         }
         return $this;
     }
+    function setTemplate($template){
+        // This allows you to use Template 
+        $this->columns[$this->last_column]['template']=$this->add('SMlite')
+            ->loadTemplateFromString($template);
+        return $this;
+    }
+
     function formatRow(){
         foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
             $formatters = split(',',$column['type']);
