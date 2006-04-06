@@ -7,7 +7,7 @@ class Filter extends Form {
     }
     function recallAll(){
         foreach(array_keys($this->elements) as $x){
-            $o=$this->data[$x]=$this->recall($x);
+            $o=$this->set($x, $this->recall($x));
         }
     }
     function submitted(){
@@ -18,7 +18,7 @@ class Filter extends Form {
             //by Camper: memorize() method doesn't memorize anything if value is null
             foreach(array_keys($this->elements) as $x){
             	if($this->isClicked('Clear'))$this->forget($x);
-                else $this->memorize($x,$this->data[$x]);
+                else $this->memorize($x,$this->get($x));
             }
 			return true;
         }

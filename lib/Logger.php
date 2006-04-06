@@ -348,6 +348,13 @@ class Logger extends AbstractController {
         }
         fflush($this->log_file);
     }
+    function logVar($var,$msg="",$shiftfunc=null){
+    	//creating an $msg from variable
+    	$msg.=": ";
+    	if(is_array($var)||is_object($var))$msg .= print_r($var, true);
+    	else$msg .= $var;
+    	$this->logLine($msg, $shiftfunc);
+    }
     function openLogFile(){
         if(!is_writable($this->log_dir)){
             // Directory is not writable, let's first try to create it
