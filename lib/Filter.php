@@ -34,5 +34,9 @@ class Filter extends Form {
     }
     function applyDQ($dq){
         // Redefine this function to apply limits to $dq.
+        foreach($this->elements as $key=>$field){
+            if($field->value)
+                $dq->where($key,$field->value);
+        }
     }
 }

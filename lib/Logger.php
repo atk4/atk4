@@ -192,7 +192,8 @@ class Logger extends AbstractController {
     function gatherDetails(){
         // Get IP address
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"])) : $_SERVER["REMOTE_ADDR"]);
+            //FIXME: generates warning - array_shift wants variable
+            //$this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"])) : $_SERVER["REMOTE_ADDR"]);
         }
 
         if (isset($_SERVER['QUERY_STRING'])) {

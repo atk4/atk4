@@ -139,6 +139,8 @@ class Auth extends AbstractController{//extends Page{
 		return $this;
 	}
 	function showLoginForm(){
+        $this->api->template->del('Content');
+        $this->api->template->del('Menu');
 		$form = $this->api->frame('Content', 'Login')->add('LoginForm', null, 'content');
 		//adding a link to the registration page
 		if($this->can_register){
