@@ -199,7 +199,7 @@
         functionality. This also applies on other things such as query
         joining, cursors, commits, sequences and limits.</para>
 
-        <para>Perhaps in latter versions we might have compatibility
+        <para>Perhaps in later versions we might have compatibility
         requirements implemented as PHP5 interfaces and advanced classes:
         compat_mysql ,compat_oracle. If you are interested, read <xref
         linkend="plans" /></para>

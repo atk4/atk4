@@ -64,10 +64,11 @@ class Ajax extends AbstractModel {
     function notImplemented($msg){
         return $this->ajaxFunc("alert('not implemented: $msg')");
     }
-    function closeExpander($lister){
-        $page=preg_replace('/.*_/','',$this->api->page());
-        $id=$_GET['id'];
-        //$this->ajaxFunc("expander_flip('".$lister->name
+    function closeExpander($lister=null){
+        $lister=$_GET['expanded'];
+        $id=(int)$_GET['id'];
+        $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
+        return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
     }
 
     // form specific fnuctions

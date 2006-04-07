@@ -11,7 +11,7 @@
  <XMI.content>
   <docsettings viewid="470" documentation="" uniqueid="530" />
   <umlobjects>
-   <UML:Class stereotype="" package="AbstractObject.php" xmi.id="13" abstract="1" documentation="Abstract object implements some base function latter to be used by Forms and Pages.
+   <UML:Class stereotype="" package="AbstractObject.php" xmi.id="13" abstract="1" documentation="Abstract object implements some base function later to be used by Forms and Pages.
 
 @author		Romans &lt;romans@void.lv>
 @copyright	n/a
@@ -277,7 +277,7 @@ This is main API function, which would do all initializing, input analysis, auth
 
 @param	$realm      Because there could me a number of system  working in the same domain you should check if  the cookie/session data really was issued on  your system. Realm should be unique for each  system running on the same site.
 
-@param   $loginpage  If authorization fails latter in  $auth->restrict() browser will be automaticaly redirected to login page.
+@param   $loginpage  If authorization fails later in  $auth->restrict() browser will be automaticaly redirected to login page.
 
 @param   $method     There could be various authorization methods:
    simple, sql, ldap and more. Each may have  unique requirements for next param @param   $method_parametrs   Custom information for choosen authorization method." name="Auth" static="0" scope="200" >
