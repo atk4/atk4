@@ -78,7 +78,8 @@ class Grid extends CompleteLister {
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
     function format_wrap($field){
-    	$this->row_t->set("tdparam_$field", "");
+    	$this->row_t->set("tdparam_$field", substr_replace('nowrap', '', 
+    		$this->row_t->get("tdparam_$field")));
     }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']
@@ -88,7 +89,7 @@ class Grid extends CompleteLister {
     }
     function format_expander($field){
         $n=$this->name.'_'.$field.'_'.$this->current_row['id'];
-        $this->row_t->set('tdparam_'.$field,'id="'.$n.'" style="cursor: hand" nowrap onclick=\''.
+        $this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: hand" onclick=\''.
                 'expander_flip("'.$this->name.'",'.$this->current_row['id'].',"'.
                     $field.'","'.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
