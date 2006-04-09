@@ -334,6 +334,12 @@ class Form_Field_File extends Form_Field {
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
 	}
 }
+class Form_Field_Time extends Form_Field {
+	function getInput($attr=array()){
+        return parent::getInput(array_merge(array('type'=>'text', 
+			'value'=>format_time($this->value)),$attr));
+	}
+}
 class Form_Field_Date extends Form_Field {
 	private $sep = '-';
 	private $is_valid = false;
