@@ -305,31 +305,7 @@ class DBlite extends DBlite_Abstract {
 
     ///////////////////// Misc functions ///////////////////////
     function fatal($str,$static_call=false){
-        if(!$static_call && isset($this->owner)){
-            $this->owner->fatal($str.": ".mysql_error());
-        }
-        // Default error handling
-        if(function_exists('debug_backtrace')){
-            $b=debug_backtrace();array_shift($b);
-            $line=array_shift($b);
-            //trigger_error($str." in ".$line['file'].':'.$line['line']);
-        }else{
-            trigger_error($str);
-        }
-
-        if(!$static_call && $this->last_query){
-            $last_query = $this->last_query;
-            $mysql_error = mysql_error();
-
-            $cause = ereg_replace('.*near \'(.*)\' at line .*','\1',$mysql_error);
-            if($cause!=$mysql_error){
-                $last_query=str_replace($cause,"<font color=red><b>".$cause."</b></font>",$last_query);
-            }
-            echo "<b>Last query:</b> <div style='border: 1px solid black'>".$last_query."</div>";
-            echo "<b>MySQL error:</b> <div style='border: 1px solid black'><font color=red>".$mysql_error."</font></div>";
-            echo "</div><small><address>DBlite v".$this->version."</address></small>\n";
-        }
-        exit;
+		throw new SQLException($this->last_query);
     }
 
     function dsql($class='dsql') {

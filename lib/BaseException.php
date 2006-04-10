@@ -54,3 +54,4 @@ class BaseException extends Exception {
 
 class ExceptionNotConfigured extends Exception {}   // used when config variable is not set
 class ObsoleteException extends BaseException {}    // used if obsolete function is called
+

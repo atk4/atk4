@@ -33,10 +33,9 @@ class VersionControl extends AbstractController{
 			if ($handle = opendir($this->dirname)) {
 				while (false !== ($file = readdir($handle))) { 
 					if($this->neededFile($file)){
-						//executing scripts
-						$sql = split(';',file_get_contents($this->dirname.$file));
-						foreach($sql as $query)if(trim($query) != '')$this->api->db->query($query);
-						if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
+						$fileext = strrchr($file, '.');
+						if($fileext == '.sql')$this->execSQL($file);
+						elseif($fileext == '.php')$this->execPHP($file);
 					}
 				}
 				closedir($handle);
@@ -47,8 +46,32 @@ class VersionControl extends AbstractController{
 			}
 		}
 	}
-	function neededFile($file){
-		if(strrchr($file, '.') == '.sql'){
+	function execSQL($file){
+		//executing scripts
+		$sql = split(';',file_get_contents($this->dirname.$file));
+		foreach($sql as $query)if(trim($query) != ''){
+			$this->api->logger->logLine("Version control: executing $query...\n");
+			try{
+				$this->api->db->query($query);
+				$this->api->logger->logLine("Version control: success\n");
+			}catch(Exception $e){
+				$this->api->logger->logLine("Version control: FAILED!\n");
+			}
+		}
+		if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
+	}
+	function execPHP($file){
+		$this->api->logger->logLine("Version control: including $file...\n");
+		try{
+			include($this->dirname.$file);
+			$this->api->logger->logLine("Version control: success\n");
+		}catch(Exception $e){
+			$this->api->logger->logLine("Version control: FAILED!\n");
+		}
+	}
+	private function neededFile($file){
+		$fileext = strrchr($file, '.');
+		if($fileext == '.sql'||$fileext == '.php'){
 			//get strlen($file)-9 chars (script number - 3 chars, extension - 3 chars, 2 dots: .001.sql)
 			$filever = substr($file, 1, strlen($file)-9);
 			return($filever <= $this->api->apinfo['version']&&$filever > $this->db_version);
