@@ -66,7 +66,7 @@ class Form extends AbstractView {
         if($this->template->is_set($name)){
             $this->template_chunks[$name] = $this->template->cloneRegion($name);
         }else{
-            return $this->fatal('missing form tag: '.$name);
+            //return $this->fatal('missing form tag: '.$name);
             // hmm.. i wonder what ? :)
         }
     }

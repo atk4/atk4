@@ -32,6 +32,14 @@ class Grid extends CompleteLister {
 
         return $this;
     }
+    function addButton($label){
+        return $this->add('Button',count($this->elements),'grid_buttons')
+            ->setLabel($label)->onClick();
+    }
+    function addQuickSearch($fields){
+        return $this->add('QuickSearch',null,'quick_search')
+            ->useFields($fields);
+    }
     function makeSortable($db_sort=null){
         // Sorting
         $reverse=false;
