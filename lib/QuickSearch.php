@@ -9,7 +9,7 @@ class QuickSearch extends Filter {
     function init(){
         parent::init();
         $this->useDQ($this->owner->dq);
-        $this->addField('Search','q');
+        $this->addField('Search','q','Find');
         $this->addSubmit('Go');
     }
     function useFields($fields){
