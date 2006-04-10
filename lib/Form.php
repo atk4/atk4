@@ -170,6 +170,9 @@ class Form extends AbstractView {
         return $this;
     }
     function addAjaxButtonAction($label,$name=null){
+        return $this->addButton($label,$name);
+    }
+    function addButton($label,$name=null){
 
         // Now add the regular button first
         $field = $this->add('Form_Button',isset($name)?$name:$label)
