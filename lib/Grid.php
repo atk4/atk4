@@ -181,6 +181,7 @@ class Grid extends CompleteLister {
             }
 
             // some types needs control over the td
+
             $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
 
             $row->append('cols',$col->render());

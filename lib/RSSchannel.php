@@ -122,7 +122,7 @@ class ItemRSSchannel {
     }
 	
 }
-class RSSchannel extends BaseObject {
+class RSSchannel extends AbstractView {
 	
 	public $encoding = 'utf-8';
 	/**
