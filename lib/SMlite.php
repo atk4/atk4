@@ -319,6 +319,10 @@ class SMlite extends AbstractModel {
         }
         return $this;
     }
+    function tryDel($tag){
+        if(is_array($tag))return $this->del($tag);
+        return $this->is_set($tag)?$this->del($tag):$this;
+    }
 
     // template loading and parsing
     function findTemplate($template_name){

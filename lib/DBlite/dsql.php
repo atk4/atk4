@@ -75,7 +75,7 @@ class DBlite_dsql  {
     }
     function do_getRow($f=null){ 
         $this->s(); 
-        return $this->l($this->db->getAll($this->select(),$f)); 
+        return $this->l($this->db->getRow($this->select(),$f)); 
     }
     function do_getOne(){ 
         $this->s(); 
