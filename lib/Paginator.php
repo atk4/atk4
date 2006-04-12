@@ -4,7 +4,7 @@ class Paginator extends AbstractView {
      * Paginator is a class you should use when you need to separate lists into
      * several pages 
      */
-    public $ipp=25;
+    public $ipp=50;
     public $skip=0;
     public $range=4;
 
