@@ -344,14 +344,16 @@ class SMlite extends AbstractModel {
         $this->parseTemplate($this->template);
         return $this;
     }
-    function loadTemplate($template_name){
+    function loadTemplate($template_name,$ext=null){
         /*
          * Load template from file
          */
+        if($ext){ $tempext=$this->settings['extension']; $this->settings['extension']=$ext; };
         $this->tmp_template = $this->findTemplate($template_name);
         if(!isset($this->tmp_template))$this->fatal("Template not found (".$template_name.$this->settings['extension'].") in (".
                                                     $this->settings['templates'].")");
         $this->parseTemplate($this->template);
+        if($ext){ $this->settings['extension']=$tempext; };
         return $this;
     }
     function parseTemplate(&$template){
