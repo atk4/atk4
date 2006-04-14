@@ -70,7 +70,7 @@ function expander_flip(name,id,button,expander_url){
      * a prefix, which will have id appended
      */
     row=document.getElementById(name+"_"+id);
-
+        
     expander_status = expander_is_open(name,id,button);
     if(expander_status=="_closing"){
         nextrow=row.nextSibling;
@@ -79,6 +79,7 @@ function expander_flip(name,id,button,expander_url){
         button_off(name+"_"+button+"_"+id);
     }else if(expander_status=="_opening"){
 
+        
         tmp=row.parentNode.firstChild;
         if(!tmp.firstChild)tmp=tmp.nextSibling;
         header = tmp.firstChild;
@@ -91,18 +92,44 @@ function expander_flip(name,id,button,expander_url){
         }else{
             row.parentNode.insertBefore(newrow,nextrow);
         }
+        /* -- rem by chk
         my_td=document.createElement("td");
         my_td.colspan=cs;
-
-
+        -- /rem by chk*/
+        
         /* TODO: here is some template-dependant stuff. It's better to move this thing
          * out. Not sure if the temporary thing can me removed easily, but the background
          * color should be customizable. And it's even better to use class names, BTW!
          */
-        bg="white";
-
-        newrow.innerHTML='<td style="background: '+bg+'; border: 1px solid black; border-top: 0px; padding: 15px" colspan="'+cs+'" id="'+name+"_expandedcontent_"+id+'" ><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table></td>';
-        aasn(name+"_expandedcontent_"+id,expander_url+id);
+        bg="#FFFFFF";
+        
+        /* chk */
+        //tmp = row./*parentNode.firstChild.*/childNodes;
+        //alert(tmp.length);
+        
+        cll = newrow.insertCell(0);
+        cll.style.backgroundColor = bg;
+        cll.style.borderWidth = '0 1px 1px 1px';
+        cll.style.borderColor = '#000';
+        cll.style.borderStyle = 'solid';
+        cll.style.padding = '15px';
+        
+        cll.colSpan = cs; //row.parentNode.firstChild.childNodes.length;
+        
+        //cll.id = name+"_expandedcontent_"+id;        
+        cll.setAttribute('id', name+"_expandedcontent_"+id);
+        
+        cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
+        
+        /* /chk */
+        
+        //newrow.innerHTML='<td style="background: '+bg+'; border: 1px solid black; border-top: 0px; padding: 15px" colspan="'+cs+'" id="'+name+"_expandedcontent_"+id+'" ><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table></td>';
+        // http://dev.adevel.com/chk/fssub.html 
+        // http://dev.adevel.com/chk/tmp/aaa&bbb=ccc
+        
+        aasn(name+"_expandedcontent_"+id, expander_url+id);
+        
+        //aasn(name+"_expandedcontent_"+id, 'http://php5.chk/freespech/admin/'+expander_url+id);
         expand('autoexpander_'+id,0);
 
         button_on(name+"_"+button+"_"+id);
