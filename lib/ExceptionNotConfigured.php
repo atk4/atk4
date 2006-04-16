@@ -1,3 +1,3 @@
 <?php
-class ExceptionNotConfigured extends Exception {}   // used when config variable is not set
+class ExceptionNotConfigured extends BaseException {}   // used when config variable is not set
 
