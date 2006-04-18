@@ -55,7 +55,7 @@ class ApiCLI extends AbstractView {
         if($default!='_config_get_false')return $default;
         throw new BaseException($exceptiontext);
     }
-    function getConfig($path, $default_value = '_config_get_no_default'){
+    function getConfig($path, $default_value = undefined){
         /**
          * For given path such as 'dsn' or 'logger/log_dir' returns
          * corresponding config value. Throws ExceptionNotConfigured if not set.
@@ -72,7 +72,7 @@ class ApiCLI extends AbstractView {
         $current_position = $this->config;
         foreach($parts as $part){
             if(!array_key_exists($part,$current_position)){
-                if($default_value!=='_config_get_no_default')return $default_value;
+                if($default_value!==undefined)return $default_value;
                 throw new ExceptionNotConfigured("You must specify \$config['".
                         join("']['",explode('/',$path)).
                         "'] in your config.php");

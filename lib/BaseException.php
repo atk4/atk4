@@ -7,6 +7,8 @@ class BaseException extends Exception {
     private $frame_stop;
     public $my_backtrace;
     public $shift=0;
+
+    public $more_info;
     function __construct($msg,$func=null,$shift=1){
         parent::__construct($msg);
         $this->frame_stop=$func;
@@ -31,6 +33,10 @@ class BaseException extends Exception {
         }
         $this->my_backtrace = debug_backtrace();
         return; 
+    }
+    function addMoreInfo($key,$value){
+        $this->more_info[$key]=$value;
+        return $this;
     }
     function getMyTrace(){
         return $this->my_backtrace;

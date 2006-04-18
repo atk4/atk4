@@ -110,6 +110,9 @@ class Grid extends CompleteLister {
             $this->current_row[$field]='<font color="blue">['.$this->columns[$field]['descr'].']</font>';
         }
     }
+    function format_nl2br($field) {
+    	$this->current_row[$field] = nl2br($this->current_row[$field]);
+    }
     function setSource($table,$db_fields="*"){
         parent::setSource($table,$db_fields);
         if($this->sortby){

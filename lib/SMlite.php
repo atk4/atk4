@@ -141,6 +141,10 @@ class SMlite extends AbstractModel {
         $this->settings['templates']=join(PATH_SEPARATOR,$path);
         $this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
     }
+    function addToPath($dir){
+        $this->settings['templates'].=':'.$dir;
+        return $this;
+    }
     function SMlite($template=array(),$settings=array()){
         /*
          * This method creates new instance of SMlite. The proper way to
