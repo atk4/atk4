@@ -50,7 +50,7 @@ class VersionControl extends AbstractController{
 		//executing scripts
 		$sql = split(';',file_get_contents($this->dirname.$file));
 		foreach($sql as $query)if(trim($query) != ''){
-			$this->api->logger->logLine("Version control: executing $query...\n");
+			$this->api->logger->logLine("Version control: SQL executing $query...\n");
 			try{
 				$this->api->db->query($query);
 				$this->api->logger->logLine("Version control: success\n");
@@ -61,7 +61,7 @@ class VersionControl extends AbstractController{
 		if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
 	}
 	function execPHP($file){
-		$this->api->logger->logLine("Version control: including $file...\n");
+		$this->api->logger->logLine("Version control: PHP including $file...\n");
 		try{
 			include($this->dirname.$file);
 			$this->api->logger->logLine("Version control: success\n");

@@ -8,7 +8,7 @@ abstract class page_DefaultAbout extends Page {
     function aboutAModules3(){
         $msg=$this->add('View','about_amodules','Content',array('shared','msgbox'));
         $msg->template->set('title','About AModules3');
-        $text="This web application was developed using <a href=\"_blank\" href=\"http://adevel.com/amodules3/\">AMofules3 framework</a>. AModules3 is free software. It's licensed under LGPL and is included together with your application. Please feel free to use it in your applications and give it some popularity.</p><p><h3>AModules3 developers</h3>";
+        $text="This web application was developed using <a href=\"_blank\" href=\"http://adevel.com/amodules3/\">AModules3 framework</a>. AModules3 is a free software. It is licensed under LGPL and goes together with your application. Please, feel free to use it in your applications and give it some popularity.</p><p><h3>AModules3 developers</h3>";
         if(file_exists($f=dirname(__FILE__).'/../../CREDITS')){
             $tmp=nl2br(htmlspecialchars(file_get_contents($f)));
             $tmp=preg_replace("/^(.*):/m",'<b>\1:</b>',$tmp);
