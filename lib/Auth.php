@@ -168,8 +168,8 @@ class Auth extends AbstractController{
 				$this->api->memorize('auth_data', $this->auth_data);
 				//storing in cookies for a month
 				if($remember){
-					setcookie('username', $this->auth_data[$this->name_field], time()+60*60*24*30, '/');
-					setcookie('password', $this->auth_data[$this->pass_field], time()+60*60*24*30, '/');
+					setcookie('username', $this->auth_data[$this->name_field], time()+60*60*24*30);
+					setcookie('password', $this->auth_data[$this->pass_field], time()+60*60*24*30);
 				}
 				$this->onLogin();
 			}
@@ -181,8 +181,8 @@ class Auth extends AbstractController{
 	}
 	function logout(){
 		$this->api->forget('auth_data');
-		setcookie('username', '', time()-1, '/');
-		setcookie('password', '', time()-1, '/');
+		setcookie('username', '', time()-1);
+		setcookie('password', '', time()-1);
 		$this->api->redirect('Index');
 	}
 	function onLogin(){
