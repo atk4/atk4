@@ -2,13 +2,6 @@
 /*
  * Created on 06.03.2006 by *Camper*
  */
-/**
- * This class performs an authentication and stores user login in the session
- * If there is no user info in the session - it is displaying a login form
- */
-/**
- * Simple login form
- */
 class RegisterLink extends Text{
 	function init(){
 		parent::init();
@@ -24,6 +17,9 @@ class LostPassword extends Text{
 			'>Lost password</a></td><td></td></tr>');
 	}
 }
+/**
+ * login form
+ */
 class LoginForm extends Form{
 	function init(){
 		parent::init();
@@ -56,6 +52,10 @@ class LoginForm extends Form{
 		return true;
 	}
 }
+/**
+ * This class performs an authentication and stores user login in the session
+ * If there is no user info in the session - it is displaying a login form
+ */
 class Auth extends AbstractController{
     public $api;
     public $owner;
@@ -78,8 +78,8 @@ class Auth extends AbstractController{
     		//user clicked a link in e-mail
     		return;
     	}
-    	if($this->api->page!=$this->api->getConfig('auth/login_page')&&
-    		!$this->auth_data['authenticated'])$this->api->redirect($this->api->getConfig('auth/login_page'));
+    	if($this->api->page!=$this->api->getConfig('auth/login_page', 'Index')&&
+    		!$this->auth_data['authenticated'])$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
         $this->api->addHook('pre-exec',array($this,'doLogin'));
     }
     function checkRestore(){
@@ -111,8 +111,8 @@ class Auth extends AbstractController{
     	}else{
     		//denial page
     		$this->api->frame('Content', 'Request error')->add('Text', null, 'content')
-    			->set("Sorry, this page is not valid. May be activation period have been expired." .
-    					" Try to rerequest.");
+    			->set("Sorry, this page is not valid. Activation period might have been expired." .
+    					" Try to repeat Your request.");
     	}
     }
     function setSource($table,$login='login',$password='password'){
@@ -168,12 +168,28 @@ class Auth extends AbstractController{
 				$this->api->memorize('auth_data', $this->auth_data);
 				//storing in cookies for a month
 				if($remember){
-					setcookie('username', $this->auth_data[$this->name_field], time()+60*60*24*30);
-					setcookie('password', $this->auth_data[$this->pass_field], time()+60*60*24*30);
+					setcookie('username', $this->auth_data[$this->name_field], time()+60*60*24*30, 
+						$this->getPath(), $this->getDomain());
+					setcookie('password', $this->auth_data[$this->pass_field], time()+60*60*24*30, 
+						$this->getPath(), $this->getDomain());
 				}
 				$this->onLogin();
 			}
 		}
+	}
+	function getDomain(){
+		/**
+		 * Returns a second level domain for cookies
+		 */
+		$domain=explode('.', $_SERVER['SERVER_NAME']);
+		return $domain[sizeof($domain)-2].'.'.$domain[sizeof($domain)-1];
+	}
+	function getPath(){
+		/**
+		 * returns a path for cookies
+		 */
+		$path=dirname($_SERVER['PHP_SELF']);
+		return $path;
 	}
 	function setNoCrypt(){
 		$this->secure = false;
@@ -251,7 +267,7 @@ class FormSendLink extends Form{
 	function sendEmail($user_id, $username, $address){
 		//adding a DB record with a key to a change password page
 		$table=DTP.$this->api->getConfig('auth/rp_table');
-		$expire=time()+$this->api->getConfig('auth/rp_timeout')*60;
+		$expire=time()+$this->api->getConfig('auth/rp_timeout', 15)*60;
 		$this->api->db->query("insert into $table (user_id, email, expire) values($user_id, '$address', " .
 				"'".date('Y-m-d H:i:s', $expire)."')");
 		$id=mysql_insert_id();
@@ -260,7 +276,7 @@ class FormSendLink extends Form{
 		$msg="This is $server password recovery subsystem.\n\nSomeone (may be you) have requested" .
 				" a password change for a user $username. If you want to change your password, please " .
 				"click a link below. REMEMBER: this link is actual for a period of ".
-				$this->api->getConfig('auth/rp_timeout')." minutes. If you won't change a password " .
+				$this->api->getConfig('auth/rp_timeout', 15)." minutes. If you won't change a password " .
 				"during this period, you will have to make a new change request.\n\n".
 				"http://".$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
@@ -296,7 +312,7 @@ class FormChangePassword extends Form{
 		$this->elements['password2']->addHook('validate', array($this, 'validatePassword2'));
 	}
 	function validatePassword(){
-		if(strlen($this->get('password'))<$this->api->getConfig('auth/password_len', 0)){
+		if(strlen($this->get('password'))<$this->api->getConfig('auth/password_len', 1)){
 			$this->elements['password']->displayFieldError('Password is too short');
 			return false;
 		}
@@ -323,6 +339,8 @@ class FormChangePassword extends Form{
 		//storing changed info
 		$this->api->db->query("update ".$this->api->getConfig('auth/rp_table')." set changed=1, changed_dts=SYSDATE()" .
 				" where id=".$this->get('rp_id'));
-		$this->api->add('Text', null, 'Content')->set('Password changed succefully');
+		$this->api->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
+		$this->api->add('Text', 'back', 'Content')
+			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 	}
 }
