@@ -57,9 +57,6 @@ class LoginForm extends Form{
  * If there is no user info in the session - it is displaying a login form
  */
 class Auth extends AbstractController{
-    public $api;
-    public $owner;
-    public $template;
     public $dq;
     private $name_field;
     private $pass_field;

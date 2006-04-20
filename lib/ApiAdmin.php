@@ -80,6 +80,11 @@ class ApiAdmin extends ApiWeb {
          */
         return isset($_POST[$button_name])||isset($_POST[$button_name.'_x']);
     }
+    function isAjaxOutput(){
+        // TODO: chk, i wonder if you pass any arguments through get when in ajax mode. Well
+        // if you do, then make a check here. Form_Field::displayFieldError relies on this.
+        return true;
+    }
 
 
     function initDefaults(){

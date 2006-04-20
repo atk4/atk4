@@ -24,6 +24,10 @@ abstract class Form_Field extends AbstractView {
     }
     function displayFieldError($msg=null){
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
+        if($this->api->isAjaxOutput()){
+            echo $this->add('Ajax')->displayAlert($msg)->getString();
+            exit;
+        }
         $this->owner->errors[$this->short_name]=$msg;
     }
     function setNoSave(){
