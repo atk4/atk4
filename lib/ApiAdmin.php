@@ -83,7 +83,7 @@ class ApiAdmin extends ApiWeb {
     function isAjaxOutput(){
         // TODO: chk, i wonder if you pass any arguments through get when in ajax mode. Well
         // if you do, then make a check here. Form_Field::displayFieldError relies on this.
-        return true;
+        return false;
     }
 
 

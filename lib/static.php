@@ -7,7 +7,7 @@ function lowlevel_error($error,$lev=null){
     /*
      * This function will be called for low level fatal errors
      */
-    echo "<font color=red>Low level error:</font> $error (note: please use exception instead)<br>";
+    echo "<font color=red>Low level error:</font> $error<br>";
     exit;
 }
 };if(!function_exists('error_handler')){
