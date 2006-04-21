@@ -18,11 +18,14 @@ class Ajax extends AbstractModel {
 
     public $spinner = null;
 
+    function execute(){
+        echo $this->ajax_output;
+        exit;
+    }
     function ajaxFlush(){
         // Now, since we are returning AJAX stuff, we don't need to render anything.
         if($this->ajax_output){
-            echo $this->ajax_output;
-            exit;
+            $this->execute();
         }
     }
     function getString(){
@@ -37,7 +40,7 @@ class Ajax extends AbstractModel {
         $this->ajax_output.="$func_call;\n";
         return $this;
     }
-    function redirect($page,$args=array()){
+    function redirect($page=null,$args=array()){
         return $this->redirectURL($this->api->getDestinationURL($page,$args));
     }
     function redirectURL($url){

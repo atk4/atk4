@@ -93,6 +93,7 @@ class Form extends AbstractView {
 
     // Operating with field values
     function get($field){
+        if(!isset($this->elements[$field]))throw new BaseException('Trying to get value of not-existing field: '.$field);
         return $this->elements[$field]->value;
     }
     function clearData(){

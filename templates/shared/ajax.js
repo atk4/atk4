@@ -317,6 +317,7 @@ function aagi( elem_id ){
 function spinner_on(spinner){
     /* This function starts a spinning wheel */
     var s = document.getElementById(spinner);
+    if(!s)return;
     if(s.src){
         /* seems to be img */
         s.src='amodules3/img/loading.gif';
