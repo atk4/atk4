@@ -142,7 +142,7 @@ class SMlite extends AbstractModel {
         $this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
     }
     function addToPath($dir){
-        $this->settings['templates'].=':'.$dir;
+        $this->settings['templates'].=PATH_SEPARATOR.$dir;
         return $this;
     }
     function SMlite($template=array(),$settings=array()){
