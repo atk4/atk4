@@ -158,7 +158,7 @@ class TreeView extends Lister{
 	                            'cut_object'=>$this->name, 'ec_action'=>$expand?'expand':'collapse'
 	                            ))."')";
 			//$onclick="alert(document.getElementById('ec_".$id."').name)";
-	    	$button="<input style=flat type=button id=button_".$id.
+	    	$button="<input class=tv_button type=button id=button_".$id.
 				" onclick=\"$onclick\"".
 				" value=".($expand?'+':'-').">";
 		}else $button='';
@@ -169,12 +169,12 @@ class TreeView extends Lister{
 			$ajax=$this->add('Ajax');
 			if($_GET['ec_action']=='expand'){
 				echo 'ec_'.$_GET['ec'];
-				$ajax->setInnerHTML('ec_'.$_GET['ec'], '');//$this->getButton(false, $_GET['ec']));
+				$ajax->setInnerHTML('ec_'.$_GET['ec'], $this->getButton(false, $_GET['ec']));
 				$ajax->setInnerHTML('p_'.$_GET['ec'], $this->renderBranch($_GET['ec']));
 				//echo $this->getButton(false, $_GET['ec']);
 			}elseif($_GET['ec_action']=='collapse'){
 				$ajax->setInnerHTML('p_'.$_GET['ec'], '');
-				$ajax->setInnerHTML('ec_'.$_GET['ec'], '');//$this->getButton(true, $_GET['ec']));
+				$ajax->setInnerHTML('ec_'.$_GET['ec'], $this->getButton(true, $_GET['ec']));
 			}
 		}else
     		$this->output($this->renderBranch($this->root_value));
