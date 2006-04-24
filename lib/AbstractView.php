@@ -108,7 +108,8 @@ abstract class AbstractView extends AbstractObject {
          */
         if($this->name==$_GET['cut_object'] || $this->short_name==$_GET['cut_object']){
             $this->downCall('render');
-            echo $this->template->render();
+            if($this->template)echo $this->template->render();
+            else $this->render();
             return false;
         }
     }

@@ -168,7 +168,7 @@ class TreeView extends Lister{
 		if($_GET['ec']){
 			$ajax=$this->add('Ajax');
 			if($_GET['ec_action']=='expand'){
-				echo 'ec_'.$_GET['ec'];
+				//echo 'ec_'.$_GET['ec'];
 				$ajax->setInnerHTML('ec_'.$_GET['ec'], $this->getButton(false, $_GET['ec']));
 				$ajax->setInnerHTML('p_'.$_GET['ec'], $this->renderBranch($_GET['ec']));
 				//echo $this->getButton(false, $_GET['ec']);
