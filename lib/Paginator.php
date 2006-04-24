@@ -64,11 +64,18 @@ class Paginator extends AbstractView {
 
         if(!isset($this->found_rows))
             $this->found_rows=1000;
-            //return $this->fatal('Unknown number of rows');
 
         $this->cur_page=floor($this->skip / $this->ipp) +1;
-        $this->total_pages = floor($this->found_rows / $this->ipp);
-        if($this->cur_page>$this->total_pages)$this->cur_page=$this->total_pages+1;
+        $this->total_pages = ceil($this->found_rows / $this->ipp);
+
+        if($this->cur_page>$this->total_pages){
+            // We are on a wrong page. Recalculate everything.
+            $this->cur_page=$this->total_pages;
+            $this->skip=$this->ipp*($this->cur_page-1);
+            $this->main_dq->limit($this->ipp,$this->skip);
+            $this->main_dq->do_select();
+        }
+
         $s = $this->template_chunks['separator']->render();
 
         // left

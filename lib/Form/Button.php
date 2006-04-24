@@ -20,9 +20,9 @@ class Form_Button extends AbstractView {
         return $this;
     }
     function render(){
-        $this->owner->template_chunks['form']->append('form_buttons',
-		'<input type="button" value="'.$this->label.'" onclick="'.
-        (is_object($this->onclick)?$this->onclick->getString():$this->onclick).
-        '">');
+        $this->output(
+                    '<input type="button" value="'.$this->label.'" onclick="'.
+                    (is_object($this->onclick)?$this->onclick->getString():$this->onclick).
+                    '">');
     }
 }

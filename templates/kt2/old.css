@@ -1,4 +1,7 @@
   /* generic styles */
+* {
+    padding-top: 1px;
+}
 a { text-decoration: none;
 color:#38A2E1;
 }
@@ -8,7 +11,7 @@ font-size: 9pt;
 form {
 margin: 0px;
 }
-p { margin-top: 0px;
+p { margin-top: 2px;
 margin-bottom: 0.5em;
 }
 
@@ -101,6 +104,7 @@ border-right: 1px solid rgb(200, 200, 200);
 border-left: 1px solid rgb(200, 200, 200);
 padding-left: 3px;
 padding-right: 3px;
+padding-top: 1px;
 }
 .lister>tbody>tr.odd>td { 
 border-bottom: 1px solid rgb(210, 210, 210);

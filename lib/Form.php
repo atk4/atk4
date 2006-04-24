@@ -134,6 +134,15 @@ class Form extends AbstractView {
 
         return $this;
     }
+    function getAllData(){
+        $data=array();
+        foreach($this->elements as $key=>$val){
+            if($val instanceof Form_Field){
+                $data[$key]=$val->value;
+            }
+        }
+        return $data;
+    }
 
     // Modifying existing field properties and behavior
     function setProperty($property,$value=null){
@@ -180,7 +189,7 @@ class Form extends AbstractView {
     function addButton($label,$name=null){
 
         // Now add the regular button first
-        $field = $this->add('Form_Button',isset($name)?$name:$label)
+        $field = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
 
