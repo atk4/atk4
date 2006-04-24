@@ -73,6 +73,9 @@ class Ajax extends AbstractModel {
         $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
         return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
     }
+    function confirm($msg="Are you sure?"){
+        return $this->ajaxFunc("if(!confirm('$msg'))return false");
+    }
 
     // form specific fnuctions
     function withForm($form){

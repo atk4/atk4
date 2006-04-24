@@ -15,6 +15,8 @@ class QuickSearch extends Filter {
         $this->useDQ($this->owner->dq);
         $this->addField('Search','q','Find');
         $this->addButton('Go')->submitForm($this);
+
+        $this->onSubmit()->submitForm($this);
     }
     function useFields($fields){
         $this->fields=$fields;

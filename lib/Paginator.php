@@ -71,6 +71,7 @@ class Paginator extends AbstractView {
         if($this->cur_page>$this->total_pages){
             // We are on a wrong page. Recalculate everything.
             $this->cur_page=$this->total_pages;
+            if($this->total_pages==0)$this->cur_page=1;
             $this->skip=$this->ipp*($this->cur_page-1);
             $this->main_dq->limit($this->ipp,$this->skip);
             $this->main_dq->do_select();

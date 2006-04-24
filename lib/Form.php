@@ -28,6 +28,7 @@ class Form extends AbstractView {
 
     public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
     public $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
+    public $onsubmit = false;
 
     public $dq = null;
     function init(){
@@ -89,6 +90,9 @@ class Form extends AbstractView {
         return $this->addComment($separator);
     }
 
+    function onSubmit(){
+        return $this->onsubmit=$this->add('Ajax');
+    }
 
 
     // Operating with field values
@@ -266,6 +270,9 @@ class Form extends AbstractView {
         // Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons
 
         // We don't have anything else to do!
+        if($this->onsubmit){
+            $this->template->set('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
+        }
         $this->template_chunks['form']
             ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
         $this->owner->template->append($this->spot,$r=$this->template_chunks['form']->render());
