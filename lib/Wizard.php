@@ -29,6 +29,7 @@ class FormButtons extends Form{
 }
 
 class Wizard extends Page{
+
 	/**
 	 * This array contains wizard's pages in form of (index => 'page_template_name')
 	 */
