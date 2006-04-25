@@ -44,7 +44,7 @@ class Ajax extends AbstractModel {
         return $this->redirectURL($this->api->getDestinationURL($page,$args));
     }
     function redirectURL($url){
-        $this->ajaxFunc("document.location='".$url."'");
+        return $this->ajaxFunc("document.location='".$url."'");
     }
     function loadRegionURL($region_id,$url){
         $this->ajaxFunc("aasn('$region_id','$url')");

@@ -112,6 +112,11 @@ class ApiWeb extends ApiCLI {
 
         /////////////// Application execution /////////////////////////
     function render(){
+        if($this->ns)return;    // it already puts something on our page
+
+        if(!($this->template)){
+            throw new BaseException("You should specify template for API object");
+        }
         echo $this->template->render();
     }
     function execute(){

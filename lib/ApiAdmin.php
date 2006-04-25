@@ -6,9 +6,12 @@ class ApiAdmin extends ApiWeb {
     public $info_messages = array();
 
     public $apinfo=array();
+
+    public $ns=null;            // current namespace object or null if none
     function __construct($realm=null,$layout='kt2'){
         $this->layout=$layout;
         parent::__construct($realm);
+        if(!$this->ns)$this->hook('init-namespaces');
     }
     function init(){
         parent::init();
@@ -39,6 +42,17 @@ class ApiAdmin extends ApiWeb {
         // If first argument is null, stay on the same page
         if(!isset($page))$page=$this->page;
 
+        if($this->ns){
+            if(substr($page,0,1)===';'){
+                // Going to main namespace
+                $page=substr($page,1);
+            }elseif(strpos($page,';')!==false){
+                // Going to some other namespace
+            }else{
+                // Staying in this namespace
+                $page=$this->ns->short_name.';'.$page;
+            }
+        }
         // Check sticky arguments. If argument value is true, 
         // GET is checked for actual value.
         if(isset($this->sticky_get_arguments)){
@@ -92,11 +106,23 @@ class ApiAdmin extends ApiWeb {
 
 
         if($_GET['page']=="")$_GET['page']='Index';
-        $this->page=$_GET['page'];
+        if(strpos($_GET['page'],';')!==false){
+            list($namespace,$_GET['page'])=explode(';',$_GET['page']);
+            if(!isset($this->namespaces[$namespace])){
+                throw new BaseException('Specified namespace ('.$namespace.') can\'t be found');
+                // it's also 
+            }
+            $this->ns=$this->namespaces[$namespace];
+            $this->page=$_GET['page'];
+            $this->add('Logger');
+            $this->ns->initLayout();
+        }else{
+            $this->page=$_GET['page'];
 
-        $this->add('Logger');
+            $this->add('Logger');
 
-        $this->initLayout();
+            $this->initLayout();
+        }
     }
     function initLayout(){
         // This function adds layout of how the webpage looks like. It should be initializing
@@ -143,6 +169,10 @@ class ApiAdmin extends ApiWeb {
         $p->add('LoremIpsum',null,'Content');
     }
 
+    function addNamespace($nm,$name=null){
+        include_once($nm.'/'.$nm.'.php');
+        $this->add($nm,$name?$name:$nm);
+    }
 
     function outputInfo($msg){
         parent::outputInfo($msg);
