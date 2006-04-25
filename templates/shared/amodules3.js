@@ -151,3 +151,8 @@ function ajax_done(){
      * errors
      */
 }
+
+
+function w(url,width,height){
+        window.open(url,'','width='+width+',height='+height+',scrollbars=yes,resizable=yes');
+}
