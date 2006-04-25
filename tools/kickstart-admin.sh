@@ -21,6 +21,7 @@ function exists {
 [ -f main.php ] && exists
 
 apdir=`dirname $0`
+apdir=`dirname $apdir`
 loader=$apdir"/lib/loader.php";
 
 echo "apdir=$apdir"
@@ -35,12 +36,30 @@ EOF
 
 cat > main.php <<EOF
 <?
-include 'amodules3/lib/loader.php';
+include '$apdir/loader.php';
 \$api = new ApiAdmin('AModules3_website');
 \$api->main();
 ?>
 EOF
 
-[ -f amodules3 ] || ln -sf $apdir amodules3
+if echo $apdir | grep -q '\.\./'; then
+cat >> .htaccess <<EOF
+RewriteRule     ^(.*gif)$    wrap.php?file=\$1&ct=image,gif   [L]
+RewriteRule     ^(.*png)$    wrap.php?file=\$1&ct=image,png   [L]
+RewriteRule     ^(.*css)$    wrap.php?file=\$1&ct=text,css   [L]
+RewriteRule     ^(.*jpg)$    wrap.php?file=\$1&ct=text,jpg   [L]
+RewriteRule     ^(.*js)$    wrap.php?file=\$1&ct=application,x-javascript   [L]
+EOF
+
+
+cat > wrap.php <<EOF
+<?
+\$amodules3_path="$apdir";
+include_once \$amodules3_path.'/tools/generic-wrap.php';
+EOF
+fi
+
+# we don't link anymore we use them out from there :)
+#[ -f amodules3 ] || ln -sf $apdir amodules3
 echo "Edit main.php, create your templates inside templates/"
 echo "consult documentation on http://adevel.com/amodules3"
