@@ -55,7 +55,11 @@ abstract class AbstractView extends AbstractObject {
                 // Now that we loaded it, let's see which tag we need to cut out
                 $this->template=$this->template->cloneRegion($template_branch[1]);
             }else{  // brach could be just a string - a region to clone off parent
-                $this->template=$this->owner->template->cloneRegion($template_branch);
+                if(isset($this->owner->template)){
+                    $this->template=$this->owner->template->cloneRegion($template_branch);
+                }else{
+                    $this->template=$this->add('SMlite');
+                }
             }
             $this->template->owner=$this;
         }
@@ -87,7 +91,7 @@ abstract class AbstractView extends AbstractObject {
         $this->output($this->template->render());
     }
     function output($txt){
-        $this->owner->template->append($this->spot,$txt);
+        if(isset($this->owner->template))$this->owner->template->append($this->spot,$txt);
     }
     function region_render(){
         /**
