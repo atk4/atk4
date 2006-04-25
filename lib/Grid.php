@@ -97,10 +97,10 @@ class Grid extends CompleteLister {
             ->trySet('_value_',$this->current_row[$field])
             ->render();
     }
-    function format_expander($field){
-        $n=$this->name.'_'.$field.'_'.$this->current_row['id'];
+    function format_expander($field, $idfield='id'){
+        $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
         $this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: hand" onclick=\''.
-                'expander_flip("'.$this->name.'",'.$this->current_row['id'].',"'.
+                'expander_flip("'.$this->name.'",'.$this->current_row[$idfield].',"'.
                     $field.'","'.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
                             'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=")\'');
