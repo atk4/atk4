@@ -76,12 +76,16 @@ class Auth extends AbstractController{
     		return;
     	}
     	if($this->api->page!=$this->api->getConfig('auth/login_page', 'Index')&&
-    		!$this->auth_data['authenticated'])$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
+    	!$this->auth_data['authenticated']){
+    		$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
+    	}
         $this->api->addHook('pre-exec',array($this,'doLogin'));
     }
     function checkRestore(){
     	if(isset($_REQUEST['rp'])||strpos(strtolower($_REQUEST['submit']), 'formchangepassword')!==false){
     		//user clicked a link in e-mail
+    		$this->api->stickyGET('rp');
+    		$this->api->stickyGET('key');
     		$this->changePassword($_REQUEST['rp'], $_REQUEST['key']);
     		return;
     	}
@@ -92,24 +96,27 @@ class Auth extends AbstractController{
     	}
     }
     function changePassword($id, $key){
-    	//looking for the key in DB and checking expiration dts
-    	if(strpos(strtolower($_REQUEST['submit']), 'formchangepassword')===false){
-    		$row=$this->api->db->getHash("select * from ".$this->api->getConfig('auth/rp_table').
+   		$row=$this->api->db->getHash("select * from ".$this->api->getConfig('auth/rp_table').
     			" where id=$id and changed=0");
-    		$db_key=sha1($row['id'].$row['email'].strtotime($row['expire']));
-    		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
-    	}else $can_change=true;
+    	//looking for the key in DB and checking expiration dts
+   		$db_key=sha1($row['id'].$row['email'].strtotime($row['expire']));
+   		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
     	if($can_change){
     		//displaying changepass page
-			$form=$this->api->frame('Content', 'Change password')->add('FormChangePassword', null, 'content');
+    		$username=$this->api->db->getOne("select $this->name_field from ".
+    			$this->dq->args['table']." where id=".$row['user_id']);
+			$form=$this->api->frame('Content', "Change password for $username")->add('FormChangePassword', null, 'content');
 			$form->table=$this->dq->args['table'];
 			$form->password_field=$this->pass_field;
 			$form->secure=$this->secure;
     	}else{
     		//denial page
+			unset($this->api->sticky_get_arguments['rp']);
+			unset($this->api->sticky_get_arguments['key']);
     		$this->api->frame('Content', 'Request error')->add('Text', null, 'content')
     			->set("Sorry, this page is not valid. Activation period might have been expired." .
     					" Try to repeat Your request.");
+			$this->addBackLink();
     	}
     }
     function setSource($table,$login='login',$password='password'){
@@ -228,6 +235,9 @@ class Auth extends AbstractController{
 		$form=$this->api->frame('Content', 'Restore password')->add('FormSendLink', null, 'content');
 		$form->table=$this->dq->args['table'];
 		$form->name_field=$this->name_field;
+		$this->addBackLink();
+	}
+	function addBackLink(){
 		$this->api->add('Text', 'back', 'Content')
 			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 	}
@@ -337,6 +347,8 @@ class FormChangePassword extends Form{
 		$this->api->db->query("update ".$this->api->getConfig('auth/rp_table')." set changed=1, changed_dts=SYSDATE()" .
 				" where id=".$this->get('rp_id'));
 		$this->api->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
+		unset($this->api->sticky_get_arguments['rp']);
+		unset($this->api->sticky_get_arguments['key']);
 		$this->api->add('Text', 'back', 'Content')
 			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 	}

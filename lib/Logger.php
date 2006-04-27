@@ -354,7 +354,7 @@ class Logger extends AbstractController {
     	$msg.=": ";
     	if(is_array($var)||is_object($var))$msg .= print_r($var, true);
     	else$msg .= $var;
-    	$this->logLine($msg, $shiftfunc);
+    	$this->logLine($msg."\n", $shiftfunc);
     }
     function openLogFile(){
         if(!is_writable($this->log_dir)){

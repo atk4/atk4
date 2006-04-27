@@ -4,7 +4,7 @@
  */
 class TreeView extends Lister{
 	protected $row_t;
-	private $id_field;
+	protected $id_field;
 	private $parent_field;
 	private $display_field = array();
 	private $root_value;
@@ -24,15 +24,6 @@ class TreeView extends Lister{
     	$this->dq->order($this->parent_field);
     	return $this;
     }
-	function execQuery(){
-		/*if(!$this->collapsed){
-			parent::execQuery();
-			//now processing results to make them tree-like
-			//results should always be in $this->data
-			$this->temp_data = $this->dq->do_getAllHash();
-			$this->recurseData($this->root_value);
-		}*/
-	}
 	function defaultTemplate(){
 		return array('treeview', '_top');
 	}

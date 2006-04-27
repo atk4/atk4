@@ -42,6 +42,9 @@ class ApiAdmin extends ApiWeb {
         // If first argument is null, stay on the same page
         if(!isset($page))$page=$this->page;
 
+        // checking whether cookies are enabled and, if no, including SID
+        if(!$_COOKIE[$this->name])$args=array_merge($args, array($this->name=>session_id()));
+
         if($this->ns){
             if(substr($page,0,1)===';'){
                 // Going to main namespace
