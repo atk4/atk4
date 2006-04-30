@@ -140,6 +140,20 @@ function expander_flip(name,id,button,expander_url){
     }
 
 }
+/******* TreeView functions *******/
+function treenode_flip(expand,id){
+	button=new String(document.getElementById('ec_'+id).innerHTML);
+	if(expand==1){
+		button=button.replace('plus.gif', 'minus.gif');
+		button=button.replace('ec_action=expand', 'ec_action=collapse');
+		button=button.replace('treenode_flip(1', 'treenode_flip(0');
+	}else{
+		button=button.replace('minus.gif', 'plus.gif');
+		button=button.replace('ec_action=collapse', 'ec_action=expand');
+		button=button.replace('treenode_flip(0', 'treenode_flip(1');
+	}
+	document.getElementById('ec_'+id).innerHTML=button;
+}
 
 /******* MISC FUNCTIONS *******/
 function w(url,width,height){

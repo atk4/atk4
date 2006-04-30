@@ -1,6 +1,7 @@
 <?php
-/*
- * Created on 14.04.2006 by *Camper*
+/**
+ * TreeView as an object you can use to display some self-dependant data. 
+ * TreView uses Ajax technology to expand/collapse its branches.
  */
 class TreeView extends Lister{
 	protected $row_t;
@@ -34,25 +35,40 @@ class TreeView extends Lister{
         return false;
     }
     function display($format, $name, $prefix = ''){
+    	/**
+    	 * Add s field to display as a branch caption.
+    	 * @param format - how to format this field
+    	 * @param name - name of a DB-field
+    	 * @param prefix - could be used as a separator
+    	 */
     	$this->display_field[]=array('name'=>$name, 'prefix'=>$prefix, 'format'=>$format);
     	return $this;
     }
-    function getNextItem(){
+    private function getNextItem(){
     	return (bool)($this->current_row=array_shift($this->data));
     }
     function hideButtons(){
+    	/**
+    	 * Whether to show expand buttons for branches
+    	 */
     	$this->display_buttons=false;
     	return $this;
     }
     function collapseAll(){
+    	/**
+    	 * Call this method in init() to collapse all the branches by default
+    	 */
     	$this->collapsed=true;
     	return $this;
     }
     function expandAll(){
+    	/**
+    	 * Call this method in init() to expand all the branches by default
+    	 */
     	$this->collapsed=false;
     	return $this;
     }
-    function recurseData($parent_id, $level = 0){
+    private function recurseData($parent_id, $level = 0){
     	foreach($this->temp_data as $key=>$row){
     		if($row['displayed'])continue;
     		foreach($row as $field=>$value){
@@ -66,12 +82,12 @@ class TreeView extends Lister{
     		}
     	}
     }
-    function getNextLevel(){
+    private function getNextLevel(){
     	$row = array_shift($this->data);
     	array_unshift($this->data, $row);
     	return $row[$this->level_field];
     }
-    function getData($parent_id){
+    private function getData($parent_id){
     	if(is_null($parent_id)||$parent_id=='')$this->dq->where($this->parent_field." is null");
     	else $this->dq->where($this->parent_field."=$parent_id");
     	$this->dq->do_select();
@@ -94,13 +110,17 @@ class TreeView extends Lister{
     	$this->current_row['caption'].=$this->current_row[$field['name']];
     }
     function format_link($field){
+    	/**
+    	 * Makes a displaying text a link like PageName_FieldName. 
+    	 * You should define a Page descendant to make this link work
+    	 */
     	$caption=$this->current_row[$field['name']];
     	$this->current_row['caption'].="<a href=".
     		$this->api->getDestinationURL($this->api->page.'_'.$field['name'], 
     			array('id'=>$this->current_row[$this->id_field])).">" .
     		$caption."</a>";
     }
-    function renderBranch($parent_id){
+    private function renderBranch($parent_id){
     	//executing query for a branch
     	$this->getData($parent_id);
     	$prev_level = 0;
@@ -109,7 +129,6 @@ class TreeView extends Lister{
     	$this->template->del('rows');
         while($this->fetchRow()){
             $this->formatItem();
-            //var_dump($this->current_row);echo "<br><br>";
            	$this->template->del('level_off');
            	$this->template->del('level_on');
 
@@ -130,7 +149,6 @@ class TreeView extends Lister{
             $this->row_t->set('button_id', 'ec_'.$this->current_row[$this->id_field]);
             $this->row_t->set('ec', $this->getButton(true, $this->current_row[$this->id_field]));
             
-            //$this->row_t->set('ec', $button->render());
             $this->row_t->set('parent', 'p_'.$this->current_row[$this->id_field]);
             $this->row_t->set('content', $this->current_row['caption']);
             $this->template->append('rows',$this->row_t->render());
@@ -139,39 +157,29 @@ class TreeView extends Lister{
         return $this->template->render();
     }
     private function getButton($expand, $id){
-		/*$button=$this->add('Button', 'ec_'.$this->current_row[$this->id_field], 'ec');
-		$button->setLabel($this->current_row['collapsed']?'+':'-')
-			->onClick()->ajaxFunc("alert('!')");*/
 		if($this->display_buttons){
-			//echo $expand?'plus':'minus';
 	    	$onclick="aasn('p_".$id."','".
-					$this->api->getDestinationURL($this->api->page, array(
-	                    		'ec'=>$id,
-	                            'cut_object'=>$this->name, 'ec_action'=>$expand?'expand':'collapse'
-	                            ))."')";
-			//$onclick="alert(document.getElementById('ec_".$id."').name)";
+				$this->api->getDestinationURL(null, array(
+					'ec'=>$id,
+					'cut_object'=>$this->name, 'ec_action'=>$expand?'expand':'collapse'
+				))."'); treenode_flip($expand, $id)";
+			;
 	    	$button="<img src=amodules3/templates/kt2/".($expand?'plus.gif':'minus.gif')." " .
-	    		"valign=bottom id=button_".$id.
+	    		"id=\"button_".$id."\"".
 				" onclick=\"$onclick\">";
 		}else $button='';
-		$this->api->logger->logVar($button);
 		return $button;
     }
     function render(){
 		if($_GET['ec']){
-			$ajax=$this->add('Ajax');
 			if($_GET['ec_action']=='expand'){
-				//echo 'ec_'.$_GET['ec'];
-				//echo "expanding:";
-				$ajax->setInnerHTML('ec_'.$_GET['ec'], $this->getButton(false, $_GET['ec']));
-				$ajax->setInnerHTML('p_'.$_GET['ec'], $this->renderBranch($_GET['ec']));
-				//echo $this->getButton(false, $_GET['ec']);
+				$this->output($this->renderBranch($_GET['ec']));
 			}elseif($_GET['ec_action']=='collapse'){
-				echo "collapsing:";
-				$ajax->setInnerHTML('p_'.$_GET['ec'], '');
-				$ajax->setInnerHTML('ec_'.$_GET['ec'], $this->getButton(true, $_GET['ec']));
+				$this->template->del('TreeView');
+				$this->output('');
 			}
-		}else
+		}else{
     		$this->output($this->renderBranch($this->root_value));
+		}
     }
 }	
