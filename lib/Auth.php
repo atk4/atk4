@@ -75,10 +75,11 @@ class Auth extends AbstractController{
     		//user clicked a link in e-mail
     		return;
     	}
-    	if($this->api->page!=$this->api->getConfig('auth/login_page', 'Index')&&
+    	/*if($this->api->page!=$this->api->getConfig('auth/login_page', 'Index')&&
     	!$this->auth_data['authenticated']){
-    		$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
-    	}
+    		$this->doLogin();
+    		//$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
+    	}*/
         $this->api->addHook('pre-exec',array($this,'doLogin'));
     }
     function checkRestore(){
@@ -115,7 +116,9 @@ class Auth extends AbstractController{
 			unset($this->api->sticky_get_arguments['key']);
     		$this->api->frame('Content', 'Request error')->add('Text', null, 'content')
     			->set("Sorry, this page is not valid. Activation period might have been expired." .
-    					" Try to repeat Your request.");
+    			" <a href=".
+				$this->api->getDestinationURL(null, array('restore_password'=>1)).
+				">Click here</a> if You want to repeat Your request.");
 			$this->addBackLink();
     	}
     }
@@ -219,9 +222,11 @@ class Auth extends AbstractController{
 		return $this;
 	}
 	function showLoginForm(){
-        $this->api->template->del('Content');
-        $this->api->template->del('Menu');
-		$form = $this->api->frame('Content', 'Login')->add('LoginForm', null, 'content');
+        // Initialize an empty page
+        $p=$this->add('Page');
+        $p->template->loadTemplate('empty');
+		
+		$form = $p->frame('Content', 'Login')->add('LoginForm', null, 'content');
 		//adding a link to the registration page
 		$form->addSeparator();
 		if($this->can_register){
@@ -230,6 +235,9 @@ class Auth extends AbstractController{
 		if($this->show_lost_password){
 			$form->add('LostPassword', null, 'form_body');
 		}
+		$p->downCall('render');
+		echo $p->template->render();
+		exit;
 	}
 	function sendLink(){
 		$form=$this->api->frame('Content', 'Restore password')->add('FormSendLink', null, 'content');
@@ -310,6 +318,7 @@ class FormChangePassword extends Form{
 		$this
 			->addField('password', 'password', 'Enter new password')
 			->addField('password', 'password2', 'Confirm new password')
+			->addField('checkbox', 'send', 'Send me new password by e-mail')
 			
 			->addSubmit('Change')
 		;
@@ -335,6 +344,25 @@ class FormChangePassword extends Form{
 	function sec($str){
 		return $this->secure?sha1($str):$str;
 	}
+	function sendPassword($user_id, $password){
+		$server=$_SERVER['SERVER_NAME'];
+		$address=$this->api->db->getOne("select email from ".$this->table.
+			" where id=".$user_id);
+		//combining a message
+		$msg="This is $server password recovery subsystem.\n\nHere is your new password : " .
+			$password;
+		$subj="Your password has changed";
+		$from="noreply@$server";
+		$headers = "From: $from \n";
+		//$headers .= "Return-Path: <".$this->owner->settings['return_path'].">\n";
+		//$headers .= "To: $to \n"; 
+		$headers .= "MIME-Version: 1.0 \n"; 
+		//$headers .= "Content-Type: text/plain; charset=KOI8-R; format=flowed Content-Transfer-Encoding: 8bit " .
+		//		"\n"; 
+		$headers .= "X-Mailer: PHP script "; 
+		
+		mail($address, $subj, $msg, $headers);
+	}
 	function submitted(){
 		if(!parent::submitted())return false;
 		//getting a user id
@@ -347,9 +375,12 @@ class FormChangePassword extends Form{
 		$this->api->db->query("update ".$this->api->getConfig('auth/rp_table')." set changed=1, changed_dts=SYSDATE()" .
 				" where id=".$this->get('rp_id'));
 		$this->api->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
+		if($this->get('send')=='Y')$this->sendPassword($user_id, $this->get('password'));
 		unset($this->api->sticky_get_arguments['rp']);
 		unset($this->api->sticky_get_arguments['key']);
 		$this->api->add('Text', 'back', 'Content')
-			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
+			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>"
+			/*."<img src=pixel.gif onLoad=\"setTimeout(document.location='".
+			$this->api->getDestinationURL('Index')."', 5000)\">"*/);
 	}
 }
