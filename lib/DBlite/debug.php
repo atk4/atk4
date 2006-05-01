@@ -200,6 +200,6 @@ class DBlite_debug extends DBlite_mysql {
 
         // FIXME
         if ($this->_tracing and $this->cursor !==true) // exclude modify queries from explain
-            $this->_trace_query($_query,$start_time, $finish_time);
+            $this->_trace_query($query,$start_time, $finish_time);
     }
 }
