@@ -168,9 +168,7 @@ class Auth extends AbstractController{
 				$this->auth_data['authenticated'] = $this->auth_data[$this->pass_field] == $pass;
 			}
 			if(!$this->auth_data['authenticated']){
-				if(isset($user))$this->api->add('Text', null, 'Content')
-					->set("<div align=center><font color=red>Your login is incorrect</font></div>");
-				$this->showLoginForm();
+				$this->showLoginForm(isset($user));
 			}else{
 				$this->api->memorize('auth_data', $this->auth_data);
 				//storing in cookies for a month
@@ -221,11 +219,15 @@ class Auth extends AbstractController{
 		$this->show_lost_password=true;
 		return $this;
 	}
-	function showLoginForm(){
+	function showLoginForm($retry=false){
         // Initialize an empty page
         $p=$this->add('Page');
         $p->template->loadTemplate('empty');
+		$p->template->trySet('page_title', 'Login');
 		
+		if($retry)$p->add('Text', null, 'Content')
+			->set("<div align=center><font color=red>Your login is incorrect</font></div>");
+
 		$form = $p->frame('Content', 'Login')->add('LoginForm', null, 'content');
 		//adding a link to the registration page
 		$form->addSeparator();

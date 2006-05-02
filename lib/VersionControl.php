@@ -28,7 +28,7 @@ class VersionControl extends AbstractController{
 		$this->db_version = $this->api->db->getOne("select db_version from $this->table");
 	}
 	function versionUpdate(){
-		if($this->db_version != $this->api->apinfo['version']){
+		if($this->db_version != $this->api->apinfo['release']){
 			//getting scripts
 			if ($handle = opendir($this->dirname)) {
 				while (false !== ($file = readdir($handle))) { 
@@ -40,9 +40,9 @@ class VersionControl extends AbstractController{
 				}
 				closedir($handle);
 				//updating DB version
-				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['version']."'");
+				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['release']."'");
 				if(isset($this->api->logger))
-					$this->api->logger->logLine('Version control: DB updated to '.$this->api->apinfo['version']."\n");
+					$this->api->logger->logLine('Version control: DB updated to '.$this->api->apinfo['release']."\n");
 			}
 		}
 	}
@@ -74,7 +74,7 @@ class VersionControl extends AbstractController{
 		if($fileext == '.sql'||$fileext == '.php'){
 			//get strlen($file)-9 chars (script number - 3 chars, extension - 3 chars, 2 dots: .001.sql)
 			$filever = substr($file, 1, strlen($file)-9);
-			return($filever <= $this->api->apinfo['version']&&$filever > $this->db_version);
+			return($filever <= $this->api->apinfo['release']&&$filever > $this->db_version);
 		}
 		return false;
 	}
