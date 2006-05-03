@@ -314,7 +314,7 @@ function aagi( elem_id ){
 	}
 }
 
-function spinner_on(spinner){
+function spinner_on(spinner, timeout){
     /* This function starts a spinning wheel */
     var s = document.getElementById(spinner);
     if(!s)return;
@@ -324,7 +324,8 @@ function spinner_on(spinner){
     }else{
         s.innerHTML='<img src="amodules3/img/loading.gif" alt="loading">';
     }
-    setTimeout("spinner_off('"+spinner+"')",3000);
+    if(timeout == null)timeout=3000;
+    if(timeout>0)setTimeout("spinner_off('"+spinner+"')",timeout);
 }
 function spinner_off(spinner){
     /* This function stops a spinning wheel */
