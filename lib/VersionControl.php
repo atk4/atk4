@@ -55,7 +55,7 @@ class VersionControl extends AbstractController{
 				$this->api->db->query($query);
 				$this->api->logger->logLine("Version control: success\n");
 			}catch(Exception $e){
-				$this->api->logger->logLine("Version control: FAILED!\n");
+				$this->api->logger->logLine("Version control: FAILED! ".mysql_error()."\n");
 			}
 		}
 		if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");

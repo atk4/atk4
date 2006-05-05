@@ -6,14 +6,14 @@ class RegisterLink extends Text{
 	function init(){
 		parent::init();
 		$this->set('<tr><td align=left><a href='.
-			$this->api->getDestinationURL($this->api->page,array('register'=>1)).'>Register</a></td><td></td></tr>');
+			$this->api->getDestinationURL($this->api->getConfig('auth/login_page'),array('register'=>1)).'>Register</a></td><td></td></tr>');
 	}
 }
 class LostPassword extends Text{
 	function init(){
 		parent::init();
 		$this->set('<tr><td align=left><a href='.
-			$this->api->getDestinationURL(null, array('restore_password'=>1)).
+			$this->api->getDestinationURL($this->api->getConfig('auth/login_page'), array('restore_password'=>1)).
 			'>Lost password</a></td><td></td></tr>');
 	}
 }
@@ -88,12 +88,10 @@ class Auth extends AbstractController{
     		$this->api->stickyGET('rp');
     		$this->api->stickyGET('key');
     		$this->changePassword($_REQUEST['rp'], $_REQUEST['key']);
-    		return;
     	}
     	//checking if there is a password restore request
     	if(isset($_REQUEST['restore_password'])||strpos(strtolower($_REQUEST['submit']), 'formsendlink')!==false){
     		$this->sendLink();
-    		return;
     	}
     }
     function changePassword($id, $key){
@@ -102,25 +100,33 @@ class Auth extends AbstractController{
     	//looking for the key in DB and checking expiration dts
    		$db_key=sha1($row['id'].$row['email'].strtotime($row['expire']));
    		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
+   	    $p=$this->add('Page');
+       	$p->template->loadTemplate('empty');
+		$p->template->trySet('page_title', 'Change password');
     	if($can_change){
     		//displaying changepass page
     		$username=$this->api->db->getOne("select $this->name_field from ".
     			$this->dq->args['table']." where id=".$row['user_id']);
-			$form=$this->api->frame('Content', "Change password for $username")->add('FormChangePassword', null, 'content');
-			$form->table=$this->dq->args['table'];
-			$form->password_field=$this->pass_field;
-			$form->secure=$this->secure;
+	        // Initialize an empty page
+    		
+			$form=$p->frame('Content', "Change password for $username")->add('FormChangePassword', null, 'content');
+			$this->api->memorize('auth_table', $this->dq->args['table']);
+			$this->api->memorize('auth_pass_field', $this->pass_field);
+			$this->api->memorize('auth_secure', $this->secure?1:0);
     	}else{
     		//denial page
 			unset($this->api->sticky_get_arguments['rp']);
 			unset($this->api->sticky_get_arguments['key']);
-    		$this->api->frame('Content', 'Request error')->add('Text', null, 'content')
+    		$p->frame('Content', 'Request error')->add('Text', null, 'content')
     			->set("Sorry, this page is not valid. Activation period might have been expired." .
     			" <a href=".
-				$this->api->getDestinationURL(null, array('restore_password'=>1)).
+				$this->api->getDestinationURL($this->api->getConfig('auth/login_page'), array('restore_password'=>1)).
 				">Click here</a> if You want to repeat Your request.");
-			$this->addBackLink();
+			$this->addBackLink($p);
     	}
+		$p->downCall('render');
+    	echo $p->template->render();
+    	exit;
     }
     function setSource($table,$login='login',$password='password'){
     	$this->name_field = $login;
@@ -204,7 +210,7 @@ class Auth extends AbstractController{
 		$this->api->forget('auth_data');
 		setcookie('username', '', time()-1);
 		setcookie('password', '', time()-1);
-		$this->api->redirect('Index');
+		$this->api->redirect($this->api->getConfig('auth/login_page', 'Index'));
 	}
 	function onLogin(){
 		$page=$this->api->recall('requested_page', 'Index');
@@ -242,19 +248,24 @@ class Auth extends AbstractController{
 		exit;
 	}
 	function sendLink(){
-		$form=$this->api->frame('Content', 'Restore password')->add('FormSendLink', null, 'content');
-		$form->table=$this->dq->args['table'];
-		$form->name_field=$this->name_field;
-		$this->addBackLink();
+   	    $p=$this->add('Page', 'restore');
+       	$p->template->loadTemplate('empty');
+		$p->template->trySet('page_title', 'Restore password');
+		$form=$p->frame('Content', 'Restore password')->add('FormSendLink', null, 'content');
+		$this->api->memorize('auth_table', $this->dq->args['table']);
+		$this->api->memorize('auth_name_field', $this->name_field);
+		$this->addBackLink($p);
+		$p->downCall('render');
+		echo $p->template->render();
+		//exit;
 	}
-	function addBackLink(){
-		$this->api->add('Text', 'back', 'Content')
-			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
+	function addBackLink($p){
+		$p->add('Text', 'back', 'Content')
+			->set("<div align=center><a href=".$this->api
+			->getDestinationURL($this->api->getConfig('auth/login_page')).">Back to main page</a></div>");
 	}
 }
 class FormSendLink extends Form{
-	public $table;
-	public $name_field;
 	
 	function init(){
 		parent::init();
@@ -265,21 +276,23 @@ class FormSendLink extends Form{
 			//->addButton('Send')->submitForm($this)
 			->addSubmit('Send')
 		;
+		if($this->isSubmitted())$this->processSubmit();
 	}
-	function submitted(){
-		if(!parent::submitted())return false;
+	function processSubmit(){
 		//finding a user in DB and sending him a email with a link
-		$row=$this->api->db->getHash("select id, email from ".$this->table.
-			" where ".$this->name_field."='".$this->get('username')."'");
+		$row=$this->api->db->getHash("select id, email from ".$this->api->recall('auth_table').
+			" where ".$this->api->recall('auth_name_field')."='".$this->get('username')."'");
 		$user_id=$row['id'];
 		$email=$row['email'];
 		if(!$email)throw new BaseException("User with a name you specified have not been found. Please try again");
 		else{
 			$this->sendEmail($user_id, $this->get('username'), $email);
-			$this->api->add('Text', null, 'Content')->set("<div align=center>An e-mail with instruction " .
-				"to restore password have been sent" .
-				" to user ".$this->get('username')."</div>");
+			$this->owner->owner->add('Text', null, 'Content')->set("<div align=center>An e-mail with instruction " .
+				"to restore password has been sent" .
+				" to user '".$this->get('username')."'</div>");
 		}
+		$this->api->forget('auth_table');
+		$this->api->forget('auth_name_field');
 	}
 	function sendEmail($user_id, $username, $address){
 		//adding a DB record with a key to a change password page
@@ -290,10 +303,10 @@ class FormSendLink extends Form{
 		$id=mysql_insert_id();
 		$server=$_SERVER['SERVER_NAME'];
 		//combining a message
-		$msg="This is $server password recovery subsystem.\n\nSomeone (may be you) have requested" .
-				" a password change for a user $username. If you want to change your password, please " .
-				"click a link below. REMEMBER: this link is actual for a period of ".
-				$this->api->getConfig('auth/rp_timeout', 15)." minutes. If you won't change a password " .
+		$msg="This is $server password recovery subsystem.\n\nWe recieved the request " .
+				" to change the password for the user '$username'. To change your password " .
+				"click the link below. REMEMBER: this link is actual for a period of ".
+				$this->api->getConfig('auth/rp_timeout', 15)." minutes only. If you do not change the password " .
 				"during this period, you will have to make a new change request.\n\n".
 				"http://".$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
@@ -311,10 +324,7 @@ class FormSendLink extends Form{
 	}
 }
 class FormChangePassword extends Form{
-	public $table;
-	public $password_field;
-	public $secure=true;
-	
+
 	function init(){
 		parent::init();
 		$this
@@ -328,6 +338,7 @@ class FormChangePassword extends Form{
 		if(isset($_REQUEST['rp']))$this->set('rp_id', $_REQUEST['rp']);
 		$this->elements['password']->addHook('validate', array($this, 'validatePassword'));
 		$this->elements['password2']->addHook('validate', array($this, 'validatePassword2'));
+		if($this->isSubmitted())$this->processSubmit();
 	}
 	function validatePassword(){
 		if(strlen($this->get('password'))<$this->api->getConfig('auth/password_len', 1)){
@@ -344,11 +355,11 @@ class FormChangePassword extends Form{
 		return true;
 	}
 	function sec($str){
-		return $this->secure?sha1($str):$str;
+		return $this->api->recall('auth_secure')==1?sha1($str):$str;
 	}
 	function sendPassword($user_id, $password){
 		$server=$_SERVER['SERVER_NAME'];
-		$address=$this->api->db->getOne("select email from ".$this->table.
+		$address=$this->api->db->getOne("select email from ".$this->api->recall('auth_table').
 			" where id=".$user_id);
 		//combining a message
 		$msg="This is $server password recovery subsystem.\n\nHere is your new password : " .
@@ -365,24 +376,24 @@ class FormChangePassword extends Form{
 		
 		mail($address, $subj, $msg, $headers);
 	}
-	function submitted(){
-		if(!parent::submitted())return false;
+	function processSubmit(){
 		//getting a user id
 		$user_id=$this->api->db->getOne("select user_id from ".$this->api->getConfig('auth/rp_table').
 			" where id = ".$this->get('rp_id'));
 		//changing password
-		$this->api->db->query("update $this->table set $this->password_field = '".$this->sec($this->get('password')).
+		$this->api->db->query("update ".$this->api->recall('auth_table')." set ".$this->api->recall('auth_pass_field').
+			" = '".$this->sec($this->get('password')).
 				"' where id = $user_id");
 		//storing changed info
 		$this->api->db->query("update ".$this->api->getConfig('auth/rp_table')." set changed=1, changed_dts=SYSDATE()" .
 				" where id=".$this->get('rp_id'));
-		$this->api->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
+		$this->owner->owner->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
 		if($this->get('send')=='Y')$this->sendPassword($user_id, $this->get('password'));
 		unset($this->api->sticky_get_arguments['rp']);
 		unset($this->api->sticky_get_arguments['key']);
-		$this->api->add('Text', 'back', 'Content')
-			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>"
-			/*."<img src=pixel.gif onLoad=\"setTimeout(document.location='".
-			$this->api->getDestinationURL('Index')."', 5000)\">"*/);
+		$this->owner->owner->add('Text', 'back', 'Content')
+			->set("<div align=center><a href=".$this->api->getDestinationURL('Index').">Back to main page</a></div>");
+		//$this->owner->owner->template->trySet('onload', "self.setTimeout(self.location.href='".
+			//$this->api->getDestinationURL($this->api->getConfig('auth/login_page'))."', 5000)");
 	}
 }
