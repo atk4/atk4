@@ -13,7 +13,7 @@ class Paginator extends AbstractView {
     private $found_rows=null;
     private $total_pages=null;
 
-    private $main_dq=null;
+    private $limiters=array();
     function init(){
         parent::init();
 
@@ -25,7 +25,20 @@ class Paginator extends AbstractView {
 
         $this->skip=$this->learn('skip',
                 $_GET[$this->name.'_skip'])+0;
-        if(isset($this->owner->dq))$this->useDQ($this->owner->dq);
+
+        $this->api->addHook('post-init',array($this,'applyHook'));
+    }
+    function applyHook(){
+        if(isset($this->owner->dq)){
+            $this->limiters[]=$this->owner->dq;
+        }
+        foreach($this->limiters as $key=>$dq){
+            $this->applyDQ($this->limiters[$key]);
+        }
+    }
+    function applyDQ($dq){
+        $dq->calc_found_rows();
+        $dq->limit($this->ipp,$this->skip);
     }
     function defaultTemplate(){
         return array('paginator','paginator');
@@ -45,10 +58,11 @@ class Paginator extends AbstractView {
         $this->range=$pageRange;
         return $this;
     }
-    protected function useDQ($dq){
-        $this->main_dq=$dq;
-        $this->main_dq->calc_found_rows();
-        $this->main_dq->limit($this->ipp,$this->skip);
+    function useDQ($dq){
+        if($dq===$this->owner->dq){
+            throw new ObsoleteException("You shouldn't use useDQ for Paginator if you are adding it into parent. This metod can be used to add additional DQ's controlled by this paginator. This is useful if you are having more than one lister controlled by paginator.");
+        }
+        $this->limiters[]=$dq;
         return $this;
     }
     function region($region){
@@ -58,8 +72,8 @@ class Paginator extends AbstractView {
     }
     function render(){
         if(!isset($this->found_rows)){
-            if(isset($this->main_dq)){
-                $this->found_rows = $this->main_dq->foundRows();
+            if(isset($this->limiters[0])){
+                $this->found_rows = $this->limiters[0]->foundRows();
             }
         }
 
@@ -74,8 +88,10 @@ class Paginator extends AbstractView {
             $this->cur_page=$this->total_pages;
             if($this->total_pages==0)$this->cur_page=1;
             $this->skip=$this->ipp*($this->cur_page-1);
-            $this->main_dq->limit($this->ipp,$this->skip);
-            $this->main_dq->do_select();
+            foreach($this->limiters as $key=>$l){
+                $this->limiters[$key]->limit($this->ipp,$this->skip);
+                $this->limiters[$key]->do_select();
+            }
         }
 
         $s = $this->template_chunks['separator']->render();

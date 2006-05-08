@@ -1,6 +1,6 @@
 <?
 class Filter extends Form {
-    public $limiters;
+    private $limiters=array();
     function init(){
         parent::init();
         $this->api->addHook('post-init',array($this,'recallAll'));
