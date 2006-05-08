@@ -55,6 +55,7 @@ class LoginForm extends Form{
 /**
  * This class performs an authentication and stores user login in the session
  * If there is no user info in the session - it is displaying a login form
+ * This class also has feature of password restoring
  */
 class Auth extends AbstractController{
     public $dq;

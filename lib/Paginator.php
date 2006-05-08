@@ -25,6 +25,7 @@ class Paginator extends AbstractView {
 
         $this->skip=$this->learn('skip',
                 $_GET[$this->name.'_skip'])+0;
+        if(isset($this->owner->dq))$this->useDQ($this->owner->dq);
     }
     function defaultTemplate(){
         return array('paginator','paginator');
@@ -44,7 +45,7 @@ class Paginator extends AbstractView {
         $this->range=$pageRange;
         return $this;
     }
-    function useDQ($dq){
+    protected function useDQ($dq){
         $this->main_dq=$dq;
         $this->main_dq->calc_found_rows();
         $this->main_dq->limit($this->ipp,$this->skip);
