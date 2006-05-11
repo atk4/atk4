@@ -91,8 +91,9 @@ function htmlize_exception($e,$msg){
 	function format_time($s, $exclude_seconds = false){
 		$m=floor($s/60);$s=$s%60;
 		$h=floor($m/60);$m=$m%60;
+		$d=floor($h/24);$h=$h%24;
 		//if(!$h)return sprintf("%02d:%02d",$m,$s);
-		if($exclude_seconds)return sprintf("%d:%02d",$h,$m);
-		return sprintf("%02d:%02d:%02d",$h,$m,$s);
+		if($exclude_seconds)return sprintf(($d>0)?"%d day".($d>1?'s ':' '):''."%d:%02d",$h,$m);
+		return sprintf(($d>0)?"%d day".($d>1?'s ':' '):''."%02d:%02d:%02d",$d,$h,$m,$s);
 	}
 }
