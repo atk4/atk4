@@ -47,7 +47,9 @@ class VersionControl extends AbstractController{
 		}
 	}
 	function execSQL($file){
-		//executing scripts
+		/**
+		 * Executes SQL scripts
+		 */
 		$sql = split(';',file_get_contents($this->dirname.$file));
 		foreach($sql as $query)if(trim($query) != ''){
 			$this->api->logger->logLine("Version control: SQL executing $query...\n");
@@ -61,6 +63,9 @@ class VersionControl extends AbstractController{
 		if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
 	}
 	function execPHP($file){
+		/**
+		 * Includes PHP script
+		 */
 		$this->api->logger->logLine("Version control: PHP including $file...\n");
 		try{
 			include($this->dirname.$file);
@@ -70,10 +75,13 @@ class VersionControl extends AbstractController{
 		}
 	}
 	private function neededFile($file){
+		/**
+		 * Checks the version of the scripts in dirname and returns true, if they are to be executed
+		 */
 		$fileext = strrchr($file, '.');
 		if($fileext == '.sql'||$fileext == '.php'){
-			//get strlen($file)-9 chars (script number - 3 chars, extension - 3 chars, 2 dots: .001.sql)
-			$filever = substr($file, 1, strlen($file)-9);
+			$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
+			$filever = $ver_parts[0].'.'.$ver_parts[1];
 			return($filever <= $this->api->apinfo['release']&&$filever > $this->db_version);
 		}
 		return false;
