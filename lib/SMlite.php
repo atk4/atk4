@@ -296,7 +296,7 @@ class SMlite extends AbstractModel {
         foreach($this->tags[$tag] as $key=>$_){
             $this->tags[$tag][$key]=$value;
         }
-    	if (!isset($this->updated_tag_list[$tag])) $this->updated_tag_list[$tag] = $value;
+    	$this->updated_tag_list[$tag] = $value;
         return $this;
     }
     function is_set($tag){
