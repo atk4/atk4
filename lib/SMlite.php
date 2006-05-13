@@ -101,6 +101,16 @@ class SMlite extends AbstractModel {
      */
 
     var $settings=array();
+    
+    /**
+     * list of updated tags with values
+     */
+    private $updated_tag_list = array();
+    
+    function getTagVal($tag) {
+    	return (isset($this->updated_tag_list[$tag]))?$this->updated_tag_list[$tag]:null;
+    }
+    
     function getDefaultSettings(){
         /*
          * This function specifies default settings for SMlite. Use
@@ -285,6 +295,7 @@ class SMlite extends AbstractModel {
         }
         foreach($this->tags[$tag] as $key=>$_){
             $this->tags[$tag][$key]=$value;
+        	if (!isset($this->updated_tag_list[$tag])) $this->updated_tag_list[$tag] = $value;
         }
         return $this;
     }
@@ -321,6 +332,7 @@ class SMlite extends AbstractModel {
         foreach($this->tags[$tag] as $key=>$val){
             $this->tags[$tag][$key]=array();
         }
+        unset($this->updated_tag_list[$tag]);
         return $this;
     }
     function tryDel($tag){
@@ -344,6 +356,8 @@ class SMlite extends AbstractModel {
     function loadTemplateFromString($template_string){
         $this->template=array();
         $this->tags=array();
+        $this->updated_tag_list = array(); 
+        
         $this->tmp_template=$template_string;
         $this->parseTemplate($this->template);
         return $this;
@@ -412,6 +426,7 @@ class SMlite extends AbstractModel {
          * changed already parsed template.
          */
         $this->tags=array();
+        $this->updated_tag_list = array();
         $this->rebuildTagsRegion($this->template);
         return $this;
     }
