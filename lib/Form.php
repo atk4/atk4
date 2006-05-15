@@ -180,7 +180,9 @@ class Form extends AbstractView {
         $this->last_field->setValueList($list);
         return $this;
     }
-
+	function onChange(){
+		return $this->last_field->onChange();
+	}
 
     function addSubmit($label,$name=null){
         $field = $this->add('Form_Submit',isset($name)?$name:$label)
