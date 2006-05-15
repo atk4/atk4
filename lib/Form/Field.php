@@ -16,6 +16,7 @@ abstract class Form_Field extends AbstractView {
     public $short_name=null;
     public $attr=array();
     public $no_save=null;
+    protected $onchange=null;
 
     // Field customization
     function setCaption($_caption){
@@ -43,7 +44,9 @@ abstract class Form_Field extends AbstractView {
     function setProperty($property,$value){
         $this->attr[$property]=$value;
     }
-
+	function onChange(){
+		return $this->onchange=$this->add('Ajax');
+	}
 
     function clearFieldValue(){
         $this->value=null;
@@ -62,6 +65,9 @@ abstract class Form_Field extends AbstractView {
         return $this->getTag('input',array_merge(array(
                                                        'name'=>$this->name,
                                                        'value'=>$this->value,
+                                                       'onchange'=>
+                                                       ($this->onchange)?$this->onchange->getString():
+                                                       ''
                                                       ),
                                                  $attr,
                                                  $this->attr)
@@ -245,6 +251,8 @@ class Form_Field_Dropdown extends Form_Field {
     function getInput($attr=array()){
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name,
+						'onchange'=>
+						($this->onchange)?$this->onchange->getString():''
                         ),
                     $attr,
                     $this->attr)
