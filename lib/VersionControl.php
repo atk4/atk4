@@ -3,16 +3,15 @@
  * Created on 26.03.2006 by *Camper*
  */
 class VersionControl extends AbstractController{
-    public $api;
-    public $owner;
     private $table;
     private $dirname;
     private $db_version;
 	
 	function init(){
-		$this->table = $this->api->getConfig('VersionControl/table');
+		$this->table = $this->api->getConfig('VersionControl/table','sys_config');
 		$this->dirname = $this->api->getConfig('VersionControl/dirname');
 		if(substr($this->dirname, strlen($this->dirname))!=DIRECTORY_SEPARATOR)
+            // todo - substr($str,-1);
 			$this->dirname.=DIRECTORY_SEPARATOR;
 		$this->getVersion();
 		$this->versionUpdate();

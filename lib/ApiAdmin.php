@@ -55,6 +55,11 @@ class ApiAdmin extends ApiWeb {
                 // Staying in this namespace
                 $page=$this->ns->short_name.';'.$page;
             }
+        }else{
+            if(substr($page,0,1)===';'){
+                // Going to main namespace
+                $page=substr($page,1);
+            }
         }
         // Check sticky arguments. If argument value is true, 
         // GET is checked for actual value.

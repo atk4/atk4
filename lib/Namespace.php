@@ -3,7 +3,7 @@ class Namespace extends AbstractView {
     function init(){
         parent::init();
         $this->subdir=$this->short_name;
-        $this->api->addHook('init-namespaces',array($this,'init_namespace'));
+        $this->api->addHook('init-namespaces',array($this,'initNamespace'));
         $this->api->namespaces[$this->short_name]=$this;
 
         $p=ini_get('include_path');
@@ -11,7 +11,7 @@ class Namespace extends AbstractView {
                 PATH_SEPARATOR.AMODULES3_LIB.'/'.$this->subdir.
                 PATH_SEPARATOR.$p);
     }
-    function init_namespace(){
+    function initNamespace(){
         /*
          * That's where you should initialize your namespace. At this point most of the other
          * initialization tasks are complete

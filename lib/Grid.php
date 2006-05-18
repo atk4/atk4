@@ -21,7 +21,11 @@ class Grid extends CompleteLister {
     function defaultTemplate(){
         return array('grid','_top');
     }
-    function addColumn($type,$name,$descr=null){
+    function addColumn($type,$name=null,$descr=null){
+        if($name===null){
+            $name=$type;
+            $type='text';
+        }
         if($descr===null)$descr=$name;
         $this->columns[$name]=array(
                 'type'=>$type,
@@ -36,8 +40,8 @@ class Grid extends CompleteLister {
         return $this->add('Button',count($this->elements),'grid_buttons')
             ->setLabel($label)->onClick();
     }
-    function addQuickSearch($fields){
-        return $this->add('QuickSearch',null,'quick_search')
+    function addQuickSearch($fields,$class='QuickSearch'){
+        return $this->add($class,null,'quick_search')
             ->useFields($fields);
     }
     function makeSortable($db_sort=null){

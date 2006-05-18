@@ -40,6 +40,34 @@ padding-left: 5px;
 padding-right: 5px;
 }
 
+
+
+ /* submenu */
+.submenu { border-color: 
+border-width: 2px 1px;
+border-bottom: 2px solid #00CC00;
+font-size: 10pt;
+background-color: #EEEEEE;
+margin-bottom: 4px;
+}
+.submenu>tbody>tr>td.separator { border-right: 1px dotted rgb(142, 142, 142);
+padding-left: 5px;
+padding-right: 5px;
+}
+.submenu>tbody>tr>td.about { font-size: 8pt;
+text-align: right;
+}
+
+.submenu>tbody>tr>td.current { background: white;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+border-right: 1px dotted rgb(142, 142, 142);
+padding-left: 5px;
+padding-right: 5px;
+}
+
+
+
  /* locator */
 .locator { padding-top: 0.5em;
 font-weight: bold;
