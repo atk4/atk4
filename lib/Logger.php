@@ -351,7 +351,7 @@ class Logger extends AbstractController {
     }
     function logVar($var,$msg="",$shiftfunc=null){
     	//creating an $msg from variable
-    	$msg.=": ";
+    	$msg.="(".gettype($var)."):";
     	if(is_array($var)||is_object($var))$msg .= print_r($var, true);
     	else$msg .= $var;
     	$this->logLine($msg."\n", $shiftfunc);

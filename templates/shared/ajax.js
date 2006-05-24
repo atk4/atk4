@@ -299,6 +299,20 @@ function aafv( elem_id, new_val){
 	
 	return res;
 }
+// gets the value of form element
+// getValue
+// camper@adevel.com
+function aagv(form_id, elem_name){
+	var res=false;
+	try{
+		form=document.getElementById(form_id);
+		if(form){
+			res=form.elements[elem_name].value;
+		}
+	}
+	finally{}
+	return res;
+}
 
 // Get element by ID in all browsers
 // jancha@adevel.com
