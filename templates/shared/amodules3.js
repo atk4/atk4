@@ -92,7 +92,7 @@ function expander_flip(name,id,button,expander_url){
 
         button_off(name+"_"+button+"_"+id);
     }else if(expander_status=="inline_active"){
-	inline_hide(name,id,inline_active[name][id]);
+	inline_hide(name,id);
         expander_flip(name,id,button,expander_url);
     }else if(expander_status=="_opening"){
 
@@ -180,17 +180,30 @@ function isKeyPressed(e, kCode){
 
 	return characterCode == kCode;
 }
-function inline_process_key(e, name, id){
+function inline_process_key(e, name, id, activate_next){
 	kReturn=13;
 	kTab=9;
 	if(isKeyPressed(e, kReturn))return false;
-	if(isKeyPressed(e, kTab)){
+	if(activate_next&&isKeyPressed(e, kTab)){
 		row=document.getElementById(name+'_'+id);
 		while(row.nextSibling){
 			row=row.nextSibling;
 			if(row.id)break;
 		}
-		//if(row.id)alert('About to activate next: '+row.id);
+		if(row.id){ 
+			//we need to parse an ID from row.id
+			row_id=new String(row.id);
+			while(row_id.indexOf("_")!=-1)
+				row_id=row_id.substring(row_id.indexOf('_')+1);
+			//storing values cause they will be erased on hide
+			active_field=inline_active[name][id]['active_field'];
+			submit_url=inline_active[name][id]['submit_url'];
+			//submitting and hiding current inline
+			inline_hide(name, id, 'update');
+			//activating next inline
+			inline_show(name,active_field,row_id,submit_url, true);
+			return false;
+		}
 	}
 	return true;
 }
@@ -222,7 +235,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
         for(cs=1;header=header.nextSibling;cs++);
 	//changing row contents to the forms. only for inlines...
 	col=row.firstChild;
-	var inline_collection=new Array;
+	var inline_collection=new Array();
 	var index=0;
 	for(i=1;col=col.nextSibling;i++){
 		id=new String(col.id);
@@ -232,9 +245,9 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
 			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 				'<input id="'+form_name+'_edit" value="'+
 				getInlineValue(id)+'" type="text" onKeyPress="'+
-				'return inline_process_key(event,\''+name+'\','+row_id+');"></form>';//+
-			inline_collection[index]="'"+form_name+"'";
-			index+=1;
+				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form>';
+			inline_collection[index]=form_name;
+			index++;
 		}
 	}
 	//expanding a row with submits
@@ -257,7 +270,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
         
         cll.colSpan = cs; 
 
-	event_handler="inline_hide('"+name+"',"+row_id+",'"+submit_url+"',new Array("+inline_collection+"),'";
+	event_handler="inline_hide('"+name+"',"+row_id+",'";
 	cll.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 			'<input type="button" value="OK" onclick="'+event_handler+'update\');">'+
 			'<input type="button" value="Cancel" onclick="'+event_handler+'cancel\');">'+
@@ -266,11 +279,16 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
 	document.getElementById('form_'+inline_id+'_edit').select();
 	//setting an array value for further hiding
 	if(!inline_active[name])inline_active[name]=new Array();
-	inline_active[name][row_id]=submit_url;
+	inline_active[name][row_id]=new Array();
+	inline_active[name][row_id]['submit_url']=submit_url;
+	inline_active[name][row_id]['inline_collection']=inline_collection;
+	inline_active[name][row_id]['active_field']=active_field;
 }
-function inline_hide(name, row_id, submit_url, inline_collection, action){
+function inline_hide(name, row_id, action){
 	//name is a grid name, id is a row id
 	//processing inline: submit or cancel
+	submit_url=inline_active[name][row_id]['submit_url']+'&row_id='+row_id;
+	inline_collection=inline_active[name][row_id]['inline_collection'];
 	if(action){
 		url=submit_url+'&action='+action;
 	}else{

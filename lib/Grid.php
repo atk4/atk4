@@ -11,6 +11,7 @@ class Grid extends CompleteLister {
     public $displayed_rows=0;
 
     public $totals_t=null;
+    public $tab_aware=false;
 
     function init(){
         parent::init();
@@ -130,8 +131,8 @@ class Grid extends CompleteLister {
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL($this->api->page, array(
-			'row_id'=>$this->current_row[$idfield], 'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'");\'>'.$this->current_row[$field].'</a>';
+			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
+			'", '.$this->tab_aware.');\'>'.$this->current_row[$field].'</a>';
     }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
@@ -175,7 +176,9 @@ class Grid extends CompleteLister {
 		$this->dq->do_update();
 	}
 	function getRowHTML($id){
-		$this->dq->where($this->dq->args['fields'][0]."=$id");
+		$idfield=$this->dq->args['fields'][0];
+		if($idfield=='*')$idfield='id';
+		$this->dq->where($idfield."=$id");
 		$row=$this->api->db->getHash($this->dq->select());
 		$row_t=$this->template->cloneRegion('row');
 		$row_t->del('cols');
