@@ -130,7 +130,7 @@ class Grid extends CompleteLister {
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL($this->api->page, array(
-			'id'=>$this->current_row[$idfield], 'cut_object'=>$this->api->page, 'submit'=>$this->name)).
+			'row_id'=>$this->current_row[$idfield], 'cut_object'=>$this->api->page, 'submit'=>$this->name)).
 			'");\'>'.$this->current_row[$field].'</a>';
     }
     function format_nl2br($field) {
@@ -162,7 +162,7 @@ class Grid extends CompleteLister {
 		if($_GET['action']=='update'){
 			$this->update();
 		}
-		echo $this->getRowHTML($_GET['id']);
+		echo $this->getRowHTML($_GET['row_id']);
 		exit;
 	}
 	function update(){
@@ -171,11 +171,12 @@ class Grid extends CompleteLister {
 				$this->dq->set(substr($name, 6)."='$value'");
 			}
 		}
-		$this->dq->where("id=".$_GET['id']);
+		$this->dq->where("id=".$_GET['row_id']);
 		$this->dq->do_update();
 	}
 	function getRowHTML($id){
-		$row=$this->api->db->getHash("select * from ".$this->dq->args['table']." where id=$id");
+		$this->dq->where($this->dq->args['fields'][0]."=$id");
+		$row=$this->api->db->getHash($this->dq->select());
 		$row_t=$this->template->cloneRegion('row');
 		$row_t->del('cols');
         $col = $row_t->cloneRegion('col');
