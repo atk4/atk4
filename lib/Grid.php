@@ -1,6 +1,6 @@
 <?
 class Grid extends CompleteLister {
-    private $columns;
+    protected $columns;
     private $table;
     private $id;
 
@@ -17,6 +17,7 @@ class Grid extends CompleteLister {
         $this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
         $this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
+        $this->api->addHook('post-submit', array($this,'submitted'));
     }
     function defaultTemplate(){
         return array('grid','_top');
@@ -114,6 +115,24 @@ class Grid extends CompleteLister {
             $this->current_row[$field]='<font color="blue">['.$this->columns[$field]['descr'].']</font>';
         }
     }
+    function format_inline($field, $idfield='id'){
+    	/**
+    	 * Formats the InlineEdit: field that on click should substitute the text
+    	 * in the columns of the row by the edit controls 
+    	 * 
+    	 * The point is to set an Id for each column of the row. To do this, we should
+    	 * set a property showing that id should be added in prerender
+    	 */
+    	$col_id=$this->name.'_'.$field.'_inline';
+
+    	$this->row_t->set('tdparam_'.$field, 'id="'.$col_id.'_'.$this->current_row[$idfield].
+			'" style="cursor: hand"');
+    	$this->current_row[$field]='<a href=\'javascript:'.
+			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
+			$this->api->getDestinationURL($this->api->page, array(
+			'id'=>$this->current_row[$idfield], 'cut_object'=>$this->api->page, 'submit'=>$this->name)).
+			'");\'>'.$this->current_row[$field].'</a>';
+    }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
     }
@@ -137,7 +156,51 @@ class Grid extends CompleteLister {
         return $this;
     }
 
-    function formatRow(){
+	function submitted(){
+		if($_GET['submit']!=$this->name)return false;
+		//saving to DB
+		if($_GET['action']=='update'){
+			$this->update();
+		}
+		echo $this->getRowHTML($_GET['id']);
+		exit;
+	}
+	function update(){
+		foreach($_GET as $name=>$value){
+			if(strpos($name, 'field_')!==false){
+				$this->dq->set(substr($name, 6)."='$value'");
+			}
+		}
+		$this->dq->where("id=".$_GET['id']);
+		$this->dq->do_update();
+	}
+	function getRowHTML($id){
+		$row=$this->api->db->getHash("select * from ".$this->dq->args['table']." where id=$id");
+		$row_t=$this->template->cloneRegion('row');
+		$row_t->del('cols');
+        $col = $row_t->cloneRegion('col');
+
+        foreach($this->columns as $name=>$column){
+            $col->del('content');
+            $col->set('content','<?$'.$name.'?>');
+
+            // some types needs control over the td
+
+            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+            $row_t->append('cols',$col->render());
+        }
+        $this->row_t = $this->api->add('SMlite');
+        $this->row_t->loadTemplateFromString($row_t->render());
+		
+		$row=$this->formatRow($row);
+        $this->row_t->set($row);
+        $result=$this->row_t->render();
+        $tr_start=strpos($result, '<td');
+        $result=" ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
+		return $result;
+	}
+    function formatRow($row=null){
+    	if($row!=null)$this->current_row=$row;
         foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
             $formatters = split(',',$column['type']);
             foreach($formatters as $formatter){
@@ -145,7 +208,9 @@ class Grid extends CompleteLister {
                     $this->$m($tmp);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
+            if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
         }
+        return $this->current_row;
     }
     function formatTotalsRow(){
         foreach($this->columns as $tmp=>$column){

@@ -185,7 +185,7 @@ class Form extends AbstractView {
 	}
 
     function addSubmit($label,$name=null){
-        $field = $this->add('Form_Submit',isset($name)?$name:$label)
+        $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label)
             ->setLabel($label)
             ->setNoSave();
         return $this;

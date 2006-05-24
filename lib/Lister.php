@@ -27,6 +27,7 @@ class Lister extends AbstractView {
         if($this->safe_html_output){
             foreach($this->current_row as $x=>$y){
                 $this->current_row[$x]=htmlspecialchars(stripslashes($y));
+                if(!$this->current_row[$x])$this->current_row[$x]='&nbsp;';
             }
         }
     }

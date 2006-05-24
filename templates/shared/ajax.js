@@ -365,3 +365,17 @@ function submitForm(form,spinner){
     };
     return aasf(form,null,callback);
 }
+function submitFormCmd(form,spinner){
+	var callback = function(response_text, response_xml){
+        if(response_text){
+            try {
+                eval(response_text);
+            }catch(e){
+		document.write(response_text);
+		return false;
+            }
+        }
+        if(spinner)spinner_off(spinner);
+    };
+    return aasf(form,null,callback);
+}
