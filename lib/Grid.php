@@ -158,7 +158,7 @@ class Grid extends CompleteLister {
     }
 
 	function submitted(){
-		if($_GET['submit']!=$this->name)return false;
+		if($_GET['submit']!=$this->name)return;// false;
 		//saving to DB
 		if($_GET['action']=='update'){
 			$this->update();
