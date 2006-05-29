@@ -74,7 +74,7 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
 	if( frm.method )
 		method = frm.method;
 	
-	var params = aacp( form_id );
+	var params = aacp( form_id )+'&ajax_submit=true';
 	
 	if (window.XMLHttpRequest)
 		req = new XMLHttpRequest();
