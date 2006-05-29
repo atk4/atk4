@@ -90,7 +90,7 @@ class Ajax extends AbstractModel {
         $this->notImplemented('submit');
     }
 	function submitForm($form){
-		$this->ajaxFunc("submitFormCmd('$form->name','".$this->spinner."')");
+		$this->ajaxFunc("submitForm('$form->name','".$this->spinner."')");
         $this->spinner=null;
 		return $this;
 	}

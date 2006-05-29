@@ -116,4 +116,40 @@ class DBlite_mysql extends DBlite {
         return mktime($dtime['HOUR'], $dtime['MIN'], $dtime['SEC'],
                       $dtime['MONTH'], $dtime['DAY'], $dtime['YEAR']);
     }     
+
+	function dump($tables=null){
+		/**
+		 * Dumps db to a fileto a file
+		 * @param array $tables
+		 */
+		//getting all the tables
+		if(!$tables){
+			$rs = mysql_list_tables($this->dbname);
+			while ($row = mysql_fetch_array($rs)){
+				$tables[] = $row[0];
+			}
+		} 
+		//saving records from tables
+		$script = "";
+		foreach($tables as $table_name){
+			$rs = $this->query("SELECT * FROM $table_name");
+			while($row = mysql_fetch_assoc($rs)){
+				$fields = "";
+				$values = "";
+				foreach($row as $field => $value){
+					if ($fields != ""){
+						$fields .= ', ';
+						$values .= ', ';
+					}
+					$fields .= $field;
+					$values .= "'".$this->normalize($value)."'";
+				}
+				$script .= "INSERT INTO $table_name ($fields) VALUES ($values);\n";
+			}
+		}
+		//saving script
+		$file_name = date("Y_m_d_H_i") . ".sql";
+		_file_put_contents ($file_name, $script);
+	}
+
 }

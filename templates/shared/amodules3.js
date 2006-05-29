@@ -183,7 +183,17 @@ function isKeyPressed(e, kCode){
 function inline_process_key(e, name, id, activate_next){
 	kReturn=13;
 	kTab=9;
-	if(isKeyPressed(e, kReturn))return false;
+	kEsc=27;
+	if(isKeyPressed(e, kEsc)){
+		//submitting and hiding current inline
+		inline_hide(name, id, 'cancel');
+		return false;
+	}
+	if(isKeyPressed(e, kReturn)){
+		//submitting and hiding current inline
+		inline_hide(name, id, 'update');
+		return false;
+	}
 	if(activate_next&&isKeyPressed(e, kTab)){
 		row=document.getElementById(name+'_'+id);
 		while(row.nextSibling){
@@ -201,13 +211,13 @@ function inline_process_key(e, name, id, activate_next){
 			//submitting and hiding current inline
 			inline_hide(name, id, 'update');
 			//activating next inline
-			inline_show(name,active_field,row_id,submit_url, true);
+			inline_show(name,active_field,row_id,submit_url,true,inline_active[name]['show_submit']);
 			return false;
 		}
 	}
 	return true;
 }
-function inline_show(name,active_field,row_id,submit_url,activate_next){
+function inline_show(name,active_field,row_id,submit_url,activate_next,show_submit){
 	// changes row content to a forms with input elements
 	// submit_url is an URL that should store changes from inline to DB
 	// name is a name of a grid
@@ -250,31 +260,33 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
 			index++;
 		}
 	}
-	//expanding a row with submits
-        newrow=document.createElement("tr");
-        nextrow=row.nextSibling;
-        if(!nextrow){
-            row.parentNode.appendChild(newrow);
-        }else{
-            row.parentNode.insertBefore(newrow,nextrow);
-        }
-        bg="#FFFFFF";
+	if(show_submit){
+		//expanding a row with submits
+        	newrow=document.createElement("tr");
+	        nextrow=row.nextSibling;
+        	if(!nextrow){
+	            row.parentNode.appendChild(newrow);
+        	}else{
+	            row.parentNode.insertBefore(newrow,nextrow);
+        	}
+	        bg="#FFFFFF";
         
-        cll = newrow.insertCell(0);
-	cll.align='right';
-        cll.style.backgroundColor = bg;
-        cll.style.borderWidth = '0 1px 1px 1px';
-        cll.style.borderColor = '#000';
-        cll.style.borderStyle = 'solid';
-        cll.style.padding = '1px';
+        	cll = newrow.insertCell(0);
+		cll.align='right';
+        	cll.style.backgroundColor = bg;
+	        cll.style.borderWidth = '0 1px 1px 1px';
+        	cll.style.borderColor = '#000';
+	        cll.style.borderStyle = 'solid';
+        	cll.style.padding = '1px';
         
-        cll.colSpan = cs; 
+	        cll.colSpan = cs; 
 
-	event_handler="inline_hide('"+name+"',"+row_id+",'";
-	cll.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
+		event_handler="inline_hide('"+name+"',"+row_id+",'";
+		cll.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 			'<input type="button" value="OK" onclick="'+event_handler+'update\');">'+
 			'<input type="button" value="Cancel" onclick="'+event_handler+'cancel\');">'+
 			'</form>';
+	}
 	//selecting an edit
 	document.getElementById('form_'+inline_id+'_edit').select();
 	//setting an array value for further hiding
@@ -283,6 +295,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next){
 	inline_active[name][row_id]['submit_url']=submit_url;
 	inline_active[name][row_id]['inline_collection']=inline_collection;
 	inline_active[name][row_id]['active_field']=active_field;
+	inline_active[name]['show_submit']=show_submit;
 }
 function inline_hide(name, row_id, action){
 	//name is a grid name, id is a row id
@@ -304,10 +317,12 @@ function inline_hide(name, row_id, action){
 		url=url+url_params;
 	}
 	aasn(name+'_'+row_id, url);
-	//hiding buttons
-	row=document.getElementById(name+'_'+row_id);
-        nextrow=row.nextSibling;
-        row.parentNode.removeChild(nextrow);
+	if(inline_active[name]['show_submit']){
+		//hiding buttons
+		row=document.getElementById(name+'_'+row_id);
+	        nextrow=row.nextSibling;
+        	row.parentNode.removeChild(nextrow);
+	}
 	inline_active[name][row_id]=false;
 }
 /******* TreeView functions *******/

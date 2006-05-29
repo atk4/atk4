@@ -11,7 +11,16 @@ class Grid extends CompleteLister {
     public $displayed_rows=0;
 
     public $totals_t=null;
-    public $tab_aware=false;
+    /**
+     * Inline related property
+     * If true - TAB key submits row and activates next row
+     */
+    public $tab_moves_down=false;
+    /**
+     * Inline related property
+     * Wether or not to show submit line
+     */
+    public $show_submit=true;
 
     function init(){
         parent::init();
@@ -125,6 +134,8 @@ class Grid extends CompleteLister {
     	 * set a property showing that id should be added in prerender
     	 */
     	$col_id=$this->name.'_'.$field.'_inline';
+    	$show_submit=$this->show_submit?'true':'false';
+    	$tab_moves_down=$this->tab_moves_down?'true':'false';
 
     	$this->row_t->set('tdparam_'.$field, 'id="'.$col_id.'_'.$this->current_row[$idfield].
 			'" style="cursor: hand"');
@@ -132,7 +143,7 @@ class Grid extends CompleteLister {
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL($this->api->page, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'", '.$this->tab_aware.');\'>'.$this->current_row[$field].'</a>';
+			'", '.$tab_moves_down.', '.$show_submit.');\'>'.$this->current_row[$field].'</a>';
     }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
