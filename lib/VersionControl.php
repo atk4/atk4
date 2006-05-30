@@ -29,13 +29,21 @@ class VersionControl extends AbstractController{
 	function versionUpdate(){
 		if($this->db_version != $this->api->apinfo['release']){
 			//getting scripts
+			$scripts=array();
 			if ($handle = opendir($this->dirname)) {
+				//getting files to an array
 				while (false !== ($file = readdir($handle))) { 
 					if($this->neededFile($file)){
-						$fileext = strrchr($file, '.');
-						if($fileext == '.sql')$this->execSQL($file);
-						elseif($fileext == '.php')$this->execPHP($file);
+						$scripts[sprintf('%06d.%03d.%03d', $this->fileVersion($file), 
+							$this->fileSubVersion($file), $this->fileSequenceNo($file))]=$file;
 					}
+				}
+				//sorting file array
+				ksort($scripts);
+				foreach($scripts as $file){
+					$fileext = strrchr($file, '.');
+					if($fileext == '.sql')$this->execSQL($file);
+					elseif($fileext == '.php')$this->execPHP($file);
 				}
 				closedir($handle);
 				//updating DB version
@@ -85,5 +93,19 @@ class VersionControl extends AbstractController{
 		}
 		return false;
 	}
+	private function fileVersion($file){
+		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
+		$result=$ver_parts[0];
+		return $result;
+	}
+	private function fileSubVersion($file){
+		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
+		$result=$ver_parts[1];
+		return $result;
+	}
+	private function fileSequenceNo($file){
+		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
+		$result=$ver_parts[2];
+		return $result;
+	}
 }
-?>
