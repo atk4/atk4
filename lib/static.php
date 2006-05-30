@@ -94,6 +94,6 @@ function htmlize_exception($e,$msg){
 		$d=floor($h/24);$h=$h%24;
 		//if(!$h)return sprintf("%02d:%02d",$m,$s);
 		if($exclude_seconds)return sprintf(($d>0?"%d day".($d>1?'s ':' '):'')."%d:%02d",$h,$m);
-		return ($d>0?sprintf(($d>1?'s ':' ')."%02d:%02d:%02d",$d,$h,$m,$s):sprintf("%02d:%02d:%02d",$h,$m,$s));
+		return ($d>0?sprintf('%d day'.($d>1?'s ':' ')."%02d:%02d:%02d",$d,$h,$m,$s):sprintf("%02d:%02d:%02d",$h,$m,$s));
 	}
 }

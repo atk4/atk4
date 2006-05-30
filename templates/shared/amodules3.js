@@ -288,7 +288,9 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			'</form>';
 	}
 	//selecting an edit
-	document.getElementById('form_'+inline_id+'_edit').select();
+	try{
+		document.getElementById('form_'+inline_id+'_edit').select();
+	}catch(e){}
 	//setting an array value for further hiding
 	if(!inline_active[name])inline_active[name]=new Array();
 	inline_active[name][row_id]=new Array();
@@ -307,21 +309,30 @@ function inline_hide(name, row_id, action){
 	}else{
 		url=submit_url+'&action=cancel';
 	}
+	reload_row=false;
 	if(inline_collection){
 		url_params="";
 		for(i=0;i<inline_collection.length;i++){
 			field_name=new String(inline_collection[i]);
 			field_name=field_name.substring(name.length+6, field_name.indexOf('_inline'));
-			url_params+='&'+'field_'+field_name+'='+document.forms[inline_collection[i]].elements[0].value;
+			form=document.getElementById(inline_collection[i]);
+			if(form){
+				url_params+='&'+'field_'+field_name+'='+form.elements[0].value;
+				//if form was not found - probably we moved to another page by some ajax action
+				//but, may be, it is a browser incompatibility...
+				reload_row=true;
+			}
 		}
 		url=url+url_params;
 	}
-	aasn(name+'_'+row_id, url);
-	if(inline_active[name]['show_submit']){
-		//hiding buttons
-		row=document.getElementById(name+'_'+row_id);
-	        nextrow=row.nextSibling;
-        	row.parentNode.removeChild(nextrow);
+	if(reload_row){
+		aasn(name+'_'+row_id, url);
+		if(inline_active[name]['show_submit']){
+			//hiding buttons
+			row=document.getElementById(name+'_'+row_id);
+		        nextrow=row.nextSibling;
+        		row.parentNode.removeChild(nextrow);
+		}
 	}
 	inline_active[name][row_id]=false;
 }

@@ -174,7 +174,8 @@ class Grid extends CompleteLister {
 		if($_GET['action']=='update'){
 			$this->update();
 		}
-		echo $this->getRowHTML($_GET['row_id']);
+		$row=$this->getRowHTML($_GET['row_id']);
+		echo $row;
 		exit;
 	}
 	function update(){
@@ -190,6 +191,9 @@ class Grid extends CompleteLister {
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*')$idfield='id';
 		$this->dq->where($idfield."=$id");
+		//we should switch off the limit or we won't get any value
+		$this->dq->limit(1);
+		$this->api->logger->logVar($this->dq->select());
 		$row=$this->api->db->getHash($this->dq->select());
 		$row_t=$this->template->cloneRegion('row');
 		$row_t->del('cols');
@@ -211,7 +215,7 @@ class Grid extends CompleteLister {
         $this->row_t->set($row);
         $result=$this->row_t->render();
         $tr_start=strpos($result, '<td');
-        $result=" ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
+        $result="\n ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
 		return $result;
 	}
     function formatRow($row=null){
