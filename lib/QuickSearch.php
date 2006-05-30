@@ -32,7 +32,7 @@ class QuickSearch extends Filter {
             $q[]="$field like '%".$v."%'";
         }
         if($q){
-            $dq->where(join(' or ',$q));
+            $dq->having(join(' or ',$q));
         }
     }
     function submitted(){
