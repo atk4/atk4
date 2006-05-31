@@ -83,6 +83,7 @@ class Grid extends CompleteLister {
     function format_number($field){
     }
     function format_text($field){
+    	$this->current_row[$field] = htmlentities($this->current_row[$field]);
     }
     function format_money($field){
         $m=$this->current_row[$field];
