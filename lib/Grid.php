@@ -175,7 +175,7 @@ class Grid extends CompleteLister {
 		if($_GET['action']=='update'){
 			$this->update();
 		}
-		$row=$this->getRowHTML($_GET['row_id']);
+		$row=$this->getRowAsCommaString($_GET['row_id']);
 		echo $row;
 		exit;
 	}
@@ -188,13 +188,43 @@ class Grid extends CompleteLister {
 		$this->dq->where("id=".$_GET['row_id']);
 		$this->dq->do_update();
 	}
+
+	function getRowAsCommaString($id){
+		$idfield=$this->dq->args['fields'][0];
+		if($idfield=='*')$idfield='id';
+		$this->dq->where($idfield."=$id");
+		//we should switch off the limit or we won't get any value
+		$this->dq->limit(1);
+		$row=$this->api->db->getHash($this->dq->select());
+		$row_t=$this->template->cloneRegion('row');
+		$row_t->del('cols');
+        $col = $row_t->cloneRegion('col');
+
+        foreach($this->columns as $name=>$column){
+            $col->del('content');
+            $col->set('content','<?$'.$name.'?>');
+
+            // some types needs control over the td
+
+            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+            $row_t->append('cols',$col->render());
+        }
+        $this->row_t = $this->api->add('SMlite');
+        $this->row_t->loadTemplateFromString($row_t->render());
+
+		$row=$this->formatRow($row);
+		$result="";
+		foreach($this->columns as $name=>$column){
+			$result.=$row[$name]."\n";
+		}
+		return $result;
+	}
 	function getRowHTML($id){
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*')$idfield='id';
 		$this->dq->where($idfield."=$id");
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
-		$this->api->logger->logVar($this->dq->select());
 		$row=$this->api->db->getHash($this->dq->select());
 		$row_t=$this->template->cloneRegion('row');
 		$row_t->del('cols');

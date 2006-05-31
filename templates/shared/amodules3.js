@@ -17,7 +17,7 @@ function expander_is_open(name,id,button){
      * This would just return exander's state on a button click. If another expander is
      * open, it would not do anything, just return it's button's name.
      */
-    //inlines should be hided anyway, no submission
+    //inlines should be hidden anyway
     if(inline_is_active(name,id))return "inline_active";
 
     id=name+"_"+id;
@@ -170,13 +170,10 @@ function getInlineValue(inline_id){
 	return value[0];
 }
 function isKeyPressed(e, kCode){
-	var characterCode;
+	var characterCode=e.keyCode;
 
-	if(e && e.which){ 
-		characterCode = e.which;
-	}else{
-		characterCode = e.keyCode;
-	}
+	if(window.event)characterCode=window.event.keyCode;
+	else if(e)characterCode = e.which;
 
 	return characterCode == kCode;
 }
@@ -234,7 +231,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	if(inline_active[name]){
 		for(i=0;i<inline_active[name].length;i++){
 			if(inline_active[name][i])
-				inline_hide(name,i,inline_active[name][i]);
+				inline_hide(name,i);
 		}
 	}
 	row=document.getElementById(id);
@@ -252,10 +249,10 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 		if(id.indexOf('_inline')!=-1){
 			var form_name='form_'+id;
 			
-			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
+			col.innerHTML=' <form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 				'<input id="'+form_name+'_edit" value="'+
 				getInlineValue(id)+'" type="text" onKeyPress="'+
-				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form>';
+				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form> ';
 			inline_collection[index]=form_name;
 			index++;
 		}
@@ -307,7 +304,7 @@ function inline_hide(name, row_id, action){
 	if(action){
 		url=submit_url+'&action='+action;
 	}else{
-		url=submit_url+'&action=cancel';
+		url=submit_url+'&action=update';
 	}
 	reload_row=false;
 	if(inline_collection){
@@ -326,7 +323,25 @@ function inline_hide(name, row_id, action){
 		url=url+url_params;
 	}
 	if(reload_row){
-		aasn(name+'_'+row_id, url);
+		//row contents could not be replaced with aasn
+		set_row_c=function(response_text, response_xml){
+			//exploding string to an array of column values
+			cols=response_text.split('\n');
+			id=name+'_'+row_id;
+			row=document.getElementById(id);
+			col=row.firstChild;
+			i=0;
+			while(col){
+				if(col.innerHTML!=undefined){
+				col.innerHTML=cols[i];
+				i++;}
+				//else i--;
+				col=col.nextSibling;
+				//i++;
+			}
+		}
+		aarq(url, set_row_c);
+		//aasn(name+'_'+row_id, url);
 		if(inline_active[name]['show_submit']){
 			//hiding buttons
 			row=document.getElementById(name+'_'+row_id);
