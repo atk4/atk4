@@ -185,7 +185,9 @@ class Grid extends CompleteLister {
 				$this->dq->set(substr($name, 6)."='$value'");
 			}
 		}
-		$this->dq->where("id=".$_GET['row_id']);
+		$idfield=$this->dq->args['fields'][0];
+		if($idfield=='*')$idfield='id';
+		$this->dq->where($idfield, $_GET['row_id']);
 		$this->dq->do_update();
 	}
 
