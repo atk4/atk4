@@ -21,7 +21,8 @@ class Form_Button extends AbstractView {
     }
     function render(){
         $this->output(
-                    '<input type="button" value="'.$this->label.'" name="'.$this->name.'" onclick="'.
+                    '<input type="button" value="'.$this->label.'" name="'.$this->name.'" ' .
+                    'id="'.$this->name.'" onclick="'.
                     (is_object($this->onclick)?$this->onclick->getString():$this->onclick).
                     '">');
     }

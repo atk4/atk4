@@ -17,6 +17,7 @@ abstract class Form_Field extends AbstractView {
     public $attr=array();
     public $no_save=null;
     protected $onchange=null;
+    protected $onkeypress=null;
 
     // Field customization
     function setCaption($_caption){
@@ -47,6 +48,9 @@ abstract class Form_Field extends AbstractView {
 	function onChange(){
 		return $this->onchange=$this->add('Ajax');
 	}
+	function onKeyPress(){
+		return $this->onkeypress=$this->add('Ajax');
+	}
 
     function clearFieldValue(){
         $this->value=null;
@@ -67,7 +71,10 @@ abstract class Form_Field extends AbstractView {
                                                        'value'=>$this->value,
                                                        'onchange'=>
                                                        ($this->onchange)?$this->onchange->getString():
-                                                       ''
+                                                       '',
+                                                       'onKeyPress'=>
+                                                       ($this->onkeypress)?$this->onkeypress->getString():
+                                                       'denyEnter(event)'
                                                       ),
                                                  $attr,
                                                  $this->attr)

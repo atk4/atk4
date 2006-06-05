@@ -183,6 +183,9 @@ class Form extends AbstractView {
 	function onChange(){
 		return $this->last_field->onChange();
 	}
+	function onKeyPress(){
+		return $this->last_field->onKeyPress();
+	}
 
     function addSubmit($label,$name=null){
         $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label)

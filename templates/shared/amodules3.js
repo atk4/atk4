@@ -1,3 +1,8 @@
+//KeyCodes
+var kReturn=13;
+var kTab=9;
+var kEsc=27;
+
 // Support for expanders @ Lister
 
 var expander_open=new Array();    
@@ -170,17 +175,17 @@ function getInlineValue(inline_id){
 	return value[0];
 }
 function isKeyPressed(e, kCode){
-	var characterCode=e.keyCode;
+	var characterCode;
 
-	if(window.event)characterCode=window.event.keyCode;
-	else if(e)characterCode = e.which;
+	if(e && e.which)characterCode = e.which;
+	else characterCode=e.keyCode;
 
 	return characterCode == kCode;
 }
+function denyEnter(e){
+	return !isKeyPressed(e, kEnter);
+}
 function inline_process_key(e, name, id, activate_next){
-	kReturn=13;
-	kTab=9;
-	kEsc=27;
 	if(isKeyPressed(e, kEsc)){
 		//submitting and hiding current inline
 		inline_hide(name, id, 'cancel');
