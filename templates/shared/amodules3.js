@@ -183,7 +183,7 @@ function isKeyPressed(e, kCode){
 	return characterCode == kCode;
 }
 function denyEnter(e){
-	return !isKeyPressed(e, kEnter);
+	return !isKeyPressed(e, kReturn);
 }
 function inline_process_key(e, name, id, activate_next){
 	if(isKeyPressed(e, kEsc)){
