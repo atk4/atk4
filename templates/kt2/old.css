@@ -16,7 +16,8 @@ margin-bottom: 0.5em;
 }
 
  /* menu */
-.menu { border-color: 
+.menu { 
+border-color: black;
 border-width: 2px 1px;
 border-top: 2px solid rgb(142, 142, 142);
 border-bottom: 2px solid #00CC00;
