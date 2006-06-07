@@ -12,7 +12,7 @@ abstract class Form_Field extends AbstractView {
      */
     public $error_template;    // template used to put errors on the field line
     public $caption;
-    public $value=null;
+    private $value=null;        // use $this->get(), ->set().
     public $short_name=null;
     public $attr=array();
     public $no_save=null;
@@ -41,6 +41,9 @@ abstract class Form_Field extends AbstractView {
         // Use this function when you want to assign $this->value. If you use this function, your field will
         // operate in AJAX mode
         $this->value=$value;
+    }
+    function get($value){
+        return $this->value;
     }
     function setProperty($property,$value){
         $this->attr[$property]=$value;

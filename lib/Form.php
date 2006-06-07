@@ -98,7 +98,7 @@ class Form extends AbstractView {
     // Operating with field values
     function get($field){
         if(!isset($this->elements[$field]))throw new BaseException('Trying to get value of not-existing field: '.$field);
-        return $this->elements[$field]->value;
+        return $this->elements[$field]->get();
     }
     function clearData(){
         $this->downCall('clearFieldValue');
@@ -134,7 +134,7 @@ class Form extends AbstractView {
 
         if(!isset($this->elements[$field_or_array]))
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
-        $this->elements[$field_or_array]->value=$value;
+        $this->elements[$field_or_array]->set($value);
 
         return $this;
     }
@@ -142,7 +142,7 @@ class Form extends AbstractView {
         $data=array();
         foreach($this->elements as $key=>$val){
             if($val instanceof Form_Field){
-                $data[$key]=$val->value;
+                $data[$key]=$val->get();
             }
         }
         return $data;
@@ -161,7 +161,7 @@ class Form extends AbstractView {
         return $this;
     }
     function validateNotNULL($msg=''){
-        $this->last_field->addHook('validate','if(!$this->value)$this->displayFieldError("'.
+        $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
                     ($msg?$msg:'Please, fill ".$this->caption."').'");');
         return $this;
     }
@@ -231,14 +231,12 @@ class Form extends AbstractView {
                 $this->loaded_from_db=true;
             }
         }
-        $this->hook('post-db-load');
     }
     function update(){
         if(!$this->dq)throw BaseException("Can't save, query was not initialized");
-        $this->hook('pre-db-save');
         foreach($this->elements as $short_name => $element)
-        	if($element instanceof Form_Field)if(!is_null($element->value)&&!$element->no_save){
-            $this->dq->set($short_name, $element->value);
+        	if($element instanceof Form_Field)if(!is_null($element->get())&&!$element->no_save){
+            $this->dq->set($short_name, $element->get());
         }
         if($this->loaded_from_db){
             // id is present, let's do update
