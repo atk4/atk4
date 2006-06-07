@@ -134,7 +134,12 @@ class Form extends AbstractView {
 
         if(!isset($this->elements[$field_or_array]))
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
-        $this->elements[$field_or_array]->value=$value;
+        
+        //$this->elements[$field_or_array]->value=$value;
+        if(method_exists($this->elements[$field_or_array],'set'))
+        	$this->elements[$field_or_array]->set($value);
+        else
+        	$this->elements[$field_or_array]->value=$value;
 
         return $this;
     }

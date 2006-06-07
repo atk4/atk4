@@ -129,6 +129,9 @@ class Form_Field_DateSelector extends Form_Field {
     }
     
     function loadPOST(){
+    	if(empty($_POST))
+    		return;
+    	
     	if(isset($_POST[$this->name.'_year']))
         	$this->c_year = $_POST[$this->name.'_year'];
         if(isset($_POST[$this->name.'_month']))
