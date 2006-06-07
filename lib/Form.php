@@ -134,12 +134,7 @@ class Form extends AbstractView {
 
         if(!isset($this->elements[$field_or_array]))
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
-        
-        //$this->elements[$field_or_array]->value=$value;
-        if(method_exists($this->elements[$field_or_array],'set'))
-        	$this->elements[$field_or_array]->set($value);
-        else
-        	$this->elements[$field_or_array]->value=$value;
+        $this->elements[$field_or_array]->value=$value;
 
         return $this;
     }
@@ -236,9 +231,11 @@ class Form extends AbstractView {
                 $this->loaded_from_db=true;
             }
         }
+        $this->hook('post-db-load');
     }
     function update(){
         if(!$this->dq)throw BaseException("Can't save, query was not initialized");
+        $this->hook('pre-db-save');
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!is_null($element->value)&&!$element->no_save){
             $this->dq->set($short_name, $element->value);
