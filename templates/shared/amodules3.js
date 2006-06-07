@@ -13,7 +13,7 @@ var inline_active=new Array();
        this array contains URLs to close inlines
     */
 function inline_is_active(name,id){
-	if(inline_active[name])return inline_active[name][id]&&inline_active[name][id]!=false;
+	if(inline_active[name])return inline_active[name][id];
 	else return false;
 }
 
