@@ -123,7 +123,7 @@ class Form extends AbstractView {
         if($value==='undefined_value'){
             if(is_array($field_or_array)){
                 foreach($field_or_array as $key=>$val){
-                    if(isset($this->elements[$key]))$this->set($key,$val);
+                    if(isset($this->elements[$key]) and $this->elements[$key] instanceof Form_Field)$this->set($key,$val);
                 }
                 return $this;
             }else{
@@ -134,6 +134,8 @@ class Form extends AbstractView {
 
         if(!isset($this->elements[$field_or_array]))
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
+        //if($this->elements[$field_or_array] instanceof Form_Button)echo caller_lookup(0);
+        if(!($this->elements[$field_or_array] instanceof Form_Field))return; // TODO, find out where it is called from!
         $this->elements[$field_or_array]->set($value);
 
         return $this;
@@ -236,7 +238,7 @@ class Form extends AbstractView {
         if(!$this->dq)throw BaseException("Can't save, query was not initialized");
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!is_null($element->get())&&!$element->no_save){
-            $this->dq->set($short_name, $element->get());
+                $this->dq->set($short_name, $element->get());
         }
         if($this->loaded_from_db){
             // id is present, let's do update

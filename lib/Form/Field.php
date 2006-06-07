@@ -12,7 +12,7 @@ abstract class Form_Field extends AbstractView {
      */
     public $error_template;    // template used to put errors on the field line
     public $caption;
-    private $value=null;        // use $this->get(), ->set().
+    protected $value=null;        // use $this->get(), ->set().
     public $short_name=null;
     public $attr=array();
     public $no_save=null;
@@ -42,7 +42,7 @@ abstract class Form_Field extends AbstractView {
         // operate in AJAX mode
         $this->value=$value;
     }
-    function get($value){
+    function get(){
         return $this->value;
     }
     function setProperty($property,$value){
