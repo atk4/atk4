@@ -98,7 +98,7 @@ class Form extends AbstractView {
     // Operating with field values
     function get($field){
         if(!isset($this->elements[$field]))throw new BaseException('Trying to get value of not-existing field: '.$field);
-        return $this->elements[$field]->get();
+        return ($this->elements[$field] instanceof Form_Field)?$this->elements[$field]->get():null;
     }
     function clearData(){
         $this->downCall('clearFieldValue');
@@ -135,8 +135,11 @@ class Form extends AbstractView {
         if(!isset($this->elements[$field_or_array]))
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
         //if($this->elements[$field_or_array] instanceof Form_Button)echo caller_lookup(0);
-        if(!($this->elements[$field_or_array] instanceof Form_Field))return; // TODO, find out where it is called from!
-        $this->elements[$field_or_array]->set($value);
+        if($this->elements[$field_or_array] instanceof Form_Field) 
+        	$this->elements[$field_or_array]->set($value);
+        else{
+        	// TODO, find out where it is called from!
+        }
 
         return $this;
     }

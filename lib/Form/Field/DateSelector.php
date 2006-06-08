@@ -15,23 +15,24 @@
 
 class Form_Field_DateSelector extends Form_Field {
 	
-	private $required = false;
-	private $enabled = true;
+	protected $required = false;
+	protected $enabled = true;
 	
-	private $year_from;
-	private $year_to;
-	private $years = array();
-	private $months = array('1'=>'Jan', '2'=>'Feb', '3'=>'Mar', '4'=>'Apr', 
+	protected $year_from;
+	protected $year_to;
+	protected $years = array();
+	protected $months = array('1'=>'Jan', '2'=>'Feb', '3'=>'Mar', '4'=>'Apr', 
 			'5'=>'May', '6'=>'Jun', '7'=>'Jul', '8'=>'Aug', 
 			'9'=>'Sep', '10'=>'Oct', '11'=>'Nov', '12'=>'Dec');
-	private $days = array();
+	protected $days = array();
 	
-	private $c_year;
-	private $c_month;
-	private $c_day;
-	
+	protected $c_year;
+	protected $c_month;
+	protected $c_day;
 	
 	function init(){
+		parent::init();
+		
 		$this->days = array();
 		for($i=1; $i<=31; $i++)
 			$this->days[$i] = str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -43,11 +44,11 @@ class Form_Field_DateSelector extends Form_Field {
 		$this->c_day= date('d');
 		
 		$this->enable();
-		
-		parent::init();
 	}
 	
 	function set($value){
+		if(is_null($value))
+			return;
 		
 		if (empty($value) || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
 			$this->disable();
@@ -230,6 +231,7 @@ class Form_Field_DateSelector extends Form_Field {
         $output.=$this->getTag('/select');
         
         $output.=$this->getTag('/span');
+        $output.='<!-- '.(is_null($this->value)?'null':$this->value).' -->';
         
         return $output;
     }
