@@ -103,9 +103,7 @@ class ApiAdmin extends ApiWeb {
         return isset($_POST[$button_name])||isset($_POST[$button_name.'_x']);
     }
     function isAjaxOutput(){
-        // TODO: chk, i wonder if you pass any arguments through get when in ajax mode. Well
-        // if you do, then make a check here. Form_Field::displayFieldError relies on this.
-        return false;
+        return isset($_POST['ajax_submit']);
     }
 
 
@@ -183,7 +181,11 @@ class ApiAdmin extends ApiWeb {
     }
 
     function outputInfo($msg){
-        $this->info_messages[]=array('no'=>count($this->info_messages),'content'=>htmlspecialchars($msg),'backtrace'=>debug_backtrace());
+        if($this->isAjaxOutput()){
+            $this->add('Ajax')->displayAlert($msg)->execute();
+        }else{
+            $this->info_messages[]=array('no'=>count($this->info_messages),'content'=>htmlspecialchars($msg),'backtrace'=>debug_backtrace());
+        }
     }
 
     function render(){
