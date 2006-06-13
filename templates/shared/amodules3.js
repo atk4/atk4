@@ -219,12 +219,14 @@ function inline_process_key(e, name, id, activate_next){
 	}
 	return true;
 }
-function inline_show(name,active_field,row_id,submit_url,activate_next,show_submit){
+function inline_show(name,active_field,row_id,submit_url,activate_next,show_submit,on_submit_fun,on_cancel_fun){
 	// changes row content to a forms with input elements
 	// submit_url is an URL that should store changes from inline to DB
 	// name is a name of a grid
 	// active_field - inline control that should be set active
 	// row_id - guess
+	// on_submit_fun callback function that executes after Ok button handler executed 
+	// on_cancel_fun callback function that executes after Cancel button handler executed
 
 	inline_id=active_field+"_"+row_id;
 	//closing all open expanders
@@ -251,7 +253,23 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	var index=0;
 	for(i=1;col=col.nextSibling;i++){
 		id=new String(col.id);
-		if(id.indexOf('_inline')!=-1){
+		if(id.indexOf('_inlinex')!=-1) { // extended inline element - ajax content loading
+			
+			var extend_url=id;
+			extend_url_arr = extend_url.split('_');
+			extend_url ='';
+			for(var i=1;i<extend_url_arr.length-1;i++) {
+				extend_url += ((i==1)?'':'_')+extend_url_arr[i];
+				
+			}
+			
+			extend_url += '&id='+extend_url_arr[extend_url_arr.length-1];
+
+			var form_name='form_'+id;
+			aasn(id,extend_url);
+			inline_collection[index]=form_name;
+			index++;
+		} else 	if(id.indexOf('_inline')!=-1){
 			var form_name='form_'+id;
 			
 			col.innerHTML=' <form id="'+form_name+'" name="'+form_name+'" method="POST">'+
@@ -282,11 +300,17 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
         	cll.style.padding = '1px';
         
 	        cll.colSpan = cs; 
-
+	        
+		if(typeof(on_submit_fun) == 'undefined') on_submit_fun = '';
+		else on_submit_fun = ',\'' + on_submit_fun + '(\\\''+name+'\\\',\\\''+row_id+'\\\')\'';
+		
+		if(typeof(on_cancel_fun) == 'undefined') on_cancel_fun = '';
+		else on_cancel_fun = ',\'' + on_cancel_fun + '(\\\''+name+'\\\',\\\''+row_id+'\\\')\'';
+		
 		event_handler="inline_hide('"+name+"',"+row_id+",'";
 		cll.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
-			'<input type="button" value="OK" onclick="'+event_handler+'update\');">'+
-			'<input type="button" value="Cancel" onclick="'+event_handler+'cancel\');">'+
+			'<input type="button" value="OK" onclick="'+event_handler+'update\''+on_submit_fun+');">'+
+			'<input type="button" value="Cancel" onclick="'+event_handler+'cancel\''+on_cancel_fun+');">'+
 			'</form>';
 	}
 	//selecting an edit
@@ -301,9 +325,10 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	inline_active[name][row_id]['active_field']=active_field;
 	inline_active[name]['show_submit']=show_submit;
 }
-function inline_hide(name, row_id, action){
+function inline_hide(name, row_id, action, callback){
 	//name is a grid name, id is a row id
 	//processing inline: submit or cancel
+	//callback - callback function with params
 	submit_url=inline_active[name][row_id]['submit_url']+'&row_id='+row_id;
 	inline_collection=inline_active[name][row_id]['inline_collection'];
 	if(action){
@@ -343,6 +368,11 @@ function inline_hide(name, row_id, action){
 				//else i--;
 				col=col.nextSibling;
 				//i++;
+			}
+			try {
+				if(typeof(callback) != 'undefined') eval(callback);
+			} catch(e) {
+				
 			}
 		}
 		aarq(url, set_row_c);
@@ -386,3 +416,4 @@ function ajax_done(){
 function w(url,width,height){
         window.open(url,'','width='+width+',height='+height+',scrollbars=yes,resizable=yes');
 }
+
