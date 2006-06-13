@@ -183,7 +183,6 @@ class ApiAdmin extends ApiWeb {
     }
 
     function outputInfo($msg){
-        parent::outputInfo($msg);
         $this->info_messages[]=array('no'=>count($this->info_messages),'content'=>htmlspecialchars($msg),'backtrace'=>debug_backtrace());
     }
 
