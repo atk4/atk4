@@ -374,12 +374,17 @@ class Form_Field_Date extends Form_Field {
         return $this->displayFieldError('Not a valid date');
 	}
 	function validate(){
+		//empty value is ok
+		if($this->value==''){
+			$this->is_valid=true;
+			return parent::validate();
+		}
 		//checking if there are 2 separators
 		if(substr_count($this->value, $this->sep) != 2){
 			$this->invalid();
 		}else{
 			$c = split($this->sep, $this->value);
-			//year must go first, month should be second and a day should be last
+			//day must go first, month should be second and a year should be last
 			if(strlen($c[0]) != 4 || 
 				$c[1] <= 0 || $c[1] > 12 || 
 				$c[2] <= 0 || $c[2] > 31)
