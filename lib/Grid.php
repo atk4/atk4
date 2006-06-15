@@ -3,6 +3,8 @@ class Grid extends CompleteLister {
     protected $columns;
     private $table;
     private $id;
+    
+    protected $style = array();
 
     public $last_column;
     public $sortby='0';
@@ -340,8 +342,37 @@ class Grid extends CompleteLister {
 
         $this->template->set('header',$header->render());
         //var_dump(htmlspecialchars($this->row_t->tmp_template));
+        
+        // prepare and set up style for container
+        $style= '';
+        foreach($this->style as $k=>$v)
+        	$style .= $k.':'.$v.';';
+        if(!empty($style))
+        	$this->template->set('container_style', $style);
     }
     function render(){
         parent::render();
     }
+    
+    /** 
+     * Sets up the style of grid container
+     * 
+     * Examples:
+     * setStyle('width', '15px') - will add style attribute to existing style value
+     * setStyle('width') - removes element from style value
+     * setStyle(array('width'=>'15px', 'margin'=>'0')) - will remove old values with new ones
+     * 
+     * */
+     
+    public function setStyle($param1, $param2=null){
+		if(!isset($param2) && is_array($param1))
+			$this->style = $param1;
+		if(!isset($param2) && !is_array($param1))
+			unset($this->style[$param1]);
+		elseif(isset($param1) && isset($param2) && 
+			is_string($param1) && is_string($param2))
+			$this->style[$param1] = $param2;
+		
+		return $this;
+	}
 }
