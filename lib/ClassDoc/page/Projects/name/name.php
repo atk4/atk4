@@ -11,7 +11,7 @@ class page_Projects_name_name extends Page{
 			->add('Form_MemberDetails', null, 'content');
 	}
 	function getClassName(){
-		return $this->api->db->getOne("select name from member where id = ".$_GET['id']);
+		return $this->api->db->getOne("select name from member where id = '".(int)$_GET['id']."'");
 	}
 	function defaultTemplate(){
 		return array('classdetails', '_top');
@@ -27,7 +27,7 @@ class ClassStructure extends TreeView{
 			->setSource('member m', 'id', 'parent_id', $_GET['id'])
 			->hideButtons()
 		;
-		$this->dq->where('parent_id = '.$_GET['id']);
+		$this->dq->where('parent_id',$_GET['id']);
 		$this->dq->where("type <> 'class'");
 		$this->dq->order('id');
 		$this->expandAll();

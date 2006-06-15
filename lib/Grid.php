@@ -21,6 +21,7 @@ class Grid extends CompleteLister {
      * Wether or not to show submit line
      */
     public $show_submit=true;
+    private $record_order=null;
 
     function init(){
         parent::init();
@@ -151,6 +152,18 @@ class Grid extends CompleteLister {
     }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
+    }
+    function format_order($field, $idfield='id'){
+        $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
+    	$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
+    	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
+    }
+    function addRecordOrder($field){
+    	if(!$this->record_order){
+    		$this->record_order=$this->add('RecordOrder');
+    		$this->record_order->setField($field);
+    	}
+    	return $this;
     }
     function setSource($table,$db_fields="*"){
         parent::setSource($table,$db_fields);
