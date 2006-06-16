@@ -197,10 +197,20 @@ function inline_process_key(e, name, id, activate_next){
 		return false;
 	}
 	if(activate_next&&isKeyPressed(e, kTab)){
-		row=document.getElementById(name+'_'+id);
-		while(row.nextSibling){
-			row=row.nextSibling;
-			if(row.id)break;
+		this_row_id=name+'_'+id;
+		row=document.getElementById(this_row_id);
+		if(e.shiftKey||e.modifiers==4){
+			//shit is pressed, locating previous row
+			while(row.previousSibling){
+				row=row.previousSibling;
+				if(row.id&&row.id!=this_row_id)break;
+			}
+		}else{
+			//no shift, locating next row
+			while(row.nextSibling){
+				row=row.nextSibling;
+				if(row.id)break;
+			}
 		}
 		if(row.id){ 
 			//we need to parse an ID from row.id

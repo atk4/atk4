@@ -54,11 +54,13 @@ class RecordOrder extends AbstractController{
 			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'untag'))->getString():
 			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'tag'))->getString();
 		$mark_alt=$this->recall('hl',null)?"Unmark this row":"Mark this row";
-		return 
+		$cell=
 			'<img title="'.$left_alt.'" src="'.$left_pic.'" onclick="'.$left_act.'">' .
 			'<img title="'.$mark_alt.'" src="'.$mark_pic.'" onclick="'.$mark_act.'">' .
 			'<img title="'.$right_alt.'" src="'.$right_pic.'" onclick="'.$right_act.'">'
 			;
+		$cell=implode('', explode("\n", $cell));
+		return $cell; 
 	}
 	function act($id, $action){
 		$aid=array();
