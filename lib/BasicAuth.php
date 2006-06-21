@@ -6,7 +6,7 @@
 class BasicAuth extends AbstractController {
     public $info=false;
 
-    private $password=null;     // this is password to let people in
+    protected $password=null;     // this is password to let people in
 
     function init(){
         parent::init();
