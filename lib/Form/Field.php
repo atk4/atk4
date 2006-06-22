@@ -287,6 +287,57 @@ class Form_Field_Dropdown extends Form_Field {
     }
 }
 
+class Form_Field_Dropdown_Multiple extends Form_Field {
+    public $value_list=array(
+            0=>'No available selections defined, something is wrong with your browser, please report'
+            );
+    public $size=10;
+    
+    function setSize($newSize = 10) {
+    	$this->size = $newSize;
+    }
+    
+    function validate(){
+        if(!isset($this->value_list[$this->value])){
+            $this->owner->errors[$this->short_name]="This is not one of offered values";
+        }
+        return parent::validate();
+    }
+    function getInput($attr=array()){
+        $output=$this->getTag('select',array_merge(array(
+                        'name'=>$this->name,
+                        'id'=>$this->name,
+                        'multiple'=>'multiple',
+                        'size'=>$this->size,
+						'onchange'=>
+						($this->onchange)?$this->onchange->getString():''
+                        ),
+                    $attr,
+                    $this->attr)
+                );
+        foreach($this->getValueList() as $value=>$descr){
+            $output.=
+                $this->getTag('option',array(
+                        'value'=>$value,
+                        'selected'=>in_array($value,$this->value)
+                    ))
+                .htmlspecialchars($descr)
+                .$this->getTag('/option');
+        }
+        $output.=$this->getTag('/select');
+        return $output;
+    }
+    function getValueList(){
+        return $this->value_list;
+    }
+    function setValueList($list){
+        $this->value_list = $list;
+    }
+}
+
+
+
+
 class Form_Field_Line extends Form_Field {
     function getInput($attr=array()){
         return parent::getInput(array_merge(array('type'=>'text'),$attr));
