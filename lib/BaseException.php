@@ -9,8 +9,8 @@ class BaseException extends Exception {
     public $shift=0;
 
     public $more_info;
-    function __construct($msg,$func=null,$shift=1){
-        parent::__construct($msg);
+    function __construct($msg,$func=null,$shift=1,$code=0){
+        parent::__construct($msg,$code);
         $this->frame_stop=$func;
         $this->shift=$shift;
 
