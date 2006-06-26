@@ -9,6 +9,8 @@ p { margin-top: 0px;
 margin-bottom: 0.5em;
 }
 
+.hidden{display:none}
+
  /* menu */
 .menu { 
 border-color: #777777;

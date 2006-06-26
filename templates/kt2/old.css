@@ -34,6 +34,8 @@ p { margin-top: 2px;
 margin-bottom: 0.5em;
 }
 
+.hidden{display:none}
+
  /* menu */
 .menu { 
 border-color: black;
