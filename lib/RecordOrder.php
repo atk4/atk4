@@ -59,6 +59,7 @@ class RecordOrder extends AbstractController{
 			'<img title="'.$mark_alt.'" src="'.$mark_pic.'" onclick="'.$mark_act.'">' .
 			'<img title="'.$right_alt.'" src="'.$right_pic.'" onclick="'.$right_act.'">'
 			;
+		//Ajax:ajaxFunc() adds a \n to the end of function, that causes a problem with inlines
 		$cell=implode('', explode("\n", $cell));
 		return $cell; 
 	}

@@ -35,7 +35,7 @@ class Filter extends Form {
     function applyDQ($dq){
         // Redefine this function to apply limits to $dq.
         foreach($this->elements as $key=>$field){
-            if($field instanceof Form_Field && $field->get())
+            if($field instanceof Form_Field && $field->get() && !$field->no_save)
                 $dq->where($key,$field->get());
         }
     }
