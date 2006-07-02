@@ -8,7 +8,7 @@ class Paginator extends AbstractView {
     public $skip=0;
     public $range=4;
 
-    private $template_chunks=array();
+    protected $template_chunks=array();
     private $region='';
     private $found_rows=null;
     private $total_pages=null;
