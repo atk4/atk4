@@ -42,8 +42,14 @@ class ApiAdmin extends ApiWeb {
         // If first argument is null, stay on the same page
         if(!isset($page))$page=$this->page;
 
+        /*
+         *
+         * TODO: this should be implemented php friendly. Php sets cookie php_sess or something,
+         * if that cookie is not available, we need to add using stickyGET. we shouldn't
+         * modify this method.
         // checking whether cookies are enabled and, if no, including SID
         if(!$_COOKIE[$this->name])$args=array_merge($args, array($this->name=>session_id()));
+        */
 
         if($this->ns){
             if(substr($page,0,1)===';'){
@@ -189,19 +195,7 @@ class ApiAdmin extends ApiWeb {
     }
 
     function render(){
-        /*
-        if($this->info_messages && $this->template->is_set('page_top')){
-            $info_box=$this->add('Container',null,'page_top','msgbox');
-            $info_box->template->set('msgbox_title','Informative Messages');
-            // since recursive render already been through childs... so..
-
-            $messages=$info_box->add('CompleteArrayLister',null,'msgbox_content','info_messages');
-            $messages->safe_html_output=false;
-            $messages->data=$this->info_messages;
-
-            $info_box->downCall('render');
-        }
-*/
+        if($this->ns)return;    // it already puts something on our page
         return parent::render();
     }
     function outputFatal($name,$shift=0){

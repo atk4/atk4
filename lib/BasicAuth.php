@@ -8,12 +8,16 @@ class BasicAuth extends AbstractController {
 
     protected $password=null;     // this is password to let people in
 
+    protected $form;
+
     function init(){
         parent::init();
         $this->api->auth=$this;
         $this->info=$this->recall('info',false);
         if($this->api->page=='Logout'){
             $this->forget('info');
+            setcookie($this->name."_user",null);
+            setcookie($this->name."_password",null);
             $this->info=false;
             $this->api->redirect('Index');
         }
@@ -23,17 +27,37 @@ class BasicAuth extends AbstractController {
         return $this;
     }
     function check(){
-        if(!$this->isLoggedIn())$this->processLogin();
+        if(!$this->isLoggedIn()){
+            // verify if cookie is present
+            if(isset($_COOKIE[$this->name."_user"]) && isset($_COOKIE[$this->name."_password"])){
+                if($this->verifyCredintals(
+                            $_COOKIE[$this->name."_user"],
+                            $_COOKIE[$this->name."_password"]
+                           )){
+                    // cookie login was successful
+                    $this->loggedIn();
+                    exit;
+                }
+            }
+            $this->processLogin();
+        }
     }
     function isLoggedIn(){
         if($this->info)return true;
     }
+    function verifyCredintals($user,$password){
+        return $user.'123'==$password;
+    }
     function loggedIn(){
         $this->info=array('auth'=>true);
         $this->memorize('info',$this->info);
+        if($this->form && $this->form->get('memorize')){
+            setcookie($this->name."_user",$this->form->get('username'),time()+60*60*24*30*6);
+            setcookie($this->name."_password",$this->form->get('password'),time()+60*60*24*30*6);
+
+        }
         unset($_GET['submit']);
         unset($_GET['page']);
-        $this->api->redirect(null,$_GET);
     }
     function processLogin(){
         // this function is called when authorization is not found. 
@@ -42,19 +66,22 @@ class BasicAuth extends AbstractController {
         // Initialize an empty page
         $p=$this->add('Page');
         $p->template->loadTemplate('empty');
-        $f=$p->frame('Content','Authentication')
+        $this->form=$p->frame('Content','Authentication')
             ->add('Form',null,'content');
 
-        $f
+        $this->form
             ->addComment('Access to this resource is only allowed if you know a secret phrase. Enter it here:')
-            ->addField('Password','secret')
+            ->addField('Line','username','Username')
+            ->addField('Password','password','Password')
+            ->addField('Checkbox','memorize','Remember on this computer')
             ->addSubmit('Save');
 
-        if($f->isSubmitted()){
-            if($f->get('secret')==$this->password && $this->password){
+        if($this->form->isSubmitted()){
+            if($this->verifyCredintals($this->form->get('username'),$this->form->get('password'))){
                 $this->loggedIn();
+                $this->api->redirect(null,$_GET);
             }
-            // display error here :)
+            $this->form->getElement('password')->displayFieldError('Incorrect login information');
         }
 
         $p->downCall('render');
