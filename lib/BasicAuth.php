@@ -74,7 +74,7 @@ class BasicAuth extends AbstractController {
             ->addField('Line','username','Username')
             ->addField('Password','password','Password')
             ->addField('Checkbox','memorize','Remember on this computer')
-            ->addSubmit('Save');
+            ->addSubmit('Login');
 
         if($this->form->isSubmitted()){
             if($this->verifyCredintals($this->form->get('username'),$this->form->get('password'))){
