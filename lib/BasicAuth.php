@@ -36,7 +36,7 @@ class BasicAuth extends AbstractController {
                            )){
                     // cookie login was successful
                     $this->loggedIn();
-                    exit;
+                    return;
                 }
             }
             $this->processLogin();
