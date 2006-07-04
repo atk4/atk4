@@ -84,7 +84,7 @@ class Wizard extends Page{
      	*/
 		return $this->getCurrentIndex() == 0 ? 0 : ($this->getCurrentIndex() - 1);
 	}
-	function addPage($title = "", $content = "Form", $template=array('form', 'form')){
+	function addPage($title = "", $content = "Form", $template=array('shared', 'Content')){
 		/**
 		 * Adds page
 	 	 */

@@ -59,10 +59,7 @@ class BasicAuth extends AbstractController {
         unset($_GET['submit']);
         unset($_GET['page']);
     }
-    function processLogin(){
-        // this function is called when authorization is not found. 
-        // You should return true, if login process was successful.
-
+    function showLoginForm(){
         // Initialize an empty page
         $p=$this->add('Page');
         $p->template->loadTemplate('empty');
@@ -74,8 +71,16 @@ class BasicAuth extends AbstractController {
             ->addField('Line','username','Username')
             ->addField('Password','password','Password')
             ->addField('Checkbox','memorize','Remember on this computer')
+			->addSeparator()
+			
             ->addSubmit('Login');
+		return $p;
+    }
+    function processLogin(){
+        // this function is called when authorization is not found. 
+        // You should return true, if login process was successful.
 
+		$p=$this->showLoginForm();
         if($this->form->isSubmitted()){
             if($this->verifyCredintals($this->form->get('username'),$this->form->get('password'))){
                 $this->loggedIn();
