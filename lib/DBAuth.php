@@ -8,8 +8,21 @@
  * If you do not want them to be encrypted - use Auth::setEncrypted(false)
  * 
  * If you want to use password recovery feature:
+ * - create a fake page for password recovery (it is needed!)
  * - add a link to password recovery page: Auth::addPwdRecoveryLink()
- * - specify a page name to password recovery in your config.php
+ * - specify a page name to password recovery in your config.php ($config['auth']['pwd_recovery']['page'])
+ * - specify a table name which will be used for password recovery process ($config['auth']['pwd_recovery']['table'])
+ *   This table structure is:
+ *   CREATE TABLE pwd_recovery_request (
+ *     id int(11) unsigned NOT NULL auto_increment,
+ *     user_id int(11) unsigned NOT NULL default '0',
+ *     email varchar(32) NOT NULL default '',
+ *     expire datetime default NULL,
+ *     changed int(1) default '0',
+ *     changed_dts datetime default NULL,
+ *     PRIMARY KEY  (`id`)
+ *     ) ENGINE=MyISAM
+ * - specify a period in minutes in which link to recovery will be actual ($config['auth']['pwd_recovery']['timeout'])
  * 
  * If you want to use register feature:
  * - create a page with the user registration data
@@ -70,10 +83,10 @@ class DBAuth extends BasicAuth{
 				$form
 					->addField('hidden', 'rp_id')
 					->addField('password', 'password', 'Enter new password')
-						->validateField('strlen($this->get(\'password\'))>=6', 'Password is too short')
+						->validateField('strlen($this->get())>=6', 'Password is too short')
 					->addField('password', 'password2', 'Confirm new password')
 						//TODO validation does not work
-						->validateField('$this->get(\'password2\')==$this->get(\'password\')', 
+						->validateField('$this->get()==$this->owner->get(\'password\')', 
 						'Confirmation differs from password')
 					->addField('checkbox', 'send', 'Send me new password by e-mail')
 			
@@ -97,8 +110,6 @@ class DBAuth extends BasicAuth{
 					if($form->get('send')=='Y')$this->sendPassword($user_id, $form->get('password'));
 					unset($this->api->sticky_get_arguments['rp']);
 					unset($this->api->sticky_get_arguments['key']);
-					$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
-						$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 				}
 	    	}else{
 	    		//denial page
@@ -109,8 +120,6 @@ class DBAuth extends BasicAuth{
 	    			" <a href=".
 					$this->api->getDestinationURL($this->api->getConfig('auth/pwd_recovery/page')).
 					">Click here</a> if You want to repeat Your request.");
-				$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
-					$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 	    	}
 		}else{
 			//displaying a form with username for password recovery
@@ -131,18 +140,18 @@ class DBAuth extends BasicAuth{
 					$p->add('Text', null, 'Content')->set("<div align=center>An e-mail with instruction " .
 						"to restore password has been sent" .
 						" to user '".$form->get('username')."'</div>");
-					$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
-						$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 				}else{
 					throw new BaseException("User with a name you specified have not been found. Please try again");
 				}
 			}
 		}
+		$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
+			$this->api->getDestinationURL('Index').">Back to main page</a></div>");
 		$p->downCall('render');
 		echo $p->template->render();
 		exit;
 	}
-	function sendPassword($user_id, $password){
+	protected function sendPassword($user_id, $password){
 		//TODO make template based
 		$server=$_SERVER['SERVER_NAME'];
 		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
