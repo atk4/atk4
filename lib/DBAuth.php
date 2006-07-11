@@ -229,6 +229,9 @@ class DBAuth extends BasicAuth{
     	$this->info=array_merge($this->info, $this->dq->do_getHash());
         $this->memorize('info',$this->info);
     }
+	function logout(){
+		$this->forget('info');
+	}
 	function showLoginForm(){
 		$p=parent::showLoginForm();
 		if($this->can_register){
