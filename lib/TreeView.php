@@ -9,7 +9,7 @@ class TreeView extends Lister{
 	private $parent_field;
 	private $display_field = array();
 	private $root_value;
-	private $level_field = 'tv_level';
+	protected $level_field = 'tv_level';
 	private $collapsed=false;
 	private $display_buttons=true;
 	
@@ -23,6 +23,13 @@ class TreeView extends Lister{
     	$this->parent_field = $parent_field;
     	$this->root_value = $root_value;
     	$this->dq->order($this->parent_field);
+    	return $this;
+    }
+    function setStaticSource($data, $id_field = 'id', $parent_field = 'parent_id', $root_value = null){
+    	$this->id_field = $id_field;
+    	$this->parent_field = $parent_field;
+    	$this->root_value = $root_value;
+    	$this->temp_data=$data;
     	return $this;
     }
 	function defaultTemplate(){
@@ -88,10 +95,12 @@ class TreeView extends Lister{
     	return $row[$this->level_field];
     }
     private function getData($parent_id){
-    	if(is_null($parent_id)||$parent_id=='')$this->dq->where($this->parent_field." is null");
-    	else $this->dq->where($this->parent_field."=$parent_id");
-    	$this->dq->do_select();
-    	$this->temp_data = $this->dq->do_getAllHash();
+    	if(!$this->temp_data){
+	    	if(is_null($parent_id)||$parent_id=='')$this->dq->where($this->parent_field." is null");
+	    	else $this->dq->where($this->parent_field."=$parent_id");
+	    	$this->dq->do_select();
+	    	$this->temp_data = $this->dq->do_getAllHash();
+    	}
     	$this->recurseData($parent_id);
     }
     function formatItem(){
@@ -106,6 +115,7 @@ class TreeView extends Lister{
 	        }
         }
     }
+    
     function format_text($field){
     	$this->current_row['caption'].=$this->current_row[$field['name']];
     }
@@ -120,6 +130,7 @@ class TreeView extends Lister{
     			array('id'=>$this->current_row[$this->id_field])).">" .
     		$caption."</a>";
     }
+    
     private function renderBranch($parent_id){
     	//executing query for a branch
     	$this->getData($parent_id);

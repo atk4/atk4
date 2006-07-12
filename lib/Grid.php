@@ -109,7 +109,7 @@ class Grid extends CompleteLister {
     	$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
     }
     function format_wrap($field){
-    	$this->row_t->set("tdparam_$field", str_replace('nowrap','',$this->row_t->get("tdparam_$field")));
+    	$this->row_t->set("tdparam_$field", str_replace('nowrap','wrap',$this->row_t->get("tdparam_$field")));
     }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']

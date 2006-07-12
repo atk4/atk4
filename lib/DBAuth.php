@@ -20,7 +20,7 @@
  *     expire datetime default NULL,
  *     changed int(1) default '0',
  *     changed_dts datetime default NULL,
- *     PRIMARY KEY  (`id`)
+ *     PRIMARY KEY  (id)
  *     ) ENGINE=MyISAM
  * - specify a period in minutes in which link to recovery will be actual ($config['auth']['pwd_recovery']['timeout'])
  * 

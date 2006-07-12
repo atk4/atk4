@@ -127,6 +127,7 @@ class Form_Field_DateSelector extends Form_Field {
     	$this->year_from = $from;
     	$this->year_to = $to;	
     	$this->years = $res;
+    	return $this;
     }
     
     function loadPOST(){

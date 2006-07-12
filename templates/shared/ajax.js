@@ -305,9 +305,13 @@ function aafv( elem_id, new_val){
 function aagv(form_id, elem_name){
 	var res=false;
 	try{
-		form=document.getElementById(form_id);
-		if(form){
-			res=form.elements[elem_name].value;
+		if(!form_id){
+			res=document.getElementById(elem_name).value;
+		}else{
+			form=document.getElementById(form_id);
+			if(form){
+				res=form.elements[elem_name].value;
+			}
 		}
 	}
 	finally{}
