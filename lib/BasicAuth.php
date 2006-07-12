@@ -86,8 +86,8 @@ class BasicAuth extends AbstractController {
             ->addField('Line','username',$this->title_name)
             ->addField('Password','password',$this->title_pass)
             ->addField('Checkbox','memorize','Remember me on this computer')
-            ->addComment('<div align="left">Security warning: by ticking \'Remember me on this computer\' you ' .
-            		'will not longer have to use a password to enter this site, until you explicitly ' .
+            ->addComment('<div align="left">Security warning: by ticking \'Remember me on this computer\'<br>you ' .
+            		'will not longer have to use a password to enter this site,<br>until you explicitly ' .
             		'log out</div>')
 			->addSeparator()
 			

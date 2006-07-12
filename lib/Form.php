@@ -83,7 +83,7 @@ class Form extends AbstractView {
         return $this;
     }
     function addComment($comment){
-        $this->add('Text','c'.count($this->elements),'form_body')->set("<tr><td colspan=2 align=center>$comment</td></tr>");
+        $this->add('Text','c'.count($this->elements),'form_body')->set('<tr><td colspan="2" align="center" nowrap>'.$comment.'</td></tr>');
         return $this;
     }
     function addSeparator($separator="<hr>"){
