@@ -63,6 +63,7 @@ class DBAuth extends BasicAuth{
 	function processRecovery(){
 		$p=$this->add('Page');
 		$p->template->loadTemplate('empty');
+		$p->template->set('page_title', 'Password recovery');
 		if($_GET['key']){
 			//user clicked link in e-mail
 			$this->api->stickyGET('rp');
@@ -125,7 +126,7 @@ class DBAuth extends BasicAuth{
 			//displaying a form with username for password recovery
 			$form=$p->frame('Content', 'Password recovery')->add('Form', 'pwd_recovery_form', 'content');
 			$form
-				->addComment('To restore Your password please enter a username specified at registration')
+				->addComment('To restore Your password please enter the '.$this->title_name.' specified at registration')
 				->addField('line', 'username', 'Username')
 				
 				->addSubmit('Submit')
@@ -146,7 +147,7 @@ class DBAuth extends BasicAuth{
 			}
 		}
 		$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
-			$this->api->getDestinationURL('Index').">Back to main page</a></div>");
+			$this->api->getDestinationURL('Index').">Back to login</a></div>");
 		$p->downCall('render');
 		echo $p->template->render();
 		exit;
@@ -229,9 +230,6 @@ class DBAuth extends BasicAuth{
     	$this->info=array_merge($this->info, $this->dq->do_getHash());
         $this->memorize('info',$this->info);
     }
-	function logout(){
-		$this->forget('info');
-	}
 	function showLoginForm(){
 		$p=parent::showLoginForm();
 		if($this->can_register){

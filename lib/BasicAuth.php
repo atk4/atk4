@@ -9,22 +9,29 @@ class BasicAuth extends AbstractController {
     protected $password=null;     // this is password to let people in
 
     protected $form;
+    protected $title_name='Username';
+    protected $title_pass='Password';
+    protected $title_comment='Please enter your username and password';
 
     function init(){
         parent::init();
         $this->api->auth=$this;
         $this->info=$this->recall('info',false);
         if($this->api->page=='Logout'){
-            $this->forget('info');
-            setcookie($this->name."_user",null);
-            setcookie($this->name."_password",null);
-            $this->info=false;
-            $this->api->redirect('Index');
+            $this->logout();
         }
     }
     function setPassword($password){
         $this->password=$password;
         return $this;
+    }
+    function setTitles($username='', $password='', $comment=''){
+    	/**
+    	 * Sets titles on the login form for the corresponding fields and upper comment
+    	 */
+    	if($username!='')$this->title_name=$username;
+    	if($password!='')$this->title_pass=$password;
+    	if($comment!='')$this->title_comment=$comment;
     }
     function check(){
         if(!$this->isLoggedIn()){
@@ -59,18 +66,29 @@ class BasicAuth extends AbstractController {
         unset($_GET['submit']);
         unset($_GET['page']);
     }
+	function logout(){
+		$this->forget('info');
+        setcookie($this->name."_user",null);
+        setcookie($this->name."_password",null);
+        $this->info=false;
+        $this->api->redirect('Index');
+	}
     function showLoginForm(){
         // Initialize an empty page
         $p=$this->add('Page');
         $p->template->loadTemplate('empty');
+        $p->template->set('page_title', $_SERVER['SERVER_NAME'].' login');
         $this->form=$p->frame('Content','Authentication')
             ->add('Form',null,'content');
 
         $this->form
-            ->addComment('Access to this resource is only allowed if you know a secret phrase. Enter it here:')
-            ->addField('Line','username','Username')
-            ->addField('Password','password','Password')
-            ->addField('Checkbox','memorize','Remember on this computer')
+            ->addComment($this->title_comment)
+            ->addField('Line','username',$this->title_name)
+            ->addField('Password','password',$this->title_pass)
+            ->addField('Checkbox','memorize','Remember me on this computer')
+            ->addComment('<div align="left">Security warning: by ticking \'Remember me on this computer\' you ' .
+            		'will not longer have to use a password to enter this site, until you explicitly ' .
+            		'log out</div>')
 			->addSeparator()
 			
             ->addSubmit('Login');
