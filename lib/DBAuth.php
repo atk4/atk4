@@ -127,7 +127,7 @@ class DBAuth extends BasicAuth{
 			$form=$p->frame('Content', 'Password recovery')->add('Form', 'pwd_recovery_form', 'content');
 			$form
 				->addComment('To restore Your password please enter the '.$this->title_name.' specified at registration')
-				->addField('line', 'username', 'Username')
+				->addField('line', 'username', $this->title_name)->setNotNull()
 				
 				->addSubmit('Submit')
 			;
