@@ -9,6 +9,7 @@ class BasicAuth extends AbstractController {
     protected $password=null;     // this is password to let people in
 
     protected $form;
+    protected $title_form='Login';
     protected $title_name='Username';
     protected $title_pass='Password';
     protected $title_comment='Please enter your username and password';
@@ -25,10 +26,11 @@ class BasicAuth extends AbstractController {
         $this->password=$password;
         return $this;
     }
-    function setTitles($username='', $password='', $comment=''){
+    function setTitles($form='', $username='', $password='', $comment=''){
     	/**
     	 * Sets titles on the login form for the corresponding fields and upper comment
     	 */
+    	if($form)$this->title_form=$form;
     	if($username!='')$this->title_name=$username;
     	if($password!='')$this->title_pass=$password;
     	if($comment!='')$this->title_comment=$comment;
@@ -77,7 +79,7 @@ class BasicAuth extends AbstractController {
         // Initialize an empty page
         $p=$this->add('Page');
         $p->template->loadTemplate('empty');
-        $p->template->set('page_title', $_SERVER['SERVER_NAME'].' login');
+        $p->template->set('page_title', $this->title_form);
         $this->form=$p->frame('Content','Authentication')
             ->add('Form',null,'content');
 
