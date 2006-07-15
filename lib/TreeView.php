@@ -5,10 +5,11 @@
  */
 class TreeView extends Lister{
 	protected $row_t;
-	protected $id_field;
-	private $parent_field;
+	protected $id_field='id';
+	public $temp_data;
+	private $parent_field='parent_id';
 	private $display_field = array();
-	private $root_value;
+	private $root_value=null;
 	protected $level_field = 'tv_level';
 	private $collapsed=false;
 	private $display_buttons=true;
@@ -79,7 +80,7 @@ class TreeView extends Lister{
     	foreach($this->temp_data as $key=>$row){
     		if($row['displayed'])continue;
     		foreach($row as $field=>$value){
-    			if($field == $this->parent_field && $value == $parent_id){
+    			if($field == $this->parent_field && $value === $parent_id){
     				$this->temp_data[$key]['displayed'] = true;
     				$row[$this->level_field] = $level;
     				$row['collapsed']=$this->collapsed;
