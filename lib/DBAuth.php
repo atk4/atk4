@@ -55,7 +55,7 @@ class DBAuth extends BasicAuth{
 	function processRegister(){
 		$p=$this->add('Page');
         $p->template->loadTemplate('empty');
-		$p->add($this->api->getConfig('auth/register_page'), null, 'Content');
+		$p->add('page_'.$this->api->getConfig('auth/register_page'), null, 'Content');
 		$p->downCall('render');
 		echo $p->template->render();
 		exit;
