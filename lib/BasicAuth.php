@@ -52,13 +52,13 @@ class BasicAuth extends AbstractController {
         }
     }
     function isLoggedIn(){
-        if($this->info)return true;
+        if($this->info['auth']===true)return true;
     }
     function verifyCredintals($user,$password){
         return $user.'123'==$password;
     }
     function loggedIn(){
-        $this->info=array('auth'=>true);
+        $this->info=array_merge($this->recall('info', array()),array('auth'=>true));
         $this->memorize('info',$this->info);
         if($this->form && $this->form->get('memorize')){
             setcookie($this->name."_user",$this->form->get('username'),time()+60*60*24*30*6);

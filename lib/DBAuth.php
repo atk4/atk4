@@ -220,6 +220,8 @@ class DBAuth extends BasicAuth{
     }
     function verifyCredintals($user,$password){
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
+    	$this->info=array_merge($this->recall('info',array()), $this->dq->do_getHash());
+        $this->memorize('info',$this->info);
     	return(sizeof($data)>0&&($data[$this->pass_field]==$password||$data[$this->pass_field]==sha1($password)));
     }
 	private function encrypt($str){
@@ -227,8 +229,6 @@ class DBAuth extends BasicAuth{
 	}
     function loggedIn(){
     	parent::loggedIn();
-    	$this->info=array_merge($this->info, $this->dq->do_getHash());
-        $this->memorize('info',$this->info);
     }
 	function showLoginForm(){
 		$p=parent::showLoginForm();
