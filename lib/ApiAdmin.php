@@ -126,15 +126,13 @@ class ApiAdmin extends ApiWeb {
             }
             $this->ns=$this->namespaces[$namespace];
             $this->page=$_GET['page'];
-            $this->add('Logger');
             $this->ns->initLayout();
         }else{
             $this->page=$_GET['page'];
 
-            $this->add('Logger');
-
             $this->initLayout();
         }
+		$this->add('Logger');
     }
     function initLayout(){
         // This function adds layout of how the webpage looks like. It should be initializing

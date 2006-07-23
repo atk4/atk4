@@ -77,15 +77,15 @@ class TreeView extends Lister{
     	return $this;
     }
     private function recurseData($parent_id, $level = 0){
-    	foreach($this->temp_data as $key=>$row){
+    	foreach($this->temp_data as $key=>&$row){
     		if($row['displayed'])continue;
     		foreach($row as $field=>$value){
     			if($field == $this->parent_field && $value === $parent_id){
     				$this->temp_data[$key]['displayed'] = true;
     				$row[$this->level_field] = $level;
-    				$row['collapsed']=$this->collapsed;
+    				$row['collapsed']=$this->collapsed&&(!isset($row['collapsed'])||$row['collapsed']);
     				$this->data[] = $row;
-    				if(!$this->collapsed)$this->recurseData($row[$this->id_field], $level+1);
+    				if(!$row['collapsed'])$this->recurseData($row[$this->id_field], $level+1);
     			}
     		}
     	}
@@ -138,6 +138,9 @@ class TreeView extends Lister{
     	$prev_level = 0;
     	$level_on = $this->template->get('level_on');
     	$level_off = $this->template->get('level_off');
+        $this->api->logger->logVar($level_on);
+        $this->api->logger->logVar($level_off.$level_off);
+    	
     	$this->template->del('rows');
         while($this->fetchRow()){
             $this->formatItem();
@@ -150,18 +153,28 @@ class TreeView extends Lister{
             if($this->getNextLevel()<$this->current_row[$this->level_field]){
             	//we may need to change level more then by 1
             	$diff=$this->current_row[$this->level_field]-$this->getNextLevel();
-            	$off="";
+            	$off=array();
             	while($diff>0){
-            		$off.=$level_off;
+            		$off=array_merge($off, $level_off);
             		$diff--;
             	}
            		$this->row_t->set('level_off', $off);
             }
+            $this->api->logger->logVar($this->row_t->render());
             //adding a branch expand button
             $this->row_t->set('button_id', 'ec_'.$this->current_row[$this->id_field]);
-            $this->row_t->set('ec', $this->getButton(true, $this->current_row[$this->id_field]));
+            $this->row_t->set('ec', $this->getButton($this->current_row['collapsed'], 
+            		$this->current_row[$this->id_field]));
             
-            $this->row_t->set('parent', 'p_'.$this->current_row[$this->id_field]);
+            if($this->current_row['collapsed']){
+            	$this->row_t->set('span', '<span id="p_'.$this->current_row[$this->id_field].'">');
+            	$this->row_t->set('close_span', '</span>');
+            }else{
+            	$this->row_t->set('lspan', '<span id="p_'.$this->current_row[$this->id_field].'">');
+            	$this->row_t->set('lclose_span', '</span>');
+            }
+            
+            //$this->row_t->set('parent', 'p_'.$this->current_row[$this->parent_field]);
             $this->row_t->set('content', $this->current_row['caption']);
             $this->template->append('rows',$this->row_t->render());
             $prev_level = $this->current_row[$this->level_field];
@@ -169,6 +182,7 @@ class TreeView extends Lister{
         return $this->template->render();
     }
     private function getButton($expand, $id){
+    	$expand=$expand?'1':'0';
 		if($this->display_buttons){
 	    	$onclick="aasn('p_".$id."','".
 				$this->api->getDestinationURL(null, array(

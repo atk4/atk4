@@ -30,7 +30,7 @@
     </td></tr></table></td>
     <?rows?>
      <?row?>
-      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a>
+      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><?href?><a href="#"><?/href?><?label?>About<?/label?><?chref?></a><?/chref?>
 	  <font color="#FFFFFF">&nbsp;&nbsp;|&nbsp;&nbsp;</font></td>
      <?/row?>
       <td class="current" nowrap="nowrap"><a href="#">Main page</a></td>
@@ -373,6 +373,23 @@ tristique eu, pede. </p>
       </td>
 
       <td valign="top">
+<?SideMenu?>
+<table class="sidemenu" border="0" cellpadding="0" cellspacing="0" width="100%">
+
+  <tbody>
+    <?rows?>
+      <?row?>
+     <tr>
+       <td height="30px" width="200px" class="<?tdclass?>separator<?/?>" nowrap="nowrap">
+	<?$href?><?label?>About<?/label?><?$href_close?></td>
+     </tr>
+      <?/row?>
+     <?/rows?>
+
+  </tbody>
+</table>
+<?/SideMenu?>
+<br>
       <?RightSidebar?>
       <table style="text-align: left; width: 155px; height: 82px;" class="msgbox" border="0" cellpadding="0" cellspacing="0">
 
@@ -401,23 +418,6 @@ more...</a></div>
         </tbody>
       </table>
       <?/RightSidebar?>
-
-<?SideMenu?>
-<table class="sidemenu" border="0" cellpadding="0" cellspacing="0" width="100%">
-
-  <tbody>
-    <?rows?>
-      <?row?>
-     <tr>
-       <td height="30px" width="200px" class="<?tdclass?>separator<?/?>" nowrap="nowrap">
-	<?$href?><?label?>About<?/label?><?$href_close?></td>
-     </tr>
-      <?/row?>
-     <?/rows?>
-
-  </tbody>
-</table>
-<?/SideMenu?>
 
       </td>
 
