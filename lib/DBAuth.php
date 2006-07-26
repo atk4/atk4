@@ -156,7 +156,7 @@ class DBAuth extends BasicAuth{
 	}
 	protected function sendPassword($user_id, $password){
 		//TODO make template based
-		$server=$_SERVER['SERVER_NAME'];
+		$server=$_SERVER['HTTP_HOST'];
 		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
 			" where id=".$user_id);
 		//combining a message
@@ -182,7 +182,7 @@ class DBAuth extends BasicAuth{
 		$this->api->db->query("insert into $table (user_id, email, expire) values($user_id, '$address', " .
 				"'".date('Y-m-d H:i:s', $expire)."')");
 		$id=mysql_insert_id();
-		$server=$_SERVER['SERVER_NAME'];
+		$server=$_SERVER['HTTP_HOST'];
 		//combining a message
 		$msg="This is $server password recovery subsystem.\n\nWe recieved the request " .
 				" to change the password for the user '$username'. To change your password " .
