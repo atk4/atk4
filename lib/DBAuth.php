@@ -258,6 +258,22 @@ class DBAuth extends BasicAuth{
 		$this->show_lost_password=true;
 		return $this;
 	}
+	function getServerName(){
+		/**
+		 * Static method
+		 * Returns server name by these rules:
+		 * 1) if there is $_SERVER['HTTP_X_FORWARDED_HOST'] set - takes first server from the line
+		 * 2) else returns $_SERVER['HTTP_HOST']
+		 */
+		$server='';
+		if($_SERVER['HTTP_X_FORWARDED_HOST']){
+			$server=$_SERVER['HTTP_X_FORWARDED_HOST'];
+			$server=strpos(',',$server)==0?$server:split(',',$server);
+			$server=$server[0];
+		}
+		if($server==''||strtolower($server)=='unknown')$server=$_SERVER['HTTP_HOST'];
+		return str_replace('www.', '', $server);
+	}
 }
 class RegisterLink extends Text{
 	function init(){
