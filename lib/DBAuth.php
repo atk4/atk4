@@ -39,6 +39,8 @@ class DBAuth extends BasicAuth{
     private $secure = true;
     private $can_register = false;
     private $show_lost_password = false;
+    private $from='';
+    private $subj='Password recovery';
 
 	function init(){
 		parent::init();
@@ -142,7 +144,7 @@ class DBAuth extends BasicAuth{
 						"to restore password has been sent" .
 						" to user '".$form->get('username')."'</div>");
 				}else{
-					throw new BaseException("User with a name you specified have not been found. Please try again");
+					$form->elements['username']->displayFieldError("User with a name you specified have not been found. Please try again");
 				}
 			}
 		}
@@ -160,8 +162,8 @@ class DBAuth extends BasicAuth{
 		//combining a message
 		$msg="This is $server password recovery subsystem.\n\nHere is your new password : " .
 			$password;
-		$subj="Your password has changed";
-		$from="noreply@$server";
+		$subj=$this->subj;
+		$from=$this->from==''?"noreply@$server":$this->from;
 		$headers = "From: $from \n";
 		//$headers .= "Return-Path: <".$this->owner->settings['return_path'].">\n";
 		//$headers .= "To: $to \n"; 
@@ -189,8 +191,8 @@ class DBAuth extends BasicAuth{
 				"during this period, you will have to make a new change request.\n\n".
 				"http://".$server.dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
-		$subj="Password recovery";
-		$from="noreply@$server";
+		$subj=$this->subj;
+		$from=$this->from==''?"noreply@$server":$this->from;
 		$headers = "From: $from \n";
 		//$headers .= "Return-Path: <".$this->owner->settings['return_path'].">\n";
 		//$headers .= "To: $to \n"; 
@@ -217,6 +219,14 @@ class DBAuth extends BasicAuth{
             ->field($this->name_field)
             ->field($this->pass_field);
         return $this;
+    }
+    function setEmailParams($from, $subj){
+    	/**
+    	 * Sets subj and from for e-mail sent by password recovery subsystem
+    	 * As we going to use this class for many projects it is cool to customize class output
+    	 */
+    	$this->from=$from;
+    	$this->subj=$subj;
     }
     function verifyCredintals($user,$password){
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();

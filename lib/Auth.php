@@ -1,4 +1,5 @@
 <?php
+trigger_error("Auth is obsolete. Use DBAuth instead. See https://btarea.com/gateway/mediawiki/index.php/DBAuth for details");
 /*
  * Created on 06.03.2006 by *Camper*
  */

@@ -47,9 +47,11 @@ class ApiAdmin extends ApiWeb {
          * TODO: this should be implemented php friendly. Php sets cookie php_sess or something,
          * if that cookie is not available, we need to add using stickyGET. we shouldn't
          * modify this method.
+         * from camper: without this line user cannot login with cookies disabled. i think until
+         * this problem solved another way - we need to have this line to avoid "strange" bugs
+         */
         // checking whether cookies are enabled and, if no, including SID
         if(!$_COOKIE[$this->name])$args=array_merge($args, array($this->name=>session_id()));
-        */
 
         if($this->ns){
             if(substr($page,0,1)===';'){
