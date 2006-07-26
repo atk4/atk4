@@ -269,7 +269,7 @@ class DBAuth extends BasicAuth{
 		if($_SERVER['HTTP_X_FORWARDED_HOST']){
 			$server=$_SERVER['HTTP_X_FORWARDED_HOST'];
 			$server=strpos(',',$server)==0?$server:split(',',$server);
-			$server=$server[0];
+			if(is_array($server))$server=$server[0];
 		}
 		if($server==''||strtolower($server)=='unknown')$server=$_SERVER['HTTP_HOST'];
 		return $full?$server:str_replace('www.', '', $server);
