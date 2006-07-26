@@ -189,7 +189,7 @@ class DBAuth extends BasicAuth{
 				"click the link below. REMEMBER: this link is actual for a period of ".
 				$this->api->getConfig('auth/pwd_recovery/timeout', 15)." minutes only. If you do not change the password " .
 				"during this period, you will have to make a new change request.\n\n".
-				"http://".$server.dirname($_SERVER['PHP_SELF'])."/".
+				"http://".$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
 		$subj=$this->subj;
 		$from=$this->from==''?"noreply@$server":$this->from;
@@ -258,7 +258,7 @@ class DBAuth extends BasicAuth{
 		$this->show_lost_password=true;
 		return $this;
 	}
-	function getServerName(){
+	function getServerName($full=false){
 		/**
 		 * Static method
 		 * Returns server name by these rules:
@@ -272,7 +272,7 @@ class DBAuth extends BasicAuth{
 			$server=$server[0];
 		}
 		if($server==''||strtolower($server)=='unknown')$server=$_SERVER['HTTP_HOST'];
-		return str_replace('www.', '', $server);
+		return $full?$server:str_replace('www.', '', $server);
 	}
 }
 class RegisterLink extends Text{
