@@ -165,7 +165,7 @@ class DBAuth extends BasicAuth{
 		$mail->trySet('password',$password);
 		$mail->trySet('from', $from);
 		$subj=$mail->get('subject');
-		$subj=$subj[0];
+		//$subj=$subj[0];
 		$mail->tryDel('subject');
 		
 		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
@@ -193,7 +193,7 @@ class DBAuth extends BasicAuth{
 		$mail->trySet('timeout', $this->api->getConfig('auth/pwd_recovery/timeout', 15));
 		$mail->trySet('username', $username);
 		$subj=$mail->get('subject');
-		$subj=$subj[0];
+		//$subj=$subj[0];
 		$mail->tryDel('subject');
 		
 		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
