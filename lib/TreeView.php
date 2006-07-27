@@ -138,8 +138,6 @@ class TreeView extends Lister{
     	$prev_level = 0;
     	$level_on = $this->template->get('level_on');
     	$level_off = $this->template->get('level_off');
-        $this->api->logger->logVar($level_on);
-        $this->api->logger->logVar($level_off.$level_off);
     	
     	$this->template->del('rows');
         while($this->fetchRow()){
@@ -160,7 +158,7 @@ class TreeView extends Lister{
             	}
            		$this->row_t->set('level_off', $off);
             }
-            $this->api->logger->logVar($this->row_t->render());
+
             //adding a branch expand button
             $this->row_t->set('button_id', 'ec_'.$this->current_row[$this->id_field]);
             $this->row_t->set('ec', $this->getButton($this->current_row['collapsed'], 

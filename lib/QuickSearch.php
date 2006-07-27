@@ -14,11 +14,14 @@ class QuickSearch extends Filter {
         parent::init();
         $this->useDQ($this->owner->dq);
         //on field change we should change a name of a button also: 'clear' in the name will clear fields
-        $this->addField('Search','q','Find')->onKeyPress()->ajaxFunc("btn=document.getElementById('".
-			$this->name.'_Clear'."'); btn.value='Go'; btn.name='".$this->name."_go';");
+        $this->addField('Search','q','Find')->onKeyPress()->ajaxFunc($this->setGoFunc());
         $this->addButton('Clear','Clear')->submitForm($this);
 
         $this->onSubmit()->submitForm($this);
+    }
+    function setGoFunc(){
+    	return "btn=document.getElementById('".$this->name.'_Clear'."'); btn.value='Go'; btn.name='".
+    		$this->name."_go';";
     }
     function useFields($fields){
         $this->fields=$fields;

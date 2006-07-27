@@ -88,7 +88,6 @@ class DBAuth extends BasicAuth{
 					->addField('password', 'password', 'Enter new password')
 						->validateField('strlen($this->get())>=6', 'Password is too short')
 					->addField('password', 'password2', 'Confirm new password')
-						//TODO validation does not work
 						->validateField('$this->get()==$this->owner->get(\'password\')', 
 						'Confirmation differs from password')
 					->addField('checkbox', 'send', 'Send me new password by e-mail')

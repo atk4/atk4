@@ -8,7 +8,9 @@ class VersionControl extends AbstractController{
     private $db_version;
 	
 	function init(){
-		$this->table = $this->api->getConfig('VersionControl/table','sys_config');
+		parent::init();
+		if(!defined('DTP'))define('DTP','');
+		$this->table = DTP.$this->api->getConfig('VersionControl/table','sys_config');
 		$this->dirname = $this->api->getConfig('VersionControl/dirname');
 		if(substr($this->dirname, strlen($this->dirname))!=DIRECTORY_SEPARATOR)
             // todo - substr($str,-1);
