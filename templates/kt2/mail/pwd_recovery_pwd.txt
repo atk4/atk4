@@ -1,0 +1,12 @@
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+From: <?$from?>
+Bcc: <?$bcc?>
+X-Mailer: AModules3 mailer
+<?subject?><?$server?> password recovery subsystem<?/?>
+This is <?$server?> password recovery subsystem.
+
+Here is your new password : <?$password?>
+
+

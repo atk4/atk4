@@ -75,7 +75,7 @@ class DBAuth extends BasicAuth{
 	   		$row=$this->api->db->getHash("select * from ".$this->api->getConfig('auth/pwd_recovery/table').
 	    			" where id=$id and changed=0");
 	    	//looking for the key in DB and checking expiration dts
-	   		$db_key=sha1($row['id'].$row['email'].strtotime($row['expire']));
+	   		$db_key=($row['id'])?sha1($row['id'].$row['email'].strtotime($row['expire'])):'';
 	   		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
 	    	if($can_change){
 	    		//displaying changepass form
@@ -155,27 +155,22 @@ class DBAuth extends BasicAuth{
 		exit;
 	}
 	protected function sendPassword($user_id, $password){
-		//TODO make template based
+		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_pwd'),'.txt');
 		$server=$this->getServerName();
 		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
 			" where id=".$user_id);
 		//combining a message
-		$msg="This is $server password recovery subsystem.\n\nHere is your new password : " .
-			$password;
-		$subj=$this->subj;
 		$from=$this->from==''?"noreply@$server":$this->from;
-		$headers = "From: $from \n";
-		//$headers .= "Return-Path: <".$this->owner->settings['return_path'].">\n";
-		//$headers .= "To: $to \n"; 
-		$headers .= "MIME-Version: 1.0 \n"; 
-		//$headers .= "Content-Type: text/plain; charset=KOI8-R; format=flowed Content-Transfer-Encoding: 8bit " .
-		//		"\n"; 
-		$headers .= "X-Mailer: PHP script "; 
+		$mail->trySet('server', $server);
+		$mail->trySet('password',$password);
+		$mail->trySet('from', $from);
+		$subj=$mail->get('subject');
+		$subj=$subj[0];
+		$mail->tryDel('subject');
 		
-		mail($address, $subj, $msg, $headers);
+		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
 	}
 	protected function sendChangeLink($user_id, $username, $address){
-		//TODO make template based
 		//adding a DB record with a key to a change password page
 		$table=DTP.$this->api->getConfig('auth/pwd_recovery/table');
 		$expire=time()+$this->api->getConfig('auth/pwd_recovery/timeout', 15)*60;
@@ -184,24 +179,24 @@ class DBAuth extends BasicAuth{
 		$id=mysql_insert_id();
 		$server=$this->getServerName();
 		//combining a message
-		$msg="This is $server password recovery subsystem.\n\nWe recieved the request " .
-				" to change the password for the user '$username'. To change your password " .
-				"click the link below. REMEMBER: this link is actual for a period of ".
-				$this->api->getConfig('auth/pwd_recovery/timeout', 15)." minutes only. If you do not change the password " .
-				"during this period, you will have to make a new change request.\n\n".
-				"http://".$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
+		$link="http://".$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
-		$subj=$this->subj;
-		$from=$this->from==''?"noreply@$server":$this->from;
-		$headers = "From: $from \n";
-		//$headers .= "Return-Path: <".$this->owner->settings['return_path'].">\n";
-		//$headers .= "To: $to \n"; 
-		$headers .= "MIME-Version: 1.0 \n"; 
-		//$headers .= "Content-Type: text/plain; charset=KOI8-R; format=flowed Content-Transfer-Encoding: 8bit " .
-		//		"\n"; 
-		$headers .= "X-Mailer: PHP script "; 
 		
-		mail($address, $subj, $msg, $headers);
+		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_link'),'.txt');
+		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
+			" where id=".$user_id);
+		//combining a message
+		$from=$this->from==''?"noreply@$server":$this->from;
+		$mail->trySet('server', $server);
+		$mail->trySet('link',$link);
+		$mail->trySet('from', $from);
+		$mail->trySet('timeout', $this->api->getConfig('auth/pwd_recovery/timeout', 15));
+		$mail->trySet('username', $username);
+		$subj=$mail->get('subject');
+		$subj=$subj[0];
+		$mail->tryDel('subject');
+		
+		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
 	}
 	function setEncrypted($secure=true){
 		$this->secure=$secure;
