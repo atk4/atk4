@@ -313,6 +313,7 @@ class Grid extends CompleteLister {
         $row->set('odd_even','<?$odd_even?>');
         $row->del('cols');
         $header->del('cols');
+        if(count($this->columns )>0)
         foreach($this->columns as $name=>$column){
             $col->del('content');
             $col->set('content','<?$'.$name.'?>');
@@ -352,6 +353,7 @@ class Grid extends CompleteLister {
         }
 
         $this->template->set('header',$header->render());
+        $this->template->set('grid_name',$this->name);
         //var_dump(htmlspecialchars($this->row_t->tmp_template));
         
     }
