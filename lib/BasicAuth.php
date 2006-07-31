@@ -45,11 +45,13 @@ class BasicAuth extends AbstractController {
                            )){
                     // cookie login was successful
                     $this->loggedIn();
-                    return;
+                    return true;
                 }
             }
             $this->processLogin();
+            return false;
         }
+        return true;
     }
     function isLoggedIn(){
         if($this->info['auth']===true)return true;

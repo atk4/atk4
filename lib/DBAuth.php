@@ -231,6 +231,20 @@ class DBAuth extends BasicAuth{
 	private function encrypt($str){
 		return $this->secure?sha1($str):$str;
 	}
+    function check(){
+    	if(!parent::check()){
+    		if($this->form->get($this->name_field)){
+    			if($this->verifyCredintals(
+                            $this->form->get($this->name_field),
+                            $this->form->get($this->pass_field)
+                           )){
+                    // cookie login was successful
+                    $this->loggedIn();
+                    return true;
+                }
+    		}
+    	}
+    }
     function loggedIn(){
     	parent::loggedIn();
     }

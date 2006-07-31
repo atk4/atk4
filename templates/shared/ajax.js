@@ -17,15 +17,15 @@ function aarq( src_url, success_handler, error_handler ){
     if((!src_url) || (!success_handler))
         return false;
 
-    if (window.XMLHttpRequest)
+    if (window.XMLHttpRequest){
         req = new XMLHttpRequest();
-    else{
+	req.setRequestHeader("Content-Type","text/html; charset=windows-1251");
+    }else{
         if (window.ActiveXObject){
             ajaxIsIE = true;
             req = new ActiveXObject("Microsoft.XMLHTTP");
         }
-	}
-    
+    }
     if (req) {
     	req.onreadystatechange = function(){
     		if (req.readyState == 4) {
@@ -41,7 +41,7 @@ function aarq( src_url, success_handler, error_handler ){
 			}
     	};
         req.open( 'GET', src_url, true );            
-        req.send('');
+        req.send("");
     }
     return false;
 }
