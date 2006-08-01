@@ -19,7 +19,6 @@ function aarq( src_url, success_handler, error_handler ){
 
     if (window.XMLHttpRequest){
         req = new XMLHttpRequest();
-	req.setRequestHeader("Content-Type","text/html; charset=windows-1251");
     }else{
         if (window.ActiveXObject){
             ajaxIsIE = true;
