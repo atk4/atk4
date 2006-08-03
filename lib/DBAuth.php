@@ -222,7 +222,7 @@ class DBAuth extends BasicAuth{
     	$this->from=$from;
     	$this->subj=$subj;
     }
-    function verifyCredintals($user,$password){
+    function verifyCredintials($user,$password){
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
     	$this->info=array_merge($this->recall('info',array()), $this->dq->do_getHash());
         $this->memorize('info',$this->info);
@@ -231,20 +231,6 @@ class DBAuth extends BasicAuth{
 	private function encrypt($str){
 		return $this->secure?sha1($str):$str;
 	}
-    function check(){
-    	if(!parent::check()){
-    		if($this->form->get($this->name_field)){
-    			if($this->verifyCredintals(
-                            $this->form->get($this->name_field),
-                            $this->form->get($this->pass_field)
-                           )){
-                    // cookie login was successful
-                    $this->loggedIn();
-                    return true;
-                }
-    		}
-    	}
-    }
     function loggedIn(){
     	parent::loggedIn();
     }
