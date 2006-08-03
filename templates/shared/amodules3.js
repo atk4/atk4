@@ -282,9 +282,14 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 		} else 	if(id.indexOf('_inline')!=-1){
 			var form_name='form_'+id;
 			
+			// setting input size to length of the text in it or 40 max
+			value=getInlineValue(id);
+			size=value.length;
+			if(size>40)size=40;
+			if(size==0)size=5;
 			col.innerHTML=' <form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 				'<input id="'+form_name+'_edit" value="'+
-				getInlineValue(id)+'" type="text" onKeyPress="'+
+				value+'" size="'+size+'" type="text" onKeyPress="'+
 				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form> ';
 			inline_collection[index]=form_name;
 			index++;
