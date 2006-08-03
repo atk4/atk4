@@ -178,7 +178,7 @@ class DBAuth extends BasicAuth{
 		$id=mysql_insert_id();
 		$server=$this->getServerName();
 		//combining a message
-		$link="http://".$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
+		$link=$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
 				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
 		
 		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_link'),'.txt');
