@@ -9,6 +9,8 @@ class BasicAuth extends AbstractController {
     protected $password=null;     // this is password to let people in
 
     protected $form;
+    protected $name_field='username';
+    protected $pass_field='password';
     protected $title_form='Login';
     protected $title_name='Username';
     protected $title_pass='Password';
@@ -37,9 +39,20 @@ class BasicAuth extends AbstractController {
     }
     function check(){
         if(!$this->isLoggedIn()){
+        	// enabling login even if cookies are set and user is logged in
+        	if($_POST[$this->name.'_page_frame_1_form_username']){
+        		if($this->verifyCredintials(
+        			$_POST[$this->name.'_page_frame_1_form_username'],
+        			$_POST[$this->name.'_page_frame_1_form_password']
+        			)){
+                    // login was successful
+                    $this->loggedIn();
+                    return true;
+                }
+        	}
             // verify if cookie is present
             if(isset($_COOKIE[$this->name."_user"]) && isset($_COOKIE[$this->name."_password"])){
-                if($this->verifyCredintals(
+                if($this->verifyCredintials(
                             $_COOKIE[$this->name."_user"],
                             $_COOKIE[$this->name."_password"]
                            )){
@@ -54,17 +67,23 @@ class BasicAuth extends AbstractController {
         return true;
     }
     function isLoggedIn(){
-        if($this->info['auth']===true)return true;
+        if($this->verifyCredintials($this->info[$this->name_field],$this->info[$this->pass_field])===true)
+        	return true;
     }
-    function verifyCredintals($user,$password){
-        return $user.'123'==$password;
+    function verifyCredintials($user,$password){
+        $result=$user.'123'==$password;
+        if($result){
+        	$this->info=array_merge($this->recall('info', array()),array('auth'=>true, 
+        		$this->name_field=>$this->form->get($this->name_field), 
+        		$this->pass_field=>$this->form->get($this->pass_field)));
+	        $this->memorize('info',$this->info);
+        }
+        return $result;
     }
     function loggedIn(){
-        $this->info=array_merge($this->recall('info', array()),array('auth'=>true));
-        $this->memorize('info',$this->info);
         if($this->form && $this->form->get('memorize')){
-            setcookie($this->name."_user",$this->form->get('username'),time()+60*60*24*30*6);
-            setcookie($this->name."_password",$this->form->get('password'),time()+60*60*24*30*6);
+            setcookie($this->name."_user",$this->form->get($this->name_field),time()+60*60*24*30*6);
+            setcookie($this->name."_password",$this->form->get($this->pass_field),time()+60*60*24*30*6);
 
         }
         unset($_GET['submit']);
@@ -104,11 +123,11 @@ class BasicAuth extends AbstractController {
 
 		$p=$this->showLoginForm();
         if($this->form->isSubmitted()){
-            if($this->verifyCredintals($this->form->get('username'),$this->form->get('password'))){
+            if($this->verifyCredintials($this->form->get($this->name_field),$this->form->get($this->pass_field))){
                 $this->loggedIn();
                 $this->api->redirect(null,$_GET);
             }
-            $this->form->getElement('password')->displayFieldError('Incorrect login information');
+            $this->form->getElement($this->pass_field)->displayFieldError('Incorrect login information');
         }
 
         $p->downCall('render');
