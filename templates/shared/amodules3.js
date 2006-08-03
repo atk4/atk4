@@ -261,7 +261,11 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	col=row.firstChild;
 	var inline_collection=new Array();
 	var index=0;
-	for(i=1;col=col.nextSibling;i++){
+	//MS IE js works different to Mozills: nextSibling does needed action erlier
+	//so for IE we should delay switching to next sibling
+	goback=col.id!=undefined;
+	for(i=0;col.nextSibling;i++){
+		if(!goback)col=col.nextSibling;
 		id=new String(col.id);
 		if(id.indexOf('_inlinex')!=-1) { // extended inline element - ajax content loading
 			
@@ -294,6 +298,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			inline_collection[index]=form_name;
 			index++;
 		}
+		if(goback)col=col.nextSibling;
 	}
 	if(show_submit){
 		//expanding a row with submits
