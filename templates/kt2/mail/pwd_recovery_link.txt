@@ -13,4 +13,4 @@ To change your password click the link below.
 REMEMBER: this link is actual for a period of <?$timeout?> minutes only. If you do not change the password 
 during this period, you will have to make a new change request.
 
-<?$link?>
+http://<?$link?>

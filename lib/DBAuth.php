@@ -33,14 +33,12 @@
  */
 class DBAuth extends BasicAuth{
     public $dq;
-    private $name_field;
-    private $pass_field;
-    private $email_field;
-    private $secure = true;
-    private $can_register = false;
-    private $show_lost_password = false;
-    private $from='';
-    private $subj='Password recovery';
+    protected $email_field;
+    protected $secure = true;
+    protected $can_register = false;
+    protected $show_lost_password = false;
+    protected $from='';
+    protected $subj='Password recovery';
 
 	function init(){
 		parent::init();

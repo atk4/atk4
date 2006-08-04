@@ -9,6 +9,8 @@ class BasicAuth extends AbstractController {
     protected $password=null;     // this is password to let people in
 
     protected $form;
+    protected $name_field='username';
+    protected $pass_field='password';
     protected $title_form='Login';
     protected $title_name='Username';
     protected $title_pass='Password';
@@ -61,8 +63,8 @@ class BasicAuth extends AbstractController {
         $this->info=array_merge($this->recall('info', array()),array('auth'=>true));
         $this->memorize('info',$this->info);
         if($this->form && $this->form->get('memorize')){
-            setcookie($this->name."_user",$this->form->get('username'),time()+60*60*24*30*6);
-            setcookie($this->name."_password",$this->form->get('password'),time()+60*60*24*30*6);
+            setcookie($this->name."_user",$this->form->get($this->name_field),time()+60*60*24*30*6);
+            setcookie($this->name."_password",$this->form->get($this->pass_field),time()+60*60*24*30*6);
 
         }
         unset($_GET['submit']);
@@ -85,8 +87,8 @@ class BasicAuth extends AbstractController {
 
         $this->form
             ->addComment($this->title_comment)
-            ->addField('Line','username',$this->title_name)
-            ->addField('Password','password',$this->title_pass)
+            ->addField('Line',$this->name_field,$this->title_name)
+            ->addField('Password',$this->pass_field,$this->title_pass)
             ->addField('Checkbox','memorize','Remember me on this computer')
             ->addComment('<div align="left"><b>Security warning: by ticking \'Remember me on this computer\'<br>you ' .
             		'will no longer have to use a password to enter this site,<br>until you explicitly ' .
@@ -102,11 +104,11 @@ class BasicAuth extends AbstractController {
 
 		$p=$this->showLoginForm();
         if($this->form->isSubmitted()){
-            if($this->verifyCredintials($this->form->get('username'),$this->form->get('password'))){
+            if($this->verifyCredintials($this->form->get($this->name_field),$this->form->get($this->pass_field))){
                 $this->loggedIn();
                 $this->api->redirect(null,$_GET);
             }
-            $this->form->getElement('password')->displayFieldError('Incorrect login information');
+            $this->form->getElement($this->pass_field)->displayFieldError('Incorrect login information');
         }
 
         $p->downCall('render');

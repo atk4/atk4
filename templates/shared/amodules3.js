@@ -373,29 +373,7 @@ function inline_hide(name, row_id, action, callback){
 		url=url+url_params;
 	}
 	if(reload_row){
-		//row contents could not be replaced with aasn
-		set_row_c=function(response_text, response_xml){
-			//exploding string to an array of column values
-			cols=response_text.split('\n');
-			id=name+'_'+row_id;
-			row=document.getElementById(id);
-			col=row.firstChild;
-			i=0;
-			while(col){
-				if(col.innerHTML!=undefined){
-				col.innerHTML=cols[i];
-				i++;}
-				//else i--;
-				col=col.nextSibling;
-				//i++;
-			}
-			try {
-				if(typeof(callback) != 'undefined') eval(callback);
-			} catch(e) {
-				
-			}
-		}
-		aarq(url, set_row_c);
+		reloadGridRow(url,name,row_id);
 		//aasn(name+'_'+row_id, url);
 		if(inline_active[name]['show_submit']){
 			//hiding buttons
@@ -422,6 +400,31 @@ function treenode_flip(expand,id){
 }
 
 /******* MISC FUNCTIONS *******/
+function reloadGridRow(url,name,row_id){
+	//row contents could not be replaced with aasn
+	set_row_c=function(response_text, response_xml){
+		//exploding string to an array of column values
+		cols=response_text.split('<row_end>');
+		id=name+'_'+row_id;
+		row=document.getElementById(id);
+		col=row.firstChild;
+		i=0;
+		while(col){
+			if(col.innerHTML!=undefined){
+			col.innerHTML=cols[i];
+			i++;}
+			//else i--;
+			col=col.nextSibling;
+			//i++;
+		}
+		try {
+			if(typeof(callback) != 'undefined') eval(callback);
+		} catch(e) {
+			
+		}
+	}
+	aarq(url, set_row_c);
+}
 function w(url,width,height){
     window.open(url,'','width='+width+',height='+height+',scrollbars=yes,resizable=yes');
 }

@@ -209,7 +209,7 @@ class Grid extends CompleteLister {
 
 	function getRowAsCommaString($id){
 		$idfield=$this->dq->args['fields'][0];
-		if($idfield=='*')$idfield='id';
+		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
 		$this->dq->where($idfield."=$id");
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
@@ -233,7 +233,7 @@ class Grid extends CompleteLister {
 		$row=$this->formatRow($row);
 		$result="";
 		foreach($this->columns as $name=>$column){
-			$result.=$row[$name]."\n";
+			$result.=$row[$name]."<row_end>";
 		}
 		return $result;
 	}
