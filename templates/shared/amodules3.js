@@ -237,7 +237,6 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	// row_id - guess
 	// on_submit_fun callback function that executes after Ok button handler executed 
 	// on_cancel_fun callback function that executes after Cancel button handler executed
-
 	inline_id=active_field+"_"+row_id;
 	//closing all open expanders
 	id=name+"_"+row_id;
@@ -373,7 +372,7 @@ function inline_hide(name, row_id, action, callback){
 		url=url+url_params;
 	}
 	if(reload_row){
-		reloadGridRow(url,name,row_id);
+		reloadGridRow(url,name,row_id,callback);
 		//aasn(name+'_'+row_id, url);
 		if(inline_active[name]['show_submit']){
 			//hiding buttons
@@ -400,7 +399,7 @@ function treenode_flip(expand,id){
 }
 
 /******* MISC FUNCTIONS *******/
-function reloadGridRow(url,name,row_id){
+function reloadGridRow(url,name,row_id,callback){
 	//row contents could not be replaced with aasn
 	set_row_c=function(response_text, response_xml){
 		//exploding string to an array of column values
