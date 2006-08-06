@@ -6,6 +6,9 @@
 class TreeView extends Lister{
 	protected $row_t;
 	protected $id_field='id';
+	/**
+	 * Contains restructured data (in sequence nodes should be rendered)
+	 */
 	public $temp_data;
 	private $parent_field='parent_id';
 	private $display_field = array();
@@ -168,7 +171,7 @@ class TreeView extends Lister{
             	$this->row_t->set('span', '<span id="p_'.$this->current_row[$this->id_field].'">');
             	$this->row_t->set('close_span', '</span>');
             }else{
-            	$this->row_t->set('lspan', '<span id="p_'.$this->current_row[$this->id_field].'">');
+            	$this->row_t->set('lspan', '<span id="p_'.$this->current_row[$this->parent_field].'">');
             	$this->row_t->set('lclose_span', '</span>');
             }
             
