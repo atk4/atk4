@@ -214,13 +214,43 @@ function aacp( form_id ){
 				}
 				res+=frm.elements[i].name+'='+val;
 			}
+			else if(frm.elements[i].type == 'file'){
+				res+=frm.elements[i].name+'='+serializeJsToPhp(frm.elements[i].value);
+			}
 			else{
 				res+=frm.elements[i].name+'='+encodeURIComponent(frm.elements[i].value);
 			}
 		}
 	return res;
 }
+function isArray(obj) {
+    if (obj.constructor.toString().indexOf("Array") == -1) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
+function serializeJsToPhp(jsArray) {
+    var arrayLength = jsArray.length;
+    var phpString = "a:"+arrayLength+":{";
+
+    for(var i=0; i<arrayLength; i++) {
+
+        // prefix for integer based arrays
+        phpString += "i:"+i;
+
+        if(!isArray(jsArray[i])) {
+            phpString += ";s:"+jsArray[i].length+
+                           ":\""+jsArray[i]+"\";";
+        } else {
+            phpString += ";"+serializeJsToPhp(jsArray[i]);
+        }
+    }
+
+    phpString += "}";
+    return phpString;
+}
 // retrieves the content of XML item 'prefix:local[index]' of the parent item as a text.
 // returns empty string on failure.
 // getNodeText

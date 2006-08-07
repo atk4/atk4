@@ -42,15 +42,16 @@ class DBAuth extends BasicAuth{
 
 	function init(){
 		parent::init();
-		$this->api->addHook('pre-exec',array($this,'check'));
 		//process recovery and register
 		if($this->api->page==$this->api->getConfig('auth/register_page')){
-			$this->api->addHook('post-init', array($this, 'processRegister'));
+			$this->processRegister();
+			//$this->api->addHook('pre-exec', array($this, 'processRegister'), 1);
 		}
 		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page')){
-			$this->api->addHook('post-init', array($this, 'processRecovery'));
-			//$this->processRecovery();
+			$this->processRecovery();
+			//$this->api->addHook('pre-exec', array($this, 'processRecovery'), 1);
 		}
+		$this->api->addHook('pre-exec',array($this,'check'));
 	}
 	function processRegister(){
 		$p=$this->add('Page');

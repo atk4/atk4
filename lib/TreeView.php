@@ -47,7 +47,7 @@ class TreeView extends Lister{
     }
     function display($format, $name, $prefix = ''){
     	/**
-    	 * Add s field to display as a branch caption.
+    	 * Adds a field to display as a branch caption.
     	 * @param format - how to format this field
     	 * @param name - name of a DB-field
     	 * @param prefix - could be used as a separator
@@ -79,9 +79,9 @@ class TreeView extends Lister{
     	$this->collapsed=false;
     	return $this;
     }
-    private function recurseData($parent_id, $level = 0){
+    protected function recurseData($parent_id, $level = 0){
     	foreach($this->temp_data as $key=>&$row){
-    		if($row['displayed'])continue;
+    		if($row['displayed']&&$row[$this->id_field]!=$parent_id)continue;
     		foreach($row as $field=>$value){
     			if($field == $this->parent_field && $value === $parent_id){
     				$this->temp_data[$key]['displayed'] = true;
@@ -100,12 +100,24 @@ class TreeView extends Lister{
     }
     private function getData($parent_id){
     	if(!$this->temp_data){
-	    	if(is_null($parent_id)||$parent_id=='')$this->dq->where($this->parent_field." is null");
-	    	else $this->dq->where($this->parent_field."=$parent_id");
+    		if(!$this->dq)return false;
+	    	//if($this->collapsed)$this->dq->where($this->parent_field,$parent_id);
 	    	$this->dq->do_select();
 	    	$this->temp_data = $this->dq->do_getAllHash();
     	}
     	$this->recurseData($parent_id);
+    	return true;
+    }
+    function isNodeHasChildren($node_id){
+    	/**
+    	 * Returns true if node with id==$node_id has children.
+    	 * Works after data aligning, returns true before
+    	 */
+    	if(!$this->temp_data)return true;
+    	foreach($this->temp_data as $row){
+    		if($row[$this->parent_field]==$node_id)return true;
+    	}
+    	return false;
     }
     function formatItem(){
        	$this->current_row['caption']="";
@@ -137,7 +149,7 @@ class TreeView extends Lister{
     
     private function renderBranch($parent_id){
     	//executing query for a branch
-    	$this->getData($parent_id);
+    	if($this->getData($parent_id)===false)return '';
     	$prev_level = 0;
     	$level_on = $this->template->get('level_on');
     	$level_off = $this->template->get('level_off');
@@ -154,9 +166,9 @@ class TreeView extends Lister{
             if($this->getNextLevel()<$this->current_row[$this->level_field]){
             	//we may need to change level more then by 1
             	$diff=$this->current_row[$this->level_field]-$this->getNextLevel();
-            	$off=array();
+            	$off='';
             	while($diff>0){
-            		$off=array_merge($off, $level_off);
+            		$off.=$level_off;
             		$diff--;
             	}
            		$this->row_t->set('level_off', $off);
@@ -169,10 +181,8 @@ class TreeView extends Lister{
             
             if($this->current_row['collapsed']){
             	$this->row_t->set('span', '<span id="p_'.$this->current_row[$this->id_field].'">');
-            	$this->row_t->set('close_span', '</span>');
             }else{
             	$this->row_t->set('lspan', '<span id="p_'.$this->current_row[$this->parent_field].'">');
-            	$this->row_t->set('lclose_span', '</span>');
             }
             
             //$this->row_t->set('parent', 'p_'.$this->current_row[$this->parent_field]);
@@ -184,17 +194,20 @@ class TreeView extends Lister{
     }
     private function getButton($expand, $id){
     	$expand=$expand?'1':'0';
+    	//empty button is one pixel stretched to button size. 
+    	$button='<img src="amodules3/templates/shared/pixel.gif" height="9" width="9">';
 		if($this->display_buttons){
+			if(!$this->isNodeHasChildren($id))return $button;
 	    	$onclick="aasn('p_".$id."','".
 				$this->api->getDestinationURL(null, array(
 					'ec'=>$id,
 					'cut_object'=>$this->name, 'ec_action'=>$expand?'expand':'collapse'
 				))."'); treenode_flip($expand, $id)";
 			;
-	    	$button="<img src=amodules3/templates/kt2/".($expand?'plus.gif':'minus.gif')." " .
-	    		"id=\"button_".$id."\"".
-				" onclick=\"$onclick\">";
-		}else $button='';
+	    	$button='<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
+	    		'id="button_'.$id.'"'.
+				' onclick="'.$onclick.'">';
+		}else return '';
 		return $button;
     }
     function render(){

@@ -260,7 +260,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	col=row.firstChild;
 	var inline_collection=new Array();
 	var index=0;
-	//MS IE js works different to Mozills: nextSibling does needed action erlier
+	//MS IE js works different to Mozilla: nextSibling does needed action erlier
 	//so for IE we should delay switching to next sibling
 	goback=col.id!=undefined;
 	for(i=0;col.nextSibling;i++){
