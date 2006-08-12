@@ -9,7 +9,33 @@
   </articleinfo>
 
   <section>
+    <title>Why would anyone need another PHP library?</title>
+
+    <para>First of all - AModules3 is not a library technically. It's a
+    framework and a set of PHP5 classes. There are a number of points which
+    makes them superior over other popular PHP libraries available up to
+    date.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Non-backwards compatible PHP5 code. That means we don't have to
+        restrict our functionality because of compatibility. AModules3 makes a
+        really good use of exceptions, classes and other exclusive PHP5
+        features.</para>
+      </listitem>
+
+      <listitem>
+        <para>AModules planing combines 2 major releases with over 6 year
+        experience and feedback from multiple developers who dealt with it.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
     <title>What are AModules3?</title>
+
+    <para></para>
 
     <para>AModules3 is a number of layers which can be used to speed up
     development of web application. AModules3 provides multipurpose framework
