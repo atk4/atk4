@@ -136,14 +136,14 @@ class SMlite extends AbstractModel {
     function init(){
         $path=array();
 
-        if(isset($this->api->layout) && $this->api->layout){
-            $path[]=$this->api->getConfig('smlite/template_dir','templates').'/'.$this->api->layout;
+        if(isset($this->api->skin) && $this->api->skin){
+            $path[]=$this->api->getConfig('smlite/template_dir','templates').'/'.$this->api->skin;
         }
         $path[]=$this->api->getConfig('smlite/template_dir','templates');
 
         if(defined('AMODULES3_DIR')){
-            if(isset($this->api->layout) && $this->api->layout){
-                $path[]=AMODULES3_DIR.'/templates/'.$this->api->layout;
+            if(isset($this->api->skin) && $this->api->skin){
+                $path[]=AMODULES3_DIR.'/templates/'.$this->api->skin;
             }
             $path[]=AMODULES3_DIR.'/templates/shared';
         }

@@ -2,14 +2,14 @@
 class ApiAdmin extends ApiWeb {
     public $page_title = null;
 
-    public $layout = null;      // layout used to render everything
+    public $skin = null;      // skin used to render everything
     public $info_messages = array();
 
     public $apinfo=array();
 
     public $ns=null;            // current namespace object or null if none
-    function __construct($realm=null,$layout='kt2'){
-        $this->layout=$layout;
+    function __construct($realm=null,$skin='kt2'){
+        $this->skin=$skin;
         parent::__construct($realm);
         if(!$this->ns)$this->hook('init-namespaces');
     }
