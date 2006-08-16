@@ -325,7 +325,7 @@ class SMlite extends AbstractModel {
             return $this;
             //return $this->fatal("SMlite::del() is trying to delete top tag: $tag");
         }
-        if(!$this->tags[$tag]){
+        if(empty($this->tags[$tag])){
             $o=$this->owner?" for ".$this->owner->__toString():"";
             throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
         }
@@ -402,8 +402,7 @@ class SMlite extends AbstractModel {
                 $this->registerTag($tag,$template[$tag.'#'.$c]);
                 $xtag = $this->parseTemplate($template[$tag.'#'.$c]);
                 if($xtag && $tag!=$xtag){
-                    echo "Tag missmatch. $tag is closed with $xtag";
-                    exit;
+                    throw new BaseException("Tag missmatch. $tag is closed with $xtag");
                 }
             }
         }
