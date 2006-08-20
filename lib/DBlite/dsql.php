@@ -414,6 +414,7 @@ class DBlite_dsql  {
     function option($option){
         if(!is_array($option))$option=array($option);
         $this->args['options']=safe_array_merge($this->args['options'],$option);
+        return $this;
     }
 }
 if(!function_exists('safe_array_merge')){
