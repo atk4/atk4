@@ -10,16 +10,19 @@ class Filter extends Form {
             $o=$this->set($x, $this->recall($x));
         }
     }
+    function memorizeAll(){
+        //by Camper: memorize() method doesn't memorize anything if value is null
+        foreach(array_keys($this->elements) as $x){
+        	if($this->isClicked('Clear'))$this->forget($x);
+            else $this->memorize($x,$this->get($x));
+        }
+    }
     function submitted(){
         if(parent::submitted()){
             if($this->isClicked('Clear')){
                 $this->clearData();
             }
-            //by Camper: memorize() method doesn't memorize anything if value is null
-            foreach(array_keys($this->elements) as $x){
-            	if($this->isClicked('Clear'))$this->forget($x);
-                else $this->memorize($x,$this->get($x));
-            }
+            $this->memorizeAll();
 			return true;
         }
     }

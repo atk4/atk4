@@ -201,7 +201,8 @@ class TreeView extends Lister{
 	    	$onclick="aasn('p_".$id."','".
 				$this->api->getDestinationURL(null, array(
 					'ec'=>$id,
-					'cut_object'=>$this->name, 'ec_action'=>$expand?'expand':'collapse'
+					'cut_object'=>$this->name, 
+					'ec_action'=>$expand?'expand':'collapse'
 				))."'); treenode_flip($expand, $id)";
 			;
 	    	$button='<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .

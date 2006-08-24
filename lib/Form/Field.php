@@ -319,7 +319,7 @@ class Form_Field_Dropdown_Multiple extends Form_Field {
             $output.=
                 $this->getTag('option',array(
                         'value'=>$value,
-                        'selected'=>in_array($value,$this->value)
+                        'selected'=>in_array($value,$this->value_list)
                     ))
                 .htmlspecialchars($descr)
                 .$this->getTag('/option');

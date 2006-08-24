@@ -26,7 +26,7 @@ class Paginator extends AbstractView {
         $this->skip=$this->learn('skip',
                 $_GET[$this->name.'_skip'])+0;
 
-        $this->api->addHook('post-init',array($this,'applyHook'), 1);
+        $this->api->addHook('pre-exec',array($this,'applyHook'), 1);
     }
     function applyHook(){
         if(isset($this->owner->dq)){
