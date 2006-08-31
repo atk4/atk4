@@ -83,6 +83,8 @@ class Paginator extends AbstractView {
         $this->cur_page=floor($this->skip / $this->ipp) +1;
         $this->total_pages = ceil($this->found_rows / $this->ipp);
 
+		//displaying only there is more than 1 page
+		//if($this->total_pages==1)return;
         if($this->cur_page>$this->total_pages){
             // We are on a wrong page. Recalculate everything.
             $this->cur_page=$this->total_pages;

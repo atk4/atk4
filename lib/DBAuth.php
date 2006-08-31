@@ -45,11 +45,9 @@ class DBAuth extends BasicAuth{
 		//process recovery and register
 		if($this->api->page==$this->api->getConfig('auth/register_page')){
 			$this->processRegister();
-			//$this->api->addHook('pre-exec', array($this, 'processRegister'), 1);
 		}
 		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page')){
 			$this->processRecovery();
-			//$this->api->addHook('pre-exec', array($this, 'processRecovery'), 1);
 		}
 		$this->api->addHook('pre-exec',array($this,'check'));
 	}
@@ -210,7 +208,8 @@ class DBAuth extends BasicAuth{
         $this->dq=$this->api->db->dsql()
             ->table($table)
             ->field($this->name_field)
-            ->field($this->pass_field);
+            ->field($this->pass_field)
+        ;
         return $this;
     }
     function setEmailParams($from, $subj){

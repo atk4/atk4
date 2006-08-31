@@ -385,8 +385,13 @@ function inline_hide(name, row_id, action, callback){
 	inline_active[name][row_id]=false;
 }
 /******* TreeView functions *******/
-function treenode_flip(expand,id){
+function treenode_flip(expand,id,url){
 	button=new String(document.getElementById('ec_'+id).innerHTML);
+	cll=document.getElementById('p_'+id);
+        if(expand==1)cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
+
+	aasn('p_'+id,url);
+	
 	if(expand==1){
 		button=button.replace('plus.gif', 'minus.gif');
 		button=button.replace('ec_action=expand', 'ec_action=collapse');
@@ -400,6 +405,9 @@ function treenode_flip(expand,id){
 }
 
 /******* MISC FUNCTIONS *******/
+/**
+ * Reloads a row of a Grid
+ */
 function reloadGridRow(url,name,row_id,callback){
 	//row contents could not be replaced with aasn
 	set_row_c=function(response_text, response_xml){

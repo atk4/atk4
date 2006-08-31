@@ -31,7 +31,7 @@ class Grid extends CompleteLister {
         $this->api->addHook('post-submit', array($this,'submitted'));
     }
     function defaultTemplate(){
-        return array('grid','_top');
+        return array('grid','grid');
     }
     function addColumn($type,$name=null,$descr=null){
         if($name===null){
@@ -176,6 +176,8 @@ class Grid extends CompleteLister {
             }
             $this->dq->order($order,$desc);
         }
+        //we always need to calc rows
+        $this->dq->calc_found_rows();
         return $this;
     }
     function setTemplate($template){
@@ -358,6 +360,15 @@ class Grid extends CompleteLister {
         
     }
     function render(){
+    	if($this->dq&&$this->dq->foundRows()==0){
+    		$not_found=$this->add('SMlite')->loadTemplate('grid');
+    		$not_found=$not_found->get('not_found');
+    		//$this->template->del('header');
+    		$this->template->del('rows');
+    		$this->template->del('totals');
+    		$this->template->set('header','<tr class="header">'.$not_found.'</tr>');
+    		//return;
+    	}
         parent::render();
     }
     

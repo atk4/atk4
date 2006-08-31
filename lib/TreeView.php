@@ -198,12 +198,18 @@ class TreeView extends Lister{
     	$button='<img src="amodules3/templates/shared/pixel.gif" height="9" width="9">';
 		if($this->display_buttons){
 			if(!$this->isNodeHasChildren($id))return $button;
-	    	$onclick="aasn('p_".$id."','".
+	    	$onclick=
+				/*"aasn('p_".$id."','".
 				$this->api->getDestinationURL(null, array(
 					'ec'=>$id,
 					'cut_object'=>$this->name, 
 					'ec_action'=>$expand?'expand':'collapse'
-				))."'); treenode_flip($expand, $id)";
+				))."'); " .*/
+				"treenode_flip($expand, $id, '".$this->api->getDestinationURL(null, array(
+					'ec'=>$id,
+					'cut_object'=>$this->name, 
+					'ec_action'=>$expand?'expand':'collapse'
+				))."')";
 			;
 	    	$button='<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
 	    		'id="button_'.$id.'"'.

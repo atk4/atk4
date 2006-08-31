@@ -97,7 +97,7 @@ class ApiCLI extends AbstractView {
             $file=getcwd().'/'.$file;
         }
         if(file_exists($file)){
-            include $file;
+            include_once $file;
         }
       
         $this->config = array_merge($this->config,$config);

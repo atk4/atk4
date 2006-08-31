@@ -88,7 +88,7 @@ abstract class Form_Field extends AbstractView {
     }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-        $this->template->trySet('field_caption',$this->caption.':');
+        $this->template->trySet('field_caption',$this->caption);
         $this->template->trySet('field_name',$this->name);
         $this->template->set('field_input',$this->getInput());
         $this->template->trySet('field_error',
