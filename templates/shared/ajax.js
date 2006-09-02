@@ -39,7 +39,7 @@ function aarq( src_url, success_handler, error_handler ){
 				finally{}
 			}
     	};
-        req.open( 'GET', src_url, true );            
+        req.open('GET', src_url, true );            
         req.send("");
     }
     return false;

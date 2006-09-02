@@ -96,7 +96,7 @@ class TreeView extends Lister{
     private function getNextLevel(){
     	$row = array_shift($this->data);
     	array_unshift($this->data, $row);
-    	return $row[$this->level_field];
+    	return $row?$row[$this->level_field]:-1;
     }
     private function getData($parent_id){
     	if(!$this->temp_data){
@@ -105,8 +105,23 @@ class TreeView extends Lister{
 	    	$this->dq->do_select();
 	    	$this->temp_data = $this->dq->do_getAllHash();
     	}
-    	$this->recurseData($parent_id);
+    	$level=0;$id=$parent_id;
+    	while($id!=$this->root_value){
+    		$level++;
+    		$id=$this->getItem($id);
+    		$id=$id['parent_id'];
+    	}
+    	$this->recurseData($parent_id,$level);
     	return true;
+    }
+    protected function getItem($id){
+    	/**
+    	 * Returns item's hash
+    	 */
+    	foreach($this->temp_data as $row){
+    		if($row[$this->id_field]==$id)return $row;
+    	}
+    	return false;
     }
     function isNodeHasChildren($node_id){
     	/**
@@ -147,12 +162,14 @@ class TreeView extends Lister{
     		$caption."</a>";
     }
     
-    private function renderBranch($parent_id){
+    protected function renderBranch($parent_id){
     	//executing query for a branch
     	if($this->getData($parent_id)===false)return '';
-    	$prev_level = 0;
+    	$prev_level = -1;
     	$level_on = $this->template->get('level_on');
+    	//$level_on=$level_on[0];
     	$level_off = $this->template->get('level_off');
+		$this->row_t->set('level_on', $level_on);
     	
     	$this->template->del('rows');
         while($this->fetchRow()){
@@ -163,9 +180,10 @@ class TreeView extends Lister{
             if($this->current_row[$this->level_field]>$prev_level){
             	$this->row_t->set('level_on', $level_on);
             }
-            if($this->getNextLevel()<$this->current_row[$this->level_field]){
+            $next_level=$this->getNextLevel();
+            if($next_level<$this->current_row[$this->level_field]){
             	//we may need to change level more then by 1
-            	$diff=$this->current_row[$this->level_field]-$this->getNextLevel();
+            	$diff=$this->current_row[$this->level_field]-$next_level;
             	$off='';
             	while($diff>0){
             		$off.=$level_off;
@@ -179,11 +197,9 @@ class TreeView extends Lister{
             $this->row_t->set('ec', $this->getButton($this->current_row['collapsed'], 
             		$this->current_row[$this->id_field]));
             
-            if($this->current_row['collapsed']){
-            	$this->row_t->set('span', '<span id="p_'.$this->current_row[$this->id_field].'">');
-            }else{
-            	$this->row_t->set('lspan', '<span id="p_'.$this->current_row[$this->parent_field].'">');
-            }
+            $span='<span id="p_'.$this->current_row[$this->id_field].'">';
+            if($this->current_row['collapsed']==1)$span.='</span>';
+            $this->row_t->set('span', $span);
             
             //$this->row_t->set('parent', 'p_'.$this->current_row[$this->parent_field]);
             $this->row_t->set('content', $this->current_row['caption']);

@@ -37,6 +37,7 @@ class Lister extends AbstractView {
         }
         return (bool)($this->current_row=$this->dq->do_fetchHash());
     }
+
     function render(){
         while($this->fetchRow()){
             $this->formatRow();
