@@ -43,10 +43,10 @@ class DBAuth extends BasicAuth{
 	function init(){
 		parent::init();
 		//process recovery and register
-		if($this->api->page==$this->api->getConfig('auth/register_page')){
+		if($this->api->page==$this->api->getConfig('auth/register_page','none')){
 			$this->processRegister();
 		}
-		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page')){
+		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page','none')){
 			$this->processRecovery();
 		}
 		$this->api->addHook('pre-exec',array($this,'check'));
