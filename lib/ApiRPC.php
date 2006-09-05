@@ -15,7 +15,11 @@ class ApiRPC extends ApiCLI {
     }
     function setHandler($class_name){
         try{
-            $this->handler=$this->add($class_name);
+            if(is_object($class_name)){
+                $this->handler=$class_name;
+            }else{
+                $this->handler=$this->add($class_name);
+            }
             if(!isset($_POST['data']))
                 throw new RPCException('No "data" specified in POST');
 
