@@ -10,6 +10,15 @@ class RPC extends AbstractController {
     var $destination_url;    // where requests will be sent
     var $security_key=null;
 
+    function setURL($url){
+        $this->destination_url=$url;
+        return $this;
+    }
+    function setSecurityKey($key){
+        $this->security_key=$key;
+        return $this;
+    }
+
 
     function __call($method,$arguments){
         if($this->security_key){
@@ -20,7 +29,7 @@ class RPC extends AbstractController {
                         $method,
                         $arguments,
                         md5(
-                            serialize(
+                            $s=serialize(
                                 array(
                                     $method,
                                     $arguments,
@@ -34,6 +43,7 @@ class RPC extends AbstractController {
             $data = serialize(array($method,$arguments));
         }
 
+        $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->destination_url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, "SERWEB full_access version 0.1");
@@ -43,14 +53,24 @@ class RPC extends AbstractController {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_FAILONERROR, 1);
         $response = curl_exec ($ch);
+
+        if(!$response){
+            throw new RPCException("CURL error: ".curl_error($ch));
+        }
+
         curl_close ($ch);
 
-        if($response!=serialize(false)){
+        if($response==serialize(false)){
             // we won't be sure if it was false returned or if there was error, so we
             // unserialize it
             return false;
         }
-        @$response=unserialize($response);
+        // TODO - we need to ignore error here
+        if(substr($response,0,5)!='AMRPC'){
+            echo "Fatal error on remote end:<br><hr><br>".$response;
+            exit;
+        }
+        $response=unserialize(substr($response,5));
         if($response===false){
             // it was really an error
             throw new RPCException("Couldn't connect to handler URL");
