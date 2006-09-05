@@ -6,12 +6,18 @@ class RPC extends AbstractController {
      * will work perfectly with AModules3
      *
      * You must use ApiRPC on the other side of the request
+     *
+     *
+     * After you initialize object, you may play with $this->ch to customize curl
+     * request options.
      */
     var $destination_url;    // where requests will be sent
     var $security_key=null;
+    var $ch;
 
     function setURL($url){
         $this->destination_url=$url;
+        curl_setopt($this->ch, CURLOPT_URL, $this->destination_url);
         return $this;
     }
     function setSecurityKey($key){
@@ -19,6 +25,10 @@ class RPC extends AbstractController {
         return $this;
     }
 
+    function init(){
+        parent::init();
+        $this->ch=curl_init();
+    }
 
     function __call($method,$arguments){
         if($this->security_key){
@@ -43,22 +53,22 @@ class RPC extends AbstractController {
             $data = serialize(array($method,$arguments));
         }
 
-        $ch=curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->destination_url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, "SERWEB full_access version 0.1");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "data=".$data);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); // need these if we dont have cert
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-        $response = curl_exec ($ch);
+        curl_setopt($this->ch, CURLOPT_POST, 1);
+        curl_setopt($this->ch, CURLOPT_USERAGENT, "SERWEB full_access version 0.1");
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "data=".$data);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0); // need these if we dont have cert
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($this->ch, CURLOPT_FAILONERROR, 1);
+        $response = curl_exec ($this->ch);
 
         if(!$response){
-            throw new RPCException("CURL error: ".curl_error($ch));
+            throw new RPCException("CURL error: ".curl_error($this->ch));
         }
 
-        curl_close ($ch);
+        curl_close ($this->ch);
+        $this->ch=curl_init();  // in case they will want to send another request...
+        curl_setopt($this->ch, CURLOPT_URL, $this->destination_url);
 
         if($response==serialize(false)){
             // we won't be sure if it was false returned or if there was error, so we
