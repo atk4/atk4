@@ -7,7 +7,7 @@ class OldRPCExeption extends RPCException  {
 	public $fileRPC;
 	public $lineRPC;
 	function __construct($msg,$func=null,$shift=1,$code=0,$fileRPC=null,$lineRPC=null){
-        parent::__construct($msg,$func=null,$shift=1,$code=0);
+        parent::__construct($msg,$func,$shift,$code);
         if(!is_null($fileRPC)) $this->fileRPC;
         if(!is_null($lineRPC)) $this->lineRPC;
         return; 

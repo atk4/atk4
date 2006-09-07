@@ -76,15 +76,16 @@ class RPC extends AbstractController {
             return false;
         }
         // TODO - we need to ignore error here
-        if(substr($response,0,5)!='ERRRPC'){
+        if(substr($response,0,6)=='ERRRPC'){
         	$response=unserialize(substr($response,6));
             throw new OldRPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
         }
-        
-        if(substr($response,0,5)!='AMRPC'){
+        elseif(substr($response,0,5)!='AMRPC'){
             throw new BaseException("Fatal error on remote end:<br><hr><br>".$response);
         }
+
         $response=unserialize(substr($response,5));
+
         if($response===false){
             // it was really an error
             throw new RPCException("Couldn't connect to handler URL");
