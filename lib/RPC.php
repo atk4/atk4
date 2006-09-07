@@ -78,7 +78,7 @@ class RPC extends AbstractController {
         // TODO - we need to ignore error here
         if(substr($response,0,5)!='ERRRPC'){
         	$response=unserialize(substr($response,6));
-            throw new OldRPCException($response['message'],$metod,1,$response['code'],$response['file'],$response['line']);
+            throw new OldRPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
         }
         
         if(substr($response,0,5)!='AMRPC'){
