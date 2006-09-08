@@ -81,7 +81,7 @@ class RPC extends AbstractController {
             throw new OldRPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
         }
         elseif(substr($response,0,5)!='AMRPC'){
-            throw new BaseException("Fatal error on remote end:<br><hr><br>".$response);
+            throw new BaseException("Fatal error on remote end: ".$response);
         }
 
         $response=unserialize(substr($response,5));
