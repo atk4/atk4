@@ -234,9 +234,6 @@ abstract class AbstractObject {
 
     /////////////// Hooking /////////////////////////////////////
     function addHook($hook_spot, $callable, $priority=5){
-        if(!is_int($priority)){
-            throw new ObsoleteException("addHook is accepting 'callback' type as 2nd argument now, see http://php.net/manual/en/language.pseudo-types.php#language.types.callback for information");
-        }
         $this->hooks[$hook_spot][$priority][] = $callable;
     }
     function hook($hook_spot,$arg=array()){
