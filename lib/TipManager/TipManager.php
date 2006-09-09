@@ -58,7 +58,7 @@ class TipManager extends Namespace{
         return array('shared','_top');
 	}
 	function page_Index($p){
-		$filter=$this->frame('Content','Quick search')->add('TipFilter',null,'content');
+		$filter=$p->frame('Content','Quick search')->add('TipFilter',null,'content');
 		$grid=$this->add('Grid',null,'Content');
 		$grid
 			->addColumn('text','type','Type')
@@ -72,7 +72,7 @@ class TipManager extends Namespace{
 		$filter->useDQ($grid->dq);
 	}
 	function page_EditTip($p){
-		$form=$this->frame('Content','Tip params')->add('Form',null,'content');
+		$form=$p->frame('Content','Tip params')->add('Form',null,'content');
 		$form
 			->addField('dropdown','type','Tip type')->setValueList($this->tip_types)
 			->addField('text','tip','Text')->setNotNull()
