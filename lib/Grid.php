@@ -86,6 +86,11 @@ class Grid extends CompleteLister {
     function format_text($field){
     	$this->current_row[$field] = $this->current_row[$field];
     }
+    function format_shorttext($field){
+    	$text=$this->current_row[$field];
+    	if(strlen($text)>50)$text=substr($text,0,46).' ...';
+    	$this->current_row[$field]=$text;
+    }
     function format_html($field){
     	$this->current_row[$field] = htmlentities($this->current_row[$field]);
     }
