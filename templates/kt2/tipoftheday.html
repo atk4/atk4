@@ -1,0 +1,35 @@
+<?TipShow?>
+<table width="100%" class="tipbox">
+  <tr>
+   <td width="25" valign="top"><img src="amodules3/templates/kt2/bulb.gif"></td>
+   <td><h4><?$title?></h4><?$tip?></td>
+  </tr>
+  <tr align="right">
+   <td colspan="2">
+  	<a href="javascript:void('');" onclick="aasn('<?$tip_name?>','<?$hide_url?>');"><hr size="1">&lt;Hide tips&gt;</a>
+	&nbsp;
+  	<a href="javascript:void('');" onclick="aasn('<?$tip_name?>','<?$prev_url?>');">&lt;Prev&gt;</a>
+	&nbsp;
+  	<a href="javascript:void('');" onclick="aasn('<?$tip_name?>','<?$next_url?>');">&lt;Next&gt;</a>
+   </td>
+  </tr>
+</table>
+<?/TipShow?>
+
+<?TipHide?>
+ <a href="javascript:void('');" onclick="aasn('<?$tip_name?>','<?$show_url?>');">[&nbsp;?&nbsp;]</a>
+<?/TipHide?>
+
+<?Window?>
+<script src="amodules3/templates/shared/ajax.js"></script>
+<script src="amodules3/templates/shared/amodules3.js"></script>
+<div id="content">
+ <table width="100%" class="tipbox">
+  <tr>
+   <td width="25" valign="top"><img src="amodules3/templates/kt2/bulb.gif"></td>
+   <td><h4>Did You know?</h4><div id="tip_text"><?$tiptext?></div></td>
+  </tr>
+ </table>
+ <div align="right" style="border: 1px dashed black; padding: 4px"><?Buttons?>echo<?/?></div>
+</div>
+<?/Window?>
