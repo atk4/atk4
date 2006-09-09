@@ -15,8 +15,7 @@ class VersionControl extends AbstractController{
 		if(substr($this->dirname, strlen($this->dirname))!=DIRECTORY_SEPARATOR)
             // todo - substr($str,-1);
 			$this->dirname.=DIRECTORY_SEPARATOR;
-		$this->getVersion();
-		$this->versionUpdate();
+        $this->api->addHook('api-defaults',array($this,'versionUpdate'));
 	}
 	function getVersion(){
 		/**
@@ -29,6 +28,7 @@ class VersionControl extends AbstractController{
 		$this->db_version = $this->api->db->getOne("select db_version from $this->table");
 	}
 	function versionUpdate(){
+        $this->getVersion();
 		if($this->db_version != $this->api->apinfo['release']){
 			//getting scripts
 			$scripts=array();
@@ -50,8 +50,7 @@ class VersionControl extends AbstractController{
 				closedir($handle);
 				//updating DB version
 				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['release']."'");
-				if(isset($this->api->logger))
-					$this->api->logger->logLine('Version control: DB updated to '.$this->api->apinfo['release']."\n");
+                $this->info('Version control: DB updated to '.$this->api->apinfo['release']."\n");
 			}
 		}
 	}
@@ -61,26 +60,26 @@ class VersionControl extends AbstractController{
 		 */
 		$sql = split(';',file_get_contents($this->dirname.$file));
 		foreach($sql as $query)if(trim($query) != ''){
-			$this->api->logger->logLine("Version control: SQL executing $query...\n");
+			$this->info("Version control: SQL executing $query...\n");
 			try{
 				$this->api->db->query($query);
-				$this->api->logger->logLine("Version control: success\n");
+				$this->info("Version control: success\n");
 			}catch(Exception $e){
-				$this->api->logger->logLine("Version control: FAILED! ".mysql_error()."\n");
+				$this->info("Version control: FAILED! ".mysql_error()."\n");
 			}
 		}
-		if(isset($this->api->logger))$this->api->logger->logLine("Version control: executed $file\n");
+        $this->info("Version control: executed $file\n");
 	}
 	function execPHP($file){
 		/**
 		 * Includes PHP script
 		 */
-		$this->api->logger->logLine("Version control: PHP including $file...\n");
+		$this->info("Version control: PHP including $file...\n");
 		try{
 			include($this->dirname.$file);
-			$this->api->logger->logLine("Version control: success\n");
+			$this->info("Version control: success\n");
 		}catch(Exception $e){
-			$this->api->logger->logLine("Version control: FAILED!\n");
+			$this->info("Version control: FAILED!\n");
 		}
 	}
 	private function neededFile($file){
