@@ -50,7 +50,7 @@ class VersionControl extends AbstractController{
 				closedir($handle);
 				//updating DB version
 				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['release']."'");
-                $this->info('Version control: DB updated to '.$this->api->apinfo['release']."\n");
+                $this->debug('Version control: DB updated to '.$this->api->apinfo['release']."\n");
 			}
 		}
 	}
@@ -60,26 +60,26 @@ class VersionControl extends AbstractController{
 		 */
 		$sql = split(';',file_get_contents($this->dirname.$file));
 		foreach($sql as $query)if(trim($query) != ''){
-			$this->info("Version control: SQL executing $query...\n");
+			$this->debug("Version control: SQL executing $query...\n");
 			try{
 				$this->api->db->query($query);
-				$this->info("Version control: success\n");
+				$this->debug("Version control: success\n");
 			}catch(Exception $e){
-				$this->info("Version control: FAILED! ".mysql_error()."\n");
+				$this->debug("Version control: FAILED! ".mysql_error()."\n");
 			}
 		}
-        $this->info("Version control: executed $file\n");
+        $this->debug("Version control: executed $file\n");
 	}
 	function execPHP($file){
 		/**
 		 * Includes PHP script
 		 */
-		$this->info("Version control: PHP including $file...\n");
+		$this->debug("Version control: PHP including $file...\n");
 		try{
 			include($this->dirname.$file);
-			$this->info("Version control: success\n");
+			$this->debug("Version control: success\n");
 		}catch(Exception $e){
-			$this->info("Version control: FAILED!\n");
+			$this->debug("Version control: FAILED!\n");
 		}
 	}
 	private function neededFile($file){
