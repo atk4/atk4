@@ -364,7 +364,7 @@ function inline_hide(name, row_id, action, callback){
 			field_name=field_name.substring(name.length+6, field_name.indexOf('_inline'));
 			form=document.getElementById(inline_collection[i]);
 			if(form){
-				url_params+='&'+'field_'+field_name+'='+form.elements[0].value;
+				url_params+='&'+'field_'+field_name+'='+encodeURIComponent(form.elements[0].value);
 				//if form was not found - probably we moved to another page by some ajax action
 				//but, may be, it is a browser incompatibility...
 				reload_row=true;
