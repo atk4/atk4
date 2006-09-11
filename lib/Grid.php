@@ -146,6 +146,8 @@ class Grid extends CompleteLister {
     	$col_id=$this->name.'_'.$field.'_inline';
     	$show_submit=$this->show_submit?'true':'false';
     	$tab_moves_down=$this->tab_moves_down?'true':'false';
+    	//setting text non empty
+    	$text=$this->current_row[$field]?$this->current_row[$field]:'null';
 
     	$this->row_t->set('tdparam_'.$field, 'id="'.$col_id.'_'.$this->current_row[$idfield].
 			'" style="cursor: hand"');
@@ -153,7 +155,7 @@ class Grid extends CompleteLister {
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL($this->api->page, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'", '.$tab_moves_down.', '.$show_submit.');\'>'.$this->current_row[$field].'</a>';
+			'", '.$tab_moves_down.', '.$show_submit.');\'>'.$text.'</a>';
     }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
@@ -204,6 +206,7 @@ class Grid extends CompleteLister {
 	}
 	function update(){
 		foreach($_GET as $name=>$value){
+			if(strpos($value,'%'))$value=urldecode($value);
 			if(strpos($name, 'field_')!==false){
 				$this->dq->set(substr($name, 6)."='$value'");
 			}
