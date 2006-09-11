@@ -33,7 +33,7 @@ class ApiWeb extends ApiCLI {
     }
     function outputDebug($msg,$shift=0){
         if($this->hook('output-debug',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font>";
+        echo "<font color=red>",$msg,"</font><br>";
     }
     function outputInfo($msg,$shift=0){
         if($this->hook('output-info',array($msg,$shift)))return true;

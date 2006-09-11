@@ -348,8 +348,10 @@ class SMlite extends AbstractModel {
         $tmp_locations = split(PATH_SEPARATOR,$this->settings['templates']);
         foreach($tmp_locations as $loc)if($loc){
             if(file_exists($f=$loc.'/'.$template_name.$this->settings['extension'])){
+                $this->debug("Template $template_name name is FOUND in $f");
                 return join('',file($f));
             }
+            $this->debug("Template $template_name name is NOT found in $f");
         }
         return null;
     }
@@ -366,10 +368,15 @@ class SMlite extends AbstractModel {
         /*
          * Load template from file
          */
-        if($ext){ $tempext=$this->settings['extension']; $this->settings['extension']=$ext; };
+        if($ext){ 
+            $tempext=$this->settings['extension']; 
+            $this->settings['extension']=$ext; 
+        };
         $this->tmp_template = $this->findTemplate($template_name);
-        if(!isset($this->tmp_template))$this->fatal("Template not found (".$template_name.$this->settings['extension'].") in (".
-                                                    $this->settings['templates'].")");
+
+        if(!isset($this->tmp_template))
+            throw new SMliteException("Template not found (".$template_name.$this->settings['extension'].") in (".  $this->settings['templates'].")");
+
         $this->parseTemplate($this->template);
         if($ext){ $this->settings['extension']=$tempext; };
         return $this;
