@@ -348,10 +348,8 @@ class SMlite extends AbstractModel {
         $tmp_locations = split(PATH_SEPARATOR,$this->settings['templates']);
         foreach($tmp_locations as $loc)if($loc){
             if(file_exists($f=$loc.'/'.$template_name.$this->settings['extension'])){
-                $this->debug("Template $template_name name is FOUND in $f");
                 return join('',file($f));
             }
-            $this->debug("Template $template_name name is NOT found in $f");
         }
         return null;
     }

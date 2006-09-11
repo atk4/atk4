@@ -19,22 +19,22 @@ class TipManager extends Namespace{
 	}
     function initLayout(){
         parent::initLayout();
-		//$this->elements['menu']=$this->api->getElement('menu');
         $this->template->del('LeftSidebar');
         $this->template->del('RightSidebar');
         $this->template->del('InfoWindow');
         $this->template->del('Locator');
-        $this->template->del('Content');
-        $this->template->del('Menu');
         //$this->template->del('SelfTips');
         
-        //$this->api->init();
-
 		$this->tips=$this->getTipsFromTemplate();
 		$tip=$this->add('Tip','regular','Locator')
 			->setStaticSource($this->tips)
 			->setSection($this->api->page?$this->api->page:'Index')
 		;
+    }
+    function layout_Menu(){
+        $this->api->layout_Menu();
+
+		$this->elements['menu']=$this->api->getElement('menu');
     }
 	function getTipsFromTemplate(){
 		$template=$this->add('SMlite');
@@ -94,7 +94,7 @@ class TipFilter extends Filter{
 	function init(){
 		parent::init();
 		$this
-			->addField('dropdown','type','Tip type')->setValueList($this->owner->owner->tip_types)
+			->addField('dropdown','type','Tip type')->setValueList($this->owner->owner->owner->tip_types)
 			->addField('line','tip','Text')->setNoSave()
 			
 			->setSource('tip')
