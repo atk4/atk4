@@ -48,7 +48,6 @@ class Tip extends Lister{
 		 */
 		$this->show=$show;
 		$this->memorize('hidden',$show?'2':'1');
-		$this->initializeTemplate(null, array('tipoftheday',$show?'TipShow':'TipHide'));
 		//store to user data
 		if($store_state){
 			if(isset($this->user_dq))$this->user_dq->set('show_tips',$this->show?'Y':'N')->do_update();
@@ -58,6 +57,7 @@ class Tip extends Lister{
 				setcookie('show_tips', $this->show?'Y':'N', time()+60*60*24*30);
 			}
 		}
+		$this->initializeTemplate(null, array('tipoftheday',$this->show?'TipShow':'TipHide'));
 	}
 	function setSection($section){
 		/**
@@ -111,8 +111,8 @@ class Tip extends Lister{
 			}
 			throw new BaseException('No tip with ID="'.$this->tip_id.'" present in static data');
 		}
-		if(isset($this->dq))return $this->api->db->dsql()->table($this->dq->args['table'])->where('id',$id)
-			->field('type')->do_getOne();
+		if(isset($this->dq))return $this->api->db->dsql()->table(substr($this->dq->args['table'],strlen(DTP)))
+			->where('id',$id)->field('type')->do_getOne();
 	}
 	function getSeenTips(){
 		if($this->seen_tips)return $this->seen_tips;
