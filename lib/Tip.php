@@ -233,7 +233,8 @@ class Tip extends Lister{
 					"(sections like '%$this->section%' or sections='') " .
 					($seen_tips!=''?"and id in (".$seen_tips.") ":"").
 					"order by coalesce(ord, id) desc";
-				$id=$seen_tips==''?$this->last_read:$this->api->db->getOne($query);
+				$id=$this->getTipType($this->last_read)=='trigger'?$this->api->db->getOne($query):
+					$seen_tips==''?$this->last_read:$this->api->db->getOne($query);
     		}
     	}
 		$this->memorize('last_read',$id);
