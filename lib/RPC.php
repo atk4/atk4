@@ -86,10 +86,10 @@ class RPC extends AbstractController {
 
         $response=unserialize(substr($response,5));
 
-        if($response===false){
+        /*if($response===false){
             // it was really an error
             throw new RPCException("Couldn't connect to handler URL");
-        }
+        }*///I think it was not error. For example remote function could return false
         if($response instanceof BaseException){
             throw $response;    // if exception was raised on other end - we just raise it again
         }
