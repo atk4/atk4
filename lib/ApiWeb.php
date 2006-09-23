@@ -59,7 +59,7 @@ class ApiWeb extends ApiCLI {
     }
     function initializeSession(){
         // initialize session for this realm
-        if($this->name){
+        if($this->name && session_id()==""){
             // If name is given, initialize session. If not, initialize
             // later when loading config file.
             session_name($this->name);
