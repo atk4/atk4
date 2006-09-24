@@ -138,7 +138,7 @@ class Form extends AbstractView {
         if($this->elements[$field_or_array] instanceof Form_Field) 
         	$this->elements[$field_or_array]->set($value);
         else{
-        	throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
+        	//throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
         }
 
         return $this;
