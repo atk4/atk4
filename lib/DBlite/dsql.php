@@ -96,6 +96,7 @@ class DBlite_dsql  {
     function do_delete(){ return $this->query($this->select()); }
     */
     function do_insert(){ $this->__call('do_insert',array()); return $this->db->lastID(); }
+    function do_replace(){ $this->__call('do_replace',array()); return $this->db->lastID(); }
     //function do_select(){ $this->__call('do_select',array()); return $this; }
     function query($str){
         $this->s();
@@ -277,6 +278,9 @@ class DBlite_dsql  {
     }
     function insert(){
         return $this->parseTemplate("insert [options] into [table] ([set_field]) values ([set_value])");
+    }
+    function replace(){
+        return $this->parseTemplate("replace [options] into [table] ([set_field]) values ([set_value])");
     }
     function delete(){
         return $this->parseTemplate("delete from [table] [where]");

@@ -40,6 +40,18 @@ abstract class AbstractObject {
          * function. It will initialize class, create object and make it a
          * child of this object. Use is really simple:
          */
+        if(is_object($class)){
+            // Object specified, just add the object, do not create anything
+            if(!( $class instanceof AbstractObject)){
+                throw new BaseException('You may only add objects based on AbstractObject');
+            }
+            if(!$class->short_name){
+                throw new BaseException('Cannot add existing object, without short_name');
+            }
+            $this->elements[$class->short_name] = $class;
+            $class->owner=$this;
+            return $class;
+        }
         if(!$short_name)$short_name=strtolower($class);
 
         if(isset($this->elements[$short_name])){

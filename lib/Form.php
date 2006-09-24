@@ -118,9 +118,9 @@ class Form extends AbstractView {
             ->limit(1);
         return $this;
     }
-    function set($field_or_array,$value='undefined_value'){
+    function set($field_or_array,$value=undefined){
         // We use undefined, because 2nd argument of "null" is meaningfull
-        if($value==='undefined_value'){
+        if($value===undefined){
             if(is_array($field_or_array)){
                 foreach($field_or_array as $key=>$val){
                     if(isset($this->elements[$key]) and $this->elements[$key] instanceof Form_Field)$this->set($key,$val);
@@ -138,7 +138,7 @@ class Form extends AbstractView {
         if($this->elements[$field_or_array] instanceof Form_Field) 
         	$this->elements[$field_or_array]->set($value);
         else{
-        	// TODO, find out where it is called from!
+        	throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
         }
 
         return $this;
