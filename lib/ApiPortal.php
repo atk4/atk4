@@ -43,12 +43,17 @@ class ApiPortal extends ApiWeb {
                 // TODO: it's inefficient to loop this. Rather should do one select.
             }
             $class = $row['type'];
-            $last = $t?$t->add($class):$this->add($class);
 
+            if(substr($row['type'],0,3)!='ap_'){
+                throw new APortalException("Place A-Portal (ApiPortal) related classes into 'ap' directory");
+            }
+            $class = $row['type'];
+            $last = new $class;
             $last->owner=$this;
             $last->api=$this;
             $last->name=($row['id']?'Object #'.$row['id']:null);
             $last->short_name=($row['id']?'obj_'.$row['id']:null);
+            $last->init();
 
             foreach($row as $key=>$val){
                 switch($key){
@@ -139,23 +144,6 @@ class ApiPortal extends ApiWeb {
         if($types)$dq->where("autorel.type in (".$types.")");
         return $dq;
     }
-    function deleteObjTree($root,$types=null){
-        // This function deletes all the objects linked as childs for root object.
-        // If $types is specified (array of type names or comma separated), then only
-        // specified relation types will be followed.
-        //
-        // $root can be either ID or object itself
-        
-        /* NOT FINISHED, NOT USABLE */
-        
-        $to_delete = $root;
-        if(!is_object($root))$root=$this->loadObj($root);
-
-        while(!empty($to_detele)){
-
-        }
-
-    }
     public function loadObj($id){
         /*
          * Loads object into memory based on $id only
@@ -166,15 +154,12 @@ class ApiPortal extends ApiWeb {
                 ->where('obj.id', $id)
                 );
     }
-    public function createObj($type, $name = "untitled", $dq=null){
+    public function createObj($type, $name=null){
         /*
          * This function will add an object to the main object table, will load
          * it and will call create method on the particular object
          */
         
-        /* why we need dq? */
-        
-        if(!$dq)$dq=$this->db->dsql();
         $obj_data = array(0 =>
                 array(
                     'type'=>$type,
@@ -223,33 +208,31 @@ class ApiPortal extends ApiWeb {
         unset($this->elements[$obj->short_name]);
         return true;
     }
-    public function addChild($parent, $child, $type, $aux = null){
+    */
+    function addRelation($parent, $child, $type, $aux = null){
         /*
-        * to add child for a parent, auto check for dublicate entries
-        $dq = $this->db->dsql()
-            ->table('rel')
-            ->field('*')
-            ->where('parent', $parent->id)
-            ->where('child', $child->id)
-            ->where('type', $type);
-        if ($dq->do_getOne()){
-            /*
-            * exists already - what to do? update or what?
-            return null;
-        } else {
+         * to add child for a parent, auto check for dublicate entries
+         */
+        if(is_object($parent))$parent=$parent->id;
+        if(is_object($child))$child=$child->id;
+        if(!$this->db->dsql()
+                ->table('rel')
+                ->field('id')
+                ->where('parent', $parent)
+                ->where('child', $child)
+                ->where('type', $type)->do_getOne()){
             $dq->set(
-                array(
-                    'parent' => $parent->id,
-                    'child' => $child->id,
-                    'type' => $type,
-                    'aux' => $aux
-                )
-            )->do_insert();
+                    array(
+                        'parent' => $parent,
+                        'child' => $child,
+                        'type' => $type,
+                        'aux' => $aux
+                        )
+                    )->do_insert();
             return true;
         }
 
     }
-    */
     function convertTypes($type=null){
         if(!$type)return $type;
         if(is_array($type))$type=join(',',$type);

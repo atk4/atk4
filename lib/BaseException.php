@@ -41,6 +41,9 @@ class BaseException extends Exception {
     function getMyTrace(){
         return $this->my_backtrace;
     } 
+    function getAdditionalMessage(){
+        return '';
+    }
     function getMyFile(){ return $this->my_backtrace[$this->shift]['file']; }
     function getMyLine(){ return $this->my_backtrace[$this->shift]['line']; }
 

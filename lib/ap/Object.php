@@ -39,48 +39,45 @@ class ap_Object extends AbstractModel {
         $dq->table("obj");
         /* */
         $this->id = $dq->do_insert();
-        
-        /* Do insert in the suplementary table */
-        $dq = $this->api->db->dsql()->table($this->table_name);
-        $dq->set("id", $this->id); //agreed on hard-coded solution
-        foreach ($this->fields as $field => $properties){
-            if ($tmp = $properties["default"]){
-                $dq->set($field, $tmp);
-            }
-        }
+
+        $dq=$this->prepareSave();
+        $dq->set('id',$this->id);
         try {
-            $dq->do_insert();
+            $id=$dq->do_replace();
         } catch (SQLException $e){
             $this->create_table();
-            $dq->do_insert();
+            $dq->do_replace();
         }
-        $this->name='Object #'.$this->name;
-        $this->short_name='obj_'.$this->name;
+
+        $this->name='Object #'.$this->id;
+        $this->short_name='obj_'.$this->id;
         return $this;
     }
-    function save($dq=null){
+    function prepareSave($dq=null){
         /*
          * Saves this object. Do this after you modify fields
          */
         if(!$this->id)throw new ap_Exception("Cannot save object without ID. Call ->create() first",$this);
         if(isset($this->data['id']))throw new ap_Exception("You may not use 'id' as a field. It's for system only",$this);
         if(!$dq) $dq = $this->api->db->dsql();
-        if(!$this->data){
-            return $this;
-        }
+
+        $dq->where('id',$this->id);
+
+        $dq
+            ->table($this->table_name)
+            ->set($this->data);
+        return $dq;
+    }
+    function save($dq=null){
+        $dq=$this->prepareSave($dq);
         try {
-            $id=$dq
-                ->table($this->table_name)
-                ->set($this->data)
-                ->do_update(); //faster and better than replace
+            $id=$dq->do_update(); //faster and better than replace
         } catch (SQLException $e){
             // let's try to create table
             $this->create_table();
-            try {
-                $dq->do_insert();
-            } catch (SQLException $e){
-                echo "could not insert? " . $dq->insert();
-            }
+
+            $dq->set('id',$this->id);
+            $dq->do_replace();
         }
         return $this;
     }
@@ -102,7 +99,8 @@ class ap_Object extends AbstractModel {
          * from parent in memory and also will drop all relations, which would be invalid
          * anyway.
          */
-        if(!$this->id)throw new ap_Exception("Can't destroy non-existang object",$this);
+        if(!$this->id)
+            throw new APortalException("Can't destroy object does not exist in database",$this);
             
         $this->hook('destroy'); // can be used for access control or cache deletion
 
@@ -146,26 +144,24 @@ class ap_Object extends AbstractModel {
          * can be specified as array or separated by comma. If $types is not specified
          * all parent objects will be deleted
          */
-        return $this->api->deleteObjects($api->childDQ($dq,$this->id,$types));
+        return $this->api->deleteObj($api->childDQ($dq,$this->id,$types));
     }
-    function deleteParentObj($types=null,$dq=null){
-        /*
-         * This function is similar to deleteChildObjects, but i can't imagine a
-         * situation where you would need to delete parents. This function is created
-         * so you never use it. It's a bad style! You should think about changing your
-         * database structure.
-         */
-        return $this->api->deleteObjects($api->parentDQ($dq,$this->id,$types));
+    function deleteObjTree($types=null,$dq=null){
+        // Similar to addChildObj, but will recursively load all object hierarchy.
+        // TODO: test
+        $obj_pool = $this->loadChildObj($types,$dq);
+        foreach($obj_pool as $obj){
+            $obj->deleteObjTree($types,$dq);
+            $obj->destroy();
+        }
     }
     function loadChildObj($types=null,$dq=null){
+        // TODO: test
         $obj_pool=$this->api->genericLoadObj($api->childDQ($dq,$this->id,$types));
         foreach($obj_pool as $obj){
             $this->add($obj);
         }
         return $obj_pool;
-    }
-    function loadParentObj($types=null,$dq=null){
-        return $this->api->genericLoadObj($api->parentDQ($dq,$this->id,$types));
     }
     function loadObjTree($types=null,$dq=null){
         // Similar to addChildObj, but will recursively load all object hierarchy.
@@ -175,13 +171,17 @@ class ap_Object extends AbstractModel {
             $obj->loadObjTree($types,$dq);
         }
     }
-    function addObj($type,$name,$dq=null){
-        /* what is this? */
+    function addChild($obj_type,$rel_type,$name=null,$rel_aux=null){
+        /*
+         * This object creates new object and links it under specified relation type.
+         */
+        $obj = $this->api->createObj($type,$name);
+        $this->api->addRelation($this,$obj,$rel_type,$rel_aux);
+        $this->add($obj);
+        return $obj;
     }
-    function addField($name, $type){
-        if (!$this->fields[$name]){
-            $this->fields[$name]["type"] = $type;
-        }
+    function addField($type, $name){
+        if($this->fields[$name])throw new APortalException("Field $name already exist",$this);
         $this->last_field=$name;
         return $this;
     }

@@ -176,6 +176,7 @@ class DBlite_dsql  {
             }
         }else{
             if($val===array()){
+                if($set===null)return $this;
                 // if 1 argument is specified and is not array, then use it
                 // as-is
                 $this->args['set'][]=$set;

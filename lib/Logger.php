@@ -236,6 +236,7 @@ class Logger extends AbstractController {
         }
         echo "<h2>".get_class($e)."</h2>\n";
         echo '<p><font color=red>' . $e->getMessage() . '</font></p>'; 
+        echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>'; 
         echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>'; 
 
         echo $this->backtrace($e->shift,$e->getMyTrace());
