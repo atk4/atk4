@@ -14,38 +14,39 @@
 class ApiPortal extends ApiWeb {
     /*
      * This class is a 3rd implementation of a-portal concept.
-     *
      */
-    private function loadObjFromArray($arr, $t = null){
+
+    //////////////// Loading ///////////////
+    private function loadObjFromArray($arr){
         /*
          * This function loads Obj by supplied array of data. All we
          * really need to know about object when we are creating it is
-         * it's ID and Type. Based on this data we will be able to pull
-         * additional details if necessary. If name was specified, it
-         * will also be supplied to the object. If not - name will be
-         * just loaded on demand later.
+         * it's ID OR Type. If ID is defined, additional data will be
+         * loaded from database. If only Type is defined, then new object
+         * is created. However new object is NOT saved into database yet.
          *
-         * $t -> container object, $this by default
+         * This function always returns array.
          */
-        $last = null;
+        if(!$arr)return array();
         $result = null;
         foreach ($arr as $row){
             if(!isset($row['type'])){
                 // Perhaps id is specified
-                if(!isset($row['id']))throw new ap_Exception('Must specify either type (for new objects) or id (if you want to load type)');
+                if(!isset($row['id']))throw new APortalException('Must specify either type (for new objects) or id (if you want to load type)');
 
                 $row['type']=$this->api->db->dsql()
                     ->table('obj')
                     ->field('type')
                     ->where('id',$row['id'])
                     ->getOne();
-
+                if(!$row['type'])throw new APortalException('Unable to initialize object with ID='.$row['id'].'. It was not found in database.');
+                }
                 // TODO: it's inefficient to loop this. Rather should do one select.
             }
             $class = $row['type'];
 
             if(substr($row['type'],0,3)!='ap_'){
-                throw new APortalException("Place A-Portal (ApiPortal) related classes into 'ap' directory");
+                throw new APortalException("Place A-Portal (ApiPortal) related classes into 'ap' directory: $".$row['type']);
             }
             $class = $row['type'];
             $last = new $class;
@@ -62,38 +63,35 @@ class ApiPortal extends ApiWeb {
                     case'type':$last->type=$val;break;
                     case'aux':$last->aux=$val;break;
                     default:
-                               $last->data[$key]=$val;
+                               $last->set($key,$val);
                 }
             }
-            $result[] = $last;
+            $result[]=$last;
         }
-        if (count($result) == 1){
-            return $last;
-        } else {
-            return $result; //array of child object pointers
-        }
+        return $result;
     }
-    public function genericLoadObj($dq, $t = null){
+    public function genericLoadObj($dq){
         /*
-         * This function creates object as a child of current object.
-         * Normally you should call loadObj like this:
+         * This function loads object based on specified dynamic query. Before
+         * using this function, look at wrappers such as loadChildObj.
+         *
+         * This function always returns array of objects, even if only one
+         * was loaded or empty array if no object matched.
+         *
+         * If you want to load a single object, use
          *
          *  $this->api->loadObj($id);
-         *
-         * However if you want to load multiple objects or if you want
-         * to specify different field to use for loading, you can use
-         * this funciton.
          *
          * $dq may be initialized with "where", "join" and "limit", however
          * main table will be "obj". Here is sample:
          *
-         *  $o=$api->genericLoadObj(
+         *  $acc = $api->genericLoadObj(
          *      $api->db->dsql()
          *          ->join('account','account.id=obj.id')
-         *          ->where('account.name',$_GET['login']);
+         *          ->where('account.name',$_GET['login']));
          *
-         * This function will object ID or array of objects, if several matches
-         * your criteria
+         *  if(!$acc) login_failed();
+         *  $acc=shift($acc);
          */
         $limit = 0;
         $dq
@@ -102,21 +100,113 @@ class ApiPortal extends ApiWeb {
             ->field('obj.type type')
             ->field('obj.name name');
 
-        if ($limit){
-            $dq->limit($limit);
-        }
         $arr = $dq->do_getAllHash();
-        return $this->loadObjFromArray($arr, $t);
+        return $this->loadObjFromArray($arr);
     }
-    function deleteObj($dq){
+    public function loadObj($id){
         /*
-        * Delete using $dq why do we need it?
-        * */
+         * Loads object into memory based on $id only.
+         */
+        if (!(int)$id) throw new APortalException("You must specify ID to loadObj. Specified: '$id'");
+        $result = $this->genericLoadObj(
+                $this->api->db->dsql()
+                ->where('obj.id', $id)
+                );
+        if(!$result) throw new APortalException("Object with specified ID was not found: '$id'");
+        return $result[0];
+    }
+
+    //////////////// Deletion ///////////////
+    function genericDeleteObj($dq){
+        /*
+         * This function deletes object based on dynamic query. Before using
+         * it, check if there are any wrapper such as deleteChildObj. If you
+         * want to delete single object use deleteObj($id)
+         */
         $obj_pool = $this->genericLoadObj($dq);
         foreach($obj_pool as $obj){
             $obj->destroy();
         }
     }
+    public function loadObj($id){
+        /*
+         * Delete object with specified $id
+         */
+        if (!(int)$id) throw new APortalException("You must specify ID to loadObj. Specified: '$id'");
+        $this->loadObj($id)->destroy();
+    }
+    function deleteRel($parent = null, $child = null, $types=null, $dq=null){
+        if(!$parent && !$child)throw new ap_Exception("Either parent or child must be specified for delete Relation");
+
+        if(!$dq)$dq=$this->db->dsql();
+        $dq->table('rel');
+
+        if(is_object($parent))$parent=$parent->id;
+        if(is_object($child))$child=$child->id;
+        $types=$this->convertTypes($types);
+
+        if (isset($parent)){
+            $dq->where('parent', $parent);
+        }
+        if (isset($child)){
+            $dq->where('child', $child);
+        }
+        if (isset($type)){
+            $dq->where('type in ('.$type.')');
+        }
+        return $dq->do_delete();
+    }
+
+    //////////////// Creating things //////////////
+    function createObj($type, $name=null){
+        /*
+         * This function will create new object with specified type
+         * and save it to database. No relation will be made. If you are
+         * willing to relate object with any other object use 
+         * $obj -> addChild();
+         */
+        
+        $obj_data = array(0 =>
+                array(
+                    'type'=>$type,
+                    'name'=>$name
+                )
+        );
+        $obj=$this->loadObjFromArray($obj_data);
+
+        // Now let's initialize object's ID by saving object into database
+        $obj->_create();
+
+        return $obj;    
+    }
+    function createRel($parent, $child, $type, $aux = null){
+        /*
+         * Creates new relation between 2 objects. You can either specify
+         * objects or IDs
+         */
+        if(is_object($parent))$parent=$parent->id;
+        if(is_object($child))$child=$child->id;
+        $dq = $this->db->dsql();
+        if(!$dq
+                ->table('rel')
+                ->field('id')
+                ->where('parent', $parent)
+                ->where('child', $child)
+                ->where('type', $type)->do_getOne()){
+            $dq->set(
+                    array(
+                        'parent' => $parent,
+                        'child' => $child,
+                        'type' => $type,
+                        'aux' => $aux
+                        )
+                    )->do_insert();
+            return true;
+        }
+
+    }
+
+    //////////////// Supplementary functions ///////////////
     function childDQ($dq,$id,$types=null){
         /*
          * This function modifies $dq object, so that only children of specified $id
@@ -147,164 +237,16 @@ class ApiPortal extends ApiWeb {
         if($types)$dq->where("autorel.type in (".$types.")");
         return $dq;
     }
-    public function loadObj($id){
-        /*
-         * Loads object into memory based on $id only
-         */
-        if (!(int)$id) throw new APortalException("You must specify ID to loadObj. Specified: '$id'");
-        return $this->genericLoadObj(
-                $this->api->db->dsql()
-                ->where('obj.id', $id)
-                );
-    }
-    public function createObj($type, $name=null){
-        /*
-         * This function will add an object to the main object table, will load
-         * it and will call create method on the particular object
-         */
-        
-        $obj_data = array(0 =>
-                array(
-                    'type'=>$type,
-                    'name'=>$name
-                )
-        );
-        $obj=$this->loadObjFromArray($obj_data);
-        $obj->_create();
-
-        return $obj;    
-    }
-    /*
-     * the following functions were moved to ap_Obj by romans
-     *
-    public function delObj($obj, $deep = null){
-        if ($deep){
-            $childs = $this->loadChilds($obj);
-            if ($childs){
-                if (is_array($childs)){  
-                    foreach ($childs as $childPtr){
-                        $this->delObj($childPtr, $deep);
-                    }
-                } else {
-                    $this->delObj($childs, $deep);
-                }
-            }
-        }
-        
-        $obj->切腹(); // experimental wrapper for $obj->harakiri();
-        $this->db->query(
-            $this->db->dsql()
-            ->table('obj')
-            ->where('obj.id', $obj->id)
-            ->delete()
-        );
-        $this->delRel($obj, null, null);
-        $this->delRel(null, $obj, null);
-        /*
-        * Remove $obj from object tree
-        *
-        * Proposal - have something like drop() in the AbstractObject
-        * reverse for add()
-        *
-        * Following is sort of a hack
-        
-        unset($this->elements[$obj->short_name]);
-        return true;
-    }
-    */
-    function addRelation($parent, $child, $type, $aux = null){
-        /*
-         * to add child for a parent, auto check for dublicate entries
-         */
-        if(is_object($parent))$parent=$parent->id;
-        if(is_object($child))$child=$child->id;
-        $dq = $this->db->dsql();
-        if(!$dq
-                ->table('rel')
-                ->field('id')
-                ->where('parent', $parent)
-                ->where('child', $child)
-                ->where('type', $type)->do_getOne()){
-            $dq->set(
-                    array(
-                        'parent' => $parent,
-                        'child' => $child,
-                        'type' => $type,
-                        'aux' => $aux
-                        )
-                    )->do_insert();
-            return true;
-        }
-
-    }
     function convertTypes($type=null){
+        /*
+         * When function accepts argument $types, you can normally specify
+         * coma-separate types or specify array. This function converts
+         * them into SQL-friendly format
+         */
         if(!$type)return $type;
         if(is_array($type))$type=join(',',$type);
         $type=addslashes($type);
         $type=str_replace($type,',','","');
+        return $type;
     }
-
-    function deleteRelation($parent = null, $child = null, $type=null, $dq=null){
-        if(!$parent && !$child)throw new ap_Exception("Either parent or child must be specified for deleteRelation");
-
-        if(!$dq)$dq=$this->db->dsql();
-        $dq->table('rel');
-
-        if(is_object($parent))$parent=$parent->id;
-        if(is_object($child))$child=$child->id;
-        $type=$this->convertTypes();
-
-        if (isset($parent)){
-            $dq->where('parent', $parent);
-        }
-        if (isset($child)){
-            $dq->where('child', $child);
-        }
-        if (isset($type)){
-            $dq->where('type in ('.$type.')');
-        }
-        return $dq->do_delete();
-    }
-    /*
-    public function loadChilds($parent, $dq=null){
-        /*
-         * This function will load all childs of a 
-        * this will load all childs for given parent with necessary rel type
-        if(is_object($parent))$parent=$parent->id;
-        $dq=$this->db->dsql()
-            ->table('obj')
-            ->field(array('rel.aux', 'rel.type'))
-            ->join('rel','rel.child=obj.id')
-            ->where('rel.parent',$parent)
-            ;
-        if(!empty($rel_type)){
-            $dq->where('rel.type',$rel_type);
-        }
-        return $this->genericLoadObj($dq, 0);
-    }
-    */
 }
-
-/*
- * Conclusion...
- *  - create generic object class AbstractObject. It should be inherited
- *    from AbstractModel.
- *  - libraries for ApiPortal should be located in subdirectory aportal. You
- *    need to add include path. See lib/Namespace.php:init(). It
- *    gives you example how to include new directory into include path.
- *    Only exception is the class ApiPortal itself, which may stay outside.
- *  - Class (or object type) should have information about field type.
- *    do not add many types yet, just a few. Create them as array, NOT
- *    as sub-objects. This array will be used when form is displayed,
- *    or when we create table (in the future).
- *    
- *
- *  Stick to V1.0 of VPBX , as we don't need a lot of functional features
- *  at this point.
- *
- * Deadline for this project is in 2 weeks - friday, September 8. I will have
- * to demonstrate project to client on monday. weekend (9,10 sep) is for
- * reserve.
- *
- */
-?>
