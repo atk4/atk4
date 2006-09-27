@@ -11,7 +11,7 @@ class ap_Object extends AbstractModel {
     var $id;            //the id of the current object
     var $type=null;     //field type, set by ApiPortal
     var $data=null;     //additional object data as associative array
-    var $fields;        //object fields
+    var $fields=array();        //object fields
 
     var $table_name=null;
     var $last_field=null;
@@ -171,6 +171,12 @@ class ap_Object extends AbstractModel {
         }
         return $obj_pool;
     }
+    function loadOneChild($types=null,$dq=null){
+        $obj_pool = $this->loadChild($types,$dq);
+        if(count($obj_pool)>1)throw new APortalException("Only one child relation of type $types is allowed",$this);
+        if(!$obj_pool)return null;
+        return $obj_pool[0];
+    }
     function loadObjTree($types=null,$dq=null){
         // Similar to addChild, but will recursively load all object hierarchy.
         $obj_pool = $this->loadChild($types,$dq);
@@ -277,7 +283,7 @@ class ap_Object extends AbstractModel {
                     unset($existing_fields[$field]);
                 }
             }
-            if ($existing_fields){
+            if (!empty($existing_fields)){
                 foreach ($existing_fields as $field => $field_data){
                     echo "Dropping non-existing field\n";
                     $this->api->db->getOne("alter table " . $this->table_name . " drop $field");
