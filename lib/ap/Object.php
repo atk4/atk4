@@ -187,6 +187,7 @@ class ap_Object extends AbstractModel {
     }
     function addField($type, $name){
         if($this->fields[$name])throw new APortalException("Field $name already exist",$this);
+        $this->fields[$name]["type"] = $type;
         $this->last_field=$name;
         return $this;
     }
@@ -212,7 +213,7 @@ class ap_Object extends AbstractModel {
             * create container first
             * */
             $query = "create table " . $this->table_name . " (";
-            $query .= "id int not null";
+            $query .= "id int not null primary key";
             foreach ($this->fields as $field => $properties){
                 $query .= ", $field " . $sql_type[$properties["type"]];
                 if ($tmp = $properties["key"]){
