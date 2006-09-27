@@ -54,6 +54,7 @@ class ApiPortal extends ApiWeb {
                 switch($key){
                     case'id':$last->id=$val;break;
                     case'name':$last->name=$val;break;
+                    case'type':$last->type=$val;break;
                     default:
                                $last->data[$key]=$val;
                 }

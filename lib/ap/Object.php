@@ -22,8 +22,6 @@ class ap_Object extends AbstractModel {
         /* No! It must have ID field as well as storage Name */
 
         $this->table_name = get_class($this);
-        $this->addField("id", "int");
-
     }
     function _create($dq=null){
         /*
@@ -67,16 +65,22 @@ class ap_Object extends AbstractModel {
         if(!$this->id)throw new ap_Exception("Cannot save object without ID. Call ->create() first",$this);
         if(isset($this->data['id']))throw new ap_Exception("You may not use 'id' as a field. It's for system only",$this);
         if(!$dq) $dq = $this->api->db->dsql();
+        if(!$this->data){
+            return $this;
+        }
         try {
             $id=$dq
                 ->table($this->table_name)
-                ->set('id',$this->id)
                 ->set($this->data)
                 ->do_update(); //faster and better than replace
         } catch (SQLException $e){
             // let's try to create table
             $this->create_table();
-            $dq->do_insert();
+            try {
+                $dq->do_insert();
+            } catch (SQLException $e){
+                echo "could not insert? " . $dq->insert();
+            }
         }
         return $this;
     }
@@ -219,7 +223,7 @@ class ap_Object extends AbstractModel {
             /* check if all fields are there */
             $fields = $this->api->db->getAll("show fields from " . $this->table_name);
             foreach ($fields as $field){
-                if ($field != "id"){
+                if ($field[0] != "id"){
                     $existing_fields[$field["0"]] = $field;
                 }
             }
