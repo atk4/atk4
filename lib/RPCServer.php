@@ -47,7 +47,7 @@ class RPCServer extends AbstractController {
             $result = call_user_func_array(array($this->handler,$method),$args);
 
             echo 'AMRPC'.serialize($result);
-        }catch(BaseException $e){
+        }catch(UserException $e){
             echo 'AMRPC'.serialize($e);
         }
     }

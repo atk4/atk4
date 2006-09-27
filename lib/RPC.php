@@ -81,7 +81,7 @@ class RPC extends AbstractController {
             throw new OldRPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
         }
         elseif(substr($response,0,5)!='AMRPC'){
-            throw new BaseException("Fatal error on remote end: ".$response);
+            throw new UserException("Fatal error on remote end: ".$response);
         }
 
         $response=unserialize(substr($response,5));
@@ -90,7 +90,7 @@ class RPC extends AbstractController {
             // it was really an error
             throw new RPCException("Couldn't connect to handler URL");
         }*///I think it was not error. For example remote function could return false
-        if($response instanceof BaseException){
+        if($response instanceof UserException){
             throw $response;    // if exception was raised on other end - we just raise it again
         }
         return $response;
