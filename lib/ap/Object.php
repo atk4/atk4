@@ -150,16 +150,21 @@ class ap_Object extends AbstractModel {
         // Similar to addChildObj, but will recursively load all object hierarchy.
         // TODO: test
         $obj_pool = $this->loadChildObj($types,$dq);
-        foreach($obj_pool as $obj){
-            $obj->deleteObjTree($types,$dq);
-            $obj->destroy();
+        if (!empty($obj_pool)){
+            foreach($obj_pool as $obj){
+                $obj->deleteObjTree($types,$dq);
+            }
         }
+        $this->destroy();
     }
     function loadChildObj($types=null,$dq=null){
         // TODO: test
-        $obj_pool=$this->api->genericLoadObj($api->childDQ($dq,$this->id,$types));
-        foreach($obj_pool as $obj){
-            $this->add($obj);
+        $obj_pool=$this->api->genericLoadObj($this->api->childDQ($dq,$this->id,$types));
+        if(is_object($obj_pool))$obj_pool=array($obj_pool);
+        if (!empty($obj_pool)){
+            foreach($obj_pool as $obj){
+                $this->add($obj);
+            }
         }
         return $obj_pool;
     }
@@ -171,11 +176,11 @@ class ap_Object extends AbstractModel {
             $obj->loadObjTree($types,$dq);
         }
     }
-    function addChild($obj_type,$rel_type,$name=null,$rel_aux=null){
+    function addChild($obj_type,$rel_type,$rel_aux=null,$name=null){
         /*
          * This object creates new object and links it under specified relation type.
          */
-        $obj = $this->api->createObj($type,$name);
+        $obj = $this->api->createObj($obj_type,$name);
         $this->api->addRelation($this,$obj,$rel_type,$rel_aux);
         $this->add($obj);
         return $obj;

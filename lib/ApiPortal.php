@@ -28,7 +28,7 @@ class ApiPortal extends ApiWeb {
          * $t -> container object, $this by default
          */
         $last = null;
-        $result = array();
+        $result = null;
         foreach ($arr as $row){
             if(!isset($row['type'])){
                 // Perhaps id is specified
@@ -60,6 +60,7 @@ class ApiPortal extends ApiWeb {
                     case'id':$last->id=$val;break;
                     case'name':$last->name=$val;break;
                     case'type':$last->type=$val;break;
+                    case'aux':$last->aux=$val;break;
                     default:
                                $last->data[$key]=$val;
                 }
@@ -94,6 +95,7 @@ class ApiPortal extends ApiWeb {
          * This function will object ID or array of objects, if several matches
          * your criteria
          */
+        $limit = 0;
         $dq
             ->table('obj')
             ->field('obj.id id')
@@ -124,8 +126,9 @@ class ApiPortal extends ApiWeb {
         if(!$dq)$dq=$this->api->db->dsql();
         $types=$this->api->convertTypes($types);
         $dq
+            ->field('autorel.aux aux')
             ->join('rel autorel',"autorel.child=obj.id")
-            ->where('autorel.parent',$this->id);
+            ->where('autorel.parent',$id);
 
         if($types)$dq->where("autorel.type in (".$types.")");
         return $dq;
@@ -215,7 +218,8 @@ class ApiPortal extends ApiWeb {
          */
         if(is_object($parent))$parent=$parent->id;
         if(is_object($child))$child=$child->id;
-        if(!$this->db->dsql()
+        $dq = $this->db->dsql();
+        if(!$dq
                 ->table('rel')
                 ->field('id')
                 ->where('parent', $parent)
@@ -237,7 +241,7 @@ class ApiPortal extends ApiWeb {
         if(!$type)return $type;
         if(is_array($type))$type=join(',',$type);
         $type=addslashes($type);
-        $type=str_replace(',','","');
+        $type=str_replace($type,',','","');
     }
 
     function deleteRelation($parent = null, $child = null, $type=null, $dq=null){
