@@ -40,7 +40,6 @@ class ApiPortal extends ApiWeb {
                     ->where('id',$row['id'])
                     ->getOne();
                 if(!$row['type'])throw new APortalException('Unable to initialize object with ID='.$row['id'].'. It was not found in database.');
-                }
                 // TODO: it's inefficient to loop this. Rather should do one select.
             }
             $class = $row['type'];
@@ -128,7 +127,7 @@ class ApiPortal extends ApiWeb {
             $obj->destroy();
         }
     }
-    public function loadObj($id){
+    public function deleteObj($id){
         /*
          * Delete object with specified $id
          */
@@ -172,7 +171,7 @@ class ApiPortal extends ApiWeb {
                     'name'=>$name
                 )
         );
-        $obj=$this->loadObjFromArray($obj_data);
+        list($obj)=$this->loadObjFromArray($obj_data);
 
         // Now let's initialize object's ID by saving object into database
         $obj->_create();

@@ -127,7 +127,7 @@ class ap_Object extends AbstractModel {
         } else if (isset($types)){
             $type = $types;
         }
-        $this->api->deleteRelation($this,null,$type,$dq);
+        $this->api->deleteRel($this,null,$type,$dq);
     }
     function deleteParentRelation($types=null,$dq=null){
         $type = null;
@@ -136,7 +136,7 @@ class ap_Object extends AbstractModel {
         } else if (isset($types)){
             $type = $types;
         }
-        $this->api->deleteRelation(null,$this,$type,$dq);
+        $this->api->deleteRel(null,$this,$type,$dq);
     }
     function deleteChildObj($type=null,$dq=null){
         /*
@@ -181,7 +181,7 @@ class ap_Object extends AbstractModel {
          * This object creates new object and links it under specified relation type.
          */
         $obj = $this->api->createObj($obj_type,$name);
-        $this->api->addRelation($this,$obj,$rel_type,$rel_aux);
+        $this->api->createRel($this,$obj,$rel_type,$rel_aux);
         $this->add($obj);
         return $obj;
     }
