@@ -91,7 +91,7 @@ class ap_Object extends AbstractModel {
         $this->data = $dq
             ->table($this->table_name)
             ->field($this->table_name.'.*')
-            ->where('id',$id)
+            ->where('id',$this->id)
             ->do_getHash();
         unset($this->data['id']);
         return $this;
@@ -145,14 +145,14 @@ class ap_Object extends AbstractModel {
          */
         return $this->api->deleteObj($api->childDQ($dq,$this->id,$types));
     }
-    function deleteObjTree($types,$dq=null){
+    function deleteObjTree($types=null,$dq=null){
         // Similar to deleteChild, but will recursively delete all object hierarchy.
         // You should limit by specifying list of allowed types.
         //
         // For your safety - $types is required by this function. Always list allowed
         // types to avoid disaster just because someone added a new relation type
         // with incorrect linknig
-        $obj_pool = $this->loadChildObj($types,$dq);
+        $obj_pool = $this->loadChild($types,$dq);
         foreach($obj_pool as $obj){
             $obj->deleteObjTree($types,$dq);
         }
@@ -173,7 +173,7 @@ class ap_Object extends AbstractModel {
     }
     function loadObjTree($types=null,$dq=null){
         // Similar to addChild, but will recursively load all object hierarchy.
-        $obj_pool = $this->loadChildObj($types,$dq);
+        $obj_pool = $this->loadChild($types,$dq);
         foreach($obj_pool as $obj){
             $this->add($obj);
             $obj->loadObjTree($types,$dq);
@@ -203,7 +203,7 @@ class ap_Object extends AbstractModel {
         }
 
         // Do not set unexistant fields
-        if(!isset($this->field[$field_or_array]))return $this;
+        if(!isset($this->fields[$field_or_array])){echo "no such field $field_or_array"; return $this;}
         $this->data[$field_or_array]=$value;
 
         return $this;

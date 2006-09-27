@@ -100,7 +100,11 @@ class ApiPortal extends ApiWeb {
             ->field('obj.name name');
 
         $arr = $dq->do_getAllHash();
-        return $this->loadObjFromArray($arr);
+        $obj_pool = $this->loadObjFromArray($arr);
+        foreach ($obj_pool as $obj){
+            $obj->load();
+        }
+        return $obj_pool;
     }
     public function loadObj($id){
         /*
