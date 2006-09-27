@@ -8,44 +8,48 @@
 * romans@adevel.com
 * */
 class ap_Object extends AbstractModel {
-    var $data=null; //additional object data as associative array
-    var $type=null; //field type, set by ApiPortal
-    var $last_field=null;
+    var $id;            //the id of the current object
+    var $type=null;     //field type, set by ApiPortal
+    var $data=null;     //additional object data as associative array
+    var $fields;        //object fields
+
     var $table_name=null;
-    var $fields; //object fields
-    var $id; //the id of the current object
+    var $last_field=null;
+
+
+    //////////////////////// Core functions /////////////////////
     function init(){
+        /*
+         * Redefine this object, call parent then use addField to specify which fields
+         * you are going to use
+         */
         parent::init();
-
-        // Nothing to initialize for generic object
-        
-        /* No! It must have ID field as well as storage Name */
-
         $this->table_name = get_class($this);
     }
-    function _create($dq=null){
+    function create($dq=null){
         /*
          * create object in database, without saving actual data. Called by Api->createObj
+         *
+         * If you throw some $dq->set on the specified argument, those will be inserted
+         * into ssupplementary table
          */
-        if($this->id)throw new ap_Exception("Object already have ID, cannot create",$this);
+        if($this->id)throw new APortalException("Object already have ID, cannot create again",$this);
         
-        if(!$dq)$dq = $this->api->db->dsql();
-        $dq->set('type',$this->type);
-        $dq->set('name',$this->name);
-        /*
-         * won't work if $dq with table been set is passed
-         * so, let's set it manualy
-         * */
-        $dq->table("obj");
-        /* */
-        $this->id = $dq->do_insert();
+        // First we are going to create entry in obj table
+        $dq_obj = $this->api->db->dsql();
+        $dq_obj->set('type',$this->type);
+        $dq_obj->set('name',$this->name);
+        $dq_obj->table("obj");
+        $this->id = $dq_obj->do_insert();
 
-        $dq=$this->prepareSave();
+        // Now we are creating entry in supplementary table
+        $dq=$this->prepareSave($dq);
         $dq->set('id',$this->id);
         try {
             $id=$dq->do_replace();
         } catch (SQLException $e){
-            $this->create_table();
+            // Perhaps table does not exist. We will try to create it and repeat query.
+            $this->createTable();
             $dq->do_replace();
         }
 
@@ -55,11 +59,11 @@ class ap_Object extends AbstractModel {
     }
     function prepareSave($dq=null){
         /*
-         * Saves this object. Do this after you modify fields
+         * Prepares dynamic query for saving. You may redeclare this object
          */
-        if(!$this->id)throw new ap_Exception("Cannot save object without ID. Call ->create() first",$this);
-        if(isset($this->data['id']))throw new ap_Exception("You may not use 'id' as a field. It's for system only",$this);
-        if(!$dq) $dq = $this->api->db->dsql();
+        if(!$this->id)throw new APortalException("Cannot save object without ID. Call ->create() instead",$this);
+        if(isset($this->data['id']))throw new APortalException("You may not use 'id' as a field. It's for system use only",$this);
+        if(!$dq)$dq=$this->api->db->dsql();
 
         $dq->where('id',$this->id);
 
@@ -74,7 +78,7 @@ class ap_Object extends AbstractModel {
             $id=$dq->do_update(); //faster and better than replace
         } catch (SQLException $e){
             // let's try to create table
-            $this->create_table();
+            $this->createTable();
 
             $dq->set('id',$this->id);
             $dq->do_replace();
@@ -82,9 +86,8 @@ class ap_Object extends AbstractModel {
         return $this;
     }
     function load($dq=null){
-        if(!$this->id)throw new ap_Exception("Cannot load object without ID. Use ".'$'."api->loadObj()",$this);
+        if(!$this->id)throw new APortalException("Cannot load object without ID. Use ".'$'."api->loadObj()",$this);
         if(!$dq)$dq = $this->api->db->dsql();
-        // TODO - should we use hash_filter with $this->fields here?????
         $this->data = $dq
             ->table($this->table_name)
             ->field($this->table_name.'.*')
@@ -105,8 +108,8 @@ class ap_Object extends AbstractModel {
         $this->hook('destroy'); // can be used for access control or cache deletion
 
         // STEP1 - destroy relations
-        $this->deleteParentRelation();
-        $this->deleteChildRelation();
+        $this->api->deleteRel($this,null);
+        $this->api->deleteRel(null,$this);
 
         // STEP2 - destroy supplimentary table entry
         $this->api->db->dsql()
@@ -120,89 +123,119 @@ class ap_Object extends AbstractModel {
             ->where('id',$this->id)
             ->do_delete();
     }
-    function deleteChildRelation($types=null,$dq=null){
-        $type = null;
-        if (is_array($types)){
-            $type = implode(",", $types);
-        } else if (isset($types)){
-            $type = $types;
-        }
-        $this->api->deleteRel($this,null,$type,$dq);
+
+    //////////////////////// Dealing with relations //////////////////
+    function addChild($obj_type,$rel_type,$rel_aux=null,$name=null,$dq=null){
+        /*
+         * This object creates new object and links it under specified relation type.
+         * Newly created object is returned. Relation type must be specified.
+         * $rel_aux is additional argument to relation, which might be useful in
+         * some cases.
+         */
+        $obj = $this->api->createObj($obj_type,$name,$dq);
+        $this->api->createRel($this,$obj,$rel_type,$rel_aux);
+        $this->add($obj);
+        return $obj;
     }
-    function deleteParentRelation($types=null,$dq=null){
-        $type = null;
-        if (is_array($types)){
-            $type = implode(",", $types);
-        } else if (isset($types)){
-            $type = $types;
-        }
-        $this->api->deleteRel(null,$this,$type,$dq);
-    }
-    function deleteChildObj($type=null,$dq=null){
+    function deleteChild($type=null,$dq=null){
         /*
          * This function deletes child objects of this object. Type names
          * can be specified as array or separated by comma. If $types is not specified
-         * all parent objects will be deleted
+         * all child objects will be deleted.
          */
         return $this->api->deleteObj($api->childDQ($dq,$this->id,$types));
     }
-    function deleteObjTree($types=null,$dq=null){
-        // Similar to addChildObj, but will recursively load all object hierarchy.
-        // TODO: test
+    function deleteObjTree($types,$dq=null){
+        // Similar to deleteChild, but will recursively delete all object hierarchy.
+        // You should limit by specifying list of allowed types.
+        //
+        // For your safety - $types is required by this function. Always list allowed
+        // types to avoid disaster just because someone added a new relation type
+        // with incorrect linknig
         $obj_pool = $this->loadChildObj($types,$dq);
-        if (!empty($obj_pool)){
-            foreach($obj_pool as $obj){
-                $obj->deleteObjTree($types,$dq);
-            }
+        foreach($obj_pool as $obj){
+            $obj->deleteObjTree($types,$dq);
         }
         $this->destroy();
     }
-    function loadChildObj($types=null,$dq=null){
-        // TODO: test
+    function loadChild($types=null,$dq=null){
+        /*
+         * This function loads all childs of a current object which are related
+         * with specified relation type. If type is omitted, all childs are loaded
+         *
+         * Loaded objects are added by $this->add(); so you can use down-calls
+         */
         $obj_pool=$this->api->genericLoadObj($this->api->childDQ($dq,$this->id,$types));
-        if(is_object($obj_pool))$obj_pool=array($obj_pool);
-        if (!empty($obj_pool)){
-            foreach($obj_pool as $obj){
-                $this->add($obj);
-            }
+        foreach($obj_pool as $obj){
+            $this->add($obj);
         }
         return $obj_pool;
     }
     function loadObjTree($types=null,$dq=null){
-        // Similar to addChildObj, but will recursively load all object hierarchy.
+        // Similar to addChild, but will recursively load all object hierarchy.
         $obj_pool = $this->loadChildObj($types,$dq);
         foreach($obj_pool as $obj){
             $this->add($obj);
             $obj->loadObjTree($types,$dq);
         }
+        return $obj_pool;
     }
-    function addChild($obj_type,$rel_type,$rel_aux=null,$name=null){
-        /*
-         * This object creates new object and links it under specified relation type.
-         */
-        $obj = $this->api->createObj($obj_type,$name);
-        $this->api->createRel($this,$obj,$rel_type,$rel_aux);
-        $this->add($obj);
-        return $obj;
-    }
+
+    //////////////////////// Working with object data /////////////////
     function addField($type, $name){
         if($this->fields[$name])throw new APortalException("Field $name already exist",$this);
         $this->fields[$name]["type"] = $type;
         $this->last_field=$name;
         return $this;
     }
-    function setFieldProperty($name, $property, $value){
+    function set($field_or_array,$value=undefined){
+        // We use undefined, because 2nd argument of "null" is meaningfull
+        if($value===undefined){
+            if(is_array($field_or_array)){
+                foreach($field_or_array as $key=>$val){
+                    $this->set($key,$val);
+                }
+                return $this;
+            }else{
+                $value=$field_or_array;
+                $field_or_array=$this->last_field;
+            }
+        }
+
+        // Do not set unexistant fields
+        if(!isset($this->field[$field_or_array]))return $this;
+        $this->data[$field_or_array]=$value;
+
+        return $this;
+    }
+    function get($field=null){
+        if(!$field)return $this->data;
+        return $this->data[$field];
+    }
+
+    //////////////////////// Field properties and SQL table //////////////
+    function setProperty($property,$value=null){
+        /*
+         * This function is useful to call right after adding the filed:
+         *
+         * $this->addField('line','login')->setProperty('not null');
+         */
+        return $this->setFieldProperty($this->last_field,$property,$value);
+    }
+    function setFieldProperty($name, $property, $value=null){
         if (!$this->fields[$name]){
             return null;
         }
         $this->fields[$name][$property] = $value;
         return $this;
     }
-    function setFieldDefault($name, $value){
-        $this->setFieldProperty($name, "default", $value);
-        return $this;
+    function postCreateTable(){
+        /*
+         * Use this function to customize table after it's been created. For example
+         * you can add some exotic indexes.
+         */
     }
-    function create_table(){
+    function createTable(){
         $sql_type = array(
             "int" => "int(11)",
             "line" => "varchar(255)",
@@ -216,15 +249,10 @@ class ap_Object extends AbstractModel {
             $query .= "id int not null primary key";
             foreach ($this->fields as $field => $properties){
                 $query .= ", $field " . $sql_type[$properties["type"]];
-                if ($tmp = $properties["key"]){
-                    $query .= " $tmp key not null";
-                }
-                if ($tmp = $properties["default"]){
-                    $query .= " default '" . $tmp . "'";
-                }
             }
             $query .= ")";
             $this->api->db->query($query);
+            $this->postCreateTable();
         } else {
             /* check if all fields are there */
             $fields = $this->api->db->getAll("show fields from " . $this->table_name);
@@ -256,28 +284,5 @@ class ap_Object extends AbstractModel {
                 }
             }
         }
-    }
-    function set($field_or_array,$value=undefined){
-        // We use undefined, because 2nd argument of "null" is meaningfull
-        if($value===undefined){
-            if(is_array($field_or_array)){
-                foreach($field_or_array as $key=>$val){
-                    $this->set($key,$val);
-                }
-                return $this;
-            }else{
-                $value=$field_or_array;
-                $field_or_array=$this->last_field;
-            }
-        }
-
-        // TODO: handle external field checks here.
-        // TODO: check if field exists
-        $this->data[$field_or_array]=$value;
-
-        return $this;
-    }
-    function get($field){
-        return $this->data[$field];
     }
 }

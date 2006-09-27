@@ -157,7 +157,7 @@ class ApiPortal extends ApiWeb {
     }
 
     //////////////// Creating things //////////////
-    function createObj($type, $name=null){
+    function createObj($type, $name=null,$dq=null){
         /*
          * This function will create new object with specified type
          * and save it to database. No relation will be made. If you are
@@ -174,7 +174,7 @@ class ApiPortal extends ApiWeb {
         list($obj)=$this->loadObjFromArray($obj_data);
 
         // Now let's initialize object's ID by saving object into database
-        $obj->_create();
+        $obj->create($dq);
 
         return $obj;    
     }
