@@ -89,7 +89,6 @@ abstract class AbstractObject {
         }
 
         $element->init();
-
         return $element;
     }
 

@@ -16,7 +16,7 @@ class ApiPortal extends ApiWeb {
      * This class is a 3rd implementation of a-portal concept.
      *
      */
-    private function loadObjFromArray($arr){
+    private function loadObjFromArray($arr, $t = null){
         /*
          * This function loads Obj by supplied array of data. All we
          * really need to know about object when we are creating it is
@@ -25,7 +25,7 @@ class ApiPortal extends ApiWeb {
          * will also be supplied to the object. If not - name will be
          * just loaded on demand later.
          *
-         * $t -> container object
+         * $t -> container object, $this by default
          */
         $last = null;
         $result = array();
@@ -42,8 +42,8 @@ class ApiPortal extends ApiWeb {
 
                 // TODO: it's inefficient to loop this. Rather should do one select.
             }
-            $class = 'ap_'.$row['type'];
-            $last = new $class;
+            $class = $row['type'];
+            $last = $t?$t->add($class):$this->add($class);
 
             $last->owner=$this;
             $last->api=$this;
@@ -56,6 +56,7 @@ class ApiPortal extends ApiWeb {
                     case'name':$last->name=$val;break;
                     default:
                                $last->data[$key]=$val;
+                }
             }
             $result[] = $last;
         }
@@ -65,7 +66,7 @@ class ApiPortal extends ApiWeb {
             return $result; //array of child object pointers
         }
     }
-    public function genericLoadObj($dq){
+    public function genericLoadObj($dq, $t = null){
         /*
          * This function creates object as a child of current object.
          * Normally you should call loadObj like this:
@@ -97,9 +98,12 @@ class ApiPortal extends ApiWeb {
             $dq->limit($limit);
         }
         $arr = $dq->do_getAllHash();
-        return $this->loadObjFromArray($arr);
+        return $this->loadObjFromArray($arr, $t);
     }
     function deleteObj($dq){
+        /*
+        * Delete using $dq why do we need it?
+        * */
         $obj_pool = $this->genericLoadObj($dq);
         foreach($obj_pool as $obj){
             $obj->destroy();
@@ -140,7 +144,9 @@ class ApiPortal extends ApiWeb {
         // specified relation types will be followed.
         //
         // $root can be either ID or object itself
-
+        
+        /* NOT FINISHED, NOT USABLE */
+        
         $to_delete = $root;
         if(!is_object($root))$root=$this->loadObj($root);
 
@@ -164,13 +170,16 @@ class ApiPortal extends ApiWeb {
          * This function will add an object to the main object table, will load
          * it and will call create method on the particular object
          */
+        
+        /* why we need dq? */
+        
         if(!$dq)$dq=$this->db->dsql();
-
-        $obj_data = array(
-                'type'=>$type,
-                'name'=>$name
-                );
-
+        $obj_data = array(0 =>
+                array(
+                    'type'=>$type,
+                    'name'=>$name
+                )
+        );
         $obj=$this->loadObjFromArray($obj_data);
         $obj->_create();
 
@@ -266,7 +275,7 @@ class ApiPortal extends ApiWeb {
         if (isset($type)){
             $dq->where('type in ('.$type.')');
         }
-        return $db->do_delete();
+        return $dq->do_delete();
     }
     /*
     public function loadChilds($parent, $dq=null){

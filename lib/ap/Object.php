@@ -9,30 +9,55 @@
 * */
 class ap_Object extends AbstractModel {
     var $data=null; //additional object data as associative array
-
+    var $type=null; //field type, set by ApiPortal
     var $last_field=null;
+    var $table_name=null;
     var $fields; //object fields
     var $id; //the id of the current object
     function init(){
         parent::init();
 
         // Nothing to initialize for generic object
+        
+        /* No! It must have ID field as well as storage Name */
+
+        $this->table_name = get_class($this);
+        $this->addField("id", "int");
+
     }
     function _create($dq=null){
         /*
          * create object in database, without saving actual data. Called by Api->createObj
          */
         if($this->id)throw new ap_Exception("Object already have ID, cannot create",$this);
-        if(!$dq)$dq=>this->api->db->dsql();
-
+        
+        if(!$dq)$dq = $this->api->db->dsql();
         $dq->set('type',$this->type);
         $dq->set('name',$this->name);
-            
-        $this->id = $dq->dq_insert();
-
+        /*
+         * won't work if $dq with table been set is passed
+         * so, let's set it manualy
+         * */
+        $dq->table("obj");
+        /* */
+        $this->id = $dq->do_insert();
+        
+        /* Do insert in the suplementary table */
+        $dq = $this->api->db->dsql()->table($this->table_name);
+        $dq->set("id", $this->id); //agreed on hard-coded solution
+        foreach ($this->fields as $field => $properties){
+            if ($tmp = $properties["default"]){
+                $dq->set($field, $tmp);
+            }
+        }
+        try {
+            $dq->do_insert();
+        } catch (SQLException $e){
+            $this->create_table();
+            $dq->do_insert();
+        }
         $this->name='Object #'.$this->name;
         $this->short_name='obj_'.$this->name;
-
         return $this;
     }
     function save($dq=null){
@@ -41,23 +66,23 @@ class ap_Object extends AbstractModel {
          */
         if(!$this->id)throw new ap_Exception("Cannot save object without ID. Call ->create() first",$this);
         if(isset($this->data['id']))throw new ap_Exception("You may not use 'id' as a field. It's for system only",$this);
-        if(!$dq)$dq=>this->api->db->dsql();
+        if(!$dq) $dq = $this->api->db->dsql();
         try {
             $id=$dq
                 ->table($this->table_name)
                 ->set('id',$this->id)
                 ->set($this->data)
-                ->do_replace();
-        }catch(SQLException $e){
+                ->do_update(); //faster and better than replace
+        } catch (SQLException $e){
             // let's try to create table
-            $this->createTable();
-            $dq->do_replace();
+            $this->create_table();
+            $dq->do_insert();
         }
         return $this;
     }
     function load($dq=null){
         if(!$this->id)throw new ap_Exception("Cannot load object without ID. Use ".'$'."api->loadObj()",$this);
-        if(!$dq)$dq=>this->api->db->dsql();
+        if(!$dq)$dq = $this->api->db->dsql();
         // TODO - should we use hash_filter with $this->fields here?????
         $this->data = $dq
             ->table($this->table_name)
@@ -93,10 +118,22 @@ class ap_Object extends AbstractModel {
             ->where('id',$this->id)
             ->do_delete();
     }
-    function deleteChildRelation($types,$dq=null){
+    function deleteChildRelation($types=null,$dq=null){
+        $type = null;
+        if (is_array($types)){
+            $type = implode(",", $types);
+        } else if (isset($types)){
+            $type = $types;
+        }
         $this->api->deleteRelation($this,null,$type,$dq);
     }
-    function deleteParentRelation($types,$dq=null){
+    function deleteParentRelation($types=null,$dq=null){
+        $type = null;
+        if (is_array($types)){
+            $type = implode(",", $types);
+        } else if (isset($types)){
+            $type = $types;
+        }
         $this->api->deleteRelation(null,$this,$type,$dq);
     }
     function deleteChildObj($type=null,$dq=null){
@@ -135,6 +172,7 @@ class ap_Object extends AbstractModel {
         }
     }
     function addObj($type,$name,$dq=null){
+        /* what is this? */
     }
     function addField($name, $type){
         if (!$this->fields[$name]){
@@ -160,18 +198,14 @@ class ap_Object extends AbstractModel {
             "line" => "varchar(255)",
             "text" => "blob"
         );
-        if (!$this->db->getOne("show tables like '" . $this->table_name . "'")){
+        if (!$this->api->db->getOne("show tables like '" . $this->table_name . "'")){
             /*
             * create container first
             * */
-            $counter = 0;
             $query = "create table " . $this->table_name . " (";
+            $query .= "id int not null";
             foreach ($this->fields as $field => $properties){
-                if ($counter){
-                    $query .= ",";
-                }
-                $counter++;
-                $query .= "$field " . $sql_type[$properties["type"]];
+                $query .= ", $field " . $sql_type[$properties["type"]];
                 if ($tmp = $properties["key"]){
                     $query .= " $tmp key not null";
                 }
@@ -180,24 +214,26 @@ class ap_Object extends AbstractModel {
                 }
             }
             $query .= ")";
-            $this->db->query($query);
+            $this->api->db->query($query);
         } else {
             /* check if all fields are there */
-            $fields = $this->db->getAll("show fields from " . $this->table_name);
+            $fields = $this->api->db->getAll("show fields from " . $this->table_name);
             foreach ($fields as $field){
-                $existing_fields[$field["0"]] = $field;
+                if ($field != "id"){
+                    $existing_fields[$field["0"]] = $field;
+                }
             }
             foreach ($this->fields as $field => $properties){
                 $default = $properties["default"];
                 if (!$existing_fields[$field]){
                     /* new field, add it */
                     echo "Adding new field\n";
-                    $this->db->getOne("alter table " . $this->table_name . " add " . $field . " " . $sql_type[$properties["type"]] . ($default?" default " . $default:""));
+                    $this->api->db->getOne("alter table " . $this->table_name . " add " . $field . " " . $sql_type[$properties["type"]] . ($default?" default " . $default:""));
                 } else if ($existing_fields[$field][1] != $sql_type[$properties["type"]]){
                     /* change type */
                     echo "Changing type for $field\n";
                     echo $existing_fields[$field][1] . " vs " . $properties["type"] . "\n";
-                    $this->db->getOne("alter table " . $this->table_name . " change " . $field . " " . $field . " " . $sql_type[$properties["type"]] . ($default?" default " . $default:""));
+                    $this->api->db->getOne("alter table " . $this->table_name . " change " . $field . " " . $field . " " . $sql_type[$properties["type"]] . ($default?" default " . $default:""));
                     unset($existing_fields[$field]);
                 } else {
                     unset($existing_fields[$field]);
@@ -206,7 +242,7 @@ class ap_Object extends AbstractModel {
             if ($existing_fields){
                 foreach ($existing_fields as $field => $field_data){
                     echo "Dropping non-existing field\n";
-                    $this->db->getOne("alter table " . $this->table_name . " drop $field");
+                    $this->api->db->getOne("alter table " . $this->table_name . " drop $field");
                 }
             }
         }
