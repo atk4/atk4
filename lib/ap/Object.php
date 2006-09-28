@@ -153,6 +153,7 @@ class ap_Object extends AbstractModel {
         // types to avoid disaster just because someone added a new relation type
         // with incorrect linknig
         $obj_pool = $this->loadChild($types,$dq);
+
         foreach($obj_pool as $obj){
             $obj->deleteObjTree($types,$dq);
         }

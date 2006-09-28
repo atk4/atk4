@@ -249,7 +249,7 @@ class ApiPortal extends ApiWeb {
         if(!$type)return $type;
         if(is_array($type))$type=join(',',$type);
         $type=addslashes($type);
-        $type = '"' . strtr($type,',','","') . '"';
+        $type = '"' . str_replace($type,',','","') . '"';
         return $type;
     }
 }
