@@ -232,7 +232,7 @@ abstract class AbstractObject {
          * one is useful for a "render" or "submitted" calls.
          */
         foreach(array_keys($this->elements) as $key){
-            if($this->elements[$key] instanceof AbstractView){
+            if(!($this->elements[$key] instanceof AbstractController)){
                 $this_result = $this->elements[$key]->downCall($type,$args);
                 if($this_result===false)return false;
             }
