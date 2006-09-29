@@ -61,6 +61,7 @@ class ApiPortal extends ApiWeb {
                     case'name':$last->name=$val;break;
                     case'type':$last->type=$val;break;
                     case'aux':$last->aux=$val;break;
+                    case'rel_type':$last->rel_type=$val;break;
                     default:
                                $last->set($key,$val);
                 }
@@ -219,6 +220,7 @@ class ApiPortal extends ApiWeb {
         if(!$dq)$dq=$this->api->db->dsql();
         $types=$this->api->convertTypes($types);
         $dq
+            ->field('autorel.type rel_type')
             ->field('autorel.aux aux')
             ->join('rel autorel',"autorel.child=obj.id")
             ->where('autorel.parent',$id);
