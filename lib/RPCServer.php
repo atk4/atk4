@@ -8,12 +8,19 @@ class RPCServer extends AbstractController {
     var $handler;
     var $security_key=null;
 
+	private $allowed_ip = array();
+
     function setSecurityKey($key){
         $this->security_key=$key;
         return $this;
     }
     function setHandler($class_name){
         try{
+	    	if (count($this->allowed_ip)) {
+	    		if (!in_array($_SERVER['REMOTE_ADDR'],$this->allowed_ip))
+	    			throw new Exception('Your IP not in allowed list');
+	    	}
+        	
             if(is_object($class_name)){
                 $this->handler=$class_name;
             }else{
@@ -51,4 +58,8 @@ class RPCServer extends AbstractController {
             echo 'AMRPC'.serialize($e);
         }
     }
+    function setAllowedIP($list_of_ips = array()) {
+    	$this->allowed_ip = $list_of_ips;
+    }
+    
 }
