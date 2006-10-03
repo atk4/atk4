@@ -1,4 +1,5 @@
 <?
+
 class RPC extends AbstractController {
     /*
      * RPC class implements remote method call. It's very similar to
@@ -90,7 +91,7 @@ class RPC extends AbstractController {
             // it was really an error
             throw new RPCException("Couldn't connect to handler URL");
         }*///I think it was not error. For example remote function could return false
-        if($response instanceof UserException){
+        if($response instanceof Exception){
             throw $response;    // if exception was raised on other end - we just raise it again
         }
         return $response;

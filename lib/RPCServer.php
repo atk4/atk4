@@ -54,8 +54,9 @@ class RPCServer extends AbstractController {
             $result = call_user_func_array(array($this->handler,$method),$args);
 
             echo 'AMRPC'.serialize($result);
-        }catch(UserException $e){
-            echo 'AMRPC'.serialize($e);
+        }catch(Exception $e){
+            // safe send any of type exceptions (remove nested objects from exception)
+            echo 'AMRPC'.preg_replace('/;O:\d+:".+?"/smi',';a',serialize($e));
         }
     }
     function setAllowedIP($list_of_ips = array()) {
