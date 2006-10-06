@@ -81,7 +81,11 @@ class ap_Object extends AbstractModel {
             $this->createTable();
 
             $dq->set('id',$this->id);
-            $dq->do_replace();
+            try {
+                $dq->do_replace();
+            } catch (SQLException $e){
+                throw new Aportalexception("User tried to save non-existing field!", $this);
+            }
         }
         return $this;
     }
