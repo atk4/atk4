@@ -236,8 +236,10 @@ class ApiPortal extends ApiWeb {
         if(!$dq)$dq=$this->api->db->dsql();
         $types=$this->api->convertTypes($types);
         $dq
+            ->field('autorel.type rel_type')
+            ->field('autorel.aux aux')
             ->join('rel autorel',"autorel.parent=obj.id")
-            ->where('autorel.child',$this->id);
+            ->where('autorel.child',$id);
 
         if($types)$dq->where("autorel.type in (".$types.")");
         return $dq;

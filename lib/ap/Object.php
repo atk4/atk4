@@ -182,6 +182,25 @@ class ap_Object extends AbstractModel {
         if(!$obj_pool)return null;
         return $obj_pool[0];
     }
+    function loadParent($types=null,$dq=null){
+        /*
+         * This function loads all parents of a current object which are related
+         * with specified relation type. If type is omitted, all childs are loaded
+         *
+         * Loaded objects are added by $this->add(); so you can use down-calls
+         */
+        $obj_pool=$this->api->genericLoadObj($this->api->parentDQ($dq,$this->id,$types));
+        foreach($obj_pool as $obj){
+            $this->add($obj);
+        }
+        return $obj_pool;
+    }
+    function loadOneParent($types=null,$dq=null){
+        $obj_pool = $this->loadParent($types,$dq);
+        if(count($obj_pool)>1)throw new APortalException("Only one parent relation of type $types is allowed",$this);
+        if(!$obj_pool)return null;
+        return $obj_pool[0];
+    }
     function loadObjTree($types=null,$dq=null){
         // Similar to addChild, but will recursively load all object hierarchy.
         $obj_pool = $this->loadChild($types,$dq);
@@ -214,7 +233,7 @@ class ap_Object extends AbstractModel {
         }
 
         // Do not set unexistant fields
-        if(!isset($this->fields[$field_or_array])){echo "no such field $field_or_array"; return $this;}
+        if(!isset($this->fields[$field_or_array])){echo "warning: no such field $field_or_array";}
         $this->data[$field_or_array]=$value;
 
         return $this;
