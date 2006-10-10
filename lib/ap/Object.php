@@ -171,10 +171,11 @@ class ap_Object extends AbstractModel {
          * Loaded objects are added by $this->add(); so you can use down-calls
          */
         $obj_pool=$this->api->genericLoadObj($this->api->childDQ($dq,$this->id,$types));
+        $new_obj_pool=array();
         foreach($obj_pool as $obj){
-            $this->add($obj);
+            $new_obj_pool[$obj->id]=$this->add($obj);
         }
-        return $obj_pool;
+        return $new_obj_pool;
     }
     function loadOneChild($types=null,$dq=null){
         $obj_pool = $this->loadChild($types,$dq);
@@ -204,11 +205,12 @@ class ap_Object extends AbstractModel {
     function loadObjTree($types=null,$dq=null){
         // Similar to addChild, but will recursively load all object hierarchy.
         $obj_pool = $this->loadChild($types,$dq);
+        $new_obj_pool=array();
         foreach($obj_pool as $obj){
-            $this->add($obj);
+            $new_obj_pool[$obj->id]=$this->add($obj);
             $obj->loadObjTree($types,$dq);
         }
-        return $obj_pool;
+        return $new_obj_pool;
     }
 
     //////////////////////// Working with object data /////////////////

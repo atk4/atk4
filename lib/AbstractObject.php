@@ -48,6 +48,7 @@ abstract class AbstractObject {
             if(!$class->short_name){
                 throw new BaseException('Cannot add existing object, without short_name');
             }
+            if($this->elements[$class->short_name])return $this->elements[$class->short_name];
             $this->elements[$class->short_name] = $class;
             $class->owner=$this;
             return $class;
