@@ -181,7 +181,7 @@ class ap_Object extends AbstractModel {
         $obj_pool = $this->loadChild($types,$dq);
         if(count($obj_pool)>1)throw new APortalException("Only one child relation of type $types is allowed",$this);
         if(!$obj_pool)return null;
-        return $obj_pool[0];
+        return array_shift($obj_pool);
     }
     function loadParent($types=null,$dq=null){
         /*
@@ -191,9 +191,6 @@ class ap_Object extends AbstractModel {
          * Loaded objects are added by $this->add(); so you can use down-calls
          */
         $obj_pool=$this->api->genericLoadObj($this->api->parentDQ($dq,$this->id,$types));
-        foreach($obj_pool as $obj){
-            $this->add($obj);
-        }
         return $obj_pool;
     }
     function loadOneParent($types=null,$dq=null){
@@ -211,6 +208,13 @@ class ap_Object extends AbstractModel {
             $obj->loadObjTree($types,$dq);
         }
         return $new_obj_pool;
+    }
+    function dumpObjTree($level = 0){
+        for ($i=0,$sep="";$i<$level;$i++,$sep.="&nbsp;&nbsp;") continue;
+        echo "$sep $this->type $this->id<br />";
+        foreach ($this->elements as $obj){
+            $obj->dumpObjTree($level + 1);
+        }
     }
 
     //////////////////////// Working with object data /////////////////
