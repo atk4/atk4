@@ -174,6 +174,8 @@ class ap_Object extends AbstractModel {
         $new_obj_pool=array();
         foreach($obj_pool as $obj){
             $new_obj_pool[$obj->id]=$this->add($obj);
+            $new_obj_pool[$obj->id]->aux = $obj->aux; // add sux, and drops this important value!
+            $new_obj_pool[$obj->id]->rel_type = $obj->rel_type; // add sux, and drops this important value!
         }
         return $new_obj_pool;
     }
