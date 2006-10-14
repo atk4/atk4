@@ -70,10 +70,10 @@ class RPCServer extends AbstractController {
     
     private function _error_and_exit($message,$code,$file,$line) {
     	echo 'ERRRPC'.serialize(array(
-				'message'=>$e->getMessage(),
-				'code'=>$e->getCode(),
-				'file'=>$e->getFile(),
-				'line'=>$e->getLine()));
+				'message'=>$message,
+				'code'=>$code,
+				'file'=>$file,
+				'line'=>$line));
 		exit;		
     }
     
