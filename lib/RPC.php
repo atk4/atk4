@@ -79,10 +79,10 @@ class RPC extends AbstractController {
         // TODO - we need to ignore error here
         if(substr($response,0,6)=='ERRRPC'){
         	$response=unserialize(substr($response,6));
-            throw new OldRPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
+            throw new RPCException($response['message'],$method,1,$response['code'],$response['file'],$response['line']);
         }
         elseif(substr($response,0,5)!='AMRPC'){
-            throw new UserException("Fatal error on remote end: ".$response);
+            throw new RPCException("Fatal error on remote end: ".$response);
         }
 
         $response=unserialize(substr($response,5));
@@ -92,7 +92,9 @@ class RPC extends AbstractController {
             throw new RPCException("Couldn't connect to handler URL");
         }*///I think it was not error. For example remote function could return false
         if($response instanceof Exception){
-            throw $response;    // if exception was raised on other end - we just raise it again
+            throw $response;    // if exception was raised on other end - we just raise it again 
+                                // mvs: this is old feature, stay here for comatiblility with scripts what 
+                                // using old version of amodules RPC-code
         }
         return $response;
     }
