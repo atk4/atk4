@@ -61,6 +61,7 @@ class RPC extends AbstractController {
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0); // need these if we dont have cert
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($this->ch, CURLOPT_FAILONERROR, 1);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, 5);
         $response = curl_exec ($this->ch);
 
         if(!$response){
