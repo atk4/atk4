@@ -62,7 +62,7 @@ class RPCServer extends AbstractController {
         }
         catch(Exception $e){
             // safe send any of type exceptions (remove nested objects from exception)
-            $this->_error_and_exit($e->getMessage(),$e->getCode(),$e->getMyFile(),$e->getMyLine());
+            $this->_error_and_exit($e->getMessage(),$e->getCode(),$e->getFile(),$e->getLine());
             
             //echo 'AMRPC'.preg_replace('/;O:\d+:".+?"/smi',';a',serialize($e));
         }
