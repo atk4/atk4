@@ -2,8 +2,8 @@
 class RPCException extends Exception {
 	public $fileRPC;
 	public $lineRPC;
-	function __construct($msg,$func=null,$shift=1,$code=0,$fileRPC=null,$lineRPC=null){
-        parent::__construct($msg,$func,$shift,$code);
+	function __construct($msg,$code=0,$fileRPC=null,$lineRPC=null){
+        parent::__construct($msg,$code);
         if(!is_null($fileRPC)) 
         	$this->fileRPC=$fileRPC;
         else
