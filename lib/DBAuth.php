@@ -37,6 +37,7 @@ class DBAuth extends BasicAuth{
     protected $secure = true;
     protected $can_register = false;
     protected $show_lost_password = false;
+    protected $doRecovery=false;
     protected $from='';
     protected $subj='Password recovery';
 
@@ -47,7 +48,7 @@ class DBAuth extends BasicAuth{
 			$this->processRegister();
 		}
 		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page','none')){
-			$this->processRecovery();
+			$this->doRecovery=true;
 		}
 		$this->api->addHook('pre-exec',array($this,'check'));
 	}
@@ -69,7 +70,7 @@ class DBAuth extends BasicAuth{
 			$this->api->stickyGET('key');
 			$id=$_GET['rp'];
 			$key=$_GET['key'];
-	   		$row=$this->api->db->getHash("select * from ".$this->api->getConfig('auth/pwd_recovery/table').
+	   		$row=$this->api->db->getHash("select * from ".DTP.$this->api->getConfig('auth/pwd_recovery/table').
 	    			" where id=$id and changed=0");
 	    	//looking for the key in DB and checking expiration dts
 	   		$db_key=($row['id'])?sha1($row['id'].$row['email'].strtotime($row['expire'])):'';
@@ -94,7 +95,7 @@ class DBAuth extends BasicAuth{
 				if(isset($_REQUEST['rp']))$form->set('rp_id', $_REQUEST['rp']);
 				if($form->isSubmitted()){
 					//getting a user id
-					$user_id=$this->api->db->getOne("select user_id from ".
+					$user_id=$this->api->db->getOne("select user_id from ".DTP.
 						$this->api->getConfig('auth/pwd_recovery/table').
 						" where id = ".$form->get('rp_id'));
 					//changing password
@@ -102,7 +103,7 @@ class DBAuth extends BasicAuth{
 						" = '".$this->encrypt($form->get('password')).
 							"' where id = $user_id");
 					//storing info about changes
-					$this->api->db->query("update ".$this->api->getConfig('auth/pwd_recovery/table').
+					$this->api->db->query("update ".DTP.$this->api->getConfig('auth/pwd_recovery/table').
 							" set changed=1, changed_dts=SYSDATE()" .
 							" where id=".$form->get('rp_id'));
 					$p->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
@@ -130,7 +131,7 @@ class DBAuth extends BasicAuth{
 				->addSubmit('Submit')
 			;
 			if($form->isSubmitted()){
-				$user=$this->api->db->getHash("select id, $this->name_field, $this->email_field from ".DTP.
+				$user=$this->api->db->getHash("select id, $this->name_field, $this->email_field from ".
 					$this->dq->args['table']." where $this->name_field='".
 					$form->get('username')."'");
 				if(sizeof($user)!=0){
@@ -150,6 +151,10 @@ class DBAuth extends BasicAuth{
 		echo $p->template->render();
 		exit;
 	}
+	function check(){
+		if($this->doRecovery===true)$this->processRecovery();
+		else parent::check();
+	}
 	protected function sendPassword($user_id, $password){
 		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_pwd'),'.txt');
 		$server=$this->getServerName();
@@ -164,7 +169,7 @@ class DBAuth extends BasicAuth{
 		//$subj=$subj[0];
 		$mail->tryDel('subject');
 		
-		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
+		mail($address,$subj[0],null,str_replace("\n","\r\n",$mail->render()));
 	}
 	protected function sendChangeLink($user_id, $username, $address){
 		//adding a DB record with a key to a change password page
@@ -192,7 +197,7 @@ class DBAuth extends BasicAuth{
 		//$subj=$subj[0];
 		$mail->tryDel('subject');
 		
-		mail($address,$subj,null,str_replace("\n","\r\n",$mail->render()));
+		mail($address,$subj[0],null,str_replace("\n","\r\n",$mail->render()));
 	}
 	function setEncrypted($secure=true){
 		$this->secure=$secure;
