@@ -345,6 +345,7 @@ class SMlite extends AbstractModel {
          * occurance of $tag. This is handy if one tag appears several times on the page,
          * but needs custom processing. $text will be rendered part of the template
          */
+        if(!isset($this->tags[$tag]))return;
         $t=$this->tags[$tag];
         foreach($t as $key=>$text){
             $this->tags[$tag][$key][0]=$callable($this->renderRegion($text));
