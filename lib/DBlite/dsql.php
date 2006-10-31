@@ -216,6 +216,10 @@ class DBlite_dsql  {
         $this->args['where'] = safe_array_merge($this->args['where'], $where);
         return $this;
     }
+    function clear_args($arg_name){
+    	unset($this->args[$arg_name]);
+    	return $this;
+    }
     function having($having,$equals=false){
         if(!is_array($having)){
             if($equals!==false){
