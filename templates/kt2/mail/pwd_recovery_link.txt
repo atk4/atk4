@@ -4,7 +4,7 @@ Content-Type: text/plain; charset=US-ASCII
 From: <?$from?>
 Bcc: <?$bcc?>
 X-Mailer: AModules3 mailer
-<?subject?><?$server?> password recovery subsystem<?/?>
+<?subject?><?$leave_this_param?><?$server?> password recovery subsystem<?/?>
 This is <?$server?> password recovery subsystem.
 
 We recieved the request to change the password for the user '<?$username?>'. 

@@ -36,7 +36,7 @@ class DatabaseStorage extends AbstractStorage{
 	}
     function getFilespaceId($filesize=0) {
     	if($filesize==0)return $this->filespace_id;
-    	if (($res = $this->db->getHash("select id, dirname " .
+    	if (($res = $this->api->db->getHash("select id, dirname " .
     			"from ".DTP.'filespace'.
     			" where enabled = '1' and (used_space + $filesize) <= total_space " .
     			" and stored_files_cnt < 4096*256*256 " .

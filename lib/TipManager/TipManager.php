@@ -1,5 +1,7 @@
 <?php
 /**
+ * TODO TipManager will be implemented as a full-functional Namespace later. 
+ * 
  * TipManager is a namespace that should be added to your administration interface
  * if you are using DB aware tips.
  * 
@@ -19,10 +21,13 @@ class TipManager extends Namespace{
 	}
     function initLayout(){
         parent::initLayout();
+		$this->add('Text', 'back', 'Locator')->set('<center><a href="Index">' .
+				'Back to Index</a></center>');
         $this->template->del('LeftSidebar');
         $this->template->del('RightSidebar');
         $this->template->del('InfoWindow');
         $this->template->del('Locator');
+        $this->template->del('Menu');
         //$this->template->del('SelfTips');
         
 		$this->tips=$this->getTipsFromTemplate();
@@ -30,11 +35,6 @@ class TipManager extends Namespace{
 			->setStaticSource($this->tips)
 			->setSection($this->api->page?$this->api->page:'Index')
 		;
-    }
-    function layout_Menu(){
-        $this->api->layout_Menu();
-
-		$this->elements['menu']=$this->api->getElement('menu');
     }
 	function getTipsFromTemplate(){
 		$template=$this->add('SMlite');
@@ -64,6 +64,7 @@ class TipManager extends Namespace{
 			->addColumn('text','type','Type')
 			->addColumn('shorttext','sections','Used in sections')
 			->addColumn('shorttext,wrap','tip','Text')
+			->addColumn('expander','Edit')
 			
 			->setSource('tip')
 		;
@@ -72,11 +73,19 @@ class TipManager extends Namespace{
 		$filter->useDQ($grid->dq);
 	}
 	function page_EditTip($p){
-		$form=$p->frame('Content','Tip params')->add('Form',null,'content');
-		$form
-			->addField('dropdown','type','Tip type')->setValueList($this->tip_types)
-			->addField('text','tip','Text')->setNotNull()
-			->addField('line','sections','Used in sections')
+		$form=$p->frame('Content','Tip params')->add('TipForm',null,'content');
+	}
+	function page_Index_Edit($p){
+		$p->frame('Content','Tip params')->add('TipForm',null,'content');
+	}
+}
+class TipForm extends Form{
+	function init(){
+		parent::init();
+		$this
+			->addField('dropdown','type','Tip type')->setValueList($this->owner->owner->owner->tip_types)
+			->addField('line','sections','Used in sections')->setProperty('size', 60)
+			->addField('text','tip','Text')->setNotNull()->setProperty('cols', '"80"')
 			
 			->setSource('tip')
 			->addConditionFromGET('id')
@@ -84,8 +93,8 @@ class TipManager extends Namespace{
 			->addSubmit('Save')
 			->addButton('Cancel')->redirect('Index')
 		;
-		if($form->isSubmitted()){
-			$form->update();
+		if($this->isSubmitted()){
+			$this->update();
 			$this->api->redirect('Index');
 		}
 	}

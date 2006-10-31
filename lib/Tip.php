@@ -244,7 +244,7 @@ class Tip extends Lister{
 		return array('tipoftheday',$this->recall('hidden',false)?'TipHide':'TipShow');
 	}
 	function render(){
-		if((!isset($this->current_row)||empty($this->current_row))&&$this->show){
+		if((!$this->current_row)||empty($this->current_row)&&$this->show){
 			$this->show(false,false);
 		}
 		//setting actions on prev/next urls if possible

@@ -28,7 +28,7 @@ class Grid extends CompleteLister {
         $this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
         $this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
-        $this->api->addHook('post-submit', array($this,'submitted'));
+        $this->api->addHook('post-submit', array($this,'submitted'), 3);
     }
     function defaultTemplate(){
         return array('grid','grid');
@@ -195,14 +195,16 @@ class Grid extends CompleteLister {
     }
 
 	function submitted(){
-		if($_GET['submit']!=$this->name)return;// false;
-		//saving to DB
-		if($_GET['action']=='update'){
-			$this->update();
+		if($_GET['submit']==$this->name){
+			//return;// false;
+			//saving to DB
+			if($_GET['action']=='update'){
+				$this->update();
+			}
+			$row=$this->getRowAsCommaString($_GET['row_id']);
+			echo $row;
+			exit;
 		}
-		$row=$this->getRowAsCommaString($_GET['row_id']);
-		echo $row;
-		exit;
 	}
 	function update(){
 		foreach($_GET as $name=>$value){

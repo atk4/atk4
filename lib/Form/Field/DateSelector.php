@@ -157,6 +157,7 @@ class Form_Field_DateSelector extends Form_Field {
     
     function getInput($attr=array()){
     	$output=$this->getTag('span', array('style'=>'white-space: nowrap;'));
+    	$onChange=($this->onchange)?$this->onchange->getString():'';
     	
     	if($this->required)
     		$output.=$this->getTag('input', 
@@ -165,7 +166,9 @@ class Form_Field_DateSelector extends Form_Field {
     		$attrs =array('type'=>'checkbox', 
 					'name'=>$this->name.'_enabled', 
 					'id'=>$this->name.'_enabled', 
-					'onclick'=>'var d=document, day=d.getElementById(\''.$this->name.'_day\'), month=d.getElementById(\''.$this->name.'_month\'), year=d.getElementById(\''.$this->name.'_year\'); if(!this.checked){if(day)day.disabled=true;if(month)month.disabled=true;if(year)year.disabled=true;}else{if(day)day.disabled=false;if(month)month.disabled=false;if(year)year.disabled=false;}');
+					'onclick'=>'var d=document, day=d.getElementById(\''.$this->name.'_day\'), month=d.getElementById(\''.$this->name.'_month\'), year=d.getElementById(\''.$this->name.'_year\'); if(!this.checked){if(day)day.disabled=true;if(month)month.disabled=true;if(year)year.disabled=true;}else{if(day)day.disabled=false;if(month)month.disabled=false;if(year)year.disabled=false;}',
+					'onchange'=>$onChange
+					);
 					
 			if($this->enabled)
 				$attrs['checked'] = 'checked'; 
@@ -181,14 +184,14 @@ class Form_Field_DateSelector extends Form_Field {
     	$output.=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_day',
 						'name'=>$this->name.'_day',
-						'onchange'=>($this->onchange)?$this->onchange->getString():''
+						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->days as $value=>$descr){
             $output.=
                 $this->getTag('option',array(
                         'value'=>$value,
-                        'selected'=>$value == $this->c_day
+                        'selected'=>$value == $this->c_day,
                     ))
                 .htmlspecialchars($descr)
                 .$this->getTag('/option');
@@ -199,7 +202,7 @@ class Form_Field_DateSelector extends Form_Field {
     	$output.=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_month',
 						'name'=>$this->name.'_month',
-						'onchange'=>($this->onchange)?$this->onchange->getString():''
+						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->months as $value=>$descr){
@@ -217,7 +220,7 @@ class Form_Field_DateSelector extends Form_Field {
     	$output.=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_year',
 						'name'=>$this->name.'_year',
-						'onchange'=>($this->onchange)?$this->onchange->getString():''
+						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->years as $value=>$descr){

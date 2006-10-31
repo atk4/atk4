@@ -261,6 +261,7 @@ class Form_Field_Dropdown extends Form_Field {
     function getInput($attr=array()){
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name,
+                        'id'=>$this->name,
 						'onchange'=>
 						($this->onchange)?$this->onchange->getString():''
                         ),
