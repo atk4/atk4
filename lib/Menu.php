@@ -24,6 +24,13 @@ class Menu extends CompleteLister {
 
         return $this;
     }
+    function insertMenuItem($index,$label,$href=null){
+    	$tail=array_slice($this->data,$index);
+    	$this->data=array_slice($this->data,0,$index);
+    	$this->addMenuItem($label,$href);
+    	$this->data=array_merge($this->data,$tail);
+    	return $this;
+    }
     function addSeparator($label='&nbsp;&nbsp;&nbsp;'){
     	$this->data[]=array('href'=>'', 'label'=>$label, 'tdclass'=>'separator', 'chref'=>'');
     	return $this;
