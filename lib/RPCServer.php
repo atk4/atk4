@@ -51,7 +51,9 @@ class RPCServer extends AbstractController {
             }else{
                 list($method,$args)=$data;
             }
-
+			
+			$this->api->debug('RPC call, method: '.$method.'. Parameters: '.print_r($args,true),__FILE__,__LINE__);
+			
             $result = call_user_func_array(array($this->handler,$method),$args);
 
             echo 'AMRPC'.serialize($result);

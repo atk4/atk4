@@ -66,7 +66,7 @@ class RPC extends AbstractController {
         $response = curl_exec ($this->ch);
 
         if(!$response){
-            throw new RPCException("CURL error: ".curl_error($this->ch));
+            throw new RPCException("CURL error ('.$this->destination_url.'): ".curl_error($this->ch));
         }
 
         curl_close ($this->ch);
