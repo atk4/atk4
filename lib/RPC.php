@@ -58,8 +58,8 @@ class RPC extends AbstractController {
         curl_setopt($this->ch, CURLOPT_POST, 1);
         curl_setopt($this->ch, CURLOPT_USERAGENT, "SERWEB full_access version 0.1");
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "data=".rawurlencode($data));
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0); // need these if we dont have cert
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "data=".rawurlencode(addslashes($data)));
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0); // need these if we don't have cert
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($this->ch, CURLOPT_FAILONERROR, 1);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, 15);
