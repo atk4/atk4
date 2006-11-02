@@ -30,7 +30,7 @@ class RPCServer extends AbstractController {
             if(!isset($_POST['data']))
 		        $this->_error_and_exit('No "data" specified in POST',0,__FILE__,__LINE__);
 
-            @$data = unserialize(base64_encode($_POST['data']));
+            @$data = unserialize(base64_decode($_POST['data']));
             if($data===false || !is_array($data))
 		        $this->_error_and_exit('Data was received, but was corrupted. POST: '.print_r($_POST,true),0,__FILE__,__LINE__);
 
