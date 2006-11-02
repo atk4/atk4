@@ -32,7 +32,7 @@ class RPCServer extends AbstractController {
 
             @$data = unserialize(stripslashes($_POST['data']));
             if($data===false || !is_array($data))
-		        $this->_error_and_exit('Data was received, but was corrupted',0,__FILE__,__LINE__);
+		        $this->_error_and_exit('Data was received, but was corrupted. POST: '.print_r($_POST,true),0,__FILE__,__LINE__);
 
             if($this->security_key && count($data)!=3){
 		        $this->_error_and_exit('This handler requires security key',0,__FILE__,__LINE__);
