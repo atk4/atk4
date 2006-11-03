@@ -56,6 +56,8 @@ class RPCServer extends AbstractController {
 			
             $result = call_user_func_array(array($this->handler,$method),$args);
 
+			$this->api->debug('Successfully executed, result: '.print_r($result,true),__FILE__,__LINE__);
+
             echo 'AMRPC'.serialize($result);
         }
         catch(BaseException $e){
@@ -71,6 +73,10 @@ class RPCServer extends AbstractController {
     }
     
     private function _error_and_exit($message,$code,$file,$line) {
+    	$this->api->debug('Raised exception during execute: '.print_r(array(
+    		'message'=>$message,'code'=>$code,'file'=>$file,'line'=>$line
+    	                                                                    ),true),__FILE__,__LINE__);
+    	
     	echo 'ERRRPC'.serialize(array(
 				'message'=>$message,
 				'code'=>$code,
