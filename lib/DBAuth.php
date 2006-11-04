@@ -160,9 +160,12 @@ class DBAuth extends BasicAuth{
 		$server=$this->getServerName();
 		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
 			" where id=".$user_id);
+		$username=$this->api->db->getOne("select $this->name_field from ".$this->dq->args['table'].
+			" where id=".$user_id);
 		//combining a message
 		$from=$this->from==''?"noreply@$server":$this->from;
 		$mail->trySet('server', $server);
+		$mail->trySet('username', $username);
 		$mail->trySet('password',$password);
 		$mail->trySet('from', $from);
 		$subj=$mail->get('subject');
