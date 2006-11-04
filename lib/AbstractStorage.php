@@ -19,8 +19,6 @@ class AbstractStorage extends AbstractController{
 		return array();
 	}
 	protected function do_upload($filename) {
-		//$uploaddir = $this->api->config['upload_path'];
-		$uploadfile = /*$uploaddir . */basename($filename);
 		if(is_uploaded_file($filename)) {
 			$this->upload_filesize=filesize($filename);
 			return $filename;

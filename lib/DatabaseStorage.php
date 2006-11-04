@@ -140,18 +140,17 @@ class DatabaseStorage extends AbstractStorage{
 	    		->do_insert(); 
 	
 	    	$this->_filenum = $filenum;
-			$this->_id = $this->api->db->lastId();  
-	
+			$_id = $this->api->db->lastId();  
 			// release lock
 			if (($res_op = $this->api->db->getOne("/* hack */select release_lock('fs_fnum_lock')"))===false) 
 			           throw new FileException("Error releasing lock");
 			
 			// moving file to its actual destination
-			if(!@rename($this->upload_temp_name,$this->_real_filename($this->_id,$filenum))) {
-				$this->files->where('id',$this->_id)->do_delete();
-				$this->_id = null;
+			if(!@rename($this->upload_temp_name,$this->_real_filename($_id,$filenum))) {
+				$this->files->where('id',$_id)->do_delete();
+				$_id = null;
 				throw new FileException ('Error moving file '.$this->upload_orig_name.' into filespace ('.
-					$this->_real_filename($this->_id,$filenum).')!'); 
+					$this->_real_filename($_id,$filenum).')!'); 
 			}else{
 				// increase used space
 		    	if ($this->filespaces->where('id',$this->getFilespaceId())
@@ -166,7 +165,7 @@ class DatabaseStorage extends AbstractStorage{
 			throw $e;
 		}
 		//TODO hooks after upload
-		return $this->_id;
+		return $_id;
 	}
 	function getFileType($filetype){
 		$id=$this->filetypes->field('id')->where('mime_type',$filetype)->do_getOne();
