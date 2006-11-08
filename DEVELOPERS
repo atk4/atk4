@@ -7,6 +7,8 @@ done by me please follow my style and do not try to change anything. It would
 annoy me and I'll have to change everything back so that all the files look
 alike
 
+Also read AModules3_Introduction.pdf which is located inside doc/ directory.
+
 I'd like to point out few things:
 
 -- <?php vs <? -------------
