@@ -92,29 +92,13 @@ class DBlite_mysql extends DBlite {
          */
         return mysql_insert_id($this->handle);
     }
-    /**
-     * parse datetime in mysql string format, return array
-     */
-    private function datetime($dts) {
-        return array(
-                      'DAY'=>substr($dts, 8,2),
-                      'MONTH'=>substr($dts,5,2),
-                      'YEAR'=> substr($dts,0,4),
-                      'HOUR'=>substr($dts,11,2),
-                      'MIN'=>substr($dts,14,2),
-                      'SEC'=>substr($dts,17,2)
-                     );
-    }
 
     /**
-     * convert datetime in mysql string format, return timestamp 
+     * <b>[DEPRECATED]</b> please use strtotime() analogue.
+     * convert datetime in mysql string format, return timestamp
      */
     function dts2tms($dts) {
-    	// 2004-10-23 10:59:16
-        $dtime = $this->datetime($dts);
-
-        return mktime($dtime['HOUR'], $dtime['MIN'], $dtime['SEC'],
-                      $dtime['MONTH'], $dtime['DAY'], $dtime['YEAR']);
+        return strtotime($dts);
     }     
 
 	function dump($tables=null){
