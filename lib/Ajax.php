@@ -61,7 +61,10 @@ class Ajax extends AbstractModel {
     }
     function setInnerHTML($field_id,$value){
         $value=str_replace("'",'',$value);
+        $value=str_replace("\r\n",'\\n',$value);  // this is for templates what saved with
+        										  // Windows line delimiters -- mvs
         $value=str_replace("\n",'\\n',$value);
+
         return $this->ajaxFunc("aafc('$field_id','$value')");
     }
     function notImplemented($msg){
