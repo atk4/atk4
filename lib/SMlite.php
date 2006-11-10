@@ -389,7 +389,8 @@ class SMlite extends AbstractModel {
             throw new SMliteException("Template not found (".$template_name.$this->settings['extension'].") in (".  $this->settings['templates'].")");
 
         $this->parseTemplate($this->template);
-        if($ext){ $this->settings['extension']=$tempext; };
+        if($ext){ $this->settings['extension']=$tempext; }
+
         return $this;
     }
     function parseTemplate(&$template){

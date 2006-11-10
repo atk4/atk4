@@ -1,6 +1,6 @@
 <?
 class Logger extends AbstractController {
-    /*
+    /**
      * Logger class is implemented a more sophisticated and usable error handling.
      *
      * Normally all error messages are sent through the API class by using one of two
@@ -33,7 +33,7 @@ class Logger extends AbstractController {
      *
      * $config['debug']=true; // turns on global debug mode.
      *
-     *//* 
+     * 
      * ==[ Severity ]================================================================
      *
      * AModules3 have 4 severity types: debug, info, warning and fatal.
@@ -69,7 +69,7 @@ class Logger extends AbstractController {
      * AModules3 core tries not to produce any debug or info messages to keep files
      * clean. Even if it does, those calls might eventually be cleaned out.
      *
-     *//*
+     *
      * ==[ Configuring logger ]======================================================
      * Logger uses 2 output destinations, and 3 ways to restrict output information.
      *
@@ -322,7 +322,8 @@ class Logger extends AbstractController {
         if(!$frame){
             return "$prefix: $msg\n";
         }else{
-            return $frame['file'].":".$frame['line']." ".($prefix?"$prefix: ":"")."$msg\n";
+            return basename($frame['file'])." on line ".$frame['line'].', path: '.dirname($frame['file'])."\n\n".
+            		($prefix?"$prefix: ":"")."$msg\n\n";
         }
     }
     function logLine($msg,$shiftfunc=null){
