@@ -60,10 +60,11 @@ class DBlite_mysql extends DBlite {
     function fetchHash(){
     	if (!is_resource($this->cursor)) return array();
         if(!$row = mysql_fetch_array($this->cursor,MYSQL_ASSOC)){
-        	if (mysql_error($this->handle))
+        	if (mysql_error($this->handle)) 
             	return $this->fatal("Unable to fetch row");
-            else
+            else 
             	return array();
+            
         }
         return $row;
     }
