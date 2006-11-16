@@ -12,9 +12,29 @@ function lowlevel_error($error,$lev=null){
 }
 };if(!function_exists('error_handler')){
 function error_handler($errno, $errstr, $errfile, $errline){
+	$errorType = Array (
+                    E_ERROR               => "Error",
+                    E_WARNING             => "Warning",
+                    E_PARSE               => "Parsing Error",
+                    E_NOTICE              => "Notice",
+                    E_CORE_ERROR          => "Core Error",
+                    E_CORE_WARNING        => "Core Warning",
+                    E_COMPILE_ERROR       => "Compile Error",
+                    E_COMPILE_WARNING     => "Compile Warning",
+                    E_USER_ERROR          => "User Error",
+                    E_USER_WARNING        => "User Warning",
+                    E_USER_NOTICE         => "User Notice",
+                    DEBUG_SQL             => "SQL queries",
+                    DEBUG_SQL_RECORDSET   => "SQL recordsets",
+                    DEBUG_VARS            => "Variables",
+                    DEBUG_END		  	  => "end of debug dump",
+                    E_STRICT          => "Runtime Notice" 
+                    );
+                    
 	if((error_reporting() & $errno)!=0) {
 	    $errfile=dirname($errfile).'/<b>'.basename($errfile).'</b>';
 	    $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
+	    
 	    switch ($errno) {
 	        case 2:
 	            if(strpos($errstr,'mysql_connect')!==false)break;
@@ -27,6 +47,8 @@ function error_handler($errno, $errstr, $errfile, $errline){
 	        default:
 	        	if(ini_get('display_errors') == 1 || ini_get('display_errors') == 'ON')
 	            	echo "$str<br />\n";
+	            if(ini_get('log_errors') == 1 || ini_get('log_errors') == 'ON')
+	            	error_log("[".date('Y-m-d H:i:s')."] $errfile:$errline\n\t\t[".$errorType[$errno]."] $errstr",0);
 	            break;
 	    }
 	}
