@@ -409,6 +409,8 @@ function submitForm(form,spinner){
                 w.document.write(response_text);
                 w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');*/
             }
+        } else {
+        	alert("Warning: Empty response from server");
         }
         if(spinner)spinner_off(spinner);
     };
