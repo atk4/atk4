@@ -24,10 +24,6 @@ function error_handler($errno, $errstr, $errfile, $errline){
                     E_USER_ERROR          => "User Error",
                     E_USER_WARNING        => "User Warning",
                     E_USER_NOTICE         => "User Notice",
-                    DEBUG_SQL             => "SQL queries",
-                    DEBUG_SQL_RECORDSET   => "SQL recordsets",
-                    DEBUG_VARS            => "Variables",
-                    DEBUG_END		  	  => "end of debug dump",
                     E_STRICT          => "Runtime Notice" 
                     );
                     
