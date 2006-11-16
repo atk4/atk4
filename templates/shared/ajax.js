@@ -410,8 +410,8 @@ function submitForm(form,spinner){
                 w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');*/
                 try{
                 	eval(response_text.substring(response_text.indexOf('//ajax_script_start'),response_text.lastIndexOf('//ajax_script_start')));
-                } catch {
-                	alert('Could not parse response.');
+                } catch(e) {
+                	alert('Could not parse response. '+e);
                 }
             }
         } else {
