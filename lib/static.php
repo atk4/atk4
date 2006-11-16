@@ -44,7 +44,7 @@ function error_handler($errno, $errstr, $errfile, $errline){
 	        	if(ini_get('display_errors') == 1 || ini_get('display_errors') == 'ON')
 	            	echo "$str<br />\n";
 	            if(ini_get('log_errors') == 1 || ini_get('log_errors') == 'ON')
-	            	error_log("[".date('Y-m-d H:i:s')."] $errfile:$errline\n\t\t[".$errorType[$errno]."] $errstr",0);
+	            	error_log(" $errfile:$errline\n[".$errorType[$errno]."] ".strip_tags($errstr),0);
 	            break;
 	    }
 	}
