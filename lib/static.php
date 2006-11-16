@@ -12,21 +12,24 @@ function lowlevel_error($error,$lev=null){
 }
 };if(!function_exists('error_handler')){
 function error_handler($errno, $errstr, $errfile, $errline){
-    $errfile=dirname($errfile).'/<b>'.basename($errfile).'</b>';
-    $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
-    switch ($errno) {
-        case 2:
-            if(strpos($errstr,'mysql_connect')!==false)break;
-        case 8:
-            if(substr($errstr,0,16)=='Undefined offset')break;
-            if(substr($errstr,0,15)=='Undefined index')break;
-        case 2048:
-            if(substr($errstr,0,15)=='var: Deprecated')break;
-            if(substr($errstr,0,17)=='Non-static method')break;
-        default:
-            echo "$str<br />\n";
-            break;
-    }
+	if((error_reporting() & $errno)!=0) {
+	    $errfile=dirname($errfile).'/<b>'.basename($errfile).'</b>';
+	    $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
+	    switch ($errno) {
+	        case 2:
+	            if(strpos($errstr,'mysql_connect')!==false)break;
+	        case 8:
+	            if(substr($errstr,0,16)=='Undefined offset')break;
+	            if(substr($errstr,0,15)=='Undefined index')break;
+	        case 2048:
+	            if(substr($errstr,0,15)=='var: Deprecated')break;
+	            if(substr($errstr,0,17)=='Non-static method')break;
+	        default:
+	        	if(ini_get('display_errors') == 1 || ini_get('display_errors') == 'ON')
+	            	echo "$str<br />\n";
+	            break;
+	    }
+	}
 }
 /*
 };if(!function_exists('htmlize_exception')){
