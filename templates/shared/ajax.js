@@ -1,4 +1,4 @@
-// Copyright © 2005 ADevel.com ( https://adevel.com/ )
+// Copyright ï¿½ 2005 ADevel.com ( https://adevel.com/ )
 // Author: Kirill Chernyshov ( chk@adevel.com )
 var ajaxIsIE = false;
 
@@ -402,10 +402,12 @@ function submitForm(form,spinner){
             try {
                 eval(response_text);
             }catch(e){
-                w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+            	//while some browsers prevents popup we better use alert
+            	alert("Error in AJAX response: "+e+"\n"+response_text);
+                /*w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
                 w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
                 w.document.write(response_text);
-                w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+                w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');*/
             }
         }
         if(spinner)spinner_off(spinner);
