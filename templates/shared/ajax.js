@@ -283,6 +283,7 @@ function aadc( form_id ){
 	var frm = document.getElementById(form_id);
 	if(frm)
 		for(var i=0; i<frm.elements.length; i++){
+			frm.elements[i].prevenabled = frm.elements[i].disabled;
 			frm.elements[i].disabled = true;
 		}
 }
@@ -293,7 +294,7 @@ function aaec( form_id ){
 	var frm = document.getElementById(form_id);
 	if(frm)
 		for(var i=0; i<frm.elements.length; i++){
-			frm.elements[i].disabled = false;
+			frm.elements[i].disabled = frm.elements[i].prevenabled;
 		}
 }
 
