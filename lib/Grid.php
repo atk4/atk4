@@ -110,6 +110,10 @@ class Grid extends CompleteLister {
 	function format_time($field){
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
+    function format_date($field){
+    	if(!$this->current_row[$field])$this->current_row[$field]='-'; else
+    	$this->current_row[$field]=date('d/m/Y',strtotime($this->current_row[$field]));
+    }
     function format_nowrap($field){
     	$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
     }
@@ -164,6 +168,10 @@ class Grid extends CompleteLister {
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
     	$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
     	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
+    }
+    function format_link($field){
+    	$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field).'">'.
+    		$this->columns[$field]['descr'].'</a>';
     }
     function addRecordOrder($field){
     	if(!$this->record_order){
