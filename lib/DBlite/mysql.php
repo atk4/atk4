@@ -85,7 +85,7 @@ class DBlite_mysql extends DBlite {
         /**
          * Rows affected by update/delete
          */
-        return mysql_affected_rows($this->cursor);
+        return mysql_affected_rows($this->handle);
     }
     function lastID(){
         /**
