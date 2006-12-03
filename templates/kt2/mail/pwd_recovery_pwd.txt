@@ -7,6 +7,6 @@ X-Mailer: AModules3 mailer
 <?subject?><?$server?> password recovery subsystem<?/?>
 This is <?$server?> password recovery subsystem.
 
-Ö‡„ new password for the user '$username' is: <?$password?>
+Ö‡„ new password for the user '<?$username?>' is: <?$password?>
 
 

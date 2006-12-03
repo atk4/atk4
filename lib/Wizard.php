@@ -13,7 +13,8 @@ class Wizard extends AbstractView{
 	function init(){
 		parent::init();
 		$this->api->stickyGET('step');
-		$this->api->addHook('post-init', array($this, 'showPage'));
+		//$this->api->addHook('post-init', array($this, 'showPage'));
+		//$this->showPage();
 	}
 	protected function getPage(){
 		/**
