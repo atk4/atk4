@@ -374,8 +374,10 @@ class Logger extends AbstractController {
         ini_set('error_log',$full_filename);
 
         //$full_filename=tempnam($this->log_dir,$filename);
+        $new_file = (file_exists($full_filename))?false:true;
         $this->log_file=fopen($full_filename,"a");
         if(!$this->log_file)throw new IOException("Cannot open log file");
+        if ($new_file) chmod($full_filename,0777); //TODO: Check for correct grants!
     }
     function writeLogMessage(){
     }
