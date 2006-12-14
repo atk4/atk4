@@ -88,7 +88,7 @@ class Grid extends CompleteLister {
     }
     function format_shorttext($field){
     	$text=$this->current_row[$field];
-    	if(strlen($text)>100)$text=substr($text,0,46).' ...';
+    	if(strlen($text)>100)$text=substr($text,0,99).' ...';
     	$this->current_row[$field]=$text;
     }
     function format_html($field){
