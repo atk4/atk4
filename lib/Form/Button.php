@@ -10,6 +10,9 @@ class Form_Button extends AbstractView {
     public $label;
 
     public $onclick='';
+    
+    private $style = array();
+    
     function setLabel($_label){
         $this->label=$_label;
         return $this;
@@ -24,6 +27,12 @@ class Form_Button extends AbstractView {
                     '<input type="button" value="'.$this->label.'" name="'.$this->name.'" ' .
                     'id="'.$this->name.'" onclick="'.
                     (is_object($this->onclick)?$this->onclick->getString():$this->onclick).
-                    '">');
+                    '"' .
+                    ((count($this->style)?'style="'.implode(';',$this->style).'"':'')).
+					'>');
+    }
+    function setColor($color) {
+    	$this->style[] = 'color: '.$color;
+    	return $this;
     }
 }

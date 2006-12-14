@@ -201,12 +201,16 @@ class Form extends AbstractView {
     function addAjaxButtonAction($label,$name=null){
         return $this->addButton($label,$name);
     }
-    function addButton($label,$name=null){
+    function addButton($label,$name=null,$color=null){
 
         // Now add the regular button first
         $field = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
-            ->setLabel($label)
-            ->setNoSave();
+            ->setLabel($label);
+            
+        if (!is_null($color))   
+        	$field->setColor($color);
+        	  
+        $field->setNoSave();
 
         // And teach it to use AJAX
         return $field->onclick = $field->add('Ajax')->useProgressIndicator($this->name.'_loading');
