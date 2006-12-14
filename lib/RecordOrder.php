@@ -50,7 +50,7 @@ class RecordOrder extends AbstractController{
 			$right_alt="Move this row down once";
 		}
 		$mark_pic=$id==$this->recall('hl',null)?'amodules3/templates/shared/unmark.gif':'amodules3/templates/shared/mark.gif';
-		$mark_act=$this->recall('hl',null)?
+		$mark_act="\n".$this->recall('hl',null)?
 			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'untag'))->getString():
 			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'tag'))->getString();
 		$mark_alt=$this->recall('hl',null)?"Unmark this row":"Mark this row";
