@@ -7,6 +7,7 @@
 class Wizard extends AbstractView{
 	protected $pages=array();
 	protected $buttons;
+	protected $current;
 	public $form=null;
 	public $finish=null;
 	
@@ -27,17 +28,14 @@ class Wizard extends AbstractView{
 		$this->add($page['class'], null, 'Content');
 		$this->template->trySet('Title', $page['title']);
 		//displaying buttons
-		$current=array_search($page, $this->pages);
-		if($current!==false&&$current>0){
-			$this->addButton('Previous')->redirect($this->api->page, array('step'=>$current-1));
+		$this->current=array_search($page, $this->pages);
+		if($this->current!==false&&$this->current>0){
+			$this->addPrevButton();
 		}
-		if($current!==false&&$current<sizeof($this->pages)-1){
-			$next=$this->addButton('Next');
-			//if there is a form on the page - redirection should be done by this form
-			if($this->form)$next->submitForm($this->form);
-			else $next->redirect($this->api->page, array('step'=>$current+1));
+		if($this->current!==false&&$this->current<sizeof($this->pages)-1){
+			$this->addNextButton();
 		}else{
-			$this->finish=$this->addButton('Finish');
+			$this->addFinishButton();
 		}
 	}
 	function addPage($title, $classname="Page", $template=array('empty', 'Content')){
@@ -55,6 +53,31 @@ class Wizard extends AbstractView{
         return $this->buttons[$name]->onclick = $this->buttons[$name]->add('Ajax')
         	->useProgressIndicator($this->name.'_loading');
 		
+	}
+	function addNextButton(){
+		/**
+		 * Adds a 'Next' button to the page. You can override this method to perform some specific
+		 * actions when user proceeds to Next page
+		 */
+		$next=$this->addButton('Next');
+		//if there is a form on the page - redirection should be done by this form
+		if($this->form)$next->submitForm($this->form);
+		else $next->redirect($this->api->page, array('step'=>$this->current+1));
+	}
+	function addPrevButton(){
+		/**
+		 * Adds a 'Previous' button to the page. You can override this method to perform some specific
+		 * actions when user proceeds to Previous step
+		 */
+		$this->addButton('Previous')->redirect($this->api->page, array('step'=>$this->current-1));
+	}
+	function addFinishButton(){
+		/**
+		 * Adds a 'Finish' button to the page. You can override this method to perform some specific
+		 * actions when user finishes wizard.
+		 * DO NOT FORGET to assign $this->finish!
+		 */
+		$this->finish=$this->addButton('Finish');
 	}
 	function defaultTemplate(){
 		return array('wizard', '_top');

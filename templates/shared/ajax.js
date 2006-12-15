@@ -340,7 +340,8 @@ function aagv(form_id, elem_name){
 		}else{
 			form=document.getElementById(form_id);
 			if(form){
-				res=form.elements[elem_name].value;
+				if(form.elements[elem_name].type=='checkbox')res=form.elements[elem_name].checked?1:0;
+				else res=form.elements[elem_name].value;
 			}
 		}
 	}

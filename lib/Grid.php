@@ -88,6 +88,7 @@ class Grid extends CompleteLister {
     }
     function format_shorttext($field){
     	$text=$this->current_row[$field];
+    	//TODO counting words, tags and trimming so that tags are not garbaged
     	if(strlen($text)>100)$text=substr($text,0,99).' ...';
     	$this->current_row[$field]=$text;
     }
