@@ -10,6 +10,7 @@ class Paginator extends AbstractView {
 
     protected $template_chunks=array();
     private $region='';
+    private $object='';
     private $found_rows=null;
     private $total_pages=null;
 
@@ -68,6 +69,10 @@ class Paginator extends AbstractView {
     function region($region){
         //$this->region=$region;
         $this->template_chunks['link']->trySet('region',$region);
+        return $this;
+    }
+    function cutObject($object){
+        $this->template_chunks['link']->trySet('object',$object);
         return $this;
     }
     function render(){

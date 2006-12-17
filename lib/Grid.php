@@ -171,7 +171,8 @@ class Grid extends CompleteLister {
     	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
     }
     function format_link($field){
-    	$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field).'">'.
+    	$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
+    		array('id'=>$this->current_row['id'])).'">'.
     		$this->columns[$field]['descr'].'</a>';
     }
     function addRecordOrder($field){
@@ -379,6 +380,7 @@ class Grid extends CompleteLister {
         
     }
     function render(){
+   		//deleting not_ajax tags when there is reload ajax acion
     	if($this->dq&&$this->dq->foundRows()==0){
     		$not_found=$this->add('SMlite')->loadTemplate('grid');
     		$not_found=$not_found->get('not_found');

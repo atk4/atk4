@@ -27,18 +27,19 @@ class Tip extends Lister{
 		$this->api->addHook('pre-exec',array($this,'processActions'),1);
 	}
 	function processActions(){
-		$this->show($_GET['hide_tips']?$_GET['hide_tips']==2:
-			$this->recall('hidden',$_COOKIE['show_tips']=='N'?1:2)==2,isset($_GET['hide_tips']));
-		if(isset($_GET['show_tip'])){
+		$this->show($_GET[$this->short_name.'hide_tips']?$_GET[$this->short_name.'hide_tips']==2:
+			$this->recall($this->short_name.'hidden',$_COOKIE[$this->short_name.'show_tips']=='N'?1:2)==2,
+			isset($_GET[$this->short_name.'hide_tips']));
+		if(isset($_GET[$this->short_name.'show_tip'])){
 			//lastreads should be stored
-			if($this->last_read!==true)$this->setSeenTips($_GET['show_tip']=='prev');
+			if($this->last_read!==true)$this->setSeenTips($_GET[$this->short_name.'show_tip']=='prev');
 		}
-		if(!isset($_GET['show_tip']))$this->tip_id=$this->getTip(true);
-		elseif(is_int($_GET['show_tip']))$this->tip_id=$this->getTip($_GET['show_tip']);
-		else $this->tip_id=$this->getTip($_GET['show_tip']=='next');
+		if(!isset($_GET[$this->short_name.'show_tip']))$this->tip_id=$this->getTip(true);
+		elseif(is_int($_GET[$this->short_name.'show_tip']))$this->tip_id=$this->getTip($_GET[$this->short_name.'show_tip']);
+		else $this->tip_id=$this->getTip($_GET[$this->short_name.'show_tip']=='next');
 		$this->applyDQ();
 		//if there was an action - show tip and exit
-		if($_GET['show_tip']){
+		if($_GET[$this->short_name.'show_tip']){
 			$this->execQuery();
 		}
 	}
@@ -47,14 +48,14 @@ class Tip extends Lister{
 		 * Hides tips. Updates user data if present
 		 */
 		$this->show=$show;
-		$this->memorize('hidden',$show?'2':'1');
+		$this->memorize($this->short_name.'hidden',$show?'2':'1');
 		//store to user data
 		if($store_state){
 			if(isset($this->user_dq))$this->user_dq->set('show_tips',$this->show?'Y':'N')->do_update();
-			elseif(isset($this->user_data))$this->user_data['show_tips']=$this->show?'Y':'N';
+			elseif(isset($this->user_data))$this->user_data[$this->short_name.'show_tips']=$this->show?'Y':'N';
 			else{
 				//store to cookies. no need to check if cookies enabled
-				setcookie('show_tips', $this->show?'Y':'N', time()+60*60*24*30);
+				setcookie($this->short_name.'show_tips', $this->show?'Y':'N', time()+60*60*24*30);
 			}
 		}
 		$this->initializeTemplate(null, array('tipoftheday',$this->show?'TipShow':'TipHide'));
@@ -241,7 +242,7 @@ class Tip extends Lister{
 		return $id;
     }
 	function defaultTemplate(){
-		return array('tipoftheday',$this->recall('hidden',false)?'TipHide':'TipShow');
+		return array('tipoftheday',$this->recall($this->short_name.'hidden',false)?'TipHide':'TipShow');
 	}
 	function render(){
 		if((!$this->current_row)||empty($this->current_row)&&$this->show){
@@ -249,13 +250,14 @@ class Tip extends Lister{
 		}
 		//setting actions on prev/next urls if possible
 		$this->template->trySet('hide_url',$this->api->getDestinationURL(null,
-			array('hide_tips'=>1,'cut_object'=>$this->name)));
+			array($this->short_name.'hide_tips'=>1,'cut_object'=>$this->name)));
 		$this->template->trySet('show_url',$this->api->getDestinationURL(null,
-			array('hide_tips'=>2,'cut_object'=>$this->name,'show_tip'=>$this->show?null:'prev')));
+			array($this->short_name.'hide_tips'=>2,'cut_object'=>$this->name,$this->short_name.
+			'show_tip'=>$this->show?null:'prev')));
 		$this->template->trySet('prev_url',$this->api->getDestinationURL(null,
-			array('show_tip'=>'prev','cut_object'=>$this->name)));
+			array($this->short_name.'show_tip'=>'prev','cut_object'=>$this->name)));
 		$this->template->trySet('next_url',$this->api->getDestinationURL(null,
-			array('show_tip'=>'next','cut_object'=>$this->name)));
+			array($this->short_name.'show_tip'=>'next','cut_object'=>$this->name)));
 		$this->template->trySet('tip_name',$this->name);
 		$this->formatRow();
 		$this->template->set($this->current_row);
