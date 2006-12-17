@@ -1,6 +1,7 @@
 <?
 class Grid extends CompleteLister {
     protected $columns;
+    protected $no_records_message="No matching records to display";
     private $table;
     private $id;
     
@@ -380,14 +381,16 @@ class Grid extends CompleteLister {
         
     }
     function render(){
-   		//deleting not_ajax tags when there is reload ajax acion
     	if($this->dq&&$this->dq->foundRows()==0){
     		$not_found=$this->add('SMlite')->loadTemplate('grid');
-    		$not_found=$not_found->get('not_found');
+    		$not_found->set('no_records_message',$this->no_records_message);
+    		$not_found->del('grid');
+    		$not_found->del('totals');
+    		//$not_found=$not_found->get('not_found');
     		//$this->template->del('header');
     		$this->template->del('rows');
     		$this->template->del('totals');
-    		$this->template->set('header','<tr class="header">'.$not_found.'</tr>');
+    		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
     		//return;
     	}
         parent::render();
@@ -395,6 +398,10 @@ class Grid extends CompleteLister {
     
     public function setWidth( $width ){
     	$this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
+    	return $this;
+    }
+    public function setNoRecords($message){
+    	$this->no_records_message=$message;
     	return $this;
     }
 }
