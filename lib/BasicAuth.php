@@ -80,6 +80,7 @@ class BasicAuth extends AbstractController {
     function showLoginForm(){
         // Initialize an empty page
         $p=$this->add('Page');
+		if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page');
         $p->template->loadTemplate('empty');
         $p->template->set('page_title', $this->title_form);
         $this->form=$p->frame('Content','Authentication')
@@ -101,7 +102,6 @@ class BasicAuth extends AbstractController {
     function processLogin(){
         // this function is called when authorization is not found. 
         // You should return true, if login process was successful.
-
 		$p=$this->showLoginForm();
         if($this->form->isSubmitted()){
             if($this->verifyCredintials($this->form->get($this->name_field),$this->form->get($this->pass_field))){

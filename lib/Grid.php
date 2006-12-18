@@ -176,10 +176,10 @@ class Grid extends CompleteLister {
     		array('id'=>$this->current_row['id'])).'">'.
     		$this->columns[$field]['descr'].'</a>';
     }
-    function addRecordOrder($field){
+    function addRecordOrder($field,$table=''){
     	if(!$this->record_order){
     		$this->record_order=$this->add('RecordOrder');
-    		$this->record_order->setField($field);
+    		$this->record_order->setField($field,$table);
     	}
     	return $this;
     }

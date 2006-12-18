@@ -20,12 +20,12 @@ class RecordOrder extends AbstractController{
 	function process(){
 		if(isset($_GET[$this->name]))$this->act($_GET[$this->name], $_GET['action']);
 	}
-	function setField($field_name){
+	function setField($field_name,$table=''){
 		/**
 		 * Sets the field by which dataset will be ordered
 		 */
-		$this->field=$field_name;
-		$this->owner->dq->order("coalesce($this->field, id)");
+		$this->field=($table?$table.'.':'').$field_name;
+		$this->owner->dq->order("coalesce($this->field, ".($table?$table.'.':'')."id)");
 	}
 	function getCell($id){
 		if($this->recall('hl',null)){
