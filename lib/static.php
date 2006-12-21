@@ -119,6 +119,7 @@ function htmlize_exception($e,$msg){
 	}
 };if(!function_exists('format_time_str')){
 	function format_time_str($s, $exclude_seconds = false){
+		//by Camper
 		$m=floor($s/60);$s=$s%60;
 		$h=floor($m/60);$m=$m%60;
 		$d=floor($h/24);$h=$h%24;
