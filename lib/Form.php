@@ -41,6 +41,7 @@ class Form extends AbstractView {
         parent::init();
 
         // commonly replaceable chunks
+        $this->grabTemplateChunk('form_comment');
         $this->grabTemplateChunk('form_line');      // template for form line, must contain field_caption,field_input,field_error
         if($this->template->is_set('hidden_form_line'))
             $this->grabTemplateChunk('hidden_form_line');
@@ -83,7 +84,8 @@ class Form extends AbstractView {
         return $this;
     }
     function addComment($comment){
-        $this->add('Text','c'.count($this->elements),'form_body')->set('<tr><td colspan="2" align="center" nowrap>'.$comment.'</td></tr>');
+        $this->add('Text','c'.count($this->elements),'form_body')->set(
+        	$this->template_chunks['form_comment']->set('comment',$comment)->render());
         return $this;
     }
     function addSeparator($separator="<hr>"){
