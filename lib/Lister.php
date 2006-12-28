@@ -32,9 +32,12 @@ class Lister extends AbstractView {
 		    }
 		    // performing an additional formats
 		    if($this->format[$x]){
-		    	if(method_exists($this,$m='format_'.$this->format[$x])){
-                    $this->$m($x);
-                }else throw new BaseException("Lister does not have method: ".$m);
+	            $formatters = split(',',$this->format[$x]);
+	            foreach($formatters as $formatter){
+			    	if(method_exists($this,$m='format_'.$formatter)){
+	                    $this->$m($x);
+	                }else throw new BaseException("Lister does not have method: ".$m);
+	            }
 		    }
             if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
         }
