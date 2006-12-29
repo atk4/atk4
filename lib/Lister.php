@@ -3,8 +3,6 @@ class Lister extends AbstractView {
     public $dq=null;
 
     public $data=null;
-    
-    private $format=array();
 
     public $safe_html_output=true;  // do htmlspecialchars by default when formatting rows
 
@@ -26,20 +24,11 @@ class Lister extends AbstractView {
         $this->dq->do_select();
     }
     function formatRow(){
-        foreach($this->current_row as $x=>$y){
-		    if($this->safe_html_output){
-        	    $this->current_row[$x]=htmlspecialchars(stripslashes($y));
-		    }
-		    // performing an additional formats
-		    if($this->format[$x]){
-	            $formatters = split(',',$this->format[$x]);
-	            foreach($formatters as $formatter){
-			    	if(method_exists($this,$m='format_'.$formatter)){
-	                    $this->$m($x);
-	                }else throw new BaseException("Lister does not have method: ".$m);
-	            }
-		    }
-            if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
+        if($this->safe_html_output){
+            foreach($this->current_row as $x=>$y){
+                $this->current_row[$x]=htmlspecialchars(stripslashes($y));
+                if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
+            }
         }
     }
     function fetchRow(){
@@ -55,21 +44,5 @@ class Lister extends AbstractView {
             $this->template->set($this->current_row);
             $this->output($this->template->render());
         }
-    }
-    
-    function formatValue($col_name,$format_func){
-    	/**
-    	 * Sets a formatter for the dataset value
-    	 */
-    	$this->format[$col_name]=$format_func;
-    	return $this;
-    }
-    
-    function format_time_str($field){
-    	$this->current_row[$field]=format_time_str($this->current_row[$field]);
-    }
-    
-    function format_bold($field){
-    	$this->current_row[$field]='<strong>'.$this->current_row[$field].'</strong>';
     }
 }
