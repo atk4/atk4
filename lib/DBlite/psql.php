@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This is parametric class implementation mainly developed by mvs@adevel.com. It allows you to exclude
  * actual values from the queries and specify them inside parameter array. Some database drivers

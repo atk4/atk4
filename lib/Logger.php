@@ -1,4 +1,4 @@
-<?
+<?php
 class Logger extends AbstractController {
     /**
      * Logger class is implemented a more sophisticated and usable error handling.
@@ -131,8 +131,8 @@ class Logger extends AbstractController {
     public $api;
 
     // Configuration;
-    public $web_output='full';      // $config['logger']['web_output']
-    public $log_output=null;        // $config['logger']['log_output']
+    public $web_output;             // $config['logger']['web_output']
+    public $log_output;             // $config['logger']['log_output']
 
     public $public_error_message=null;  
                                     // This message will be outputed to user in case of 
@@ -146,7 +146,9 @@ class Logger extends AbstractController {
                                     //
                                     // You can change in $config['logger']['log_dir']
 
-    private $log_file;              // File we are currently logging to
+    private $log_error_file;        // File we are currently logging errors to
+    private $log_debug_file;        // File we are currently logging errors to
+    private $log_info_file;         // File we are currently logging errors to
     public $details=array();
 
 
@@ -169,7 +171,9 @@ class Logger extends AbstractController {
         if($this->log_output){
             $this->log_dir=$this->api->getConfig('logger/log_dir',
                     "/var/log/amodules3/".$this->api->name);
-            $this->openLogFile();
+            $this->openLogFile('error');
+            $this->openLogFile('debug');
+            $this->openLogFile('info');
             if(rand(1,50)==1)$this->cleanupLogDirectory();
         }
 
@@ -228,7 +232,7 @@ class Logger extends AbstractController {
         if($this->log_output){
             //$frame=$this->findFrame('warning',$shift);
             $frame=$e->my_backtrace[$e->shift];
-            $this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2);
+            $this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error');
         }
         if(!$this->web_output){
             echo $this->public_error_message;
@@ -247,7 +251,7 @@ class Logger extends AbstractController {
         // first, let's see if we should log this
         $frame=$this->findFrame('warning',$shift);
         if($this->log_output){
-            $this->logLine($this->txtLine("warning: $msg",$frame),'warning');
+            $this->logLine($this->txtLine("warning: $msg",$frame),'warning','error');
         }
         if(!$this->web_output){
             return true;
@@ -262,7 +266,7 @@ class Logger extends AbstractController {
         // first, let's see if we should log this
         $frame=$this->findFrame('debug');
         if($this->log_output){
-            $this->logLine($this->txtLine("info: $msg",$frame),'fatal');
+            $this->logLine($this->txtLine("info: $msg",$frame),'fatal','debug');
         }
         if(!$this->web_output){
             return true;
@@ -275,7 +279,7 @@ class Logger extends AbstractController {
     }
     function outputInfo($msg,$shift=0,$nohtml=false){
         if($this->log_output){
-            $this->logLine($this->txtLine("info: $msg"));
+            $this->logLine($this->txtLine("info: $msg"),null,'info');
         }
         if($this->web_output && !$nohtml){
             echo $this->html_stdout?
@@ -288,7 +292,7 @@ class Logger extends AbstractController {
         // first, let's see if we should log this
         $frame=$this->findFrame('fatal');
         if($this->log_output){
-            $this->logLine($this->txtLine("fatal: $msg",$frame),'fatal');
+            $this->logLine($this->txtLine("fatal: $msg",$frame),'fatal','error');
         }
         if(!$this->web_output){
             echo $this->public_error_message;
@@ -326,57 +330,60 @@ class Logger extends AbstractController {
             		($prefix?"$prefix: ":"")."$msg\n\n";
         }
     }
-    function logLine($msg,$shiftfunc=null){
+    function logLine($msg,$shiftfunc=null,$severity='info'){
+        $log_file='log_'.$severity.'_file';
         if($this->log_output==='full'){
             if(!$this->header_sent++){
-                fputs($this->log_file,"\n\n".
+                fputs($this->$log_file,"\n\n".
                         "============================================================\n".
                         "$msg".
                         "------------------------------------------------------------\n".
                         "Date: ".date("d-M-Y H:i:s")."\n");
                 foreach($this->details as $key=>$val){
-                    fputs($this->log_file,"$key: $val\n");
+                    fputs($this->$log_file,"$key: $val\n");
                 }
-                fputs($this->log_file,
+                fputs($this->$log_file,
                         "------------------------------------------------------------\n".
                         " Stack trace\n".
                         $this->txtBacktrace($shiftfunc).
                         "\n"
                      );
             }else{
-                fputs($this->log_file,$msg);
+                fputs($this->$log_file,$msg);
             }
         }else{
-            fputs($this->log_file,"[".date("d-M-Y H:i:s")."] $msg");
+            fputs($this->$log_file,"[".date("d-M-Y H:i:s")."] $msg");
         }
-        fflush($this->log_file);
+        fflush($this->$log_file);
     }
-    function logVar($var,$msg="",$shiftfunc=null){
+    function logVar($var,$msg="",$shiftfunc=null,$severity='debug'){
     	//creating an $msg from variable
     	$msg.="(".gettype($var)."):";
     	if(is_array($var)||is_object($var))$msg .= print_r($var, true);
     	else$msg .= $var;
-    	$this->logLine($msg."\n", $shiftfunc);
+    	$this->logLine($msg."\n", $shiftfunc,$severity);
     }
-    function openLogFile(){
-        if(!is_writable($this->log_dir)){
+    function openLogFile($severity='error'){
+        if(!is_dir($this->log_dir)){
             // Directory is not writable, let's first try to create it
             if(!mkdir($this->log_dir,0750)){
                 throw new BaseException("You must specify valid 'debug_log_dir' inside your config.php if you are are using Logger class in production mode");
             }
         }
 
-        $filename='am3_error_log';
+        $filename='am3_'.$severity.'_log';
         $full_filename=$this->log_dir.DIRECTORY_SEPARATOR.$filename;
-        if(is_link($full_filename))throw new BaseError("Log file is a symlink. Are you trying to make me overwrite somethingn?");
+        if(!is_writable($full_filename) && !is_writable($this->log_dir))throw new BaseException("Log file is not writable and seems I won't be able to create it: $full_filename");
+        if(is_link($full_filename))throw new BaseException("Log file is a symlink. Are you trying to make me overwrite somethingn?");
 
 
-        ini_set('error_log',$full_filename);
+        ini_set($severity.'_log',$full_filename);
 
         //$full_filename=tempnam($this->log_dir,$filename);
         $new_file = (file_exists($full_filename))?false:true;
-        $this->log_file=fopen($full_filename,"a");
-        if(!$this->log_file)throw new IOException("Cannot open log file");
+        $log_file="log_$severity"."_file";
+        $this->$log_file=fopen($full_filename,"a");
+        if(!$this->$log_file)throw new IOException("Cannot open $severity log file");
         if ($new_file) chmod($full_filename,0777); //TODO: Check for correct grants!
     }
     function writeLogMessage(){

@@ -1,4 +1,4 @@
-<?
+<?php
 class ApiAdmin extends ApiWeb {
     public $page_title = null;
 
@@ -203,3 +203,4 @@ class ApiAdmin extends ApiWeb {
         throw new BaseException("Fatal: ".$name,'fatal',$shift+1);
     }
 }
+?>

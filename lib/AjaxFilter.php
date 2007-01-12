@@ -1,4 +1,4 @@
-<?
+<?php
 trigger_error("AjaxFilter is obsolete");
 exit;
 class AjaxFilter extends AjaxForm {

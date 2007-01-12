@@ -1,4 +1,4 @@
-<?
+<?php
 class Namespace extends AbstractView {
     function init(){
         parent::init();

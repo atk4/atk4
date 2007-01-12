@@ -1,4 +1,4 @@
-<?
+<?php
 class HelloWorld extends AbstractView {
     private $message;
     function init(){

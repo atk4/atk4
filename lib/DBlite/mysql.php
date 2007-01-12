@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * This class implements mysql compatibility for DBlite layer.
  *
@@ -30,6 +30,7 @@ class DBlite_mysql extends DBlite {
         if(!$this->handle)return('Could not connect to mysql');
         if(!mysql_select_db($this->settings['database'],$this->handle))
             return('Could not select db');
+        mysql_query("/*!40101 SET NAMES utf8 */",$this->handle);
         return true;
     }
     function useDB($db){

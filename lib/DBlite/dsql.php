@@ -1,4 +1,4 @@
-<?
+<?php
 
 if (!defined('DTP')) define('DTP','');
 

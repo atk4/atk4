@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Date selection control. Consists of checkbox and three comboboxes (dropdown lists of  days, 
  * months and years).
@@ -29,6 +29,7 @@ class Form_Field_DateSelector extends Form_Field {
 	protected $c_year;
 	protected $c_month;
 	protected $c_day;
+	protected $date_order=array('d','m','y');
 	
 	function init(){
 		parent::init();
@@ -45,12 +46,16 @@ class Form_Field_DateSelector extends Form_Field {
 		
 		$this->enable();
 	}
-	
+	function clearFieldValue(){
+		$this->set(null);
+	}
 	function set($value){
-		if(is_null($value))
+		/*if(is_null($value)){
+			
 			return;
-		
-		if (empty($value) || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
+		}*/
+		if (is_null($value) || empty($value) || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
+			//$this->api->addHook('post-submit',array($this, 'disable'));
 			$this->disable();
 		}
 		else{
@@ -67,7 +72,7 @@ class Form_Field_DateSelector extends Form_Field {
 			$this->enable();
 		}
 		
-		parent::set($value);
+		return parent::set($value);
 	}
 	
 	public function isEnabled(){
@@ -133,7 +138,7 @@ class Form_Field_DateSelector extends Form_Field {
     function loadPOST(){
     	if(empty($_POST))
     		return;
-    	
+
     	if(isset($_POST[$this->name.'_year']))
         	$this->c_year = $_POST[$this->name.'_year'];
         if(isset($_POST[$this->name.'_month']))
@@ -153,6 +158,12 @@ class Form_Field_DateSelector extends Form_Field {
 	        	$this->owner->errors[$this->short_name]="Invalid date specified!";
         	
         return parent::validate();
+    }
+    
+    function setOrder($order){
+    	//pass an array with 'd','m','y' as members to set an order
+    	$this->date_order=$order;
+    	return $this;
     }
     
     function getInput($attr=array()){
@@ -181,14 +192,14 @@ class Form_Field_DateSelector extends Form_Field {
 			$xtraattrs['disabled'] = 'disabled';
     	
     	// day control
-    	$output.=$this->getTag('select',array_merge(array(
+    	$d=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_day',
 						'name'=>$this->name.'_day',
 						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->days as $value=>$descr){
-            $output.=
+            $d.=
                 $this->getTag('option',array(
                         'value'=>$value,
                         'selected'=>$value == $this->c_day,
@@ -196,17 +207,17 @@ class Form_Field_DateSelector extends Form_Field {
                 .htmlspecialchars($descr)
                 .$this->getTag('/option');
         }
-        $output.=$this->getTag('/select').'&nbsp;';
+        $d.=$this->getTag('/select').'&nbsp;';
                 
     	// month control
-    	$output.=$this->getTag('select',array_merge(array(
+    	$m=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_month',
 						'name'=>$this->name.'_month',
 						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->months as $value=>$descr){
-            $output.=
+            $m.=
                 $this->getTag('option',array(
                         'value'=>$value,
                         'selected'=>$value == $this->c_month
@@ -214,17 +225,17 @@ class Form_Field_DateSelector extends Form_Field {
                 .htmlspecialchars($descr)
                 .$this->getTag('/option');
         }
-        $output.=$this->getTag('/select').'&nbsp;';
+        $m.=$this->getTag('/select').'&nbsp;';
         
     	// year control
-    	$output.=$this->getTag('select',array_merge(array(
+    	$y=$this->getTag('select',array_merge(array(
                         'id'=>$this->name.'_year',
 						'name'=>$this->name.'_year',
 						'onchange'=>$onChange
                         ), $attr, $this->attr, $xtraattrs)
                 );
         foreach($this->years as $value=>$descr){
-            $output.=
+            $y.=
                 $this->getTag('option',array(
                         'value'=>$value,
                         'selected'=>$value == $this->c_year
@@ -232,8 +243,10 @@ class Form_Field_DateSelector extends Form_Field {
                 .htmlspecialchars($descr)
                 .$this->getTag('/option');
         }
-        $output.=$this->getTag('/select');
+        $y.=$this->getTag('/select');
         
+		$o1=$this->date_order[0];$o2=$this->date_order[1];$o3=$this->date_order[2];
+        $output.=$$o1.$$o2.$$o3;
         $output.=$this->getTag('/span');
         $output.='<!-- '.(is_null($this->value)?'null':$this->value).' -->';
         

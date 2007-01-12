@@ -1,4 +1,4 @@
-<?
+<?php
 class RPCException extends Exception {
 	public $fileRPC;
 	public $lineRPC;

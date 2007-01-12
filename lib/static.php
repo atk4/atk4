@@ -1,4 +1,4 @@
-<?
+<?php
 
 define('undefined','_amodules3_undefined_value');
 
@@ -130,5 +130,12 @@ function htmlize_exception($e,$msg){
 		$result.=($m>0?$m." minute".($m>1?"s ":" "):"");
 		if(!$exclude_seconds)$result.=($s>0?$s." second".($s>1?"s ":" "):"");
 		return $result;
+	}
+};if(!function_exists('format_file_size')){
+	function format_file_size($size_in_bytes){
+		if($size_in_bytes<1024)return $size_in_bytes.' b';
+		if($size_in_bytes/1024<1024)return round($size_in_bytes/1024). ' kb';
+		if($size_in_bytes/(1024*1024)<1024)return round($size_in_bytes/(1024*1024)).' Mb';
+		return round($size_in_bytes/(1024*1024*1024)).' Gb';
 	}
 }

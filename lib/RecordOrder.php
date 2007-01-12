@@ -32,27 +32,33 @@ class RecordOrder extends AbstractController{
 			$left_pic='amodules3/templates/shared/move-here.gif';
 			$left_act=$id==$this->recall('hl',null)?
 				"":
-				$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'mv'))->getString();
+				$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'mv', 
+						'cut_object'=>$this->owner->name))->getString();
 			$left_alt="Move marked row here";
 			$right_pic='amodules3/templates/shared/xchg.gif';
 			$right_act=$id==$this->recall('hl',null)?
 				"":
-				$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'xchg'))->getString();
+				$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'xchg', 
+						'cut_object'=>$this->owner->name))->getString();
 			$right_alt="Exchange this row with marked";
 		}else{
 			$left_pic='amodules3/templates/shared/move-up.gif';
 			$left_act=
-				$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'up'))->getString();
+				$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'up', 
+						'cut_object'=>$this->owner->name))->getString();
 			$left_alt="Move this row up once";
 			$right_pic='amodules3/templates/shared/move-down.gif';
 			$right_act=
-				$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'dn'))->getString();
+				$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'dn', 
+						'cut_object'=>$this->owner->name))->getString();
 			$right_alt="Move this row down once";
 		}
 		$mark_pic=$id==$this->recall('hl',null)?'amodules3/templates/shared/unmark.gif':'amodules3/templates/shared/mark.gif';
 		$mark_act="\n".($this->recall('hl',null)?
-			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'untag'))->getString():
-			$this->add('Ajax')->reloadRegion('Content', array($this->name=>$id, 'action'=>'tag'))->getString());
+			$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'untag', 
+						'cut_object'=>$this->owner->name))->getString():
+			$this->add('Ajax')->reloadRegion($this->owner->name, array($this->name=>$id, 'action'=>'tag', 
+						'cut_object'=>$this->owner->name))->getString());
 		$mark_alt=$this->recall('hl',null)?"Unmark this row":"Mark this row";
 		$cell=
 			'<img title="'.$left_alt.'" src="'.$left_pic.'" onclick="'.$left_act.'">' .

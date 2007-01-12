@@ -1,4 +1,4 @@
-<?
+<?php
 include_once'Form/Field.php';
 /**
  * This class implements generic form, which you can actually use without

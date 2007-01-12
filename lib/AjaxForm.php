@@ -1,4 +1,4 @@
-<?
+<?php
 trigger_error("AjaxForm is obsolete");
 exit;
 /*

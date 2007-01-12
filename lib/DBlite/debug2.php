@@ -1,4 +1,4 @@
-<?
+<?php
 class DBlite_debug2 extends Debug {
     function __construct(){
         echo "me is born";

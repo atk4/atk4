@@ -398,6 +398,12 @@ function aaej(src_url, spinner, argument){
 	return aarq( src_url, callback);
 }
 
+function setVisibility(element,visible){
+	var eltag = document.getElementById( element );
+    if(!eltag)alert('No element by name "'+element+'"');
+    eltag.style.display=visible?"block":"none";
+}
+
 function submitForm(form,spinner){
 	var callback = function(response_text, response_xml){
         if(response_text){
@@ -405,11 +411,14 @@ function submitForm(form,spinner){
                 eval(response_text);
             }catch(e){
             	//while some browsers prevents popup we better use alert
-            	alert("Error in AJAX response: "+e+"\n"+response_text);
-                /*w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
-                w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
-                w.document.write(response_text);
-                w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');*/
+                w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+                if(w){
+                    w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
+                    w.document.write(response_text);
+                    w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+                }else{
+                    alert("Error in AJAX response: "+e+"\n"+response_text);
+                }
                 try{
                 	eval(response_text.substring(response_text.indexOf('//ajax_script_start'),response_text.lastIndexOf('//ajax_script_end')));
                 } catch(e) {

@@ -1,4 +1,4 @@
-<?
+<?php
 class InfoWindow extends Grid {
     function defaultTemplate(){
         return array('infogrid','_top');

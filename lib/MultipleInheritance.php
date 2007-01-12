@@ -1,4 +1,4 @@
-<?
+<?php
 // PHP5 is still unable to deliver multiple inheritance (MI) and probably won't be able
 // to do it at all. People consider multiple inheritance a bad style just as they
 // consider GOTO to be a bad style. However there are some cases when implementation

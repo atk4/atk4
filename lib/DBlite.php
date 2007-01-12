@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This class is lightweight replacement of popular PEAR::DB class. This class
  * Excludes number of useless stuff (in my opinion), which PEAR::DB is rich.

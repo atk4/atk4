@@ -1,4 +1,4 @@
-<?
+<?php
 class Form_Field_IconSelect extends Form_Field_Dropdown {
     function getInput($attr=array()){
         $output='<table class="lister" cellspacing=0 cellpadding=0 width=100%><tbody><tr>'."\n";

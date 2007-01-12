@@ -1,4 +1,4 @@
-<?
+<?php
 class CompleteLister extends Lister {
     public $totals=false;
     protected $row_t;

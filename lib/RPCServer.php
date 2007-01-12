@@ -1,4 +1,4 @@
-<?
+<?php
 class RPCServer extends AbstractController {
     /*
      * If you want your API to receive RPC calls, you have to initialize this class

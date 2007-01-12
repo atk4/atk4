@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ==[ About SMlite ]==========================================================
  * This class is a lightweight template engine. It's based around operating with

@@ -1,4 +1,4 @@
-<?
+<?php
 class AuthHTTP extends AbstractController{
     /*
      * This class will add authentication to your web application. All you need to do is:

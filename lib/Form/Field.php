@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Implementation of abstract form's field
  *
@@ -41,6 +41,7 @@ abstract class Form_Field extends AbstractView {
         // Use this function when you want to assign $this->value. If you use this function, your field will
         // operate in AJAX mode
         $this->value=$value;
+        return $this;
     }
     function get(){
         return $this->value;

@@ -1,4 +1,4 @@
-<?
+<?php
 class LoremIpsum extends AbstractView {
     private $message;
     function render(){

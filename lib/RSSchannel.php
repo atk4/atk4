@@ -1,4 +1,4 @@
-<?
+<?php
 
 class RSSException extends Exception {
 }

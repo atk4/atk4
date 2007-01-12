@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * This class implements improved mysql compatibility for DBlite layer.
  *

@@ -1,4 +1,4 @@
-<?
+<?php
 class QuickSearch extends Filter {
     /*
      * Quicksearch represents one-field filter which goes perfectly with a grid

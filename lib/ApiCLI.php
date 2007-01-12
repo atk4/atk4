@@ -1,4 +1,4 @@
-<?
+<?php
 class ApiCLI extends AbstractView {
     public $db=null;
     protected $config = null;     // use getConfig method to access this variable
@@ -102,7 +102,7 @@ class ApiCLI extends AbstractView {
       
         $this->config = array_merge($this->config,$config);
         if(isset($this->config['table_prefix'])){
-            define('DTP',$this->config['table_prefix']);
+            if(!defined('DTP'))define('DTP',$this->config['table_prefix']);
         }
 
         $tz = $this->getConfig('timezone',null);
@@ -114,3 +114,4 @@ class ApiCLI extends AbstractView {
 
     }
 }
+?>

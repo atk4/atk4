@@ -1,4 +1,4 @@
-<?
+<?php
 class DBlite_debug extends DBlite_mysql {
     private $_tracing = false;  // trace all SQL queries
     private $_tracing_file_handle;

@@ -1,4 +1,4 @@
-<?
+<?php
 abstract class AbstractView extends AbstractObject {
 
     /**

@@ -1,4 +1,4 @@
-<?
+<?php
 class Filter extends Form {
     private $limiters=array();
     function init(){

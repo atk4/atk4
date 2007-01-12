@@ -2,9 +2,18 @@
 This file contains conceptual changes between 3.0 and 3.1 brancges.
 
  Implemented:
+  * Synced changes from 3.0 branch 341 revision
 
 
  Planned:
+  * when applicatino is created - combine it's realm (name) from both
+     config file and value specified upon creation. It might be a case
+     that config is shared between multiple applications
 
+  * start each file with <?php (because it's the only tag php will accept
+     in high performance configuration)
 
+  * Document AbstractStorage and DatabaseStorage classes
+
+  * Add testing suite and unit-testing for provided classes
 =============================================================================

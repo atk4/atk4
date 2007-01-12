@@ -1,4 +1,4 @@
-<?
+<?php
 class BaseException extends Exception {
     // Exception defines it's methods as "final", which is complete nonsence
     // and incorrect behavor in my opinion. Therefore I need to re-declare

@@ -1,4 +1,4 @@
-<?
+<?php
 
 class RPC extends AbstractController {
     /*

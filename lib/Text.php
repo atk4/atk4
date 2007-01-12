@@ -1,4 +1,4 @@
-<?
+<?php
 class Text extends AbstractView {
     public $text='Your text goes here......';
     function set($text){

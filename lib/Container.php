@@ -1,4 +1,4 @@
-<?
+<?php
 trigger_error("Class Container is obsolete. Now any class is container, so change to AbbstractView. Called from ".caller_lookup(2,true));
 exit;
 /**

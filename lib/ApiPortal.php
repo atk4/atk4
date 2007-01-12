@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * ApiPortal extends ApiWeb and is designed to provide core operations with
  * ApiPortal Objects and ApiPortal Relations (e.g. loading, saving, creating, deleting).

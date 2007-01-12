@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This is generic query class. 
  *

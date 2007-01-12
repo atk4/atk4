@@ -1,4 +1,4 @@
-<?
+<?php
 class APortalException extends BaseException {
     var $related_obj=null;
     function __construct($msg,$related_obj=null){

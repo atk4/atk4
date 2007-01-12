@@ -1,4 +1,4 @@
-<?
+<?php
 class Grid extends CompleteLister {
     protected $columns;
     protected $no_records_message="No matching records to display";
@@ -130,7 +130,7 @@ class Grid extends CompleteLister {
     }
     function format_expander($field, $idfield='id'){
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-        $this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: hand" onclick=\''.
+        $this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: pointer" onclick=\''.
                 'expander_flip("'.$this->name.'",'.$this->current_row[$idfield].',"'.
                     $field.'","'.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,

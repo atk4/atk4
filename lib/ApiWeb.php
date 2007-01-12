@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * This is core API class for AModules3. It implements abstract base for API
  * class. ApiBase does not contain support for HTTP/PHP request handling,

@@ -1,4 +1,4 @@
-<?
+<?php
 class Paginator extends AbstractView {
     /*
      * Paginator is a class you should use when you need to separate lists into
@@ -32,14 +32,19 @@ class Paginator extends AbstractView {
     function applyHook(){
         if(isset($this->owner->dq)){
             $this->limiters[]=$this->owner->dq;
+        }elseif(isset($this->owner->data)){
+        	$this->limiters[]=&$this->owner->data;
         }
         foreach($this->limiters as $key=>$dq){
-            $this->applyDQ($this->limiters[$key]);
+            if($this->limiters[$key] instanceof DBlite_dsql)$this->applyDQ($this->limiters[$key]);
         }
     }
     function applyDQ($dq){
         $dq->calc_found_rows();
         $dq->limit($this->ipp,$this->skip);
+    }
+    function applyData(&$data){
+    	$data=array_slice($data,$this->skip,$this->ipp);
     }
     function defaultTemplate(){
         return array('paginator','paginator');
@@ -78,10 +83,10 @@ class Paginator extends AbstractView {
     function render(){
         if(!isset($this->found_rows)){
             if(isset($this->limiters[0])){
-                $this->found_rows = $this->limiters[0]->foundRows();
+                if($this->limiters[0] instanceof DBlite_dsql)$this->found_rows = $this->limiters[0]->foundRows();
+                else $this->found_rows=sizeof($this->limiters[0]);
             }
         }
-
         if(!isset($this->found_rows))
             $this->found_rows=1000;
 
@@ -94,10 +99,14 @@ class Paginator extends AbstractView {
             if($this->total_pages==0)$this->cur_page=1;
             $this->skip=$this->ipp*($this->cur_page-1);
             foreach($this->limiters as $key=>$l){
-                $this->limiters[$key]->limit($this->ipp,$this->skip);
-                $this->limiters[$key]->do_select();
+                if($l instanceof DBlite_dsql){
+                	$this->limiters[$key]->limit($this->ipp,$this->skip);
+                	$this->limiters[$key]->do_select();
+                }
             }
         }
+		// static source should be filtered here, after all calculations
+        if(is_array($this->limiters[0]))$this->applyData($this->limiters[0]);
 
 		//displaying only there is more than 1 page
 		if($this->total_pages<=1)return;

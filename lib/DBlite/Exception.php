@@ -1,4 +1,4 @@
-<?
+<?php
 class DBlite_exception extends BaseException {
     protected $str;
     protected $info;

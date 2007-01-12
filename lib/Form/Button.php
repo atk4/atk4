@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Displays flexible button
  *

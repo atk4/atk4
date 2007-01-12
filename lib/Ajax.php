@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This object enables many advanced actions only possible with using AJAX technology.
  *
@@ -90,14 +90,20 @@ class Ajax extends AbstractModel {
     function reloadField($fld){
         $this->notImplemented("reloadField");
     }
-    function submit($button='default'){
-        $this->notImplemented('submit');
-    }
 	function submitForm($form){
 		$this->ajaxFunc("submitForm('$form->name','".$this->spinner."')");
         $this->spinner=null;
 		return $this;
 	}
+    function makeVisible($element){
+        $this->ajaxFunc("setVisibility('".$element->name."',true)");
+        return $this;
+    }
+    function makeVisible($element){
+        $this->ajaxFunc("setVisibility('".$element->name."',false)");
+        return $this;
+    }
+
 
     function displayFormError($fld,$message){
         $this->ajaxFunc("alert('$field: $message')");
