@@ -255,6 +255,10 @@ class Form_Field_Dropdown extends Form_Field {
             );
     function validate(){
         if(!isset($this->value_list[$this->value])){
+        	if($this->api->isAjaxOutput()){
+		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->getString();
+		        exit;
+		    }
             $this->owner->errors[$this->short_name]="This is not one of offered values";
         }
         return parent::validate();
