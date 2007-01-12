@@ -77,6 +77,16 @@ class Ajax extends AbstractModel {
         $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
         return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
     }
+    function reloadExpander($url,$args=array()){
+    	/**
+    	 * Reloads expander after some action permormed in it
+    	 * (like form submission, nested grid record deletion, etc.)
+    	 * You should stickyGET('expanded') and stickyGET('id') to make it work properly
+    	 */
+    	return $this->loadRegionURL($_GET['expanded'].'_expandedcontent_'.$_GET['id'],
+			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url), 
+				$args)));
+    }
     function confirm($msg="Are you sure?"){
         return $this->ajaxFunc("if(!confirm('$msg'))return false");
     }
