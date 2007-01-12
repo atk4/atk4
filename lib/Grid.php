@@ -206,6 +206,10 @@ class Grid extends CompleteLister {
     }
 
 	function submitted(){
+        if($_GET['grid_action']=='return_field'){
+        	echo $this->getFieldContent($_GET['expander'],$_GET['id']);
+        	exit;
+        }
 		if($_GET['submit']==$this->name){
 			//return;// false;
 			//saving to DB
@@ -289,6 +293,36 @@ class Grid extends CompleteLister {
         $tr_start=strpos($result, '<td');
         $result="\n ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
 		return $result;
+	}
+	function getFieldContent($field,$id){
+		/**
+		 * Returns the properly formatted field content.
+		 * Used firstly with Ajax::reloadExpandedField()
+		 */
+		$idfield=$this->dq->args['fields'][0];
+		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
+		$this->dq->where($idfield."=$id");
+		//we should switch off the limit or we won't get any value
+		$this->dq->limit(1);
+		$row=$this->api->db->getHash($this->dq->select());
+		$row_t=$this->template->cloneRegion('row');
+		$row_t->del('cols');
+        $col = $row_t->cloneRegion('col');
+
+        foreach($this->columns as $name=>$column){
+            $col->del('content');
+            $col->set('content','<?$'.$name.'?>');
+
+            // some types needs control over the td
+
+            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+            $row_t->append('cols',$col->render());
+        }
+        $this->row_t = $this->api->add('SMlite');
+        $this->row_t->loadTemplateFromString($row_t->render());
+
+		$row=$this->formatRow($row);
+		return $row[$field];
 	}
     function formatRow($row=null){
     	if($row!=null)$this->current_row=$row;

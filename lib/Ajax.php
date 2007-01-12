@@ -81,10 +81,27 @@ class Ajax extends AbstractModel {
     	/**
     	 * Reloads expander after some action permormed in it
     	 * (like form submission, nested grid record deletion, etc.)
-    	 * You should stickyGET('expanded') and stickyGET('id') to make it work properly
     	 */
+		$this->api->stickyGET('id');
+		$this->api->stickyGET('expanded');
+		$this->api->stickyGET('expander');
     	return $this->loadRegionURL($_GET['expanded'].'_expandedcontent_'.$_GET['id'],
 			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url), 
+				$args)));
+    }
+    function reloadExpandedField($url,$args=array()){
+    	/**
+    	 * Reloads the field of the grid that had been expanded.
+    	 * Useful for grid update after updates in expander. You can use it along with reloadExpander()
+    	 * Specified URL should return the needed content (see also Grid::getFieldContent())
+    	 */
+		$this->api->stickyGET('id');
+		$this->api->stickyGET('expanded');
+		$this->api->stickyGET('expander');
+    	return $this->loadRegionURL($_GET['expanded'].'_'.$_GET['expander'].'_'.$_GET['id'],
+    		$this->api->getDestinationURL($url,array_merge(
+    			array('cut_object'=>$url,'grid_action'=>'return_field','expanded'=>$_GET['expanded'],
+    			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
 				$args)));
     }
     function confirm($msg="Are you sure?"){
