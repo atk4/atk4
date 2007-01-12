@@ -99,7 +99,7 @@ class Ajax extends AbstractModel {
         $this->ajaxFunc("setVisibility('".$element->name."',true)");
         return $this;
     }
-    function makeVisible($element){
+    function makeInvisible($element){
         $this->ajaxFunc("setVisibility('".$element->name."',false)");
         return $this;
     }
