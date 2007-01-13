@@ -210,6 +210,10 @@ class Grid extends CompleteLister {
         	echo $this->getFieldContent($_GET['expander'],$_GET['id']);
         	exit;
         }
+        if($_GET['grid_action']=='return_row'){
+        	echo $this->getRowAsCommaString($_GET['id']);
+        	exit;
+        }
 		if($_GET['submit']==$this->name){
 			//return;// false;
 			//saving to DB

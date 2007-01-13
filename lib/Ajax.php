@@ -72,7 +72,7 @@ class Ajax extends AbstractModel {
         return $this->ajaxFunc("alert('not implemented: $msg')");
     }
     function closeExpander($lister=null){
-        $lister=$_GET['expanded'];
+        if(!$lister)$lister=$_GET['expanded'];
         $id=(int)$_GET['id'];
         $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
         return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
@@ -103,6 +103,21 @@ class Ajax extends AbstractModel {
     			array('cut_object'=>$url,'grid_action'=>'return_field','expanded'=>$_GET['expanded'],
     			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
 				$args)));
+    }
+    function reloadExpandedRow($url,$args=array()){
+    	/**
+    	 * Reloads the row of the grid that had been expanded.
+    	 * Useful for grid update after updates in expander. You can use it along with reloadExpander()
+    	 * Specified URL should return the needed content (see also Grid::getRowAsCommaString())
+    	 */
+		$this->api->stickyGET('id');
+		$this->api->stickyGET('expanded');
+		$this->api->stickyGET('expander');
+    	return $this->ajaxFunc('reloadGridRow("'.
+    		$this->api->getDestinationURL($url,array_merge(
+    			array('cut_object'=>$url,'grid_action'=>'return_row','expanded'=>$_GET['expanded'],
+    			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
+				$args)).'","'.$_GET['expanded'].'",'.$_GET['id'].')');
     }
     function confirm($msg="Are you sure?"){
         return $this->ajaxFunc("if(!confirm('$msg'))return false");
