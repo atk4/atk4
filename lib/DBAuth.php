@@ -229,10 +229,13 @@ class DBAuth extends BasicAuth{
     	$this->subj=$subj;
     }
     function verifyCredintials($user,$password){
+    	/**
+    	 * Verifying user and password. Password in params should be an SHA1 hash in ALL cases
+    	 */
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
     	$this->info=array_merge($this->recall('info',array()), $this->dq->do_getHash());
         $this->memorize('info',$this->info);
-    	return(sizeof($data)>0&&($data[$this->pass_field]==$password||$data[$this->pass_field]==sha1($password)));
+    	return(sizeof($data)>0&&($data[$this->pass_field]==$password||sha1($data[$this->pass_field])==$password));
     }
 	private function encrypt($str){
 		return $this->secure?sha1($str):$str;
@@ -243,10 +246,10 @@ class DBAuth extends BasicAuth{
 	function showLoginForm(){
 		$p=parent::showLoginForm();
 		if($this->can_register){
-			$this->form->add('RegisterLink', null, 'form_body');
+			$this->form->add('RegisterLink', null, 'form');
 		}
 		if($this->show_lost_password){
-			$this->form->add('PwdRecoveryLink', null, 'form_body');
+			$this->form->add('PwdRecoveryLink', null, 'form');
 		}
 		return $p;
 	}

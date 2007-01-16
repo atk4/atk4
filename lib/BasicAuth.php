@@ -40,10 +40,10 @@ class BasicAuth extends AbstractController {
     function check(){
         if(!$this->isLoggedIn()){
             // verify if cookie is present
-            if(isset($_COOKIE[$this->name."_user"]) && isset($_COOKIE[$this->name."_password"])){
+            if(isset($_COOKIE[$this->name."_uid"]) && isset($_COOKIE[$this->name."_ua"])){
                 if($this->verifyCredintials(
-                            $_COOKIE[$this->name."_user"],
-                            $_COOKIE[$this->name."_password"]
+                            $_COOKIE[$this->name."_uid"],
+                            $_COOKIE[$this->name."_ua"]
                            )){
                     // cookie login was successful
                     $this->loggedIn();
@@ -65,8 +65,8 @@ class BasicAuth extends AbstractController {
         $this->info=array_merge($this->recall('info', array()),array('auth'=>true));
         $this->memorize('info',$this->info);
         if($this->form && $this->form->get('memorize')){
-            setcookie($this->name."_user",$this->form->get($this->name_field),time()+60*60*24*30*6);
-            setcookie($this->name."_password",$this->form->get($this->pass_field),time()+60*60*24*30*6);
+            setcookie($this->name."_uid",$this->form->get($this->name_field),time()+60*60*24*30*6);
+            setcookie($this->name."_ua",sha1($this->form->get($this->pass_field)),time()+60*60*24*30*6);
 
         }
         unset($_GET['submit']);
@@ -74,8 +74,8 @@ class BasicAuth extends AbstractController {
     }
 	function logout(){
 		$this->forget('info');
-        setcookie($this->name."_user",null);
-        setcookie($this->name."_password",null);
+        setcookie($this->name."_uid",null);
+        setcookie($this->name."_ua",null);
         $this->info=false;
         $this->api->redirect('Index');
 	}
@@ -106,7 +106,8 @@ class BasicAuth extends AbstractController {
         // You should return true, if login process was successful.
 		$p=$this->showLoginForm();
         if($this->form->isSubmitted()){
-            if($this->verifyCredintials($this->form->get($this->name_field),$this->form->get($this->pass_field))){
+            if($this->verifyCredintials($this->form->get($this->name_field),
+            	sha1($this->form->get($this->pass_field)))){
                 $this->loggedIn();
                 $this->api->redirect(null,$_GET);
             }
