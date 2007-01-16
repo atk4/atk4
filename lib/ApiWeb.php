@@ -45,8 +45,6 @@ class ApiWeb extends ApiCLI {
          * Redifine this function instead of default constructor. Do not forget
          * to set $this->db to instance of DBlite.
          */
-
-
         $this->initializeSession();
 
         // find out which page is to display
@@ -122,6 +120,24 @@ class ApiWeb extends ApiCLI {
 
         $this->hook('pre-render');
 
+        try {
+            $this->recursiveRender();
+            if(isset($_GET['cut_object']))
+                throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");
+            if(isset($_GET['cut_region'])){
+                if(!$this->cut_region_result)
+                    throw new BaseException("Unable to cut region with name='".$_GET['cut_region']."'");
+                echo $this->cut_region_result;
+                return;
+            }
+        }catch(Exception $e){
+            if($e instanceof RenderObjectSuccess){
+                echo $e->result;
+                return;
+            }
+
+        }
+        /*
         if(isset($_GET['cut_object'])){
             $res=parent::downCall("object_render");
             if(!isset($res))throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");
@@ -130,5 +146,13 @@ class ApiWeb extends ApiCLI {
         }else{
             parent::downCall("render");
         }
+        */
+    }
+}
+
+class RenderObjectSuccess extends Exception{
+    public $result;
+    function RenderObjectSuccess($r){
+        $this->result=$r;
     }
 }

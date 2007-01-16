@@ -38,6 +38,7 @@ abstract class AbstractView extends AbstractObject {
          * for us to use
          */
 
+        if(!$template_spot)$template_spot='Content';
         if(!isset($template_branch))$template_branch=$this->defaultTemplate();
         if(isset($template_branch)){
 
@@ -80,6 +81,28 @@ abstract class AbstractView extends AbstractObject {
 
 
     /////////////// H T M L   H e l p e r ///////////////////////
+    function recursiveRender(){
+        $cutting_here=false;
+
+        if(isset($_GET['cut_object']) && ($_GET['cut_object']==$this->name || $_GET['cut_object']==$this->short_name)){
+            // If we are cutting here, render childs and then we are done
+            unset($_GET['cut_object']);
+            $cutting_here=true;
+        }
+
+        foreach($this->elements as $key=>$obj){
+            if($obj instanceof AbstractView)$obj->recursiveRender();
+        }
+
+        if(!isset($_GET['cut_object'])){
+            $this->render();
+        }
+        if($cutting_here){
+            $result=$this->owner->template->cloneRegion($this->spot)->render();
+            $e=new RenderObjectSuccess($result);
+            throw $e;
+        }
+    }
     function render(){
         /**
          * For visual objects, their default action while rendering is rely on SMlite engine.
@@ -88,6 +111,7 @@ abstract class AbstractView extends AbstractObject {
         if(!($this->template)){
             throw new BaseException("You should specify template for this object");
         }
+        $this->template->trySet('_name',$this->name);
         $this->output($this->template->render());
     }
     function output($txt){

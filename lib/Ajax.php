@@ -12,8 +12,6 @@ class Ajax extends AbstractModel {
     public $owner;
 
 
-    private $form;
-
     public $ajax_output="";
 
     public $spinner = null;
@@ -34,6 +32,9 @@ class Ajax extends AbstractModel {
         	$this->ajax_output."//ajax_script_end\n";
         $this->ajax_output="";
         return $s;
+    }
+    function getLink($text){
+        return '<a href="javascript: void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
 
 
@@ -56,8 +57,28 @@ class Ajax extends AbstractModel {
 		$url=$this->api->getDestinationURL(null,$args);
 		return $this->loadRegionURL($region_id,$url);
     }
+    function reload($element,$args=array()){
+        if(is_object($element)){
+            if(!$element instanceof ReloadableView)throw new BaseException('Only views inherited from ReloadableView may be reloaded');
+            $element=$element->name;
+        }
+        $args['cut_object']=$element;
+        $url=$this->api->getDestinationURL(null,$args);
+        $this->setVisibility("RD_".$element);
+        $this->loadRegionURL("RR_".$element,$url);
+        return $this;
+    }
     function loadFieldValue($field_id,$url){
         $this->ajaxFunc("aasv('$field_id','$url')");
+        return $this;
+    }
+    // urlwrap_admin_Aliases_grid_delete_frame_1_form
+    function setFieldValue($form,$field,$value){
+        $this->ajaxFunc("setFieldValue('".$form->name."','$field','$value')");
+        return $this;
+    }
+    function setFormFocus($form,$field){
+        $this->ajaxFunc("setFormFocus('".$form->name."','$field')");
         return $this;
     }
     function setInnerHTML($field_id,$value){
@@ -123,12 +144,6 @@ class Ajax extends AbstractModel {
         return $this->ajaxFunc("if(!confirm('$msg'))return false");
     }
 
-    // form specific fnuctions
-    function withForm($form){
-        // associates this class with form class
-        $this->form=$form;
-        return $this;
-    }
     function reloadField($fld){
         $this->notImplemented("reloadField");
     }
@@ -137,12 +152,18 @@ class Ajax extends AbstractModel {
         $this->spinner=null;
 		return $this;
 	}
-    function makeVisible($element){
-        $this->ajaxFunc("setVisibility('".$element->name."',true)");
+    function resetForm($form){
+		$this->ajaxFunc("resetForm('$form->name')");
+		return $this;
+    }
+    function setVisibility($element,$visible=true){
+        if(!is_string($element))$element=$element->name;
+        $this->ajaxFunc("setVisibility('".$element."',".($visible?"true":"false").")");
         return $this;
     }
-    function makeInvisible($element){
-        $this->ajaxFunc("setVisibility('".$element->name."',false)");
+    function setFrameVisibility($frame,$visibility=true){
+        $this->setVisibility($frame->name."_bg",$visibility);
+        $this->setVisibility($frame->name."_fr",$visibility);
         return $this;
     }
 
@@ -154,6 +175,9 @@ class Ajax extends AbstractModel {
     function displayAlert($msg){
         $this->ajaxFunc("alert('$msg')");
         return $this;
+    }
+    function alert($msg){
+        return $this->displayAlert($msg);
     }
     function useProgressIndicator($id){
         $this->spinner=$id;

@@ -404,6 +404,22 @@ function setVisibility(element,visible){
     eltag.style.display=visible?"block":"none";
 }
 
+function resetForm(form){
+	var frm = document.getElementById(form);
+    frm.reset()
+}
+
+function setFieldValue(form,field,value){
+	var frm = document.getElementById(form);
+    frm[form+"_"+field].value=value;
+}
+
+function setFormFocus(form,field){
+	var frm = document.getElementById(form);
+    frm[form+"_"+field].focus();
+}
+
+
 function submitForm(form,spinner){
 	var callback = function(response_text, response_xml){
         if(response_text){
@@ -422,7 +438,13 @@ function submitForm(form,spinner){
                 try{
                 	eval(response_text.substring(response_text.indexOf('//ajax_script_start'),response_text.lastIndexOf('//ajax_script_end')));
                 } catch(e) {
-                	alert('Could not parse response. '+e);
+                    if(w){
+                        w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
+                        w.document.write(response_text);
+                        w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+                    }else{
+                        alert('Could not parse response. '+e);
+                    }
                 }
             }
         } else {

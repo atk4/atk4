@@ -1,5 +1,5 @@
 <?php
-class Lister extends AbstractView {
+class Lister extends ReloadableView {
     public $dq=null;
 
     public $data=null;
@@ -7,13 +7,18 @@ class Lister extends AbstractView {
     public $safe_html_output=true;  // do htmlspecialchars by default when formatting rows
 
     public $current_row=array();    // this is data of a current row
-    function setSource($table,$db_fields="*"){
+    function setSource($table,$db_fields=null){
         if(!$this->api->db)throw new BaseException('DB must be initialized if you want to use Lister / setSource');
         $this->dq = $this->api->db->dsql();
         $this->api->addHook('pre-render',array($this,'execQuery'));
 
         $this->dq->table($table);
-        $this->dq->field($db_fields);
+        if(isset($db_fields)){
+            $this->dq->field($db_fields);
+        }else{
+            $this->dq->field('*');
+            $this->dq->field($table.'.id id');
+        }
         return $this;
     }
     function setStaticSource($data){

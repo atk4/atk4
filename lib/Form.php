@@ -91,6 +91,9 @@ class Form extends AbstractView {
     function addSeparator($separator="<hr>"){
         return $this->addComment($separator);
     }
+    function addLabel($label){
+        return $this->addComment($label);
+    }
 
     function onSubmit(){
         return $this->onsubmit=$this->add('Ajax');
@@ -223,7 +226,7 @@ class Form extends AbstractView {
             ->where($field,$value);
         return $this;
     }
-    function addConditionFromGET($field,$get_field=null){
+    function addConditionFromGET($field='id',$get_field=null){
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
         $this->api->stickyGET($get_field);

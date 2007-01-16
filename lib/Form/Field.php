@@ -349,6 +349,8 @@ class Form_Field_Line extends Form_Field {
         return parent::getInput(array_merge(array('type'=>'text'),$attr));
     }
 }
+class Form_Field_URL extends Form_Field_Line {
+}
 class Form_Field_Search extends Form_Field {
     // WARNING: <input type=search> is safari extention and is will not validate as valid HTML
     function getInput($attr=array()){

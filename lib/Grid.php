@@ -24,6 +24,8 @@ class Grid extends CompleteLister {
     public $show_submit=true;
     private $record_order=null;
 
+    public $title_col=array();
+
     function init(){
         parent::init();
         $this->api->addHook('pre-render',array($this,'precacheTemplate'));
@@ -80,6 +82,10 @@ class Grid extends CompleteLister {
         }
         $this->columns[$this->last_column]['sortable']=$info;
 
+        return $this;
+    }
+    function makeTitle(){
+        $this->title_col[]=$this->last_column;
         return $this;
     }
     function format_number($field){
@@ -176,6 +182,38 @@ class Grid extends CompleteLister {
     		array('id'=>$this->current_row['id'])).'">'.
     		$this->columns[$field]['descr'].'</a>';
     }
+    function format_delete($field){
+        $l=$this->name.'_'.$field."_label";
+        if(isset($this->columns[$field]['del_frame'])){
+            $f=$this->columns[$field]['del_frame'];
+            $confirm=$this->columns[$field]['del_confirm'];
+        }else{
+            $f=$this->columns[$field]['del_frame']=$this->add('FloatingFrame',$field,'Misc');
+            $confirm = $f->frame("Delete record?")
+                ->add('Form');
+
+            $confirm->addLabel("<div id='".$l."'>Error..?</div>");
+            $confirm->addField('hidden','id','Hidden');
+            $confirm->addButton('Delete')->submitForm($confirm);
+            $confirm->addButton('Cancel')->setFrameVisibility($f,false);
+
+            $this->columns[$field]['del_confirm']=$confirm;
+
+            if($confirm->isSubmitted()){
+                $this->dq->where('id',$confirm->get('id'))->do_delete();
+                $this->add('Ajax')
+                    ->setFrameVisibility($f,false)
+                    ->displayAlert("Record ".$confirm->get('id')." deleted")
+                    ->reload($this)
+                    ->execute();
+            }
+
+
+            $f->recursiveRender();
+        }
+    	$this->current_row[$field]=
+            $this->add('Ajax')->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete '".$this->getRowTitle()."'?")->setFrameVisibility($f,true)->getLink('delete');
+    }
     function addRecordOrder($field,$table=''){
     	if(!$this->record_order){
     		$this->record_order=$this->add('RecordOrder');
@@ -183,7 +221,7 @@ class Grid extends CompleteLister {
     	}
     	return $this;
     }
-    function setSource($table,$db_fields="*"){
+    function setSource($table,$db_fields=null){
         parent::setSource($table,$db_fields);
         if($this->sortby){
             $desc=false;
@@ -298,6 +336,16 @@ class Grid extends CompleteLister {
         $result="\n ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
 		return $result;
 	}
+    function getRowTitle(){
+        $title=' ';
+        foreach($this->title_col as $col){
+            $title.=$this->current_row[$col];
+        }
+        if($title==' '){
+            return "Row #".$this->current_row['id'];
+        }
+        return substr($title,1);
+    }
 	function getFieldContent($field,$id){
 		/**
 		 * Returns the properly formatted field content.

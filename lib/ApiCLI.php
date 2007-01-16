@@ -8,6 +8,7 @@ class ApiCLI extends AbstractView {
         $this->api   = $this;
 
         set_error_handler("error_handler");
+
         try {
             $this->init();
 

@@ -3,6 +3,8 @@ This file contains conceptual changes between 3.0 and 3.1 brancges.
 
  Implemented:
   * Synced changes from 3.0 branch 341 revision
+  * reload() and ReloadableView
+  * 
 
 
  Planned:
