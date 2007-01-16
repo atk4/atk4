@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Mandatory Authorization module. Once you add this to your API, it will protect
  * it without any further actions.
@@ -57,6 +57,8 @@ class BasicAuth extends AbstractController {
         if($this->info['auth']===true)return true;
     }
     function verifyCredintials($user,$password){
+        $result=$this->hook('verifyCredintals');
+        var_dump($result);
         return $user.'123'==$password;
     }
     function loggedIn(){
@@ -83,8 +85,8 @@ class BasicAuth extends AbstractController {
 		if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page');
         $p->template->loadTemplate('empty');
         $p->template->set('page_title', $this->title_form);
-        $this->form=$p->frame('Content','Authentication')
-            ->add('Form',null,'content');
+        $this->form=$p->frame('Authentication')
+            ->add('Form');
 
         $this->form
             ->addComment($this->title_comment)

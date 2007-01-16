@@ -95,8 +95,8 @@ class Form extends AbstractView {
         return $this->addComment($label);
     }
 
-    function onSubmit(){
-        return $this->onsubmit=$this->add('Ajax');
+    function onSubmit($ajax=null){
+        return $this->onsubmit=$ajax?$ajax:$this->add('Ajax');
     }
 
 
@@ -198,13 +198,16 @@ class Form extends AbstractView {
 	}
 
     function addSubmit($label,$name=null){
-        $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label)
+        $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
         return $this;
     }
     function addAjaxButtonAction($label,$name=null){
         return $this->addButton($label,$name);
+    }
+    function addDefaultButton($label,$name=null,$color=null){
+        return $this->onSubmit($this->addButton($label,$name,$color));
     }
     function addButton($label,$name=null,$color=null){
 

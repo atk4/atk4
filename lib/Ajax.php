@@ -30,7 +30,7 @@ class Ajax extends AbstractModel {
         if($this->spinner)$this->ajaxFunc("spinner_off('".$this->spinner."')");
         $s=//"//ajax_script_start\n".
         	$this->ajax_output."//ajax_script_end\n";
-        $this->ajax_output="";
+        //$this->ajax_output="";
         return $s;
     }
     function getLink($text){

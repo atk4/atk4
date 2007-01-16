@@ -41,17 +41,11 @@ class QuickSearch extends Filter {
         }
     }
     function submitted(){
+        echo "here";
+        exit;
         if(parent::submitted()){
             $a=$this->add('Ajax');
-            if(!$this->region){
-                $a->redirect();
-            }else{
-                if($this->region_url){
-                    $a->loadRegionURL($this->region,$this->region_url);
-                }else{
-                    $a->reloadRegion($this->region);
-                }
-            }
+            $a->reload($this->owner);
             $a->execute();
         }
     }

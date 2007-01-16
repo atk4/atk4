@@ -68,7 +68,7 @@ abstract class AbstractView extends AbstractObject {
         // Now that the template is loaded, let's take care of parent's template
         if(isset($template_spot)){
             $this->spot=$template_spot;
-            if($this->owner && $this->owner->template){
+            if($this->owner && isset($this->owner->template)){
                 $this->owner->template->del($template_spot);
             }
         }

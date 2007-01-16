@@ -135,6 +135,7 @@ class ApiWeb extends ApiCLI {
                 echo $e->result;
                 return;
             }
+            throw $e;
 
         }
         /*

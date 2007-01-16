@@ -17,11 +17,16 @@ class VersionControl extends AbstractController{
 			$this->dirname.=DIRECTORY_SEPARATOR;
         $this->api->addHook('api-defaults',array($this,'versionUpdate'));
 	}
+    function showInfo(){
+        $this->getVersion();
+        $this->info("Running database version ".$this->db_version);
+        return $this;
+    }
 	function getVersion(){
 		/**
 		 * Checking table that contains version info
 		 */
-		$this->api->db->query("create table if not exists $this->table (db_version varchar(20)) engine=MyISAM");
+		$this->api->db->query("create table if not exists $this->table (db_version varchar(20))");
 		if($this->api->db->getOne("select count(*) from $this->table")==0){
 			$this->api->db->query("insert into $this->table values(0)");
 		}

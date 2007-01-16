@@ -40,6 +40,7 @@ class Lister extends ReloadableView {
         if(is_array($this->data)){
             return (bool)($this->current_row=array_shift($this->data));
         }
+        if(!isset($this->dq))throw new BaseException("dq must be set here");
         return (bool)($this->current_row=$this->dq->do_fetchHash());
     }
 
