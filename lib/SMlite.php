@@ -408,7 +408,7 @@ class SMlite extends AbstractModel {
             if(substr($tag,0,1)=='$'){
                 $tag = substr($tag,1);
                 $template[$tag.'#'.$c]=array();
-                $this->registerTag($tag,$template[$tag.'#'.$c]);
+                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
             }elseif(substr($tag,0,1)=='/'){
                 $tag = substr($tag,1);
                 return $tag;
@@ -416,9 +416,11 @@ class SMlite extends AbstractModel {
                 $tag = substr($tag,0,-1);
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$template[$tag.'#'.$c]);
+                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
             }elseif(isset($tag) && $tag){
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$template[$tag.'#'.$c]);
+                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
                 $xtag = $this->parseTemplate($template[$tag.'#'.$c]);
                 if($xtag && $tag!=$xtag){
                     throw new BaseException("Tag missmatch. $tag is closed with $xtag");
@@ -454,6 +456,7 @@ class SMlite extends AbstractModel {
             if(is_int($key))continue;
             list($real_key,$junk)=split('#',$key);
             $this->registerTag($real_key,$branch[$key]);
+            $this->registerTag($key,$branch[$key]);
             if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);
         }
     }
