@@ -182,7 +182,7 @@ class SMlite extends AbstractModel {
         }
         $class_name=get_class($this);
         $new=new $class_name();
-        $new->template=$this->tags[$tag][0];
+        $new->template=unserialize(serialize($this->tags[$tag][0]));
         $new->owner=$this->owner;
         $new->top_tag=$tag;
         $new->settings=$this->settings;
