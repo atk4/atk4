@@ -408,19 +408,17 @@ class SMlite extends AbstractModel {
             if(substr($tag,0,1)=='$'){
                 $tag = substr($tag,1);
                 $template[$tag.'#'.$c]=array();
-                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
+                $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
             }elseif(substr($tag,0,1)=='/'){
                 $tag = substr($tag,1);
                 return $tag;
             }elseif(substr($tag,-1,1)=='/'){
                 $tag = substr($tag,0,-1);
                 $template[$tag.'#'.$c]=array();
-                $this->registerTag($tag,$template[$tag.'#'.$c]);
-                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
+                $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
             }elseif(isset($tag) && $tag){
                 $template[$tag.'#'.$c]=array();
-                $this->registerTag($tag,$template[$tag.'#'.$c]);
-                $this->registerTag($tag.'#'.$c,$template[$tag.'#'.$c]);
+                $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
                 $xtag = $this->parseTemplate($template[$tag.'#'.$c]);
                 if($xtag && $tag!=$xtag){
                     throw new BaseException("Tag missmatch. $tag is closed with $xtag");
@@ -429,8 +427,9 @@ class SMlite extends AbstractModel {
         }
         return "end_of_file";
     }
-    function registerTag($key,&$ref){
+    function registerTag($key,$npk,&$ref){
         if(!$key)return;
+        if(isset($npk))$this->tags[$key.'#'.$npk][]=&$ref;
         $this->tags[$key][]=&$ref;
     }
     function isTopTag($tag){
@@ -455,8 +454,8 @@ class SMlite extends AbstractModel {
         foreach($branch as $key=>$val){
             if(is_int($key))continue;
             list($real_key,$junk)=split('#',$key);
-            $this->registerTag($real_key,$branch[$key]);
-            $this->registerTag($key,$branch[$key]);
+            $this->registerTag($real_key,null,$branch[$key]);
+            $this->registerTag($key,null,$branch[$key]);
             if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);
         }
     }

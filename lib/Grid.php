@@ -417,7 +417,6 @@ class Grid extends CompleteLister {
             $t_row->del('cols');
         }
 
-        $row->set('grid_name',$this->name);
         $row->set('row_id','<?$id?>');
         $row->set('odd_even','<?$odd_even?>');
         $row->del('cols');
@@ -462,7 +461,6 @@ class Grid extends CompleteLister {
         }
 
         $this->template->set('header',$header->render());
-        $this->template->set('grid_name',$this->name);
         //var_dump(htmlspecialchars($this->row_t->tmp_template));
         
     }
