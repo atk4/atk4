@@ -17,6 +17,7 @@ class Ajax extends AbstractModel {
     public $spinner = null;
 
     function execute(){
+        $this->api->not_html=true;
         echo $this->ajax_output;
         exit;
     }
