@@ -156,8 +156,20 @@ class Logger extends AbstractController {
 
     private $header_sent=0;
 
+    private $debug_log='';          // Will be outputed at the end of the page
+    private $debug_added=false;     // no debug messages added yet
+
 
     function init(){
+
+        $this->debug_log=$this->recall('debug_log','');
+        $this->forget('debug_log');
+        $this->debug_log.="[<font color=red>Debug log from ".date("d.m.Y H:m:s")." to ".$_SERVER['QUERY_STRING']."</font>] - debug started<br>\n";
+        $this->debug_added=false;
+
+        register_shutdown_function(array($this,'showDebugInfo'));
+
+
         $this->log_output=$this->api->getConfig('logger/log_output',null);
         $this->web_output=$this->api->getConfig('logger/web_output','full');
 
@@ -192,6 +204,17 @@ class Logger extends AbstractController {
         $this->api->addHook('output-warning',array($this,'outputWarning'));
         $this->api->addHook('output-info',array($this,'outputInfo'));
         $this->api->addHook('output-debug',array($this,'outputDebug'));
+
+        $this->api->debug('Logger is initialized');
+    }
+    function showDebugInfo(){
+        if(!$this->debug_added)return;
+        if($this->api->not_html){
+            // We may not output anything, because this will screw up. Save debug output to session
+            $this->memorize('debug_log',$this->debug_log);
+        }else{
+            echo $this->debug_log;
+        }
     }
     function gatherDetails(){
         // Get IP address
@@ -271,7 +294,8 @@ class Logger extends AbstractController {
         if(!$this->web_output){
             return true;
         }else{
-            echo $this->html_stdout?
+            $this->debug_added=true;
+            $this->debug_log.=$this->html_stdout?
                 $this->htmlLine("$msg",$frame,'debug'):
                 $this->txtLine("$msg",$frame,'debug');
             return true;

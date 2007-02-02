@@ -89,7 +89,7 @@ abstract class Form_Field extends AbstractView {
     }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-        $this->template->trySet('field_caption',$this->caption);
+        $this->template->trySet('field_caption',$this->caption?($this->caption.':'):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->set('field_input',$this->getInput());
         $this->template->trySet('field_error',
@@ -359,13 +359,14 @@ class Form_Field_Search extends Form_Field {
 }
 class Form_Field_Checkbox extends Form_Field {
     function getInput($attr=array()){
+        $this->template->trySet('field_caption','');
         return parent::getInput(array_merge(
                     array(
                         'type'=>'checkbox',
                         'value'=>'Y',
                         'checked'=>$this->value=='Y'
                         ),$attr
-                    ));
+                    )).' - '.$this->caption;
     }
     function loadPOST(){
         if(isset($_POST[$this->name])){

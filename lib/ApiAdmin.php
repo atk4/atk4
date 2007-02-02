@@ -8,6 +8,8 @@ class ApiAdmin extends ApiWeb {
     public $apinfo=array();
 
     public $ns=null;            // current namespace object or null if none
+
+    public $not_html=false;     // this is true if output is NOT html. It might be javascript ajax response or redirect
     function __construct($realm=null,$skin='kt2'){
         $this->skin=$skin;
         parent::__construct($realm);
@@ -101,6 +103,7 @@ class ApiAdmin extends ApiWeb {
          * Use this function instead of issuing header("Location") stuff
          */
 
+        $this->api->not_html=true;
         header("Location: ".$this->getDestinationURL($page,$args));
         exit;
     }
