@@ -29,10 +29,7 @@ class Ajax extends AbstractModel {
     }
     function getString(){
         if($this->spinner)$this->ajaxFunc("spinner_off('".$this->spinner."')");
-        $s=//"//ajax_script_start\n".
-        	$this->ajax_output."//ajax_script_end\n";
-        //$this->ajax_output="";
-        return $s;
+        return $this->ajax_output."\n";
     }
     function getLink($text){
         return '<a href="javascript: void(0)" onclick="'.$this->getString().'">'.$text.'</a>';

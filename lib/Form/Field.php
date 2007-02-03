@@ -27,8 +27,7 @@ abstract class Form_Field extends AbstractView {
     function displayFieldError($msg=null){
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
         if($this->api->isAjaxOutput()){
-            echo $this->add('Ajax')->displayAlert($msg)->getString();
-            exit;
+            echo $this->add('Ajax')->displayAlert($msg)->execute();
         }
         $this->owner->errors[$this->short_name]=$msg;
     }
@@ -256,8 +255,7 @@ class Form_Field_Dropdown extends Form_Field {
     function validate(){
         if(!isset($this->value_list[$this->value])){
         	if($this->api->isAjaxOutput()){
-		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->getString();
-		        exit;
+		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
 		    }
             $this->owner->errors[$this->short_name]="This is not one of offered values";
         }

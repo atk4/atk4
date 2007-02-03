@@ -29,6 +29,7 @@ class Form extends AbstractView {
     public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
     public $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = false;
+    public $onload = false;
 
     public $dq = null;
     function init(){
@@ -103,6 +104,9 @@ class Form extends AbstractView {
 
     function onSubmit($ajax=null){
         return $this->onsubmit=$ajax?$ajax:$this->add('Ajax');
+    }
+    function onLoad($ajax=null){
+        return $this->onload=$ajax?$ajax:$this->add('Ajax');
     }
 
 
@@ -300,7 +304,10 @@ class Form extends AbstractView {
 
         // We don't have anything else to do!
         if($this->onsubmit){
-            $this->template->set('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
+            $this->template->trySet('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
+        }
+        if($this->onload){
+            $this->template->trySet('form_onload',str_replace("\n","",$this->onload->getString()));
         }
         $this->template_chunks['form']
             ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));

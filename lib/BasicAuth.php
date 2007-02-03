@@ -60,6 +60,10 @@ class BasicAuth extends AbstractController {
             $this->logout();
         }
     }
+    function get($property,$default=null){
+        if(!isset($this->info[$property]))return $default;
+        return $this->info[$property];
+    }
     function allow($username,$password){
         /*
          * This function will add specified credintals to allowed user list. If they are entered
@@ -119,6 +123,17 @@ class BasicAuth extends AbstractController {
             $this->processLogin();
         }else $this->debug('User is already authenticated');
     }
+    function addInfo($key,$val=null){
+        if(is_null($val) && is_array($key)){
+            foreach($key as $a=>$b){
+                $this->addInfo($a,$b);
+            }
+            return;
+        }
+        $this->debug("Gathered info: $key=$val");
+        $this->info[$key]=$val;
+        return $this;
+    }
     function isLoggedIn(){
         /*
          * This function determines - if user is already logged in or not. It does it by
@@ -150,7 +165,7 @@ class BasicAuth extends AbstractController {
          * call parent, then modify it.
          */
         $this->debug("Login successful");
-        $this->info=array();
+        $this->addInfo('username',$this->form->get('username'));
 
         if($this->form && $this->form->get('memorize')){
             $this->debug('setting permanent cookie');
@@ -199,6 +214,7 @@ class BasicAuth extends AbstractController {
             		'log out.</b></div>')
 			
             ->addSubmit('Login');
+        $form->onLoad()->setFormFocus($form,'username');
         return $form;
     }
     function showLoginForm(){

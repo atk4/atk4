@@ -73,6 +73,10 @@ abstract class AbstractView extends AbstractObject {
             }
         }
 
+
+        // Cool, now let's set _name of this template
+        if($this->template)$this->template->trySet('_name',$this->name);
+
     }
     function defaultTemplate(){
         return null;//"_top";
@@ -111,7 +115,6 @@ abstract class AbstractView extends AbstractObject {
         if(!($this->template)){
             throw new BaseException("You should specify template for this object");
         }
-        $this->template->trySet('_name',$this->name);
         $this->output($this->template->render());
     }
     function output($txt){
