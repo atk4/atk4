@@ -4,14 +4,15 @@
                         <?form_body?>
                         <?form_line?>
 						  <tr>
-							<td width="70" class="smalltext" align="right"><?field_caption?>Email:<?/?></td>
-							<td width="54%"><?field_input?><input type="text" name="loginemail" class="logintext" value=""><?/?>
+							<td class="smalltext" align="right" nowrap><?field_caption?>Email:<?/?></td>
+							<td><?field_input?><input type="text" name="loginemail" class="logintext" value=""><?/?>
                             <?field_error?><br><font color=red>^ <?field_error_str?>Error<?/?></font><?/?>
                             </td>
 						  </tr>
                           <?/form_line?>
 			  <?form_separator?>
-				<tr><td colspan="2" align="center" nowrap style="">~ <u><?$separator?></u> ~</td></tr>
+				<tr><td colspan="2" align="left" nowrap style="padding-left: 70px">
+                 ~ <u><?$separator?></u> ~</td></tr>
 			  <?/form_separator?>
 			  <?form_comment?>
 				<tr><td colspan="2" align="center" nowrap style="padding-left: 30px; padding-right: 30px"><?$comment?></td></tr>

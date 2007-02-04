@@ -115,7 +115,7 @@ class BasicAuth extends AbstractController {
                             $this->encryptPassword($_COOKIE[$this->name."_password"])
                            )){
                     // Cookie login was successful. No redirect will be performed
-                    $this->loggedIn();
+                    $this->loggedIn($_COOKIE[$this->name."_username"]);
                     $this->memorize('info',$this->info);
                     return;
                 }
@@ -156,7 +156,7 @@ class BasicAuth extends AbstractController {
         // Successful
         return true;
     }
-    function loggedIn(){
+    function loggedIn($username){
         /*
          * This function is always executed after successful login.
          *
@@ -165,7 +165,7 @@ class BasicAuth extends AbstractController {
          * call parent, then modify it.
          */
         $this->debug("Login successful");
-        $this->addInfo('username',$this->form->get('username'));
+        $this->addInfo('username',$username);
 
         if($this->form && $this->form->get('memorize')){
             $this->debug('setting permanent cookie');
@@ -248,7 +248,7 @@ class BasicAuth extends AbstractController {
                         $this->form->get('username'),
                         $this->encryptPassword($this->form->get('password'))
                         )){
-                $this->loggedIn();
+                $this->loggedIn($this->form->get('username'));
                 $this->memorize('info',$this->info);
                 $this->loginRedirect();
             }

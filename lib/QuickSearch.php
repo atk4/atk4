@@ -41,8 +41,6 @@ class QuickSearch extends Filter {
         }
     }
     function submitted(){
-        echo "here";
-        exit;
         if(parent::submitted()){
             $a=$this->add('Ajax');
             $a->reload($this->owner);
