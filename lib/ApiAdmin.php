@@ -125,7 +125,7 @@ class ApiAdmin extends ApiWeb {
 
         
         if(!isset($_GET['page'])){
-            $base=basename($_SERVER['SCRIPT_URL']);
+            $base=basename($_SERVER['REDIRECT_URL']);
             if(!strpos('.',$base) && !strpos('&',$base)){
                 $_GET['page']=$base;
             }
