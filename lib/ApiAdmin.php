@@ -95,7 +95,9 @@ class ApiAdmin extends ApiWeb {
             if(is_array($val)||is_object($val))$val=serialize($val);
             $tmp[]="$arg=".urlencode($val);
         }
-        return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
+        if($this->getConfig('url_prefix',false)){
+            return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
+        }else return $page.($tmp?"?".join('&',$tmp):'');
     }
     function redirect($page=null,$args=array()){
         /**
@@ -121,6 +123,13 @@ class ApiAdmin extends ApiWeb {
     function initDefaults(){
         if(!defined('DTP'))define('DTP','');
 
+        
+        if(!isset($_GET['page'])){
+            $base=basename($_SERVER['SCRIPT_URL']);
+            if(!strpos('.',$base) && !strpos('&',$base)){
+                $_GET['page']=$base;
+            }
+        }
 
         if($_GET['page']=="")$_GET['page']='Index';
         if(strpos($_GET['page'],';')!==false){
