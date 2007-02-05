@@ -18,6 +18,7 @@ class ApiAdmin extends ApiWeb {
     function init(){
         parent::init();
 
+
         $this->initializeTemplate();
         $this->addHook('api-defaults',array($this,'initDefaults'));
     }
@@ -124,13 +125,6 @@ class ApiAdmin extends ApiWeb {
         if(!defined('DTP'))define('DTP','');
 
         
-        if(!isset($_GET['page'])){
-            $base=basename($_SERVER['REDIRECT_URL']);
-            if(!strpos('.',$base) && !strpos('&',$base)){
-                $_GET['page']=$base;
-            }
-        }
-
         if($_GET['page']=="")$_GET['page']='Index';
         if(strpos($_GET['page'],';')!==false){
             list($namespace,$_GET['page'])=explode(';',$_GET['page']);
