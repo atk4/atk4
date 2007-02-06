@@ -442,7 +442,9 @@ class Grid extends CompleteLister {
             if(isset($column['sortable'])){
                 $s=$column['sortable'];
                 // calculate sortlink
-                $l = $this->api->getDestinationURL(null,array($this->name.'_sort'=>$s[1]));
+                $l = $this->add('Ajax')
+                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
+                	->getString();
 
                 $header_sort->set('order',$column['sortable'][0]);
                 $header_sort->set('sortlink',$l);
