@@ -28,8 +28,8 @@ class Form extends AbstractView {
 
     public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
     public $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
-    public $onsubmit = false;
-    public $onload = false;
+    public $onsubmit = null;
+    public $onload = null;
 
     public $dq = null;
     function init(){
@@ -211,6 +211,8 @@ class Form extends AbstractView {
         $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
+
+        if(!isset($this->onsubmit))$this->onsubmit=false;  // do not perform ajax submit
         return $this;
     }
     function addAjaxButtonAction($label,$name=null){
@@ -302,7 +304,10 @@ class Form extends AbstractView {
         // Assuming, that child fields already inserted their HTML code into 'form'/form_body using 'form_line'
         // Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons
 
-        // We don't have anything else to do!
+        // That means - we will submit our form through Ajax
+        if(!isset($this->onsubmit)){
+            $this->onSubmit()->submitForm($this);
+        }
         if($this->onsubmit){
             $this->template->trySet('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
         }
