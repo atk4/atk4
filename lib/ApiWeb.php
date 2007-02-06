@@ -84,7 +84,10 @@ class ApiWeb extends ApiCLI {
 
         if(!isset($_GET['page'])){
             $base=basename($_SERVER['REDIRECT_URL']);
-            if(!strpos('.',$base) && !strpos('&',$base)){
+            if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
+                $base='Index';
+            }
+            if(!strpos($base,'.') && !strpos($base,'&')){
                 $_GET['page']=$base;
             }
         }
