@@ -164,13 +164,13 @@ function expander_flip(name,id,button,expander_url){
 }
 /******* InlineEdit functions ********/
 function getInlineValue(inline_id){
-	var value=new String(document.getElementById(inline_id).innerHTML);
+	//var value=new String(document.getElementById(inline_id).innerHTML);
 	/* stripping any tags from a value 
 	   initial string is: <font color="blue">Value</font>
 	*/
-	v=value.split(">");
+	//v=value.split(">");
 	//now we have v=array(0=>'<font color="blue"', 1=>'Value</font'
-	value=new String(v[1]).split("<");
+	//value=new String(v[1]).split("<");
 	//value='edt';
 	//return value[0];
 	return document.getElementById(inline_id).title;
@@ -420,8 +420,11 @@ function reloadGridRow(url,name,row_id,callback){
 		i=0;
 		while(col){
 			if(col.innerHTML!=undefined){
-			col.innerHTML=cols[i];
-			i++;}
+				value=cols[i].split('<t>');
+				col.innerHTML=value[0];
+				col.title=value[1];
+				i++;
+			}
 			//else i--;
 			col=col.nextSibling;
 			//i++;
