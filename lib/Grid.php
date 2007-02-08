@@ -98,7 +98,7 @@ class Grid extends CompleteLister {
     	//TODO counting words, tags and trimming so that tags are not garbaged
     	if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
     	$this->current_row[$field]=$text;
-    	$this->row_t->set('tdparam_'.$field,'alt="'.$this->current_row[$field.'_original'].'"');
+    	//$this->row_t->set('tdparam_'.$field,'alt="'.$this->current_row[$field.'_original'].'"');
     }
     function format_html($field){
     	$this->current_row[$field] = htmlentities($this->current_row[$field]);
@@ -162,7 +162,7 @@ class Grid extends CompleteLister {
     	//setting text non empty
     	$text=$this->current_row[$field]?$this->current_row[$field]:'null';
 
-    	$this->row_t->set('tdparam_'.$field, $this->row_t->get('tdparam_'.$field).
+    	$this->row_t->set('tdparam_'.$field, //$this->row_t->get('tdparam_'.$field).
 			' id="'.$col_id.'_'.$this->current_row[$idfield].
 			'" style="cursor: hand" title="'.$this->current_row[$field.'_original'].'"');
     	$this->current_row[$field]='<a href=\'javascript:'.
