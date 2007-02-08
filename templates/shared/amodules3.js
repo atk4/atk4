@@ -172,7 +172,8 @@ function getInlineValue(inline_id){
 	//now we have v=array(0=>'<font color="blue"', 1=>'Value</font'
 	value=new String(v[1]).split("<");
 	//value='edt';
-	return value[0];
+	//return value[0];
+	return document.getElementById(inline_id).title;
 }
 function isKeyPressed(e, kCode){
 	var characterCode;
@@ -288,7 +289,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			// setting input size to length of the text in it or 40 max
 			value=getInlineValue(id);
 			size=value.length;
-			if(size<10) size=10;
+			if(size<3) size=3;
 			if(size>40) size=40;
 			//if(size==0) size=5;
 			col.innerHTML=' <form id="'+form_name+'" name="'+form_name+'" method="POST">'+
