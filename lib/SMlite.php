@@ -393,18 +393,21 @@ class SMlite extends AbstractModel {
 
         return $this;
     }
-    function parseTemplate(&$template){
+    function parseTemplate(&$template,$level=0,$pc=0){
         /*
          * private function
          *
          * This is a main function, which actually parses template. It's recursive and it
          * calls itself. Empty array should be passed
          */
+	    // TODO when we go into sublevel, we should set the number of
+	    // the tag so that there is NO double numbers in template COMPLETELY
+	    // May be this way is dirty, need to look for better solution...
+        $c=pow(10,$level)+$pc;
         while(strlen($this->tmp_template)){
             $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
             if($text)$template[]=$text;
             $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
-            $c=count($template);
             if(substr($tag,0,1)=='$'){
                 $tag = substr($tag,1);
                 $template[$tag.'#'.$c]=array();
@@ -419,11 +422,12 @@ class SMlite extends AbstractModel {
             }elseif(isset($tag) && $tag){
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-                $xtag = $this->parseTemplate($template[$tag.'#'.$c]);
+                $xtag = $this->parseTemplate($template[$tag.'#'.$c],$level+1,$c);
                 if($xtag && $tag!=$xtag){
                     throw new BaseException("Tag missmatch. $tag is closed with $xtag");
                 }
             }
+            $c++;
         }
         return "end_of_file";
     }
