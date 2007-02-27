@@ -99,8 +99,10 @@ class ApiCLI extends AbstractView {
         }
         if(file_exists($file)){
             include_once $file;
+            // some tricky thing to make config be read in some cases it could not in simple way
+            if(!$config)global $config;
         }
-      
+      	
         $this->config = array_merge($this->config,$config);
         if(isset($this->config['table_prefix'])){
             if(!defined('DTP'))define('DTP',$this->config['table_prefix']);
