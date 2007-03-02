@@ -174,6 +174,17 @@ class SMlite extends AbstractModel {
          * Sometimes you will want to put branch into different class. This function will create
          * new class for you.
          */
+<<<<<<< .mine
+        if($this->isTopTag($tag)){
+	        $class_name=get_class($this);
+	        $new=new $class_name();
+	        $new->template=unserialize(serialize($this->template));
+	        $new->owner=$this->owner;
+	        $new->top_tag=$tag;
+	        $new->settings=$this->settings;
+					$new->rebuildTags();
+					return $new;
+=======
         
         if($this->isTopTag($tag))
         {
@@ -185,10 +196,16 @@ class SMlite extends AbstractModel {
 	        $new->settings=$this->settings;
             $new->rebuildTags();
             return $new;
+>>>>>>> .r392
         }
 
+<<<<<<< .mine
+
+        if(!$this->is_set($tag)){
+=======
         if(!$this->is_set($tag))
         {
+>>>>>>> .r392
             $o=$this->owner?" for ".$this->owner->__toString():"";
             throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
         }
