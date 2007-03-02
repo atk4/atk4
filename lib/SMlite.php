@@ -167,14 +167,11 @@ class SMlite extends AbstractModel {
          */
         if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
     }
-    
-    function cloneRegion($tag)
-    {
+    function cloneRegion($tag){
         /*
          * Sometimes you will want to put branch into different class. This function will create
          * new class for you.
          */
-<<<<<<< .mine
         if($this->isTopTag($tag)){
 	        $class_name=get_class($this);
 	        $new=new $class_name();
@@ -182,34 +179,14 @@ class SMlite extends AbstractModel {
 	        $new->owner=$this->owner;
 	        $new->top_tag=$tag;
 	        $new->settings=$this->settings;
-					$new->rebuildTags();
-					return $new;
-=======
-        
-        if($this->isTopTag($tag))
-        {
-	        $class_name=get_class($this);
-	        $new=new $class_name();
-	        $new->template=unserialize(serialize($this->template));
-	        $new->owner=$this->owner;
-	        $new->top_tag=$tag;
-	        $new->settings=$this->settings;
-            $new->rebuildTags();
-            return $new;
->>>>>>> .r392
+          $new->rebuildTags();
+          return $new;
         }
-
-<<<<<<< .mine
-
+        
         if(!$this->is_set($tag)){
-=======
-        if(!$this->is_set($tag))
-        {
->>>>>>> .r392
             $o=$this->owner?" for ".$this->owner->__toString():"";
             throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
         }
-
         $class_name=get_class($this);
         $new=new $class_name();
         $new->template=unserialize(serialize($this->tags[$tag][0]));
@@ -245,15 +222,9 @@ class SMlite extends AbstractModel {
          *
          * If tag is defined multiple times, first region is returned.
          */
-        if($this->isTopTag($tag))
-        {
-        	return $this->template;
-        }
+        if($this->isTopTag($tag))return $this->template;
         $v=$this->tags[$tag][0];
-        if(is_array($v) && count($v)==1)
-        {
-        	$v=array_shift($v);
-        }
+        if(is_array($v) && count($v)==1)$v=array_shift($v);
         return $v;
     }
     function append($tag,$value,$delim=""){
@@ -429,9 +400,7 @@ class SMlite extends AbstractModel {
 
         return $this;
     }
-
-    function parseTemplate(&$template,$level=0,$pc=0)
-    {
+    function parseTemplate(&$template,$level=0,$pc=0){
         /*
          * private function
          *
@@ -442,38 +411,26 @@ class SMlite extends AbstractModel {
 	    // the tag so that there is NO double numbers in template COMPLETELY
 	    // May be this way is dirty, need to look for better solution...
         $c=pow(10,$level)+$pc;
-        while(strlen($this->tmp_template))
-        {
+        while(strlen($this->tmp_template)){
             $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
-            if($text)
-            {
-            	$template[]=$text;
-            }
+            if($text)$template[]=$text;
             $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
-            if(substr($tag,0,1)=='$')
-            {
+            if(substr($tag,0,1)=='$'){
                 $tag = substr($tag,1);
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-            }
-            elseif(substr($tag,0,1)=='/')
-            {
+            }elseif(substr($tag,0,1)=='/'){
                 $tag = substr($tag,1);
                 return $tag;
-            }
-            elseif(substr($tag,-1,1)=='/')
-            {
+            }elseif(substr($tag,-1,1)=='/'){
                 $tag = substr($tag,0,-1);
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-            }
-            elseif(isset($tag) && $tag)
-            {
+            }elseif(isset($tag) && $tag){
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
                 $xtag = $this->parseTemplate($template[$tag.'#'.$c],$level+1,$c);
-                if($xtag && $tag!=$xtag)
-                {
+                if($xtag && $tag!=$xtag){
                     throw new BaseException("Tag missmatch. $tag is closed with $xtag");
                 }
             }
@@ -481,30 +438,19 @@ class SMlite extends AbstractModel {
         }
         return "end_of_file";
     }
-    
-    function registerTag($key,$npk,&$ref)
-    {
-        if(!$key)
-        {
-        	return;
-        }
-        if(isset($npk))
-        {
-        	$this->tags[$key.'#'.$npk][]=&$ref;
-        }
+    function registerTag($key,$npk,&$ref){
+        if(!$key)return;
+        if(isset($npk))$this->tags[$key.'#'.$npk][]=&$ref;
         $this->tags[$key][]=&$ref;
     }
-    
-    function isTopTag($tag)
-    {
+    function isTopTag($tag){
         return 
             (isset($this->top_tag) && ($tag==$this->top_tag)) ||
             ($tag=='_top');
     }
 
     // rebuild tags of existing array structure
-    function rebuildTags()
-    {
+    function rebuildTags(){
         /*
          * This function walks through template and rebuilds list of tags. You need it in case you
          * changed already parsed template.
@@ -514,26 +460,14 @@ class SMlite extends AbstractModel {
         $this->rebuildTagsRegion($this->template);
         return $this;
     }
-    
-    function rebuildTagsRegion(&$branch)
-    {
-        if(!isset($branch))
-        {
-        	throw new BaseException("Cannot rebuild tags, because template is empty");
-        }
-        foreach($branch as $key=>$val)
-        {
-            if(is_int($key))
-            {
-            	continue;
-            }
+    function rebuildTagsRegion(&$branch){
+        if(!isset($branch))throw new BaseException("Cannot rebuild tags, because template is empty");
+        foreach($branch as $key=>$val){
+            if(is_int($key))continue;
             list($real_key,$junk)=split('#',$key);
             $this->registerTag($real_key,null,$branch[$key]);
             $this->registerTag($key,null,$branch[$key]);
-            if(is_array($branch[$key]))
-            {
-            	$this->rebuildTagsRegion($branch[$key]);
-            }
+            if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);
         }
     }
 
