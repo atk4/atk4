@@ -1,6 +1,6 @@
 <?php
 /**
- * Lister object
+ * Lister object. This object will work with any template containing tags <?items?> and <?item?>
  */
 class sw_list extends sw_wrap { 
     function init(){
@@ -12,7 +12,7 @@ class sw_list extends sw_wrap {
         }else{
             $separator=null;
         }
-        $this->template->del('items');
+        $this->wrapping->del('items');
 
         $need_separator=false;
         // Now find all "item" inside the ref template
@@ -24,15 +24,17 @@ class sw_list extends sw_wrap {
             $this->grabTags($item_tpl);
             $i->set($this->data);
 
-            $i->set('text',$item_tpl->render());
+            $i->set('content',$item_tpl->render());
 
             if($need_separator && $separator){
-                $this->template->append('items',$separator);
+                $this->wrapping->append('items',$separator);
             }
             $need_separator=true;
 
             //$this->tmpl['item']->set('text',$this->ref->get($tag));
-            $this->template->append('items',$this->tmpl['item']->render());
+            $this->wrapping->append('items',$this->tmpl['item']->render());
         }
+    }
+    function processRecursively(){
     }
 }

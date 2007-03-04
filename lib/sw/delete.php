@@ -5,4 +5,5 @@
  */
 class sw_delete extends View {
     function render(){ }
+    function processRecursively() {}
 }

@@ -6,6 +6,6 @@ class sw_simple extends sw_wrap {
     function init(){
         $this->grabTags($this->template);
         parent::init();
-        $this->template->set($this->data);
+        $this->wrapping->set($this->data);
     }
 }

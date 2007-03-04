@@ -4,42 +4,38 @@
  * 
  */
 class sw_component extends View {
-    var $ref;    // link to region defined inside main template, with content
+    var $wrapping=null;  // This is a template which is going to be used as a wrapping
 
-    var $content;   // same thing but rendered
+    var $content='';    // same thing but rendered
 
     var $data=array();  // this contains structured we grabed from content
 
     var $tmpl=array();  // this contains collected template clones
 
-	function init(){
-		parent::init();
-		$this->initNested($this->template->template);
-	}
-	function initNested(&$template){
-        foreach(array_keys($template) as $item){
-            list($class,$junk)=split('#',$item);
-            if(is_numeric($class))continue;
-            if(isset($this->tagmatch[$class]))$class=$this->tagmatch[$class];
-            if(!$class){
-                continue;
-            }
-            if($class[0]=='_')continue;
-           	if(class_exists('sw_'.$class,false)){
-           		$nested=&$this->api->add('sw_'.$class,$item,$item,$item);
-           		$nested->downCall('render');
-           		$nested_content=$nested->template->render();
-           		$template[$item]=$nested_content;
-           		return true;//$nested_content;
-           	}else{
-           		$nested=$this->initNested(&$template[$item]);
-           	}
-        }
-	}
+    function processRecursively(){
+        $this->api->processTemplate($this);
+    }
+    function output($data){
+        /*
+         * We do not put anything inside parent yet. We might need to wrap things up
+         */
+        $this->content.=$data;
+    }
+    function wrapUp(){
+        /*
+         * If you have called "surroundBy" earlier, that means - the whole object should be put inside
+         * a "wrapping". The actual template will be rendered and placed as a 'content' inside wrapping
+         */
 
+        $this->wrapping->trySet('content',$this->content);
+        $this->wrapping->set($this->api->info);
+        $this->content=$this->wrapping->render();
+    }
     function render(){
         if($this->api->getConfig('debug',false))$this->output('<div style="border: 1px dashed red">');
         parent::render();
+        if($this->wrapping)$this->wrapUp();
+        parent::output($this->content);
         if($this->api->getConfig('debug',false))$this->output('</div>');
     }
     function grab($tag,$default=null,$template=null){
@@ -54,25 +50,57 @@ class sw_component extends View {
         }else $this->data[$tag]=$default;
     }
     function cloneRegion($tag){
-        $this->tmpl[$tag]=$this->template->cloneRegion($tag);
-        $this->template->del($tag);
+        $this->tmpl[$tag]=$this->wrapping->cloneRegion($tag);
+        $this->wrapping->del($tag);
         return $this->tmpl[$tag];
     }
-    function surroundBy($template,$tag){
+    function surroundBy($template=null){
+        /*
+         * Normally when component is created, it inherits it's template from the parent. However usually it's
+         * not what we need. We want this template to be used as a reference, but the real template should be
+         * loaded from a component library or an external file.
+         *
+         * This function taks region defined by a $tag and replaces it with $template. If $template is not
+         * specified, then tag name will be used to determine name of a tag cloned from component library
+         *
+         *
+         * After insertion is done, the previous template is rendered and is inserted inside <content>
+         * tag, which may be defined inside component.
+         *
+         * To ilustrate, let's take this example:
+         *
+         * components:
+         *
+         *  <?title?> <h1> <?content?>sample content<?/?> </h1> <?/title?>
+         *
+         *
+         * content template:
+         *
+         *  <?title?> Hello World <?/title?>
+         *
+         * When component is initalized, it inherits template containing "hello world" by default. However
+         * if surroundBy is called on top-tag (title), this function render region <?title?> from content:
+         *   "Hello World"
+         * and then gonna insert inside <?content?> tag
+         *
+         *
+         * <?title?> <h1> <?content?>Hello world<?/content?> </h1> <?/title?>
+         */
+
+        if(isset($template)){
+            $this->wrapping=$template;
+            return;
+        }
+
+
+        // We will use content-template as a reference
         $this->ref = $this->template;
-        list($class,$junk)=split('#',$tag);
+        list($class,$junk)=split('#',$this->template->top_tag);
 
         // This class will clone component's region from the component library
-        $this->template=$this->owner->components->cloneRegion($class);
-
-        // this is what originally was inside the tags such as
-        // <!mytag!>this will become content<!/!>
-        $this->content=$this->ref->render();
-
-        // we are putting supplied content into the component. Now this will
-        // only happen if a) content was specified and b) component have
-        // tag for content
-        if($this->content)$this->template->trySet('content',$this->content);
+        if(!$this->api->components->is_set($class))
+            throw new BaseException("Region '$class' must be defined in content library");
+        $this->wrapping=$this->api->components->cloneRegion($class);
     }
     function grabTags($t){
         foreach(array_keys($t->tags) as $tag){

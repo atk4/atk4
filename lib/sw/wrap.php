@@ -6,7 +6,7 @@ class sw_wrap extends sw_component {
     function init(){
         parent::init();
 
-        $this->surroundBy('components',$this->template->top_tag);
+        $this->surroundBy();
         $this->template->trySet('_page',$this->owner->page);
         $this->template->trySet('_parent',$this->owner->parent);
         $this->template->trySet('_title',$this->owner->title);
