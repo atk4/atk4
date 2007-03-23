@@ -12,7 +12,7 @@ class ReloadableView extends AbstractView {
      * class and add yours into it's Content.
      */
     function renderLoadingDiv(){
-        $this->output('<div id="RD_'.$this->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
+        $this->output('<div id="RD_'.$this->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
     }
     function recursiveRender(){
         if($_GET['cut_object']){
