@@ -141,7 +141,7 @@ function expander_flip(name,id,button,expander_url){
         //cll.id = name+"_expandedcontent_"+id;        
         cll.setAttribute('id', name+"_expandedcontent_"+id);
         
-        cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
+        cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
         
         /* /chk */
         
@@ -389,7 +389,7 @@ function inline_hide(name, row_id, action, callback){
 function treenode_flip(expand,id,url){
 	button=new String(document.getElementById('ec_'+id).innerHTML);
 	cll=document.getElementById('p_'+id);
-        if(expand==1)cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src=amodules3/img/loading.gif></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
+        if(expand==1)cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
 
 	aasn('p_'+id,url);
 	
