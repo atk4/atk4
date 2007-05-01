@@ -63,10 +63,11 @@ class SQLAuth extends BasicAuth {
         return parent::addInfo($key,$val);
     }
     function verifyCredintials($login,$password){
+        $this->debug("Verifying credintals for $login / $password");
         $this->dq->where($this->login_field,$login);
         $data=$this->dq->do_getHash();
         // If passwords are matched we will record some information
-        if($data[$this->password_field]==$password){
+        if($data && $data[$this->password_field]==$password){
             $this->addInfo($data);
             return true;
         }

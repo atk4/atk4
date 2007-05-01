@@ -121,6 +121,7 @@ class BasicAuth extends AbstractController {
                 }
             }else $this->debug("No permanent cookie");
             $this->processLogin();
+            return true;
         }else $this->debug('User is already authenticated');
     }
     function addInfo($key,$val=null){
@@ -202,6 +203,7 @@ class BasicAuth extends AbstractController {
 	}
     function createForm($frame){
         $form=$frame->add('Form');
+        
 
         $form
             ->addSeparator($this->title)
@@ -258,6 +260,7 @@ class BasicAuth extends AbstractController {
 
         $p->recursiveRender();
         echo $p->template->render();
+        $this->debug("Page rendered");
         exit;
     }
 }
