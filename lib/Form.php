@@ -48,12 +48,13 @@ class Form extends AbstractView {
         if($this->template->is_set('hidden_form_line'))
             $this->grabTemplateChunk('hidden_form_line');
         $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
-        $this->grabTemplateChunk('form');           // template for whole form, must contain form_body, form_buttons, form_action,
+        //$this->grabTemplateChunk('form');           // template for whole form, must contain form_body, form_buttons, form_action,
                                                     //  and form_name
 
         // ok, other grabbing will be done by field themselves as you will add them to the form.
         // They will try to look into this template, and if you don't have apropriate templates
         // for them, they will use default ones.
+        $this->template_chunks['form']=$this->template;
         $this->template_chunks['form']->del('form_body');
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->set('form_name',$this->name);
