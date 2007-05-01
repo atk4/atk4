@@ -34,7 +34,7 @@ abstract class AbstractObject {
     function __toString(){
         return "Object ".get_class($this)."(".$this->name.")";
     }
-    function add($class,$short_name=null,$template_spot=null,$template_branch=null,$debug=null){
+    function add($class,$short_name=null,$template_spot=null,$template_branch=null){
         /**
          * When you want to add element to your container, always use this
          * function. It will initialize class, create object and make it a
@@ -68,11 +68,10 @@ abstract class AbstractObject {
             // Model classes may be created several times and we are actually don't care about those.
         }
 
-        if($debug){
-            $element = new Debug($class);
-        }else{
-            $element = new $class();
-        }
+        $element = new $class();
+
+        // Inherit debuging option
+        $element->debug=$this->debug;
 
         if(!($element instanceof AbstractObject)){
             throw new BaseException("You can add only classes based on AbstractObject (called from ".caller_lookup(1,true).")");
