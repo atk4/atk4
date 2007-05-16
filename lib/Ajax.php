@@ -55,13 +55,13 @@ class Ajax extends AbstractModel {
 		$url=$this->api->getDestinationURL(null,$args);
 		return $this->loadRegionURL($region_id,$url);
     }
-    function reload($element,$args=array()){
+    function reload($element,$args=array(),$page=null){
         if(is_object($element)){
             if(!$element instanceof ReloadableView)throw new BaseException('Only views inherited from ReloadableView may be reloaded');
             $element=$element->name;
         }
         $args['cut_object']=$element;
-        $url=$this->api->getDestinationURL(null,$args);
+        $url=$this->api->getDestinationURL($page,$args);
         $this->setVisibility("RD_".$element);
         $this->loadRegionURL("RR_".$element,$url);
         return $this;

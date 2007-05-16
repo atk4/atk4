@@ -30,8 +30,9 @@ mkdir templates 2>/dev/null
 
 cat > .htaccess <<EOF
 RewriteEngine on
-RewriteRule     ^(main.php.*)$           \$1                  [L]
-RewriteRule     ^([^\./]*(&.*)?)$        main.php?page=\$1    [L]
+RewriteRule     ^(main.php.*)$           $1                  [L]
+RewriteRule     ^([^\./]*&.*)$        main.php?page=$1    [L]
+RewriteRule     ^([^\./&?]*)$        main.php   [L]
 EOF
 
 cat > main.php <<EOF
