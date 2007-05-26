@@ -1,0 +1,62 @@
+    <div id="content">
+      <?form?>
+      <!-- Bad Nick and room name control -->
+      <h2><SPAN>Bad Nick and room name.</SPAN></h2>
+      <p>Adjustment of parameters of a filtration of the forbidden words.</p>
+      <form id="<?$form_short_name?>" name="<?$form_name?>" method="post" action="<?$form_action?>" onSubmit="">
+        <fieldset>
+        <?form_body?>
+        <legend>FlashChat rooms</legend>
+        <p class="description">Select room and assign permitted libraries. </p>
+        <?form_dropdown?>
+        <div class="select">
+          <p  class="label"><?field_caption?>Rooms<?/?>:</p>
+          <?field_input?>
+          <select name="chatrooms" size="4" id="chatrooms" onchange="">
+            <option value="id01">Public room</option>
+            <option value="id02">Public room 2</option>
+          </select>
+          <?/field_input?>
+        </div>
+        <?/form_dropdown?>
+        <div class="select">
+          <p class="label">Permitted libraries:</p>
+          <select name="libraryname" size="4" id="libraryname" onchange="">
+            <option value="id01">Sex</option>
+            <option value="id02">Obscene</option>
+          </select>
+        </div>
+        <?form_applychanges_open?>
+        <div class="applychanges">
+          <p class="label"></p>
+          <div class="loader">&nbsp;</div>
+        <?/form_applychanges_open?>
+          <input name="applychanges" type="button" id="applychanges" value="Apply Changes">
+        <?form_applychanges_close?>
+        </div>
+        <?/form_applychanges_close?>
+        <fieldset>
+        <legend>FlashChat control mode</legend>
+        <?form_radiobutton_open?>
+        <div class="radiobutton" id="badwordscontrol"><?/?><?form_radio?><span>
+          <?field_input?>
+          <input checked="checked" value="replace" name="badwordscontrol" id="radio2" type="radio">
+          <?/field_input?>
+          <label><?field_caption?>Replace words ***.<?/?></label>
+          </span><?/form_radio?> <span>
+          <input value="kick" name="badwordscontrol" id="badwordscontrol" type="radio">
+          <label>Warn and kick user.</label></span>
+          <?form_radiobutton_close?></div><?/?>
+        </fieldset>
+        <?/form_body?>
+        </fieldset>
+        <div class="submit">
+          <div class="loader"></div>
+          <?form_buttons?>
+          <input type="submit" name="save" value="Save changes">
+          <?/form_buttons?>
+        </div>
+      </form>
+      <?/form?>
+      <!-- END content -->
+    </div>

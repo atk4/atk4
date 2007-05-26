@@ -1,0 +1,30 @@
+<div id="content">
+     <?wizard?>
+      <h2><span>FlashChat startup wizard.</span></h2>
+      <p>Welcome to the adjustments of key parameters FlashChat. With the help of a wizard you can adjust following parameters FlashChat: FlashChat Login Screen, Bad nick and room name, Chat rooms.</p>
+      <div id="wizsteps">
+        <div id="wizstep1">
+          <h3>FlashChat Login Screen.</h3>
+          <p>Adjustment of parameters of the authorization, the text of rule for use a chat, display of process of loading of the chat.</p>
+        </div>
+        <div id="wizstep2">
+          <h3>Chat rooms.</h3>
+          <p>Management of the list of mandatory rooms at loading a chat.</p>
+        </div>
+        <div id="wizstep3">
+          <h3>Bad nick and room name.</h3>
+          <p>Adjustment of parameters of a filtration of the forbidden words.</p>
+        </div>
+        <div id="wizstep4">
+          <h3>Get config file.</h3>
+          <p>Generation and loading of a file of a chat configuration.</p>
+        </div></div>
+      <div class="submit">
+          <div class="loader"></div>
+          <?wizard_buttons?>
+          <input type="submit" name="save" value="Start wizard">
+          <input type="button" name="exit" value="Close wizard">
+          <?/wizard_buttons?>
+        </div>
+	<?/wizard?>
+    </div>

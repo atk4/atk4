@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD html 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<HEAD>
+<TITLE>FlashChat Administrative System | <?page_title?>Authentication<?/?></TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META content="Andrey Synyatkin" name="author">
+<META content="FlashChat" name="keywords">
+<META content="FlashChat Administrative System" name="description">
+<META content="all" name="robots">
+<script src="<?$template_root?>/kt2/custom.js"></script>
+<script src="<?$template_root?>/shared/ajax.js"></script>
+<script src="<?$template_root?>/shared/amodules3.js"></script>
+<script type="text/javascript" src="<?$template_root?>/kt2/styleswitcher.js"></script>
+<script type="text/javascript" src="script/menudrop.js"></script>
+<link href="styles/style.css" rel="stylesheet" type="text/css">
+<script>
+<?$js?>
+</script>
+<?$custom_head?>
+</HEAD>
+<BODY id="p-<?page_name?>antiflood<?/?>" onLoad="<?$onload?>">
+<div id="container">
+  <div id="innerFrame">
+    <div id="intro">
+      <div id="pageHeader">
+        <H1><SPAN>FlashChat administrative system.</SPAN></H1>
+        <p><SPAN>The Best Video Chat Solution.</SPAN></p>
+      </div>
+    </div>
+    <?Menu?>
+    <div id="menu">
+      <h3 class="select"><SPAN>FlashChat management</SPAN></h3>
+      <ul>
+      <?rows?>
+        <?row?>
+        <li id="nav-<?page?>preloader<?/?>"> <?href?><A title="Chat loader parameters" href="preloader.html"><?/?><?label?>Chat loader parameters<?/label?><?chref?></A><?/?></li>
+        <?/row?>
+        <li id="nav-preloader"> <a href="preloader">Chat loader parameters</a></li>
+        <li id="nav-messages"> <a href="messages">System messages and text</a></li>
+        <li id="nav-antiflood"> <a href="antiflood">Antiflood system</a></li>
+        <li id="nav-badcontrol"> <a href="badcontrol">Bad word control</a></li>
+        <li id="nav-badnick"> <a href="badnick">Bad nick and room name</a></li>
+        <li id="nav-chatrooms"> <a href="chatrooms">Chat rooms</a></li>
+        <li id="nav-history"> <a href="history">Message history</a></li>
+        <li id="nav-statistic"> <a href="statistic">Chat statistic</a></li>
+        <li id="nav-banusers"> <a href="banusers">Banned users</a></li>
+        <li id="nav-users"> <a href="users">FlashChat administrators</a></li>
+      <?/rows?>
+      </ul>
+    </div>
+    <?/Menu?>
+	<div id="chatchoice">
+      <h3 class="select"><span>Choice FlashChat Site: </span></h3>
+      <ul>
+        <li id="currentchat"><a title="Current Chat" href="<?page_name?><?/?>&chat_id=<?$chat_id?>"><?$chat_name?></a>
+          <ul>
+          <?chatchoice?>
+            <?chat_row?>
+            <li><a title="<?$name?>" href="<?page_name?><?/?>&chat_id=<?$id?>"><?$name?></a></li>
+            <?/chat_row?>
+            <li id="02"> <a title="FlashChat" href="">FlashChat 3</a></li>
+            <li id="03"> <a title="FlashChat" href="">FlashChat 3</a></li>
+            <li id="04"> <a title="FlashChat" href="">Chat.pl</a></li>
+            <li id="05"> <a title="FlashChat" href="">Adultlove.com</a></li>
+          <?/chatchoice?>
+          </ul>
+      </ul>
+    </div>
+    <?genconfig?>
+    <div id="genconfig">
+      <h3 class="select"><span>Config generator</span></h3>
+      <ul>
+        <li id="nav-getconfig"> <a href="getconfig">Get config file</a></li>
+      </ul>
+    </div>
+    <?/genconfig?>
+    <div id="logout"> <a href="Logout">Logout</a> </div>
+    <div id="content">
+      <!-- Antiflood parameters -->
+      <?Content?>
+      <h2><SPAN>FlashChat Antiflood parameters.</SPAN></h2>
+      <p></p>
+      <form id="antiflood" name="antiflood" method="post" action="" onSubmit="">
+        <fieldset>
+        <legend>Messages limitation </legend>
+        <p class="description"></p>
+        <div class="input">
+          <p class="label">Words per minute:</p>
+          <input name="wordpermin" id="wordpermin" value="" size="5" type="text">
+        </div>
+        <div class="input">
+          <p class="label">Character per minute:</p>
+          <input name="charspermin" id="charspermin" value="" size="5" type="text">
+        </div>
+        </fieldset>
+        <div class="submit">
+          <div class="loader"></div>
+          <input type="submit" name="save" value="Save changes">
+        </div>
+      </form>
+      <?/Content?>
+      <!-- END content -->
+    </div>
+    <div id="footer">
+      <div id="copy"> <span>Copyright &copy; 2006, FlashChat.</span> <span class="engine">powered by AModules</span> </div>
+    </div>
+  </div>
+</div>
+<div id="extraDiv1"><span></span></div>
+</BODY>
+</HTML>

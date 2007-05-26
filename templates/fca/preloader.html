@@ -1,0 +1,50 @@
+    <div id="content">
+      <!-- FlashChat loader parameters page -->
+      <?form?>
+      <h2><SPAN>FlashChat loader parameters.</SPAN></h2>
+      <p>Adjustment of parameters of the authorization, the text of rule for use a chat, display of process of loading of the chat.</p>
+      <form id="<?$form_short_name?>" name="<?$form_name?>" method="post" action="<?$form_action?>" onSubmit="">
+        <fieldset>
+        <?form_body?>
+        <legend>ProgressBar</legend>
+        <p class="description">Show progressbar while FlashChat is loading</p>
+        <div class="checkbox">
+          <input name="Input2" value="Y" onChange="" type="checkbox">
+          <label>Show progressbar.</label>
+        </div>
+        </fieldset>
+        <fieldset>
+        <legend>Authorization parameters</legend>
+        <p class="description"></p>
+        <?form_checkbox?>
+        <div class="checkbox">
+          <?field_input?><input name="Input" value="Y" onChange="" type="checkbox"><?/field_input?>
+          <label><?field_caption?>Show authorization.<?/field_caption?></label>
+        </div>
+        <?/form_checkbox?>
+        </fieldset>
+        <fieldset>
+        <legend>FlashChat agreement</legend>
+        <p class="description"></p>
+        <div class="checkbox">
+          <input name="Input" value="Y" onChange="" type="checkbox">
+          <label>Show agreement.</label>
+        </div>
+        <?form_text?>
+        <div class="textarea">
+          <p class="label"><?field_caption?>Agreement text<?/field_caption?></p>
+          <?field_input?><textarea name="agreement" value="" onchange="" onkeypress="" cols="50" rows="5"></textarea><?/field_input?>
+        </div>
+        <?/form_text?>
+        <?/form_body?>
+        </fieldset>
+        <div class="submit">
+          <div class="loader"></div>
+          <?form_buttons?>
+          <input type="submit" name="save2" value="Save changes">
+          <?/form_buttons?>
+        </div>
+      </form>
+      <?/form?>
+      <!-- END content -->
+    </div>

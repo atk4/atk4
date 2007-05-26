@@ -1,0 +1,32 @@
+    <div id="content">
+    <!-- Antiflood parameters -->
+	<?form?>
+      <h2><SPAN>FlashChat preferences.</SPAN></h2>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+      <form id="<?$form_short_name?>" name="<?$form_name?>" method="post" action="<?$form_action?>" onSubmit="">
+        <fieldset>
+        <legend>Preferences</legend>
+        <p class="description"></p>
+        <?form_body?>
+        <?form_line?>
+        <div class="input">
+          <p class="label"><?field_caption?>Words per minute<?/?>:</p>
+          <?field_input?><input name="wordpermin" id="wordpermin" value="" size="5" type="text"><?/?>
+        </div>
+        <?/form_line?>
+        <div class="input">
+          <p class="label">Character per minute:</p>
+          <input name="charspermin" id="charspermin" value="" size="5" type="text">
+        </div>
+        <?/form_body?>
+        </fieldset>
+        <div class="submit">
+          <div class="loader"></div>
+          <?form_buttons?>
+          <input type="submit" name="save" value="Save changes">
+          <?/form_buttons?>
+        </div>
+      </form>
+	<?/form?>
+    <!-- END content -->
+	</div>

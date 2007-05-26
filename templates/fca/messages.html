@@ -1,0 +1,66 @@
+    <div id="content">
+      <!-- Messages and components parameters page -->
+      <?form?>
+      <h2><SPAN>System messages and text.</SPAN></h2>
+      <p>Localization of the system messages and components' labels</p>
+      <form id="<?$form_short_name?>" name="<?$form_name?>" method="post" action="<?$form_action?>" onSubmit="">
+        <fieldset>
+        <?form_body?>
+        <legend>Messages</legend>
+        <p class="description"></p>
+        <?form_dropdown?>
+        <div class="select">
+          <p class="label"><?field_caption?>Message code<?/field_caption?>:</p>
+          <?field_input?>
+          <select name="messagecode" onchange="">
+            <option value="001" selected="selected">m001</option>
+            <option value="002">m002</option>
+            <option value="003">m003</option>
+            <option value="004">m004</option>
+            <option value="005">m005</option>
+            <option value="006">m006</option>
+            <option value="007">m007</option>
+            <option value="008">m008</option>
+            <option value="009">m009</option>
+            <option value="010">m010</option>
+          </select>
+          <?/?>
+        </div>
+        <?/form_dropdown?>
+        <?form_text?>
+        <div class="textarea">
+          <p class="label"><?field_caption?>Message text<?/?>:</p>
+          <?field_input?>
+          <textarea name="messagetext" value="" onchange="" onkeypress="" cols="50" rows="5"></textarea>
+          <?/field_input?>
+        </div>
+        <?/form_text?>
+        </fieldset>
+        <fieldset>
+        <legend>Components</legend>
+        <p class="description"></p>
+        <div class="select">
+          <p class="label">Component ID:</p>
+          <select name="componentid" onchange="">
+            <option value="txtMyWebCam" selected="selected">txtMyWebCam</option>
+            <option value="txtWebCam">txtWebCam</option>
+          </select>
+        </div>
+        <?form_line?>
+        <div class="input">
+          <p class="label"><?field_caption?>Component text<?/?>:</p>
+          <?field_input?><input name="Username2" id="Username2" value="" size="50" type="text"><?/?>
+        </div>
+        <?/form_line?>
+        <?/form_body?>
+        </fieldset>
+        <div class="submit">
+          <div class="loader"></div>
+          <?form_buttons?>
+          <input type="submit" name="save" value="Save changes">
+          <?/form_buttons?>
+        </div>
+      </form>
+      <?/form?>
+      <!-- END content -->
+    </div>
