@@ -41,7 +41,7 @@ class BasicAuth extends AbstractController {
                                                 // prior to calling check(). Your form must have compatible field
                                                 // names: "username" and "password"
 
-    protected $passwordencryption=null;         // Which encryption to use. Few are built-in
+    protected $password_encryption=null;         // Which encryption to use. Few are built-in
 
     protected $title="Authoriation is necessary";  // use setTitle() to change this text appearing on the top of the form
 
@@ -201,8 +201,8 @@ class BasicAuth extends AbstractController {
         $this->memorize('info',$this->info);
         $this->api->redirect('Index');
 	}
-    function createForm($frame){
-        $form=$frame->add('Form');
+    function createForm($frame,$login_tag='Content'){
+        $form=$frame->add('Form',null,$login_tag);
         
 
         $form
@@ -228,11 +228,15 @@ class BasicAuth extends AbstractController {
 		if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
         $p=$this->add('Page');
-        $p->template->loadTemplate('empty');
-        $p->template->set('page_title', $this->title_form);
-        $frame=$p->frame('Authentication');
-
-        $this->form=$this->createForm($frame);
+        if($p->template->findTemplate('login')){
+            $p->template->loadTemplate('login');
+            $this->form=$this->createForm($p,'Login');
+        }else{
+            $p->template->loadTemplate('empty');
+            $frame=$p->frame('Authentication');
+            $this->form=$this->createForm($frame);
+        }
+        //$p->template->set('page_title', $this->title_form);
 
 		return $p;
     }

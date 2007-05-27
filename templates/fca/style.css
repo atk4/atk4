@@ -1,0 +1,230 @@
+@media screen{
+
+body {margin:0;	padding:0; color:#333; background:#f7f7f7; font:80% arial, sans-serif; text-align:left;	border:none;}
+
+a {color:#900; font-size:90%;}
+a:hover {color:#900; font-size:90%;	text-decoration:underline;}
+a:link, a:visited {color:#900; text-decoration:none; font-weight:bold; font-size:12px;}
+
+p {margin:0; padding:10px 0;}
+h2 {font-size:140%; color:#036; margin:0; padding:0; background:none;}
+h3 {color:#036; margin:0; padding:0; font-size:120%;	font-weight:bold;}
+h4 {font-size:110%; color:#c33;}
+h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px}
+li {list-style:none;}
+
+#innerFrame {margin:0; border:none; width:100%; padding:0; background:url(leftbg.gif) repeat-y;}
+#container {width:100%; margin:0px; background-color:#fff; color:#333;}
+#pageHeader {float:none; background:url(logo.gif) no-repeat; padding:0; height:117px;border: 1px solid black}
+#intro {margin:0; height:117px; background:#fff url(headerbg.gif) repeat-x;}
+#intro h1, #intro p{ display:none}
+
+/******************
+*Navigation*
+*******************/
+.menu h3 {background:url(icomenu.gif) no-repeat;}
+.menu a:link, .menu a:visited {font-weight:bold; font-size:12px;}
+.menu {padding-left: 30px;}
+#p-home #nav-home a, 
+#p-preloader #nav-preloader a, #p-messages #nav-messages a, #p-users #nav-users a, 
+#p-banusers #nav-banusers a, #p-pathsettings #nav-pathsettings a, #p-getconfig #nav-getconfig a,
+#p-antiflood #nav-antiflood a, #p-badcontrol #nav-badcontrol a,
+#p-badnick #nav-badnick a, #p-chatrooms #nav-chatrooms a,
+#p-history #nav-history a, #p-statistic #nav-statistic a{color:#003366;}
+
+#content {position:relative;float:none; width:60%; margin-left:290px; margin-top:-50px; margin-right:0px; padding:0px; background:none;}
+#content p {background:none;}
+#footer {clear:both; height:51px; margin:0; padding:0px; color:#333; background:#f7f7f7 url(footerbg.gif) repeat-x;}
+#copy {height:50px; padding:10px; margin:0; }
+#copy span {display:block; text-align:center; font-size:100%; font-weight:bold;}
+#copy span.engine {display:block; text-align:center; font-size:80%;}
+/******************
+*Forms*
+*******************/
+form {margin:0; padding:0px;position:relative}
+#content .submit{padding:10px 20px 10px 0 ; border-top:1px solid #999; border-bottom:1px solid #999; background:#eee; height:24px; margin:10px 0; }
+#content p {display:block}
+#content p .description {float:none; display:block}
+#content .input p {float:none; display:block}
+#content .submit input{float:right; display:block;margin:0 auto 0 20px;}
+/*#content .submit {clear:left; height:24px; margin:20px 0; padding-right:20px}*/
+#content .select {float:left; display:block; padding:0 20px 0 0}
+#badcontrol .select {clear:none; float:left; padding:0 20px 0 0}
+#badcontrol select {width:120px}
+#badcontrol .edit, 
+#accounts .edit, 
+#accounts .input, 
+#badcontrol .input, 
+#badcontrol .applychanges,
+#chatrooms .edit, 
+#chatrooms .input, 
+#users .edit, 
+#users .input {float:left; display:block; padding:0 0 0 20px; }
+
+#badcontrol .edit input, 
+#badcontrol .applychanges input, 
+#chatrooms .edit input, 
+#users .edit input {float:none; display:block; width:130px; margin:0; padding:0}
+
+#badcontrol input, 
+#accounts input {float:none; display:block}
+
+#antiflood .input p {clear:left;float:left; display:block; width:150px; padding:0}
+#antiflood .input {clear:left; display:block; margin:10px 0}
+#badnick .radiobutton p{clear:left; float:left; display:block; width:150px; padding:0}
+
+#badnick .radiobutton span, 
+#history .radiobutton span{clear:left; float:left;display:block; margin:0}
+
+fieldset fieldset {display:block; clear:both; padding:0; margin:0;}
+fieldset {display:block; border:0px solid #000;	border-bottom:0px solid #999; padding:0; margin:0; width:100%; overflow:hidden;}
+fieldset p.description{border-top:4px solid #900;}
+fieldset p.warning{border:0px solid;}
+fieldset .warning strong {color:#900}
+
+#content form {border-bottom:0px solid #999; padding:0 0px 0px 0px; width: auto}
+
+#login, 
+#genconfig, 
+#wizprogress {clear:left; float:left; width:230px; margin:0; padding:10px; border-bottom:solid 1px #999}
+
+#login ul, 
+.menu ul, 
+#genconfig ul{margin:10px 0 10px 40px; padding:0; }
+
+legend {color:#036; font-size:120%; font-weight:bold; line-height:32px; padding:10px 0 0 0; }
+fieldset fieldset legend {color:#333; font-size:100%; font-weight:bold; line-height:32px; padding:0px 0 0 0; margin:10px 0 0 0;}
+
+#login fieldset div, 
+#chatchoice fieldset div {clear:both; display :block; float:none; line-height:22px;  padding:0px;	margin:5px 0;}
+
+#login .input label {background:#c99; float:left; width:80px;}
+
+#login .input input, 
+#chatchoice select {position:static; clear:none; float:right; width:120px; left:120px; margin-left:auto;display:block;}
+
+#login .checkbox label {font-size:95%; clear:both; float:none; display:inline;}
+
+#login .checkbox input, 
+#chatchoice .checkbox input {float:right; display:inline;}
+
+#login p.warning {clear:both; font-size:90%; padding:0 0 10px 0; margin:10px 0 0 0; border-bottom:1px #999 solid;}
+#login legend {color:#036;	font-size:120%; font-weight:bold; line-height:32px; padding:0 0 0 50px; background:url(icologin.gif) no-repeat}
+
+#login .input .label, 
+#logout .input .label, 
+#chatchoice .label {padding:0; margin:0; width:80px; float:left;}
+
+#login .checkbox .label, 
+#chatchoice .checkbox .label {padding:0;	margin:0; width:200px;	float:left;}
+
+#loader.off {float:left; display:block; background:url(not_loading.gif) no-repeat ;width:32px; height:24px; margin:0}
+#loader.on {float:left; display:block; background:url(loading.gif) no-repeat ;width:32px; height:24px; margin:0}
+
+#login h3, 
+#logout h3, 
+.menu h3, 
+#wizprogress h3{line-height:32px; padding:0 0 0 40px;}
+
+#login h3 {background:url(icologin.gif) no-repeat;}
+#logout h3 {background:url(icologout.gif) no-repeat;}
+
+#login .submit, 
+#chatchoice .submit {display:block; padding:0px; clear:both; margin:15px 0 0 0}
+
+#login .submit input, 
+#logout .submit input, 
+#chatchoice .submit input{ margin-left:auto; float:none; display:block; }
+
+#genconfig h3 {background:url(icoconfig.gif) no-repeat; line-height:32px; padding:0 0 0 40px; }
+
+/******************
+*Logout*
+*******************/
+
+#logout a:link, 
+#logout a:visited {display:block; color:#900; text-decoration:none; font-weight:bold; font-size:12px; line-height:36px}
+
+#timeperiod .timefrom, 
+#timeperiod .timeto {display:block; clear:left}
+
+#history .radiobutton {display:block; float:left; margin:0 20px 0 0}
+
+#timeperiod, 
+#filters {display:block; float:left;}
+
+#timeperiod .select .label{display:none}/**/
+#timeperiod .label {width:50px; display:block; float:left; line-height:22px; text-align:right}
+#timeperiod .select span {float:none; padding:0}
+#timeperiod .select {float:left; display:block; padding:0 20px 0 0}
+
+#filters {position:relative; display:block; clear:both; float:left; margine:20px 0 0 0; padding:0;}
+#filters .label {width:50px; display:block; float:left; line-height:22px;}
+#history .textarea {display:block; clear:both; }
+#history .input p {clear:left;float:left; display:block; width:50px; padding:0}
+#history .input {clear:left; display:block; margin:10px 0}
+#filters .select {float:none; display:block; padding:10px 20px 0 0}
+#statistic #timeperiod .label {width:50px; display:none; float:left; line-height:22px; text-align:left}
+#statistic #timeperiod .select {float:none; display:block; padding:0 20px 0 0}
+#statistic .radiobutton {display:block; float:left; margin:0 20px 0 0}
+
+
+
+/**********************************
+* DropDown
+**********************************/
+#chatchoice {position:absolute; top:0; left:290px; display:block; width:500px; margin:0; padding:0px; z-index:10}
+#chatchoice h3 {background:url(icochoice.gif) no-repeat; line-height:32px; padding:0 0 0 40px; }
+#chatchoice ul {position:relative; padding:0px; margin:-23px 0 0 220px; list-style:none; display:block;}
+#chatchoice li li {background:#600; margin:0; padding:0 ;}
+#chatchoice a {text-decoration:none;display:block;}
+#chatchoice li li a:hover {color:#c33; background:#e0e0e0;}
+#chatchoice li ul {display:none; position:absolute; background:none; margin:0px; padding:0; width:260px;}
+#chatchoice li li a {width:260px; background:#f7f7f7; padding:5px 0 0 5px;}
+#chatchoice li:hover ul,
+#chatchoice li.jshover ul {border-left:solid 1px #900;margin:0;padding:0;list-style:none; display:block;}
+#chatchoice li:hover li ul,
+#chatchoice li.jshover li ul {display:none; width:260px; top:-9px; left:0px; lef\t:0px;}
+/********************
+*Wizardboxes
+********************/
+#wizsteps {clear:none; float:left; margin:0px; width:100%;}
+#wizsteps div{margin-bottom:20px; border:solid 1px #666; background:#ffc }
+#wizsteps h3 {text-align:left; padding:10px 30px 10px 40px; background:#eee; margin:0; border-bottom:solid 1px #900;}
+#wizstep1 h3 {background:url(wiznum1.gif) no-repeat #eee;}
+#wizstep2 h3 {background:url(wiznum2.gif) no-repeat #eee;}
+#wizstep3 h3 {background:url(wiznum3.gif) no-repeat #eee;}
+#wizstep4 h3 {background:url(wiznum4.gif) no-repeat #eee;}
+#wizsteps p {padding:10px 20px 20px 10px; margin:0}
+#wizprogress h3 {background:url(icowizardp.gif) no-repeat; line-height:32px; padding:0 0 0 40px; }
+#wizprogress ul{margin:10px 0 10px 20px; padding:0;}
+#wizprogress li.complete{background:url(icocomplete.gif) no-repeat;color:#036; }
+#wizprogress li.selected{background:url(icoselected.gif) no-repeat;color:#900; }
+#wizprogress li {padding-bottom:5px; color:#333}
+#wizprogress li span{ margin:0 0 0 24px;  font-size:100%;font-weight:bold;}
+#genconfig h3 {background:url(icoconfig.gif) no-repeat; line-height:32px; padding:0 0 0 40px; }
+/********************
+*Grid
+********************/
+#ChatAdmin_history_chatgrid {display:block;margin:0; padding:0}
+#ChatAdmin_history_chatgrid div {display:block;margin:0; padding:0}
+#history .submit {margin:0px 0; padding-right:20px}
+table {width: 100%;}
+table .gridmenu{display:none}/**/
+table .header td{background:#ccc; color:#333; font-weight:bold; padding:5px;}
+table .odd td{color:#333; padding:2px 5px;	background-color: #f9f9f9; border-bottom:solid 1px #666}
+table .even td{background:#f0f0f0; color:#333; padding:2px 5px; border-bottom:solid 1px #666}
+
+.msgbox { border-style: none solid solid;
+border-color: -moz-use-text-color rgb(142, 142, 142) rgb(142, 142, 142);
+border-width: 0px 1px 1px;
+background-color: rgb(228, 228, 228);
+margin-bottom: 1em;
+}
+
+
+/*******************/
+}
+@media print {
+
+}

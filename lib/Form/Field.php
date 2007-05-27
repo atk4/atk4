@@ -16,6 +16,10 @@ abstract class Form_Field extends AbstractView {
     public $short_name=null;
     public $attr=array();
     public $no_save=null;
+
+    public $field_prepend='';
+    public $field_append='';
+
     protected $onchange=null;
     protected $onkeypress=null;
 
@@ -90,7 +94,7 @@ abstract class Form_Field extends AbstractView {
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.':'):'');
         $this->template->trySet('field_name',$this->name);
-        $this->template->set('field_input',$this->getInput());
+        $this->template->set('field_input',$this->field_prepend.$this->getInput().$this->field_append);
         $this->template->trySet('field_error',
                              isset($this->owner->errors[$this->short_name])?
                              $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
@@ -293,7 +297,9 @@ class Form_Field_Dropdown extends Form_Field {
 
 class Form_Field_Dropdown_Multiple extends Form_Field {
     public $value_list=array(
-            0=>'No available selections defined, something is wrong with your browser, please report'
+            0=>'No available options #1',
+            1=>'No available options #2',
+            2=>'No available options #3'
             );
     public $size=10;
     

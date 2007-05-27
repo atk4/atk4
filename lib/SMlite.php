@@ -250,6 +250,10 @@ class SMlite extends AbstractModel {
         }
         foreach($this->tags[$tag] as $key=>$_){
             
+            if(!is_array($this->tags[$tag][$key])){
+                //throw new BaseException("Problem appending '".htmlspecialchars($value)."' to '$tag': key=$key");
+                $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
+            }
             if ($this->tags[$tag][$key]){
                 $this->tags[$tag][$key][]=$delim;
             }

@@ -1,35 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD html 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <HEAD>
-<TITLE>FlashChat Administrative System | <?page_title?>Authentication<?/?></TITLE>
+<TITLE><?page_title?>Authentication<?/?></TITLE>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<META content="Andrey Synyatkin" name="author">
 <META content="FlashChat" name="keywords">
 <META content="FlashChat Administrative System" name="description">
 <META content="all" name="robots">
-<script src="<?$template_root?>/kt2/custom.js"></script>
-<script src="<?$template_root?>/shared/ajax.js"></script>
-<script src="<?$template_root?>/shared/amodules3.js"></script>
-<script type="text/javascript" src="<?$template_root?>/kt2/styleswitcher.js"></script>
-<script type="text/javascript" src="script/menudrop.js"></script>
-<link href="styles/style.css" rel="stylesheet" type="text/css">
+<script src="amodules3/templates/kt2/custom.js"></script>
+<script src="amodules3/templates/shared/ajax.js"></script>
+<script src="amodules3/templates/shared/amodules3.js"></script>
+<script type="text/javascript" src="amodules3/templates/kt2/styleswitcher.js"></script>
+<link href="amodules3/templates/fca/style.css" rel="stylesheet" type="text/css">
 <script>
 <?$js?>
 </script>
 <?$custom_head?>
 </HEAD>
-<BODY id="p-<?page_name?>antiflood<?/?>" onLoad="<?$onload?>">
-<div id="container">
-  <div id="innerFrame">
-    <div id="intro">
-      <div id="pageHeader">
-        <H1><SPAN>FlashChat administrative system.</SPAN></H1>
-        <p><SPAN>The Best Video Chat Solution.</SPAN></p>
-      </div>
-    </div>
-    <?Menu?>
-    <div id="menu">
-      <h3 class="select"><SPAN>FlashChat management</SPAN></h3>
+<BODY onLoad="<?$onload?>">
+<table width=100% height=100% cellspacing=0 cellpadding=0 border=0>
+ <tr><td width=250 valign=top>
+  <div style="background:#eee; border-right: 1px solid black; border-bottom: 1px solid black; width:250px">
+  <center><img src="amodules3/templates/fca/logo.gif"></center>
+  <div style="padding: 10px; border-top: 1px solid gray; border-bottom: 1px solid gray">
+  <?Menu?>
+    <div class="menu">
+      <h3><SPAN>Main Menu</SPAN></h3>
       <ul>
       <?rows?>
         <?row?>
@@ -49,63 +44,60 @@
       </ul>
     </div>
     <?/Menu?>
-	<div id="chatchoice">
-      <h3 class="select"><span>Choice FlashChat Site: </span></h3>
-      <ul>
-        <li id="currentchat"><a title="Current Chat" href="<?page_name?><?/?>&chat_id=<?$chat_id?>"><?$chat_name?></a>
-          <ul>
-          <?chatchoice?>
-            <?chat_row?>
-            <li><a title="<?$name?>" href="<?page_name?><?/?>&chat_id=<?$id?>"><?$name?></a></li>
-            <?/chat_row?>
-            <li id="02"> <a title="FlashChat" href="">FlashChat 3</a></li>
-            <li id="03"> <a title="FlashChat" href="">FlashChat 3</a></li>
-            <li id="04"> <a title="FlashChat" href="">Chat.pl</a></li>
-            <li id="05"> <a title="FlashChat" href="">Adultlove.com</a></li>
-          <?/chatchoice?>
-          </ul>
-      </ul>
-    </div>
-    <?genconfig?>
-    <div id="genconfig">
-      <h3 class="select"><span>Config generator</span></h3>
-      <ul>
-        <li id="nav-getconfig"> <a href="getconfig">Get config file</a></li>
-      </ul>
-    </div>
-    <?/genconfig?>
-    <div id="logout"> <a href="Logout">Logout</a> </div>
-    <div id="content">
-      <!-- Antiflood parameters -->
-      <?Content?>
-      <h2><SPAN>FlashChat Antiflood parameters.</SPAN></h2>
-      <p></p>
-      <form id="antiflood" name="antiflood" method="post" action="" onSubmit="">
-        <fieldset>
-        <legend>Messages limitation </legend>
-        <p class="description"></p>
-        <div class="input">
-          <p class="label">Words per minute:</p>
-          <input name="wordpermin" id="wordpermin" value="" size="5" type="text">
-        </div>
-        <div class="input">
-          <p class="label">Character per minute:</p>
-          <input name="charspermin" id="charspermin" value="" size="5" type="text">
-        </div>
-        </fieldset>
-        <div class="submit">
-          <div class="loader"></div>
-          <input type="submit" name="save" value="Save changes">
-        </div>
-      </form>
-      <?/Content?>
-      <!-- END content -->
-    </div>
-    <div id="footer">
-      <div id="copy"> <span>Copyright &copy; 2006, FlashChat.</span> <span class="engine">powered by AModules</span> </div>
-    </div>
   </div>
-</div>
+
+  <div id="copy"> <span><?copyright?>All Rights Reserved<?/?></span> <span class="engine">version <?version?>0.1<?/version?></span> </div>
+
+ </td><td width=100% valign=top>
+ <div style="padding: 10px; padding-top: 0px">
+   <table cellspacing=0 cellpadding=0 border=0 width=100%> 
+   <tr><td>
+  <img src="amodules3/templates/fca/icochoice.gif">
+  </td><td width=100%>
+   <h3><?page_title?>Creating new account<?/?></h3>
+   </td><td>
+  <img src="amodules3/templates/fca/icologout.gif">
+   </td><td>
+    <div id="logout"> <a href="Logout">Logout</a> </div>
+   </td></tr>
+  </table>
+   <div style="background: #a3362d; height: 4px; width: 100%; margin-bottom: 10px"></div>
+   <?Content?>
+    <?msgbox?>
+      <div align=center style="padding: 10px">
+      <table class="msgbox" border="0" cellpadding="0" cellspacing="0" style="border: 1px solid black" <?$opt?>>
+
+        <tbody>
+
+          <tr class="header">
+
+            <td><?title?>This
+is sample box<?/?></td>
+
+          </tr>
+
+          <tr>
+
+            <td style="height: 32px; padding-left: 10px; padding-right: 10px"><?Content?><?content?>Welcome to our new
+template for AModules3. How cool is this, ? i think it's good enough..
+ehmm. hm.<br>
+
+            <div style="text-align: right;"><a href="shared.html#">Read
+more...</a></div>
+<?/content?><?/Content?>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+      </center>
+    <?/msgbox?>
+   <?/?>
+ </div>
+</td></tr>
+</table>
 <div id="extraDiv1"><span></span></div>
 </BODY>
 </HTML>

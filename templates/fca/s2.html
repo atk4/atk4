@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title><?page_title?>AModules template "K2"<?/page_title?></title>
+
+
+<script src="amodules3/templates/kt2/custom.js"></script>
+<script src="amodules3/templates/shared/ajax.js"></script>
+<script src="amodules3/templates/shared/amodules3.js"></script>
+<link rel="stylesheet" type="text/css" href="amodules3/templates/kt2/default.css" title="css_default">
+<link rel="alternate stylesheet" type="text/css" href="amodules3/templates/kt2/ie.css" title="css_ie">
+<script type="text/javascript" src="amodules3/templates/kt2/styleswitcher.js"></script>
+<script>
+<?$js?>
+</script>
+<?$custom_head?>
+</head>
+
+
+<body onLoad="<?$onload?>">
+
+<?FloatingFrame?>
+<div id="<?$_name?>_bg"  style="z-index:1; display: none; position: fixed; left:0; right:0; top:0; bottom:0; filter:alpha(opacity=70); opacity: 0.7; -moz-opacity:0.7; background: white">
+
+</div>
+<div id="<?$_name?>_fr"  style="z-index:2; display: none; position: fixed; left:0; right:0; top:0; bottom:0">
+ <table height=70% style="left: 40%; right: 40%; top:100; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="0" cellspacing="0" width="40%" <?$opts?>>
+ <!-- <table id="<?$_name?>_fr" style="z-index:2; display: none; left: 40%; right: 40%; top:0; text-align: left; margin-left: auto; margin-right: auto; position: fixed;" border="0" cellpadding="0" cellspacing="0" width="40%" <?$opts?>>-->
+
+ <tr><td><?$Content?>
+ </td></tr>
+ </table></div>
+<?/FloatingFrame?>
+ 
+<?CentredFrame?>
+<div id="<?$_name?>_bg"></div>
+ <table id="<?$_name?>_fr" style="z-index:2; display: none; left: 40%; right: 40%; top:100; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="0" cellspacing="0" width="40%" <?$opts?>>
+
+ <tr><td><?$Content?>
+ </td></tr>
+ </table>
+<?/CentredFrame?>
+
+<?Menu?>
+<table class="menu" border="0" cellpadding="0" cellspacing="1" width="100%">
+
+  <tbody>
+
+    <tr>
+
+    <?rows?>
+     <?row?>
+      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><?href?><a href="#"><?/href?><?label?>About<?/label?><?chref?></a><?/chref?></td>
+     <?/row?>
+      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a></td>
+      <td class="current" nowrap="nowrap"><a href="#">Main page</a></td>
+
+      <td class="separator" nowrap="nowrap"><a href="#">Preferences</a></td>
+
+      <td class="separator" nowrap="nowrap"><a href="#">About</a></td>
+      <?/rows?>
+
+      <td style="text-align: right;" width="100%"></td>
+
+      <td class="about" nowrap="nowrap" valign="bottom"><a target="_blank" href="<?url?>http://adevel.com/amodules3/<?/url?>"><?name?>AModules3<?/name?></a><br>
+<?version?>v0.1<?/version?>
+    </td>
+
+    </tr>
+
+  </tbody>
+</table>
+<?/Menu?>
+
+<?Locator?>
+<div class="locator"><?rows?><?row?><a href="<?$href?>"><?label?>Shared page<?/label?></a> / <?/row?><?/rows?> <?page_title?>Editing template<?/page_title?></a></div>
+<?/Locator?>
+
+
+<table class="layout" border="0" cellpadding="0" cellspacing="0" width="100%">
+
+  <tbody>
+
+    <tr>
+
+      <td valign="top">
+      <?LeftSidebar?>
+      <?msgbox?>
+      <center>
+      <table class="msgbox" border="0" cellpadding="0" cellspacing="0" <?$opt?>>
+
+        <tbody>
+
+          <tr>
+
+            <td class="header"><?title?>This
+is sample box<?/?></td>
+
+          </tr>
+
+          <tr>
+
+            <td style="height: 32px;"><?content?>Welcome to our new
+template for AModules3. How cool is this, ? i think it's good enough..
+ehmm. hm.<br>
+
+            <div style="text-align: right;"><a href="shared.html#">Read
+more...</a></div>
+<?/content?>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+      </center>
+      <?/msgbox?>
+
+      <?powered_amodules3?>
+      <img style="width: 150px; height: 51px;" alt="powered by amodules3" src="amodules3/templates/kt2/powered.gif"> </td>
+      <?/powered_amodules3?>
+
+      <?/LeftSidebar?>
+
+      <td class="content" width="100%" valign="top">
+
+      <div id=Content>
+      <?Content?>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing
+elit.
+Phasellus sollicitudin lectus sed magna. Donec posuere. Vivamus
+vehicula mollis tortor. Donec placerat. Aenean dapibus massa nec erat
+pretium ornare. Suspendisse aliquet eleifend sapien. Phasellus
+tristique convallis tellus. Ut tempus massa condimentum nisi. Nam
+tortor tortor, ultricies sed, fermentum ac, vestibulum quis, risus.
+Suspendisse posuere imperdiet neque. Vivamus id enim. Quisque
+condimentum imperdiet libero. Proin magna elit, convallis eu, lobortis
+quis, vehicula quis, lectus. Class aptent taciti sociosqu ad litora
+torquent per conubia nostra, per inceptos hymenaeos. Suspendisse
+potenti.<br>
+
+      </p>
+
+      <table style="text-align: left; margin-left: auto; margin-right: auto;" class="lister" border="0" cellpadding="0" cellspacing="0" width="90%">
+
+        <tbody>
+
+          <tr class="header">
+
+            <td>First Name</td>
+
+            <td>Surname</td>
+
+            <td>Passport ID</td>
+
+            <td>Picture</td>
+
+          </tr>
+
+          <tr class="odd">
+
+            <td>Bill</td>
+
+            <td>Smith</td>
+
+            <td>2888-2837-2993-2989</td>
+
+            <td><a href="#">[click to view]</a></td>
+
+          </tr>
+
+          <tr class="even">
+
+            <td>Johan</td>
+
+            <td>Sebastian</td>
+
+            <td>3999-3992-2328-1746</td>
+
+            <td><a href="shared.html#">[click to
+view]</a></td>
+
+          </tr>
+
+          <tr class="odd">
+
+            <td>Bill</td>
+
+            <td>Smith</td>
+
+            <td>2888-2837-2993-2989</td>
+
+            <td><a href="shared.html#">[click to
+view]</a></td>
+
+          </tr>
+
+          <tr class="even">
+
+            <td>Johan</td>
+
+            <td>Sebastian</td>
+
+            <td>3999-3992-2328-1746</td>
+
+            <td><a href="shared.html#">[click to
+view]</a></td>
+
+          </tr>
+
+          <tr class="odd">
+
+            <td>Bill</td>
+
+            <td>Smith</td>
+
+            <td>2888-2837-2993-2989</td>
+
+            <td><a href="shared.html#">[click to
+view]</a></td>
+
+          </tr>
+
+          <tr class="even">
+
+            <td>Johan</td>
+
+            <td>Sebastian</td>
+
+            <td>3999-3992-2328-1746</td>
+
+            <td><a href="shared.html#">[click to
+view]</a></td>
+
+          </tr>
+
+          <tr class="total">
+
+            <td>Total: 7 rows</td>
+
+            <td></td>
+
+            <td>$382,299</td>
+
+            <td></td>
+
+          </tr>
+
+        </tbody>
+      </table>
+
+      <p><br>
+
+Nunc ut erat. Pellentesque convallis pellentesque tortor. Aenean
+imperdiet, arcu sit amet tempor lobortis, sem purus lobortis arcu,
+vitae dictum libero ante suscipit est. Donec varius faucibus enim.
+Vestibulum scelerisque, nunc non aliquam convallis, eros tortor
+accumsan purus, ac luctus purus leo vel neque. Fusce posuere sapien
+eget felis. Nunc lacinia, nisi quis porttitor iaculis, purus felis
+consequat orci, et tincidunt enim lacus id sem. Proin mi diam,
+adipiscing et, tincidunt id, vestibulum eget, arcu. Nam blandit ipsum a
+lacus. Mauris faucibus lorem quis tellus. Vestibulum molestie tortor
+laoreet eros.<br>
+
+      <br>
+
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+inceptos hymenaeos. Donec posuere malesuada dui. Cras vulputate, dolor
+id faucibus ultricies, massa dolor auctor risus, in aliquam dolor odio
+vitae augue. Etiam varius leo eget diam. Nulla lacus. Ut nisl. Vivamus
+tincidunt. Maecenas sagittis aliquet risus. Sed id tortor viverra orci
+commodo sollicitudin. Suspendisse potenti. Nunc in libero. Aliquam nisi.<br>
+
+      <br>
+
+Quisque sed leo. Phasellus condimentum, urna a fringilla venenatis, dui
+magna bibendum mi, sed pretium tellus lectus id lectus. Sed ornare
+molestie dui. Pellentesque lobortis. Cras eu leo. Nunc velit nulla,
+varius quis, facilisis pellentesque, sollicitudin at, sapien.
+Pellentesque habitant morbi tristique senectus et netus et malesuada
+fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci
+luctus et ultrices posuere cubilia Curae; Fusce magna leo, interdum
+rhoncus, gravida eu, egestas quis, lectus. Ut ullamcorper, diam rutrum
+vestibulum luctus, augue pede consectetuer eros, nec volutpat orci dui
+varius nunc. Duis ultrices tempus ipsum. Fusce hendrerit tellus sit
+amet velit. Nunc eget odio. Sed hendrerit risus nec mauris. Nullam eget
+turpis ut est tempor viverra. In vel metus id orci venenatis ornare.
+Aliquam arcu nunc, laoreet a, hendrerit non, consectetuer ut, tellus.
+Aliquam tempus, libero vel malesuada ultrices, sem lorem eleifend orci,
+et auctor neque diam et pede. Maecenas turpis turpis, convallis quis,
+molestie et, sollicitudin eget, urna.<br>
+
+      <br>
+
+Vestibulum sagittis pede a lacus. Aliquam nunc. Integer vitae tortor ut
+arcu imperdiet consequat. Nulla ut ligula sed eros sollicitudin
+viverra. Donec sodales varius odio. Quisque tincidunt felis sed pede.
+Quisque dolor libero, dictum ut, congue a, adipiscing a, enim. Aliquam
+ac purus quis sem aliquet elementum. In laoreet, massa sed euismod
+rhoncus, ante mauris sollicitudin ante, a varius nisi velit eget urna.
+Nulla facilisi. Nulla imperdiet lorem quis velit. Integer vel diam quis
+nisl sollicitudin dictum. Class aptent taciti sociosqu ad litora
+torquent per conubia nostra, per inceptos hymenaeos. Fusce ac nibh.<br>
+
+      <br>
+
+Vivamus auctor. Pellentesque habitant morbi tristique senectus et netus
+et malesuada fames ac turpis egestas. Curabitur rhoncus ligula sit amet
+mi. Sed erat lorem, sagittis vel, sodales quis, pellentesque eu, felis.
+Nam a dolor sit amet tortor condimentum pretium. Curabitur dignissim
+ligula ut pede convallis volutpat. Aliquam convallis. Maecenas iaculis
+congue dui. Nam id turpis. Suspendisse euismod magna nec ipsum. Nulla
+et massa et dui fringilla condimentum. Sed accumsan. Donec porttitor
+turpis ut diam. Integer cursus interdum eros.<br>
+
+      <br>
+
+Morbi iaculis dui sit amet ipsum. Donec viverra. Vivamus lorem. Nullam
+interdum lacus a velit. Morbi erat velit, malesuada ut, ornare sed,
+mattis a, risus. Vestibulum ante ipsum primis in faucibus orci luctus
+et ultrices posuere cubilia Curae; Proin et risus sed dolor sagittis
+blandit. Cras congue mauris sed tortor. Maecenas velit. Etiam elementum
+neque at dui. Cras non metus nec justo iaculis consectetuer. In viverra
+lacinia nisl. Nulla aliquam, turpis elementum bibendum tincidunt,
+turpis arcu ullamcorper metus, nec hendrerit magna libero a eros. Nulla
+convallis cursus ante. Duis vulputate est in risus. In sed est eget
+risus rhoncus tempus. Nullam in risus.<br>
+
+      <br>
+
+Etiam ut velit ac eros facilisis lacinia. Donec eget odio et mauris
+scelerisque lacinia. Proin facilisis dui id turpis. Sed volutpat eros a
+nulla. Fusce vulputate, sapien consectetuer interdum pharetra, ligula
+erat sagittis ligula, vulputate elementum nisi tortor non ipsum. Duis
+dui augue, euismod a, pellentesque ac, feugiat quis, leo. Quisque
+pretium aliquam dui. Phasellus tempor. Praesent nisl massa, faucibus
+non, adipiscing eget, vehicula quis, nibh. Maecenas imperdiet pretium
+lectus. Integer ante ipsum, tincidunt at, facilisis vitae, consectetuer
+vitae, dolor. Curabitur quis turpis et libero laoreet lobortis.<br>
+
+      <br>
+
+Donec et velit. Vestibulum vehicula. Pellentesque habitant morbi
+tristique senectus et netus et malesuada fames ac turpis egestas. Proin
+quam libero, hendrerit non, tristique tincidunt, tincidunt eu, libero.
+Nulla leo sem, gravida ac, lobortis ut, placerat sit amet, enim. Duis
+dignissim feugiat nunc. Donec mauris tellus, mollis sit amet, rutrum
+eget, porta in, magna. Maecenas ac est ut ipsum interdum iaculis.
+Suspendisse volutpat iaculis erat. Sed mollis gravida orci. Ut dui.
+Duis eleifend, urna eget eleifend venenatis, erat dui cursus urna, quis
+condimentum libero ipsum vitae mi. Donec quam eros, tempor eu, aliquet
+eget, dapibus id, massa. Donec volutpat eros. Vestibulum ut ligula
+pharetra dui accumsan semper. Suspendisse aliquam nulla. Pellentesque
+nonummy dictum nunc. Sed malesuada, lorem non condimentum viverra, mi
+dui ornare lorem, ut pharetra nibh arcu eu urna.<br>
+
+      <br>
+
+Pellentesque habitant morbi tristique senectus et netus et malesuada
+fames ac turpis egestas. Praesent in urna quis mi convallis varius.
+Aliquam in urna nec eros porttitor semper. Vestibulum in risus. Nunc
+fermentum quam eget felis. Aliquam sollicitudin magna placerat tellus.
+Duis a lorem et nisi semper tempor. Etiam pellentesque. Vestibulum ante
+leo, aliquam non, sodales in, malesuada ut, risus. Aenean massa.
+Aliquam auctor varius orci. Quisque sed quam eget lacus ullamcorper
+tempus. Sed egestas magna non lorem. Duis nonummy laoreet justo.
+Integer ut mi. Donec sodales odio euismod ipsum. Vestibulum velit.
+Aliquam erat volutpat. Sed dolor augue, imperdiet ac, pulvinar ac,
+tristique eu, pede. </p>
+
+      <?/Content?>
+      </div>
+      </td>
+
+      <td valign="top">
+      <?RightSidebar?>
+      <table style="text-align: left; width: 155px; height: 82px;" class="msgbox" border="0" cellpadding="0" cellspacing="0">
+
+        <tbody>
+
+          <tr>
+
+            <td class="header">This
+is sample box</td>
+
+          </tr>
+
+          <tr>
+
+            <td style="height: 32px;">Welcome to our new
+template for AModules3. How cool is this, ? i think it's good enough..
+ehmm. hm.<br>
+
+            <div style="text-align: right;"><a href="shared.html#">Read
+more...</a></div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+      <?/RightSidebar?>
+
+      </td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<p></p>
+
+<br>
+
+</body>
+</html>

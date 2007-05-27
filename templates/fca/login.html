@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD html 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<HEAD>
+<TITLE><?page_title?>Authentication<?/?></TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META content="Andrey Synyatkin" name="author">
+<META content="FlashChat" name="keywords">
+<META content="FlashChat Administrative System" name="description">
+<META content="all" name="robots">
+<script src="amodules3/templates/kt2/custom.js"></script>
+<script src="amodules3/templates/shared/ajax.js"></script>
+<script src="amodules3/templates/shared/amodules3.js"></script>
+<script type="text/javascript" src="amodules3/templates/kt2/styleswitcher.js"></script>
+<link href="amodules3/templates/fca/style.css" rel="stylesheet" type="text/css">
+<script>
+<?$js?>
+</script>
+<?$custom_head?>
+</HEAD>
+<BODY onLoad="<?$onload?>">
+<table width=100% height=100% cellspacing=0 cellpadding=0 border=0>
+ <tr><td width=250 valign=top>
+  <div style="background:#eee; border-right: 1px solid black; border-bottom: 1px solid black; width:250px">
+  <center><img src="amodules3/templates/fca/logo.gif"></center>
+  <div style="padding: 10px; border-top: 1px solid gray; border-bottom: 1px solid gray">
+  <?$Login?>
+  </div>
+
+  <div id="copy"> <span><?copyright?>All Rights Reserved<?/?></span> <span class="engine">version <?version?>0.1<?/version?></span> </div>
+
+ </td><td width=100% valign=top>
+ <div style="padding: 10px; padding-top: 0px">
+   <table cellspacing=0 cellpadding=0 border=0 width=100%> 
+   <tr><td>
+  <img src="amodules3/templates/fca/icochoice.gif">
+  </td><td width=100%>
+   <h3><?page_title?>Access to the system is restricted<?/?></h3>
+   </td></tr>
+  </table>
+   <div style="background: #a3362d; height: 4px; width: 100%; margin-bottom: 10px"></div>
+   <?Content?>
+   The system you are trying to access is only available to authorized users. You need to enter your login name and password for authentication before you can proceed. If you do not posses authentication information, please contact system maintainer.
+   <p>If this is a publically available system, try username: <b>demo</b> and password <b>demo</b>.
+   <h5>Browser compatibility</h5>
+   You are about to use a web application based on AModules3 framework. This framework uses some great features provided by a modern web browsers and giving you an unique experience. If you receive JavaScript errors or some elements do not work for you as intended - please make sure that you have up to date browsers. Any major browsers would be comptaible such as Firefox, IE6, IE7, Safari and Opera. Many other browsers properly spporting web standards will be able to work properly as well
+   <h5>Web 2.0 Zone</h5>
+   Web 2.0 is a new loose standard for a web applications which addresses how the applications work and feel. This application often relies on JavaScript and AJAX technology to do things much more efficiently than you would see it in other web applications. You could see part of the pages change dynamically, content being loaded directly inside tables or even some forms may apear on top of the web page.
+   <h5>AModules3</h5>
+   AModules3 is a PHP5 framework which uses object oriented development approach to simplify web development. By taking away all the technical issues, developer can address business logic and instead of thinking how to parse POST data he now can spend his time thinking how to arange elements on the page. This framework is Open Software and is licensed under LGPL. That means - you can develop application like this with a minimum effort - see <a href=http://adevel.com/amodules3/ target=_blank>http://adevel.com/amodules3</a> for more information.
+    <?msgbox?>
+    <?$title?><?$Content?>
+    <?/msgbox?>
+   <?/?>
+ </div>
+</td></tr>
+</table>
+<div id="extraDiv1"><span></span></div>
+</BODY>
+</HTML>
