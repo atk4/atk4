@@ -54,7 +54,15 @@
    <tr><td>
   <img src="amodules3/templates/fca/icochoice.gif">
   </td><td width=100%>
+<?Locator?>
+<div class="locator"><?rows?><?row?><a href="<?$href?>"><?label?>Shared page<?/label?></a> / <?/row?><?/rows?> <?page_title?>Editing template<?/page_title?></a></div>
+<?/Locator?>
+
+   <?Locator?>
+   <?rows?><?row?><h3><?label?>Creating new account<?/?></h3><?/?>
+   <?/rows?>
    <h3><?page_title?>Creating new account<?/?></h3>
+   <?/Locator?>
    </td><td>
   <img src="amodules3/templates/fca/icologout.gif">
    </td><td>
@@ -63,6 +71,7 @@
   </table>
    <div style="background: #a3362d; height: 4px; width: 100%; margin-bottom: 10px"></div>
    <?Content?>
+    <?$InfoWindow?>
     <?msgbox?>
       <div align=center style="padding: 10px">
       <table class="msgbox" border="0" cellpadding="0" cellspacing="0" style="border: 1px solid black" <?$opt?>>
