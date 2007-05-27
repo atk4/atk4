@@ -190,162 +190,6 @@ abstract class Form_Field extends AbstractView {
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }
 }
-class Form_Field_Category extends Form_Field {
-    public $value_list=array(
-            0=>'No available selections defined, something is wrong with your browser, please report'
-            );
-    function validate(){
-        if(!isset($this->value_list[$this->value])){
-            $this->owner->errors[$this->short_name]="This is not one of offered values";
-        }
-        return parent::validate();
-    }
-    function getInput($attr=array()){
-        $output=$this->getTag('select',array_merge(array(
-                        'name'=>$this->name,
-                        'id'=>$this->name,
-                        ),
-                    $attr,
-                    $this->attr)
-                );
-        foreach($this->getValueList() as $value=>$descr){
-            $output.=
-                $this->getTag('option',array(
-                        'value'=>$value,
-                        'selected'=>$value == $this->value
-                    ))
-                .htmlspecialchars($descr)
-                .$this->getTag('/option');
-        }
-        $output.=$this->getTag('/select');
-		$output.=$this->getTag('img', array_merge(
-											array(
-												'src' => 'http://www.myadminimages.com/images/icons/trash_b.gif',
-												'alt' => 'drop',
-												'style' => 'width: 17px',
-												'onclick' => 'reload_campaign_field_drop_' . $this->owner->name . '("' . $this->name . '")'
-											)
-										)
-				 );
-
-		$output.=$this->getTag('input', array_merge(
-											array(
-												'id' => $this->name . '_new'
-											)
-										)
-				 );
-		$output.=$this->getTag('img', array_merge(
-											array(
-												'src' => 'http://www.myadminimages.com/images/icons/add_icon.gif',
-												'alt' => 'add',
-												'style' => 'width: 17px',
-												'onclick' => 'reload_campaign_field_add_' . $this->owner->name . '("' . $this->name . '")'
-											)
-										)
-				 );
-        return $output;
-    }
-    function getValueList(){
-        return $this->value_list;
-    }
-    function setValueList($list){
-        $this->value_list = $list;
-    }
-}
-class Form_Field_Dropdown extends Form_Field {
-    public $value_list=array(
-            0=>'No available selections defined, something is wrong with your browser, please report'
-            );
-    function validate(){
-        if(!isset($this->value_list[$this->value])){
-        	if($this->api->isAjaxOutput()){
-		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
-		    }
-            $this->owner->errors[$this->short_name]="This is not one of offered values";
-        }
-        return parent::validate();
-    }
-    function getInput($attr=array()){
-        $output=$this->getTag('select',array_merge(array(
-                        'name'=>$this->name,
-                        'id'=>$this->name,
-						'onchange'=>
-						($this->onchange)?$this->onchange->getString():''
-                        ),
-                    $attr,
-                    $this->attr)
-                );
-        foreach($this->getValueList() as $value=>$descr){
-            $output.=
-                $this->getTag('option',array(
-                        'value'=>$value,
-                        'selected'=>$value == $this->value
-                    ))
-                .htmlspecialchars($descr)
-                .$this->getTag('/option');
-        }
-        $output.=$this->getTag('/select');
-        return $output;
-    }
-    function getValueList(){
-        return $this->value_list;
-    }
-    function setValueList($list){
-        $this->value_list = $list;
-    }
-}
-
-class Form_Field_Dropdown_Multiple extends Form_Field {
-    public $value_list=array(
-            0=>'No available options #1',
-            1=>'No available options #2',
-            2=>'No available options #3'
-            );
-    public $size=10;
-    
-    function setSize($newSize = 10) {
-    	$this->size = $newSize;
-    }
-    
-    function validate(){
-        if(!isset($this->value_list[$this->value])){
-            $this->owner->errors[$this->short_name]="This is not one of offered values";
-        }
-        return parent::validate();
-    }
-    function getInput($attr=array()){
-        $output=$this->getTag('select',array_merge(array(
-                        'name'=>$this->name,
-                        'id'=>$this->name,
-                        'multiple'=>'multiple',
-                        'size'=>$this->size,
-						'onchange'=>
-						($this->onchange)?$this->onchange->getString():''
-                        ),
-                    $attr,
-                    $this->attr)
-                );
-        foreach($this->getValueList() as $value=>$descr){
-            $output.=
-                $this->getTag('option',array(
-                        'value'=>$value,
-                        'selected'=>in_array($value,$this->value_list)
-                    ))
-                .htmlspecialchars($descr)
-                .$this->getTag('/option');
-        }
-        $output.=$this->getTag('/select');
-        return $output;
-    }
-    function getValueList(){
-        return $this->value_list;
-    }
-    function setValueList($list){
-        $this->value_list = $list;
-    }
-}
-
-
 
 
 class Form_Field_Line extends Form_Field {
@@ -410,9 +254,6 @@ class Form_Field_Readonly extends Form_Field {
     }
     
 }
-/**
- * This field contains a button to file browser
- */
 class Form_Field_File extends Form_Field {
 	function init(){
 		$this->attr['type'] = 'file';
@@ -485,3 +326,114 @@ class Form_Field_Money extends Form_Field_Line {
         $this->set(number_format(str_replace(',','',$this->value),2));        // formatting
     }
 }
+
+// The following clases operates with predefined value lists. 
+// User is picking one or several options
+class Form_Field_ValueList extends Form_Field {
+    /*
+     * This is abstract class. Use this as a base for all the controls
+     * which operate with predefined values such as dropdowns, checklists
+     * etc
+     */
+    public $value_list=array(
+            0=>'No available options #1',
+            1=>'No available options #2',
+            2=>'No available options #3'
+            );
+    function getValueList(){
+        return $this->value_list;
+    }
+    function setValueList($list){
+        $this->value_list = $list;
+    }
+    function loadPOST(){
+        $data=$_POST[$this->name];
+        if(is_array($data))join(',',$data);
+        if(isset($_POST[$this->name]))$this->set(stripslashes($data));
+    }
+}
+class Form_Field_Dropdown extends Form_Field_ValueList {
+    function validate(){
+        if(!isset($this->value_list[$this->value])){
+        	if($this->api->isAjaxOutput()){
+		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
+		    }
+            $this->owner->errors[$this->short_name]="This is not one of offered values";
+        }
+        return parent::validate();
+    }
+    function getInput($attr=array()){
+        $output=$this->getTag('select',array_merge(array(
+                        'name'=>$this->name,
+                        'id'=>$this->name,
+						'onchange'=>
+						($this->onchange)?$this->onchange->getString():''
+                        ),
+                    $attr,
+                    $this->attr)
+                );
+        foreach($this->getValueList() as $value=>$descr){
+            $output.=
+                $this->getTag('option',array(
+                        'value'=>$value,
+                        'selected'=>$value == $this->value
+                    ))
+                .htmlspecialchars($descr)
+                .$this->getTag('/option');
+        }
+        $output.=$this->getTag('/select');
+        return $output;
+    }
+}
+class Form_Field_CheckboxList extends Form_Field_ValueList {
+    /*
+     * This field will create 2 column of checkbox+labels from defived value
+     * list. You may check as many as you like and when you save their ID
+     * values will be stored coma-separated in varchar type field.
+     *
+		$f->addField('CheckboxList','producers','Producers')->setValueList(array(
+                    1=>'Mr John',
+                    2=>'Piter ',
+                    3=>'Michail Gershwin',
+                    4=>'Bread and butter',
+                    5=>'Alex',
+                    6=>'Benjamin',
+                    7=>'Rhino',
+                    ));
+
+                    */
+
+    var $columns=2;
+    function validate(){
+        return true;
+    }
+    function getInput($attr=array()){
+        $output='<table border=0>';
+        $column=0;
+        $current_values=explode(',',$this->value);
+        foreach($this->getValueList() as $value=>$descr){
+            if($column==0){
+                $output.="<tr><td>";
+            }else{
+                $output.="</td><td>";
+            }
+
+            $output.=
+                $this->getTag('input',array(
+                            'type'=>'checkbox',
+                            'value'=>$value,
+                            'name'=>$this->name.'[]',
+                            'checked'=>in_array($value,$current_values)
+                            )).htmlspecialchars($descr);
+            $column++;
+            if($column==$this->columns){
+                $output.="</td></tr>";
+                $column=0;
+            }
+        }
+        $output.="</table>";
+        return $output;
+    }
+}
+
+

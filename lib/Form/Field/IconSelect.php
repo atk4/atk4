@@ -1,5 +1,5 @@
 <?php
-class Form_Field_IconSelect extends Form_Field_Dropdown {
+class Form_Field_IconSelect extends Form_Field_ValueList {
     function getInput($attr=array()){
         $output='<table class="lister" cellspacing=0 cellpadding=0 width=100%><tbody><tr>'."\n";
         foreach($this->getValueList() as $icon){
@@ -18,6 +18,6 @@ class Form_Field_IconSelect extends Form_Field_Dropdown {
         if(!in_array($this->value,$this->value_list)){
             $this->owner->errors[$this->name]="This is not one of offered values";
         }
-        return Form_Field::validate();
+        return parent::validate();
     }
 }
