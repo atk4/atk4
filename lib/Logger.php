@@ -462,6 +462,7 @@ class Logger extends AbstractController {
             $output .= "<tr><td valign=top align=right><font color=".($sh==$n?'red':'blue').">".dirname($bt['file'])."/".
                 "<b>".basename($bt['file'])."</b></font></td>";
             $output .= "<td valign=top nowrap><font color=".($sh==$n?'red':'blue').">:{$bt['line']}</font>&nbsp;</td>";
+            if($bt['object'])$output .= "<td>".$bt['object']->name."</td>";else $output.="<td></td>";
             $output .= "<td valign=top><font color=".($sh==$n?'red':'green').">{$bt['class']}{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
         }
         $output .= "</table></div>\n";

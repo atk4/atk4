@@ -79,7 +79,7 @@ class Form extends AbstractView {
     function addField($type,$name,$caption=null){
         if($caption===null)$caption=$name;
 
-        $this->last_field=$this->add('Form_Field_'.$type,$name)
+        $this->last_field=$this->add('Form_Field_'.$type,$name,'form_body','form_line')
             ->setCaption($caption);
 
         $this->last_field->short_name = $name;

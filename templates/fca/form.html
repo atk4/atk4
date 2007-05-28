@@ -5,7 +5,7 @@
                         <?form_line?>
 						  <tr>
 							<td class="smalltext" align="right" valign="top" nowrap style="padding-top: 4px"><?field_caption?>Email:<?/?></td>
-							<td><?field_input?><input type="text" name="loginemail" class="logintext" value=""><?/?>
+							<td><?$field_input_pre?><?field_input?><input type="text" name="loginemail" class="logintext" value=""><?/?><?$field_input_post?>
                             <?field_error?><br><font color=red><?field_error_str?>Error<?/?></font><?/?>
                             </td>
 						  </tr>

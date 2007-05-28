@@ -87,9 +87,6 @@ abstract class Form_Field extends AbstractView {
                                                  $this->attr)
                       );
     }
-    function initializeTemplate($f2,$f2){
-        $this->template = $this->owner->template_chunks['form_line'];
-    }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.':'):'');
@@ -100,7 +97,7 @@ abstract class Form_Field extends AbstractView {
                              $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
                              :''
                              );
-        $this->owner->template_chunks['form']->append('form_body',$this->template->render());
+        $this->output($this->template->render());
     }
 
     function getTag($tag, $attr=null, $value=null){
@@ -348,7 +345,7 @@ class Form_Field_ValueList extends Form_Field {
     }
     function loadPOST(){
         $data=$_POST[$this->name];
-        if(is_array($data))join(',',$data);
+        if(is_array($data))$data=join(',',$data);
         if(isset($_POST[$this->name]))$this->set(stripslashes($data));
     }
 }

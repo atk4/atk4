@@ -209,7 +209,7 @@ fieldset fieldset legend {color:#333; font-size:100%; font-weight:bold; line-hei
 #ChatAdmin_history_chatgrid {display:block;margin:0; padding:0}
 #ChatAdmin_history_chatgrid div {display:block;margin:0; padding:0}
 #history .submit {margin:0px 0; padding-right:20px}
-table {width: 100%;}
+#table {width: 100%;}
 table .gridmenu{display:none}/**/
 table .header td{background:#ccc; color:#333; font-weight:bold; padding:5px;}
 table .odd td{color:#333; padding:2px 5px;	background-color: #f9f9f9; border-bottom:solid 1px #666}

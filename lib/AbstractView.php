@@ -88,6 +88,7 @@ abstract class AbstractView extends AbstractObject {
     function recursiveRender(){
         $cutting_here=false;
         $this->debug("Recursively rendering ".$this->__toString());
+        if($this->hook('pre-recursive-render'))return;
 
         if(isset($_GET['cut_object']) && ($_GET['cut_object']==$this->name || $_GET['cut_object']==$this->short_name)){
             // If we are cutting here, render childs and then we are done
@@ -107,6 +108,7 @@ abstract class AbstractView extends AbstractObject {
             $e=new RenderObjectSuccess($result);
             throw $e;
         }
+        $this->hook('post-recursive-render');
         $this->debug("Rendering complete ".$this->__toString());
     }
     function render(){

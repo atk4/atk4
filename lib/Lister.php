@@ -1,5 +1,5 @@
 <?php
-class Lister extends ReloadableView {
+class Lister extends View {
     public $dq=null;
 
     public $data=null;
