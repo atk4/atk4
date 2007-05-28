@@ -103,13 +103,13 @@ abstract class AbstractView extends AbstractObject {
         if(!isset($_GET['cut_object'])){
             $this->render();
         }
+        $this->hook('post-recursive-render');
+        $this->debug("Rendering complete ".$this->__toString());
         if($cutting_here){
             $result=$this->owner->template->cloneRegion($this->spot)->render();
             $e=new RenderObjectSuccess($result);
             throw $e;
         }
-        $this->hook('post-recursive-render');
-        $this->debug("Rendering complete ".$this->__toString());
     }
     function render(){
         /**
