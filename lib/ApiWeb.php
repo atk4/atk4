@@ -95,6 +95,20 @@ class ApiWeb extends ApiCLI {
         if(!$this->page)$this->page = @$_GET['page'];
     }
 
+
+    function getDestinationURL($page=null,$args=array()){
+        $tmp=array();
+        if(!$page)$page='index';
+        foreach($args as $arg=>$val){
+            if(!isset($val) || $val===false)continue;
+            if(is_array($val)||is_object($val))$val=serialize($val);
+            $tmp[]="$arg=".urlencode($val);
+        }
+        if($this->getConfig('url_prefix',false)){
+            return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
+        }else return $page.'.php'.($tmp?"?".join('&',$tmp):'');
+    }
+
     /////////////// This is what you should call //////////////////
     function main(){
         /**
