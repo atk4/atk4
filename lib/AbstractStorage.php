@@ -6,27 +6,35 @@
 class AbstractStorage extends AbstractController{
 
 	protected $filespace_path='';
-	public $upload_temp_name;
-	public $upload_orig_name;
-	public $upload_save_name;
-	public $upload_filesize;
-	public $upload_filetype;
+	public $file;
 
 	function init(){
 		parent::init();
+		$this->file=$this->initFile();
+	}
+	function initFile(){
+		$file=array(
+			'filename'=>'', // user specified filename ('save as' name) or original filename
+			'filesize'=>0,  // size of file, updates on file changes
+			'filetype'=>'', // mime type of the file
+			'temp_filename'=>'', // filename by which it is stored after upload, in temp dir
+			'original_filename'=>'' // original file name, which was specified in 'browse' field of the form
+		);
+		return $file;
 	}
 	function getFileList(){
 		return array();
 	}
 	protected function do_upload($filename) {
 		if(is_uploaded_file($filename)) {
-			$this->upload_filesize=filesize($filename);
+			clearstatcache();
+			$this->file['filesize']=filesize($filename);
 			return $filename;
 		} else {
 			return false;
 		}
 	}
-	function downloadFile($filespace_id, $file_id){
+	function downloadFile($file_id){
 		/**
 		 * Returns file data by filespace id and file id
 		 */

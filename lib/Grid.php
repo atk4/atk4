@@ -302,10 +302,11 @@ class Grid extends CompleteLister {
         $this->row_t = $this->api->add('SMlite');
         $this->row_t->loadTemplateFromString($row_t->render());
 
-		$row=$this->formatRow($row);
+		$this->current_row=$row;
+		$this->formatRow();
 		$result="";
 		foreach($this->columns as $name=>$column){
-			$result.=$row[$name]."<t>".$row[$name.'_original']."<row_end>";
+			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original']."<row_end>";
 		}
 		return $result;
 	}

@@ -198,7 +198,7 @@ class BasicAuth extends AbstractController {
         setcookie($this->name."_username",null);
         setcookie($this->name."_password",null);
         $this->info=false;
-        $this->memorize('info',$this->info);
+        $this->forget('info');
         $this->api->redirect('Index');
 	}
     function createForm($frame,$login_tag='Content'){

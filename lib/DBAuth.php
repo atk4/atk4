@@ -33,120 +33,23 @@
  */
 class DBAuth extends BasicAuth{
     public $dq;
-    protected $email_field;
+    public $email_field;
+    public $pass_field;
+    public $name_field;
     protected $secure = true;
-    protected $can_register = false;
-    protected $show_lost_password = false;
-    protected $doRecovery=false;
-    protected $from='';
-    protected $subj='Password recovery';
+    protected $signup = null;
+    protected $pwd_recovery = null;
+    protected $signup_processor = null;
 
-	function init(){
-		parent::init();
-		//process recovery and register
-		if($this->api->page==$this->api->getConfig('auth/register_page','none')){
-			$this->processRegister();
-		}
-		if($this->api->page==$this->api->getConfig('auth/pwd_recovery/page','none')){
-			$this->doRecovery=true;
-		}
-		$this->api->addHook('pre-exec',array($this,'check'));
-	}
-	function processRegister(){
-		$p=$this->add('Page');
-        $p->template->loadTemplate('empty');
-		$p->add('page_'.$this->api->getConfig('auth/register_page'), null, 'Content');
-		$p->downCall('render');
-		echo $p->template->render();
-		exit;
-	}
-	function processRecovery(){
+	function processLogin(){
+		/**
+		 * Draws page which set in config.php
+		 * Page should contain login form or other stuff which could be used as login object
+		 */
 		$p=$this->add('Page');
 		$p->template->loadTemplate('empty');
-		$p->template->set('page_title', 'Password recovery');
-		if($_GET['key']){
-			//user clicked link in e-mail
-			$this->api->stickyGET('rp');
-			$this->api->stickyGET('key');
-			$id=$_GET['rp'];
-			$key=$_GET['key'];
-	   		$row=$this->api->db->getHash("select * from ".DTP.$this->api->getConfig('auth/pwd_recovery/table').
-	    			" where id=$id and changed=0");
-	    	//looking for the key in DB and checking expiration dts
-	   		$db_key=($row['id'])?sha1($row['id'].$row['email'].strtotime($row['expire'])):'';
-	   		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
-	    	if($can_change){
-	    		//displaying changepass form
-	    		$username=$this->api->db->getOne("select $this->name_field from ".
-	    			$this->dq->args['table']." where id=".$row['user_id']);
-	    		
-				$form=$p->frame('Content', "Change password for $username")->add('Form', null, 'content');
-				$form
-					->addField('hidden', 'rp_id')
-					->addField('password', 'password', 'Enter new password')
-						->validateField('strlen($this->get())>=6', 'Password is too short')
-					->addField('password', 'password2', 'Confirm new password')
-						->validateField('$this->get()==$this->owner->get(\'password\')', 
-						'Confirmation differs from password')
-					->addField('checkbox', 'send', 'Send me new password by e-mail')
-			
-					->addSubmit('Change')
-				;
-				if(isset($_REQUEST['rp']))$form->set('rp_id', $_REQUEST['rp']);
-				if($form->isSubmitted()){
-					//getting a user id
-					$user_id=$this->api->db->getOne("select user_id from ".DTP.
-						$this->api->getConfig('auth/pwd_recovery/table').
-						" where id = ".$form->get('rp_id'));
-					//changing password
-					$this->api->db->query("update ".$this->dq->args['table']." set ".$this->pass_field.
-						" = '".$this->encrypt($form->get('password')).
-							"' where id = $user_id");
-					//storing info about changes
-					$this->api->db->query("update ".DTP.$this->api->getConfig('auth/pwd_recovery/table').
-							" set changed=1, changed_dts=SYSDATE()" .
-							" where id=".$form->get('rp_id'));
-					$p->add('Text', null, 'Content')->set('<center>Password changed succefully</center>');
-					if($form->get('send')=='Y')$this->sendPassword($user_id, $form->get('password'));
-					unset($this->api->sticky_get_arguments['rp']);
-					unset($this->api->sticky_get_arguments['key']);
-				}
-	    	}else{
-	    		//denial page
-				unset($this->api->sticky_get_arguments['rp']);
-				unset($this->api->sticky_get_arguments['key']);
-	    		$p->frame('Content', 'Request error')->add('Text', null, 'content')
-	    			->set("Sorry, this page is not valid. Activation period might have been expired." .
-	    			" <a href=".
-					$this->api->getDestinationURL($this->api->getConfig('auth/pwd_recovery/page')).
-					">Click here</a> if You want to repeat Your request.");
-	    	}
-		}else{
-			//displaying a form with username for password recovery
-			$form=$p->frame('Content', 'Password recovery')->add('Form', 'pwd_recovery_form', 'content');
-			$form
-				->addComment('To restore Your password please enter the '.$this->title_name.' specified at registration')
-				->addField('line', 'username', $this->title_name)->setNotNull()
-				
-				->addSubmit('Submit')
-			;
-			if($form->isSubmitted()){
-				$user=$this->api->db->getHash("select id, $this->name_field, $this->email_field from ".
-					$this->dq->args['table']." where $this->name_field='".
-					$form->get('username')."'");
-				if(sizeof($user)!=0){
-					//generating and sending e-mail
-					$this->sendChangeLink($user['id'], $user[$this->name_field], $user[$this->email_field]);
-					$p->add('Text', null, 'Content')->set("<div align=center>An e-mail with instruction " .
-						"to restore password has been sent" .
-						" to user '".$form->get('username')."'</div>");
-				}else{
-					$form->elements['username']->displayFieldError("User with a name you specified have not been found. Please try again");
-				}
-			}
-		}
-		$p->add('Text', 'back', 'Content')->set("<div align=center><a href=".
-			$this->api->getDestinationURL('Index').">Back to login</a></div>");
+		$p->add('page_'.$this->api->getConfig('auth/login_page'),null,'Content');
+		$this->form=$p->form;
 		$p->downCall('render');
 		echo $p->template->render();
 		exit;
@@ -154,53 +57,6 @@ class DBAuth extends BasicAuth{
 	function check(){
 		if($this->doRecovery===true)$this->processRecovery();
 		else parent::check();
-	}
-	protected function sendPassword($user_id, $password){
-		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_pwd'),'.txt');
-		$server=$this->getServerName();
-		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
-			" where id=".$user_id);
-		$username=$this->api->db->getOne("select $this->name_field from ".$this->dq->args['table'].
-			" where id=".$user_id);
-		//combining a message
-		$from=$this->from==''?"noreply@$server":$this->from;
-		$mail->trySet('server', $server);
-		$mail->trySet('username', $username);
-		$mail->trySet('password',$password);
-		$mail->trySet('from', $from);
-		$subj=$mail->get('subject');
-		//$subj=$subj[0];
-		$mail->tryDel('subject');
-		
-		mail($address,$subj[0],null,str_replace("\n","\r\n",$mail->render()));
-	}
-	protected function sendChangeLink($user_id, $username, $address){
-		//adding a DB record with a key to a change password page
-		$table=DTP.$this->api->getConfig('auth/pwd_recovery/table');
-		$expire=time()+$this->api->getConfig('auth/pwd_recovery/timeout', 15)*60;
-		$this->api->db->query("insert into $table (user_id, email, expire) values($user_id, '$address', " .
-				"'".date('Y-m-d H:i:s', $expire)."')");
-		$id=mysql_insert_id();
-		$server=$this->getServerName();
-		//combining a message
-		$link=$this->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
-				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
-		
-		$mail=$this->add('SMlite')->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_link'),'.txt');
-		$address=$this->api->db->getOne("select $this->email_field from ".$this->dq->args['table'].
-			" where id=".$user_id);
-		//combining a message
-		$from=$this->from==''?"noreply@$server":$this->from;
-		$mail->trySet('server', $server);
-		$mail->trySet('link',$link);
-		$mail->trySet('from', $from);
-		$mail->trySet('timeout', $this->api->getConfig('auth/pwd_recovery/timeout', 15));
-		$mail->trySet('username', $username);
-		$subj=$mail->get('subject');
-		//$subj=$subj[0];
-		$mail->tryDel('subject');
-		
-		mail($address,$subj[0],null,str_replace("\n","\r\n",$mail->render()));
 	}
 	function setEncrypted($secure=true){
 		$this->secure=$secure;
@@ -220,45 +76,28 @@ class DBAuth extends BasicAuth{
         ;
         return $this;
     }
-    function setEmailParams($from, $subj){
-    	/**
-    	 * Sets subj and from for e-mail sent by password recovery subsystem
-    	 * As we going to use this class for many projects it is cool to customize class output
-    	 */
-    	$this->from=$from;
-    	$this->subj=$subj;
-    }
     function verifyCredintials($user,$password){
     	/**
     	 * Verifying user and password. Password in params should be an SHA1 hash in ALL cases
     	 */
+    	unset($this->dq->args['where']);
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
-    	$this->info=array_merge($this->recall('info',array()), $this->dq->do_getHash());
+    	$this->addInfo($this->dq->do_getHash());
         $this->memorize('info',$this->info);
     	return(sizeof($data)>0&&($data[$this->pass_field]==$password||sha1($data[$this->pass_field])==$password));
     }
-	private function encrypt($str){
+	function encrypt($str){
 		return $this->secure?sha1($str):$str;
 	}
     function loggedIn(){
-    	parent::loggedIn();
+    	parent::loggedIn($this->get('username'));
     }
-	function showLoginForm(){
-		$p=parent::showLoginForm();
-		if($this->can_register){
-			$this->form->add('RegisterLink', null, 'form');
-		}
-		if($this->show_lost_password){
-			$this->form->add('PwdRecoveryLink', null, 'form');
-		}
-		return $p;
-	}
-	function addRegisterLink(){
-		$this->can_register=true;
+	function addSignupProcessor($class_name='Auth_SignupProcessor'){
+		$this->signup_processor=$this->add($class_name);
 		return $this;
 	}
-	function addPwdRecoveryLink(){
-		$this->show_lost_password=true;
+	function addPasswordRecovery($class_name='Auth_PasswordRecovery'){
+		$this->pwd_recovery=$this->add($class_name);
 		return $this;
 	}
 	function getServerName($full=false){
@@ -277,19 +116,8 @@ class DBAuth extends BasicAuth{
 		if($server==''||strtolower($server)=='unknown')$server=$_SERVER['HTTP_HOST'];
 		return $full?$server:str_replace('www.', '', $server);
 	}
-}
-class RegisterLink extends Text{
-	function init(){
-		parent::init();
-		$this->set('<tr><td align=left><a href='.
-			$this->api->getDestinationURL($this->api->getConfig('auth/register_page')).'>Register</a></td><td></td></tr>');
-	}
-}
-class PwdRecoveryLink extends Text{
-	function init(){
-		parent::init();
-		$this->set('<tr><td align=left><a href='.
-			$this->api->getDestinationURL($this->api->getConfig('auth/pwd_recovery/page')).
-			'>Lost password</a></td><td></td></tr>');
+	function createForm($frame,$login_tag='Content'){
+        $form=$frame->add('Auth_Form',null,$login_tag);
+		return $form;
 	}
 }
