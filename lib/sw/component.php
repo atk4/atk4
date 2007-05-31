@@ -32,11 +32,17 @@ class sw_component extends View {
         $this->content=$this->wrapping->render();
     }
     function render(){
-        if($this->api->getConfig('debug',false))$this->output('<div style="border: 1px dashed red">');
+        $debug=$this->api->debug||$this->debug;
+        if($debug)$this->output('<div style="border: 1px dashed red">');
         parent::render();
-        if($this->wrapping)$this->wrapUp();
+
+        if($this->wrapping){
+            $this->output('</div');
+            parent::output('<div style="border: 1px dashed blue">');
+            $this->wrapUp();
+        }
         parent::output($this->content);
-        if($this->api->getConfig('debug',false))$this->output('</div>');
+        if($debug)parent::output('</div>');
     }
     function grab($tag,$default=null,$template=null){
         if(!$template)$template=$this->template;
