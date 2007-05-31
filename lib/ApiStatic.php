@@ -61,15 +61,9 @@ class ApiStatic extends ApiWeb{
         if(is_array($elements))foreach($elements as $el)$this->importFromConfig($el);
         else $this->info[$elements]=$this->getConfig($elements,'');
     }
-
     function loadConfig(){
-        $this->importFromConfig(array(
-                    'base_path',
-                    'test'
-                    )
-                );
+        //$this->importFromConfig(array());
     }
-
     function init(){
         parent::init();
         
@@ -230,6 +224,7 @@ class ApiStatic extends ApiWeb{
             if($tag[0]=='_')continue;
             list($class,$junk)=split('#',$tag);
             if(is_numeric($class))continue;     // numeric ones are just a text, not really a tag
+            $original_class=$class;
 
             // If tag is present inside tagmatch class, it can redefine the class name
             // and some additional options
@@ -240,32 +235,6 @@ class ApiStatic extends ApiWeb{
             }
 			
             /*
-             * It's up to menu really
-             *
-			if($parent->depth == 0) 
-			{	
-        		$uri = $_SERVER['REQUEST_URI'];
-        		$components = preg_split('/\//', $uri);
-        		$count = count($components);
-        		// decreasing by the number of components in the path, if site is not at the top
-       			$count = $count - count(preg_split('/\//', $this->getConfig('base_path')));
-       			$subdir_string = '';
-			}
-			else 
-			{
-				$count = $parent->depth;
-			}
-		    for($i = 0; $i < $count; $i++) 
-			{
-				$subdir_string .= '../';
-			}
-			$depth = $parent->depth;
-			$generated = $parent->generated;
-			$parent->subdir = "$subdir_string";;
-			$parent->template->trySet('_subdir', "$subdir_string");
-            */
-
-            /*
              * Class may contain something like 'myclass(foo,bar,baz)'. We need to extract arguments
              */
             list($class,$rest)=explode('(',$class);
@@ -275,7 +244,18 @@ class ApiStatic extends ApiWeb{
                 $rest=explode(',',$rest);
             }else $rest=null;
 
-            //$component=$parent->add('sw_'.$class,$tag,$tag,$tag);
+
+            // Before we start with class initialization let's see if it can be initialized at all.
+            // We will only do this if the calss was not found in the tagmatch array. If it WAS defined
+            // we assume those people know what they are doing and let them have their error.
+            if($class==$original_class && !class_exists($class,false)){
+                // Perhaps we could load it
+                if(!loadClass($class)){
+                    // It's no use. Class cannot be found, so we will use "sw_wrap" as default class.
+                    $this->debug("Couldn't find separate class definition for tag $tag, so using 'sw_wrap'");
+                    $class='sw_wrap';
+                }
+            }
 
             // We need to pass some arguments to the class when initializing. Our add('classname') method is
             // not passing any arguments before initialization. Setting global variables or relying on owner's
@@ -296,7 +276,7 @@ class ApiStatic extends ApiWeb{
             $component->args=$rest;
             $component->init();
 
-            $component->processRecursively();
+            if($component instanceof sw_component)$component->processRecursively();
             $this->debug("Component $tag initialization completed");
         }
     }
