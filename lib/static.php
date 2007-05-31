@@ -7,7 +7,8 @@ function lowlevel_error($error,$lev=null){
     /*
      * This function will be called for low level fatal errors
      */
-    echo "<font color=red>Low level error:</font> $error<br>";
+    echo "<font color=red>Low level error:</font> $error in <b>".caller_lookup()."()</b><br><br>Backtrace:<pre>";
+    echo print_r(debug_backtrace());
     exit;
 }
 };if(!function_exists('error_handler')){
@@ -98,10 +99,17 @@ function htmlize_exception($e,$msg){
         return $r;
     }
 };if(!function_exists('__autoload')){
+    function loadClass($class){
+        $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+        if(!@include_once($file)){
+            return false;
+        }
+        return true;
+    }
     function __autoload($class){
 
         $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
-        if(!include_once($file)){
+        if(!loadClass($class)){
             lowlevel_error("Unable to load $file for $class");
         }
         if(class_exists($class))return;
