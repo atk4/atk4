@@ -171,7 +171,7 @@ class Logger extends AbstractController {
 
 
         $this->log_output=$this->api->getConfig('logger/log_output',null);
-        $this->web_output=$this->api->getConfig('logger/web_output','full');
+        $this->web_output=$this->api->getConfig('logger/web_output',null);
 
         if(!$this->web_output){
             $this->public_error_message=$this->api

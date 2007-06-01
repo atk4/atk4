@@ -11,6 +11,8 @@ class Grid extends CompleteLister {
 
     public $displayed_rows=0;
 
+	private $totals_title_row=null;
+	private $totals_title="";
     public $totals_t=null;
     /**
      * Inline related property
@@ -117,6 +119,12 @@ class Grid extends CompleteLister {
     function format_totals_money($field){
         return $this->format_money($field);
     }
+    function format_totals_text($field){
+    	// This method is mainly for totals title displaying
+    	if($field==$this->totals_title_row)$this->current_row[$field]=
+			'<div align="center"><strong>'.$this->current_row[$field].':</strong></div>';
+		else $this->current_row[$field]='-';
+    }
 	function format_time($field){
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
@@ -180,6 +188,27 @@ class Grid extends CompleteLister {
     	$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
     	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
     }
+	function format_reload($field,$args=array()){
+		/**
+		 * Useful for nested Grids in expanders
+		 * Formats field as a link by clicking on which the whole expander area
+		 * is reloaded by specified page contents.
+		 * Page address is similar to expander field
+		 * 
+		 * To return expander's previous content see Ajax methods:
+		 * - Ajax::reloadExpander()
+		 * - Ajax::reloadExpandedRow()
+		 * - Ajax::reloadExpandedField()
+		 * 
+		 * WARNING!
+		 * As these Ajax methods use the current $_GET['id'] value to return 
+		 * the previuos expander state, clicked row ID is passed through $_GET['row_id']
+		 */
+		$this->current_row[$field]='<a href="javascript:void(\''.$this->current_row['id'].'\')" ' .
+			'onclick="'.$this->add('Ajax')
+			->reloadExpander($this->api->page.'_'.$field,array('row_id'=>$this->current_row['id']))
+			->getString().'"><u>'.($this->current_row[$field]==null?$field:$this->current_row[$field]).'</u></a>';
+	}
     function format_link($field){
     	$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
     		array('id'=>$this->current_row['id'])).'">'.
@@ -394,6 +423,11 @@ class Grid extends CompleteLister {
         }
         return $this->current_row;
     }
+	function setTotalsTitle($row,$title="Total"){
+		$this->totals_title_row=$row;
+		$this->totals_title=$title;
+		return $this;
+	}
     function formatTotalsRow(){
         foreach($this->columns as $tmp=>$column){
             $formatters = split(',',$column['type']);
@@ -407,6 +441,14 @@ class Grid extends CompleteLister {
             if($all_failed)$this->current_row[$tmp]='-';
         }
     }
+	function updateTotals(){
+		parent::updateTotals();
+		foreach($this->current_row as $key=>$val){
+			if($key==$this->totals_title_col){
+				$this->totals[$key]=$this->totals_title;
+			}
+		}
+	}
     function precacheTemplate(){
         // pre-cache our template for row
         $row = $this->row_t;
@@ -482,6 +524,7 @@ class Grid extends CompleteLister {
     		$this->template->del('rows');
     		$this->template->del('totals');
     		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
+    		$this->totals=false;
     		//return;
     	}
         parent::render();
