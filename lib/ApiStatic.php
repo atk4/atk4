@@ -81,7 +81,8 @@ class ApiStatic extends ApiWeb{
         /*
          * Here we determine, which page was loaded. 
          */
-        $this->page=$_SERVER['REDIRECT_URL'];
+//        $this->page=$_SERVER['REDIRECT_URL'];
+        $this->page=$_SERVER['REQUEST_URI'];
         if(!$this->page)$this->page=$_SERVER['REDIRECT_SCRIPT_URL'];
         if(!strpos($this->page,'.html'))$this->page.='/index.html';
         $this->page=str_replace('.html','',$this->page);
@@ -250,10 +251,10 @@ class ApiStatic extends ApiWeb{
             // we assume those people know what they are doing and let them have their error.
             if($class==$original_class && !class_exists($class,false)){
                 // Perhaps we could load it
-                if(!loadClass($class)){
+                if(!loadClass('sw_'.$class)){
                     // It's no use. Class cannot be found, so we will use "sw_wrap" as default class.
-                    $this->debug("Couldn't find separate class definition for tag $tag, so using 'sw_wrap'");
-                    $class='sw_wrap';
+                    $this->debug("Couldn't find separate class definition for tag sw_$class, so using 'sw_wrap'");
+                    $class='wrap';
                 }
             }
 
