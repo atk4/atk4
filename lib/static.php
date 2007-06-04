@@ -101,17 +101,20 @@ function htmlize_exception($e,$msg){
 };if(!function_exists('__autoload')){
     function loadClass($class){
         $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
-        if(!@include_once($file)){
-            return false;
+        foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
+            $fullpath = $path . DIRECTORY_SEPARATOR . $file;
+            if (file_exists($fullpath)) {
+                return $fullpath; 
+            }
         }
-        return true;
+        return false;
     }
     function __autoload($class){
 
-        $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
-        if(!loadClass($class)){
-            lowlevel_error("Unable to load $file for $class");
+        if(!$fullpath=loadClass($class)){
+            lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
         }
+        include_once($fullpath);
         if(class_exists($class))return;
 
         lowlevel_error("Class $class is not defined in $file");
