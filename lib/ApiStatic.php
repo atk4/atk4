@@ -222,12 +222,27 @@ class ApiStatic extends ApiWeb{
                 $component->processRecursively();
             }else{
                 
+                /*
+                 * In the case here - we are trying to insert a 
+                 * regular View into our template, which is most probably
+                 * a dynamic element. It will require a template to render.
+                 */
 
                 if($this->api->components->is_set($class)){
                     $template=$this->api->components->cloneRegion($class);
-                }else $template=$tag;
-                $component->initializeTemplate($tag,$template);
+                }else $template=null;
+
+                /*
+                 * Additionally we will pass argument "logic" to it, with content
+                 * of the tag from your page. This can be used to write some rules
+                 * or checks on top of standard component.
+                 */
                 $component->logic=$this->template->cloneRegion($tag);
+
+                /*
+                 * Good
+                 */
+                $component->initializeTemplate($tag,$template);
                 $component->init();
             }
 
