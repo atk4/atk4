@@ -58,7 +58,10 @@ class ApiStatic extends ApiWeb{
 
     function importFromConfig($elements){
         if(is_array($elements))foreach($elements as $el)$this->importFromConfig($el);
-        else $this->info[$elements]=$this->getConfig($elements,'');
+        else{
+            if(!$this->info[$elements]=$this->getConfig(basename($this->page).'/'.$elements,null))
+                $this->info[$elements]=$this->getConfig($elements,'');
+        }
     }
     function loadConfig(){
         //$this->importFromConfig(array());
@@ -97,7 +100,6 @@ class ApiStatic extends ApiWeb{
         $this->template=$this->add('SMlite');
         $f=join('',file($_SERVER['DOCUMENT_ROOT'].$this->page.'.html'));
         $this->template->loadTemplateFromString($f);
-
 
 
         /*
@@ -218,6 +220,7 @@ class ApiStatic extends ApiWeb{
                 $component->init();
                 $component->processRecursively();
             }else{
+                
 
                 if($this->api->components->is_set($class)){
                     $template=$this->api->components->cloneRegion($class);
