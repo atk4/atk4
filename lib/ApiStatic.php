@@ -35,7 +35,6 @@ class ApiStatic extends ApiWeb{
             'recursive_test'=>'recursive',          // This is to test a recurnsive component
 
 
-            'title'=>'grab',
             'loc'=>'collect',
 
             );
@@ -207,7 +206,7 @@ class ApiStatic extends ApiWeb{
     	}
     	return '';
     }
-    function processTemplate($parent){
+    function processTemplate($parent,$template=null){
         /* 
          * Process template will walk through the template of an object, replace tags with components
          * according to the rules specified in $api->tagmatch
@@ -270,14 +269,23 @@ class ApiStatic extends ApiWeb{
             $component->name=$parent->name.'_'.$component->short_name;
             $component->api=$parent->api;
             $parent->add($component);
-            $component->initializeTemplate($tag,$tag);
 
 
-            // Now set some arguments and do initialization
-            $component->args=$rest;
-            $component->init();
 
-            if($component instanceof sw_component)$component->processRecursively();
+            if($component instanceof sw_component){
+                $component->initializeTemplate($tag,$tag);
+                $component->init();
+                $component->processRecursively();
+            }else{
+
+                if($this->api->components->is_set($class)){
+                    $template=$this->api->components->cloneRegion($class);
+                }else $template=$tag;
+                $component->initializeTemplate($tag,$template);
+                $component->logic=$this->template->cloneRegion($tag);
+                $component->init();
+            }
+
             $this->debug("Component $tag initialization completed");
         }
     }
