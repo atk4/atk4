@@ -29,6 +29,7 @@ class sw_component extends View {
 
         $this->wrapping->trySet('content',$this->content);
         $this->wrapping->set($this->api->info);
+        // $this->template->set('content',$logic->render());
         $this->content=$this->wrapping->render();
     }
     function render(){
@@ -104,8 +105,12 @@ class sw_component extends View {
         list($class,$junk)=split('#',$this->template->top_tag);
 
         // This class will clone component's region from the component library
-        if(!$this->api->components->is_set($class))
-            throw new BaseException("Region '$class' must be defined in content library");
+        if(!$this->api->components->is_set($class)){
+            $this->debug("Component for $class is not defined");
+            return;
+        }
+	
+            //throw new BaseException("Region '$class' must be defined in content library");
         $this->wrapping=$this->api->components->cloneRegion($class);
     }
     function grabTags($t){
