@@ -98,38 +98,6 @@ class ApiStatic extends ApiWeb{
         $f=join('',file($_SERVER['DOCUMENT_ROOT'].$this->page.'.html'));
         $this->template->loadTemplateFromString($f);
 
-        /*
-         * --> menu specific things go into menu component
-        $path=$this->getPath($this->page,$this->getConfig('menu'));
-        if($path==''){
-        	// this page was not defined in menu
-        	// getting the path by the tag 'menuitem' of this page
-            $this->debug('This page is not defined in menu');
-        	$this->current_menuitem=$this->template->get('menuitem');
-        	$path=$this->getPath($this->getConfig('base_path').$this->current_menuitem,$this->getConfig('menu'));
-        }else{
-            $this->debug("This page's path is $path");
-        }
-        $this->path=split(' ',$path);
-        */
-        
-        // Template we just loaded will have some useful information we will need
-        // such as page title
-        /*
-        if($this->template->is_set('title')){
-            $this->title=trim($this->template->get('title'));
-            $this->template->del('title');
-        }else $this->title="!!Title must be defined!!";
-         *--> this is going to bet moved into sw_title
-        */
-
-		// should be an obsolete property
-		/*
-        if($this->template->is_set('parent')){
-            $this->parent=trim($this->template->get('parent'));
-            $this->template->del('parent');
-        }else $this->parent='';
-		*/
 
 
         /*
@@ -151,44 +119,12 @@ class ApiStatic extends ApiWeb{
          */
 
 
+        $this->addHook('pre-exec',array($this,'processRootTemplate'));
+
+
+    }
+    function processRootTemplate(){
         $this->processTemplate($this);
-
-
-        /*
-        // There are two ways page could be defined. It could actually be a
-        // valid HTML file with some content we are going to replace OR
-        // it might be just a list of tags surrounded with <!main_content!>
-        // tag. 
-        // In 1st case we will render this template and output
-        // In 2nd case we will insert result into "global" template
-        if($this->template->is_set('main_content')){
-
-            // Ok, we don't care for anything outside the main_content region
-            $this->template=$this->template->cloneRegion('main_content');
-
-            // This will insert components into the template
-            $this->processTemplate($this);
-
-            // This will render our template
-            $this->dontrender=true;
-            $this->downCall('render');
-            $this->dontrender=false;
-            unset($this->elements);
-
-            // Now we are preparing general page - inserting result inside it
-            $this->general=$this->add('SMlite')->loadTemplate('general');
-            $this->general->set('main_content',$this->template->render());
-
-            // General template may contain some components too, so we need
-            // to process it again
-            $this->template=$this->general;
-            $this->processTemplate($this);
-        }else{
-            // Process our page and output it completely
-            $this->processTemplate($this);
-        }
-        */
-
     }
     function getPath($link,$menu){
     	// returns the space separated path of the link given related to the menu
@@ -221,8 +157,13 @@ class ApiStatic extends ApiWeb{
              * multilple tags of the same name in the template and we don't want
              * those to get mixed up, so we are only interested in tags with #
              */
-            if($tag[0]=='_')continue;
             list($class,$junk)=split('#',$tag);
+            if($class[0]=='_'){
+                // variable
+                $class=substr($class,1);
+                if(isset($this->info[$class]))$this->template->set($tag,$this->info[$class]);
+                continue;
+            }
             if(is_numeric($class))continue;     // numeric ones are just a text, not really a tag
             $original_class=$class;
 
