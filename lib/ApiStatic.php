@@ -3,6 +3,7 @@
  * Generic class to work with static sites.
  * Description coming soon
  * 
+ * TODO: importFromConfig will not work with sub-pages (located in subdirs)
  */
 class ApiStatic extends ApiWeb{
     var $tagmatch=array(
