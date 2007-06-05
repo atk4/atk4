@@ -176,7 +176,7 @@ class Grid extends CompleteLister {
 			'" style="cursor: hand" title="'.$this->current_row[$field.'_original'].'"');
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
-			$this->api->getDestinationURL($this->api->page, array(
+			$this->api->getDestinationURL(null, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
 			'", '.$tab_moves_down.', '.$show_submit.');\'>'.$text.'</a>';
     }

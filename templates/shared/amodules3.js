@@ -252,6 +252,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 		}
 	}
 	row=document.getElementById(id);
+	if(!row)alert("Row is empty: "+row+"\nID used is: "+id);
 	//counting columns	
         tmp=row.parentNode.firstChild;
         if(!tmp.firstChild)tmp=tmp.nextSibling;
