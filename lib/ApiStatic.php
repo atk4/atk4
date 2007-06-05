@@ -67,6 +67,11 @@ class ApiStatic extends ApiWeb{
     function loadConfig(){
         //$this->importFromConfig(array());
     }
+    function calculatePageName(){
+        parent::calculatePageName();
+        $this->page=str_replace('.html','',$this->page_base);
+        
+    }
     function init(){
         parent::init();
         
@@ -85,10 +90,6 @@ class ApiStatic extends ApiWeb{
          * Here we determine, which page was loaded. 
          */
 //        $this->page=$_SERVER['REDIRECT_URL'];
-        $this->page=$_SERVER['REQUEST_URI'];
-        if(!$this->page)$this->page=$_SERVER['REDIRECT_SCRIPT_URL'];
-        if(!strpos($this->page,'.html'))$this->page.='/index.html';
-        $this->page=str_replace('.html','',$this->page);
 
 
         /*
@@ -99,7 +100,7 @@ class ApiStatic extends ApiWeb{
          */
         $this->debug('Initializing content template');
         $this->template=$this->add('SMlite');
-        $f=join('',file($_SERVER['DOCUMENT_ROOT'].$this->page.'.html'));
+        $f=join('',file($this->page.'.html'));
         $this->template->loadTemplateFromString($f);
 
 
@@ -248,5 +249,17 @@ class ApiStatic extends ApiWeb{
 
             $this->debug("Component $tag initialization completed");
         }
+    }
+    function getDestinationURL($page=null,$args=array()){
+        $tmp=array();
+        if(!$page)$page=$this->api->page;
+        foreach($args as $arg=>$val){
+            if(!isset($val) || $val===false)continue;
+            if(is_array($val)||is_object($val))$val=serialize($val);
+            $tmp[]="$arg=".urlencode($val);
+        }
+        if($this->getConfig('url_prefix',false)){
+            return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
+        }else return $page.'.html'.($tmp?"?".join('&',$tmp):'');
     }
 }

@@ -16,6 +16,9 @@ class ApiWeb extends ApiCLI {
      * DB handle
      */
     public $page=null;
+    protected $page_base=null;
+
+    public $index_page='Index';
 
     public $sticky_get_arguments = array();
 
@@ -83,12 +86,12 @@ class ApiWeb extends ApiCLI {
          */
 
         if(!isset($_GET['page'])){
-            $base=basename($_SERVER['REDIRECT_URL']);
+            $this->page_base=basename($_SERVER['REDIRECT_URL']);
             if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
-                $base='Index';
+                $this->page_base=$this->index_page;
             }
-            if(!strpos($base,'.') && !strpos($base,'&')){
-                $_GET['page']=$base;
+            if(!strpos($this->page_base,'.') && !strpos($this->page_base,'&')){
+                $_GET['page']=$this->page_base;
             }
         }
 
