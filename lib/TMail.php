@@ -44,7 +44,7 @@ class TMail extends AbstractController{
 		// gathering parts:
 		// headers
 		$this->headers=$this->template->cloneRegion('headers');
-		if(!$this->headers->tags)$this->loadDefaultHeaders();
+		if(!$this->headers->tags)$this->loadDefaultTemplate();
 		$this->subject=$this->template->get('subject');
 		// body
 		$this->body=$this->template->cloneRegion('body');
@@ -55,7 +55,19 @@ class TMail extends AbstractController{
 		$this->bcc=$this->template->get('bcc');
 		return $this;
 	}
-	function loadDefaultHeaders(){
+	function setTag($tag,$value){
+		/**
+		 * Sets the tag value throughout the template, including all parts
+		 */
+		$this->template->trySet($tag,$value);
+		$this->body->trySet($tag,$value);
+		$this->headers->trySet($tag,$value);
+		$this->sign->trySet($tag,$value);
+	}
+	function loadDefaultTemplate(){
+		/**
+		 * Loads default template and sets sign and headers from it
+		 */
 		$template=$this->add('SMlite')->loadTemplate('mail/mail','.txt');
 		$this->headers=$template->cloneRegion('headers');
 		$this->sign=$template->cloneRegion('sign');

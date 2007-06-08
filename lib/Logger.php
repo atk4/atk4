@@ -162,8 +162,8 @@ class Logger extends AbstractController {
 
     function init(){
 
-        $this->debug_log=$this->recall('debug_log','');
-        $this->forget('debug_log');
+        $this->debug_log=session_id()?$this->recall('debug_log',''):'';
+        if(session_id())$this->forget('debug_log');
         $this->debug_log.="[<font color=red>Debug log from ".date("d.m.Y H:m:s")." to ".$_SERVER['QUERY_STRING']."</font>] - debug started<br>\n";
         $this->debug_added=false;
 
@@ -211,7 +211,7 @@ class Logger extends AbstractController {
         if(!$this->debug_added)return;
         if($this->api->not_html){
             // We may not output anything, because this will screw up. Save debug output to session
-            $this->memorize('debug_log',$this->debug_log);
+            if(session_id())$this->memorize('debug_log',$this->debug_log);
         }else{
             echo $this->debug_log;
         }

@@ -1,16 +1,17 @@
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII
-From: <?$from?>
-Bcc: <?$bcc?>
-X-Mailer: AModules3 mailer
-<?subject?><?$leave_this_param?><?$server?> password recovery subsystem<?/?>
-This is <?$server?> password recovery subsystem.
+<?from?><?/from?>
+<?bcc?><?/bcc?>
+<?headers?>
+<?/headers?>
+<?subject?>Password recovery<?/?>
+<?body?>
+This is an automated mail from password recovery subsystem.
 
-We recieved the request to change the password for the user '<?$username?>'. 
+We have received a request to change the password for the user '<?$username?>'. 
 To change your password click the link below. 
+<?$link?>
 
-REMEMBER: this link is actual for a period of <?$timeout?> minutes only. If you do not change the password 
-during this period, you will have to make a new change request.
-
-http://<?$link?>
+IMPORTANT: this link is active for a period of <?$timeout?> minutes only. If you 
+do not change the password during this period, you will have to make a 
+new change request.
+<?sign?>
+<?/sign?><?/body?>

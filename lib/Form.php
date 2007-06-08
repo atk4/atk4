@@ -91,7 +91,7 @@ class Form extends AbstractView {
         	$this->template_chunks['form_comment']->set('comment',$comment)->render());
         return $this;
     }
-    function addSeparator($separator){
+    function addSeparator($separator='<hr>'){
 
         if(!isset($this->template_chunks['form_separator']))return $this->addComment('<u>'.$separator.'</u>');
 
