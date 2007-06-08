@@ -50,7 +50,7 @@ class TMail extends AbstractController{
 		$this->body=$this->template->cloneRegion('body');
 		$sign=$this->body->cloneRegion('sign');
 		$this->body->tryDel('sign');
-		if($sign->tags)$this->sign=$sign;
+		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
 		$this->bcc=$this->template->get('bcc');
 		return $this;
