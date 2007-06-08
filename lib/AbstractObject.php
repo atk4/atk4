@@ -119,6 +119,7 @@ abstract class AbstractObject {
          *
          * If you have multiple possible values, you might want using learn()
          */
+        if (!isset($_SESSION)) return;
         if(!isset($value))return $this->recall($name);
         return $_SESSION['o'][$this->name][$name] = $value;
     }
@@ -129,6 +130,8 @@ abstract class AbstractObject {
          * $this->forget(); without arguments.
          */
         
+        if (!isset($_SESSION)) return;
+         
         if(isset($name)){
             unset($_SESSION['o'][$this->name][$name]);
         }else{
@@ -142,6 +145,8 @@ abstract class AbstractObject {
          *
          * If you want $default value to be memorized as well, see learn()
          */
+        if (!isset($_SESSION)) return;
+        
         if(!isset($_SESSION['o'][$this->name][$name])){
             return $default;
         }else{
