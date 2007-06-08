@@ -317,4 +317,11 @@ class DBlite extends DBlite_Abstract {
         $ds->db = $this;
         return $ds;
     }
+    
+    function escape($s){
+        /* Default string escape is addslashes.
+         * Drivers with their own string escape function should override this function.
+         */
+        return addslashes($s);
+    }
 }

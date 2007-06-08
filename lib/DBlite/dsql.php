@@ -183,7 +183,7 @@ class DBlite_dsql  {
             }elseif(is_null($val)){
                 $this->args['set'][$set]="NULL";
             }else{
-                $this->args['set'][$set]="'".addslashes($val)."'";
+                $this->args['set'][$set]="'".$this->db->escape($val)."'";
             }
         }
         return $this;
@@ -203,11 +203,11 @@ class DBlite_dsql  {
                     $c=substr($where,-1,1);
                     if($c=='<' || $c=='>' || $c=='='){
                         // no need to add sign, it's already there
-                        $where.=" '".addslashes($equals)."'";
+                        $where.=" '".$this->db->escape($equals)."'";
                     }elseif(substr($where,-5,5)==' like'){
-                        $where.=" '".addslashes($equals)."'";
+                        $where.=" '".$this->db->escape($equals)."'";
                     }else{
-                        $where.=" = '".addslashes($equals)."'";
+                        $where.=" = '".$this->db->escape($equals)."'";
                     }
                 }
             }
@@ -231,11 +231,11 @@ class DBlite_dsql  {
                     $c=substr($having,-1,1);
                     if($c=='<' || $c=='>' || $c=='='){
                         // no need to add sign, it's already there
-                        $having.=" '".addslashes($equals)."'";
+                        $having.=" '".$this->db->escape($equals)."'";
                     }elseif(substr($having,-5,5)==' like'){
-                        $having.=" '".addslashes($equals)."'";
+                        $having.=" '".$this->db->escape($equals)."'";
                     }else{
-                        $having.=" = '".addslashes($equals)."'";
+                        $having.=" = '".$this->db->escape($equals)."'";
                     }
                 }
             }

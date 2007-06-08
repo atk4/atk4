@@ -94,6 +94,13 @@ class DBlite_mysql extends DBlite {
          */
         return mysql_insert_id($this->handle);
     }
+    
+    function escape($s){
+        /**
+         * Escapes special characters in a string for use in a SQL statement
+         */
+        return mysql_real_escape_string($s,$this->handle);
+    }
 
     /**
      * <b>[DEPRECATED]</b> please use strtotime() analogue.
