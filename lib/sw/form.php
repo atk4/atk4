@@ -1,46 +1,97 @@
 <?php
-/* class integration tool */
-class sw_form extends sw_component {
-    function render(){
-        if ($this->template){
-            $this->template->trySet("form_id", $this->short_name);
-        }
-        if ($this->fields){
-            /* look for values and errors */
-            $id = $this->short_name;
-            if ($errors = $_SESSION[$id]){
-                $prev_gp = unserialize(urldecode($_SESSION[$id . "gp"]));
-                unset($_SESSION[$id]);
-                unset($_SESSION[$id . "gp"]);
-                foreach ($errors as $field => $error_str){
-                    $this->template->trySet($field . "_error", $error_str);
+/* TODO:
+* 1) logic support for validators
+* 2) logic support for data restoration upon failed post request, don't stay at
+* post
+* 3) add submit handler
+* */
+class sw_form extends Form {
+    function init(){
+        parent::init();
+        echo $this->api->recall("entrance_url");
+        $counter = 0;
+        $this->name = preg_replace("/#/", "___", $this->name);
+        foreach(array_keys($this->logic->template) as $tag){
+            list($class,$junk)=split('#',$tag);
+            if(is_numeric($class))continue;     // numeric ones are just a text, not really a tag
+            $type='text';
+            $counter++;
+            $caption = null;
+            $validator = null;
+            $field_type = null;
+            if ($class == "onsuccess"){
+                foreach (array_keys($this->logic->template[$tag]) as $subtag){
+                    list($class,$junk)=split('#',$subtag);
+                    if ($class == "redirect"){
+                        $this->onsuccess_method = "redirect";
+                        $to = $this->onsuccess_aux = $this->logic->template[$tag][$subtag][0];
+                        continue;
+                    } else if ($class == "callmethod"){
+                        $this->onsuccess_method = "method";
+                        foreach (array_keys($this->logic->template[$tag][$subtag]) as $subsubtag){
+                            list($class,$junk)=split('#',$subsubtag);
+                            if ($class == "class"){
+                                $this->onsuccess_class = $this->logic->template[$tag][$subtag][$subsubtag][0];
+                            } else if ($class == "method"){
+                                $this->onsuccess_aux = $this->logic->template[$tag][$subtag][$subsubtag][0];
+                            }
+                        }
+                    }
                 }
-                foreach ($prev_gp as $field => $value){
-                    $value = $this->form_encode($value);
-                    $this->template->trySet($field, $value);
+            }
+            foreach(array_keys($this->logic->template[$tag]) as $subtag){
+                list($class,$junk)=split('#',$subtag);
+                if(is_numeric($subtag)){
+                    if ($subtag == 0){
+                        $caption = $this->logic->template[$tag][$subtag];
+                    }
+                } else if ($class=='type'){
+                    $type=$this->logic->get($subtag);
+                    if ($type=="text"){
+                        $field_type = "line";
+                    } elseif ($type == "password"){
+                        $field_type = "password";
+                    } 
+                } else if ($class == 'validator'){
+                    $validator = $this->logic->template[$tag][$subtag][0];
+                }
+            }
+            if($field_type){
+                $last_field = $this->addField($field_type,'f'.$counter, $caption);
+                if ($validator){
+                    if (method_exists($last_field, $validator)){
+                        $last_field->$validator();
+                    }
                 }
             }
         }
-        parent::render();
-    }
-    function form_encode($str){
-        if (get_magic_quotes_gpc()){
-            $str = stripslashes($str);
-        }
-        $str = preg_replace("/(\")/", "&#034;", $str);
-        $str = preg_replace("/(\\\)/", "&#092;", $str);
-        return $str;
-    }
-    function is_submitted(){
-        $id = $this->short_name;
-        if (($_GET["form_id"] == $id) || ($_POST["form_id"] == $id)){
-            return true;
-        } else {
-            return false;
-        }
-    }
-    function store_gp(){
-        $_SESSION[$this->short_name . "gp"] = urlencode(serialize($_GET["form_id"]?$_GET:$_POST));
-    }
 
+        $this->addSubmit('Ok');
+        $this->addButton('Cancel');
+        if($this->isSubmitted()){
+            if ($method = $this->onsuccess_method){
+                $this->$method($this->onsuccess_aux);
+            }
+            /* what to do? */
+        } else {
+            /* what to do? */
+        }
+    }
+    function method($aux){
+        if (class_exists($class = $this->onsuccess_class)){
+            $class = $this->add($class, "", "class");
+            if (method_exists($class, $aux)){
+                $class->$aux();
+            }
+        }
+
+    }
+    function redirect($url){
+        if (!$url){
+            $url = $this->api->recall("entrance_url");
+            $this->api->forget("entrance_url");
+        }
+        $generic = new sw_generic();
+        $generic->redirect($url);
+    }
 }
