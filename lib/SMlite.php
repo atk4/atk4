@@ -302,7 +302,9 @@ class SMlite extends AbstractModel {
             return $this;
         }
         if(!isset($this->tags[$tag])||!is_array($this->tags[$tag])){
-            return $this->fatal("No such tag '$tag' inside SMlite::set()");
+            $o=$this->owner?" for ".$this->owner->__toString():"";
+            return $this->fatal("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+            //return $this->fatal("No such tag '$tag' inside SMlite::set()");
         }
         foreach($this->tags[$tag] as $key=>$_){
             $this->tags[$tag][$key]=$value;

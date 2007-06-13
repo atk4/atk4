@@ -84,7 +84,6 @@ class ApiWeb extends ApiCLI {
         /**
          * Discover requested page name (class) from $_GET
          */
-
         if(!isset($_GET['page'])){
             $this->page_base=basename($_SERVER['REDIRECT_URL']);
             if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){

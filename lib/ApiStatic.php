@@ -69,7 +69,7 @@ class ApiStatic extends ApiWeb{
     }
     function calculatePageName(){
         parent::calculatePageName();
-        $this->page=str_replace('.html','',$this->page_base);
+        //$this->page=str_replace('.html','',$this->page_base);
         
     }
     function init(){
@@ -101,6 +101,20 @@ class ApiStatic extends ApiWeb{
         $this->debug('Initializing content template');
         $this->template=$this->add('SMlite');
         $f=join('',file($this->page.'.html'));
+
+        // temporary: //what is this?
+        // page.html?bypass=1 <-- would just output html without replacing tags
+        // but problem is <-- get arguments are destroyed by htaccess
+        // yes this is serious problem for .htacces.. it cannot work with ?.*
+        // no way can it pass :( I adjusted forms so that action would be
+        // e.g. action.html&param1=... and then it works
+        // so
+        // page.html&bypass=1 should do the trick
+        // ok
+        if($_GET['bypass']){
+            echo $f;
+            exit;
+        }
         $this->template->loadTemplateFromString($f);
 
 
@@ -165,7 +179,7 @@ class ApiStatic extends ApiWeb{
             if($class[0]=='_'){
                 // variable
                 $class=substr($class,1);
-                if(isset($this->info[$class]))$this->template->set($tag,$this->info[$class]);
+                if(isset($this->info[$class]))$parent->template->set($tag,$this->info[$class]);
                 continue;
             }
             if(is_numeric($class))continue;     // numeric ones are just a text, not really a tag
@@ -173,8 +187,11 @@ class ApiStatic extends ApiWeb{
 
             // If tag is present inside tagmatch class, it can redefine the class name
             // and some additional options
-            if(isset($this->tagmatch[$class]))$class=$this->tagmatch[$class];
-
+            if(isset($this->tagmatch[$class])){
+                $this->debug("*tagmach present for $class = ".$this->tagmatch[$class]);
+                $class=$this->tagmatch[$class];
+            }else
+                $this->debug("*tagmach NOT present for $class = ".$this->tagmatch[$class]);
             if(!$class){
                 continue;   // tagmatch says we should ignore this tag
             }
@@ -193,7 +210,9 @@ class ApiStatic extends ApiWeb{
             // Before we start with class initialization let's see if it can be initialized at all.
             // We will only do this if the calss was not found in the tagmatch array. If it WAS defined
             // we assume those people know what they are doing and let them have their error.
-            if($class==$original_class && !class_exists($class,false)){
+            
+            $class_exist_status = loadClass($class);
+            if($class==$original_class && !$class_exist_status){
                 // Perhaps we could load it
                 if(!loadClass('sw_'.$class)){
                     // It's no use. Class cannot be found, so we will use "sw_wrap" as default class.
@@ -215,22 +234,23 @@ class ApiStatic extends ApiWeb{
             $component->api=$parent->api;
             $parent->add($component);
 
-
-
             if($component instanceof sw_component){
-                $component->initializeTemplate($tag,$tag);
+                /* try to force using piece from components */
+                if ($this->components->get($tag)){
+                    $component->initializeTemplate($tag, array("components", $tag));
+                } else {
+                    $component->initializeTemplate($tag,$tag);
+                }
                 $component->init();
                 $component->processRecursively();
             }else{
-                
                 /*
                  * In the case here - we are trying to insert a 
                  * regular View into our template, which is most probably
                  * a dynamic element. It will require a template to render.
                  */
-
                 if($this->api->components->is_set($class)){
-                    $template=$this->api->components->cloneRegion($class);
+                    $template=$this->api->components->cloneRegion($class); 
                 }else $template=null;
 
                 /*
@@ -238,7 +258,7 @@ class ApiStatic extends ApiWeb{
                  * of the tag from your page. This can be used to write some rules
                  * or checks on top of standard component.
                  */
-                $component->logic=$this->template->cloneRegion($tag);
+                $component->logic=$parent->template->cloneRegion($tag);
 
                 /*
                  * Good
