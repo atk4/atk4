@@ -98,14 +98,18 @@ class Ajax extends AbstractModel {
         $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
         return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
     }
+    function memorizeExpander(){
+		$this->api->stickyGET('id');
+		$this->api->stickyGET('expanded');
+		$this->api->stickyGET('expander');
+		return $this;
+    }
     function reloadExpander($url,$args=array()){
     	/**
     	 * Reloads expander after some action permormed in it
     	 * (like form submission, nested grid record deletion, etc.)
     	 */
-		$this->api->stickyGET('id');
-		$this->api->stickyGET('expanded');
-		$this->api->stickyGET('expander');
+		$this->memorizeExpander();
     	return $this->loadRegionURL($_GET['expanded'].'_expandedcontent_'.$_GET['id'],
 			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url), 
 				$args)));
@@ -116,9 +120,7 @@ class Ajax extends AbstractModel {
     	 * Useful for grid update after updates in expander. You can use it along with reloadExpander()
     	 * Specified URL should return the needed content (see also Grid::getFieldContent())
     	 */
-		$this->api->stickyGET('id');
-		$this->api->stickyGET('expanded');
-		$this->api->stickyGET('expander');
+		$this->memorizeExpander();
     	return $this->loadRegionURL($_GET['expanded'].'_'.$_GET['expander'].'_'.$_GET['id'],
     		$this->api->getDestinationURL($url,array_merge(
     			array('cut_object'=>$url,'grid_action'=>'return_field','expanded'=>$_GET['expanded'],
@@ -131,9 +133,7 @@ class Ajax extends AbstractModel {
     	 * Useful for grid update after updates in expander. You can use it along with reloadExpander()
     	 * Specified URL should return the needed content (see also Grid::getRowAsCommaString())
     	 */
-		$this->api->stickyGET('id');
-		$this->api->stickyGET('expanded');
-		$this->api->stickyGET('expander');
+		$this->memorizeExpander();
     	return $this->ajaxFunc('reloadGridRow("'.
     		$this->api->getDestinationURL($url,array_merge(
     			array('cut_object'=>$url,'grid_action'=>'return_row','expanded'=>$_GET['expanded'],

@@ -265,7 +265,8 @@ class Form extends AbstractView {
     function update(){
         if(!$this->dq)throw BaseException("Can't save, query was not initialized");
         foreach($this->elements as $short_name => $element)
-        	if($element instanceof Form_Field)if(!is_null($element->get())&&!$element->no_save){
+        	if($element instanceof Form_Field)if(!$element->no_save){
+                //if(is_null($element->get()))
                 $this->dq->set($short_name, $element->get());
         }
         if($this->loaded_from_db){

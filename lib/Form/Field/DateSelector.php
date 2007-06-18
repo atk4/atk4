@@ -252,5 +252,10 @@ class Form_Field_DateSelector extends Form_Field {
         
         return $output;
     }
+    
+    function get(){
+    	if(parent::get()=='0000-00-00')return null;
+    	return parent::get();
+    }
 }
 
