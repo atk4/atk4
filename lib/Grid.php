@@ -444,7 +444,7 @@ class Grid extends CompleteLister {
 	function updateTotals(){
 		parent::updateTotals();
 		foreach($this->current_row as $key=>$val){
-			if($key==$this->totals_title_col){
+			if ((!empty($this->totals_title_col)) and ($key==$this->totals_title_col)) {
 				$this->totals[$key]=$this->totals_title;
 			}
 		}
