@@ -478,6 +478,7 @@ class Grid extends CompleteLister {
             if($t_row){
                 $t_col->del('content');
                 $t_col->set('content','<?$'.$name.'?>');
+                $t_col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
                 $t_row->append('cols',$t_col->render());
             }
 
