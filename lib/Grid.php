@@ -122,7 +122,7 @@ class Grid extends CompleteLister {
     function format_totals_text($field){
     	// This method is mainly for totals title displaying
     	if($field==$this->totals_title_row)$this->current_row[$field]=
-			'<div align="center"><strong>'.$this->current_row[$field].':</strong></div>';
+			'<div align="center"><strong>'.$this->totals_title.':</strong></div>';
 		else $this->current_row[$field]='-';
     }
 	function format_time($field){
@@ -276,11 +276,13 @@ class Grid extends CompleteLister {
     }
 
 	function submitted(){
-        if($_GET['grid_action']=='return_field'){
+       	// checking if this Grid was requested
+        if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_field'){
         	echo $this->getFieldContent($_GET['expander'],$_GET['id']);
         	exit;
         }
-        if($_GET['grid_action']=='return_row'){
+       	// checking if this Grid was requested
+        if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
         	echo $this->getRowAsCommaString($_GET['id']);
         	exit;
         }
@@ -311,7 +313,7 @@ class Grid extends CompleteLister {
 	function getRowAsCommaString($id){
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-		$this->dq->where($idfield."=$id");
+		$this->dq->where($idfield,$id);
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
 		$row=$this->api->db->getHash($this->dq->select());
@@ -386,7 +388,7 @@ class Grid extends CompleteLister {
 		 */
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-		$this->dq->where($idfield."=$id");
+		$this->dq->where($idfield,$id);
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
 		$row=$this->api->db->getHash($this->dq->select());

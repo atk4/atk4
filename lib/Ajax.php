@@ -134,11 +134,11 @@ class Ajax extends AbstractModel {
     	 * Specified URL should return the needed content (see also Grid::getRowAsCommaString())
     	 */
 		$this->memorizeExpander();
-    	return $this->ajaxFunc('reloadGridRow("'.
+    	return $this->ajaxFunc('reloadGridRow(\''.
     		$this->api->getDestinationURL($url,array_merge(
     			array('cut_object'=>$url,'grid_action'=>'return_row','expanded'=>$_GET['expanded'],
     			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
-				$args)).'","'.$_GET['expanded'].'",'.$_GET['id'].')');
+				$args)).'\',\''.$_GET['expanded'].'\','.$_GET['id'].')');
     }
     function confirm($msg="Are you sure?"){
         return $this->ajaxFunc("if(!confirm('$msg'))return false");

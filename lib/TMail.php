@@ -28,6 +28,7 @@ class TMail extends AbstractController{
 	public $body;
 	public $headers;
 	protected $template=null;
+	protected $is_html=false;
 	
 	function loadTemplate($template,$type='.txt'){
 		// loads the template from the specified file
@@ -41,6 +42,7 @@ class TMail extends AbstractController{
 		// 
 		// look at the provided sample template in templates/kt2/mail
 		$this->template=$this->add('SMlite')->loadTemplate($template,$type);
+		$this->is_html=$type=='.html';
 		// gathering parts:
 		// headers
 		$this->headers=$this->template->cloneRegion('headers');
@@ -70,6 +72,7 @@ class TMail extends AbstractController{
 		 * Loads default template and sets sign and headers from it
 		 */
 		$template=$this->add('SMlite')->loadTemplate('mail/mail','.txt');
+		if($this->is_html)$template->set('content_type','text/html');
 		$this->headers=$template->cloneRegion('headers');
 		$this->sign=$template->cloneRegion('sign');
 	}
@@ -98,6 +101,10 @@ class TMail extends AbstractController{
 		// before sending we should set the X-B64 header
 		$this->headers->set('xb64',base64_encode($address));
 		// send an email with defined parameters
-		mail($address, $this->getSubject(), $this->getBody().$this->getSign(), $this->getHeaders());
+		mail($address, $this->getSubject(), 
+			($this->is_html?'<html>':'').
+			$this->getBody().$this->getSign().
+			($this->is_html?'</html>':''), 
+			$this->getHeaders());
 	}
 }
