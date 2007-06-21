@@ -122,7 +122,7 @@ class Grid extends CompleteLister {
     function format_totals_text($field){
     	// This method is mainly for totals title displaying
     	if($field==$this->totals_title_row)$this->current_row[$field]=
-			'<div align="center"><strong>'.$this->totals_title.':</strong></div>';
+			'<strong>'.$this->totals_title.':</strong>';
 		else $this->current_row[$field]='-';
     }
 	function format_time($field){
