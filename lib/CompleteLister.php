@@ -17,7 +17,6 @@ class CompleteLister extends Lister {
     function updateTotals(){
         foreach($this->current_row as $key=>$val){
             if(is_string($val))$this->totals[$key]+=strip_tags($val);
-            $this->api->logger->logVar(strip_tags($val));
         }
         $this->totals['row_count']++;
     }
