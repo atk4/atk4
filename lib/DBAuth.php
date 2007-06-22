@@ -54,10 +54,10 @@ class DBAuth extends BasicAuth{
 		echo $p->template->render();
 		exit;
 	}
-	function check(){
-		if($this->doRecovery===true)$this->processRecovery();
-		else parent::check();
-	}
+	//function check(){
+	//	if($this->doRecovery===true)$this->processRecovery();
+	//	else parent::check();
+	//}
 	function setEncrypted($secure=true){
 		$this->secure=$secure;
 		return $this;
