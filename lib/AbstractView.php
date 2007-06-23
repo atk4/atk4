@@ -68,7 +68,7 @@ abstract class AbstractView extends AbstractObject {
         // Now that the template is loaded, let's take care of parent's template
         if(isset($template_spot)){
             $this->spot=$template_spot;
-            if($this->owner && ($this->owner->template)){
+            if($this->owner && (!empty($this->owner->template))){
                 $this->owner->template->del($template_spot);
             }
         }
@@ -122,7 +122,7 @@ abstract class AbstractView extends AbstractObject {
         $this->output($this->template->render());
     }
     function output($txt){
-        if(($this->owner->template))$this->owner->template->append($this->spot,$txt);
+        if((!empty($this->owner->template)))$this->owner->template->append($this->spot,$txt);
     }
     function region_render(){
         /**
