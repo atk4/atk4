@@ -147,7 +147,7 @@ class ap_Object extends AbstractModel {
          * can be specified as array or separated by comma. If $types is not specified
          * all child objects will be deleted.
          */
-        return $this->api->deleteObj($api->childDQ($dq,$this->id,$types));
+        return $this->api->deleteObj($api->childDQ($dq,$this->id,$type));
     }
     function deleteObjTree($types=null,$dq=null){
         // Similar to deleteChild, but will recursively delete all object hierarchy.

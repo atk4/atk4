@@ -27,9 +27,9 @@ class MultiuserAuth extends BasicAuth {
     private $user_field;
     private $password_field;
 
-
+	//TODO Check this method
     function processLogin($return){
-        if($
+        // if($ ---> add comment by MVS, not completed method???
         $this->getCredentials();
         
     }

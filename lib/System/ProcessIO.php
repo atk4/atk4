@@ -49,7 +49,8 @@ class System_ProcessIO extends AbstractModel {
     protected function execute_raw($command){
         // This function just executes command and returns hash of descriptors.
         // Hash will have keys 'in', 'out' and 'err'
-
+		
+		$pipes=null;
         $this->process = proc_open($command,$this->descriptorspec,$pipes);
         if(!is_resource($this->process)){
             throw new System_ProcessIO_Exception("Failed to execute");
@@ -93,7 +94,8 @@ class System_ProcessIO extends AbstractModel {
             $str.=fgets($this->pipes[$res],1024);
         }
         $this->close($res);
-        if(substr($str,-1,1)!="\n")$str.="\n"
+        if(substr($str,-1,1)!="\n")$str.="\n";
+        
         return $str;
     }
     function read_stderr(){
@@ -154,7 +156,7 @@ class System_ProcessIO_Tester {
             'basic'=>array('exec','close'),
             'readwrite'=>array('exec','close','read_all','write_all'),
             'failure'=>array('exec','read_stderr'),
-            'advanced'=>array('exec','write','read_line','terminate');
+            'advanced'=>array('exec','write','read_line','terminate')
             );
     function test_basic(){
         $p=$this->add('System_ProcessIO')
