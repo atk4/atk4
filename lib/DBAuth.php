@@ -46,7 +46,7 @@ class DBAuth extends BasicAuth{
 		 * Draws page which set in config.php
 		 * Page should contain login form or other stuff which could be used as login object
 		 */
-		$p=$this->add('Page');
+		$p=$this->api->add('Page');
 		$p->template->loadTemplate('empty');
 		$p->add('page_'.$this->api->getConfig('auth/login_page'),null,'Content');
 		$this->form=$p->form;

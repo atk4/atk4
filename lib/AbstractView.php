@@ -69,7 +69,7 @@ abstract class AbstractView extends AbstractObject {
         if(isset($template_spot)){
             $this->spot=$template_spot;
             if($this->owner && (!is_null($this->owner->template))){
-                $this->owner->template->del($template_spot);
+		$this->owner->template->del($template_spot);
             }
         }
 
