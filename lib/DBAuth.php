@@ -93,11 +93,11 @@ class DBAuth extends BasicAuth{
     	parent::loggedIn($this->get('username'));
     }
 	function addSignupProcessor($class_name='Auth_SignupProcessor'){
-		$this->signup_processor=$this->add($class_name);
+		$this->signup_processor=$this->api->add($class_name);
 		return $this;
 	}
 	function addPasswordRecovery($class_name='Auth_PasswordRecovery'){
-		$this->pwd_recovery=$this->add($class_name);
+		$this->pwd_recovery=$this->api->add($class_name);
 		return $this;
 	}
 	function getServerName($full=false){
