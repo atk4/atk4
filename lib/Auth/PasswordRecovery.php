@@ -5,7 +5,7 @@
  * Created on 26.05.2007 by *Camper* (camper@adevel.com)
  */
 class Auth_PasswordRecovery extends AbstractController{
-	private $page=null;
+	protected $page=null;
 	protected $mailer=null;
 	
 	function init(){
@@ -25,6 +25,16 @@ class Auth_PasswordRecovery extends AbstractController{
 		return '<a href="'.$this->api->getDestinationURL($this->api->getConfig('auth/pwd_recovery/page')).'">' .
 				'Lost password</a>';
 	}
+	function showRecoveryForm(){
+		$form=$this->page->frame('Content', 'Password recovery',null,'width="200"')
+			->add('Form', 'pwd_recovery_form', 'content');
+		$form
+			->addComment('To restore your password please enter the login specified at registration')
+			->addField('line', 'username', 'Login')
+				->setNotNull('Login should not be empty')
+		;
+		return $form;
+	}
 	function processStage1(){
 		/**
 		 * First stage of recovery: 
@@ -32,13 +42,7 @@ class Auth_PasswordRecovery extends AbstractController{
 		 * - sending a link with change password form by email
 		 */
 		//displaying a form with username for password recovery
-		$form=$this->page->frame('Content', 'Password recovery',null,'width="200"')->add('Form', 'pwd_recovery_form', 'content');
-		$form
-			->addComment('To restore Your password please enter the '.$this->owner->title_name.
-				' specified at registration')
-			->addField('line', 'username', $this->owner->title_name)
-				->setNotNull($this->owner->title_name.' should not be empty')
-		;
+		$form=$this->showRecoveryForm();
 		if($form->isSubmitted()){
 			$user=$this->api->db->dsql()->table($this->owner->dq->args['table'])
 				->field('id')

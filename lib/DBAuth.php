@@ -90,14 +90,14 @@ class DBAuth extends BasicAuth{
 		return $this->secure?sha1($str):$str;
 	}
     function loggedIn(){
-    	parent::loggedIn($this->get('username'));
+    	parent::loggedIn($this->get($this->name_field));
     }
 	function addSignupProcessor($class_name='Auth_SignupProcessor'){
-		$this->signup_processor=$this->api->add($class_name);
+		$this->signup_processor=$this->add($class_name);
 		return $this;
 	}
 	function addPasswordRecovery($class_name='Auth_PasswordRecovery'){
-		$this->pwd_recovery=$this->api->add($class_name);
+		$this->pwd_recovery=$this->add($class_name);
 		return $this;
 	}
 	function getServerName($full=false){
