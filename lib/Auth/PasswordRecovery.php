@@ -168,6 +168,10 @@ class Auth_PasswordRecovery extends AbstractController{
 		$this->getMailer()->body->trySet('password',$password);
 		$this->getMailer()->send($address);
 	}
+	function getChangeLink($id,$address,$expire){
+		return $this->owner->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
+				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
+	}
 	protected function sendChangeLink($user_id, $username, $address){
 		//adding a DB record with a key to a change password page
 		$table=DTP.$this->api->getConfig('auth/pwd_recovery/table');
@@ -178,8 +182,7 @@ class Auth_PasswordRecovery extends AbstractController{
 			->setDate('expire',$expire)
 			->do_insert();
 		//combining a message
-		$link=$this->owner->getServerName(true).dirname($_SERVER['PHP_SELF'])."/".
-				$this->api->getDestinationURL(null, array('rp'=>$id, 'key'=>sha1($id.$address.$expire)));
+		$link=$this->getChangeLink($id,$address,$expire);
 		
 		$this->getMailer()->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_link'));
 		$address=$this->api->db->dsql()->table($this->owner->dq->args['table'])

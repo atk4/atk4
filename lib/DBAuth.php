@@ -114,7 +114,7 @@ class DBAuth extends BasicAuth{
 			if(is_array($server))$server=$server[0];
 		}
 		if($server==''||strtolower($server)=='unknown')$server=$_SERVER['HTTP_HOST'];
-		return $full?$server:str_replace('www.', '', $server);
+		return ($_SERVER['HTTPS']?'https':'http').'://'.($full?$server:str_replace('www.', '', $server));
 	}
 	function createForm($frame,$login_tag='Content'){
         $form=$frame->add('Auth_Form',null,$login_tag);

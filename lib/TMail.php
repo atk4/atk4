@@ -62,6 +62,7 @@ class TMail extends AbstractController{
 		 * Sets the tag value throughout the template, including all parts
 		 */
 		$this->template->trySet($tag,$value);
+		$this->subject->trySet($tag,$value);
 		$this->body->trySet($tag,$value);
 		$this->headers->trySet($tag,$value);
 		$this->sign->trySet($tag,$value);

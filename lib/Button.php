@@ -14,8 +14,13 @@ class Button extends AbstractView {
     function onClick(){
         return $this->onclick=$this->add('Ajax');
     }
+    function setColor($color){
+    	$this->style[]='color: '.$color;
+    	return $this;
+    }
     function render(){
         $this->template->set('name',$this->name);
+        $this->template->set('style',((count($this->style)?'style="'.implode(';',$this->style).'"':'')));
         if($this->onclick)$this->template->set('onclick',$this->onclick->getString());
         return parent::render();
     }
