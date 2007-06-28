@@ -54,6 +54,7 @@ class TMail extends AbstractController{
 		$this->body->tryDel('sign');
 		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
+		if(!$this->from)$this->from=$this->headers->get('from');
 		$this->bcc=$this->template->get('bcc');
 		return $this;
 	}
