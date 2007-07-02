@@ -8,7 +8,10 @@ function lowlevel_error($error,$lev=null){
      * This function will be called for low level fatal errors
      */
     echo "<font color=red>Low level error:</font> $error in <b>".caller_lookup()."()</b><br><br>Backtrace:<pre>";
-    echo print_r(debug_backtrace());
+    $backtrace=print_r(debug_backtrace(),true);
+    // restricting output by 100 symbols
+    if(strlen($backtrace)>100)$backtrace=substr($backtrace,0,100).'<br>... Backtrace is too long, trimmed to first 100 symbols ...';
+    echo $backtrace;
     exit;
 }
 };if(!function_exists('error_handler')){
