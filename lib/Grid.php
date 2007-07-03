@@ -122,7 +122,8 @@ class Grid extends CompleteLister {
         $m=$this->current_row[$field];
         $this->current_row[$field]=number_format($m,2);
         if($m<0){
-            $this->current_row[$field]='<font color=red>'.$this->current_row[$field].'</font>';
+            $this->tdparam[$field]['style']['color']='red';
+            //$this->current_row[$field]='<font color=red>'.$this->current_row[$field].'</font>';
         }
     }
     function format_totals_number($field){
@@ -133,8 +134,8 @@ class Grid extends CompleteLister {
     }
     function format_totals_text($field){
     	// This method is mainly for totals title displaying
-    	if($field==$this->totals_title_row)$this->current_row[$field]=
-			'<strong>'.$this->totals_title.':</strong>';
+    	if($field==$this->totals_title_row)$this->tdparam[$field]['style']['font-weight']='bold';
+    		//$this->current_row[$field]='<strong>'.$this->totals_title.':</strong>';
 		else $this->current_row[$field]='-';
     }
 	function format_time($field){
@@ -160,11 +161,6 @@ class Grid extends CompleteLister {
     }
     function format_expander($field, $idfield='id'){
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-        //$this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: pointer" onclick=\''.
-        //        'expander_flip("'.$this->name.'",'.$this->current_row[$idfield].',"'.
-        //            $field.'","'.
-        //            $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
-        //                    'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=")\'');
         $tdparam=array(
         	'id'=>$n,
         	'wrap'=>false,
@@ -204,10 +200,6 @@ class Grid extends CompleteLister {
 			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$field]=$tdparam;
-    	/*$this->row_t->set('tdparam_'.$field, //$this->row_t->get('tdparam_'.$field).
-			' id="'.$col_id.'_'.$this->current_row[$idfield].
-			'" style="cursor: hand" title="'.$this->current_row[$field.'_original'].'"');
-		*/
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL(null, array(
@@ -225,7 +217,6 @@ class Grid extends CompleteLister {
     			'cursor'=>'hand'
     		)
     	);
-    	//$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
     	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
     }
 	function format_reload($field,$args=array()){
@@ -433,12 +424,11 @@ class Grid extends CompleteLister {
             // setting cell parameters (tdparam)
             foreach($this->tdparam as $field=>$tdparam){
             	// wrap and style handled separately
-            	$tdparam_str=$tdparam['wrap']===false?'nowrap ':'wrap ';
+            	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
             	unset($tdparam['wrap']);
-            	// TODO: implement style as array using array_walk
             	if(is_array($tdparam['style'])){
 					$tdparam_str.='style="';
-            		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.': '.$value.'; ';
+            		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
             		$tdparam_str.='" ';
             		unset($tdparam['style']);
             	}
