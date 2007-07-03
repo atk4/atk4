@@ -27,7 +27,19 @@ class Grid extends CompleteLister {
     private $record_order=null;
 
     public $title_col=array();
-
+    
+    /**
+     * $tdparam property is an array with cell parameters specified in td tag.
+     * This should be a hash: 'param_name'=>'param_value'
+     * Following parameters treated and processed in a special way:
+     * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
+     * 		 style: style="param_name: param_value; param_name: param_value"
+     * 2) wrap: possible values are true|false; if true, 'wrap' is added
+     * 
+     * All the rest are not checked and converted to a form of param_name="param_value"
+     */
+    protected $tdparam=array();
+    
     function init(){
         parent::init();
         $this->add('Reloadable');
@@ -101,7 +113,7 @@ class Grid extends CompleteLister {
     	//TODO counting words, tags and trimming so that tags are not garbaged
     	if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
     	$this->current_row[$field]=$text;
-    	//$this->row_t->set('tdparam_'.$field,'alt="'.$this->current_row[$field.'_original'].'"');
+    	$this->tdparam[$field]['title']=$this->current_row[$field.'_original'];
     }
     function format_html($field){
     	$this->current_row[$field] = htmlentities($this->current_row[$field]);
@@ -133,10 +145,12 @@ class Grid extends CompleteLister {
     	$this->current_row[$field]=date('d/m/Y',strtotime($this->current_row[$field]));
     }
     function format_nowrap($field){
-    	$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
+    	//$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
+    	$this->tdparam[$field]['wrap']=false;
     }
     function format_wrap($field){
-    	$this->row_t->set("tdparam_$field", str_replace('nowrap','wrap',$this->row_t->get("tdparam_$field")));
+    	//$this->row_t->set("tdparam_$field", str_replace('nowrap','wrap',$this->row_t->get("tdparam_$field")));
+    	$this->tdparam[$field]['wrap']=true;
     }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']
@@ -146,15 +160,26 @@ class Grid extends CompleteLister {
     }
     function format_expander($field, $idfield='id'){
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-        $this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: pointer" onclick=\''.
-                'expander_flip("'.$this->name.'",'.$this->current_row[$idfield].',"'.
-                    $field.'","'.
+        //$this->row_t->set('tdparam_'.$field,'id="'.$n.'" nowrap style="cursor: pointer" onclick=\''.
+        //        'expander_flip("'.$this->name.'",'.$this->current_row[$idfield].',"'.
+        //            $field.'","'.
+        //            $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
+        //                    'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=")\'');
+        $tdparam=array(
+        	'id'=>$n,
+        	'wrap'=>false,
+        	'style'=>array(
+        		'cursor'=>'pointer',
+				'color'=>'blue'
+        	),
+        	'onclick'=>'expander_flip(\''.$this->name.'\','.$this->current_row[$idfield].',\''.
+                    $field.'\',\''.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
-                            'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=")\'');
-        if($this->current_row[$field]){
-            $this->current_row[$field]='<font color="blue">'.$this->current_row[$field].'</font>';
-        }else{
-            $this->current_row[$field]='<font color="blue">['.$this->columns[$field]['descr'].']</font>';
+						'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=\')'
+        );
+        $this->tdparam[$field]=$tdparam;
+        if(!$this->current_row[$field]){
+            $this->current_row[$field]='['.$this->columns[$field]['descr'].']';
         }
     }
     function format_inline($field, $idfield='id'){
@@ -171,9 +196,18 @@ class Grid extends CompleteLister {
     	//setting text non empty
     	$text=$this->current_row[$field]?$this->current_row[$field]:'null';
 
-    	$this->row_t->set('tdparam_'.$field, //$this->row_t->get('tdparam_'.$field).
+		$tdparam=array(
+			'id'=>$col_id.'_'.$this->current_row[$idfield],
+			'style'=>array(
+				'cursor'=>'hand'
+			),
+			'title'=>$this->current_row[$field.'_original']
+		);
+		$this->tdparam[$field]=$tdparam;
+    	/*$this->row_t->set('tdparam_'.$field, //$this->row_t->get('tdparam_'.$field).
 			' id="'.$col_id.'_'.$this->current_row[$idfield].
 			'" style="cursor: hand" title="'.$this->current_row[$field.'_original'].'"');
+		*/
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL(null, array(
@@ -185,7 +219,13 @@ class Grid extends CompleteLister {
     }
     function format_order($field, $idfield='id'){
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-    	$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
+    	$this->tdparam[$field]=array(
+    		'id'=>$n,
+    		'style'=>array(
+    			'cursor'=>'hand'
+    		)
+    	);
+    	//$this->row_t->set("tdparam_$field", 'id="'.$n.'" style="cursor: hand"'); 
     	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
     }
 	function format_reload($field,$args=array()){
@@ -311,64 +351,38 @@ class Grid extends CompleteLister {
 	}
 
 	function getRowAsCommaString($id){
+		/*
+		 * Obsolete function. Should be replaced with getRowContent()
+		 */
+		$this->debug('getRowAsCommaString() is renamed to getRowContent(). Please fix the code!');
+		return $this->getRowContent($id);
+	}
+	function getRowContent($id){
+		/**
+		 * Returns the properly formatted row content.
+		 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
+		 */
+
+		// *** Getting required record from DB ***
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
 		$this->dq->where($idfield,$id);
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
-		$row=$this->api->db->getHash($this->dq->select());
-		$row_t=$this->template->cloneRegion('row');
-		$row_t->del('cols');
-        $col = $row_t->cloneRegion('col');
-
-        foreach($this->columns as $name=>$column){
-            $col->del('content');
-            $col->set('content','<?$'.$name.'?>');
-
-            // some types needs control over the td
-
-            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-            $row_t->append('cols',$col->render());
-        }
-        $this->row_t = $this->api->add('SMlite');
-        $this->row_t->loadTemplateFromString($row_t->render());
-
-		$this->current_row=$row;
+		$row_data=$this->api->db->getHash($this->dq->select());
+		
+		// *** Initializing template ***
+		$this->precacheTemplate(false);
+		
+		// *** Rendering row ***
+		$this->current_row=$row_data;
 		$this->formatRow();
+		
+		// *** Combining result string ***
 		$result="";
 		foreach($this->columns as $name=>$column){
 			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original']."<row_end>";
 		}
-		return $result;
-	}
-	function getRowHTML($id){
-		$idfield=$this->dq->args['fields'][0];
-		if($idfield=='*')$idfield='id';
-		$this->dq->where($idfield."=$id");
-		//we should switch off the limit or we won't get any value
-		$this->dq->limit(1);
-		$row=$this->api->db->getHash($this->dq->select());
-		$row_t=$this->template->cloneRegion('row');
-		$row_t->del('cols');
-        $col = $row_t->cloneRegion('col');
-
-        foreach($this->columns as $name=>$column){
-            $col->del('content');
-            $col->set('content','<?$'.$name.'?>');
-
-            // some types needs control over the td
-
-            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-            $row_t->append('cols',$col->render());
-        }
-        $this->row_t = $this->api->add('SMlite');
-        $this->row_t->loadTemplateFromString($row_t->render());
-		
-		$row=$this->formatRow($row);
-        $this->row_t->set($row);
-        $result=$this->row_t->render();
-        $tr_start=strpos($result, '<td');
-        $result="\n ".substr($result, $tr_start, strpos($result, '</tr>')-$tr_start);
 		return $result;
 	}
     function getRowTitle(){
@@ -386,40 +400,52 @@ class Grid extends CompleteLister {
 		 * Returns the properly formatted field content.
 		 * Used firstly with Ajax::reloadExpandedField()
 		 */
+
+		// *** Getting required record from DB ***
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
 		$this->dq->where($idfield,$id);
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
-		$row=$this->api->db->getHash($this->dq->select());
-		$row_t=$this->template->cloneRegion('row');
-		$row_t->del('cols');
-        $col = $row_t->cloneRegion('col');
-
-        foreach($this->columns as $name=>$column){
-            $col->del('content');
-            $col->set('content','<?$'.$name.'?>');
-
-            // some types needs control over the td
-
-            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-            $row_t->append('cols',$col->render());
-        }
-        $this->row_t = $this->api->add('SMlite');
-        $this->row_t->loadTemplateFromString($row_t->render());
-
-		$row=$this->formatRow($row);
+		$row_data=$this->api->db->getHash($this->dq->select());
+		
+		// *** Initializing template ***
+		$this->precacheTemplate(false);
+		
+		// *** Rendering row ***
+		$this->current_row=$row_data;
+		$row=$this->formatRow();
+		
+		// *** Returning required field value ***
 		return $row[$field];
 	}
-    function formatRow($row=null){
-    	if($row!=null)$this->current_row=$row;
+    function formatRow(){
         foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
             $this->current_row[$tmp.'_original']=$this->current_row[$tmp];
             $formatters = split(',',$column['type']);
+            // cleaning up tdparam for each column
+            $this->tdparam=array();
             foreach($formatters as $formatter){
                 if(method_exists($this,$m="format_".$formatter)){
                     $this->$m($tmp);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
+            }
+            // setting cell parameters (tdparam)
+            foreach($this->tdparam as $field=>$tdparam){
+            	// wrap and style handled separately
+            	$tdparam_str=$tdparam['wrap']===false?'nowrap ':'wrap ';
+            	unset($tdparam['wrap']);
+            	// TODO: implement style as array using array_walk
+            	if(is_array($tdparam['style'])){
+					$tdparam_str.='style="';
+            		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.': '.$value.'; ';
+            		$tdparam_str.='" ';
+            		unset($tdparam['style']);
+            	}
+            	//walking and combining string
+            	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
+            	//$this->api->logger->logVar($this->row_t->get("tdparam_$field"));
+            	$this->row_t->set("tdparam_$field",trim($tdparam_str));
             }
             if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
         }
@@ -451,58 +477,65 @@ class Grid extends CompleteLister {
 			}
 		}
 	}
-    function precacheTemplate(){
+    function precacheTemplate($full=true){
         // pre-cache our template for row
+        // $full=false used for certain row init
         $row = $this->row_t;
-
         $col = $row->cloneRegion('col');
-        $header = $this->template->cloneRegion('header');
-        $header_col = $header->cloneRegion('col');
-        $header_sort = $header_col->cloneRegion('sort');
-
-
-        if($t_row = $this->totals_t){
-            $t_col = $t_row->cloneRegion('col');
-            $t_row->del('cols');
-        }
 
         $row->set('row_id','<?$id?>');
         $row->set('odd_even','<?$odd_even?>');
         $row->del('cols');
-        $header->del('cols');
-        if(count($this->columns )>0)
-        foreach($this->columns as $name=>$column){
-            $col->del('content');
-            $col->set('content','<?$'.$name.'?>');
+      
+		if($full){
+	        $header = $this->template->cloneRegion('header');
+	        $header_col = $header->cloneRegion('col');
+	        $header_sort = $header_col->cloneRegion('sort');
+	
+	        if($t_row = $this->totals_t){
+	            $t_col = $t_row->cloneRegion('col');
+	            $t_row->del('cols');
+	        }
 
-            if($t_row){
-                $t_col->del('content');
-                $t_col->set('content','<?$'.$name.'?>');
-                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-                $t_row->append('cols',$t_col->render());
-            }
-
-            // some types needs control over the td
-
-            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-
-            $row->append('cols',$col->render());
-
-            $header_col->set('descr',$column['descr']);
-            if(isset($column['sortable'])){
-                $s=$column['sortable'];
-                // calculate sortlink
-                $l = $this->add('Ajax')
-                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
-                	->getString();
-
-                $header_sort->set('order',$column['sortable'][0]);
-                $header_sort->set('sortlink',$l);
-                $header_col->set('sort',$header_sort->render());
-            }else{
-                $header_col->del('sort');
-            }
-            $header->append('cols',$header_col->render());
+        	$header->del('cols');
+		}
+		
+        if(count($this->columns)>0){
+	        foreach($this->columns as $name=>$column){
+	            $col->del('content');
+	            $col->set('content','<?$'.$name.'?>');
+	
+	            if($t_row){
+	                $t_col->del('content');
+	                $t_col->set('content','<?$'.$name.'?>');
+	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+	                $t_row->append('cols',$t_col->render());
+	            }
+	
+	            // some types needs control over the td
+	
+	            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+	
+	            $row->append('cols',$col->render());
+	
+	            if($full){
+					$header_col->set('descr',$column['descr']);
+		            if(isset($column['sortable'])){
+		                $s=$column['sortable'];
+		                // calculate sortlink
+		                $l = $this->add('Ajax')
+		                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
+		                	->getString();
+		
+		                $header_sort->set('order',$column['sortable'][0]);
+		                $header_sort->set('sortlink',$l);
+		                $header_col->set('sort',$header_sort->render());
+		            }else{
+		                $header_col->del('sort');
+		            }
+		            $header->append('cols',$header_col->render());
+	            }
+	        }
         }
         $this->row_t = $this->api->add('SMlite');
         $this->row_t->loadTemplateFromString($row->render());
@@ -512,7 +545,8 @@ class Grid extends CompleteLister {
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
 
-        $this->template->set('header',$header->render());
+        if($full)$this->template->set('header',$header->render());
+        // for certain row: required data is in $this->row_t
         //var_dump(htmlspecialchars($this->row_t->tmp_template));
         
     }
