@@ -179,9 +179,9 @@ class Ajax extends AbstractModel {
     function alert($msg){
         return $this->displayAlert($msg);
     }
-    function useProgressIndicator($id){
+    function useProgressIndicator($id,$timeout=null){
         $this->spinner=$id;
-        $this->ajaxFunc("spinner_on('$id')");
+        $this->ajaxFunc("spinner_on('$id'".(is_null($timeout)?'':",$timeout").")");
         return $this;
     }
 
