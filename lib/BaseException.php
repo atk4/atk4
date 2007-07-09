@@ -7,10 +7,12 @@ class BaseException extends Exception {
     private $frame_stop;
     public $my_backtrace;
     public $shift=0;
+    public $name;
 
     public $more_info;
     function __construct($msg,$func=null,$shift=1,$code=0){
         parent::__construct($msg,$code);
+	$this->name=get_class($this);
         $this->frame_stop=$func;
         $this->shift=$shift;
 
