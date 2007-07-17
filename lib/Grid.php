@@ -37,6 +37,17 @@ class Grid extends CompleteLister {
      * 2) wrap: possible values are true|false; if true, 'wrap' is added
      * 
      * All the rest are not checked and converted to a form of param_name="param_value"
+     * 
+     * This is a tree-like array with the following structure:
+     * array(
+     * 		[level1]=>dataset_row=array(
+     * 			[level2]=>field=array(
+     * 				[level3]=>tdparam_elements=array(
+     * 					param_name=>param_value
+     * 				)
+     * 			)
+     * 		)
+     * )
      */
     protected $tdparam=array();
     
@@ -113,7 +124,7 @@ class Grid extends CompleteLister {
     	//TODO counting words, tags and trimming so that tags are not garbaged
     	if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
     	$this->current_row[$field]=$text;
-    	$this->tdparam[$field]['title']=$this->current_row[$field.'_original'];
+    	$this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
     function format_html($field){
     	$this->current_row[$field] = htmlentities($this->current_row[$field]);
@@ -122,7 +133,7 @@ class Grid extends CompleteLister {
         $m=$this->current_row[$field];
         $this->current_row[$field]=number_format($m,2);
         if($m<0){
-            $this->tdparam[$field]['style']['color']='red';
+            $this->tdparam[$this->getCurrentIndex()][$field]['style']['color']='red';
             //$this->current_row[$field]='<font color=red>'.$this->current_row[$field].'</font>';
         }
     }
@@ -134,7 +145,8 @@ class Grid extends CompleteLister {
     }
     function format_totals_text($field){
     	// This method is mainly for totals title displaying
-    	if($field==$this->totals_title_row)$this->tdparam[$field]['style']['font-weight']='bold';
+    	if($field==$this->totals_title_row)
+    		$this->tdparam[$this->getCurrentIndex()][$field]['style']['font-weight']='bold';
     		//$this->current_row[$field]='<strong>'.$this->totals_title.':</strong>';
 		else $this->current_row[$field]='-';
     }
@@ -147,11 +159,11 @@ class Grid extends CompleteLister {
     }
     function format_nowrap($field){
     	//$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
-    	$this->tdparam[$field]['wrap']=false;
+    	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=false;
     }
     function format_wrap($field){
     	//$this->row_t->set("tdparam_$field", str_replace('nowrap','wrap',$this->row_t->get("tdparam_$field")));
-    	$this->tdparam[$field]['wrap']=true;
+    	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=true;
     }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']
@@ -173,7 +185,7 @@ class Grid extends CompleteLister {
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
 						'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=\')'
         );
-        $this->tdparam[$field]=$tdparam;
+        $this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
         if(!$this->current_row[$field]){
             $this->current_row[$field]='['.$this->columns[$field]['descr'].']';
         }
@@ -199,7 +211,7 @@ class Grid extends CompleteLister {
 			),
 			'title'=>$this->current_row[$field.'_original']
 		);
-		$this->tdparam[$field]=$tdparam;
+		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
     	$this->current_row[$field]='<a href=\'javascript:'.
 			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL(null, array(
@@ -211,7 +223,7 @@ class Grid extends CompleteLister {
     }
     function format_order($field, $idfield='id'){
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-    	$this->tdparam[$field]=array(
+    	$this->tdparam[$this->getCurrentIndex()][$field]=array(
     		'id'=>$n,
     		'style'=>array(
     			'cursor'=>'hand'
@@ -372,9 +384,39 @@ class Grid extends CompleteLister {
 		// *** Combining result string ***
 		$result="";
 		foreach($this->columns as $name=>$column){
-			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original']."<row_end>";
+			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original'].
+				// appending styles as structured string
+				"<t>".$this->getFieldStyle($name,$id).
+				"<row_end>";
 		}
 		return $result;
+	}
+	function getFieldStyle($field,$id){
+		/**
+		 * Returns the structured string with row styles. Used along with getRowContent()
+		 * in row redrawing
+		 */
+		$style=$this->tdparam[$this->getCurrentIndex()][$field]['style'];
+		if(is_array($style)){
+			// now we should convert style elements' names to JS compatible
+			$tdparam=array();
+			foreach($style as $key=>$value){
+				switch($key){
+					case 'background-color':$tdparam[]="$key=$value";break;
+					
+					default:break;
+				}
+			}
+		}
+		return (is_array($tdparam)?join($tdparam,'<s>'):'');
+	}
+	function setTDParam($field,$param,$value){
+		/**
+		 * Sets the tdparam for the current row
+		 * This method just hides array usage, you can use direct method as follows:
+		 * $this->tdparam[$this->getCurrentIndex()][$field]['style']...
+		 */
+		$this->tdparam[$this->getCurrentIndex()][$field][$param]=$value;
 	}
     function getRowTitle(){
         $title=' ';
@@ -414,28 +456,30 @@ class Grid extends CompleteLister {
         foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
             $this->current_row[$tmp.'_original']=$this->current_row[$tmp];
             $formatters = split(',',$column['type']);
-            // cleaning up tdparam for each column
-            $this->tdparam=array();
+            // ??? cleaning up tdparam for each column
+            //$this->tdparam=array();
             foreach($formatters as $formatter){
                 if(method_exists($this,$m="format_".$formatter)){
                     $this->$m($tmp);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
             // setting cell parameters (tdparam)
-            foreach($this->tdparam as $field=>$tdparam){
-            	// wrap and style handled separately
-            	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
-            	unset($tdparam['wrap']);
-            	if(is_array($tdparam['style'])){
+            //$this->api->logger->logVar(array_keys($this->tdparam[$this->getCurrentIndex()]));
+            $tdparam=$this->tdparam[$this->getCurrentIndex()][$tmp];
+            if(is_array($tdparam)){
+	        	// wrap and style handled separately
+	        	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
+	        	unset($tdparam['wrap']);
+	        	if(is_array($tdparam['style'])){
 					$tdparam_str.='style="';
-            		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
-            		$tdparam_str.='" ';
-            		unset($tdparam['style']);
-            	}
-            	//walking and combining string
-            	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
-            	//$this->api->logger->logVar($this->row_t->get("tdparam_$field"));
-            	$this->row_t->set("tdparam_$field",trim($tdparam_str));
+	        		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
+	        		$tdparam_str.='" ';
+	        		unset($tdparam['style']);
+	        	}
+	        	//walking and combining string
+	        	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
+	        	//$this->api->logger->logVar($this->row_t->get("tdparam_$tmp"));
+	        	$this->row_t->set("tdparam_$tmp",trim($tdparam_str));
             }
             if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
         }
@@ -565,4 +609,10 @@ class Grid extends CompleteLister {
     	$this->no_records_message=$message;
     	return $this;
     }
+	public function getCurrentIndex($idfield='id'){
+		// TODO: think more to optimize this method
+		if(is_array($this->data))return array_search(current($this->data),$this->data);
+		// else it is dsql dataset...
+		return $this->current_row[$idfield];
+	}
 }
