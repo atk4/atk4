@@ -15,6 +15,8 @@ class Ajax extends AbstractModel {
     public $ajax_output="";
 
     public $spinner = null;
+    
+    protected $timeout=null;
 
     function execute(){
         $this->api->not_html=true;
@@ -37,8 +39,29 @@ class Ajax extends AbstractModel {
 
 
     function ajaxFunc($func_call){
-        $this->ajax_output.="$func_call;\n";
+        /*
+         */
+        if(is_null($this->timeout))$this->ajax_output.="$func_call;\n";
+        else{
+        	$this->ajax_output.="setTimeout('".addslashes($func_call)."',$this->timeout);\n";
+        	$this->timeout=null;
+        }
+        	
         return $this;
+    }
+    function delay($timeout){
+    	/*
+    	 * adds a setTimeout() to the next function. $timeout is in milliseconds
+         * Use this function when you need to call AJAX function after some delay.
+         * This can be useful if you call 2 functions:
+         * 1) update DB
+         * 2) reload a region to display updated data
+         * 
+         * as AJAX is asynchronious technology, (1) could finish after (2) is finished, and
+         * you won't see any updates on the page
+    	 */
+    	$this->timeout=$timeout;
+    	return $this;
     }
     function redirect($page=null,$args=array()){
         return $this->redirectURL($this->api->getDestinationURL($page,$args));
