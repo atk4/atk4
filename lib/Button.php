@@ -4,6 +4,7 @@
 //
 class Button extends AbstractView {
     public $onclick=null;
+    protected $style=array();
     function defaultTemplate(){
         return array('button','button');
     }
