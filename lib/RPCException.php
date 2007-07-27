@@ -1,5 +1,5 @@
 <?php
-class RPCException extends Exception {
+class RPCException extends BaseException {
 	public $fileRPC;
 	public $lineRPC;
 	function __construct($msg,$code=0,$fileRPC=null,$lineRPC=null){
