@@ -37,7 +37,6 @@ abstract class AbstractView extends AbstractObject {
          * This class will be called BEFORE init(), so that it can prepare template
          * for us to use
          */
-
         if(!$template_spot)$template_spot='Content';
         if(!isset($template_branch))$template_branch=$this->defaultTemplate();
         if(isset($template_branch)){
@@ -50,6 +49,7 @@ abstract class AbstractView extends AbstractObject {
                 if(is_object($template_branch[0])){     // if [0] is object, we'll use that
                     $this->template=$template_branch[0];
                 }else{
+                    "loading $template_branch[0]<br />";
                     $this->template=$this->api->add('SMlite')   // or if it's string
                         ->loadTemplate($template_branch[0]);    // we'll use it as a file
                 }

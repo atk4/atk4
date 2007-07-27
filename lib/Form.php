@@ -9,6 +9,8 @@ include_once'Form/Field.php';
  * @version		$Id$
  */
 class Form extends AbstractView {
+    private $form_template = null;
+    private $form_tag = null;
     public $errors=array();
                             // Here we will have a list of errors occured in the form, when we tried to submit it.
                             //  field_name => error
@@ -64,8 +66,19 @@ class Form extends AbstractView {
         // to default values of those fields.
         $this->api->addHook('pre-exec',array($this,'loadData'));
     }
-    function defaultTemplate(){
-        return array('form','form');
+    function initializeTemplate($tag, $template){
+        $template = $this->form_template?$this->form_template:$template;
+        $tag = $this->form_tag?$this->form_tag:$tag;
+        return parent::initializeTemplate($tag, $template);
+    }
+    function defaultTemplate($template = null, $tag = null){
+        if ($template){
+            $this->form_template = $template;
+        }
+        if ($tag){
+            $this->form_tag = $tag;
+        }
+        return array($this->form_template?$this->form_template:"form", $this->form_tag?$this->form_tag:"form");
     }
     function grabTemplateChunk($name){
         if($this->template->is_set($name)){
@@ -76,11 +89,16 @@ class Form extends AbstractView {
         }
     }
 
-    function addField($type,$name,$caption=null){
+    function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=$name;
 
         $this->last_field=$this->add('Form_Field_'.$type,$name,'form_body','form_line')
             ->setCaption($caption);
+        if (is_array($attr)){
+            foreach ($attr as $key => $value){
+                $this->last_field->setProperty($key, $value);
+            }
+        }
 
         $this->last_field->short_name = $name;
 
@@ -148,8 +166,12 @@ class Form extends AbstractView {
             }
         }
 
-        if(!isset($this->elements[$field_or_array]))
+        if(!isset($this->elements[$field_or_array])){
+            foreach ($this->elements as $key => $val){
+                echo "$key<br />";
+            }
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
+        }
         //if($this->elements[$field_or_array] instanceof Form_Button)echo caller_lookup(0);
         if($this->elements[$field_or_array] instanceof Form_Field) 
         	$this->elements[$field_or_array]->set($value);
@@ -322,6 +344,15 @@ class Form extends AbstractView {
     }
     function isClicked($name){
         return $this->api->isClicked($this->name.'_'.$name);
+    }
+    /* external error management */
+    function setFieldError($field, $name){
+        if (isset($this->errors[$field])){
+            $existing = $this->errors[$field];
+        } else {
+            $existing = null;
+        }
+        $this->errors[$field] = $existing . $name;
     }
 }
 ?>

@@ -1,4 +1,4 @@
-<?php
+<?
 /*
  * ApiPortal extends ApiWeb and is designed to provide core operations with
  * ApiPortal Objects and ApiPortal Relations (e.g. loading, saving, creating, deleting).
@@ -51,8 +51,11 @@ class ApiPortal extends ApiWeb {
             $last = new $class;
             $last->owner=$this;
             $last->api=$this;
-            $last->name=($row['id']?'Object #'.$row['id']:null);
-            $last->short_name=($row['id']?'obj_'.$row['id']:null);
+            $cnt = $GLOBALS["ocnt"]++;
+            $last->name=($row['id']?'Object #'.$row['id']."_".$cnt:"n_a_" . $cnt);
+            $last->short_name=($row['id']?'obj_'.$row['id']."_".$cnt:"n_a_" . $cnt);
+            $GLOBALS["lh"][$last->short_name]++;
+            $GLOBALS["mc"][$last->short_name] = $last;
             $last->init();
 
             foreach($row as $key=>$val){

@@ -38,8 +38,10 @@ class sw_component extends View {
         parent::render();
 
         if($this->wrapping){
-            $this->output('</div');
-            parent::output('<div style="border: 1px dashed blue">');
+            if ($debug){
+                $this->output('</div');
+                parent::output('<div style="border: 1px dashed blue">');
+            }
             $this->wrapUp();
         }
         parent::output($this->content);

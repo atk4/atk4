@@ -24,6 +24,7 @@ abstract class Form_Field extends AbstractView {
     protected $onkeypress=null;
 
     // Field customization
+    private $separator=':';
     function setCaption($_caption){
         $this->caption=$_caption;
         return $this;
@@ -63,7 +64,12 @@ abstract class Form_Field extends AbstractView {
         $this->value=null;
     }
     function loadPOST(){
-        if(isset($_POST[$this->name]))$this->set(stripslashes($_POST[$this->name]));
+        $gpc = get_magic_quotes_gpc();
+        if ($gpc){
+            if(isset($_POST[$this->name]))$this->set(stripslashes($_POST[$this->name]));
+        } else {
+            if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
+        }
     }
     function validate(){
         // we define "validate" hook, so actual validators could hook it here
@@ -87,9 +93,13 @@ abstract class Form_Field extends AbstractView {
                                                  $this->attr)
                       );
     }
+    function setSeparator($separator){
+        $this->separator = $separator;
+        return $this;
+    }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-        $this->template->trySet('field_caption',$this->caption?($this->caption.':'):'');
+        $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->set('field_input',$this->field_prepend.$this->getInput().$this->field_append);
         $this->template->trySet('field_error',
@@ -346,7 +356,12 @@ class Form_Field_ValueList extends Form_Field {
     function loadPOST(){
         $data=$_POST[$this->name];
         if(is_array($data))$data=join(',',$data);
-        if(isset($_POST[$this->name]))$this->set(stripslashes($data));
+        $gpc = get_magic_quotes_gpc();
+        if ($gpc){
+            if(isset($_POST[$this->name]))$this->set(stripslashes($data));
+        } else {
+            if(isset($_POST[$this->name]))$this->set($data);
+        } 
     }
 }
 class Form_Field_Dropdown extends Form_Field_ValueList {

@@ -226,18 +226,19 @@ class ApiStatic extends ApiWeb{
             // property seems like a wrong way to do. So instead we manually initialize object and insert it
             // into parent. add() when used with object is really lazy.
             $this->debug("Initializing component '$class' for '$tag'");
-
             $class_name='sw_'.$class;
             $component=new $class_name;
             $component->short_name='sw_'.$tag;
             $component->name=$parent->name.'_'.$component->short_name;
             $component->api=$parent->api;
             $parent->add($component);
-
             if($component instanceof sw_component){
                 /* try to force using piece from components */
+                list($plain_tag, $junk) = split("#", $tag);
                 if ($this->components->get($tag)){
                     $component->initializeTemplate($tag, array("components", $tag));
+                } else if ($this->components->get($plain_tag)){
+                    $component->initializeTemplate($tag, array("components", $plain_tag));
                 } else {
                     $component->initializeTemplate($tag,$tag);
                 }

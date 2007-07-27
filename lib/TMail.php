@@ -50,7 +50,7 @@ class TMail extends AbstractController{
 		$this->subject=$this->template->cloneRegion('subject');
 		// body
 		$this->body=$this->template->cloneRegion('body');
-		$sign=$this->body->cloneRegion('sign');
+        $this->sign=$sign=$this->body->cloneRegion('sign');
 		$this->body->tryDel('sign');
 		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
@@ -66,7 +66,9 @@ class TMail extends AbstractController{
 		$this->subject->trySet($tag,$value);
 		$this->body->trySet($tag,$value);
 		$this->headers->trySet($tag,$value);
-		$this->sign->trySet($tag,$value);
+        if (is_object($this->sign)){
+            $this->sign->trySet($tag,$value);
+        }
 		return $this;
 	}
 	function loadDefaultTemplate(){
@@ -83,7 +85,7 @@ class TMail extends AbstractController{
 		return is_string($this->body)?$this->body:$this->body->render();
 	}
 	function getSign(){
-		return is_string($this->sign)?$this->sign:$this->sign->render();
+        return is_object($this->sign)?$this->sign->render():$this->sign;
 	}
 	function getHeaders(){
 		// returns the rendered headers
@@ -101,7 +103,7 @@ class TMail extends AbstractController{
 	}
 	function send($address){
 		// before sending we should set the X-B64 header
-		$this->headers->set('xb64',base64_encode($address));
+		$this->headers->trySet('xb64',base64_encode($address));
 		// send an email with defined parameters
 		mail($address, $this->getSubject(), 
 			($this->is_html?'<html>':'').

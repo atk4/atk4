@@ -147,7 +147,7 @@ class ap_Object extends AbstractModel {
          * can be specified as array or separated by comma. If $types is not specified
          * all child objects will be deleted.
          */
-        return $this->api->deleteObj($api->childDQ($dq,$this->id,$type));
+        return $this->api->deleteObj($api->childDQ($dq,$this->id,$types));
     }
     function deleteObjTree($types=null,$dq=null){
         // Similar to deleteChild, but will recursively delete all object hierarchy.
@@ -197,7 +197,9 @@ class ap_Object extends AbstractModel {
     }
     function loadOneParent($types=null,$dq=null){
         $obj_pool = $this->loadParent($types,$dq);
-        if(count($obj_pool)>1)throw new APortalException("Only one parent relation of type $types is allowed",$this);
+        if(count($obj_pool)>1){
+            throw new APortalException("Only one parent relation of type $types is allowed",$this);
+        }
         if(!$obj_pool)return null;
         return $obj_pool[0];
     }
@@ -207,7 +209,10 @@ class ap_Object extends AbstractModel {
         $new_obj_pool=array();
         foreach($obj_pool as $obj){
             $new_obj_pool[$obj->id]=$this->add($obj);
-            $obj->loadObjTree($types,$dq);
+            $sub_obj_pool = $obj->loadObjTree($types,$dq);
+            if (is_array($sub_obj_pool)){
+                $new_obj_pool = array_merge($new_obj_pool, $sub_obj_pool);
+            }
         }
         return $new_obj_pool;
     }

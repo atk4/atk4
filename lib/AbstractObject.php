@@ -1,4 +1,4 @@
-<?php
+<?
 abstract class AbstractObject {
     /*
      * This class is a parent of ANY class of those in AModules.
@@ -34,7 +34,7 @@ abstract class AbstractObject {
     function __toString(){
         return "Object ".get_class($this)."(".$this->name.")";
     }
-    function add($class,$short_name=null,$template_spot=null,$template_branch=null){
+    function add($class,$short_name=null,$template_spot=null,$template_branch=null,$debug=null){
         /**
          * When you want to add element to your container, always use this
          * function. It will initialize class, create object and make it a
@@ -68,10 +68,11 @@ abstract class AbstractObject {
             // Model classes may be created several times and we are actually don't care about those.
         }
 
-        $element = new $class();
-
-        // Inherit debuging option
-        $element->debug=$this->debug;
+        if($debug){
+            $element = new Debug($class);
+        }else{
+            $element = new $class();
+        }
 
         if(!($element instanceof AbstractObject)){
             throw new BaseException("You can add only classes based on AbstractObject (called from ".caller_lookup(1,true).")");
@@ -89,6 +90,7 @@ abstract class AbstractObject {
         }
 
         $element->init();
+        $GLOBALS["lh"][$element->short_name]++;
         return $element;
     }
 
@@ -119,7 +121,6 @@ abstract class AbstractObject {
          *
          * If you have multiple possible values, you might want using learn()
          */
-        if (!isset($_SESSION)) return;
         if(!isset($value))return $this->recall($name);
         return $_SESSION['o'][$this->name][$name] = $value;
     }
@@ -130,8 +131,6 @@ abstract class AbstractObject {
          * $this->forget(); without arguments.
          */
         
-        if (!isset($_SESSION)) return;
-         
         if(isset($name)){
             unset($_SESSION['o'][$this->name][$name]);
         }else{
@@ -145,8 +144,6 @@ abstract class AbstractObject {
          *
          * If you want $default value to be memorized as well, see learn()
          */
-        if (!isset($_SESSION)) return;
-        
         if(!isset($_SESSION['o'][$this->name][$name])){
             return $default;
         }else{
@@ -285,5 +282,19 @@ abstract class AbstractObject {
         $this->hook($hook_spot.'-post');
         return $result;
     }
-    
+    /* destruction to free up memory */
+    function selfDestruct(){
+        if ($this->elements){
+            foreach ($this->elements as $element_id => $element){
+                $element->selfDestruct();
+                if (!isset($GLOBALS["lh"][$element->short_name])){
+                    $GLOBALS["lh"][$element->short_name] = "was not properly initialized!";
+                } else {
+                    $GLOBALS["lh"][$element->short_name]--;
+                }
+                unset($this->elements[$element_id]);
+                unset($element);
+            }
+        }
+    }
 }
