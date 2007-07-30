@@ -235,7 +235,12 @@ class ApiStatic extends ApiWeb{
             if($component instanceof sw_component){
                 /* try to force using piece from components */
                 list($plain_tag, $junk) = split("#", $tag);
-                if ($this->components->get($tag)){
+                /*try this first if file exists under templates, load it.
+                * remember that underscore is folder separator */
+                $tag_file = preg_replace("/_/", "/", $plain_tag);
+                if (file_exists($file = "templates/" . $tag_file . ".html")){
+                    $component->initializeTemplate($tag, array($tag_file, $plain_tag));
+                } else if ($this->components->get($tag)){
                     $component->initializeTemplate($tag, array("components", $tag));
                 } else if ($this->components->get($plain_tag)){
                     $component->initializeTemplate($tag, array("components", $plain_tag));
