@@ -366,13 +366,25 @@ class Grid extends CompleteLister {
 		 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
 		 */
 
-		// *** Getting required record from DB ***
-		$idfield=$this->dq->args['fields'][0];
-		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-		$this->dq->where($idfield,$id);
-		//we should switch off the limit or we won't get any value
-		$this->dq->limit(1);
-		$row_data=$this->api->db->getHash($this->dq->select());
+		// if DB source set
+		if($this->dq){
+			// *** Getting required record from DB ***
+			$idfield=$this->dq->args['fields'][0];
+			if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
+			$this->dq->where($idfield,$id);
+			//we should switch off the limit or we won't get any value
+			$this->dq->limit(1);
+			$row_data=$this->api->db->getHash($this->dq->select());
+		}
+		// if static source set
+		elseif($this->data){
+			foreach($this->data as $index=>$row){
+				if($row['id']==$id){
+					$row_data=$row;
+					break;
+				}
+			}
+		}
 		
 		// *** Initializing template ***
 		$this->precacheTemplate(false);
@@ -390,6 +402,9 @@ class Grid extends CompleteLister {
 				"<row_end>";
 		}
 		return $result;
+	}
+	function getColumns(){
+		return $this->columns;
 	}
 	function getFieldStyle($field,$id){
 		/**
@@ -456,15 +471,12 @@ class Grid extends CompleteLister {
         foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
             $this->current_row[$tmp.'_original']=$this->current_row[$tmp];
             $formatters = split(',',$column['type']);
-            // ??? cleaning up tdparam for each column
-            //$this->tdparam=array();
             foreach($formatters as $formatter){
                 if(method_exists($this,$m="format_".$formatter)){
                     $this->$m($tmp);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
             // setting cell parameters (tdparam)
-            //$this->api->logger->logVar(array_keys($this->tdparam[$this->getCurrentIndex()]));
             $tdparam=$this->tdparam[$this->getCurrentIndex()][$tmp];
             if(is_array($tdparam)){
 	        	// wrap and style handled separately

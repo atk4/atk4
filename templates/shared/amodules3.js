@@ -424,6 +424,7 @@ function reloadGridRow(url,name,row_id,callback){
 				value=cols[i].split('<t>');
 				col.innerHTML=value[0];
 				col.title=value[1];
+				col.style=value[2];
 				i++;
 			}
 			//else i--;
