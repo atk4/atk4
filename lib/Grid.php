@@ -367,7 +367,7 @@ class Grid extends CompleteLister {
 		 */
 
 		// if DB source set
-		if($this->dq){
+		if(isset($this->dq)){
 			// *** Getting required record from DB ***
 			$idfield=$this->dq->args['fields'][0];
 			if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
@@ -377,7 +377,7 @@ class Grid extends CompleteLister {
 			$row_data=$this->api->db->getHash($this->dq->select());
 		}
 		// if static source set
-		elseif($this->data){
+		elseif(isset($this->data)){
 			foreach($this->data as $index=>$row){
 				if($row['id']==$id){
 					$row_data=$row;
@@ -412,6 +412,7 @@ class Grid extends CompleteLister {
 		 * in row redrawing
 		 */
 		$style=$this->tdparam[$this->getCurrentIndex()][$field]['style'];
+		$tdparam=null;
 		if(is_array($style)){
 			// now we should convert style elements' names to JS compatible
 			$tdparam=array();
@@ -551,7 +552,7 @@ class Grid extends CompleteLister {
 	            $col->del('content');
 	            $col->set('content','<?$'.$name.'?>');
 	
-	            if($t_row){
+	            if(isset($t_row)){
 	                $t_col->del('content');
 	                $t_col->set('content','<?$'.$name.'?>');
 	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
@@ -586,7 +587,7 @@ class Grid extends CompleteLister {
         $this->row_t = $this->api->add('SMlite');
         $this->row_t->loadTemplateFromString($row->render());
 
-        if($t_row){
+        if(isset($t_row)){
             $this->totals_t = $this->api->add('SMlite');
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
