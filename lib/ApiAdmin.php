@@ -37,6 +37,9 @@ class ApiAdmin extends ApiWeb {
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=$_GET[$name];
     }
+    function stickyForget($name){
+	unset($this->sticky_get_arguments[$name]);
+    }
     function getDestinationURL($page=null,$args=array()){
         /**
          * Construct URL for getting to page
