@@ -598,7 +598,7 @@ class Grid extends CompleteLister {
         
     }
     function render(){
-    	if($this->dq&&$this->dq->foundRows()==0){
+    	if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->data)||empty($this->data))){
     		$not_found=$this->add('SMlite')->loadTemplate('grid');
     		$not_found->set('no_records_message',$this->no_records_message);
     		$not_found->del('grid');
