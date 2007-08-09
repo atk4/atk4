@@ -29,6 +29,9 @@ class sw_wrap extends sw_component {
     }
     function render(){
         parent::render();
-        $this->api->template->trySet($this->init_tag, $this->template->render());
+        $this->owner->template->trySet($this->init_tag, $this->template->render());
+    }
+    function processRecursively(){
+        parent::processRecursively();
     }
 }
