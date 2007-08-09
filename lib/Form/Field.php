@@ -257,7 +257,14 @@ class Form_Field_Hidden extends Form_Field {
 }
 class Form_Field_Readonly extends Form_Field {
     function getInput($attr=array()){
-        return $this->value;
+        if (isset($this->value_list)){
+            return $this->value_list[$this->value];
+        } else {
+            return $this->value;
+        }
+    }
+    function setValueList($list){
+        $this->value_list = $list;
     }
     
 }
