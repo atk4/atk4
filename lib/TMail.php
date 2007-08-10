@@ -101,6 +101,18 @@ class TMail extends AbstractController{
 		// returns the rendered mail subject
 		return is_string($this->subject)?$this->subject:$this->subject->render();
 	}
+	function setSubject($subject){
+		$this->subject=$subject;
+		return $this;
+	}
+	function setBody($body){
+		$this->body=$body;
+		return $this;
+	}
+	function setSign($sign){
+		$this->sign=$sign;
+		return $this;
+	}
 	function send($address){
 		// before sending we should set the X-B64 header
 		$this->headers->trySet('xb64',base64_encode($address));
