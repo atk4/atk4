@@ -131,8 +131,8 @@ class Logger extends AbstractController {
     public $api;
 
     // Configuration;
-    public $web_output;             // $config['logger']['web_output']
-    public $log_output;             // $config['logger']['log_output']
+    public $web_output='full';      // $config['logger']['web_output']
+    public $log_output=null;        // $config['logger']['log_output']
 
     public $public_error_message=null;  
                                     // This message will be outputed to user in case of 
@@ -161,7 +161,7 @@ class Logger extends AbstractController {
 
 
     function init(){
-
+        parent::init();
         $this->debug_log=session_id()?$this->recall('debug_log',''):'';
         if(session_id())$this->forget('debug_log');
         $this->debug_log.="[<font color=red>Debug log from ".date("d.m.Y H:m:s")." to ".$_SERVER['QUERY_STRING']."</font>] - debug started<br>\n";
@@ -169,9 +169,10 @@ class Logger extends AbstractController {
 
         register_shutdown_function(array($this,'showDebugInfo'));
 
-
-        $this->log_output=$this->api->getConfig('logger/log_output',null);
-        $this->web_output=$this->api->getConfig('logger/web_output','full');
+        if(isset($api->config) || method_exists($this->api,'getConfig')){
+            $this->log_output=$this->api->getConfig('logger/log_output',null);
+            $this->web_output=$this->api->getConfig('logger/web_output','full');
+        }
 
         if(!$this->web_output){
             $this->public_error_message=$this->api
@@ -194,7 +195,7 @@ class Logger extends AbstractController {
             $this->gatherDetails();
         }
 
-        if($this->api instanceof ApiWeb){
+        if($this->api instanceof ApiWeb || $this->api instanceof api_Web){
             $this->html_stdout=true;
         }
 
@@ -263,10 +264,11 @@ class Logger extends AbstractController {
         }
         echo "<h2>".get_class($e)."</h2>\n";
         echo '<p><font color=red>' . $e->getMessage() . '</font></p>'; 
-        echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>'; 
-        echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>'; 
+        if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>'; 
+        if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>'; 
 
-        echo $this->backtrace($e->shift,$e->getMyTrace());
+        if(method_exists($e,'getMyTrace'))echo $this->backtrace($e->shift,$e->getMyTrace());
+        else echo $this->backtrace($e->shift,$e->getTrace());
 
         exit;
     }
