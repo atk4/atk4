@@ -169,10 +169,9 @@ class Logger extends AbstractController {
 
         register_shutdown_function(array($this,'showDebugInfo'));
 
-        if(isset($api->config) || method_exists($this->api,'getConfig')){
-            $this->log_output=$this->api->getConfig('logger/log_output',null);
-            $this->web_output=$this->api->getConfig('logger/web_output','full');
-        }
+
+        $this->log_output=$this->api->getConfig('logger/log_output',null);
+        $this->web_output=$this->api->getConfig('logger/web_output','full');
 
         if(!$this->web_output){
             $this->public_error_message=$this->api
@@ -195,7 +194,7 @@ class Logger extends AbstractController {
             $this->gatherDetails();
         }
 
-        if($this->api instanceof ApiWeb || $this->api instanceof api_Web){
+        if($this->api instanceof ApiWeb){
             $this->html_stdout=true;
         }
 
