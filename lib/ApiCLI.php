@@ -110,7 +110,7 @@ class ApiCLI extends AbstractView {
         if (file_exists($file)) {
             // some tricky thing to make config be read in some cases it could not in simple way
             if(!$config)global $config;
-            include_once $fullpath;
+            include_once $file;
         }
 
         $this->config = array_merge($this->config,$config);
