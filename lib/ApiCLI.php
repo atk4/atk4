@@ -92,17 +92,27 @@ class ApiCLI extends AbstractView {
         $this->db=DBlite::tryConnect($dsn);
     }
     function readConfig($file='config.php'){
+        $orig_file = $file;
         if(is_null($this->config))$this->config=array();
         $config=array();
         if(strpos($file,'/')===false){
             $file=getcwd().'/'.$file;
         }
-        if(file_exists($file)){
+        if (!file_exists($file)){
+            foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
+                $fullpath = $path . DIRECTORY_SEPARATOR . $orig_file;
+                if (file_exists($fullpath)){
+                    $file = $fullpath;
+                    break;
+                }
+            }
+        }
+        if (file_exists($file)) {
             // some tricky thing to make config be read in some cases it could not in simple way
             if(!$config)global $config;
-            include_once $file;
+            include_once $fullpath;
         }
-      	
+
         $this->config = array_merge($this->config,$config);
         if(isset($this->config['table_prefix'])){
             if(!defined('DTP'))define('DTP',$this->config['table_prefix']);
