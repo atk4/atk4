@@ -123,6 +123,7 @@ class Ajax extends AbstractModel {
     }
     function memorizeExpander(){
 		$this->api->stickyGET('id');
+		$this->api->stickyGET('row_id');
 		$this->api->stickyGET('expanded');
 		$this->api->stickyGET('expander');
 		return $this;
