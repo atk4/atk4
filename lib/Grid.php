@@ -133,7 +133,8 @@ class Grid extends CompleteLister {
         $m=$this->current_row[$field];
         $this->current_row[$field]=number_format($m,2);
         if($m<0){
-            $this->tdparam[$this->getCurrentIndex()][$field]['style']['color']='red';
+            $this->setTDParam($field,'style/color','red');
+            //$this->tdparam[$this->getCurrentIndex()][$field]['style']['color']='red';
             //$this->current_row[$field]='<font color=red>'.$this->current_row[$field].'</font>';
         }
     }
@@ -426,14 +427,6 @@ class Grid extends CompleteLister {
 		}
 		return (is_array($tdparam)?join($tdparam,'<s>'):'');
 	}
-	function setTDParam($field,$param,$value){
-		/**
-		 * Sets the tdparam for the current row
-		 * This method just hides array usage, you can use direct method as follows:
-		 * $this->tdparam[$this->getCurrentIndex()][$field]['style']...
-		 */
-		$this->tdparam[$this->getCurrentIndex()][$field][$param]=$value;
-	}
     function getRowTitle(){
         $title=' ';
         foreach($this->title_col as $col){
@@ -627,5 +620,20 @@ class Grid extends CompleteLister {
 		if(is_array($this->data))return array_search(current($this->data),$this->data);
 		// else it is dsql dataset...
 		return $this->current_row[$idfield];
+	}
+	public function setTDParam($field,$path,$value){
+		// adds a parameter. nested ones can be specified like 'stile/color'
+		$path=split('/',$path);
+		$current_position=&$this->tdparam[$this->getCurrentIndex()][$field];
+		if(!is_array($current_position))$current_position=array();
+		foreach($path as $part){
+			if(array_key_exists($part,$current_position)){
+				$current_position=&$current_position[$part];
+			}else{
+				$current_position[$part]=array();
+				$current_position=&$current_position[$part];
+			}
+		}
+		$current_position=$value;
 	}
 }
