@@ -7,7 +7,7 @@
 class Auth_Form extends Form{
 	function init(){
 		parent::init();
-        $this->owner->owner->template->set('page_title','Login');
+        ///$this->owner->owner->template->set('page_title','Login');
         $this
             ->addSeparator('Authentication is required')
             ->addField('Line','username','Login')

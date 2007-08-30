@@ -46,13 +46,17 @@ class DBAuth extends BasicAuth{
 		 * Draws page which set in config.php
 		 * Page should contain login form or other stuff which could be used as login object
 		 */
+		/*$this->debug('Creating page');
 		$p=$this->api->add('Page');
 		$p->template->loadTemplate('empty');
+		$
 		$p->add('page_'.$this->api->getConfig('auth/login_page'),null,'Content');
 		$this->form=$p->form;
 		$p->downCall('render');
+		$this->debug('Rendering login page');
 		echo $p->template->render();
-		exit;
+		exit;*/
+		parent::processLogin();
 	}
 	//function check(){
 	//	if($this->doRecovery===true)$this->processRecovery();
