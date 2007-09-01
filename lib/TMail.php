@@ -113,7 +113,10 @@ class TMail extends AbstractController{
 		$this->sign=$sign;
 		return $this;
 	}
-	function send($address){
+	/**
+	 * Does the actual send by calling mail() function
+	 */
+	function send($address,$add_params=null){
 		// before sending we should set the X-B64 header
 		$this->headers->trySet('xb64',base64_encode($address));
 		// send an email with defined parameters
@@ -121,6 +124,7 @@ class TMail extends AbstractController{
 			($this->is_html?'<html>':'').
 			$this->getBody().$this->getSign().
 			($this->is_html?'</html>':''), 
-			$this->getHeaders());
+			$this->getHeaders(),
+			$add_params);
 	}
 }
