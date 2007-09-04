@@ -113,6 +113,16 @@ class TMail extends AbstractController{
 		$this->sign=$sign;
 		return $this;
 	}
+	function getFromAddr(){
+		// as $this->from could contain the address including name ("admin" <admin@domain.com>)
+		// we need this method to extract address only
+		$m=array();
+		$this->api->logger->logVar($this->from);
+		preg_match('/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/',
+			$this->from,$m);
+		$this->api->logger->logVar($m);
+		return $m[0];
+	}
 	/**
 	 * Does the actual send by calling mail() function
 	 */
@@ -125,6 +135,6 @@ class TMail extends AbstractController{
 			$this->getBody().$this->getSign().
 			($this->is_html?'</html>':''), 
 			$this->getHeaders(),
-			$add_params);
+			'-r '.$this->from.' '.$add_params);
 	}
 }
