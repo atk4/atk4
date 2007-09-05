@@ -455,4 +455,35 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
     }
 }
 
+class Form_Field_Radio extends Form_Field_ValueList {
+    function validate(){
+        if(!isset($this->value_list[$this->value])){
+        	if($this->api->isAjaxOutput()){
+		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
+		    }
+            $this->owner->errors[$this->short_name]="This is not one of offered values";
+        }
+        return parent::validate();
+    }
+    function getInput($attr=array()){
+        $output = "";
+        foreach($this->getValueList() as $value=>$descr){
+            $output.=
+                $this->getTag('input',
+                array_merge(
+                    array(
+                        'name'=>$this->name,
+                        'type'=>'radio',
+                        'value'=>$value,
+                        'checked'=>$value == $this->value
+                    ),
+                    $this->attr,
+                    $attr
+                ))
+                .$this->getTag('/input')
+                .htmlspecialchars($descr) . "<br />";
+        }
+        return $output;
+    }
+}
 
