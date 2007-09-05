@@ -238,7 +238,9 @@ class ApiStatic extends ApiWeb{
                 /*try this first if file exists under templates, load it.
                 * remember that underscore is folder separator */
                 $tag_file = preg_replace("/_/", "/", $plain_tag);
-                if (file_exists($file = "templates/" . $tag_file . ".html")){
+                if (file_exists($file = "templates/" . $plain_tag . ".html")){
+                    $component->initializeTemplate($tag, array($plain_tag, $plain_tag));
+                } if (file_exists($file = "templates/" . $tag_file . ".html")){
                     $component->initializeTemplate($tag, array($tag_file, $plain_tag));
                 } else if ($this->components->get($tag)){
                     $component->initializeTemplate($tag, array("components", $tag));
