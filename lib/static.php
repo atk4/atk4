@@ -28,7 +28,7 @@ function error_handler($errno, $errstr, $errfile, $errline){
                     E_USER_ERROR          => "User Error",
                     E_USER_WARNING        => "User Warning",
                     E_USER_NOTICE         => "User Notice",
-                    E_STRICT          => "Runtime Notice" 
+                    4096                  => "Runtime Notice" 
                     );
                     
 	if((error_reporting() & $errno)!=0) {
