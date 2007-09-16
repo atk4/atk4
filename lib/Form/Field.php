@@ -337,7 +337,8 @@ class Form_Field_Text extends Form_Field {
 class Form_Field_Money extends Form_Field_Line {
     function load(){
         parent::load();
-        $this->set(number_format(str_replace(',','',$this->value),2));        // formatting
+        if (strlen($this->value)>0)
+        	$this->set(number_format(str_replace(',','',$this->value),2)); // formatting if having value (mvs fix)
     }
 }
 
