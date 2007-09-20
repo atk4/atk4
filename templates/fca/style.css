@@ -22,15 +22,10 @@ li {list-style:none;}
 /******************
 *Navigation*
 *******************/
-.menu h3 {background:url(icomenu.gif) no-repeat;}
-.menu a:link, .menu a:visited {font-weight:bold; font-size:12px;}
-.menu {padding-left: 30px;}
-#p-home #nav-home a, 
-#p-preloader #nav-preloader a, #p-messages #nav-messages a, #p-users #nav-users a, 
-#p-banusers #nav-banusers a, #p-pathsettings #nav-pathsettings a, #p-getconfig #nav-getconfig a,
-#p-antiflood #nav-antiflood a, #p-badcontrol #nav-badcontrol a,
-#p-badnick #nav-badnick a, #p-chatrooms #nav-chatrooms a,
-#p-history #nav-history a, #p-statistic #nav-statistic a{color:#003366;}
+#menu h3 {background:url(icomenu.gif) no-repeat;}
+#menu a:link, .menu a:visited {font-weight:bold; font-size:12px;}
+#menu {padding-left: 30px;}
+#nav-current a{color:#003366;}
 
 #content {position:relative;float:none; width:60%; margin-left:290px; margin-top:-50px; margin-right:0px; padding:0px; background:none;}
 #content p {background:none;}
@@ -215,6 +210,7 @@ table .header td{background:#ccc; color:#333; font-weight:bold; padding:5px;}
 table .odd td{color:#333; padding:2px 5px;	background-color: #f9f9f9; border-bottom:solid 1px #666}
 table .even td{background:#f0f0f0; color:#333; padding:2px 5px; border-bottom:solid 1px #666}
 
+
 .msgbox { border-style: none solid solid;
 border-color: -moz-use-text-color rgb(142, 142, 142) rgb(142, 142, 142);
 border-width: 0px 1px 1px;
@@ -227,4 +223,25 @@ margin-bottom: 1em;
 }
 @media print {
 
+}
+td .current {
+	border-bottom-width:1pt;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: none;
+	border-left-style: solid;
+	border-top-width: 1pt;
+	border-right-width: 1pt;
+	border-left-width: 1pt;
+}
+td .separator {
+	border-bottom-width:1pt;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-width: 1pt;
+	border-right-width: 1pt;
+	border-left-width: 1pt;
+	background-color: #CCCCCC;
 }

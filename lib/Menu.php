@@ -18,11 +18,19 @@ class Menu extends CompleteLister {
                 $href=';'.$href;
             }
         }
-        $this->data[$href]=array('page'=>$href, 'href'=>'<a href="'.$this->api->getDestinationURL($href).'">','label'=>$label,
-			'tdclass'=>($href==$this->api->page||$href==';'.$this->api->page)?"current":"separator",
-			'chref'=>'</a>');
+        $this->data[$href]=array(
+			'page'=>$href,
+			'href'=>'<a href="'.$this->api->getDestinationURL($href).'">',
+			'label'=>$label,
+			'tdclass'=>$this->isCurrent($href)?"current":"separator",
+			'chref'=>'</a>'
+		);
 
         return $this;
+    }
+    function isCurrent($href){
+    	// returns true if item being added is current
+    	return $href==$this->api->page||$href==';'.$this->api->page;
     }
     function insertMenuItem($index,$label,$href=null){
     	$tail=array_slice($this->data,$index);
