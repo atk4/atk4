@@ -1,117 +1,166 @@
 <?php
-/*
- * Created on 26.03.2006 by *Camper*
+/**
+ * Implements a DB update and/or php scripts launch
+ * 
+ * This component is to be added to API ($api->add('VersionControl')) in order
+ * to perform scheduled DB updates or PHP scripts.
+ * 
+ * If VersionControl is to perform DB updates, you should connect to DB BEFORE adding
+ * VersionControl
+ * 
+ * It looks the specified directory forongoing updates, executes them and puts
+ * results of executing in files:
+ * - {update_name}.ok : if update was successful, empty file
+ * - {update_name}.fail : if update failed, contains error message
+ * 
+ * Results of update execution can be reviewed manually in the update directory or
+ * in the related application which gives the visual interface for update monitoring
+ * 
+ * Created on 09.08.2007 by *Camper* (camper@adevel.com)
  */
 class VersionControl extends AbstractController{
-    private $table;
-    private $dirname;
-    private $db_version;
+	protected $working_dir=null;
+	protected $results=array();
+	protected $updates_done=0;
+	protected $prefix='';
+	protected $db=null;
 	
 	function init(){
 		parent::init();
-		if(!defined('DTP'))define('DTP','');
-		$this->table = DTP.$this->api->getConfig('VersionControl/table','sys_config');
-		$this->dirname = $this->api->getConfig('VersionControl/dirname');
-		if(substr($this->dirname, strlen($this->dirname))!=DIRECTORY_SEPARATOR)
-            // todo - substr($str,-1);
-			$this->dirname.=DIRECTORY_SEPARATOR;
-        $this->api->addHook('api-defaults',array($this,'versionUpdate'));
+		$this->working_dir=$this->api->getConfig('VersionControl/dirname').DIRECTORY_SEPARATOR;
 	}
-    function showInfo(){
-        $this->getVersion();
-        $this->info("Running database version ".$this->db_version);
-        return $this;
-    }
-	function getVersion(){
+	function execute(){
+		foreach($this->getOngoingUpdates() as $update=>$last_result){
+			$this->executeUpdate($update,$last_result);
+			$this->updates_done++;
+		}
+	}
+	protected function getOngoingUpdates(){
 		/**
-		 * Checking table that contains version info
+		 * Looks the working dir for the files without 'ok' flag
 		 */
-		$this->api->db->query("create table if not exists $this->table (db_version varchar(20))");
-		if($this->api->db->getOne("select count(*) from $this->table")==0){
-			$this->api->db->query("insert into $this->table values(0)");
-		}
-		$this->db_version = $this->api->db->getOne("select db_version from $this->table");
-	}
-	function versionUpdate(){
-        $this->getVersion();
-		if($this->db_version != $this->api->apinfo['release']){
-			//getting scripts
-			$scripts=array();
-			if ($handle = opendir($this->dirname)) {
-				//getting files to an array
-				while (false !== ($file = readdir($handle))) { 
-					if($this->neededFile($file)){
-						$scripts[sprintf('%06d.%03d.%03d', $this->fileVersion($file), 
-							$this->fileSubVersion($file), $this->fileSequenceNo($file))]=$file;
-					}
+		// getting scripts
+		$result=array();
+		$this->results[]='Using directory: '.$this->working_dir;
+		if($handle=opendir($this->working_dir)){
+			// getting files into an array
+			while(false!==($file=readdir($handle))){
+				if($this->neededFile($file)){
+					$result[$file]=$this->getLastResultFor($file);
+					// previous result will be appended with new lines
 				}
-				//sorting file array
-				ksort($scripts);
-				foreach($scripts as $file){
-					$fileext = strrchr($file, '.');
-					if($fileext == '.sql')$this->execSQL($file);
-					elseif($fileext == '.php')$this->execPHP($file);
-				}
-				closedir($handle);
-				//updating DB version
-				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['release']."'");
-                $this->debug('Version control: DB updated to '.$this->api->apinfo['release']."\n");
 			}
+			closedir($handle);
+			//sorting file array
+			ksort($result);
 		}
+		return $result;
 	}
-	function execSQL($file){
+	private function neededFile($file){
+		// files needed are those without '.ok' flag
+		if($this->prefix!=''&&strpos($file,$this->prefix)===false)return false;
+		$fileext=strrchr($file, '.');
+		if($fileext=='.sql'||$fileext=='.php'){
+			// looking for completion flags
+			if($this->getLastResultFor($file)=='ok')return false;
+			return true;
+		}
+		// file is of invalid extension
+		return false;
+	}
+	private function getLastResultFor($file){
+		if(file_exists($this->working_dir.$file.'.fail'))return file_get_contents($this->working_dir.$file.'.fail');
+		if(file_exists($this->working_dir.$file.'.ok'))return 'ok';
+		return '';
+	}
+	function executeUpdate($filename,$last_result=''){
+		/**
+		 * Executes an update with file $filename
+		 * $filename should be a full path to file
+		 * if $is_new==true, file treated as never executed, else it's .fail file is appended
+		 * on error
+		 */
+		// executing file on the basis of it's extension
+		$fileext=strrchr($filename, '.');
+		// transforming last_result to an array
+		$last_result=split("\n",$last_result);
+		if($fileext=='.sql')$this->execSQL($filename,$last_result);
+		elseif($fileext=='.php')$this->execPHP($filename,$last_result);
+	}
+	function execSQL($file,$last_result=array()){
 		/**
 		 * Executes SQL scripts
 		 */
-		$sql = split(';',file_get_contents($this->dirname.$file));
+		$limit=600;
+		$this->results[]='Starting DB update. Setting script time limit to '.$limit;
+		set_time_limit($limit);
+		$sql=split(';',file_get_contents($this->working_dir.$file));
 		foreach($sql as $query)if(trim($query) != ''){
-			$this->debug("Version control: SQL executing $query...\n");
+			$this->results[]="[".date('d/m/Y H:i:s')."] Version control: SQL executing $query...";
 			try{
-				$this->api->db->query($query);
-				$this->debug("Version control: success\n");
+				$this->getDb()->query($query);
+				$this->results[]="[".date('d/m/Y H:i:s')."] Version control: success";
+				// creating ok flag
+				file_put_contents($this->working_dir.$file.'.ok','');
+				// deleting previous .fail (if any)
+				if(file_exists($this->working_dir.$file.'.fail'))unlink($this->working_dir.$file.'.fail');
 			}catch(Exception $e){
-				$this->debug("Version control: FAILED! ".mysql_error()."\n");
+				$error="[".date('d/m/Y H:i:s')."] Version control: FAILED! ".mysql_error();
+				$this->results[]=$error;
+				// saving error (previous + current) to flag
+				$last_result[]=$error;
+				file_put_contents($this->working_dir.$file.'.fail',join($last_result,"\n"));
 			}
 		}
-        $this->debug("Version control: executed $file\n");
+		$this->results[]='DB update finished. Setting script time limit to 30';
+		set_time_limit(30);
+	    $this->results[]="[".date('d/m/Y H:i:s')."] Version control: executed $file";
 	}
-	function execPHP($file){
+	function execPHP($file,$last_result=array()){
 		/**
 		 * Includes PHP script
 		 */
-		$this->debug("Version control: PHP including $file...\n");
+		$this->results[]="[".date('d/m/Y H:i:s')."] Version control: PHP including $file...";
 		try{
-			include($this->dirname.$file);
-			$this->debug("Version control: success\n");
+			include($this->working_dir.$file);
+			$this->results[]="[".date('d/m/Y H:i:s')."] Version control: success";
+				// creating ok flag
+				file_put_contents($this->working_dir.$file.'.ok','');
 		}catch(Exception $e){
-			$this->debug("Version control: FAILED!\n");
+			$error="[".date('d/m/Y H:i:s')."] Version control: FAILED! ".$e->getMessage();
+			$this->results[]=$error;
+			// saving error (previous + current) to flag
+			$last_result[]=$error;
+			file_put_contents($this->working_dir.$file.'.fail',join($last_result,"\n"));
 		}
 	}
-	private function neededFile($file){
+	function getResults(){
+		return $this->results;
+	}
+	function getUpdatesDone(){
+		return $this->updates_done;
+	}
+	function setPrefix($prefix){
 		/**
-		 * Checks the version of the scripts in dirname and returns true, if they are to be executed
+		 * Sets the prefix of updates to process
+		 * This can be used to separate updates by users
 		 */
-		$fileext = strrchr($file, '.');
-		if($fileext == '.sql'||$fileext == '.php'){
-			$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
-			$filever = $ver_parts[0].'.'.$ver_parts[1];
-			return($filever <= $this->api->apinfo['release']&&$filever > $this->db_version);
-		}
-		return false;
+		$this->prefix=$prefix;
+		return $this;
 	}
-	private function fileVersion($file){
-		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
-		$result=$ver_parts[0];
-		return $result;
+	private function getDb(){
+		/**
+		 * Returns a connection to a DB
+		 * This method useful for the DB which are not from API connection, 
+		 * but from separate one (such as own component's DB connection)
+		 */
+		return is_null($this->db)?$this->api->db:$this->db;
 	}
-	private function fileSubVersion($file){
-		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
-		$result=$ver_parts[1];
-		return $result;
-	}
-	private function fileSequenceNo($file){
-		$ver_parts=split('[.]', basename($file)); //array(release_number, release_subnumber, script_no, extension)
-		$result=$ver_parts[2];
-		return $result;
+	function setDb($db){
+		/**
+		 * Sets a DB connection different from API DB
+		 */
+		$this->db=$db;
+		return $this;
 	}
 }
