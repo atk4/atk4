@@ -35,7 +35,7 @@ class VersionControl extends AbstractController{
 			$this->updates_done++;
 		}
 	}
-	protected function getOngoingUpdates(){
+	function getOngoingUpdates(){
 		/**
 		 * Looks the working dir for the files without 'ok' flag
 		 */
