@@ -163,4 +163,7 @@ class VersionControl extends AbstractController{
 		$this->db=$db;
 		return $this;
 	}
+	function getWorkingDir(){
+		return $this->getWorkingDir();
+	}
 }
