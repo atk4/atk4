@@ -87,7 +87,7 @@ fieldset .warning strong {color:#900}
 .menu ul, 
 #genconfig ul{margin:10px 0 10px 40px; padding:0; }
 
-legend {color:#036; font-size:120%; font-weight:bold; line-height:32px; padding:10px 0 0 0; }
+.legend {color:#036; font-size:120%; font-weight:bold; line-height:32px; padding:10px 0 0 0; border-bottom:4px solid #900;}
 fieldset fieldset legend {color:#333; font-size:100%; font-weight:bold; line-height:32px; padding:0px 0 0 0; margin:10px 0 0 0;}
 
 #login fieldset div, 

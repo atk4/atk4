@@ -86,9 +86,12 @@ class DBAuth extends BasicAuth{
     	 */
     	unset($this->dq->args['where']);
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
-    	$this->addInfo($this->dq->do_getHash());
-        $this->memorize('info',$this->info);
-    	return(sizeof($data)>0&&($data[$this->pass_field]==$password||sha1($data[$this->pass_field])==$password));
+    	$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||sha1($data[$this->pass_field])==$password));
+    	if($result){
+    		$this->addInfo($data);
+        	$this->memorize('info',$this->info);
+    	}
+    	return $result;
     }
 	function encrypt($str){
 		return $this->secure?sha1($str):$str;

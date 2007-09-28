@@ -40,7 +40,7 @@ class Paginator extends AbstractView {
         }
     }
     function applyDQ($dq){
-        $dq->calc_found_rows();
+        //$dq->calc_found_rows();
         $dq->limit($this->ipp,$this->skip);
     }
     function applyData(&$data){

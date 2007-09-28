@@ -138,7 +138,7 @@ class Form extends AbstractView {
         $this->downCall('clearFieldValue');
     }
     function setSource($table,$db_fields=null){
-        if($db_fields===null){
+        if(is_null($db_fields)){
             $db_fields=array();
             foreach($this->elements as $key=>$el){
                 if(!($el instanceof Form_Field))continue;
@@ -285,7 +285,7 @@ class Form extends AbstractView {
         }
     }
     function update(){
-        if(!$this->dq)throw BaseException("Can't save, query was not initialized");
+        if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))

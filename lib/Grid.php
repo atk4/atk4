@@ -327,7 +327,7 @@ class Grid extends CompleteLister {
         }
        	// checking if this Grid was requested
         if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
-        	echo $this->getRowAsCommaString($_GET['id']);
+        	echo $this->getRowContent($_GET['id']);
         	exit;
         }
 		if($_GET['submit']==$this->name){
@@ -336,7 +336,7 @@ class Grid extends CompleteLister {
 			if($_GET['action']=='update'){
 				$this->update();
 			}
-			$row=$this->getRowAsCommaString($_GET['row_id']);
+			$row=$this->getRowContent($_GET['row_id']);
 			echo $row;
 			exit;
 		}

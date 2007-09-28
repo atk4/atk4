@@ -282,6 +282,9 @@ class DBlite_dsql  {
         return $this->parseTemplate("update [table] set [set] [where]");
     }
     function insert(){
+		if(isset($this->args['options']))foreach($this->args['options'] as $index=>$option){
+			if($option=="SQL_CALC_FOUND_ROWS")$this->args['options'][$index]='';
+		}
         return $this->parseTemplate("insert [options] into [table] ([set_field]) values ([set_value])");
     }
     function replace(){
