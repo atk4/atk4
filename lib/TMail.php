@@ -117,10 +117,8 @@ class TMail extends AbstractController{
 		// as $this->from could contain the address including name ("admin" <admin@domain.com>)
 		// we need this method to extract address only
 		$m=array();
-		$this->api->logger->logVar($this->from);
 		preg_match('/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/',
 			$this->from,$m);
-		$this->api->logger->logVar($m);
 		return $m[0];
 	}
 	/**
