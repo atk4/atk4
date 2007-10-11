@@ -132,17 +132,17 @@ function htmlize_exception($e,$msg){
 		return ($d>0?sprintf('%d day'.($d>1?'s ':' ')."%02d:%02d:%02d",$d,$h,$m,$s):sprintf("%02d:%02d:%02d",$h,$m,$s));
 	}
 };if(!function_exists('format_time_str')){
-	function format_time_str($s, $exclude_seconds = false){
+	function format_time_str($s, $exclude_seconds=false, $short=false){
 		//by Camper
 		$m=floor($s/60);$s=$s%60;
 		$h=floor($m/60);$m=$m%60;
 		$d=floor($h/24);$h=$h%24;
 		//if(!$h)return sprintf("%02d:%02d",$m,$s);
 		$result="";
-		$result.=($d>0?$d." day".($d>1?'s ':' '):'');
-		$result.=($h>0?$h." hour".($h>1?"s ":" "):"");
-		$result.=($m>0?$m." minute".($m>1?"s ":" "):"");
-		if(!$exclude_seconds)$result.=($s>0?$s." second".($s>1?"s ":" "):"");
+		$result.=($d>0?$d." ".($short?"d ":"day".($d>1?'s ':' ')):'');
+		$result.=($h>0?$h." ".($short?"h ":"hour".($h>1?"s ":" ")):"");
+		$result.=($m>0?$m." ".($short?"m ":"minute".($m>1?"s ":" ")):"");
+		if(!$exclude_seconds)$result.=($s>0?$s." ".($short?"s":"second".($s>1?"s":"")):"");
 		return $result;
 	}
 };if(!function_exists('format_file_size')){
