@@ -392,7 +392,7 @@ class Logger extends AbstractController {
         if(!is_dir($this->log_dir)){
             // Directory is not writable, let's first try to create it
             if(!mkdir($this->log_dir,0750)){
-                throw new BaseException("You must specify valid 'debug_log_dir' inside your config.php if you are are using Logger class in production mode");
+                throw new BaseException("Unable to create $this->log_dir for log output");
             }
         }
 
