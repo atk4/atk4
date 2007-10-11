@@ -126,5 +126,8 @@ class ApiCLI extends AbstractView {
 
 
     }
+    function setConfig($config=array()){
+    	$this->config=safe_array_merge($this->config,$config);
+    }
 }
 ?>
