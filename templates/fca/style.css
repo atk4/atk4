@@ -11,7 +11,6 @@ h2 {font-size:140%; color:#036; margin:0; padding:0; background:none;}
 h3 {color:#036; margin:0; padding:0; font-size:120%;	font-weight:bold;}
 h4 {font-size:110%; color:#c33;}
 h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px}
-/*li {list-style:none;}*/
 
 #innerFrame {margin:0; border:none; width:100%; padding:0; background:url(leftbg.gif) repeat-y;}
 #container {width:100%; margin:0px; background-color:#fff; color:#333;}
@@ -26,6 +25,7 @@ h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px}
 #menu a:link, .menu a:visited {font-weight:bold; font-size:12px;}
 #menu {padding-left: 30px;}
 #nav-current a{color:#003366;}
+.menu li {list-style:none;}
 
 #content {position:relative;float:none; width:60%; margin-left:290px; margin-top:-50px; margin-right:0px; padding:0px; background:none;}
 #content p {background:none;}
