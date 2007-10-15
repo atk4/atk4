@@ -95,22 +95,26 @@ class VersionControl extends AbstractController{
 		$this->results[]='Starting DB update. Setting script time limit to '.$limit;
 		set_time_limit($limit);
 		$sql=split(';',file_get_contents($this->working_dir.$file));
+		$error=false;
 		foreach($sql as $query)if(trim($query) != ''){
 			$this->results[]="[".date('d/m/Y H:i:s')."] Version control: SQL executing $query...";
 			try{
 				$this->getDb()->query($query);
 				$this->results[]="[".date('d/m/Y H:i:s')."] Version control: success";
-				// creating ok flag
-				file_put_contents($this->working_dir.$file.'.ok','');
-				// deleting previous .fail (if any)
-				if(file_exists($this->working_dir.$file.'.fail'))unlink($this->working_dir.$file.'.fail');
 			}catch(Exception $e){
 				$error="[".date('d/m/Y H:i:s')."] Version control: FAILED! ".mysql_error();
-				$this->results[]=$error;
 				// saving error (previous + current) to flag
 				$last_result[]=$error;
-				file_put_contents($this->working_dir.$file.'.fail',join($last_result,"\n"));
+				$this->results[]=$error;
 			}
+		}
+		if($error===false){
+			// creating ok flag
+			file_put_contents($this->working_dir.$file.'.ok','');
+			// deleting previous .fail (if any)
+			if(file_exists($this->working_dir.$file.'.fail'))unlink($this->working_dir.$file.'.fail');
+		}else{
+			file_put_contents($this->working_dir.$file.'.fail',join($last_result,"\n"));
 		}
 		$this->results[]='DB update finished. Setting script time limit to 30';
 		set_time_limit(30);
@@ -124,13 +128,18 @@ class VersionControl extends AbstractController{
 		try{
 			include($this->working_dir.$file);
 			$this->results[]="[".date('d/m/Y H:i:s')."] Version control: success";
-				// creating ok flag
-				file_put_contents($this->working_dir.$file.'.ok','');
 		}catch(Exception $e){
 			$error="[".date('d/m/Y H:i:s')."] Version control: FAILED! ".$e->getMessage();
-			$this->results[]=$error;
 			// saving error (previous + current) to flag
 			$last_result[]=$error;
+			$this->results[]=$error;
+		}
+		if($error===false){
+			// creating ok flag
+			file_put_contents($this->working_dir.$file.'.ok','');
+			// deleting previous .fail (if any)
+			if(file_exists($this->working_dir.$file.'.fail'))unlink($this->working_dir.$file.'.fail');
+		}else{
 			file_put_contents($this->working_dir.$file.'.fail',join($last_result,"\n"));
 		}
 	}
