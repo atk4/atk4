@@ -385,7 +385,10 @@ class Grid extends CompleteLister {
 					break;
 				}
 			}
+			// no data found, returning empty string
+			return "";
 		}
+		else return "";
 		
 		// *** Initializing template ***
 		$this->precacheTemplate(false);
