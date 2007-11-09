@@ -183,7 +183,9 @@ class DBlite_dsql  {
             }elseif(is_null($val)){
                 $this->args['set'][$set]="NULL";
             }else{
-                $this->args['set'][$set]="'".$this->db->escape($val)."'";
+                // numeric values MUST be without quotas for the correct rounding
+                if(is_numeric($val))$this->args['set'][$set]=$val;
+                else $this->args['set'][$set]="'".$this->db->escape($val)."'";
             }
         }
         return $this;
