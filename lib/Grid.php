@@ -625,7 +625,7 @@ class Grid extends CompleteLister {
 		return $this->current_row[$idfield];
 	}
 	public function setTDParam($field,$path,$value){
-		// adds a parameter. nested ones can be specified like 'stile/color'
+		// adds a parameter. nested ones can be specified like 'style/color'
 		$path=split('/',$path);
 		$current_position=&$this->tdparam[$this->getCurrentIndex()][$field];
 		if(!is_array($current_position))$current_position=array();
