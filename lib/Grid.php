@@ -11,7 +11,7 @@ class Grid extends CompleteLister {
 
     public $displayed_rows=0;
 
-	private $totals_title_row=null;
+	private $totals_title_field=null;
 	private $totals_title="";
     public $totals_t=null;
     /**
@@ -146,9 +146,10 @@ class Grid extends CompleteLister {
     }
     function format_totals_text($field){
     	// This method is mainly for totals title displaying
-    	if($field==$this->totals_title_row)
-    		$this->tdparam[$this->getCurrentIndex()][$field]['style']['font-weight']='bold';
-    		//$this->current_row[$field]='<strong>'.$this->totals_title.':</strong>';
+    	if($field==$this->totals_title_field){
+    		$this->setTDParam($field,'style/font-weight','bold');
+    		//$this->current_row[$field]=$this->totals_title.':';
+    	}
 		else $this->current_row[$field]='-';
     }
 	function format_time($field){
@@ -474,28 +475,33 @@ class Grid extends CompleteLister {
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
             // setting cell parameters (tdparam)
-            $tdparam=$this->tdparam[$this->getCurrentIndex()][$tmp];
-            if(is_array($tdparam)){
-	        	// wrap and style handled separately
-	        	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
-	        	unset($tdparam['wrap']);
-	        	if(is_array($tdparam['style'])){
-					$tdparam_str.='style="';
-	        		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
-	        		$tdparam_str.='" ';
-	        		unset($tdparam['style']);
-	        	}
-	        	//walking and combining string
-	        	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
-	        	//$this->api->logger->logVar($this->row_t->get("tdparam_$tmp"));
-	        	$this->row_t->set("tdparam_$tmp",trim($tdparam_str));
-            }
+            $this->applyTDParams($tmp);
             if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
         }
         return $this->current_row;
     }
-	function setTotalsTitle($row,$title="Total"){
-		$this->totals_title_row=$row;
+    function applyTDParams($field,$totals=false){
+        // setting cell parameters (tdparam)
+        $tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
+        if(is_array($tdparam)){
+        	// wrap and style handled separately
+        	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
+        	unset($tdparam['wrap']);
+        	if(is_array($tdparam['style'])){
+				$tdparam_str.='style="';
+        		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
+        		$tdparam_str.='" ';
+        		unset($tdparam['style']);
+        	}
+        	//walking and combining string
+        	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
+        	//$this->api->logger->logVar($this->row_t->get("tdparam_$field"));
+        	if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
+        	else $this->row_t->set("tdparam_$field",trim($tdparam_str));
+        }
+    }
+	function setTotalsTitle($field,$title="Total:"){
+		$this->totals_title_field=$field;
 		$this->totals_title=$title;
 		return $this;
 	}
@@ -509,13 +515,15 @@ class Grid extends CompleteLister {
                     $this->$m($tmp);
                 }
             }
+            // setting cell parameters (tdparam)
+            $this->applyTDParams($tmp,true);
             if($all_failed)$this->current_row[$tmp]='-';
         }
     }
 	function updateTotals(){
 		parent::updateTotals();
 		foreach($this->current_row as $key=>$val){
-			if ((!empty($this->totals_title_col)) and ($key==$this->totals_title_col)) {
+			if ((!empty($this->totals_title_field)) and ($key==$this->totals_title_field)) {
 				$this->totals[$key]=$this->totals_title;
 			}
 		}
