@@ -152,4 +152,8 @@ function htmlize_exception($e,$msg){
 		if($size_in_bytes/(1024*1024)<1024)return round($size_in_bytes/(1024*1024)).' Mb';
 		return round($size_in_bytes/(1024*1024*1024)).' Gb';
 	}
+};if(!function_exists('is_decimal_number')){
+	function is_decimal_number($n) {
+		return (string)(float)$n === (string)$n;
+	}
 }
