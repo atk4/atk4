@@ -2,10 +2,11 @@
 
 body {margin:0;	padding:0; color:#333; background:#f7f7f7; font:80% arial, sans-serif; text-align:left;	border:none;}
 
-a {color:#900; font-size:90%;}
-a:hover {color:#900; font-size:90%;	text-decoration:underline;}
+a {color:#900; font-size:12px;}
+a:hover,a:visited:hover, a:link:hover {color:#900; font-size:12px;	text-decoration:underline;}
 a:link, a:visited {color:#900; text-decoration:none; font-weight:bold; font-size:12px;}
-
+  
+  
 p {margin:0; padding:10px 0;}
 h2 {font-size:140%; color:#036; margin:0; padding:0; background:none;}
 h3 {color:#036; margin:0; padding:0; font-size:120%;	font-weight:bold;}
