@@ -172,7 +172,7 @@ class Ajax extends AbstractModel {
         $this->notImplemented("reloadField");
     }
 	function submitForm($form){
-		$this->ajaxFunc("submitForm('$form->name','".$this->spinner."')");
+		$this->ajaxFunc("buttonClicked='".$this->owner->name."'; submitForm('$form->name','".$this->spinner."')");
         $this->spinner=null;
 		return $this;
 	}

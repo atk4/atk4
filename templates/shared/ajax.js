@@ -1,6 +1,7 @@
 // Copyright � 2005 ADevel.com ( https://adevel.com/ )
 // Author: Kirill Chernyshov ( chk@adevel.com )
 var ajaxIsIE = false;
+var buttonClicked = null;
 
 /**
  *    success_handler = function(response_text, response_xml);
@@ -213,6 +214,9 @@ function aacp( form_id ){
 						val = elem[j].value;
 				}
 				res+=frm.elements[i].name+'='+val;
+			}
+			else if(frm.elements[i].type == 'button'){
+				if(buttonClicked == frm.elements[i].name)res+=frm.elements[i].name+'=1';
 			}
 			else if(frm.elements[i].type == 'file'){
 				res+=frm.elements[i].name+'='+serializeJsToPhp(frm.elements[i].value);
