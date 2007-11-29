@@ -100,6 +100,10 @@ class ApiStatic extends ApiWeb{
          */
         $this->debug('Initializing content template');
         $this->template=$this->add('SMlite');
+        if (!file_exists($this->page.".html")){
+            throw new BaseException("Requested page does not exist!");
+            return;
+        }
         $f=join('',file($this->page.'.html'));
 
         // temporary: //what is this?
