@@ -31,7 +31,7 @@ class Ajax extends AbstractModel {
     }
     function getString(){
         if($this->spinner)$this->ajaxFunc("spinner_off('".$this->spinner."')");
-        return $this->ajax_output."\n";
+        return $this->ajax_output;
     }
     function getLink($text){
         return '<a href="javascript: void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
@@ -41,12 +41,12 @@ class Ajax extends AbstractModel {
     function ajaxFunc($func_call){
         /*
          */
-        if(is_null($this->timeout))$this->ajax_output.="$func_call;\n";
+        if(is_null($this->timeout))$this->ajax_output.="$func_call;";
         else{
-        	$this->ajax_output.="setTimeout('".addslashes($func_call)."',$this->timeout);\n";
+        	$this->ajax_output.="setTimeout('".addslashes($func_call)."',$this->timeout);";
         	$this->timeout=null;
         }
-        	
+        
         return $this;
     }
     function delay($timeout){
