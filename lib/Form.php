@@ -230,10 +230,12 @@ class Form extends AbstractView {
 		return $this->last_field->onKeyPress();
 	}
 
-    function addSubmit($label,$name=null){
+    function addSubmit($label,$name=null,$color=null){
         $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
+        if (!is_null($color))   
+        	$this->last_field->setColor($color);
 
         if(!isset($this->onsubmit))$this->onsubmit=false;  // do not perform ajax submit
         return $this;

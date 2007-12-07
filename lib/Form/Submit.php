@@ -19,7 +19,14 @@ class Form_Submit extends AbstractView {
         return $this;
     }
     function render(){
-        $this->owner->template_chunks['form']->append('form_buttons','<input type="submit" name="'.$this->name.
-                                                      '" value="'.$this->label.'">');
+        $this->owner->template_chunks['form']
+        	->append('form_buttons','<input type="submit" name="'.$this->name.
+			'" value="'.$this->label.'" ' .
+			((count($this->style)?'style="'.implode(';',$this->style).'"':'')).
+			'>');
+    }
+    function setColor($color) {
+    	$this->style[] = 'color: '.$color;
+    	return $this;
     }
 }
