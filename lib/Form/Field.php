@@ -22,6 +22,9 @@ abstract class Form_Field extends AbstractView {
 
     protected $onchange=null;
     protected $onkeypress=null;
+    protected $onfocus=null;
+    protected $onblur=null;
+    protected $onclick=null;
 
     // Field customization
     private $separator=':';
@@ -59,6 +62,15 @@ abstract class Form_Field extends AbstractView {
 	function onKeyPress(){
 		return $this->onkeypress=$this->add('Ajax');
 	}
+	function onFocus(){
+		return $this->onfocus=$this->add('Ajax');
+	}
+	function onBlur(){
+		return $this->onblur=$this->add('Ajax');
+	}
+	function onClick(){
+		return $this->onclick=$this->add('Ajax');
+	}
 
     function clearFieldValue(){
         $this->value=null;
@@ -79,19 +91,17 @@ abstract class Form_Field extends AbstractView {
     function getInput($attr=array()){
         // This function returns HTML tag for the input field. Derived classes should inherit this and add
         // new properties if needed
-        return $this->getTag('input',array_merge(array(
-                                                       'name'=>$this->name,
-                                                       'value'=>$this->value,
-                                                       'onchange'=>
-                                                       ($this->onchange)?$this->onchange->getString():
-                                                       '',
-                                                       'onKeyPress'=>
-                                                       ($this->onkeypress)?$this->onkeypress->getString():
-                                                       'denyEnter(event)'
-                                                      ),
-                                                 $attr,
-                                                 $this->attr)
-                      );
+        return $this->getTag('input',
+        	array_merge(array(
+				'name'=>$this->name,
+				'value'=>$this->value,
+				'onchange'=>(is_null($this->onchange)?'':$this->onchange->getString()),
+				'onKeyPress'=>(is_null($this->onkeypress)?'denyEnter(event)':$this->onkeypress->getString()),
+				'onfocus'=>(is_null($this->onfocus)?'':$this->onfocus->getString()),
+				'onblur'=>(is_null($this->onblur)?'':$this->onblur->getString()),
+				'onclick'=>(is_null($this->onclick)?'':$this->onclick->getString()),
+			),$attr,$this->attr)
+		);
     }
     function setSeparator($separator){
         $this->separator = $separator;
