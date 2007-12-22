@@ -16,8 +16,8 @@ class Reloadable extends AbstractController {
             // placing our <div>
             if(!$this->isCut()){
                 $this->owner->template->append('field_input_pre','<div id="RR_'.$this->owner->name.'">');
-                $this->owner->template->append('field_input_pre','<div id="RD_'.$this->owner->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
-                $this->owner->template->append('field_input_post','</div>');
+                $this->owner->template->append('field_input_pre','<div id="RD_'.$this->owner->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div><!-- RD close -->');
+                $this->owner->template->append('field_input_post','</div><!-- RR close -->');
                 return;
             }
         }
