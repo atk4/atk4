@@ -47,7 +47,7 @@ class Reloadable extends AbstractController {
         }
     }
     function postRecursiveRender(){
-        if($this->isCut()){
+        if(!$this->isCut()){
             $this->owner->output('</div>');
         }
     }
