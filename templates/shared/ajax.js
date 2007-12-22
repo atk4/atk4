@@ -373,9 +373,9 @@ function spinner_on(spinner, timeout){
     if(!s)return;
     if(s.src){
         /* seems to be img */
-        s.src='amodules3/img/loading.gif';
+        s.src=am_loading;
     }else{
-        s.innerHTML='<img src="amodules3/img/loading.gif" alt="loading">';
+        s.innerHTML='<img src="'+am_loading+'" alt="loading">';
     }
     if(timeout == null)timeout=3000;
     if(timeout>0)setTimeout("spinner_off('"+spinner+"')",timeout);
@@ -386,9 +386,9 @@ function spinner_off(spinner){
     if(!s)return;
     if(s.src){
         /* seems to be img */
-        s.src='amodules3/img/not_loading.gif';
+        s.src=am_not_loading;
     }else{
-        s.innerHTML='<img src="amodules3/img/not_loading.gif" alt="loading">';
+        s.innerHTML='<img src="'+am_notloading+'" alt="loading">';
     }
 }
 
