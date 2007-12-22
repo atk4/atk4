@@ -2,6 +2,8 @@
 // Author: Kirill Chernyshov ( chk@adevel.com )
 var ajaxIsIE = false;
 var buttonClicked = null;
+var am_loading='amodules3/img/loading.gif';
+var am_notloading='amodules3/img/not_loading.gif';
 
 /**
  *    success_handler = function(response_text, response_xml);
