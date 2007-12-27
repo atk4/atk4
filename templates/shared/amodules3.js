@@ -186,7 +186,20 @@ function isKeyPressed(e, kCode){
 function denyEnter(e){
 	return !isKeyPressed(e, kReturn);
 }
+
+
+
+function detect_ie()
+{
+	var agent=navigator.userAgent.toLowerCase();
+	var i=agent.indexOf('opera');
+	if (i!=-1) return parseFloat(agent.slice(i+6));
+	else return false;
+}
+
 function inline_process_key(e, name, id, activate_next){
+//	alert(e+" "+name+" "+id+" "+activate_next);
+
 	if(isKeyPressed(e, kEsc)){
 		//submitting and hiding current inline
 		inline_hide(name, id, 'cancel');
@@ -230,6 +243,7 @@ function inline_process_key(e, name, id, activate_next){
 	}
 	return true;
 }
+
 function inline_show(name,active_field,row_id,submit_url,activate_next,show_submit,on_submit_fun,on_cancel_fun){
 	// changes row content to a forms with input elements
 	// submit_url is an URL that should store changes from inline to DB
@@ -259,14 +273,13 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
         header = tmp.firstChild;
         for(cs=1;header=header.nextSibling;cs++);
 	//changing row contents to the forms. only for inlines...
-	col=row.firstChild;
+	col=document.getElementById(inline_id);
 	var inline_collection=new Array();
 	var index=0;
 	//MS IE js works different to Mozilla: nextSibling does needed action erlier
 	//so for IE we should delay switching to next sibling
 	goback=col.id!=undefined;
-	for(i=0;col.nextSibling;i++){
-		if(!goback)col=col.nextSibling;
+		
 		id=new String(col.id);
 		if(id.indexOf('_inlinex')!=-1) { // extended inline element - ajax content loading
 			
@@ -292,16 +305,18 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			size=value.length+5;
 			if(size<6) size=6;
 			if(size>40) size=40;
-			//if(size==0) size=5;
-			col.innerHTML=' <form id="'+form_name+'" name="'+form_name+'" method="POST">'+
+			
+			var key;
+			if (detect_ie()) key='onKeyDown';
+			else key='onKeyPress';
+
+			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
 				'<input id="'+form_name+'_edit" value="'+
-				value+'" size="'+size+'" type="text" onKeyPress="'+
-				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form> ';
+				value+'" size="'+size+'" type="text" '+key+'="'+
+				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form>';
 			inline_collection[index]=form_name;
 			index++;
 		}
-		if(goback)col=col.nextSibling;
-	}
 	if(show_submit){
 		//expanding a row with submits
         	newrow=document.createElement("tr");
@@ -335,10 +350,14 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			'<input type="button" value="Cancel" onclick="'+event_handler+'cancel\''+on_cancel_fun+');">'+
 			'</form>';
 	}
-	//selecting an edit
+	
+//selecting an edit
 	try{
-		document.getElementById('form_'+inline_id+'_edit').select();
+			document.getElementById('form_'+inline_id+'_edit').focus();
+			document.getElementById('form_'+inline_id+'_edit').select();
 	}catch(e){}
+	
+	
 	//setting an array value for further hiding
 	if(!inline_active[name])inline_active[name]=new Array();
 	inline_active[name][row_id]=new Array();
@@ -347,6 +366,9 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	inline_active[name][row_id]['active_field']=active_field;
 	inline_active[name]['show_submit']=show_submit;
 }
+
+
+
 function inline_hide(name, row_id, action, callback){
 	//name is a grid name, id is a row id
 	//processing inline: submit or cancel
