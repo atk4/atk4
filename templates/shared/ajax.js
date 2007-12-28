@@ -388,7 +388,7 @@ function spinner_off(spinner){
     if(!s)return;
     if(s.src){
         /* seems to be img */
-        s.src=am_not_loading;
+        s.src=am_notloading;
     }else{
         s.innerHTML='<img src="'+am_notloading+'" alt="loading">';
     }
