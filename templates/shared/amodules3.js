@@ -89,7 +89,6 @@ function expander_flip(name,id,button,expander_url){
      */
 
     row=document.getElementById(name+"_"+id);
-        
     expander_status = expander_is_open(name,id,button);
     if(expander_status=="_closing"){
         nextrow=row.nextSibling;
@@ -102,11 +101,10 @@ function expander_flip(name,id,button,expander_url){
     }else if(expander_status=="_opening"){
 
         
-        tmp=row.parentNode.firstChild;
-        if(!tmp.firstChild)tmp=tmp.nextSibling;
-        header = tmp.firstChild;
-        for(cs=1;header=header.nextSibling;cs++);
-
+		tmp=document.getElementById(row.id);
+		tmp=tmp.getElementsByTagName('TD');
+		cs=0;
+		while (tmp[cs] != null) cs++;
         newrow=document.createElement("tr");
         nextrow=row.nextSibling;
         if(!nextrow){
@@ -123,14 +121,13 @@ function expander_flip(name,id,button,expander_url){
          * out. Not sure if the temporary thing can me removed easily, but the background
          * color should be customizable. And it's even better to use class names, BTW!
          */
-        bg="#FFFFFF";
+//        bg="#FFFFFF";
         
         /* chk */
         //tmp = row./*parentNode.firstChild.*/childNodes;
         //alert(tmp.length);
-        
         cll = newrow.insertCell(0);
-        cll.style.backgroundColor = bg;
+        cll.style.backgroundColor = "#FFFFFF";
         cll.style.borderWidth = '0 1px 1px 1px';
         cll.style.borderColor = '#000';
         cll.style.borderStyle = 'solid';
@@ -144,7 +141,7 @@ function expander_flip(name,id,button,expander_url){
         cll.innerHTML = '<table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="'+am_loading+'"></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table>';
         
         /* /chk */
-        
+       
         //newrow.innerHTML='<td style="background: '+bg+'; border: 1px solid black; border-top: 0px; padding: 15px" colspan="'+cs+'" id="'+name+"_expandedcontent_"+id+'" ><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img src="'+am_loading+'"></td><td>&nbsp;</td><td class="smalltext" align=center id="autoexpander_'+id+'" valign=top><b>Loading. Stand by...</b></td></tr></table></td>';
         // http://dev.adevel.com/chk/fssub.html 
         // http://dev.adevel.com/chk/tmp/aaa&bbb=ccc
@@ -160,7 +157,6 @@ function expander_flip(name,id,button,expander_url){
         expander_flip(name,id,expander_status,expander_url);
         expander_flip(name,id,button,expander_url);
     }
-
 }
 /******* InlineEdit functions ********/
 function getInlineValue(inline_id){
@@ -192,10 +188,20 @@ function denyEnter(e){
 function detect_ie()
 {
 	var agent=navigator.userAgent.toLowerCase();
+	var i=agent.indexOf('msie');
+	if (i!=-1) return parseFloat(agent.slice(i+5));
+	else return false;
+}
+
+
+function detect_opera()
+{
+	var agent=navigator.userAgent.toLowerCase();
 	var i=agent.indexOf('opera');
 	if (i!=-1) return parseFloat(agent.slice(i+6));
 	else return false;
 }
+
 
 function inline_process_key(e, name, id, activate_next){
 //	alert(e+" "+name+" "+id+" "+activate_next);
@@ -210,6 +216,7 @@ function inline_process_key(e, name, id, activate_next){
 		inline_hide(name, id, 'update');
 		return false;
 	}
+
 	if(activate_next&&isKeyPressed(e, kTab)){
 		this_row_id=name+'_'+id;
 		row=document.getElementById(this_row_id);
@@ -268,10 +275,12 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 	row=document.getElementById(id);
 	if(!row)alert("Row is empty: "+row+"\nID used is: "+id);
 	//counting columns	
-        tmp=row.parentNode.firstChild;
-        if(!tmp.firstChild)tmp=tmp.nextSibling;
-        header = tmp.firstChild;
-        for(cs=1;header=header.nextSibling;cs++);
+
+	tmp=document.getElementById(row.id);
+	tmp=tmp.getElementsByTagName('TD');
+	cs=0;
+	while (tmp[cs] != null) cs++;
+	
 	//changing row contents to the forms. only for inlines...
 	col=document.getElementById(inline_id);
 	var inline_collection=new Array();
@@ -307,10 +316,14 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			if(size>40) size=40;
 			
 			var key;
-			if (detect_ie()) key='onKeyDown';
-			else key='onKeyPress';
-
-			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST">'+
+			if (detect_ie() || detect_opera()){
+				key='onKeyDown';
+			}
+			else{
+				key='onKeyPress';
+			}
+			
+			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST" onsubmit="return false;">'+
 				'<input id="'+form_name+'_edit" value="'+
 				value+'" size="'+size+'" type="text" '+key+'="'+
 				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form>';
@@ -326,17 +339,16 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
         	}else{
 	            row.parentNode.insertBefore(newrow,nextrow);
         	}
-	        bg="#FFFFFF";
+//	        bg="#FFFFFF";
         
         	cll = newrow.insertCell(0);
-		cll.align='right';
-        	cll.style.backgroundColor = bg;
+			cll.align='right';
+        	cll.style.backgroundColor = "#FFFFFF";
 	        cll.style.borderWidth = '0 1px 1px 1px';
         	cll.style.borderColor = '#000';
 	        cll.style.borderStyle = 'solid';
         	cll.style.padding = '1px';
-        
-	        cll.colSpan = cs; 
+			cll.colSpan = cs; 
 	        
 		if(typeof(on_submit_fun) == 'undefined') on_submit_fun = '';
 		else on_submit_fun = ',\'' + on_submit_fun + '(\\\''+name+'\\\',\\\''+row_id+'\\\')\'';
@@ -408,6 +420,10 @@ function inline_hide(name, row_id, action, callback){
 	}
 	inline_active[name][row_id]=false;
 }
+
+
+
+
 /******* TreeView functions *******/
 function treenode_flip(expand,id,url){
 	button=new String(document.getElementById('ec_'+id).innerHTML);
@@ -434,13 +450,14 @@ function treenode_flip(expand,id,url){
  */
 function reloadGridRow(url,name,row_id,callback){
 	//row contents could not be replaced with aasn
-	set_row_c=function(response_text, response_xml){
+	set_row_c = function(response_text, response_xml){
 		//exploding string to an array of column values
 		cols=response_text.split('<row_end>');
 		id=name+'_'+row_id;
 		row=document.getElementById(id);
 		col=row.firstChild;
 		i=0;
+//		alert(col);
 		while(col){
 			if(col.innerHTML!=undefined){
 				value=cols[i].split('<t>');
