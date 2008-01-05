@@ -428,7 +428,7 @@ function setFormFocus(form,field){
 
 function submitForm(form,spinner){
 	var callback = function(response_text, response_xml){
-        if(response_text){
+		if(response_text){
             try {
                 eval(response_text);
             }catch(e){
