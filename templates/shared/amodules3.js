@@ -339,7 +339,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
         	}else{
 	            row.parentNode.insertBefore(newrow,nextrow);
         	}
-//	        bg="#FFFFFF";
+//	        bg="#FFFFFF";  
         
         	cll = newrow.insertCell(0);
 			cll.align='right';
