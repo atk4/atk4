@@ -47,10 +47,10 @@ function button_on(id){
     for(c=button.parentNode.firstChild;c;c=c.nextSibling){
         if(c==button)continue;
         if(!c.style)continue;
-        c.className='expanded_other';
+//        c.className='expanded_other';
     }
 
-    button.className='expanded_this';
+//    button.className='expanded_this';
 }
 
 function button_off(id){
@@ -62,10 +62,10 @@ function button_off(id){
     for(c=button.parentNode.firstChild;c;c=c.nextSibling){
         if(c==button)continue;
         if(!c.style)continue;
-        c.className='not_expanded';
+//        c.className='not_expanded';
     }
 
-    button.className='not_expanded';
+//    button.className='not_expanded';
 }
 
 function expand(id,step){
@@ -126,7 +126,8 @@ function expander_flip(name,id,button,expander_url){
         /* chk */
         //tmp = row./*parentNode.firstChild.*/childNodes;
         //alert(tmp.length);
-        cll = newrow.insertCell(0);
+
+		cll = newrow.insertCell(0);
         cll.style.backgroundColor = "#FFFFFF";
         cll.style.borderWidth = '0 1px 1px 1px';
         cll.style.borderColor = '#000';
@@ -463,7 +464,8 @@ function reloadGridRow(url,name,row_id,callback){
 				value=cols[i].split('<t>');
 				col.innerHTML=value[0];
 				col.title=value[1];
-				try{col.style=value[2];}catch(e){}
+//				alert(value[2]);
+//				try{col.style=value[2];}catch(e){}
 				i++;
 			}
 			//else i--;
