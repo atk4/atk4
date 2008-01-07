@@ -106,7 +106,8 @@ class Form extends AbstractView {
     }
     function addComment($comment){
         $this->add('Text','c'.count($this->elements),'form_body')->set(
-        	$this->template_chunks['form_comment']->set('comment',$comment)->render());
+			$this->template_chunks['form_comment']->set('comment',$comment)->render()
+		);
         return $this;
     }
     function addSeparator($separator='<hr>'){
@@ -291,10 +292,12 @@ class Form extends AbstractView {
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))
+                $this->api->logger->logVar($element->get(),$short_name.': ');
                 $this->dq->set($short_name, $element->get());
         }
         if($this->loaded_from_db){
             // id is present, let's do update
+            $this->api->logger->logVar($this->dq->update());
             return $this->dq->do_update();
         }else{
             // id is not present

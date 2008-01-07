@@ -105,7 +105,7 @@ class SMlite extends AbstractModel {
     /**
      * list of updated tags with values
      */
-    private $updated_tag_list = array();
+    public $updated_tag_list = array();
     
     function getTagVal($tag) {
     	return (isset($this->updated_tag_list[$tag]))?$this->updated_tag_list[$tag]:null;
@@ -166,6 +166,16 @@ class SMlite extends AbstractModel {
          * also customize settings by passing them as 2nd argument.
          */
         if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
+    }
+    function __clone(){
+    	if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
+    	// may be some of the following lines are unneeded...
+    	$this->template=unserialize(serialize($this->template));
+    	$this->tags=unserialize(serialize($this->tags));
+    	$this->settings=unserialize(serialize($this->settings));
+    	$this->updated_tag_list=unserialize(serialize($this->updated_tag_list));
+    	// ...
+    	$this->rebuildTags();
     }
     function cloneRegion($tag){
         /*

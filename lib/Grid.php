@@ -157,14 +157,13 @@ class Grid extends CompleteLister {
 	}
     function format_date($field){
     	if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-    	$this->current_row[$field]=date('d/m/Y',strtotime($this->current_row[$field]));
+    	$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
+    		strtotime($this->current_row[$field]));
     }
     function format_nowrap($field){
-    	//$this->row_t->set("tdparam_$field", $this->row_t->get("tdparam_$field")." nowrap");
     	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=false;
     }
     function format_wrap($field){
-    	//$this->row_t->set("tdparam_$field", str_replace('nowrap','wrap',$this->row_t->get("tdparam_$field")));
     	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=true;
     }
     function format_template($field){
@@ -211,7 +210,7 @@ class Grid extends CompleteLister {
 			'style'=>array(
 				'cursor'=>'hand'
 			),
-			'title'=>$this->current_row[$field.'_original'],
+			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
     	$this->current_row[$field]='<a href=\'javascript:'.

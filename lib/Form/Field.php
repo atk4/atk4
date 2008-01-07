@@ -266,6 +266,11 @@ class Form_Field_Hidden extends Form_Field {
 
 }
 class Form_Field_Readonly extends Form_Field {
+    function init(){
+    	parent::init();
+    	$this->setNoSave();
+    }
+    
     function getInput($attr=array()){
         if (isset($this->value_list)){
             return $this->value_list[$this->value];

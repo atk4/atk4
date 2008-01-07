@@ -1,0 +1,67 @@
+             <?form?>
+			<form id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" onsubmit="<?form_onsubmit?>spinner_on('<?$form_name?>_loading')<?/?>" method="POST" <?$enctype?>>
+                        <table width="100%"  border="0" cellspacing="1" cellpadding="2">
+			<tr>
+		<?section_open?>
+			<!-- opening DIV: opening new cell and creating a table there -->
+			<td valign="top" <?SeparatorStyle?>style="border-left: solid black 1px;"<?/SeparatorStyle?>><table>
+		<?/?>
+                        <?form_body?>
+                        <?form_line?>
+						<tr style="vertical-align: top;">
+							<td class="smalltext" align="right" nowrap><?field_caption?>Email:<?/?></td>
+							<td><?field_input?><input type="text" name="loginemail" class="logintext" value=""><?/?>
+                            <?field_error?><br><font color="red">^ <?field_error_str?>Error<?/?></font><?/?>
+                            </td>
+						</tr>
+                          <?/form_line?>
+			  <?form_separator?>
+				<tr valign="top"><td colspan="2" align="left" nowrap style="padding-left: 70px">
+                 <u><?$separator?></u></td></tr>
+			  <?/form_separator?>
+			  <?form_comment?>
+				<tr><td colspan="2" valign="top" align="center" nowrap style="padding-left: 30px; padding-right: 30px;"><?$comment?></td></tr>
+			  <?/form_comment?>
+                          <?hidden_form_line?>
+                              <?hidden_field_input?> <?/?>
+                          <?/hidden_form_line?>
+						  <tr>
+							<td class="smalltext">Ticket Key:</td>
+							<td><input type="password" name="loginpassword" class="loginpassword" value=""></td>
+							</tr>
+						  <tr>
+							<td class="smalltext">Remember Me:</td>
+							<td><input type="checkbox" name="rememberme" value="1"></td>
+						  </tr>
+                          <?/form_body?>
+		<?section_close?>
+			<!-- closing DIV: closing table and cell -->
+			</table></td>
+		<?/?>
+			</tr>
+			<tr>
+                          <tr><td colspan="<?$section_count?>" style="border-bottom: 1px solid black"></td></tr>
+                          <td colspan="<?$section_count?>"><table width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td class="left"  width="100%">&nbsp;
+                  <img id="<?$form_name?>_loading" src="amodules3/img/not_loading.gif" border="0">
+                  <!-- chk_preload -->
+                  <div style="display:none;"><img src="amodules3/img/loading.gif" /></div>
+                  <!-- -------------->
+				</td><td align="center" style="text-align: center;">
+					  <b id="msg_<?$form_id?>"></b>
+                </td>
+		<td id="<?$form_name?>_buttons" name="<?$form_name?>_buttons" align="right" nowrap>
+                	<?form_buttons?>
+                            <input type="submit" name="Submit2" value="Login" class="yellowbutton">                          
+                        <?/form_buttons?>
+                </td>
+		<td>
+			<?form_ebuttons?>
+			<?/form_ebuttons?>
+		</td>
+	</tr></table></td>
+						  </tr>
+						</table>
+                        </form>
+                        <script><?$form_onload?></script>
+                        <?/form?>

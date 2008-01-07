@@ -37,8 +37,8 @@ class Ajax extends AbstractModel {
         return '<a href="javascript: void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
 
-	function getFormFieldValue($form,$field_name){
-		return $this->ajaxFunc("aagv('$form->name','".$form->getElement($field_name)->name."')");
+	function getFormFieldValue($form,$field_name,$var='fv'){
+		return $this->ajaxFunc("$var=aagv('$form->name','".$form->getElement($field_name)->name."')");
 	}
 
     function ajaxFunc($func_call){
