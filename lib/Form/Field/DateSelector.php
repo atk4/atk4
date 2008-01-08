@@ -39,7 +39,7 @@ class Form_Field_DateSelector extends Form_Field {
 			$this->days[$i] = str_pad($i, 2, '0', STR_PAD_LEFT);
 		
 		$cur_year = date('Y');
-		$this->setYearRange($cur_year-1, $cur_year+1);
+		$this->setYearRange($cur_year-3, $cur_year+3);
 		$this->c_year = $cur_year;
 		$this->c_month= date('m');
 		$this->c_day= date('d');

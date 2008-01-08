@@ -292,12 +292,12 @@ class Form extends AbstractView {
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))
-                $this->api->logger->logVar($element->get(),$short_name.': ');
+                //$this->api->logger->logVar($element->get(),$short_name.': ');
                 $this->dq->set($short_name, $element->get());
         }
         if($this->loaded_from_db){
             // id is present, let's do update
-            $this->api->logger->logVar($this->dq->update());
+            //$this->api->logger->logVar($this->dq->update());
             return $this->dq->do_update();
         }else{
             // id is not present
