@@ -108,7 +108,6 @@ class ApiAdmin extends ApiWeb {
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */
-
         $this->api->not_html=true;
         header("Location: ".$this->getDestinationURL($page,$args));
         exit;

@@ -125,9 +125,9 @@
         at the same time. For instance, when you create form, you insert it
         into page by calling:</para>
 
-        <screen>$page-&gt;add('MyForm');</screen>
+        <screen>$page-&gt;add('CmdForm');</screen>
 
-        <para>where <emphasis role="bold">MyForm</emphasis> is your own class
+        <para>where <emphasis role="bold">CmdForm</emphasis> is your own class
         inherited from Form. You can only insert something into object of
         class "Container" and it's child classes such as Api, Page and Form
         are in fact containers. "<emphasis role="bold">add</emphasis>" method
@@ -138,7 +138,7 @@
         constructor, you should re-define function named "init". This function
         is called right after object is inserted into it's parent. This is a
         good place to initialize class or insert some more objects into it.
-        For example if you are redefining MyForm::init(), you can add fields
+        For example if you are redefining CmdForm::init(), you can add fields
         into a form. You should always call <emphasis
         role="bold">parent::init()</emphasis> before you do anything else.
         Here is sample:</para>

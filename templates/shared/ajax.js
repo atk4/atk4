@@ -430,6 +430,7 @@ function submitForm(form,spinner){
 	var callback = function(response_text, response_xml){
 		if(response_text){
             try {
+//				alert(response_text);
                 eval(response_text);
             }catch(e){
             	//while some browsers prevents popup we better use alert
