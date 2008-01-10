@@ -191,7 +191,11 @@ class DBlite_dsql  {
         return $this;
     }
     function setDate($field='ts',$value=null){
+        /**
+         * Accepts any date format
+         */
         if(is_null($value))$value=time();
+        elseif(is_string($value))$value=strtotime($value);
         return $this->set($field,date('Y-m-d H:i:s',$value));
     }
     function where($where,$equals=false){

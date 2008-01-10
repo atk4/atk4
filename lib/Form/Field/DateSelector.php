@@ -93,7 +93,7 @@ class Form_Field_DateSelector extends Form_Field {
 		}
 	}
 	
-	function setRequired($is_required){
+	function setRequired($is_required=true){
 		$this->required = $is_required === true;
 	}
 	
