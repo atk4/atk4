@@ -605,10 +605,10 @@ class Grid extends CompleteLister {
     		$not_found->del('grid');
     		$not_found->del('totals');
     		//$not_found=$not_found->get('not_found');
-    		//$this->template->del('header');
+    		$this->template->del('header');
     		$this->template->del('rows');
     		$this->template->del('totals');
-    		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
+    		$this->template->set('no_record','<tr class="header">'.$not_found->render().'</tr>');
     		$this->totals=false;
     		//return;
     	}

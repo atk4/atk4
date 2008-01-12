@@ -60,7 +60,6 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
 	var frm = document.getElementById( form_id );
 	var url = '';
 	var method = 'get';
-	
 	if ( !frm )
 		return false;	
 	if( !custom_url ) {
@@ -93,7 +92,9 @@ function aasf( form_id, custom_url, success_handler, error_handler ){
 			    try{
 			    	if (req.status == 200) {
 			    		if(success_handler)
+						{
 			        		success_handler(req.responseText, req.responseXML);
+						}
 			        	else{
 			        		if( req.responseXML )
 			        			aadp( req.responseXML );

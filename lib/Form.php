@@ -199,11 +199,15 @@ class Form extends AbstractView {
         return $this;
     }
 
+
+
     function validateField($condition,$msg=''){
         $this->last_field->addHook('validate','if(!('.$condition.'))$this->displayFieldError("'.
                     ($msg?$msg:'Error in ".$this->caption."').'");');
         return $this;
     }
+
+
     function validateNotNULL($msg=''){
         $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
                     ($msg?$msg:'Please, fill ".$this->caption."').'");');
