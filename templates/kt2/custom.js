@@ -24,6 +24,19 @@ function isNumberKey(evt)
 
 function eraseBox(value)
 {
-	if (document.getElementById(value)!=null) document.getElementById(value).outerText="";
+	if (document.getElementById(value)!=null) document.getElementById(value).innerHTML="";
 	return true;
+}
+
+function htmlspecialchars(text)
+{
+	var chars = Array("<", ">", "'", '"');
+	var replacements = Array("&lt;", "&gt;", "&#039;", "&quot;");
+	for(var i=0; i<chars.length; i++){
+	    var re = new RegExp(chars[i], "gi");
+		while(re.test(text)){
+    	    text = text.replace(chars[i], replacements[i]);
+		}
+	}
+	return text;
 }

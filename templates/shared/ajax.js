@@ -42,7 +42,7 @@ function aarq( src_url, success_handler, error_handler ){
 				finally{}
 			}
     	};
-        req.open('GET', src_url, true );            
+		req.open('GET', src_url, true );            
         req.send("");
     }
     return false;
@@ -179,8 +179,15 @@ function aadp( xml_response ){
 // explicitly replaces the content of specified HTML element with result of requesting src_url
 // ajaxSetContent
 function aasn(element_id, src_url){
-	var callback = function(response_text, response_xml){aafc( element_id, response_text);};
-	return aarq( src_url, callback);
+	var callback = function(response_text, response_xml){
+		re = /table_/;
+		if (response_text.search(re)==-1){
+			window.location='main.php';
+			return false;
+		};
+		aafc( element_id, response_text);
+	};
+	return aarq(src_url, callback);
 }
 
 // eSimilar to aasn, but replaces form field value

@@ -66,7 +66,8 @@ class Form extends AbstractView {
         // to default values of those fields.
         $this->api->addHook('pre-exec',array($this,'loadData'));
     }
-    function initializeTemplate($tag, $template){
+
+	function initializeTemplate($tag, $template){
         $template = $this->form_template?$this->form_template:$template;
         $tag = $this->form_tag?$this->form_tag:$tag;
         return parent::initializeTemplate($tag, $template);
@@ -291,7 +292,9 @@ class Form extends AbstractView {
             }
         }
     }
-    function update(){
+
+	function update()
+	{
         if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){
@@ -307,7 +310,10 @@ class Form extends AbstractView {
             // id is not present
             return $this->dq->do_insert();
         }
-    }
+	}
+
+
+	
     function submitted(){
         /**
          * Default down-call submitted will automatically call this method if form was submitted

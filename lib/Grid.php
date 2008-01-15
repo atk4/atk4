@@ -202,13 +202,12 @@ class Grid extends CompleteLister {
     	$tab_moves_down=$this->tab_moves_down?'true':'false';
     	//setting text non empty
     	$text=$this->current_row[$field]?$this->current_row[$field]:'null';
-
 		$tdparam=array(
 			'id'=>$col_id.'_'.$this->current_row[$idfield],
 			'style'=>array(
 				'cursor'=>'hand'
 			),
-			'title'=>$this->current_row[$field.'_original']
+			'title'=>htmlspecialchars($this->current_row[$field.'_original'],ENT_QUOTES)
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
     	$this->current_row[$field]='<a href=\'javascript:'.

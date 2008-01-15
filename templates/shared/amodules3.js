@@ -323,7 +323,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			else{
 				key='onKeyPress';
 			}
-			 
+			value=htmlspecialchars(value);
 			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST" onsubmit="return false;">'+
 				'<input id="'+form_name+'_edit" value="'+
 				value+'" size="'+size+'" type="text" '+key+'="'+
