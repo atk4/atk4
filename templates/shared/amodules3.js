@@ -47,10 +47,10 @@ function button_on(id){
     for(c=button.parentNode.firstChild;c;c=c.nextSibling){
         if(c==button)continue;
         if(!c.style)continue;
-//        c.className='expanded_other';
+        c.className='expanded_other';
     }
 
-//    button.className='expanded_this';
+    button.className='expanded_this';
 }
 
 function button_off(id){
@@ -62,10 +62,10 @@ function button_off(id){
     for(c=button.parentNode.firstChild;c;c=c.nextSibling){
         if(c==button)continue;
         if(!c.style)continue;
-//        c.className='not_expanded';
+        c.className='not_expanded';
     }
 
-//    button.className='not_expanded';
+    button.className='not_expanded';
 }
 
 function expand(id,step){
