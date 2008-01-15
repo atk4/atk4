@@ -180,11 +180,11 @@ function aadp( xml_response ){
 // ajaxSetContent
 function aasn(element_id, src_url){
 	var callback = function(response_text, response_xml){
-		re = /table_/;
+/*		re = /table_/;
 		if (response_text.search(re)==-1){
 			window.location='main.php';
 			return false;
-		};
+		};*/
 		aafc( element_id, response_text);
 	};
 	return aarq(src_url, callback);
