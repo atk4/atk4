@@ -608,7 +608,7 @@ class Grid extends CompleteLister {
     		$this->template->del('header');
     		$this->template->del('rows');
     		$this->template->del('totals');
-    		$this->template->set('not_found','<tr class="header">'.$not_found->render().'</tr>');
+    		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
     		$this->totals=false;
     		//return;
     	}
