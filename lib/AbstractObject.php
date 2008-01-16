@@ -159,6 +159,7 @@ abstract class AbstractObject {
          */
         return $this->learn($name,@$_GET[$this->long_name.'_'.$name],$default);
     }
+
     function getElement($short_name){
         if(!isset($this->elements[$short_name]))throw new BaseException($this->__toString()." does not have child $short_name");
         return $this->elements[$short_name];

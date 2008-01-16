@@ -40,3 +40,17 @@ function htmlspecialchars(text)
 	}
 	return text;
 }
+
+function http_validate(text)
+{
+var re;
+text=trim(text);
+re = new RegExp("http://", "gi");
+if (!re.test(text)) text='http://'+text;
+return text;
+}
+
+function test()
+{
+ alert(1);
+}
