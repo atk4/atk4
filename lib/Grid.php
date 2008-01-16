@@ -207,8 +207,7 @@ class Grid extends CompleteLister {
 			'style'=>array(
 				'cursor'=>'hand'
 			),
-//			'title'=>htmlspecialchars($this->current_row[$field.'_original'],ENT_QUOTES)
-			$this->current_row[$field.'_original']
+			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
     	$this->current_row[$field]='<a href=\'javascript:'.
