@@ -8,6 +8,7 @@ class Grid extends CompleteLister {
 	public $last_column;
     public $sortby='0';
     public $sortby_db=null;
+	public $not_found=false;
 
     public $displayed_rows=0;
 
@@ -604,14 +605,15 @@ class Grid extends CompleteLister {
     		$not_found->del('grid');
     		$not_found->del('totals');
     		//$not_found=$not_found->get('not_found');
-    		$this->template->del('header');
+    		//$this->template->del('header');
     		$this->template->del('rows');
     		$this->template->del('totals');
-    		$this->template->set('not_found','<tr class="header">'.$not_found->render().'</tr>');
+    		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
     		$this->totals=false;
-    		//return;
+//    		return true;
     	}
         parent::render();
+		
     }
     
     public function setWidth( $width ){
