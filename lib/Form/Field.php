@@ -25,6 +25,7 @@ abstract class Form_Field extends AbstractView {
     protected $onfocus=null;
     protected $onblur=null;
     protected $onclick=null;
+    public $comment='&nbsp;';
 
     // Field customization
     private $separator=':';
@@ -111,6 +112,7 @@ abstract class Form_Field extends AbstractView {
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
+        $this->template->trySet('field_comment',$this->comment);
         $this->template->set('field_input',$this->field_prepend.$this->getInput().$this->field_append);
         $this->template->trySet('field_error',
                              isset($this->owner->errors[$this->short_name])?

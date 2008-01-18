@@ -105,6 +105,14 @@ class Form extends AbstractView {
 
         return $this;
     }
+	function setFieldComment($comment){
+		/**
+		 * Adds a comment to the last field. 
+		 * Comment will be inserted to the field_comment tag of the form template
+		 */
+		$this->last_field->comment=$comment;
+		return $this;
+	}
     function addComment($comment){
         $this->add('Text','c'.count($this->elements),'form_body')->set(
 			$this->template_chunks['form_comment']->set('comment',$comment)->render()
