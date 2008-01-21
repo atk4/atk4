@@ -26,6 +26,7 @@ abstract class Form_Field extends AbstractView {
     protected $onblur=null;
     protected $onclick=null;
     public $comment='&nbsp;';
+    protected $disabled=false;
 
     // Field customization
     private $separator=':';
@@ -44,6 +45,16 @@ abstract class Form_Field extends AbstractView {
         // Field value will not be saved into defined source (such as database)
         $this->no_save=true;
         return $this;
+    }
+    function disable(){
+    	// sets 'disabled' property and setNoSave()
+    	$this->setProperty('disabled',true);
+    	$this->setNoSave();
+    	$this->disabled=true;
+    	return $this;
+    }
+    function isDisabled(){
+    	return $this->disabled;
     }
     function set($value){
         // Use this function when you want to assign $this->value. If you use this function, your field will

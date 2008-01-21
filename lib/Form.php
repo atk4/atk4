@@ -105,6 +105,11 @@ class Form extends AbstractView {
 
         return $this;
     }
+    function disable(){
+    	// disables last field
+    	$this->last_field->disable();
+    	return $this;
+    }
 	function setFieldComment($comment){
 		/**
 		 * Adds a comment to the last field. 
