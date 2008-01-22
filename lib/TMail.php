@@ -22,11 +22,11 @@
  * Created on 15.03.2007 by *Camper* (camper@adevel.com)
  */
 class TMail extends AbstractController{
-	public $from;
-	public $bcc;
-	public $subject;
-	public $body;
-	public $headers;
+	protected $from;
+	protected $bcc;
+	protected $subject;
+	protected $body;
+	protected $headers;
 	protected $template=null;
 	protected $is_html=false;
 	
@@ -55,17 +55,18 @@ class TMail extends AbstractController{
 		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
 		if(!$this->from)$this->from=$this->headers->get('from');
-		$this->bcc=$this->template->get('bcc');
+		$this->bcc=split(',',$this->template->get('bcc'));
 		return $this;
 	}
 	function setTag($tag,$value){
 		/**
 		 * Sets the tag value throughout the template, including all parts
+		 * Some parts could be strings, not templates
 		 */
 		$this->template->trySet($tag,$value);
-		$this->subject->trySet($tag,$value);
-		$this->body->trySet($tag,$value);
-		$this->headers->trySet($tag,$value);
+		if($this->subject instanceof SMlite)$this->subject->trySet($tag,$value);
+		if($this->body instanceof SMlite)$this->body->trySet($tag,$value);
+		if($this->headers instanceof SMlite)$this->headers->trySet($tag,$value);
         if (is_object($this->sign)){
             $this->sign->trySet($tag,$value);
         }
@@ -90,7 +91,7 @@ class TMail extends AbstractController{
 	function getHeaders(){
 		// returns the rendered headers
 		$this->headers->set('from',$this->from);
-		if($this->bcc)$this->headers->set('bcc',$this->bcc);
+		if($this->bcc)$this->headers->set('bcc',join($this->bcc,','));
 		// headers should be separated by CRLF (\r\n), there should be no spaces
 		// between lines (they are if we don't specify bcc)
 		$headers=split("\n",$this->headers->render());
@@ -111,6 +112,20 @@ class TMail extends AbstractController{
 	}
 	function setSign($sign){
 		$this->sign=$sign;
+		return $this;
+	}
+	function setFrom($from){
+		$this->from=$from;
+		return $this;
+	}
+	/**
+	 * Adds/overwrites bcc address to an array
+	 * @param $bcc email address to add to bcc
+	 * @param $overwrite if true, contents of the bcc will be erased before settings
+	 */
+	function setBcc($bcc,$overwrite=false){
+		if($overwrite)$this->bcc=array();
+		$this->bcc[]=$bcc;
 		return $this;
 	}
 	function getFromAddr(){
