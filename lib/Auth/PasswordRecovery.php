@@ -190,9 +190,10 @@ class Auth_PasswordRecovery extends AbstractController{
 			->where('id',$user_id)
 			->do_getOne();
 		//combining a message
-		$this->getMailer()->body->set('link',$link);
-		$this->getMailer()->body->set('username',$username);
-		$this->getMailer()->body->set('timeout',$this->api->getConfig('auth/pwd_recovery/timeout', 15));
+//		$this->getMailer()->body->set('link',$link);
+		$this->getMailer()->setTag('link',$link);
+		$this->getMailer()->setTag('username',$username);
+		$this->getMailer()->setTag('timeout',$this->api->getConfig('auth/pwd_recovery/timeout', 15));
 		$this->getMailer()->send($address);
 	}
 	function getMailer(){
