@@ -62,6 +62,12 @@ class DBAuth extends BasicAuth{
 	//	if($this->doRecovery===true)$this->processRecovery();
 	//	else parent::check();
 	//}
+	
+	function getPwd(){
+		return $this->pwd_recovery;
+	}
+	
+	
 	function setEncrypted($secure=true){
 		$this->secure=$secure;
 		return $this;
