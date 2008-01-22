@@ -55,7 +55,8 @@ class TMail extends AbstractController{
 		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
 		if(!$this->from)$this->from=$this->headers->get('from');
-		$this->bcc=split(',',$this->template->get('bcc'));
+		// TODO: fix this damn bcc getting
+		$this->bcc=array();
 		return $this;
 	}
 	function setTag($tag,$value){
