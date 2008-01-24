@@ -224,7 +224,7 @@ class Form extends AbstractView {
 
     function validateNotNULL($msg=''){
         $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
-                    ($msg?$msg:'Please, fill ".$this->caption."').'");');
+                    ($msg?$msg:'$this->caption." is a mandatory field!').'");');
         return $this;
     }
     function setNotNull($msg=''){
