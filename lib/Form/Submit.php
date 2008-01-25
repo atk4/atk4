@@ -9,6 +9,8 @@
 class Form_Submit extends AbstractView {
     public $label;
     public $no_save=null;
+    protected $style=array();
+
     function setLabel($_label){
         $this->label=$_label;
         return $this;
