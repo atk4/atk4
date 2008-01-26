@@ -84,6 +84,13 @@ class TMail extends AbstractController{
 	}
 	function getBody(){
 		// returns the rendered mail body
+//		$this->api->logger->logVar($this->body);
+		if(is_null($this->body)){
+			$this->body='';
+			// this is unnormal situation, notifying developer
+			$this->api->logger->logLine("Email body is null: ".$this->from." >> ".
+				date($this->api->getConfig('locale/timestamp','Y-m-d H:i:s')."\n"),null,'error');
+		}
 		return is_string($this->body)?$this->body:$this->body->render();
 	}
 	function getSign(){
