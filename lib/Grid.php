@@ -532,7 +532,7 @@ class Grid extends CompleteLister {
         $col = $row->cloneRegion('col');
 
         $row->set('row_id','<?$id?>');
-        $row->set('odd_even','<?$odd_even?>');
+        $row->trySet('odd_even','<?$odd_even?>');
         $row->del('cols');
       
 		if($full){
