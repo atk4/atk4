@@ -222,11 +222,19 @@ class Form extends AbstractView {
     }
 
 
-    function validateNotNULL($msg=''){
-        $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError('.
+/*    function validateNotNULL($msg=''){
+        $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
                     ($msg?$msg:'$this->caption." is a mandatory field!').'");');
         return $this;
-    }
+    }*/
+
+    function validateNotNULL($msg=''){
+        $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
+                    ($msg?$msg:'".$this->caption." is a mandatory field!').'");');
+	       return $this;
+    }	
+	
+	
     function setNotNull($msg=''){
         $this->validateNotNULL($msg);
         return $this;
