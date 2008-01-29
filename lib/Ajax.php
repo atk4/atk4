@@ -4,7 +4,7 @@
  *
  * You would need a compliant browser too.
  *
- * In order to use this module do $ajax = $this->add('Ajax');
+ * In order to use this module do $ajax = $this->loadRegionURLadd('Ajax');
  */
 
 class Ajax extends AbstractModel {
@@ -72,10 +72,17 @@ class Ajax extends AbstractModel {
     function redirectURL($url){
         return $this->ajaxFunc("document.location='".$url."'");
     }
+	
     function loadRegionURL($region_id,$url){
         $this->ajaxFunc("aasn('$region_id','$url')");
         return $this;
     }
+
+    function ExecuteURL($url){
+        $this->ajaxFunc("aacu('$url')");
+        return $this;
+    }
+
     function reloadRegion($region_id,$args=array()){
 		$args=array_merge(array('cut_region'=>$region_id),$args);
 		$url=$this->api->getDestinationURL(null,$args);
