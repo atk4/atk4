@@ -388,6 +388,14 @@ class Logger extends AbstractController {
     	else$msg .= $var;
     	$this->logLine($msg."\n", $shiftfunc,$severity);
     }
+	function logException($e){
+		// logs exception from the catch statement
+		// contains code from Logger::caughtException(), as this code won't launch
+		// if exception is caught
+		$frame=$e->my_backtrace[$e->shift-1];
+		$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error');
+		return $this;
+	}
     function openLogFile($severity='error'){
         if(!is_dir($this->log_dir)){
             // Directory is not writable, let's first try to create it
