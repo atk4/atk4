@@ -326,7 +326,7 @@ function inline_show(name,active_field,row_id,submit_url,activate_next,show_subm
 			value=htmlspecialchars(value);
 			col.innerHTML='<form id="'+form_name+'" name="'+form_name+'" method="POST" onsubmit="return false;">'+
 				'<input id="'+form_name+'_edit" value="'+
-				value+'" size="'+size+'" type="text" '+key+'="'+
+				value+'" size="'+size+'" maxlength="255" type="text" '+key+'="'+
 				'return inline_process_key(event,\''+name+'\','+row_id+','+activate_next+');"></form>';
 			inline_collection[index]=form_name;
 			index++;
