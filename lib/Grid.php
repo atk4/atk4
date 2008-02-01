@@ -377,14 +377,16 @@ class Grid extends CompleteLister {
 		}
 		// if static source set
 		elseif(isset($this->data)){
+			$found=false;
 			foreach($this->data as $index=>$row){
 				if($row['id']==$id){
 					$row_data=$row;
+					$found=true;
 					break;
 				}
 			}
 			// no data found, returning empty string
-			return "";
+			if(!$found)return "";
 		}
 		else return "";
 		

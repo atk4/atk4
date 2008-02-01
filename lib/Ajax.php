@@ -78,7 +78,7 @@ class Ajax extends AbstractModel {
         return $this;
     }
 
-    function ExecuteURL($url){
+    function executeURL($url){
         $this->ajaxFunc("aacu('$url')");
         return $this;
     }
@@ -176,7 +176,7 @@ class Ajax extends AbstractModel {
 			$this->reloadGridRow($_GET['expanded'],$_GET['id'],$url,array_merge(
     			array('expander'=>$_GET['expander']), $args));
     }
-    function reloadGridRow($grid,$row_id,$url,$args=array()){
+    function reloadGridRow($grid,$row_id,$url=null,$args=array()){
     	if(is_object($grid))$grid_name=$grid->name;
     	else $grid_name=$grid;
     	return $this->ajaxFunc('reloadGridRow(\''.
