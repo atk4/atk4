@@ -29,7 +29,7 @@ class Form extends AbstractView {
     public $last_field = null;  // contains reference to last-added filed
 
     public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
-    public $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
+    protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
 
@@ -116,6 +116,11 @@ class Form extends AbstractView {
 		 * Comment will be inserted to the field_comment tag of the form template
 		 */
 		$this->last_field->comment=$comment;
+		return $this;
+	}
+	function setFormat($format,$separator='-'){
+		if($this->last_field instanceof Form_Field_Grouped)$this->last_field->setFormat($format,$separator);
+		else throw new BaseException("This field type does not support formats");
 		return $this;
 	}
     function addComment($comment){
@@ -314,6 +319,9 @@ class Form extends AbstractView {
         }
     }
 
+	function isLoadedFromDB(){
+		return $this->loaded_from_db;
+	}
 	function update()
 	{
         if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
