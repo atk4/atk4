@@ -22,13 +22,10 @@
  * Created on 15.03.2007 by *Camper* (camper@adevel.com)
  */
 class TMail extends AbstractController{
-	protected $from;
-	protected $bcc;
-	protected $subject;
-	protected $body;
-	protected $headers;
+	protected $headers=array();
 	protected $template=null;
 	protected $is_html=false;
+	protected $attrs=array();
 	
 	function loadTemplate($template,$type='.txt'){
 		// loads the template from the specified file
@@ -45,16 +42,13 @@ class TMail extends AbstractController{
 		$this->is_html=$type=='.html';
 		// gathering parts:
 		// headers
-		$this->headers=$this->template->cloneRegion('headers');
-		if(!$this->headers->tags)$this->loadDefaultTemplate();
-		$this->subject=$this->template->cloneRegion('subject');
+		$this->set('subject',$this->template->cloneRegion('subject'));
 		// body
 		$this->body=$this->template->cloneRegion('body');
         $this->sign=$sign=$this->body->cloneRegion('sign');
 		$this->body->tryDel('sign');
 		if($sign->render()!='')$this->sign=$sign;
 		$this->from=$this->template->get('from');
-		if(!$this->from)$this->from=$this->headers->get('from');
 		// TODO: fix this damn bcc getting
 		$this->bcc=array();
 		return $this;
@@ -65,12 +59,22 @@ class TMail extends AbstractController{
 		 * Some parts could be strings, not templates
 		 */
 		$this->template->trySet($tag,$value);
-		if($this->subject instanceof SMlite)$this->subject->trySet($tag,$value);
+		if($this->get('subject') instanceof SMlite)$this->get('subject')->trySet($tag,$value);
 		if($this->body instanceof SMlite)$this->body->trySet($tag,$value);
-		if($this->headers instanceof SMlite)$this->headers->trySet($tag,$value);
         if (is_object($this->sign)){
             $this->sign->trySet($tag,$value);
         }
+		return $this;
+	}
+	function setIsHtml($is_html=true){
+		$this->is_html=$is_html;
+		return $this;
+	}
+	function set($tag,$value){
+		/**
+		 * Sets the mail attribute
+		 */
+		$this->attrs[$tag]=$value;
 		return $this;
 	}
 	function loadDefaultTemplate(){
@@ -79,12 +83,10 @@ class TMail extends AbstractController{
 		 */
 		$template=$this->add('SMlite')->loadTemplate('mail/mail','.txt');
 		if($this->is_html)$template->set('content_type','text/html');
-		$this->headers=$template->cloneRegion('headers');
 		$this->sign=$template->cloneRegion('sign');
 	}
 	function getBody(){
 		// returns the rendered mail body
-//		$this->api->logger->logVar($this->body);
 		if(is_null($this->body)){
 			$this->body='';
 			// this is unnormal situation, notifying developer
@@ -96,44 +98,40 @@ class TMail extends AbstractController{
 	function getSign(){
         return is_object($this->sign)?$this->sign->render():$this->sign;
 	}
-	function getHeaders(){
+	function getHeaders($x64=null){
 		// returns the rendered headers
-		$this->headers->set('from',$this->from);
-		if($this->bcc)$this->headers->set('bcc',join($this->bcc,','));
+		$this->headers[]="Mime-Version: 1.0";
+		$this->headers[]="From: ".$this->get('from',false);
+		if($this->get('bcc')!=false)$this->headers[]="Bcc: ".$this->get('bcc',false);
+		$this->headers[]="Reply-To: ".$this->get('reply-to',false);
+		$this->headers[]="Sender: ".$this->get('from',false);
+		$this->headers[]="Errors-To: ".$this->get('errors-to',false);
+		if(!is_null($x64))$this->headers[]="X-B64: $x64";
+		$this->headers[]="Content-Type: ".($this->is_html?'text/html':'text/plain')."; charset=\"UTF-8\"";
+		$this->headers[]="Content-Transfer-Encoding: 8bit";
+		
 		// headers should be separated by CRLF (\r\n), there should be no spaces
 		// between lines (they are if we don't specify bcc)
-		$headers=split("\n",$this->headers->render());
-		foreach($headers as $id=>$header)if(trim($header)=='')unset($headers[$id]);
-		return join("\n",$headers);
+		return join("\n",$this->headers);
 	}
-	function getSubject(){
-		// returns the rendered mail subject
-		return is_string($this->subject)?$this->subject:$this->subject->render();
-	}
-	function setSubject($subject){
-		$this->subject=$subject;
-		return $this;
+	function get($tag,$plain=true){
+		if(isset($this->attrs[$tag]))$value=$this->attrs[$tag];
+		else
+		// some tags can be replaced be others
+		switch($tag){
+			case 'reply-to': $value=$this->get('from'); break;
+			case 'errors-to': $value=$this->get('from'); break;
+			case 'bcc': $value=false;	// not set by default
+		}
+		// if plain, we need it for rendering. converting arrays
+		if(!$plain){
+			if(is_array($value))$value=join(',',$value);
+			if($value instanceof SMlite)$value=$value->render();
+		}
+		return $value;
 	}
 	function setBody($body){
 		$this->body=$body;
-		return $this;
-	}
-	function setSign($sign){
-		$this->sign=$sign;
-		return $this;
-	}
-	function setFrom($from){
-		$this->from=$from;
-		return $this;
-	}
-	/**
-	 * Adds/overwrites bcc address to an array
-	 * @param $bcc email address to add to bcc
-	 * @param $overwrite if true, contents of the bcc will be erased before settings
-	 */
-	function setBcc($bcc,$overwrite=false){
-		if($overwrite)$this->bcc=array();
-		$this->bcc[]=$bcc;
 		return $this;
 	}
 	function getFromAddr(){
@@ -141,21 +139,18 @@ class TMail extends AbstractController{
 		// we need this method to extract address only
 		$m=array();
 		preg_match('/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/',
-			$this->from,$m);
+			$this->get('from'),$m);
 		return $m[0];
 	}
 	/**
 	 * Does the actual send by calling mail() function
 	 */
 	function send($address,$add_params=null){
-		// before sending we should set the X-B64 header
-		$this->headers->trySet('xb64',base64_encode($address));
 		// send an email with defined parameters
-		mail($address, $this->getSubject(), 
-			($this->is_html?'<html>':'').
-			$this->getBody().$this->getSign().
-			($this->is_html?'</html>':''), 
-			$this->getHeaders(),
+		mail($address, $this->get('subject'), 
+			//($this->is_html?'<html>':'').
+			$this->getBody().$this->getSign(),//.($this->is_html?'</html>':''), 
+			$this->getHeaders(base64_encode($address)),
 			'-r '.$this->from.' '.$add_params);
 	}
 }
