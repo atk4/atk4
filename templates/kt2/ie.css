@@ -13,6 +13,7 @@ margin-bottom: 0.5em;
 
  /* menu */
 .menu { 
+font-family: helvetica, arial,sans-serif;
 border-color: #777777;
 border-width: 2px 1px;
 border-top: 2px solid rgb(142, 142, 142);
