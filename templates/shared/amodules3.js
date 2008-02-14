@@ -493,3 +493,20 @@ function ajax_done(){
 function w(url,width,height){
     window.open(url,'','width='+width+',height='+height+',scrollbars=yes,resizable=yes');
 }
+/**
+ * Switches grouped field when given length is met
+ */
+function switchFieldOn(check_field_id, switchto_field_id, check_len){
+	selected='';
+	cf=document.getElementById(check_field_id);
+	sf=document.getElementById(switchto_field_id);
+
+	if (window.getSelection)   selected = cf.value.substring(cf.selectionStart, cf.selectionEnd);      
+	else if (document.selection)   selected = document.selection.createRange().text;
+
+	if (cf.value.length>=check_len && cf.value!=selected){
+		sf.select();
+		sf.focus();
+		return false;
+	}
+}

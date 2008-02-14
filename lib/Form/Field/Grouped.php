@@ -25,15 +25,20 @@ class Form_Field_Grouped extends Form_Field{
 		$s_start=0;
 		foreach($input as $size){
 			$id=$this->name.'_'.$i;
-			if($size!='*')$this->attr['size']=$size;
+			$next_id=$this->name.'_'.($i+1);
+			if($size!='*'){
+				$this->attr['maxlength']=$size;
+				$this->attr['size']=$size;
+			}
 			// onChange should contain switching to the next group
 			if($count>$i+1){
 				// 
 				$onchange=$this->add('Ajax')
 					//->getFormFieldValue($this->owner,$id) // field names a more complicated, this method does not fit
-					->ajaxFunc("fv=aagv('$this->owner->name','".$id."')")
-					->ajaxFunc("if((fv.toString()).length==$size)setFormFocus('".$this->owner->name."'," .
-							"'".$this->name.'_'.($i+1)."')")
+					->ajaxFunc("switchFieldOn('$id','$next_id',$size)")
+					//->ajaxFunc("fv=aagv('$this->owner->name','".$id."')")
+					//->ajaxFunc("if((fv.toString()).length==$size)setFormFocus('".$this->owner->name."'," .
+					//		"'".$this->name.'_'.($i+1)."')")
 					->getString();
 			}else{
 				$onchange=$this->onchange;
@@ -41,7 +46,8 @@ class Form_Field_Grouped extends Form_Field{
 			$output.=$this->getTag('input',array_merge(array(
                         'id'=>$id,
 						'name'=>$id,
-						'onchange'=>$onchange,
+						//'onchange'=>$onchange,
+						'onkeyup'=>$onchange,
 						'type'=>'text',
 						'value'=>substr($this->value,$s_start,$input[$i])
                         ), $attr, $this->attr)
