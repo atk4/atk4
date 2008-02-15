@@ -34,11 +34,7 @@ class Form_Field_Grouped extends Form_Field{
 			if($count>$i+1){
 				// 
 				$onchange=$this->add('Ajax')
-					//->getFormFieldValue($this->owner,$id) // field names a more complicated, this method does not fit
 					->ajaxFunc("switchFieldOn('$id','$next_id',$size)")
-					//->ajaxFunc("fv=aagv('$this->owner->name','".$id."')")
-					//->ajaxFunc("if((fv.toString()).length==$size)setFormFocus('".$this->owner->name."'," .
-					//		"'".$this->name.'_'.($i+1)."')")
 					->getString();
 			}else{
 				$onchange=$this->onchange;

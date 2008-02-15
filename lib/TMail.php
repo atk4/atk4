@@ -48,9 +48,7 @@ class TMail extends AbstractController{
         $this->sign=$sign=$this->body->cloneRegion('sign');
 		$this->body->tryDel('sign');
 		if($sign->render()!='')$this->sign=$sign;
-		$this->from=$this->template->get('from');
-		// TODO: fix this damn bcc getting
-		$this->bcc=array();
+		$this->set('from',$this->template->cloneRegion('from'));
 		return $this;
 	}
 	function setTag($tag,$value){
@@ -59,11 +57,12 @@ class TMail extends AbstractController{
 		 * Some parts could be strings, not templates
 		 */
 		$this->template->trySet($tag,$value);
-		if($this->get('subject') instanceof SMlite)$this->get('subject')->trySet($tag,$value);
+		foreach($this->attrs as $key=>$attr){
+			if($attr instanceof SMlite)$this->get($key)->trySet($tag,$value);
+		}
+		//if($this->get('subject') instanceof SMlite)$this->get('subject')->trySet($tag,$value);
 		if($this->body instanceof SMlite)$this->body->trySet($tag,$value);
-        if (is_object($this->sign)){
-            $this->sign->trySet($tag,$value);
-        }
+        if($this->sign instanceof SMlite)$this->sign->trySet($tag,$value);
 		return $this;
 	}
 	function setIsHtml($is_html=true){
@@ -90,7 +89,7 @@ class TMail extends AbstractController{
 		if(is_null($this->body)){
 			$this->body='';
 			// this is unnormal situation, notifying developer
-			$this->api->logger->logLine("Email body is null: ".$this->from." >> ".
+			$this->api->logger->logLine("Email body is null: ".$this->get('from')." >> ".
 				date($this->api->getConfig('locale/timestamp','Y-m-d H:i:s')."\n"),null,'error');
 		}
 		return is_string($this->body)?$this->body:$this->body->render();
@@ -121,7 +120,7 @@ class TMail extends AbstractController{
 		switch($tag){
 			case 'reply-to': $value=$this->get('from'); break;
 			case 'errors-to': $value=$this->get('from'); break;
-			case 'bcc': $value=false;	// not set by default
+			case 'bcc': $value=false; break;	// not set by default
 		}
 		// if plain, we need it for rendering. converting arrays
 		if(!$plain){
@@ -151,6 +150,6 @@ class TMail extends AbstractController{
 			//($this->is_html?'<html>':'').
 			$this->getBody().$this->getSign(),//.($this->is_html?'</html>':''), 
 			$this->getHeaders(base64_encode($address)),
-			'-r '.$this->from.' '.$add_params);
+			'-r '.$this->get('from',false).' '.$add_params);
 	}
 }
