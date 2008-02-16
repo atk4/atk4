@@ -25,7 +25,8 @@ class DBlite_mysql extends DBlite {
         $this->handle=mysql_connect(
                                      $this->settings['hostspec'],
                                      $this->settings['username'],
-                                     $this->settings['password']
+                                     $this->settings['password'],
+                                     true // MVS: fix issue with DB connect replacing in case same host/username/pass
                                     );
         if(!$this->handle)return('Could not connect to mysql');
         if(!mysql_select_db($this->settings['database'],$this->handle))
