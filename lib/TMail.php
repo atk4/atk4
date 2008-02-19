@@ -99,19 +99,20 @@ class TMail extends AbstractController{
 	}
 	function getHeaders($x64=null){
 		// returns the rendered headers
-		$this->headers[]="Mime-Version: 1.0";
-		$this->headers[]="From: ".$this->get('from',false);
-		if($this->get('bcc')!=false)$this->headers[]="Bcc: ".$this->get('bcc',false);
-		$this->headers[]="Reply-To: ".$this->get('reply-to',false);
-		$this->headers[]="Sender: ".$this->get('from',false);
-		$this->headers[]="Errors-To: ".$this->get('errors-to',false);
-		if(!is_null($x64))$this->headers[]="X-B64: $x64";
-		$this->headers[]="Content-Type: ".($this->is_html?'text/html':'text/plain')."; charset=\"UTF-8\"";
-		$this->headers[]="Content-Transfer-Encoding: 8bit";
+		$headers=array();
+		$headers[]="Mime-Version: 1.0";
+		$headers[]="From: ".$this->get('from',false);
+		if($this->get('bcc')!=false)$headers[]="Bcc: ".$this->get('bcc',false);
+		$headers[]="Reply-To: ".$this->get('reply-to',false);
+		$headers[]="Sender: ".$this->get('from',false);
+		$headers[]="Errors-To: ".$this->get('errors-to',false);
+		if(!is_null($x64))$headers[]="X-B64: $x64";
+		$headers[]="Content-Type: ".$this->get('content-type')."; charset=\"UTF-8\"";
+		$headers[]="Content-Transfer-Encoding: 8bit";
 		
 		// headers should be separated by CRLF (\r\n), there should be no spaces
 		// between lines (they are if we don't specify bcc)
-		return join("\n",$this->headers);
+		return join("\n",$headers);
 	}
 	function get($tag,$plain=true){
 		if(isset($this->attrs[$tag]))$value=$this->attrs[$tag];
@@ -121,6 +122,7 @@ class TMail extends AbstractController{
 			case 'reply-to': $value=$this->get('from'); break;
 			case 'errors-to': $value=$this->get('from'); break;
 			case 'bcc': $value=false; break;	// not set by default
+			case 'content-type': $value=($this->is_html?'text/html':'text/plain'); break;
 		}
 		// if plain, we need it for rendering. converting arrays
 		if(!$plain){
@@ -146,7 +148,7 @@ class TMail extends AbstractController{
 	 */
 	function send($address,$add_params=null){
 		// send an email with defined parameters
-		mail($address, $this->get('subject'), 
+		mail($address, $this->get('subject',false), 
 			//($this->is_html?'<html>':'').
 			$this->getBody().$this->getSign(),//.($this->is_html?'</html>':''), 
 			$this->getHeaders(base64_encode($address)),
