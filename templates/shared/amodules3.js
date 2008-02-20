@@ -410,7 +410,7 @@ function inline_hide(name, row_id, action, callback){
 		url=url+url_params;
 	}
 	if(reload_row){
-		reloadGridRow(url,name,row_id,callback);
+		reloadGridRow(url,name,row_id,callback,true);
 		//aasn(name+'_'+row_id, url);
 		if(inline_active[name]['show_submit']){
 			//hiding buttons
@@ -450,7 +450,7 @@ function treenode_flip(expand,id,url){
  * Reloads a row of a Grid
  */
  
-function reloadGridRow(url,name,row_id,callback){
+function reloadGridRow(url,name,row_id,callback,settitle){
 	//row contents could not be replaced with aasn
 	set_row_c = function(response_text, response_xml){
 		//exploding string to an array of column values
@@ -464,7 +464,7 @@ function reloadGridRow(url,name,row_id,callback){
 			if(col.innerHTML!=undefined){
 				value=cols[i].split('<t>');
 				col.innerHTML=value[0];
-//				col.title=value[1];
+				if(settitle==true)col.title=value[1];
 //				alert(value[2]);
 //				try{col.style=value[2];}catch(e){}
 				i++;
