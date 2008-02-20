@@ -464,7 +464,7 @@ function reloadGridRow(url,name,row_id,callback){
 			if(col.innerHTML!=undefined){
 				value=cols[i].split('<t>');
 				col.innerHTML=value[0];
-				col.title=value[1];
+//				col.title=value[1];
 //				alert(value[2]);
 //				try{col.style=value[2];}catch(e){}
 				i++;
