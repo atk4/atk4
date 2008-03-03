@@ -422,9 +422,10 @@ class Grid extends CompleteLister {
 			$tdparam=array();
 			foreach($style as $key=>$value){
 				switch($key){
-					case 'background-color':$tdparam[]="$key=$value";break;
+					//case 'background-color':$tdparam[]="$key:$value";break;
 					
-					default:break;
+					default:
+						$tdparam[]="$key:$value";
 				}
 			}
 		}

@@ -459,19 +459,30 @@ function reloadGridRow(url,name,row_id,callback,settitle){
 		row=document.getElementById(id);
 		col=row.firstChild;
 		i=0;
-//		alert(col);
 		while(col){
 			if(col.innerHTML!=undefined){
 				value=cols[i].split('<t>');
 				col.innerHTML=value[0];
 				if(settitle==true)col.title=value[1];
-//				alert(value[2]);
-//				try{col.style=value[2];}catch(e){}
+				// value[2] contains styles separated by <s>
+				if(value[2]!=''){
+					styles=value[2].split('<s>');
+					for(j=0;j<styles.length;j++){
+						// style cannot be assigned directly, 
+						// so we analyze and set every property
+						style=styles[j].split(':');
+						switch(style[0]){
+							case 'color':
+								col.style.color=style[1];
+								break;
+							case 'cursor':
+								col.style.cursor=style[1];
+						}
+					}
+				}
 				i++;
 			}
-			//else i--;
 			col=col.nextSibling;
-			//i++;
 		}
 		try {
 			if(typeof(callback) != 'undefined') eval(callback);
@@ -479,7 +490,10 @@ function reloadGridRow(url,name,row_id,callback,settitle){
 			
 		}
 	}
-	aarq(url, set_row_c);
+	display_error = function(response_text,response_xml){
+		alert(response_text);
+	}
+	aarq(url, set_row_c, display_error);
 }
 function w(url,width,height){
     window.open(url,'','width='+width+',height='+height+',scrollbars=yes,resizable=yes');
