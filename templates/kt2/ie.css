@@ -85,7 +85,7 @@ height: 20px;
 }
 
 .lister tbody tr td { 
-border-style: none solid solid none;
+border-style: none;
 border-width: 1px;
 border-color: rgb(210, 210, 210);
 padding-left: 3px;
