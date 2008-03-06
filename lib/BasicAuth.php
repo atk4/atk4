@@ -235,6 +235,9 @@ class BasicAuth extends AbstractController {
             $frame=$p->frame('Authentication');
             $this->form=$this->createForm($frame);
         }
+        // adding token for session exiration detection
+        $p->add('Text','session_token')
+        	->set('<div id="session_token" style="display: none;">session is expired, relogin</div>');
         //$p->template->set('page_title', $this->title_form);
 
 		return $p;
