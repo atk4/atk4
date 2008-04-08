@@ -173,15 +173,14 @@ class TMail extends AbstractController{
 				case 'text/html':
 					$result.="charset=UTF-8\n".
 						"Content-Transfer-Encoding: base64";
+					$att['content']=rtrim(chunk_split($att['content']));
 					break;
 				default:
 					$result.="name=$name\n" .
 							"Content-Transfer-Encoding: base64";
+					$att['content']=rtrim(chunk_split($att['content']));
 			}
 			$result.="\n\n";
-			// the attachment itself, splitted by default to 76 chars chunks
-			// only if it is not text
-			if($att['type']!='text')$att['content']=rtrim(chunk_split($att['content']));
 			$result.=$att['content'];
 		}
 		// if there were any attachments, trailing boundary should be added
