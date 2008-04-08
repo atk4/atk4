@@ -180,7 +180,9 @@ class TMail extends AbstractController{
 			}
 			$result.="\n\n";
 			// the attachment itself, splitted by default to 76 chars chunks
-			$result.=rtrim(chunk_split($att['content']));
+			// only if it is not text
+			if($att['type']!='text')$att['content']=rtrim(chunk_split($att['content']));
+			$result.=$att['content'];
 		}
 		// if there were any attachments, trailing boundary should be added
 		if(count($this->mime)>0)$result.="\n--".$this->getBoundary()."--\n";
