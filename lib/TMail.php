@@ -5,11 +5,9 @@
  * such as from, to, bcc, subject and so on in the mail template, so in order to send the mail
  * you should do the following:
  * 
- * $mail=$this->add('TMail')->loadTemplate('your_template');
- * $mail->send($to_address);
+ * $mail=$this->add('TMail')->loadTemplate('your_template')->send($to_address);
  * 
- * However, you can redefine all the email parts after template load. E.g. you can read headers,
- * but insert your own body (in this case you should take care of the whole body, sign included):
+ * However, you can redefine all the email parts after template load. 
  * 
  * $mail->loadTemplate('mail/template');
  * $mail->body="This is test e-mail";
@@ -17,15 +15,39 @@
  * 
  * Or you can set the tags of the templates:
  * 
- * $mail->body->set('server_name',$server_name);
+ * $mail->body->setTag('server_name',$server_name);
+ * 
+ * This method will set specified tag in all the message parts: subject, body, sign
+ * 
+ * Multipart MIME messages are also supported. You can add attachments, as well as
+ * add text and HTML part:
+ * $mail
+ * 		->setBodyType('both')	// use both HTML and text part
+ * 		->setBody($html)		// default body is HTML for 'both' message type
+ * 		->attachText($text);	// adding text part for plain-text mode
+ * 
+ * For non MIME compatible mail readers plain text part is also added. Content of this part
+ * depends on message type:
+ * - text and both types: text part content
+ * - html type: explanation message (see getBody() method for details)
  * 
  * Created on 15.03.2007 by *Camper* (camper@adevel.com)
+ * Changed on 08.04.2008 by *Camper* (camper@adevel.com)
  */
 class TMail extends AbstractController{
 	protected $headers=array();
+	protected $mime=array();
+	protected $boundary=null;
 	protected $template=null;
-	protected $is_html=false;
 	protected $attrs=array();
+	protected $body_type=null;
+	
+	function init(){
+		parent::init();
+		$this->headers['Mime-Version']="1.0";
+		$this->headers['Content-Transfer-Encoding']="8bit";
+		$this->setBodyType('text');
+	}
 	
 	function loadTemplate($template,$type='.txt'){
 		// loads the template from the specified file
@@ -39,7 +61,9 @@ class TMail extends AbstractController{
 		// 
 		// look at the provided sample template in templates/kt2/mail
 		$this->template=$this->add('SMlite')->loadTemplate($template,$type);
-		$this->is_html=$type=='.html';
+		if($type=='.html'){
+			$this->setBodyType('html');
+		}
 		// gathering parts:
 		// headers
 		$this->set('subject',$this->template->cloneRegion('subject'));
@@ -66,7 +90,18 @@ class TMail extends AbstractController{
 		return $this;
 	}
 	function setIsHtml($is_html=true){
-		$this->is_html=$is_html;
+		$this->body_type=($is_html?'html':'text');
+		return $this;
+	}
+	/**
+	 * Sets the body type. Possible values:
+	 * - text: plain text
+	 * - html: HTML only
+	 * - both: text and HTML
+	 */
+	function setBodyType($type){
+		if($type=='html'||$type=='text'||$type='both')$this->body_type=$type;
+		else throw new MailException("Unsupported body type: $type");
 		return $this;
 	}
 	function set($tag,$value){
@@ -74,6 +109,15 @@ class TMail extends AbstractController{
 		 * Sets the mail attribute
 		 */
 		$this->attrs[$tag]=$value;
+		return $this;
+	}
+	function setHeader($name,$value=null){
+		// sets the message header
+		if(is_null($value)&&is_array($name)){
+			$this->headers=array_merge($this->headers,$name);
+		}else{
+			$this->headers[$name]=$value;
+		}
 		return $this;
 	}
 	function loadDefaultTemplate(){
@@ -84,35 +128,91 @@ class TMail extends AbstractController{
 		if($this->is_html)$template->set('content_type','text/html');
 		$this->sign=$template->cloneRegion('sign');
 	}
+	/**
+	 * Returns the rendered mail body, sign included
+	 */
 	function getBody(){
-		// returns the rendered mail body
+		// first we should render the body if it was not rendered before
 		if(is_null($this->body)){
-			$this->body='';
+			$this->set('body','');
 			// this is unnormal situation, notifying developer
 			$this->api->logger->logLine("Email body is null: ".$this->get('from')." >> ".
 				date($this->api->getConfig('locale/timestamp','Y-m-d H:i:s')."\n"),null,'error');
 		}
-		return is_string($this->body)?$this->body:$this->body->render();
+		if(!isset($this->mime['text'])&&!isset($this->mime['html'])){
+			$this->setBody(is_object($this->body)?$this->body->render():$this->body);
+		}
+		// sign should be added to all parts
+		if(isset($this->mime['text']))$this->mime['text']['content'].=$this->getSign();
+		if(isset($this->mime['html'])){
+			$this->mime['html']['content'].=$this->getSign();
+			// HTML should be converted to base 64
+			$this->mime['html']['content']=base64_encode($this->mime['html']['content']);
+		}
+		// now as we have all the needed parts set
+		$result='';
+		// first we have to add a simple text for non-Mime readers
+		if($this->body_type=='text'||$this->body_type=='both'){
+			$result.=$this->mime['text']['content'];
+		}
+		else{
+			// this message is HTML only, adding excuses :)
+			$result.="Sorry, this message can only be read with MIME-supporting mail reader.";
+		}
+		// adding attachments if any
+		foreach($this->mime as $name=>$att){
+			// $name is a file name, $att is a hash with type and content
+			$result.="\n\n--".$this->getBoundary()."\n".
+				"Content-Type: ".$att['type']."; ";
+			// depending on the type adding a header
+			switch($att['type']){
+				case 'text/plain':
+					$result.="charset=UTF-8";
+					break;
+				
+				case 'text/html':
+					$result.="charset=UTF-8\n".
+						"Content-Transfer-Encoding: base64";
+					break;
+				default:
+					$result.="name=$name\n" .
+							"Content-Transfer-Encoding: base64";
+			}
+			$result.="\n\n";
+			// the attachment itself, splitted by default to 76 chars chunks
+			$result.=rtrim(chunk_split($att['content']));
+		}
+		// if there were any attachments, trailing boundary should be added
+		if(count($this->mime)>0)$result.="\n--".$this->getBoundary()."--\n";
+		return $result;
 	}
 	function getSign(){
         return is_object($this->sign)?$this->sign->render():$this->sign;
 	}
-	function getHeaders($x64=null){
+	function getHeaders(){
 		// returns the rendered headers
-		$headers=array();
-		$headers[]="Mime-Version: 1.0";
-		$headers[]="From: ".$this->get('from',false);
-		if($this->get('bcc')!=false)$headers[]="Bcc: ".$this->get('bcc',false);
-		$headers[]="Reply-To: ".$this->get('reply-to',false);
-		$headers[]="Sender: ".$this->get('from',false);
-		$headers[]="Errors-To: ".$this->get('errors-to',false);
-		if(!is_null($x64))$headers[]="X-B64: $x64";
-		$headers[]="Content-Type: ".$this->get('content-type')."; charset=\"UTF-8\"";
-		$headers[]="Content-Transfer-Encoding: 8bit";
-		
-		// headers should be separated by CRLF (\r\n), there should be no spaces
-		// between lines (they are if we don't specify bcc)
-		return join("\n",$headers);
+		$this->headers['From']=$this->get('from',false);
+		$this->headers['Bcc']=$this->get('bcc',false);
+		$this->headers['Reply-To']=$this->get('reply-to',false);
+		$this->headers['Sender']=$this->get('from',false);
+		$this->headers['Errors-To']=$this->get('errors-to',false);
+		$this->headers['Content-Type']=$this->get('content-type');
+
+		$result='';
+		$this->api->logger->logVar($this->headers);
+		// headers should be separated by LF (\n), there should be no spaces
+		// between lines 
+		foreach($this->headers as $header=>$value){
+			if($value)$result.="$header: $value\n";
+		}		
+		return $result;
+	}
+	function getBoundary(){
+		// returns the boundary code for multipart messages
+		if(is_null($this->boundary)){
+			$this->boundary=md5($this->get('subject').date('YmdHis'));
+		}
+		return $this->boundary;
 	}
 	function get($tag,$plain=true){
 		if(isset($this->attrs[$tag]))$value=$this->attrs[$tag];
@@ -122,7 +222,11 @@ class TMail extends AbstractController{
 			case 'reply-to': $value=$this->get('from'); break;
 			case 'errors-to': $value=$this->get('from'); break;
 			case 'bcc': $value=false; break;	// not set by default
-			case 'content-type': $value=($this->is_html?'text/html':'text/plain'); break;
+			case 'content-type': 
+				if($this->is_html)$value='text/html; charset="UTF-8"';
+				elseif(count($this->mime)>0)$value='multipart/mixed; boundary='.$this->getBoundary();
+				else $value='text/plain'; 
+				break;
 		}
 		// if plain, we need it for rendering. converting arrays
 		if(!$plain){
@@ -131,16 +235,76 @@ class TMail extends AbstractController{
 		}
 		return $value;
 	}
+	/**
+	 * Sets the body of the message.
+	 * Behaviour of this method depends on the body type specified with setBodyType():
+	 * - text: plain text mime part is set
+	 * - html: html mime part only is set
+	 * - both: html mime part only is set, text part should be added separately
+	 * 
+	 * This method does NOT accept SMlite object as a parameter.
+	 */
 	function setBody($body){
-		$this->body=$body;
+		if(is_object($body))throw new MailException("Body cannot be an object");
+		switch($this->body_type){
+			case 'text':
+				$this->attachText($body);
+				break;
+			case 'html':
+				$this->attachHtml($body);
+				break;
+			case 'both':
+				$this->attachText("Text part is not set");
+				$this->attachHtml($body);
+				break;
+		}
+		return $this;
+	}
+	/**
+	 * Attaches a saved file
+	 * @param $file any valid path to a file
+	 * @param $type valid mime type. e.g.:
+	 * audio/mpeg
+	 * image/jpeg
+	 * application/zip
+	 * audio/wav
+	 * etc.
+	 * @param $name optional, sets the filename for message
+	 */
+	function attachFile($file,$type,$name=null){
+		$content=file_get_contents($file);
+		if(!$content)throw new MailException("Error reading attachment: $file");
+		// encoding content
+		$this->mime['"'.(is_null($name)?basename($file):$name).'"']=array(
+			'type'=>$type,
+			'content'=>base64_encode($content)
+		);
+		return $this;
+	}
+	/**
+	 * Attaches a provided HTML string as a HTML file
+	 * @param $html any valid HTML code as a string
+	 */
+	function attachHTML($html){
+		$this->mime['html']=array(
+			'type'=>'text/html',
+			'content'=>$html,
+		);
+		// sign could be added to HTML after, converting performed in getBody()
+		return $this;
+	}
+	function attachText($text){
+		$this->mime['text']=array(
+			'type'=>'text/plain',
+			'content'=>$text,
+		);
 		return $this;
 	}
 	function getFromAddr(){
 		// as $this->from could contain the address including name ("admin" <admin@domain.com>)
 		// we need this method to extract address only
 		$m=array();
-		preg_match('/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/',
-			$this->get('from'),$m);
+		preg_match('/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/',$this->get('from'),$m);
 		return $m[0];
 	}
 	/**
@@ -148,10 +312,12 @@ class TMail extends AbstractController{
 	 */
 	function send($address,$add_params=null){
 		// send an email with defined parameters
+		$this->headers['X-B64']=base64_encode($address);
 		mail($address, $this->get('subject',false), 
 			//($this->is_html?'<html>':'').
-			$this->getBody().$this->getSign(),//.($this->is_html?'</html>':''), 
-			$this->getHeaders(base64_encode($address)),
+			$this->getBody(),//.($this->is_html?'</html>':''), 
+			$this->getHeaders(),
 			'-r '.$this->get('from',false).' '.$add_params);
 	}
 }
+class MailException extends BaseException{}
