@@ -4,33 +4,33 @@
  * This class is designed to be based on mail templates. Usually you set all the mail parameters
  * such as from, to, bcc, subject and so on in the mail template, so in order to send the mail
  * you should do the following:
- * 
+ *
  * $mail=$this->add('TMail')->loadTemplate('your_template')->send($to_address);
- * 
- * However, you can redefine all the email parts after template load. 
- * 
+ *
+ * However, you can redefine all the email parts after template load.
+ *
  * $mail->loadTemplate('mail/template');
  * $mail->body="This is test e-mail";
  * $mail->send('somewhere@somehost.net');
- * 
+ *
  * Or you can set the tags of the templates:
- * 
+ *
  * $mail->body->setTag('server_name',$server_name);
- * 
+ *
  * This method will set specified tag in all the message parts: subject, body, sign
- * 
+ *
  * Multipart MIME messages are also supported. You can add attachments, as well as
  * add text and HTML part:
  * $mail
  * 		->setBodyType('both')	// use both HTML and text part
  * 		->setBody($html)		// default body is HTML for 'both' message type
  * 		->attachText($text);	// adding text part for plain-text mode
- * 
+ *
  * For non MIME compatible mail readers plain text part is also added. Content of this part
  * depends on message type:
  * - text and both types: text part content
  * - html type: explanation message (see getBody() method for details)
- * 
+ *
  * Created on 15.03.2007 by *Camper* (camper@adevel.com)
  * Changed on 08.04.2008 by *Camper* (camper@adevel.com)
  */
@@ -41,14 +41,14 @@ class TMail extends AbstractController{
 	protected $template=null;
 	protected $attrs=array();
 	protected $body_type=null;
-	
+
 	function init(){
 		parent::init();
 		$this->headers['Mime-Version']="1.0";
 		$this->headers['Content-Transfer-Encoding']="8bit";
 		$this->setBodyType('text');
 	}
-	
+
 	function loadTemplate($template,$type='.txt'){
 		// loads the template from the specified file
 		// the template should contain the following tags:
@@ -58,7 +58,7 @@ class TMail extends AbstractController{
 		// subject
 		// body - can contain any tags you want
 		// sign
-		// 
+		//
 		// look at the provided sample template in templates/kt2/mail
 		$this->template=$this->add('SMlite')->loadTemplate($template,$type);
 		if($type=='.html'){
@@ -169,7 +169,7 @@ class TMail extends AbstractController{
 				case 'text/plain':
 					$result.="charset=UTF-8";
 					break;
-				
+
 				case 'text/html':
 					$result.="charset=UTF-8\n".
 						"Content-Transfer-Encoding: base64";
@@ -199,12 +199,11 @@ class TMail extends AbstractController{
 		$this->headers['Content-Type']=$this->get('content-type');
 
 		$result='';
-		$this->api->logger->logVar($this->headers);
 		// headers should be separated by LF (\n), there should be no spaces
-		// between lines 
+		// between lines
 		foreach($this->headers as $header=>$value){
 			if($value)$result.="$header: $value\n";
-		}		
+		}
 		return $result;
 	}
 	function getBoundary(){
@@ -222,10 +221,10 @@ class TMail extends AbstractController{
 			case 'reply-to': $value=$this->get('from'); break;
 			case 'errors-to': $value=$this->get('from'); break;
 			case 'bcc': $value=false; break;	// not set by default
-			case 'content-type': 
+			case 'content-type':
 				if($this->is_html)$value='text/html; charset="UTF-8"';
 				elseif(count($this->mime)>0)$value='multipart/mixed; boundary='.$this->getBoundary();
-				else $value='text/plain'; 
+				else $value='text/plain';
 				break;
 		}
 		// if plain, we need it for rendering. converting arrays
@@ -241,7 +240,7 @@ class TMail extends AbstractController{
 	 * - text: plain text mime part is set
 	 * - html: html mime part only is set
 	 * - both: html mime part only is set, text part should be added separately
-	 * 
+	 *
 	 * This method does NOT accept SMlite object as a parameter.
 	 */
 	function setBody($body){
@@ -313,9 +312,9 @@ class TMail extends AbstractController{
 	function send($address,$add_params=null){
 		// send an email with defined parameters
 		$this->headers['X-B64']=base64_encode($address);
-		mail($address, $this->get('subject',false), 
+		mail($address, $this->get('subject',false),
 			//($this->is_html?'<html>':'').
-			$this->getBody(),//.($this->is_html?'</html>':''), 
+			$this->getBody(),//.($this->is_html?'</html>':''),
 			$this->getHeaders(),
 			'-r '.$this->get('from',false).' '.$add_params);
 	}
