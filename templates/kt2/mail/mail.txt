@@ -1,22 +1,6 @@
-// Comments to the structure of headers (according to RFC-822, http://www.faqs.org/rfcs/rfc822.html):
-// 1. Use 'Sender' header ONLY if it would be different from 'From' header 
-// 2. Use 'Reply-To' header ONLY if it would be different from 'From' header 
-// 3. 'Sender' and 'Reply-To' could be different
-// 4. 'To' and 'Date' headers are added by the mailer
-// 5. 'Bcc' header could be empty
-//
-// To send e-mail in HTML, just set Content-Type to text/html and enclose body in <html></html> 
-<?headers?>
-Mime-Version: 1.0
-From: "<?$server_title?>" <<?from?>noreply@<?$server_name?><?/from?>>
-Bcc: <?$bcc?>
-Reply-To: support@<?$server_name?>
-Sender: <?$from?>
-Errors-To: support@<?$server_name?>
-X-B64: <?$xb64?>
-Content-Type: <?content_type?>text/plain<?/content_type?>; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-<?/headers?><?subject?><?/?><?body?>
+<?from?>noreply@<?$server_name?><?/from?>
+<?bcc?><?/bcc?>
+<?subject?>E-mail subject<?/?><?body?>
 <?sign?>
 -- 
 Regards, <?$server_title?> Team.
