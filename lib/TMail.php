@@ -75,11 +75,15 @@ class TMail extends AbstractController{
 		$this->set('from',$this->template->cloneRegion('from'));
 		return $this;
 	}
-	function setTag($tag,$value){
+	function setTag($tag,$value=null){
 		/**
 		 * Sets the tag value throughout the template, including all parts
 		 * Some parts could be strings, not templates
 		 */
+		if(is_null($value)&&is_array($tag)){
+			foreach($tag as $k=>$v)$this->setTag($k,$v);
+			return $this;
+		}
 		$this->template->trySet($tag,$value);
 		foreach($this->attrs as $key=>$attr){
 			if($attr instanceof SMlite)$this->get($key)->trySet($tag,$value);
