@@ -227,7 +227,7 @@ class TMail extends AbstractController{
 			case 'errors-to': $value=$this->get('from'); break;
 			case 'bcc': $value=false; break;	// not set by default
 			case 'content-type':
-				if($this->is_html)$value='text/html; charset="UTF-8"';
+				if($this->body_type=='html')$value='text/html; charset="UTF-8"';
 				elseif(count($this->mime)>0)$value='multipart/mixed; boundary='.$this->getBoundary();
 				else $value='text/plain';
 				break;
