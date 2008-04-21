@@ -351,8 +351,8 @@ class Form extends AbstractView {
         // hook to those spots here.
         // On Windows platform mod_rewrite is lowercasing all the urls.
 
-        if($_GET['submit']!=$this->name)return false;
-        if($this->bail_out)return false;
+        if($_GET['submit']!=$this->name)return;
+        if($this->bail_out)return;
 
         $this->downCall('loadPOST');
         $this->downCall('validate');
