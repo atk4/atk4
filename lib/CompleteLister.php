@@ -29,14 +29,13 @@ class CompleteLister extends Lister {
         }
     }
     function render(){
-        $oe='';
+        $this->tr_class='';
         $this->template->del('rows');
         while($this->fetchRow()){
-            $oe=$oe=='odd'?'even':'odd';
             if($this->totals!==false)$this->updateTotals();
             $this->formatRow();
             $this->row_t->set($this->current_row);
-            $this->row_t->trySet('odd_even',$oe);
+            $this->setTRClass();
             $this->template->append('rows',$this->row_t->render());
         }
         if($this->totals!==false && $this->totals_t){ 
@@ -47,5 +46,9 @@ class CompleteLister extends Lister {
             $this->template->append('rows',$t->render());
         }
         $this->output($this->template->render());
+    }
+    function setTRClass(){
+        $this->tr_class=$this->tr_class=='odd'?'even':'odd';
+        $this->row_t->trySet('odd_even',$this->tr_class);
     }
 }
