@@ -9,12 +9,12 @@ class Paginator extends AbstractView {
     public $range=4;
 
     protected $template_chunks=array();
-    private $region='';
-    private $object='';
-    private $found_rows=null;
-    private $total_pages=null;
+    protected $region='';
+    protected $object='';
+    protected $found_rows=null;
+    protected $total_pages=null;
 
-    private $limiters=array();
+    protected $limiters=array();
     function init(){
         parent::init();
 
