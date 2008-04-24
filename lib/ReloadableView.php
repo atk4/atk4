@@ -43,9 +43,9 @@ class ReloadableView extends AbstractView {
         
         // Else render template <
         } else {
-            $this->owner->output($tmp->loadTemplate($this->loading_template)
-                                     ->trySet('name', $this->name)
-                                     ->render());            
+            $this->output($tmp->loadTemplate($this->loading_template)
+                              ->trySet('name', $this->name)
+                              ->render());            
         }
     }
     function recursiveRender(){
