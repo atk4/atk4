@@ -481,6 +481,21 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
         $output.="</table>";
         return $output;
     }
+    
+    function loadPOST(){
+        $data=$_POST[$this->name];
+        if(is_array($data))
+           $data=join(',',$data);
+        else 
+           $data='';
+
+        $gpc = get_magic_quotes_gpc();
+        if ($gpc){
+            $this->set(stripslashes($data));
+        } else {
+            $this->set($data);
+        } 
+    }    
 }
 
 class Form_Field_Radio extends Form_Field_ValueList {

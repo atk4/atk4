@@ -7,6 +7,10 @@ class Reloadable extends AbstractController {
      * will be placed arround and the element will know how to
      * properly render itself
      */
+    
+    // Holds template for loading progress meter <
+    protected $loading_template = null;
+    
     function init(){
         parent::init();
         $this->owner->reloadable=$this;
@@ -23,13 +27,39 @@ class Reloadable extends AbstractController {
         }
         $this->owner->addHook('pre-recursive-render',array($this,'preRecursiveRender'));
         $this->owner->addHook('post-recursive-render',array($this,'postRecursiveRender'));
+        
+        // Get config from api for default loading template <
+        try {
+            $this->loading_template = $this->api->getConfig('reloadable/loading_template'); 
+        } catch (ExceptionNotConfigured $e) {
+            $this->loading_template = null; 
+        }        
     }
+    
+    public function setLoadingTemplate($template) {
+        $this->loading_template = $template;
+    }
+    
     function isCut(){
         return(isset($_GET['cut_object']) && ($_GET['cut_object']==$this->owner->name || $_GET['cut_object']==$this->owner->short_name));
     }
     function renderLoadingDiv(){
-        $this->owner->output('<div id="RD_'.$this->owner->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
+        
+        // Add template engine <
+        $tmp = $this->add('SMLite');
+        
+        // If no template found, render default <
+        if (empty($this->loading_template) || ($tmp->findTemplate($this->loading_template) == null)) {
+            $this->owner->output('<div id="RD_'.$this->owner->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
+        
+        // Else render template <
+        } else {
+            $this->owner->output($tmp->loadTemplate($this->loading_template)
+                                     ->trySet('name', $this->owner->name)
+                                     ->render());            
+        }      
     }
+    
     function preRecursiveRender(){
         /*
          * If cut_object is present, then we are currently reloading

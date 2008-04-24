@@ -184,7 +184,7 @@ class Form_Field_DateSelector extends Form_Field {
 			if($this->enabled)
 				$attrs['checked'] = 'checked'; 
     		
-    		$output.=$this->getTag('input', $attrs);
+    		$output.=$this->getTag('input', $attrs)  . "&nbsp;&nbsp;";
     	}
     	
     	$xtraattrs = array();

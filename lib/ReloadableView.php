@@ -11,8 +11,42 @@ class ReloadableView extends AbstractView {
      * class from this - don't worry - initialize a simple element of this
      * class and add yours into it's Content.
      */
+    
+    // Holds template for loading progress meter <
+    protected $loading_template = null;
+
+    public function setLoadingTemplate($template) {
+        $this->loading_template = $template;
+    }
+    
+    public function init() {
+        
+        // Call parent init <
+        parent::init();
+        
+        // Get config from api for default loading template <
+        try {
+            $this->loading_template = $this->api->getConfig('reloadable/loading_template'); 
+        } catch (ExceptionNotConfigured $e) {
+            $this->loading_template = null; 
+        }
+    }
+           
     function renderLoadingDiv(){
-        $this->output('<div id="RD_'.$this->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
+        
+        // Add template engine <
+        $tmp = $this->add('SMLite');
+        
+        // If no template found, render default <
+        if (empty($this->loading_template) || ($tmp->findTemplate($this->loading_template) == null)) {
+            $this->output('<div id="RD_'.$this->name.'" style="display: none; position:absolute; width:200;font-weight: bold; background: white"><table cellspacing=0 cellpadding=0 border=0><tr><td valign=top><img alt="" src="amodules3/img/loading.gif"></td><td>&nbsp;</td><td class="smalltext" align=center><b>Loading. Stand by...</b></td></tr></table></div>');
+        
+        // Else render template <
+        } else {
+            $this->owner->output($tmp->loadTemplate($this->loading_template)
+                                     ->trySet('name', $this->name)
+                                     ->render());            
+        }
     }
     function recursiveRender(){
         if($_GET['cut_object']){
