@@ -72,7 +72,7 @@ class TMail extends AbstractController{
         $this->sign=$sign=$this->body->cloneRegion('sign');
 		$this->body->tryDel('sign');
 		if($sign->render()!='')$this->sign=$sign;
-		$this->set('from',$this->template->cloneRegion('from'));
+		if($this->template->is_set('from'))$this->set('from',$this->template->cloneRegion('from'));
 		return $this;
 	}
 	function setTag($tag,$value=null){
@@ -80,6 +80,7 @@ class TMail extends AbstractController{
 		 * Sets the tag value throughout the template, including all parts
 		 * Some parts could be strings, not templates
 		 */
+		//$this->api->logger->logVar("setting $tag");
 		if(is_null($value)&&is_array($tag)){
 			foreach($tag as $k=>$v)$this->setTag($k,$v);
 			return $this;
@@ -88,7 +89,10 @@ class TMail extends AbstractController{
 		foreach($this->attrs as $key=>$attr){
 			if($attr instanceof SMlite)$this->get($key)->trySet($tag,$value);
 		}
-		//if($this->get('subject') instanceof SMlite)$this->get('subject')->trySet($tag,$value);
+		if($this->get('subject') instanceof SMlite){
+			$this->get('subject')->trySet($tag,$value);
+			//$this->api->logger->logVar($this->get('subject')->render());
+		}
 		if($this->body instanceof SMlite)$this->body->trySet($tag,$value);
         if($this->sign instanceof SMlite)$this->sign->trySet($tag,$value);
 		return $this;
@@ -214,7 +218,7 @@ class TMail extends AbstractController{
 	function getBoundary(){
 		// returns the boundary code for multipart messages
 		if(is_null($this->boundary)){
-			$this->boundary=md5($this->get('subject').date('YmdHis'));
+			$this->boundary=md5($this->get('subject',false).date('YmdHis'));
 		}
 		return $this->boundary;
 	}
@@ -274,12 +278,17 @@ class TMail extends AbstractController{
 	 * audio/wav
 	 * etc.
 	 * @param $name optional, sets the filename for message
+	 * @param $asstring if set to true, $file contains contents, not filename
 	 */
-	function attachFile($file,$type,$name=null){
-		$content=file_get_contents($file);
-		if(!$content)throw new MailException("Error reading attachment: $file");
+	function attachFile($file,$type,$name=null,$asstring=false){
+		$content=$asstring?$file:file_get_contents($file);
+		if(!$content)throw new MailException("Error reading attachment: ".($asstring?$name:$file));
+		if(is_null($name)){
+			if($asstring)$name='file_'.count($this->mime);
+			else $name=basename($file);
+		}
 		// encoding content
-		$this->mime['"'.(is_null($name)?basename($file):$name).'"']=array(
+		$this->mime['"'.$name.'"']=array(
 			'type'=>$type,
 			'content'=>base64_encode($content)
 		);
