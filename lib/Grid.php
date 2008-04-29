@@ -604,10 +604,10 @@ class Grid extends CompleteLister {
     function render(){
     	if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
     	    $def_template = $this->defaultTemplate();
-    		$not_found=$this->add('SMlite')->loadTemplate(isset($def_template[0]) ? $def_template[0] : 'grid');
+    		$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
     		$not_found->set('no_records_message',$this->no_records_message);
-    		$not_found->del('grid');
-    		$not_found->del('totals');
+    	//	$not_found->del('grid');
+    	//	$not_found->del('totals');
     		//$not_found=$not_found->get('not_found');
     		//$this->template->del('header');
     		$this->template->del('rows');
