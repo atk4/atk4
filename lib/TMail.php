@@ -324,6 +324,8 @@ class TMail extends AbstractController{
 	 * Does the actual send by calling mail() function
 	 */
 	function send($address,$add_params=null){
+		// checking if from is set
+		if(!$this->get('from'))$this->set('from',$address);
 		// send an email with defined parameters
 		$this->headers['X-B64']=base64_encode($address);
 		mail($address, $this->get('subject',false),

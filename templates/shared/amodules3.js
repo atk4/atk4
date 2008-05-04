@@ -524,3 +524,23 @@ function switchFieldOn(check_field_id, switchto_field_id, check_len){
 		return false;
 	}
 }
+/**
+ * Checks if session is expired and forces redirect to login if so
+ * Check is performed by a key string in the results of the aarq request to
+ * the specified URL
+ * In order for function not to find a key in self parameters, key is passed with
+ * spaces replaced by = (equals sign). Make sure your key has spaces :)
+ */
+function checkSession(url,key){
+        if(key==undefined)key='session is expired, relogin';
+        // decoding encoded string
+        else key=key.replace(/=/g,' ');
+        var callback=function(response_text,response_xml){
+                if(response_text.search(key)!=-1){
+                        alert('Your session has expired. Please log in again.');
+                        window.location='main.php';
+                        return false;
+                }
+        }
+        aarq(url, callback);
+}

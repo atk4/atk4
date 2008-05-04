@@ -40,6 +40,12 @@ class Ajax extends AbstractModel {
 	function getFormFieldValue($form,$field_name,$var='fv'){
 		return $this->ajaxFunc("$var=aagv('$form->name','".$form->getElement($field_name)->name."')");
 	}
+	function checkSession($key='session is expired, relogin'){
+		// in order for JS not to find a string in the parameters of function itself,
+		// parameter should be encoded first
+		$key=str_replace(' ','=',$key);
+		return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."','$key')");
+	}
 
     function ajaxFunc($func_call){
         /*
