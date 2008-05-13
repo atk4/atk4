@@ -48,7 +48,17 @@ class TMail extends AbstractController{
 		$this->headers['Content-Transfer-Encoding']="8bit";
 		$this->setBodyType('text');
 	}
-
+	function reset(){
+		// required due to feature of AModules: controllers are added once
+		// if we use two add()s of controller, content should be set to null
+		$this->template=null;
+		$this->mime=array();
+		$this->boundary=null;
+		$this->headers=array();
+		$this->attrs=array();
+		$this->body_type=null;
+		return $this;
+	}
 	function loadTemplate($template,$type='.txt'){
 		// loads the template from the specified file
 		// the template should contain the following tags:
@@ -60,6 +70,7 @@ class TMail extends AbstractController{
 		// sign
 		//
 		// look at the provided sample template in templates/kt2/mail
+		$this->reset();
 		$this->template=$this->add('SMlite')->loadTemplate($template,$type);
 		if($type=='.html'){
 			$this->setBodyType('html');
