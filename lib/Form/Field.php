@@ -106,6 +106,7 @@ abstract class Form_Field extends AbstractView {
         return $this->getTag('input',
         	array_merge(array(
 				'name'=>$this->name,
+				'id'=>$this->name,
 				'value'=>$this->value,
 				'onchange'=>(is_null($this->onchange)?'':$this->onchange->getString()),
 				'onKeyPress'=>(is_null($this->onkeypress)?'denyEnter(event)':$this->onkeypress->getString()),
