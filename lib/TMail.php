@@ -52,11 +52,12 @@ class TMail extends AbstractController{
 		// required due to feature of AModules: controllers are added once
 		// if we use two add()s of controller, content should be set to null
 		$this->template=null;
+		$this->elements['SMlite']=null;
 		$this->mime=array();
 		$this->boundary=null;
 		$this->headers=array();
 		$this->attrs=array();
-		$this->body_type=null;
+//		$this->body_type=null;
 		return $this;
 	}
 	function loadTemplate($template,$type='.txt'){
