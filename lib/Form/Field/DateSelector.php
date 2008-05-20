@@ -16,7 +16,7 @@
 class Form_Field_DateSelector extends Form_Field {
 	
 	protected $required = false;
-	protected $enabled = true;
+	protected $enabled = false;
 	
 	protected $year_from;
 	protected $year_to;
@@ -54,8 +54,7 @@ class Form_Field_DateSelector extends Form_Field {
 			
 			return;
 		}*/
-		if (is_null($value) || empty($value) || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
-			//$this->api->addHook('post-submit',array($this, 'disable'));
+		if (is_null($value) || ($value=='') || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
 			$this->disable();
 		}
 		else{
@@ -89,7 +88,7 @@ class Form_Field_DateSelector extends Form_Field {
 	function disable(){
 		if(!$this->required){
 			$this->enabled = false;
-			$this->value = '0000-00-00';
+			$this->value = null;
 		}
 	}
 	
@@ -145,10 +144,9 @@ class Form_Field_DateSelector extends Form_Field {
         	$this->c_month = $_POST[$this->name.'_month'];
         if(isset($_POST[$this->name.'_day']))
         	$this->c_day = $_POST[$this->name.'_day'];
-    	
-    	if(isset($_POST[$this->name.'_enabled']))
+    	if(isset($_POST[$this->name.'_enabled'])){
 	        $this->enable();
-    	else 
+    	}else 
     		$this->disable();
     }
     
@@ -180,9 +178,10 @@ class Form_Field_DateSelector extends Form_Field {
 					'onclick'=>'var d=document, day=d.getElementById(\''.$this->name.'_day\'), month=d.getElementById(\''.$this->name.'_month\'), year=d.getElementById(\''.$this->name.'_year\'); if(!this.checked){if(day)day.disabled=true;if(month)month.disabled=true;if(year)year.disabled=true;}else{if(day)day.disabled=false;if(month)month.disabled=false;if(year)year.disabled=false;}',
 					'onchange'=>$onChange
 					);
-					
-			if($this->enabled)
-				$attrs['checked'] = 'checked'; 
+			
+			if($this->enabled){
+				$attrs['checked'] = 'checked';
+			} 
     		
     		$output.=$this->getTag('input', $attrs)  . "&nbsp;&nbsp;";
     	}

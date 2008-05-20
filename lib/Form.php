@@ -374,7 +374,7 @@ class Form extends AbstractView {
 
         // That means - we will submit our form through Ajax
         if(!isset($this->onsubmit)){
-            $this->onSubmit()->submitForm($this);
+            //$this->onSubmit()->submitForm($this);
         }
         if($this->onsubmit){
             $this->template->trySet('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());

@@ -18,7 +18,7 @@ class QuickSearch extends Filter {
         $this->last_field->onKeyPress()->ajaxFunc($this->setGoFunc());
         $this->addButton('Clear','Clear')->submitForm($this);
 
-        $this->onSubmit()->submitForm($this);
+        //$this->onSubmit()->submitForm($this);
     }
     function setGoFunc(){
     	return "btn=document.getElementById('".$this->name.'_Clear'."'); btn.value='Go'; btn.name='".

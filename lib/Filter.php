@@ -13,7 +13,7 @@ class Filter extends Form {
     function memorizeAll(){
         //by Camper: memorize() method doesn't memorize anything if value is null
         foreach(array_keys($this->elements) as $x){
-        	if($this->isClicked('Clear'))$this->forget($x);
+        	if($this->isClicked('Clear')||is_null($this->get($x)))$this->forget($x);
             else $this->memorize($x,$this->get($x));
         }
     }
