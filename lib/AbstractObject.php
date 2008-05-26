@@ -40,6 +40,8 @@ abstract class AbstractObject {
          * function. It will initialize class, create object and make it a
          * child of this object. Use is really simple:
          */
+        /* pre-add hook returns either empty object, or null */
+        if(!is_null($hook_object=$this->hook('pre-add',array($this,$class))))return $hook_object;
         if(is_object($class)){
             // Object specified, just add the object, do not create anything
             if(!( $class instanceof AbstractObject)){
@@ -91,6 +93,8 @@ abstract class AbstractObject {
 
         $element->init();
         $GLOBALS["lh"][$element->short_name]++;
+        /* this hook is called after object is added, we are not interested in its results */
+        $this->hook('post-add',array($this,$element));
         return $element;
     }
 
