@@ -208,8 +208,9 @@ fieldset fieldset legend {color:#333; font-size:100%; font-weight:bold; line-hei
 #table {width: 100%;}
 table .gridmenu{display:none}/**/
 table .header td{background:#ccc; color:#333; font-weight:bold; padding:5px;}
-table .odd td{color:#333; padding:2px 5px;	background-color: #f9f9f9; border-bottom:solid 1px #666}
-table .even td{background:#f0f0f0; color:#333; padding:2px 5px; border-bottom:solid 1px #666}
+table .odd td{color:#333; padding:2px 5px;	background-color: #f9f9f9; border-bottom:solid 1px #666; border-left:solid 1px #DDDDDD; border-right:solid 1px #DDDDDD}
+table .even td{background:#f0f0f0; color:#333; padding:2px 5px; border-bottom:solid 1px #666; border-left:solid 1px #DDDDDD; border-right:solid 1px #DDDDDD}
+table .totals_ td{background:#FFFFFF; color:#333; padding:2px 5px; border-bottom:solid 1px #666; border-left:solid 1px #DDDDDD; border-right:solid 1px #DDDDDD; font-weight:bold;}
 
 
 .msgbox { border-style: none solid solid;
