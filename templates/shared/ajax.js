@@ -477,3 +477,93 @@ function submitForm(form,spinner){
     };
     return aasf(form,null,callback);
 }
+
+// Floating frames fix for IE6 <
+function hideSelects(hide, cont_element) {
+    if (!document.all) {
+        return;
+    }
+
+    var selects = cont_element ? document.getElementById(cont_element).getElementsByTagName('select') : document.getElementsByTagName('select');
+    
+    for (var i = 0; i < selects.length; i++) {
+        selects.item(i).style.display = (hide ? 'none' : 'inline');
+    }
+}
+
+// Function for checking if IE6 fix is needed <
+function IE6FixNeeded() {
+    return (navigator.appName == 'Microsoft Internet Explorer') && (navigator.appVersion.indexOf('MSIE 6.') > -1);
+}
+
+// Called on hiding and showing floating frames <
+function setFloatingFrame(name, show) {
+    
+    // Perform operation only if browser is IE 6 <
+    if (IE6FixNeeded()) {
+        if (show) {   
+            
+            // Setup body overflow property to hidden, in order to display floating frame in center of the page
+            // without sidebars <
+            document.body.style.overflow = 'hidden';
+            
+            // Since IE6 also can't hide elements with position:absolute even with overflow = "hidden"
+            // if you are having some elements that are using position:absolute. add code here for changin
+            // position:absolute to position:relative or something else. This will be only when floating frame will be opened 
+            
+            // Hide all selects when floatign frame is active except the ones that are in floating
+            // frames since they appear above the floating frame and we dont want that <
+            hideSelects(true);
+            hideSelects(false, name + '_fr');
+            
+            // Setup the positioning for the floating frame <
+            document.getElementById(name + '_bg').style.position = 'absolute';
+            document.getElementById(name + '_fr').style.position = 'absolute';
+            
+            // Setup floatign frame sizes to current client size <
+            document.getElementById(name + '_bg').style.width = document.body.clientWidth + 'px';
+            document.getElementById(name + '_bg').style.height = document.body.clientHeight + 'px';
+            document.getElementById(name + '_fr').style.width = document.body.clientWidth + 'px';
+            document.getElementById(name + '_fr').style.height = document.body.clientHeight + 'px'; 
+            
+            // Save the current active floating frame name for furture use by resizing and etc <
+            active_floating_frame = name;           
+            
+        } else {
+            
+            // Restore body overflow and selects <
+            document.body.style.overflow = '';
+            
+            // Add code for putting back elements with postion:absolute to their original position .
+            // Look upper comments for more info 
+            
+            hideSelects(false);
+            
+            // Unset the positioning for the floating frame <
+            document.getElementById(name + '_bg').style.position = '';
+            document.getElementById(name + '_fr').style.position = '';            
+            
+            // Unset floatin frame sizes <
+            document.getElementById(name + '_bg').style.width = '';
+            document.getElementById(name + '_bg').style.height = '';    
+            document.getElementById(name + '_fr').style.width = '';
+            document.getElementById(name + '_fr').style.height = ''; 
+            
+            // Clear active floating frame name <
+            active_floating_frame = undefined;                 
+        }
+    }
+}
+
+// Holds current opened floatign frame if broiwser is IE6 and is opened <
+var active_floating_frame;
+
+// Called when resizing the widnow in order to resize the floating frame <
+function resizeFloatingFrames() {
+    if (active_floating_frame != undefined) {
+        setFloatingFrame(active_floating_frame, 1);    
+    }
+}
+
+// Setup window resizez for floating frames fix for IE6 <
+window.onresize = resizeFloatingFrames;

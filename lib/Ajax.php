@@ -215,6 +215,7 @@ class Ajax extends AbstractModel {
         return $this;
     }
     function setFrameVisibility($frame,$visibility=true){
+        $this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
         $this->setVisibility($frame->name."_bg",$visibility);
         $this->setVisibility($frame->name."_fr",$visibility);
         return $this;
