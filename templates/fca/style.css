@@ -7,11 +7,11 @@ a:hover,a:visited:hover, a:link:hover {color:#900; font-size:12px;	text-decorati
 a:link, a:visited {color:#900; text-decoration:none; font-weight:bold; font-size:12px;}
   
   
-p {margin:0; padding:10px 0;}
-h2 {font-size:140%; color:#036; margin:0; padding:0; background:none;}
-h3 {color:#036; margin:0; padding:0; font-size:120%;	font-weight:bold;}
-h4 {font-size:110%; color:#c33;}
-h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px}
+p {margin:0; padding:10px 0; text-align:left;}
+h2 {font-size:140%; color:#036; margin:0; padding:0; background:none; text-align:left;}
+h3 {color:#036; margin:0; padding:0; font-size:120%;	font-weight:bold; text-align:left; }
+h4 {font-size:110%; color:#c33; text-align:left;}
+h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px text-align:left;}
 
 #innerFrame {margin:0; border:none; width:100%; padding:0; background:url(leftbg.gif) repeat-y;}
 #container {width:100%; margin:0px; background-color:#fff; color:#333;}
@@ -32,8 +32,8 @@ h5 {font-size:90%; color:#036;border-bottom: 5px solid #069;padding-left: 5px}
 #content p {background:none;}
 #footer {clear:both; height:51px; margin:0; padding:0px; color:#333; background:#f7f7f7 url(footerbg.gif) repeat-x;}
 #copy {height:50px; padding:10px; margin:0; }
-#copy span {display:block; text-align:center; font-size:100%; font-weight:bold;}
-#copy span.engine {display:block; text-align:center; font-size:80%;}
+#copy span {display:block; font-size:100%; font-weight:bold;}
+#copy span.engine {display:block; font-size:80%;}
 /******************
 *Forms*
 *******************/
