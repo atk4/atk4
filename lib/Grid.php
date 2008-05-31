@@ -373,7 +373,8 @@ class Grid extends CompleteLister {
 			$this->dq->where($idfield,$id);
 			//we should switch off the limit or we won't get any value
 			$this->dq->limit(1);
-			$row_data=$this->api->db->getHash($this->dq->select());
+			#zak: This fix is if grid is not using the $this->api->db database but some else it hsould be depending only on $this->dq
+			$row_data=$this->dq->do_getHash(); //$this->api->db->getHash($this->dq->select());
 		}
 		// if static source set
 		elseif(isset($this->data)){
