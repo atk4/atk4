@@ -41,7 +41,8 @@ abstract class AbstractObject {
          * child of this object. Use is really simple:
          */
         /* pre-add hook returns either empty object, or null */
-        if(!is_null($hook_object=$this->hook('pre-add',array($this,$class))))return $hook_object;
+        //if($this->api->logger)$this->api->logger->logVar("$this->name adds $class, pre-add");
+        if(!is_null($hook_object=$this->hook('pre-add',array($this,$class,$short_name))))return $hook_object;
         if(is_object($class)){
             // Object specified, just add the object, do not create anything
             if(!( $class instanceof AbstractObject)){
@@ -91,10 +92,11 @@ abstract class AbstractObject {
             $element->initializeTemplate($template_spot,$template_branch);
         }
 
+        /* this hook is called after object is added, we are not interested in its results */
+        //if($this->api->logger)$this->api->logger->logVar("$this->name added $element->name, post-add");
+        $this->hook('post-add',array($this,$element));
         $element->init();
         $GLOBALS["lh"][$element->short_name]++;
-        /* this hook is called after object is added, we are not interested in its results */
-        $this->hook('post-add',array($this,$element));
         return $element;
     }
 

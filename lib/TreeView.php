@@ -215,12 +215,6 @@ class TreeView extends Lister{
 		if($this->display_buttons){
 			if(!$this->isNodeHasChildren($id))return $button;
 	    	$onclick=
-				/*"aasn('p_".$id."','".
-				$this->api->getDestinationURL(null, array(
-					'ec'=>$id,
-					'cut_object'=>$this->name, 
-					'ec_action'=>$expand?'expand':'collapse'
-				))."'); " .*/
 				"treenode_flip($expand, $id, '".$this->api->getDestinationURL(null, array(
 					'ec'=>$id,
 					'cut_object'=>$this->name, 
