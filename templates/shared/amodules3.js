@@ -283,6 +283,27 @@ function inline_process_key(e, name, id, activate_next){
         return true;
 }
 
+function htmlspecialchars(string, quote_style) {
+    
+    string = string.toString();
+    
+    // Always encode
+    string = string.replace('/&/g', '&amp;');
+    string = string.replace('/</g', '&lt;');
+    string = string.replace('/>/g', '&gt;');
+    
+    // Encode depending on quote_style
+    if (quote_style == 'ENT_QUOTES') {
+        string = string.replace('/"/g', '&quot;');
+        string = string.replace('/\'/g', '&#039;');
+    } else if (quote_style != 'ENT_NOQUOTES') {
+        // All other cases (ENT_COMPAT, default, but not ENT_NOQUOTES)
+        string = string.replace('/"/g', '&quot;');
+    }
+    
+    return string;
+}
+
 function inline_show(name,active_field,row_id,submit_url,activate_next,show_submit,on_submit_fun,on_cancel_fun){
         // changes row content to a forms with input elements
         // submit_url is an URL that should store changes from inline to DB
@@ -441,7 +462,7 @@ function inline_hide(name, row_id, action, callback){
                 url=url+url_params;
         }
         if(reload_row){
-                reloadGridRow(url,name,row_id,callback,true);
+                reloadGridRow(url,name,row_id,callback, true, inline_active[name][row_id]['active_field'] + '_' + row_id);
                 //aasn(name+'_'+row_id, url);
                 if(inline_active[name]['show_submit']){
                         //hiding buttons
@@ -485,7 +506,7 @@ function treenode_refresh(id,url){
  * Reloads a row of a Grid
  */
  
-function reloadGridRow(url,name,row_id,callback,settitle){
+function reloadGridRow(url,name,row_id,callback,settitle, reload_col){
         //row contents could not be replaced with aasn
         set_row_c = function(response_text, response_xml){
                 //exploding string to an array of column values
@@ -496,6 +517,8 @@ function reloadGridRow(url,name,row_id,callback,settitle){
                 i=0;
                 while(col){
                         if(col.innerHTML!=undefined){
+                            
+                            if ((reload_col == undefined) || (col.id == reload_col)){
                                 value=cols[i].split('<t>');
                                 col.innerHTML=value[0];
                                 if(settitle==true)col.title=value[1];
@@ -515,7 +538,8 @@ function reloadGridRow(url,name,row_id,callback,settitle){
                                                 }
                                         }
                                 }
-                                i++;
+                            }
+                            i++;
                         }
                         col=col.nextSibling;
                 }
