@@ -79,7 +79,7 @@ class Grid extends CompleteLister {
         return $this;
     }
     function addButton($label,$name=null,$color='black'){
-        return $this->add('Button',count($this->elements),'grid_buttons')
+        return $this->add('Button','gbtn'.count($this->elements),'grid_buttons')
             ->setLabel($label)->setColor($color)->onClick();
     }
     function addQuickSearch($fields,$class='QuickSearch'){
