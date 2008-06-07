@@ -34,6 +34,17 @@ abstract class AbstractObject {
     function __toString(){
         return "Object ".get_class($this)."(".$this->name.")";
     }
+    /*function __get($var){
+	$this->api->logger->logVar('hit');
+	if($this instanceof DummyObject){
+		return $this;
+	}else{
+		// usually this causes error, but I guess we should get rid of it
+		$this->api->logger->logLine("Property $var is not defined",null,"error");
+		// ...and make further call to be secure
+		return new DummyObject();
+	}
+    }*/
     function add($class,$short_name=null,$template_spot=null,$template_branch=null,$debug=null){
         /**
          * When you want to add element to your container, always use this
@@ -42,7 +53,12 @@ abstract class AbstractObject {
          */
         /* pre-add hook returns either empty object, or null */
         //if($this->api->logger)$this->api->logger->logVar("$this->name adds $class, pre-add");
-        if(!is_null($hook_object=$this->hook('pre-add',array($this,$class,$short_name))))return $hook_object;
+        if(!is_null($hook_object=$this->hook('pre-add',array($this,$class,$short_name)))){
+		// some properties are required for the dummy
+		$hook_object->owner=$this;
+		$hook_object->api=$this->api;
+		return $hook_object;
+	}
         if(is_object($class)){
             // Object specified, just add the object, do not create anything
             if(!( $class instanceof AbstractObject)){
