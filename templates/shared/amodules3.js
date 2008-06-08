@@ -184,7 +184,7 @@ function denyEnter(e){
         return !isKeyPressed(e, kReturn);
 }
 
-function modifierPressed(event){
+function modifierPressed(e){
  var ctrlPressed=0;
  var altPressed=0;
  var shiftPressed=0;
