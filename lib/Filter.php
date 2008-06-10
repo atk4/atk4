@@ -19,9 +19,9 @@ class Filter extends Form {
     }
     function submitted(){
         if(parent::submitted()){
-            if($this->isClicked('Clear')){
-                $this->clearData();
-            }
+		if($this->isClicked('Clear')){
+			$this->clearData();
+		}
             $this->memorizeAll();
 			return true;
         }
