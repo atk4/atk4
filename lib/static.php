@@ -158,4 +158,28 @@ function htmlize_exception($e,$msg){
 	function is_decimal_number($n) {
 		return (string)(float)$n === (string)$n;
 	}
+};if(!function_exists('char_sequence')){
+	function char_sequence($num,$upcase=false){
+		// converts number into a char(s) if a char sequence
+		// i.e. 1=>a, 2=>b, 3=>c, ..., 26=>z, 27=>aa, 28=>ab
+		// and so on until zz
+		$c=26;
+		if($num==0)return '';
+		$zero=$upcase?64:96;
+		$f=floor($num/$c);
+		$s=$num%$c;
+		if($f===0){
+			$f='';
+		}else{
+			if($s==0)$f--;
+			$f=char_sequence($f,$upcase);
+		}
+		if($s===0){
+			$s=chr($zero+26);
+		}else{
+			$s=chr($zero+$s);
+		}
+		$result=$f.$s;
+		return $result;
+	}
 }
