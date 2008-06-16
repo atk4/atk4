@@ -95,7 +95,8 @@ class Ajax extends AbstractModel {
 		return $this->loadRegionURL($region_id,$url);
     }
     function reload($element,$args=array(),$page=null){
-        if(!isset($element->reloadable) && is_object($element)){
+	if(is_null($element)||$element instanceof DummyObject)return $this;
+	if(!isset($element->reloadable) && is_object($element)){
             $element->add('Reloadable');
         }
         if(is_object($element)){
