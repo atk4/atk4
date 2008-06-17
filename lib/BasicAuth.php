@@ -105,6 +105,13 @@ class BasicAuth extends AbstractController {
         // Check if user's session contains autentication information
         if(!$this->isLoggedIn()){
             $this->debug('User is not authenticated yet');
+            
+            // Redirect to index page if its ajax action <
+            if (isset($_REQUEST['ajax_submit']) || isset($_REQUEST['cut_object']) || isset($_REQUEST['expanded'])) {
+                echo "window.location = 'Index'; <!--endjs-->";
+                exit;
+            }
+            
             // No information is present. Let's see if cookie is set
             if(isset($_COOKIE[$this->name."_username"]) && isset($_COOKIE[$this->name."_password"])){
 
