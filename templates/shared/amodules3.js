@@ -517,7 +517,6 @@ function reloadGridRow(url,name,row_id,callback,settitle, reload_col){
                 i=0;
                 while(col){
                         if(col.innerHTML!=undefined){
-                            
                             if ((reload_col == undefined) || (col.id == reload_col)){
                                 value=cols[i].split('<t>');
                                 col.innerHTML=value[0];
@@ -528,13 +527,17 @@ function reloadGridRow(url,name,row_id,callback,settitle, reload_col){
                                         for(j=0;j<styles.length;j++){
                                                 // style cannot be assigned directly, 
                                                 // so we analyze and set every property
-                                                style=styles[j].split(':');
+                                                style=styles[j].split('::');
                                                 switch(style[0]){
                                                         case 'color':
                                                                 col.style.color=style[1];
                                                                 break;
                                                         case 'cursor':
                                                                 col.style.cursor=style[1];
+																break;
+														case 'title':
+																col.title=style[1];
+																break;
                                                 }
                                         }
                                 }

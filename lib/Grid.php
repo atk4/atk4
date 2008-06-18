@@ -416,7 +416,7 @@ class Grid extends CompleteLister {
 		 * Returns the structured string with row styles. Used along with getRowContent()
 		 * in row redrawing
 		 */
-		$style=$this->tdparam[$this->getCurrentIndex()][$field]['style'];
+		$style=$this->tdparam[$this->getCurrentIndex()][$field];
 		$tdparam=null;
 		if(is_array($style)){
 			// now we should convert style elements' names to JS compatible
@@ -424,9 +424,15 @@ class Grid extends CompleteLister {
 			foreach($style as $key=>$value){
 				switch($key){
 					//case 'background-color':$tdparam[]="$key:$value";break;
+					case 'style':
+						// style is a nested array
+						foreach($value as $k=>$v){
+							$tdparam[]="$k::$v";
+						}
+						break;
 					
 					default:
-						$tdparam[]="$key:$value";
+						$tdparam[]="$key::$value";
 				}
 			}
 		}
