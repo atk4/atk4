@@ -166,6 +166,10 @@ class Form_Field_DateSelector extends Form_Field {
     
     function getInput($attr=array()){
     	$output=$this->getTag('span', array('style'=>'white-space: nowrap;'));
+    	
+    	// Add reloading in onchange <
+    	$this->onChange()->ajaxFunc("refreshDateSelector('{$this->name}')");
+    	
     	$onChange=($this->onchange)?$this->onchange->getString():'';
     	
     	if($this->required)
