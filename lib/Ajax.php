@@ -206,6 +206,17 @@ class Ajax extends AbstractModel {
         $this->spinner=null;
 		return $this;
 	}
+	/**
+	 * Uploads a file using IFrame. See AjaxFileUploader class description for details
+	 */
+	function uploadFile($form,$field_name){
+		$this->api->add('AjaxFileUploader','uploader');
+		$this->ajaxFunc("submitUpload('$form->name','".
+			$this->api->getDestinationURL(null,array('file_upload'=>$field_name)).
+			"','$this->spinner')");
+		$this->spinner=null;
+		return $this;
+	}
     function resetForm($form){
 		$this->ajaxFunc("resetForm('$form->name')");
 		return $this;
