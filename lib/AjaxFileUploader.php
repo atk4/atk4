@@ -75,8 +75,8 @@ class AjaxFileUploader extends AbstractController{
 		return $this;
 	}
 	private function uploadFile($field_name){
-		if(isset($_FILES[$field_name])&&$_FILES['field_name']!=''){
-			$this->setFilePath($this->api->getConfig('ajax_uploads_dir','/uploads').DIRECTORY_SEPARATOR.
+		if(isset($_FILES[$field_name])&&$_FILES[$field_name]['name']!=''){
+			$this->setFilePath($this->api->getConfig('ajax_uploads_dir','uploads').DIRECTORY_SEPARATOR.
 				$_FILES[$field_name]['name']);
 			if(!move_uploaded_file($_FILES[$field_name]['tmp_name'],$this->getFilePath())){
 				throw new BaseException("Error uploading file");
