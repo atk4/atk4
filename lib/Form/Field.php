@@ -357,6 +357,12 @@ class Form_Field_Text extends Form_Field {
         parent::init();
     }
     function getInput($attr=array()){
+        
+        // Disable the deny edit here <
+        if (is_null($this->onkeypress)) {
+            $this->onKeyPress();
+        }
+        
         return 
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
             htmlspecialchars(stripslashes($this->value)).
