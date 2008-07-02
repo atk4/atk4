@@ -78,6 +78,17 @@ class AjaxFileUploader extends AbstractController{
 		if(isset($_FILES[$field_name])&&$_FILES[$field_name]['name']!=''){
 			$this->setFilePath($this->api->getConfig('ajax_uploads_dir','uploads').DIRECTORY_SEPARATOR.
 				$_FILES[$field_name]['name']);
+			// checking upload errors
+			$this->api->logger->logVar($_FILES[$field_name]['error']);
+			if($_FILES[$field_name]['error']!=UPLOAD_ERR_OK){
+				switch($_FILES[$field_name]['error']){
+					case UPLOAD_ERR_INI_SIZE:
+					case UPLOAD_ERR_FORM_SIZE:
+						throw new BaseException("File size exceeds the allowed limit");
+					case UPLOAD_ERR_PARTIAL:
+						throw new BaseException("File uploaded partially");
+				}
+			}
 			if(!move_uploaded_file($_FILES[$field_name]['tmp_name'],$this->getFilePath())){
 				throw new BaseException("Error uploading file");
 			}

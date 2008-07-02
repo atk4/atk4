@@ -304,6 +304,12 @@ class Form_Field_File extends Form_Field {
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
 	}
 }
+class Form_Field_FileSize extends Form_Field_Hidden{
+	function init(){
+		$this->name=$this->short_name='MAX_FILE_SIZE';
+		parent::init();
+	}
+}
 class Form_Field_Time extends Form_Field {
 	function getInput($attr=array()){
         return parent::getInput(array_merge(array('type'=>'text', 
