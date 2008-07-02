@@ -580,15 +580,30 @@ function createIFrame() {
 }
 
 function submitUpload(form, url, spinner) {
-  if (!document.createElement) return; // not supported
-  if (typeof(form)=="string") form=document.getElementById(form);
-  var frame=createIFrame();
-  frame.onSendComplete = function() { form.setAttribute('action',form_action); submitForm(form.name,spinner); };
-  form.setAttribute('target', frame.id);
-  // saving action, it will be returned on form submit
-  form_action=form.getAttribute('action');
-  form.setAttribute('action', url);
-  form.submit();
+	if (!document.createElement) return; // not supported
+	if (typeof(form)=="string") form=document.getElementById(form);
+	var frame=createIFrame();
+	frame.onSendComplete = function() {
+		// checking if there is error
+		var doc=frame.contentDocument;
+		if (!doc && frame.contentWindow) doc=frame.contentWindow.document;
+		if (!doc) doc=window.frames[frame.id].document;
+		if (!doc) return null;
+		if (doc.location=="about:blank") return null;
+		if (doc.XMLDocument) doc=doc.XMLDocument;
+		// doc's first element contains either filesize or error message
+		if(typeof(doc.documentElement.firstChild.nodeValue)=="string"){
+			alert(doc.documentElement.firstChild.nodeValue);
+		}else{
+			form.setAttribute('action',form_action);
+			submitForm(form.name,spinner);
+		}
+	};
+	form.setAttribute('target', frame.id);
+	// saving action, it will be returned on form submit
+	form_action=form.getAttribute('action');
+	form.setAttribute('action', url);
+	form.submit();
 }
 
 function sendComplete(id) {
