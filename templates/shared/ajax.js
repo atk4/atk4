@@ -592,7 +592,8 @@ function submitUpload(form, url, spinner) {
 		if (doc.location=="about:blank") return null;
 		if (doc.XMLDocument) doc=doc.XMLDocument;
 		// doc's first element contains either filesize or error message
-		if(typeof(doc.documentElement.firstChild.nodeValue)=="string"){
+		res=doc.documentElement.firstChild.nodeValue;
+		if(res-0!=res){
 			alert(doc.documentElement.firstChild.nodeValue);
 		}else{
 			form.setAttribute('action',form_action);
