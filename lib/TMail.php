@@ -196,13 +196,11 @@ class TMail extends AbstractController{
                                                 "Content-Transfer-Encoding: base64";
                                         $att['content']=rtrim(chunk_split($att['content']));
                                         break;
-                                default:
-                                        $result.="name=$name\n" .
-                                                        "Content-Transfer-Encoding: base64";
-                                        $att['content']=rtrim(chunk_split($att['content']));
                         }
                         if($att['attachment']){
-                        	$result.="\nContent-transfer-encoding: base64\nContent-Disposition: attachment;";
+                                $att['content']=rtrim(chunk_split($att['content']));
+                                $result.="name=$name\n" .
+                        		"Content-transfer-encoding: base64\nContent-Disposition: attachment;";
                         }
                         $result.="\n\n";
                         $result.=$att['content'];

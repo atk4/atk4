@@ -182,4 +182,45 @@ function htmlize_exception($e,$msg){
 		$result=$f.$s;
 		return $result;
 	}
+};if(!function_exists('detect_charset')){
+	function detect_charset($str){
+		$lowercase=3;
+		$uppercase=1;
+		$charsets = Array(
+                         'k' => 0,
+                         'w' => 0,
+                         'd' => 0,
+                         'i' => 0,
+                         'm' => 0
+                         );
+		for ( $i = 0, $length = strlen($str); $i < $length; $i++ ) {
+			$char = ord($str[$i]);
+			//non-russian characters
+			if ($char < 128 || $char > 256) continue;
+
+			//CP866
+			if (($char > 159 && $char < 176) || ($char > 223 && $char < 242))
+				$charsets['d']+=$lowercase;
+			if (($char > 127 && $char < 160)) $charsets['d']+=$uppercase;
+
+			//KOI8-R
+			if (($char > 191 && $char < 223)) $charsets['k']+=$lowercase;
+			if (($char > 222 && $char < 256)) $charsets['k']+=$uppercase;
+
+			//WIN-1251
+			if ($char > 223 && $char < 256) $charsets['w']+=$lowercase;
+			if ($char > 191 && $char < 224) $charsets['w']+=$uppercase;
+			
+			//MAC
+			if ($char > 221 && $char < 255) $charsets['m']+=$lowercase;
+			if ($char > 127 && $char < 160) $charsets['m']+=$uppercase;
+			
+			//ISO-8859-5
+			if ($char > 207 && $char < 240) $charsets['i']+=$lowercase;
+			if ($char > 175 && $char < 208) $charsets['i']+=$uppercase;
+	
+		}
+		arsort($charsets);
+		return key($charsets);
+	}
 }
