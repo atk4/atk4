@@ -184,14 +184,15 @@ class TMail extends AbstractController{
                         // $name is a file name, $att is a hash with type and content
                         $result.="\n\n--".$this->getBoundary()."\n".
                                 "Content-Type: ".$att['type']."; ";
+                        list($type,)=split(';',$att['type']);
                         // depending on the type adding a header
-                        switch($att['type']){
+                        switch($type){
                                 case 'text/plain':
-                                        $result.="charset=UTF-8";
+                                        //$result.="charset=UTF-8";
                                         break;
 
                                 case 'text/html':
-                                        $result.="charset=UTF-8\n".
+                                        $result.=//"charset=UTF-8\n".
                                                 "Content-Transfer-Encoding: base64";
                                         $att['content']=rtrim(chunk_split($att['content']));
                                         break;
@@ -199,6 +200,9 @@ class TMail extends AbstractController{
                                         $result.="name=$name\n" .
                                                         "Content-Transfer-Encoding: base64";
                                         $att['content']=rtrim(chunk_split($att['content']));
+                        }
+                        if($att['attachment']){
+                        	$result.="\nContent-transfer-encoding: base64\nContent-Disposition: attachment;";
                         }
                         $result.="\n\n";
                         $result.=$att['content'];
@@ -302,7 +306,8 @@ class TMail extends AbstractController{
                 // encoding content
                 $this->mime['"'.$name.'"']=array(
                         'type'=>$type,
-                        'content'=>base64_encode($content)
+                        'content'=>base64_encode($content),
+                        'attachment'=>true
                 );
                 return $this;
         }
@@ -312,7 +317,7 @@ class TMail extends AbstractController{
          */
         function attachHTML($html){
                 $this->mime['html']=array(
-                        'type'=>'text/html',
+                        'type'=>'text/html; charset=UTF-8',
                         'content'=>$html,
                 );
                 // sign could be added to HTML after, converting performed in getBody()
@@ -320,7 +325,7 @@ class TMail extends AbstractController{
         }
         function attachText($text){
                 $this->mime['text']=array(
-                        'type'=>'text/plain',
+                        'type'=>'text/plain; charset=UTF-8',
                         'content'=>$text,
                 );
                 return $this;
