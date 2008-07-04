@@ -168,7 +168,8 @@ class Form_Field_DateSelector extends Form_Field {
     	$output=$this->getTag('span', array('style'=>'white-space: nowrap;'));
     	
     	// Add reloading in onchange <
-    	$this->onChange()->ajaxFunc("refreshDateSelector('{$this->name}')");
+    	// zak, did you forget that onChange() event might ALREADY be defined?
+    	//$this->onChange()->ajaxFunc("refreshDateSelector('{$this->name}')");
     	
     	$onChange=($this->onchange)?$this->onchange->getString():'';
     	
@@ -179,8 +180,8 @@ class Form_Field_DateSelector extends Form_Field {
     		$attrs =array('type'=>'checkbox', 
 					'name'=>$this->name.'_enabled', 
 					'id'=>$this->name.'_enabled', 
-					'onclick'=>'var d=document, day=d.getElementById(\''.$this->name.'_day\'), month=d.getElementById(\''.$this->name.'_month\'), year=d.getElementById(\''.$this->name.'_year\'); if(!this.checked){if(day)day.disabled=true;if(month)month.disabled=true;if(year)year.disabled=true;}else{if(day)day.disabled=false;if(month)month.disabled=false;if(year)year.disabled=false;}',
-					'onchange'=>$onChange
+					'onclick'=>'switchDateSelector(this,\''.$this->name.'\');'.$onChange,
+					'onchange'=>$onChange."refreshDateSelector('{$this->name}')"
 					);
 			
 			if($this->enabled){

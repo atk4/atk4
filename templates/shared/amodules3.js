@@ -642,3 +642,20 @@ function refreshDateSelector(name) {
         days_select.value = max_day;
     }
 }
+// enables or disables DateSelector on checkbox click
+function switchDateSelector(control,name){
+	var d=document;
+	var day=d.getElementById(name+'_day');
+	var month=d.getElementById(name+'_month');
+	var year=d.getElementById(name+'_year'); 
+	
+	if(!control.checked){
+		if(day)day.disabled=true;
+		if(month)month.disabled=true;
+		if(year)year.disabled=true;
+	}else{
+		if(day)day.disabled=false;
+		if(month)month.disabled=false;
+		if(year)year.disabled=false;
+	}
+}
