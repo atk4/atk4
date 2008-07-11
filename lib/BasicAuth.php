@@ -45,6 +45,8 @@ class BasicAuth extends AbstractController {
 
     protected $title="Authoriation is necessary";  // use setTitle() to change this text appearing on the top of the form
 
+    protected $allowed_pages=array('Logout');
+
     function init(){
         parent::init();
 
@@ -72,6 +74,20 @@ class BasicAuth extends AbstractController {
         $this->allowed_credintals[$username]=$password;
         return $this;
     }
+    function allowPage($page){
+    	/**
+    	 * Allows page access without login
+    	 */
+    	if(is_array($page)){
+    		foreach($page as $p)$this->allowPage($p);
+    		return $this;
+    	}
+    	$this->allowed_pages[]=$page;
+    	return $this;
+    }
+	function isPageAllowed($page){
+		return in_array($page,$this->allowed_pages);
+	}
     function usePasswordEncryption($method){
         $this->password_encryption=$method;
         return $this;
