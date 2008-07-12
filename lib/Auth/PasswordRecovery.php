@@ -164,8 +164,8 @@ class Auth_PasswordRecovery extends AbstractController{
 			->where('id',$user_id)
 			->do_getOne();
 		//combining a message
-		$this->getMailer()->body->trySet('username',$username);
-		$this->getMailer()->body->trySet('password',$password);
+		$this->getMailer()->setTag('username',$username);
+		$this->getMailer()->setTag('password',$password);
 		$this->getMailer()->send($address);
 	}
 	function getChangeLink($id,$address,$expire){
@@ -190,7 +190,7 @@ class Auth_PasswordRecovery extends AbstractController{
 			->where('id',$user_id)
 			->do_getOne();
 		//combining a message
-//		$this->getMailer()->body->set('link',$link);
+//		$this->getMailer()->setTag('link',$link);
 		$this->getMailer()->setTag('link',$link);
 		$this->getMailer()->setTag('username',$username);
 		$this->getMailer()->setTag('timeout',$this->api->getConfig('auth/pwd_recovery/timeout', 15));
