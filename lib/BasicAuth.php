@@ -66,6 +66,9 @@ class BasicAuth extends AbstractController {
         if(!isset($this->info[$property]))return $default;
         return $this->info[$property];
     }
+    function getAll(){
+    	return $this->info;
+    }
     function allow($username,$password){
         /*
          * This function will add specified credintals to allowed user list. If they are entered
@@ -98,8 +101,6 @@ class BasicAuth extends AbstractController {
     function encryptPassword($password){
         if($this->password_encryption)$this->debug("Encrypting password: '$password'");
         switch($this->password_encryption){
-            case false:;
-            case true:;
             case null: return $password;
             case'sha1':return sha1($password);
             case'md5':return md5($password);
@@ -210,7 +211,6 @@ class BasicAuth extends AbstractController {
             unset($original_request['submit']);
             $this->api->redirect($p,$original_request);
         }
-
 
         // Rederect to index page
         $this->api->redirect(null);
