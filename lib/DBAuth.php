@@ -36,7 +36,6 @@ class DBAuth extends BasicAuth{
     public $email_field;
     public $pass_field;
     public $name_field;
-    protected $secure = true;
     protected $signup = null;
     protected $pwd_recovery = null;
     protected $signup_processor = null;
@@ -69,7 +68,7 @@ class DBAuth extends BasicAuth{
 	
 	
 	function setEncrypted($secure=true){
-		$this->secure=$secure;
+		if($secure)$this->usePasswordEncryption('sha1');
 		return $this;
 	}
 	function setPassword($password){
@@ -92,7 +91,7 @@ class DBAuth extends BasicAuth{
     	 */
     	unset($this->dq->args['where']);
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
-    	$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||sha1($data[$this->pass_field])==$password));
+    	$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||$this->encryptPassword($data[$this->pass_field])==$password));
     	if($result){
     		$this->addInfo($data);
         	$this->memorize('info',$this->info);
@@ -100,7 +99,7 @@ class DBAuth extends BasicAuth{
     	return $result;
     }
 	function encrypt($str){
-		return $this->secure?sha1($str):$str;
+		return $this->encryptPassword($str);
 	}
     function loggedIn(){
     	parent::loggedIn($this->get($this->name_field));
