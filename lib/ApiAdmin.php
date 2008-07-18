@@ -126,7 +126,6 @@ class ApiAdmin extends ApiWeb {
     function initDefaults(){
         if(!defined('DTP'))define('DTP','');
 
-        
         if($_GET['page']=="")$_GET['page']='Index';
         if(strpos($_GET['page'],';')!==false){
             list($namespace,$_GET['page'])=explode(';',$_GET['page']);
