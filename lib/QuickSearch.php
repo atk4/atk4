@@ -21,8 +21,8 @@ class QuickSearch extends Filter {
         //$this->onSubmit()->submitForm($this);
     }
     function setGoFunc(){
-    	return "btn=document.getElementById('".$this->name.'_Clear'."'); btn.value='Go'; btn.name='".
-    		$this->name."_go';";
+    	return "btn=document.getElementById('".$this->name.'_Clear'."'); if(btn){btn.value='Go'; btn.name='".
+    		$this->name."_go'; btn.id='".$this->name."_go';}";
     }
     function useFields($fields){
         $this->fields=$fields;
