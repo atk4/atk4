@@ -207,12 +207,15 @@ class BasicAuth extends AbstractController {
         // Redirect to the page which was originally requested
         if($original_request=$this->recall('original_request',false)){
             $p=$original_request['page'];
+	    if(!$p)$p=null;
             unset($original_request['page']);
             unset($original_request['submit']);
+	    $this->debug("to $p");
             $this->api->redirect($p,$original_request);
         }
 
         // Rederect to index page
+	$this->debug("to Index");
         $this->api->redirect(null);
     }
 	function logout(){

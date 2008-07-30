@@ -18,6 +18,15 @@ class Ajax extends AbstractModel {
     
     protected $timeout=null;
 
+	function init(){
+		parent::init();
+		// before proceed we need to check session
+		// only if we are on restricted page
+		if(isset($this->api->auth)&&!is_null($this->api->auth)){
+			if(!$this->api->auth->isPageAllowed($this->api->page))$this->checkSession();
+		}
+	}
+
     function execute(){
         $this->api->not_html=true;
         echo $this->ajax_output;
@@ -201,9 +210,10 @@ class Ajax extends AbstractModel {
     }
 	function submitForm($form){
 		// buttonClicked var used later to define the button that was clicked
-		$this->ajaxFunc("buttonClicked='".$this->owner->name.
-			"'; submitForm('$form->name','".$this->spinner."')");
-        $this->spinner=null;
+		$this
+			->ajaxFunc("buttonClicked='".$this->owner->name.
+				"'; submitForm('$form->name','".$this->spinner."')");
+		$this->spinner=null;
 		return $this;
 	}
 	/**
@@ -250,7 +260,8 @@ class Ajax extends AbstractModel {
         $this->ajaxFunc("spinner_on('$id'".(is_null($timeout)?'':",$timeout").")");
         return $this;
     }
-
-
-
+	function disableControl($control){
+		$this->ajaxFunc("document.getElementById('$control->name').disabled=true");
+		return $this;
+	}
 }

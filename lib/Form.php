@@ -26,7 +26,8 @@ class Form extends AbstractView {
                             //  should use $this->setStaticSource() to load values from hash
                             //  AAAAAAAAAA: this array is no more!
 
-    public $last_field = null;  // contains reference to last-added filed
+    public $last_field = null;  // contains reference to last-added field
+    public $last_button = null; // contains last added button
 
     public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
     protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
@@ -281,7 +282,7 @@ class Form extends AbstractView {
     function addButton($label,$name=null,$color=null){
 
         // Now add the regular button first
-        $field = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
+        $field = $this->last_button = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label);
             
         if (!is_null($color))   
