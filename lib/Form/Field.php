@@ -69,19 +69,34 @@ abstract class Form_Field extends AbstractView {
         $this->attr[$property]=$value;
     }
 	function onChange(){
-		return $this->onchange=$this->add('Ajax');
+		if(is_null($this->onchange)){
+			$this->onchange=$this->add('Ajax');
+		}
+		return $this->onchange;
 	}
 	function onKeyPress(){
-		return $this->onkeypress=$this->add('Ajax');
+		if(is_null($this->onkeypress)){
+			$this->onkeypress=$this->add('Ajax');
+		}
+		return $this->onkeypress;
 	}
 	function onFocus(){
-		return $this->onfocus=$this->add('Ajax');
+		if(is_null($this->onfocus)){
+			$this->onfocus=$this->add('Ajax');
+		}
+		return $this->onfocus;
 	}
 	function onBlur(){
-		return $this->onblur=$this->add('Ajax');
+		if(is_null($this->onblur)){
+			$this->onblur=$this->add('Ajax');
+		}
+		return $this->onblur;
 	}
 	function onClick(){
-		return $this->onclick=$this->add('Ajax');
+		if(is_null($this->onclick)){
+			$this->onclick=$this->add('Ajax');
+		}
+		return $this->onclick;
 	}
 
     function clearFieldValue(){
