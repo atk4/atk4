@@ -124,7 +124,9 @@ abstract class Form_Field extends AbstractView {
 				'id'=>$this->name,
 				'value'=>$this->value,
 				'onchange'=>(is_null($this->onchange)?'':$this->onchange->getString()),
-				'onKeyDown'=>(is_null($this->onkeypress)?'return denyEnter(event);':$this->onkeypress->getString()),
+				/* Since all browsers except Opera handle only button cancelling on even onKeyDown and Opera on KeyPress
+				   Determine whats the browser and put JS in proper event  */
+				(stripos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false ? 'onKeyPress' : 'onKeyDown') =>(is_null($this->onkeypress)?'return denyEnter(event);':$this->onkeypress->getString()),
 				'onfocus'=>(is_null($this->onfocus)?'':$this->onfocus->getString()),
 				'onblur'=>(is_null($this->onblur)?'':$this->onblur->getString()),
 				'onclick'=>(is_null($this->onclick)?'':$this->onclick->getString()),
