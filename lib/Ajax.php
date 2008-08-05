@@ -23,7 +23,7 @@ class Ajax extends AbstractModel {
 		// before proceed we need to check session
 		// only if we are on restricted page
 		if(isset($this->api->auth)&&!is_null($this->api->auth)){
-			if(!$this->api->auth->isPageAllowed($this->api->page))$this->checkSession();
+			if($this->api->auth instanceof BasicAuth && !$this->api->auth->isPageAllowed($this->api->page))$this->checkSession();
 		}
 	}
 
