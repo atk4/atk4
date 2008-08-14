@@ -81,7 +81,7 @@ class AjaxFileUploader extends AbstractController{
 				$this->setFilePath($this->api->getConfig('ajax_uploads_dir','uploads').DIRECTORY_SEPARATOR.
 					$_FILES[$field_name]['name']);
 				// checking upload errors
-				$this->api->logger->logVar($_FILES[$field_name]['error']);
+				//$this->api->logger->logVar($_FILES[$field_name]['error']);
 				if($_FILES[$field_name]['error']!=UPLOAD_ERR_OK){
 					switch($_FILES[$field_name]['error']){
 						case UPLOAD_ERR_INI_SIZE:
