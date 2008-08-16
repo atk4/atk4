@@ -211,6 +211,8 @@ class BasicAuth extends AbstractController {
             unset($original_request['page']);
             unset($original_request['submit']);
 	    $this->debug("to $p");
+	    // erasing stored URL
+	    $this->forget('original_request');
             $this->api->redirect($p,$original_request);
         }
 
@@ -269,7 +271,7 @@ class BasicAuth extends AbstractController {
 		return $p;
     }
     function memorizeOriginalURL(){
-        $this->memorize('original_request',$_GET);
+        if($this->recall('original_request',false)===false)$this->memorize('original_request',$_GET);
         return $this;
     }
     function processLogin(){
