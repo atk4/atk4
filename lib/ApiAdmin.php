@@ -184,10 +184,6 @@ class ApiAdmin extends ApiWeb {
         $this->add('InfoWindow',null,'InfoWindow');//,'InfoWindow');
     }
 
-    function page_Index($p){
-        $p->add('LoremIpsum',null,'Content');
-    }
-
     function addNamespace($nm,$name=null){
         include_once($nm.'/'.$nm.'.php');
         $this->add($nm,$name?$name:$nm);
