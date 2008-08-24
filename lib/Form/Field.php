@@ -141,8 +141,8 @@ abstract class Form_Field extends AbstractView {
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
-        $this->template->trySet('field_comment',$this->comment);             
-        $this->template->set('field_input',$this->field_prepend.$this->getInput().$this->field_append);   
+        $this->template->trySet('field_comment',$this->comment);
+        $this->template->set('field_input',$this->field_prepend.$this->getInput().$this->field_append);
         $this->template->trySet('field_error',
                              isset($this->owner->errors[$this->short_name])?
                              $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
@@ -216,7 +216,7 @@ abstract class Form_Field extends AbstractView {
          * getTag('a',array('href'=>'foo.html'),getTag('b','click here'));
          * --> <a href="foo.html"><b>click here</b></a>
          */
-         
+
         if(is_string($attr)){
             $value=$attr;
             $attr=null;
@@ -301,7 +301,7 @@ class Form_Field_Readonly extends Form_Field {
     	parent::init();
     	$this->setNoSave();
     }
-    
+
     function getInput($attr=array()){
         if (isset($this->value_list)){
             return $this->value_list[$this->value];
@@ -312,7 +312,7 @@ class Form_Field_Readonly extends Form_Field {
     function setValueList($list){
         $this->value_list = $list;
     }
-    
+
 }
 class Form_Field_File extends Form_Field {
 	function init(){
@@ -325,20 +325,21 @@ class Form_Field_FileSize extends Form_Field_Hidden{
 	function init(){
 		$this->name=$this->short_name='MAX_FILE_SIZE';
 		parent::init();
+		$this->no_save=true;
 	}
 }
 class Form_Field_Time extends Form_Field {
 	function getInput($attr=array()){
-        return parent::getInput(array_merge(array('type'=>'text', 
+        return parent::getInput(array_merge(array('type'=>'text',
 			'value'=>format_time($this->value)),$attr));
 	}
 }
 class Form_Field_Date extends Form_Field {
 	private $sep = '-';
 	private $is_valid = false;
-	
+
 	/*function getInput($attr=array()){
-        return parent::getInput(array_merge(array('type'=>'text', 
+        return parent::getInput(array_merge(array('type'=>'text',
 			'value'=>($this->is_valid ? date('Y-m-d', $this->value) : $this->value)),$attr));
 	}*/
 	private function invalid(){
@@ -356,8 +357,8 @@ class Form_Field_Date extends Form_Field {
 		}else{
 			$c = split($this->sep, $this->value);
 			//day must go first, month should be second and a year should be last
-			if(strlen($c[0]) != 4 || 
-				$c[1] <= 0 || $c[1] > 12 || 
+			if(strlen($c[0]) != 4 ||
+				$c[1] <= 0 || $c[1] > 12 ||
 				$c[2] <= 0 || $c[2] > 31)
 			{
 				$this->invalid();
@@ -380,13 +381,13 @@ class Form_Field_Text extends Form_Field {
         parent::init();
     }
     function getInput($attr=array()){
-        
+
         // Disable the deny edit here <
         if (is_null($this->onkeypress)) {
             $this->onKeyPress();
         }
-        
-        return 
+
+        return
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
             htmlspecialchars(stripslashes($this->value)).
             $this->getTag('/textarea');
@@ -398,7 +399,7 @@ class Form_Field_Money extends Form_Field_Line {
     }
 }
 
-// The following clases operates with predefined value lists. 
+// The following clases operates with predefined value lists.
 // User is picking one or several options
 class Form_Field_ValueList extends Form_Field {
     /*
@@ -425,7 +426,7 @@ class Form_Field_ValueList extends Form_Field {
             if(isset($_POST[$this->name]))$this->set(stripslashes($data));
         } else {
             if(isset($_POST[$this->name]))$this->set($data);
-        } 
+        }
     }
 }
 class Form_Field_Dropdown extends Form_Field_ValueList {
@@ -511,12 +512,12 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
         $output.="</table>";
         return $output;
     }
-    
+
     function loadPOST(){
         $data=$_POST[$this->name];
         if(is_array($data))
            $data=join(',',$data);
-        else 
+        else
            $data='';
 
         $gpc = get_magic_quotes_gpc();
@@ -524,8 +525,8 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
             $this->set(stripslashes($data));
         } else {
             $this->set($data);
-        } 
-    }    
+        }
+    }
 }
 
 class Form_Field_Radio extends Form_Field_ValueList {
