@@ -451,13 +451,23 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                     $this->attr)
                 );
         foreach($this->getValueList() as $value=>$descr){
-            $output.=
-                $this->getTag('option',array(
-                        'value'=>$value,
-                        'selected'=>$value == $this->value
-                    ))
-                .htmlspecialchars($descr)
-                .$this->getTag('/option');
+            // Check if a separator is not needed identified with _separator<
+            if ($value != '_separator') {
+                $output.=
+                    $this->getTag('option',array(
+                            'value'=>$value,
+                            'selected'=>$value == $this->value
+                        ))
+                    .htmlspecialchars($descr)
+                    .$this->getTag('/option');
+            } else {
+                $output.=
+                    $this->getTag('option',array(
+                            'disabled'=>'disabled',
+                        ))
+                    .htmlspecialchars($descr)
+                    .$this->getTag('/option');                
+            }
         }
         $output.=$this->getTag('/select');
         return $output;
