@@ -7,9 +7,9 @@ class Lister extends View {
     public $safe_html_output=true;  // do htmlspecialchars by default when formatting rows
 
     public $current_row=array();    // this is data of a current row
-    function setSource($table,$db_fields=null){
-        if(!$this->api->db)throw new BaseException('DB must be initialized if you want to use Lister / setSource');
-        $this->dq = $this->api->db->dsql();
+    function setSource($table,$db_fields=null,$db = null){
+        if((!$this->api->db) && (!$db))throw new BaseException('DB must be initialized if you want to use Lister / setSource');
+        $this->dq = $db ? $db->dsql() : $this->api->db->dsql();
         $this->api->addHook('pre-render',array($this,'execQuery'));
 
         $this->dq->table($table);
