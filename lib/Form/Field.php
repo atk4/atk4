@@ -452,21 +452,21 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                 );
         foreach($this->getValueList() as $value=>$descr){
             // Check if a separator is not needed identified with _separator<
-            if ($value != '_separator') {
+            if ($value == '_separator') {
+                $output.=
+                    $this->getTag('option',array(
+                            'disabled'=>'disabled',
+                        ))
+                    .htmlspecialchars($descr)
+                    .$this->getTag('/option'); 
+            } else {
                 $output.=
                     $this->getTag('option',array(
                             'value'=>$value,
                             'selected'=>$value == $this->value
                         ))
                     .htmlspecialchars($descr)
-                    .$this->getTag('/option');
-            } else {
-                $output.=
-                    $this->getTag('option',array(
-                            'disabled'=>'disabled',
-                        ))
-                    .htmlspecialchars($descr)
-                    .$this->getTag('/option');                
+                    .$this->getTag('/option');              
             }
         }
         $output.=$this->getTag('/select');
