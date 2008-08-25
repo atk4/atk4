@@ -418,7 +418,7 @@ class Form_Field_ValueList extends Form_Field {
     function setValueList($list){
         $this->value_list = $list;
     }
-    function loadPOST(){
+    function loadPOST(){ 
         $data=$_POST[$this->name];
         if(is_array($data))$data=join(',',$data);
         $gpc = get_magic_quotes_gpc();
@@ -440,7 +440,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
         }
         return parent::validate();
     }
-    function getInput($attr=array()){
+    function getInput($attr=array()){ echo 'sdfssssssssss<br />';
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name,
                         'id'=>$this->name,
@@ -450,9 +450,10 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                     $attr,
                     $this->attr)
                 );
+
         foreach($this->getValueList() as $value=>$descr){
             // Check if a separator is not needed identified with _separator<
-            if ($value == '_separator') {
+            if ($value === '_separator') {
                 $output.=
                     $this->getTag('option',array(
                             'disabled'=>'disabled',
