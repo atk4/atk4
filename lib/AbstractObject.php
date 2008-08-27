@@ -175,7 +175,7 @@ abstract class AbstractObject {
 		 *
 		 * If you want $default value to be memorized as well, see learn()
 		 */
-		if (!isset ($_SESSION['o'][$this->name][$name])) {
+		if (!isset ($_SESSION['o'][$this->name][$name])||is_null($_SESSION['o'][$this->name][$name])) {
 			return $default;
 		} else {
 			return $_SESSION['o'][$this->name][$name];
