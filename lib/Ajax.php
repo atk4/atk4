@@ -15,7 +15,7 @@ class Ajax extends AbstractModel {
     public $ajax_output="";
 
     public $spinner = null;
-    
+
     protected $timeout=null;
 
 	function init(){
@@ -64,7 +64,7 @@ class Ajax extends AbstractModel {
         	$this->ajax_output.="setTimeout('".addslashes($func_call)."',$this->timeout);";
         	$this->timeout=null;
         }
-        
+
         return $this;
     }
     function delay($timeout){
@@ -74,7 +74,7 @@ class Ajax extends AbstractModel {
          * This can be useful if you call 2 functions:
          * 1) update DB
          * 2) reload a region to display updated data
-         * 
+         *
          * as AJAX is asynchronious technology, (1) could finish after (2) is finished, and
          * you won't see any updates on the page
     	 */
@@ -87,7 +87,7 @@ class Ajax extends AbstractModel {
     function redirectURL($url){
         return $this->ajaxFunc("document.location='".$url."'");
     }
-	
+
     function loadRegionURL($region_id,$url){
         $this->ajaxFunc("aasn('$region_id','$url')");
         return $this;
@@ -161,7 +161,7 @@ class Ajax extends AbstractModel {
     	 */
 		$this->memorizeExpander();
     	return $this->loadRegionURL($_GET['expanded'].'_expandedcontent_'.$_GET['id'],
-			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url), 
+			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url),
 				$args)));
     }
     function reloadExpandedField($url,$args=array()){
@@ -174,7 +174,7 @@ class Ajax extends AbstractModel {
     	return $this->loadRegionURL($_GET['expanded'].'_'.$_GET['expander'].'_'.$_GET['id'],
     		$this->api->getDestinationURL($url,array_merge(
     			array('cut_object'=>$url,'grid_action'=>'return_field','expanded'=>$_GET['expanded'],
-    			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
+    			'expander'=>$_GET['expander'],'id'=>$_GET['id']),
 				$args)));
     }
     function reloadExpandedRow($url,$args=array()){
@@ -184,12 +184,7 @@ class Ajax extends AbstractModel {
     	 * Specified URL should return the needed content (see also Grid::getRowAsCommaString())
     	 */
 		$this->memorizeExpander();
-    	return /*$this->ajaxFunc('reloadGridRow(\''.
-    		$this->api->getDestinationURL($url,array_merge(
-    			array('cut_object'=>$url,'grid_action'=>'return_row','expanded'=>$_GET['expanded'],
-    			'expander'=>$_GET['expander'],'id'=>$_GET['id']), 
-				$args)).'\',\''.$_GET['expanded'].'\','.$_GET['id'].')');*/
-			$this->reloadGridRow($_GET['expanded'],$_GET['id'],$url,array_merge(
+    	return $this->reloadGridRow($_GET['expanded'],$_GET['id'],$url,array_merge(
     			array('expander'=>$_GET['expander']), $args));
     }
     function reloadGridRow($grid,$row_id,$url=null,$args=array()){
@@ -198,7 +193,7 @@ class Ajax extends AbstractModel {
     	return $this->ajaxFunc('reloadGridRow(\''.
     		$this->api->getDestinationURL($url,array_merge(
     			array('cut_object'=>$url,'grid_action'=>'return_row','expanded'=>$grid_name,
-    			'id'=>$row_id), 
+    			'id'=>$row_id),
 				$args)).'\',\''.$grid_name.'\','.$row_id.')');
     }
     function confirm($msg="Are you sure?"){
