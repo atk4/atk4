@@ -14,7 +14,7 @@ class QuickSearch extends Filter {
         parent::init();
         $this->useDQ($this->owner->dq);
         //on field change we should change a name of a button also: 'clear' in the name will clear fields
-        $this->addField('Search','q','Find')->onChange()->ajaxFunc($this->setGoFunc());
+        $this->addField('Search','q','Find')->denyEnter()->onChange()->ajaxFunc($this->setGoFunc());
         $this->last_field->onKeyPress()->ajaxFunc($this->setGoFunc());
         $this->addButton('Clear','Clear')->submitForm($this);
 

@@ -126,12 +126,16 @@ abstract class Form_Field extends AbstractView {
 				'onchange'=>(is_null($this->onchange)?'':$this->onchange->getString()),
 				/* Since all browsers except Opera handle only button cancelling on even onKeyDown and Opera on KeyPress
 				   Determine whats the browser and put JS in proper event  */
-				(stripos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false ? 'onKeyPress' : 'onKeyDown') =>(is_null($this->onkeypress)?'return denyEnter(event);':$this->onkeypress->getString()),
+				(stripos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false ? 'onKeyPress' : 'onKeyDown') =>(is_null($this->onkeypress)?'':$this->onkeypress->getString()),
 				'onfocus'=>(is_null($this->onfocus)?'':$this->onfocus->getString()),
 				'onblur'=>(is_null($this->onblur)?'':$this->onblur->getString()),
 				'onclick'=>(is_null($this->onclick)?'':$this->onclick->getString()),
 			),$attr,$this->attr)
 		);
+    }
+    function denyEnter(){
+    	$this->onKeyPress()->ajaxFunc('if(isKeyPressed(e, kReturn))return false');
+    	return $this;
     }
     function setSeparator($separator){
         $this->separator = $separator;
@@ -418,7 +422,7 @@ class Form_Field_ValueList extends Form_Field {
     function setValueList($list){
         $this->value_list = $list;
     }
-    function loadPOST(){ 
+    function loadPOST(){
         $data=$_POST[$this->name];
         if(is_array($data))$data=join(',',$data);
         $gpc = get_magic_quotes_gpc();
@@ -440,7 +444,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
         }
         return parent::validate();
     }
-    function getInput($attr=array()){ 
+    function getInput($attr=array()){
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name,
                         'id'=>$this->name,
@@ -459,7 +463,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                             'disabled'=>'disabled',
                         ))
                     .htmlspecialchars($descr)
-                    .$this->getTag('/option'); 
+                    .$this->getTag('/option');
             } else {
                 $output.=
                     $this->getTag('option',array(
@@ -467,7 +471,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                             'selected'=>$value == $this->value
                         ))
                     .htmlspecialchars($descr)
-                    .$this->getTag('/option');              
+                    .$this->getTag('/option');
             }
         }
         $output.=$this->getTag('/select');

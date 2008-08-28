@@ -111,9 +111,15 @@ class Form extends AbstractView {
     	$this->last_field->disable();
     	return $this;
     }
+    function denyEnter(){
+    	// prevents the submit on Enter for the last field
+    	// apply it when there is only one field on the form
+    	$this->last_field->denyEnter();
+    	return $this;
+    }
 	function setFieldComment($comment){
 		/**
-		 * Adds a comment to the last field. 
+		 * Adds a comment to the last field.
 		 * Comment will be inserted to the field_comment tag of the form template
 		 */
 		$this->last_field->comment=$comment;
@@ -194,7 +200,7 @@ class Form extends AbstractView {
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
         }
         //if($this->elements[$field_or_array] instanceof Form_Button)echo caller_lookup(0);
-        if($this->elements[$field_or_array] instanceof Form_Field) 
+        if($this->elements[$field_or_array] instanceof Form_Field)
         	$this->elements[$field_or_array]->set($value);
         else{
         	//throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
@@ -238,9 +244,9 @@ class Form extends AbstractView {
         $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
                     ($msg?$msg:'".$this->caption." is a mandatory field!').'");');
 	       return $this;
-    }	
-	
-	
+    }
+
+
     function setNotNull($msg=''){
         $this->validateNotNULL($msg);
         return $this;
@@ -267,7 +273,7 @@ class Form extends AbstractView {
         $this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
-        if (!is_null($color))   
+        if (!is_null($color))
         	$this->last_field->setColor($color);
 
         if(!isset($this->onsubmit))$this->onsubmit=false;  // do not perform ajax submit
@@ -284,10 +290,10 @@ class Form extends AbstractView {
         // Now add the regular button first
         $field = $this->last_button = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label);
-            
-        if (!is_null($color))   
+
+        if (!is_null($color))
         	$field->setColor($color);
-        	  
+
         $field->setNoSave();
 
         // And teach it to use AJAX
@@ -343,7 +349,7 @@ class Form extends AbstractView {
 	}
 
 
-	
+
     function submitted(){
         /**
          * Default down-call submitted will automatically call this method if form was submitted
