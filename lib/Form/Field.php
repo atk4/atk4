@@ -244,6 +244,19 @@ abstract class Form_Field extends AbstractView {
 }
 
 
+class Form_Field_Free extends Form_Field{
+	function init(){
+		parent::init();
+		// free field template is the whole content of its tag
+		//$this->content=$this->owner
+	}
+	function render(){
+		$this->template->trySet('value',$this->get());
+		$this->output($this->template->render());
+	}
+}
+
+
 class Form_Field_Line extends Form_Field {
     function getInput($attr=array()){
         return parent::getInput(array_merge(array('type'=>'text'),$attr));

@@ -9,8 +9,8 @@ include_once'Form/Field.php';
  * @version		$Id$
  */
 class Form extends AbstractView {
-    private $form_template = null;
-    private $form_tag = null;
+    protected $form_template = null;
+    protected $form_tag = null;
     public $errors=array();
                             // Here we will have a list of errors occured in the form, when we tried to submit it.
                             //  field_name => error
@@ -18,7 +18,7 @@ class Form extends AbstractView {
     public $template_chunks=array();
                             // Those templates will be used when rendering form and fields
 
-    private $data = array(); // This array holds list of values prepared for fields before their initialization. When fields
+    protected $data = array(); // This array holds list of values prepared for fields before their initialization. When fields
                             // are initialized they will look into this array to see if there are default value for them.
                             // Afterwards fields will link to $this->data, so changing $this->data['fld_name'] would actually
                             // affect field's value.
