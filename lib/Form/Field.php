@@ -251,7 +251,13 @@ class Form_Field_Free extends Form_Field{
 		//$this->content=$this->owner
 	}
 	function render(){
+		// we don't know the field type, so we set all possible properties
+		// value
 		$this->template->trySet('value',$this->get());
+		// selected item (dropdowns)
+		$this->template->trySet($this->get().'_selected','selected="selected"');
+		// checked item (checkboxes, radiobuttons)
+		$this->template->trySet($this->get().'_checked','checked="1"');
 		$this->output($this->template->render());
 	}
 }
