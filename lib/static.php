@@ -223,4 +223,9 @@ function htmlize_exception($e,$msg){
 		arsort($charsets);
 		return key($charsets);
 	}
+};if(!function_exists('__unserialize')){
+	function __unserialize($sObject) {
+		$__ret =preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $sObject );  
+		return unserialize($__ret);
+	}
 }
