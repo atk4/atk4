@@ -180,10 +180,7 @@ class Grid extends CompleteLister {
         		'cursor'=>'pointer',
 				'color'=>'blue'
         	),
-        	'onclick'=>'expander_flip(\''.$this->name.'\','.$this->current_row[$idfield].',\''.
-                    $field.'\',\''.
-                    $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
-						'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$this->name)).'&id=\')'
+        	'onclick'=>$this->add('Ajax')->openExpander($this,$this->current_row[$idfield],$field)->getString(),
         );
         $this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
         if(!$this->current_row[$field]){

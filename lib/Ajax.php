@@ -141,6 +141,13 @@ class Ajax extends AbstractModel {
     function notImplemented($msg){
         return $this->ajaxFunc("alert('not implemented: $msg')");
     }
+    function openExpander($lister,$id,$field){
+    	// checking session
+    	return $this->ajaxFunc('expander_flip(\''.$lister->name.'\','.$id.',\''.
+                    $field.'\',\''.
+                    $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
+						'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$lister->name)).'&id=\')');
+    }
     function closeExpander($lister=null){
         if(!$lister)$lister=$_GET['expanded'];
         $id=(int)$_GET['id'];
