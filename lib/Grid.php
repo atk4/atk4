@@ -4,7 +4,7 @@ class Grid extends CompleteLister {
     protected $no_records_message="No matching records to display";
     private $table;
     private $id;
-    
+
 	public $last_column;
     public $sortby='0';
     public $sortby_db=null;
@@ -28,7 +28,7 @@ class Grid extends CompleteLister {
     private $record_order=null;
 
     public $title_col=array();
-    
+
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
      * This should be a hash: 'param_name'=>'param_value'
@@ -36,9 +36,9 @@ class Grid extends CompleteLister {
      * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
      * 		 style: style="param_name: param_value; param_name: param_value"
      * 2) wrap: possible values are true|false; if true, 'wrap' is added
-     * 
+     *
      * All the rest are not checked and converted to a form of param_name="param_value"
-     * 
+     *
      * This is a tree-like array with the following structure:
      * array(
      * 		[level1]=>dataset_row=array(
@@ -51,7 +51,7 @@ class Grid extends CompleteLister {
      * )
      */
     protected $tdparam=array();
-    
+
     function init(){
         parent::init();
         $this->add('Reloadable');
@@ -159,6 +159,11 @@ class Grid extends CompleteLister {
     	$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
     		strtotime($this->current_row[$field]));
     }
+    function format_datetime($field){
+    	if(!$this->current_row[$field])$this->current_row[$field]='-'; else
+    	$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+    		strtotime($this->current_row[$field]));
+    }
     function format_nowrap($field){
     	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=false;
     }
@@ -190,8 +195,8 @@ class Grid extends CompleteLister {
     function format_inline($field, $idfield='id'){
     	/**
     	 * Formats the InlineEdit: field that on click should substitute the text
-    	 * in the columns of the row by the edit controls 
-    	 * 
+    	 * in the columns of the row by the edit controls
+    	 *
     	 * The point is to set an Id for each column of the row. To do this, we should
     	 * set a property showing that id should be added in prerender
     	 */
@@ -233,14 +238,14 @@ class Grid extends CompleteLister {
 		 * Formats field as a link by clicking on which the whole expander area
 		 * is reloaded by specified page contents.
 		 * Page address is similar to expander field
-		 * 
+		 *
 		 * To return expander's previous content see Ajax methods:
 		 * - Ajax::reloadExpander()
 		 * - Ajax::reloadExpandedRow()
 		 * - Ajax::reloadExpandedField()
-		 * 
+		 *
 		 * WARNING!
-		 * As these Ajax methods use the current $_GET['id'] value to return 
+		 * As these Ajax methods use the current $_GET['id'] value to return
 		 * the previuos expander state, clicked row ID is passed through $_GET['row_id']
 		 */
 		$this->current_row[$field]='<a href="javascript:void(\''.$this->current_row['id'].'\')" ' .
@@ -308,7 +313,7 @@ class Grid extends CompleteLister {
         return $this;
     }
     function setTemplate($template){
-        // This allows you to use Template 
+        // This allows you to use Template
         $this->columns[$this->last_column]['template']=$this->add('SMlite')
             ->loadTemplateFromString($template);
         return $this;
@@ -387,14 +392,14 @@ class Grid extends CompleteLister {
 			if(!$found)return "";
 		}
 		else return "";
-		
+
 		// *** Initializing template ***
 		$this->precacheTemplate(false);
-		
+
 		// *** Rendering row ***
 		$this->current_row=$row_data;
 		$this->formatRow();
-		
+
 		// *** Combining result string ***
 		$result="";
 		foreach($this->columns as $name=>$column){
@@ -427,7 +432,7 @@ class Grid extends CompleteLister {
 							$tdparam[]="$k::$v";
 						}
 						break;
-					
+
 					default:
 						$tdparam[]="$key::$value";
 				}
@@ -458,14 +463,14 @@ class Grid extends CompleteLister {
 		//we should switch off the limit or we won't get any value
 		$this->dq->limit(1);
 		$row_data=$this->api->db->getHash($this->dq->select());
-		
+
 		// *** Initializing template ***
 		$this->precacheTemplate(false);
-		
+
 		// *** Rendering row ***
 		$this->current_row=$row_data;
 		$row=$this->formatRow();
-		
+
 		// *** Returning required field value ***
 		return $row[$field];
 	}
@@ -541,12 +546,12 @@ class Grid extends CompleteLister {
         $row->set('row_id','<?$id?>');
         $row->trySet('odd_even','<?$odd_even?>');
         $row->del('cols');
-      
+
 		if($full){
 	        $header = $this->template->cloneRegion('header');
 	        $header_col = $header->cloneRegion('col');
 	        $header_sort = $header_col->cloneRegion('sort');
-	
+
 	        if($t_row = $this->totals_t){
 	            $t_col = $t_row->cloneRegion('col');
 	            $t_row->del('cols');
@@ -554,25 +559,25 @@ class Grid extends CompleteLister {
 
         	$header->del('cols');
 		}
-		
+
         if(count($this->columns)>0){
 	        foreach($this->columns as $name=>$column){
 	            $col->del('content');
 	            $col->set('content','<?$'.$name.'?>');
-	
+
 	            if(isset($t_row)){
 	                $t_col->del('content');
 	                $t_col->set('content','<?$'.$name.'?>');
 	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
 	                $t_row->append('cols',$t_col->render());
 	            }
-	
+
 	            // some types needs control over the td
-	
+
 	            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
-	
+
 	            $row->append('cols',$col->render());
-	
+
 	            if($full){
 					$header_col->set('descr',$column['descr']);
 		            if(isset($column['sortable'])){
@@ -581,7 +586,7 @@ class Grid extends CompleteLister {
 		                $l = $this->add('Ajax')
 		                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
 		                	->getString();
-		
+
 		                $header_sort->set('order',$column['sortable'][0]);
 		                $header_sort->set('sortlink',$l);
 		                $header_col->set('sort',$header_sort->render());
@@ -603,7 +608,7 @@ class Grid extends CompleteLister {
         if($full)$this->template->set('header',$header->render());
         // for certain row: required data is in $this->row_t
         //var_dump(htmlspecialchars($this->row_t->tmp_template));
-        
+
     }
     function render(){
     	if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
@@ -617,9 +622,9 @@ class Grid extends CompleteLister {
 //    		return true;
     	}
         parent::render();
-		
+
     }
-    
+
     public function setWidth( $width ){
     	$this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
     	return $this;
