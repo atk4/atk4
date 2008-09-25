@@ -525,9 +525,9 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
         $current_values=explode(',',$this->value);
         foreach($this->getValueList() as $value=>$descr){
             if($column==0){
-                $output.="<tr><td>";
+                $output.="<tr><td align=\"left\">";
             }else{
-                $output.="</td><td>";
+                $output.="</td><td align=\"left\">";
             }
 
             $output.=
