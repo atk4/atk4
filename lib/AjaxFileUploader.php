@@ -10,9 +10,10 @@
  *
  *    $form->addButton('Submit')->uploadFile($form,$form->getElement('file')->name);
  * 2) AjaxFileUploader class will be created and used to handle file upload. You can configure
- *    directory where uploaded files will be stored in config file
+ *    directory where uploaded files will be stored in config file.
+ *    NOTE: always use absolute path
  *
- *    $config['ajax_uploads_dir']='/uploads';
+ *    $config['ajax_uploads_dir']=ROOTDIR.'/uploads';
  *    uploads/ dir in project root will be used by default.
  * 3) You can reach uploaded file by calling:
  *
@@ -67,17 +68,19 @@ class AjaxFileUploader extends AbstractController{
 		return $this;
 	}
 	function getFileSize(){
+		$this->api->logger->logVar($this->getFilePath());
 		return filesize($this->getFilePath());
 	}
 	function deleteFile(){
-		unlink($this->getFilePath());
+		@unlink($this->getFilePath());
 		$this->api->forget('uploader_file_path');
 		$this->api->forget('uploader_file_type');
 		return $this;
 	}
-	private function uploadFile($field_name){
+	protected function uploadFile($field_name){
 		$result=0;
 		try{
+			//$this->api->logger->logVar($_FILES);
 			if(isset($_FILES[$field_name])&&$_FILES[$field_name]['name']!=''){
 				$this->setFilePath($this->api->getConfig('ajax_uploads_dir','uploads').DIRECTORY_SEPARATOR.
 					$_FILES[$field_name]['name']);
@@ -99,8 +102,12 @@ class AjaxFileUploader extends AbstractController{
 				// saving file attributes
 				$this->setMimeType($_FILES[$field_name]['type']);
 				$result=$this->getFileSize();
+				if($result==0)$result="Unknown error during upload, file size is zero";
 			}
 		}catch(BaseException $e){
+			// we should forget the file here
+			$this->api->forget('uploader_file_path');
+			$this->api->forget('uploader_file_type');
 			$result=$e->getMessage();
 		}
 		header("Content-type: application/xml; charset=UTF-8");
