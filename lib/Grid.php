@@ -214,10 +214,10 @@ class Grid extends CompleteLister {
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
     	$this->current_row[$field]=$this->add('Ajax')->ajaxFunc(
-    		'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
+    		'inline_show(\''.$this->name.'\',\''.$col_id.'\','.$this->current_row[$idfield].', \''.
 			$this->api->getDestinationURL(null, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'", '.$tab_moves_down.', '.$show_submit.')'
+			'\', '.$tab_moves_down.', '.$show_submit.')'
     	)->getLink($text);
     }
     function format_nl2br($field) {
