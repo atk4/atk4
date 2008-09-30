@@ -213,11 +213,12 @@ class Grid extends CompleteLister {
 			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-    	$this->current_row[$field]='<a href=\'javascript:'.
-			'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
+    	$this->current_row[$field]=$this->add('Ajax')->ajaxFunc(
+    		'inline_show("'.$this->name.'","'.$col_id.'",'.$this->current_row[$idfield].', "'.
 			$this->api->getDestinationURL(null, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'", '.$tab_moves_down.', '.$show_submit.');\'>'.$text.'</a>';
+			'", '.$tab_moves_down.', '.$show_submit.')'
+    	)->getLink($text);
     }
     function format_nl2br($field) {
     	$this->current_row[$field] = nl2br($this->current_row[$field]);
