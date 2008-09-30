@@ -53,6 +53,7 @@ class Form extends AbstractView {
         $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
         //$this->grabTemplateChunk('form');           // template for whole form, must contain form_body, form_buttons, form_action,
                                                     //  and form_name
+		$this->grabTemplateChunk('field_mandatory'); // template for marking mandatory fields
 
         // ok, other grabbing will be done by field themselves as you will add them to the form.
         // They will try to look into this template, and if you don't have apropriate templates
@@ -241,6 +242,7 @@ class Form extends AbstractView {
     }*/
 
     function validateNotNULL($msg=''){
+    	$this->last_field->setMandatory();
         $this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
                     ($msg?$msg:'".$this->caption." is a mandatory field!').'");');
 	       return $this;

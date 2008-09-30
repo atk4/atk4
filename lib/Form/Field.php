@@ -11,6 +11,7 @@ abstract class Form_Field extends AbstractView {
      * Description of the field shown next to it on the form
      */
     public $error_template;    // template used to put errors on the field line
+    public $error_mandatory;    // template used to mark mandatory fields
     public $caption;
     protected $value=null;        // use $this->get(), ->set().
     public $short_name=null;
@@ -27,9 +28,18 @@ abstract class Form_Field extends AbstractView {
     protected $onclick=null;
     public $comment='&nbsp;';
     protected $disabled=false;
+    protected $mandatory=false;
 
     // Field customization
     private $separator=':';
+
+    function setMandatory($mandatory=true){
+    	$this->mandatory=$mandatory;
+    	return $this;
+    }
+    function isMandatory(){
+    	return $this->mandatory;
+    }
     function setCaption($_caption){
         $this->caption=$_caption;
         return $this;
@@ -143,6 +153,7 @@ abstract class Form_Field extends AbstractView {
     }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
+        if(!$this->mandatory_template)$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->trySet('field_comment',$this->comment);
@@ -152,6 +163,7 @@ abstract class Form_Field extends AbstractView {
                              $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
                              :''
                              );
+		$this->template->trySet('field_mandatory',$this->isMandatory()?$this->mandatory_template->render():'');
         $this->output($this->template->render());
     }
 

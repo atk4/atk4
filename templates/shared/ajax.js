@@ -572,7 +572,7 @@ function createIFrame() {
 	return document.getElementById(id);
 }
 
-function submitUpload(form, url, spinner) {
+function submitUpload(form, url, spinner, onUpload) {
 	if (!document.createElement) return; // not supported
 	if (typeof(form)=="string") form=document.getElementById(form);
 	var frame=createIFrame();
@@ -587,10 +587,10 @@ function submitUpload(form, url, spinner) {
 		// doc's first element contains either filesize or error message
 		res=doc.documentElement.firstChild.nodeValue;
 		if(res-0!=res){
-				alert("Upload failed: "+res);
+			alert("Upload failed: "+res);
 		}else{
-				form.setAttribute('action',form_action);
-				submitForm(form.name,spinner);
+			form.setAttribute('action',form_action);
+			submitForm(form.name,spinner);
 		}
 	};
 	form.setAttribute('target', frame.id);
