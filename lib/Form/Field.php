@@ -258,6 +258,12 @@ class Form_Field_Free extends Form_Field{
 		$this->template->trySet($this->get().'_selected','selected="selected"');
 		// checked item (checkboxes, radiobuttons)
 		$this->template->trySet($this->get().'_checked','checked="1"');
+		// field properties
+		$attr='';
+		if(!empty($this->attr)){
+			foreach($this->attr as $k=>$v)$attr.=$k.'="'.$v.'" ';
+		}
+		$this->template->trySet($this->short_name.'_attrs',$attr);
 		$this->output($this->template->render());
 	}
 }

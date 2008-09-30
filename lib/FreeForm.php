@@ -47,7 +47,7 @@ class FreeForm extends Form{
 		return $this;
 	}
 	function validateField($field,$condition,$msg=''){
-		$this->getElement($field)->addHook('validate','if(!'.$condition.')$this->displayFieldError("'.
+		$this->getElement($field)->addHook('validate','echo $condition;if(!'.$condition.')$this->displayFieldError("'.
 			($msg?$msg:'Error in ".$this->short_name."').'");');
 		return $this;
 	}
