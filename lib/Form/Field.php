@@ -163,7 +163,9 @@ abstract class Form_Field extends AbstractView {
                              $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
                              :''
                              );
-		$this->template->trySet('field_mandatory',$this->isMandatory()?$this->mandatory_template->render():'');
+        if (is_object($this->mandatory_template)) {
+			$this->template->trySet('field_mandatory',$this->isMandatory()?$this->mandatory_template->render():'');
+        }
         $this->output($this->template->render());
     }
 
