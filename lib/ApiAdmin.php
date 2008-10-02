@@ -99,9 +99,11 @@ class ApiAdmin extends ApiWeb {
             if(is_array($val)||is_object($val))$val=serialize($val);
             $tmp[]="$arg=".urlencode($val);
         }
-        if($this->getConfig('url_prefix',false)){
-            return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
-        }else return $page.($tmp?"?".join('&',$tmp):'');
+        return 
+            $this->getConfig('url_prefix','').
+            $page.
+            $this->getConfig('url_postfix','').
+            ($tmp?'?'.join('&',$tmp):'');
     }
     function redirect($page=null,$args=array()){
         /**
@@ -139,6 +141,9 @@ class ApiAdmin extends ApiWeb {
         }else{
             $this->page=$_GET['page'];
 
+            if($this->getConfig('url_postfix',false)){
+                $this->page=str_replace($this->getConfig('url_postfix'),'',$this->page);
+            }
             $this->initLayout();
         }
 		$this->add('Logger');

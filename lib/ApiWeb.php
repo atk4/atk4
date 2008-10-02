@@ -106,9 +106,16 @@ class ApiWeb extends ApiCLI {
             if(is_array($val)||is_object($val))$val=serialize($val);
             $tmp[]="$arg=".urlencode($val);
         }
+        return 
+            $this->getConfig('url_prefix','').
+            $page.
+            $this->getConfig('url_postfix','').
+            ($tmp?'?'.join('&',$tmp):'');
+        /*
         if($this->getConfig('url_prefix',false)){
             return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
         }else return $page.'.php'.($tmp?"?".join('&',$tmp):'');
+        */
     }
 
     /////////////// This is what you should call //////////////////
