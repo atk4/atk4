@@ -221,10 +221,10 @@ function aacp( form_id ){
 				}
 				res+=frm.elements[i].name+'='+val;
 			}
-			else if(frm.elements[i].type == 'button'){
+			if(frm.elements[i].type == 'button'){
 				if(buttonClicked == frm.elements[i].name)res+=frm.elements[i].name+'=1';
 			}
-			else if(frm.elements[i].type == 'file'){
+			if(frm.elements[i].type == 'file'){
 				res+=frm.elements[i].name+'='+serializeJsToPhp(frm.elements[i].value);
 			}
 			else{

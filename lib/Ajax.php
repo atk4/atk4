@@ -161,6 +161,13 @@ class Ajax extends AbstractModel {
 		$this->api->stickyGET('expander');
 		return $this;
     }
+    function forgetExpander(){
+		$this->api->stickyForget('id');
+		$this->api->stickyForget('row_id');
+		$this->api->stickyForget('expanded');
+		$this->api->stickyForget('expander');
+		return $this;
+    }
     function reloadExpander($url,$args=array()){
     	/**
     	 * Reloads expander after some action permormed in it
