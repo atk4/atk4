@@ -207,28 +207,33 @@ function aacp( form_id ){
 	var frm = document.getElementById( form_id );
 	if(frm)
 		for(var i=0; i<frm.elements.length; i++){
-			if(res != '')
-				res+='&';
-			if(frm.elements[i].type == 'checkbox'){
-				if(!frm.elements[i].checked)continue;
-			}
-			if(frm.elements[i].type == 'radio'){
-				elem = frm.elements[frm.elements[i].name];
-				val = 'null';
-				for(j=0; j < elem.length; j++){
-					if(elem[j].checked)
-						val = elem[j].value;
-				}
-				res+=frm.elements[i].name+'='+val;
-			}
-			if(frm.elements[i].type == 'button'){
-				if(buttonClicked == frm.elements[i].name)res+=frm.elements[i].name+'=1';
-			}
-			if(frm.elements[i].type == 'file'){
-				res+=frm.elements[i].name+'='+serializeJsToPhp(frm.elements[i].value);
-			}
-			else{
-				res+=frm.elements[i].name+'='+encodeURIComponent(frm.elements[i].value);
+			if(res != '')res+='&';
+			switch(frm.elements[i].type){
+				case 'checkbox':
+					if(!frm.elements[i].checked)continue;
+				case 'radio':
+					elem = frm.elements[frm.elements[i].name];
+					val = 'null';
+					for(j=0; j < elem.length; j++){
+						if(elem[j].checked)
+							val = elem[j].value;
+					}
+					res+=frm.elements[i].name+'='+val;
+					break;
+				case 'button':
+					if(buttonClicked == frm.elements[i].name)res+=frm.elements[i].name+'=1';
+					break;
+				case 'file':
+					res+=frm.elements[i].name+'='+serializeJsToPhp(frm.elements[i].value);
+					break;
+				case 'textarea':
+					res+=frm.elements[i].name+'=';
+					if(richedit_value&&richedit_value!='')res+=encodeURIComponent(richedit_value);
+					else res+=encodeURIComponent(frm.elements[i].value);
+					break;
+
+				default:
+					res+=frm.elements[i].name+'='+encodeURIComponent(frm.elements[i].value);
 			}
 		}
 	return res;
