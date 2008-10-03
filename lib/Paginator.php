@@ -2,7 +2,7 @@
 class Paginator extends AbstractView {
     /*
      * Paginator is a class you should use when you need to separate lists into
-     * several pages 
+     * several pages
      */
     public $ipp=30;
     public $skip=0;
@@ -125,12 +125,12 @@ class Paginator extends AbstractView {
         $this->outputNum(1);
         if($this->total_pages>1){
             //$this->output($s);
-            
+
             $range = $this->range;
             // first_in_range
             $left=$this->cur_page-$range;
             $right=$this->cur_page+$range;
-            
+
             if($left<3)$left=2;else $this->output(' .. ');
             for($n=$left;$n<=$right;$n++){
                 if($n>$left || $left==2)$this->output($s);

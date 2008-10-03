@@ -44,9 +44,9 @@ class ApiAdmin extends ApiWeb {
         /**
          * Construct URL for getting to page
          */
-        
+
         // If first argument is null, stay on the same page
-        if(!isset($page))$page=$this->page;
+        if(is_null($page)||$page=='')$page=$this->page;
 
         /*
          *
@@ -75,7 +75,7 @@ class ApiAdmin extends ApiWeb {
                 $page=substr($page,1);
             }
         }
-        // Check sticky arguments. If argument value is true, 
+        // Check sticky arguments. If argument value is true,
         // GET is checked for actual value.
         if(isset($this->sticky_get_arguments)){
             foreach($this->sticky_get_arguments as $key=>$val){
@@ -99,7 +99,7 @@ class ApiAdmin extends ApiWeb {
             if(is_array($val)||is_object($val))$val=serialize($val);
             $tmp[]="$arg=".urlencode($val);
         }
-        return 
+        return
             $this->getConfig('url_prefix','').
             $page.
             $this->getConfig('url_postfix','').
@@ -133,7 +133,7 @@ class ApiAdmin extends ApiWeb {
             list($namespace,$_GET['page'])=explode(';',$_GET['page']);
             if(!isset($this->namespaces[$namespace])){
                 throw new BaseException('Specified namespace ('.$namespace.') can\'t be found');
-                // it's also 
+                // it's also
             }
             $this->ns=$this->namespaces[$namespace];
             $this->page=$_GET['page'];
@@ -150,7 +150,7 @@ class ApiAdmin extends ApiWeb {
     }
     function initLayout(){
         // This function adds layout of how the webpage looks like. It should be initializing
-        // content of the page, sidebars and any other elements on the page. Different 
+        // content of the page, sidebars and any other elements on the page. Different
         // content pages are handled by page_*
         return $this
             ->addLayout('Content')
