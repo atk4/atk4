@@ -30,13 +30,13 @@ function error_handler($errno, $errstr, $errfile, $errline){
                     E_USER_ERROR          => "User Error",
                     E_USER_WARNING        => "User Warning",
                     E_USER_NOTICE         => "User Notice",
-                    4096                  => "Runtime Notice" 
+                    4096                  => "Runtime Notice"
                     );
-                    
+
 	if((error_reporting() & $errno)!=0) {
 	    $errfile=dirname($errfile).'/<b>'.basename($errfile).'</b>';
 	    $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
-	    
+
 	    switch ($errno) {
 	        case 2:
 	            if(strpos($errstr,'mysql_connect')!==false)break;
@@ -109,7 +109,7 @@ function htmlize_exception($e,$msg){
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
             $fullpath = $path . DIRECTORY_SEPARATOR . $file;
             if (file_exists($fullpath)) {
-                return $fullpath; 
+                return $fullpath;
             }
         }
         return false;
@@ -210,22 +210,22 @@ function htmlize_exception($e,$msg){
 			//WIN-1251
 			if ($char > 223 && $char < 256) $charsets['w']+=$lowercase;
 			if ($char > 191 && $char < 224) $charsets['w']+=$uppercase;
-			
+
 			//MAC
 			if ($char > 221 && $char < 255) $charsets['m']+=$lowercase;
 			if ($char > 127 && $char < 160) $charsets['m']+=$uppercase;
-			
+
 			//ISO-8859-5
 			if ($char > 207 && $char < 240) $charsets['i']+=$lowercase;
 			if ($char > 175 && $char < 208) $charsets['i']+=$uppercase;
-	
+
 		}
 		arsort($charsets);
 		return key($charsets);
 	}
 };if(!function_exists('__unserialize')){
 	function __unserialize($sObject) {
-		$__ret =preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $sObject );  
+		$__ret =preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $sObject );
 		return unserialize($__ret);
 	}
 }

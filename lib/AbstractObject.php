@@ -357,4 +357,8 @@ abstract class AbstractObject {
 			}
 		}
 	}
+	/////// LOGGER ////////
+	function logVar($var,$msg=""){
+		$this->api->getLogger()->logVar($var,$msg);
+	}
 }

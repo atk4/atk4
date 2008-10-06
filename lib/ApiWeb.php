@@ -16,12 +16,27 @@ class ApiWeb extends ApiCLI {
      * DB handle
      */
     public $page=null;
+    public $skin = null;      // skin used to render everything
+    public $page_title = null;
+    public $apinfo=array();
+
     protected $page_base=null;
 
-    public $index_page='Index';
+    public $index_page='Index';	// TODO: protect this
 
-    public $sticky_get_arguments = array();
+    public $sticky_get_arguments = array();	// TODO: protect this
 
+    function __construct($realm=null,$skin='kt2'){
+        $this->skin=$skin;
+        parent::__construct($realm);
+    }
+    function initDefaults(){
+    	parent::init();
+    	$this->initLayout();
+    }
+	function initLayout(){
+		$this->addLayout('Content');
+	}
     /////////////// C o r e   f u n c t i o n s ///////////////////
     function caughtException($e){
         $this->hook('caught-exception',array($e));
@@ -67,6 +82,12 @@ class ApiWeb extends ApiCLI {
             session_start();
         }
     }
+    function stickyGET($name){
+        $this->sticky_get_arguments[$name]=$_GET[$name];
+    }
+    function stickyForget($name){
+		unset($this->sticky_get_arguments[$name]);
+    }
     function sendHeaders(){
         /**
          * Send headers to browser
@@ -98,26 +119,6 @@ class ApiWeb extends ApiCLI {
     }
 
 
-    function getDestinationURL($page=null,$args=array()){
-        $tmp=array();
-        if(!$page)$page='index';
-        foreach($args as $arg=>$val){
-            if(!isset($val) || $val===false)continue;
-            if(is_array($val)||is_object($val))$val=serialize($val);
-            $tmp[]="$arg=".urlencode($val);
-        }
-        return 
-            $this->getConfig('url_prefix','').
-            $page.
-            $this->getConfig('url_postfix','').
-            ($tmp?'?'.join('&',$tmp):'');
-        /*
-        if($this->getConfig('url_prefix',false)){
-            return $this->getConfig('url_prefix','').$page.($tmp?"&".join('&',$tmp):'');
-        }else return $page.'.php'.($tmp?"?".join('&',$tmp):'');
-        */
-    }
-
     /////////////// This is what you should call //////////////////
     function main(){
         /**
@@ -126,7 +127,7 @@ class ApiWeb extends ApiCLI {
          * This is main API function, which would do all initializing,
          * input analysis, auth checking, the displaying
          */
-        
+
         try{
             $this->hook('pre-exec');
 
@@ -183,6 +184,47 @@ class ApiWeb extends ApiCLI {
         }
         */
     }
+    function addLayout($name){
+        if(method_exists($this,$lfunc='layout_'.$name)){
+            if($this->template->is_set($name)){
+                $this->$lfunc();
+            }
+        }
+        return $this;
+    }
+    function layout_Content(){
+        // This function initializes content. Content is page-dependant
+
+        if(method_exists($this,$pagefunc='page_'.$this->page)){
+            $p=$this->add('Page',$this->page,'Content');
+            $this->$pagefunc($p);
+        }else{
+            $this->add('page_'.$this->page,$this->page,'Content');
+            //throw new BaseException("No such page: ".$this->page);
+        }
+    }
+    function isClicked($button_name){
+        /**
+         * Will return true if button with this name was clicked
+         */
+        return isset($_POST[$button_name])||isset($_POST[$button_name.'_x']);
+    }
+    function isAjaxOutput(){
+        return isset($_POST['ajax_submit']);
+    }
+    function redirect($page=null,$args=array()){
+        /**
+         * Redirect to specified page. $args are $_GET arguments.
+         * Use this function instead of issuing header("Location") stuff
+         */
+        $this->api->not_html=true;
+        header("Location: ".$this->getDestinationURL($page,$args));
+        exit;
+    }
+	function setIndexPage($page){
+		$this->index_page=$page;
+		return $this;
+	}
 }
 
 class RenderObjectSuccess extends Exception{

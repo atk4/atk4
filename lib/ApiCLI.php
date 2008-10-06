@@ -2,6 +2,9 @@
 class ApiCLI extends AbstractView {
     public $db=null;
     protected $config = null;     // use getConfig method to access this variable
+    public $logger=null;	// TODO: protect this
+    protected $base_dir='';
+
     function __construct($realm=null){
         $this->owner = null;
         $this->name  = $realm;
@@ -18,6 +21,59 @@ class ApiCLI extends AbstractView {
         }catch(Exception $e){
             $this->caughtException($e);
         }
+    }
+    function init(){
+    	parent::init();
+    	$this->addHook('api-defaults',array($this,'initDefaults'));
+    }
+    function initDefaults(){
+    	if(!defined('DTP'))define('DTP','');
+    }
+	function getBaseURL(){
+		return (isset($_SERVER['HTTPS'])?'https':'http').'://'.$_SERVER['SERVER_NAME'].
+			(substr($root=$this->api->getConfig('url_root','/'),0,1)=='/'?'':'/').$root;
+	}
+	function getBaseDir(){
+		return $this->base_dir;
+	}
+    function getDestinationURL($page=null,$args=array()){
+        // If first argument is null, stay on the same page
+        if(is_null($page)||$page=='')$page=$this->page;
+
+        // Check sticky arguments. If argument value is true,
+        // GET is checked for actual value.
+        if(isset($this->sticky_get_arguments)){
+            foreach($this->sticky_get_arguments as $key=>$val){
+                if($val===true){
+                    if(isset($_GET[$key])){
+                        $val=$_GET[$key];
+                    }else{
+                        continue;
+                    }
+                }
+                if(!isset($args[$key])){
+                    $args[$key]=$val;
+                }
+            }
+        }
+        $tmp=array();
+        foreach($args as $arg=>$val){
+            if(!isset($val) || $val===false)continue;
+            if(is_array($val)||is_object($val))$val=serialize($val);
+            $tmp[]="$arg=".urlencode($val);
+        }
+        return
+            $this->getConfig('url_prefix','').
+            $page.
+            $this->getConfig('url_postfix','').
+            ($tmp?'?'.join('&',$tmp):'');
+    }
+
+    function getLogger($class_name='Logger'){
+    	if(is_null($this->logger)){
+    		$this->logger=$this->add($class_name);
+    	}
+    	return $this->logger;
     }
     function caughtException($e){
         $this->hook('caught-exception',array($e));
@@ -85,8 +141,10 @@ class ApiCLI extends AbstractView {
     }
     function dbConnect($dsn=null){
     	if (is_null($dsn)) $dsn=$this->getConfig('dsn');
-        $this->db=DBlite::connect($dsn);
+        $result=$this->db=DBlite::connect($dsn);
+        if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
         $this->db->owner=$this;
+        return $this;
     }
     function tryConnect($dsn){
         $this->db=DBlite::tryConnect($dsn);
