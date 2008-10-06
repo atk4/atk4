@@ -20,10 +20,9 @@ class Menu extends CompleteLister {
         }
         $this->data[$href]=array(
 			'page'=>$href,
-			'href'=>'<a href="'.$this->api->getDestinationURL($href).'">',
+			'href'=>$this->api->getDestinationURL($href),
 			'label'=>$label,
 			'tdclass'=>$this->isCurrent($href)?"current":"separator",
-			'chref'=>'</a>'
 		);
 
         return $this;

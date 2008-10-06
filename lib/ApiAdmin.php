@@ -14,9 +14,6 @@ class ApiAdmin extends ApiWeb {
 
         $this->initializeTemplate();
     }
-    function defaultTemplate(){
-        return array('shared','_top');
-    }
 
     /////////////// H e l p e r   f u n c t i o n s ///////////////
     function getDestinationURL($page=null,$args=array()){
@@ -57,8 +54,7 @@ class ApiAdmin extends ApiWeb {
         return parent::getDestinationURL($page,$args);
     }
     function initDefaults(){
-        parent::initDefaults();
-
+		ApiCLI::initDefaults(); // DTP constant checked
         if(strpos($_GET['page'],';')!==false){
             list($namespace,$_GET['page'])=explode(';',$_GET['page']);
             if(!isset($this->namespaces[$namespace])){
@@ -68,11 +64,7 @@ class ApiAdmin extends ApiWeb {
             $this->ns=$this->namespaces[$namespace];
             $this->ns->initLayout();
         }else{
-
-            if($this->getConfig('url_postfix',false)){
-                $this->page=str_replace($this->getConfig('url_postfix'),'',$this->page);
-            }
-            $this->initLayout();
+        	$this->initLayout();
         }
     }
     function initLayout(){

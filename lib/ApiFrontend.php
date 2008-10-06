@@ -8,12 +8,13 @@
  *
  * Created on 23.09.2008 by *Camper* (cmd@adevel.com)
  */
-class ApiFrontend extends ApiAdmin{
+class ApiFrontend extends ApiWeb{
 	protected $page_object=null;
 
 	function init(){
 		parent::init();
 		$this->getLogger();
+		$this->initializeTemplate();
 		// base url is requred due to a Home/Events/Article.html links style
 		$this->template->trySet('base_url',$this->getBaseURL());
 	}
@@ -29,7 +30,10 @@ class ApiFrontend extends ApiAdmin{
 				// page not found, trying to load static content
 				if(file_exists($static_page='page_'.strtolower($this->page)))
 					$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));
-				else die(header("HTTP/1.0 404 Not Found"));
+				else{
+					//header("HTTP/1.0 404 Not Found");
+					$this->page_object=$this->add('Page',$this->page,'Content',array('page_404','_top'));
+				}
 			}
 		}
 	}

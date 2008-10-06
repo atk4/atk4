@@ -31,7 +31,7 @@ class ApiWeb extends ApiCLI {
         parent::__construct($realm);
     }
     function initDefaults(){
-    	parent::init();
+    	parent::initDefaults();
     	$this->initLayout();
     }
 	function initLayout(){
@@ -225,6 +225,9 @@ class ApiWeb extends ApiCLI {
 		$this->index_page=$page;
 		return $this;
 	}
+    function defaultTemplate(){
+        return array('shared','_top');
+    }
 }
 
 class RenderObjectSuccess extends Exception{
