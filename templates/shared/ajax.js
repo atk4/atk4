@@ -228,6 +228,7 @@ function aacp( form_id ){
 					break;
 				case 'textarea':
 					res+=frm.elements[i].name+'=';
+					richedit_value = frm.elements[i].value;
 					if(richedit_value&&richedit_value!='')res+=encodeURIComponent(richedit_value);
 					else res+=encodeURIComponent(frm.elements[i].value);
 					break;
