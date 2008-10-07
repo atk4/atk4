@@ -588,19 +588,32 @@ function switchFieldOn(check_field_id, switchto_field_id, check_len){
 * the specified URL
 * In order for function not to find a key in self parameters, key is passed with
 * spaces replaced by = (equals sign). Make sure your key has spaces :)
+* ### Zak ### 
+* Changed this to make ajax request to check sesson only if last check was done before mroe than 4 seconds,
+* This way server load will be reduced significantly if a lot of JSes needs to be executed.
 */
-function checkSession(url,key){
-	if(key==undefined)key='session is expired, relogin';
-	// decoding encoded string
-	else key=key.replace(/=/g,' ');
-	var callback=function(response_text,response_xml){
-		if(response_text.search(key)!=-1){
-			alert('Your session has expired. Please log in again.');
-			window.location='main.php';
-			return false;
-		}
-	}
-	aarq(url, callback);
+var last_session_check = 0;
+
+function checkSession(url,key){ 
+        if(key==undefined)key='session is expired, relogin';
+        // decoding encoded string
+        else key=key.replace(/=/g,' ');
+        
+        var callback=function(response_text,response_xml){
+                if(response_text.search(key)!=-1){
+                        alert('Your session has expired. Please log in again.');
+                        window.location='main.php';
+                        return false;
+                }
+        }
+
+        var curtime = new Date;
+        if (last_session_check + 4000 < curtime.getTime()) {
+        	last_session_check = curtime.getTime();
+        	aarq(url, callback);	
+        } else {
+        	return true;
+        }
 }
 
 // Refreshes available months and days for date selector <
