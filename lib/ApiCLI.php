@@ -66,7 +66,7 @@ class ApiCLI extends AbstractView {
             $this->getConfig('url_prefix','').
             $page.
             $this->getConfig('url_postfix','').
-            ($tmp?'?'.join('&',$tmp):'');
+            ($tmp?(stripos($this->getConfig('url_prefix',''),'?')===false?'?':'&').join('&',$tmp):'');
     }
 
     function getLogger($class_name='Logger'){

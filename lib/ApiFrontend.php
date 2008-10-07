@@ -28,7 +28,7 @@ class ApiFrontend extends ApiWeb{
 				$this->page_object=$this->add('page_'.$this->page,$this->page,'Content');
 			else{
 				// page not found, trying to load static content
-				if(file_exists($static_page='page_'.strtolower($this->page)))
+				if($this->template->findTemplate($static_page='page_'.strtolower($this->page)))
 					$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));
 				else{
 					//header("HTTP/1.0 404 Not Found");
