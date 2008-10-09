@@ -32,7 +32,6 @@ class ApiWeb extends ApiCLI {
     }
     function initDefaults(){
     	parent::initDefaults();
-    	$this->initLayout();
     }
 	function initLayout(){
 		$this->addLayout('Content');
