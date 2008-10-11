@@ -5,6 +5,7 @@
 class Button extends AbstractView {
     public $onclick=null;
     protected $style=array();
+    protected $class=null;	// CSS class value
     function defaultTemplate(){
         return array('button','button');
     }
@@ -16,12 +17,21 @@ class Button extends AbstractView {
         return $this->onclick=$this->add('Ajax');
     }
     function setColor($color){
-    	$this->style[]='color: '.$color;
+    	$this->setStyle('color',$color);
+    	return $this;
+    }
+    function setStyle($key,$value){
+    	$this->style[]="$key: $value";
+    	return $this;
+    }
+    function setClass($class){
+    	$this->class=$class;
     	return $this;
     }
     function render(){
         $this->template->set('name',$this->name);
-        $this->template->set('style',((count($this->style)?'style="'.implode(';',$this->style).'"':'')));
+        $class=is_null($this->class)?'':'class="'.$this->class.'" ';
+        $this->template->set('style',$class.((count($this->style)?'style="'.implode(';',$this->style).'"':'')));
         if($this->onclick)$this->template->set('onclick',$this->onclick->getString());
         return parent::render();
     }
