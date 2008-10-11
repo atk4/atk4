@@ -209,11 +209,11 @@ class Form extends AbstractView {
 
         return $this;
     }
-    function getAllData(){
+    function getAllData($include_nosave=false){
         $data=array();
         foreach($this->elements as $key=>$val){
             if($val instanceof Form_Field){
-                $data[$key]=$val->get();
+                if($include_nosave||$val->no_save!==true)$data[$key]=$val->get();
             }
         }
         return $data;

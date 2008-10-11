@@ -109,7 +109,7 @@ class BasicAuth extends AbstractController {
         }
     }
     function check(){
-        /* 
+        /*
          * This is a public function you must call when preparations are complete. It will verify
          * if user is logged in or not. If he's not logged in, it will try to verify his
          * credintals. If he's verified - browser will be redirected and execution terminated.
@@ -122,24 +122,25 @@ class BasicAuth extends AbstractController {
         // Check if user's session contains autentication information
         if(!$this->isLoggedIn()){
             $this->debug('User is not authenticated yet');
-            
+
             // Redirect to index page if its ajax action <
 /*            if (isset($_REQUEST['ajax_submit']) || isset($_REQUEST['cut_object']) || isset($_REQUEST['expanded'])) {
                 echo "window.location = 'Index'; <!--endjs-->";
                 exit;
             }
-*/            
+*/
             // No information is present. Let's see if cookie is set
             if(isset($_COOKIE[$this->name."_username"]) && isset($_COOKIE[$this->name."_password"])){
 
                 $this->debug("Cookie present, validating it");
                 // Cookie is found, but is it valid?
+                // passwords are always passed encrypted
                 if($this->verifyCredintials(
                             $_COOKIE[$this->name."_username"],
-                            $this->encryptPassword($_COOKIE[$this->name."_password"])
+                            $_COOKIE[$this->name."_password"]
                            )){
                     // Cookie login was successful. No redirect will be performed
-                    $this->loggedIn($_COOKIE[$this->name."_username"]);
+                    $this->loggedIn($_COOKIE[$this->name."_username"],$_COOKIE[$this->name."_password"]);
                     $this->memorize('info',$this->info);
                     return;
                 }
@@ -181,9 +182,11 @@ class BasicAuth extends AbstractController {
         // Successful
         return true;
     }
-    function loggedIn($username){
+    function loggedIn($username,$password){
         /*
          * This function is always executed after successful login.
+         *
+         * Password passed should be encrypted
          *
          * It will create $this->info with non-false value. If you are willing to add more
          * data to $auth->info, re-define this function and do addition there. You must
@@ -194,12 +197,15 @@ class BasicAuth extends AbstractController {
 
         if($this->form && $this->form->get('memorize')){
             $this->debug('setting permanent cookie');
-            setcookie($this->name."_username",$this->form->get('username'),time()+60*60*24*30*6);
-            setcookie($this->name."_password",$this->form->get('password'),time()+60*60*24*30*6);
+            setcookie($this->name."_username",$username,time()+60*60*24*30*6);
+            setcookie($this->name."_password",$password,time()+60*60*24*30*6);
         }
 
         unset($_GET['submit']);
         unset($_GET['page']);
+    }
+    function login($username){
+    	$this->loggedIn($username,$this->allowed_credintals[$username]);
     }
     function loginRedirect(){
         $this->debug("Redirecting to original page");
@@ -230,7 +236,7 @@ class BasicAuth extends AbstractController {
 	}
     function createForm($frame,$login_tag='Content'){
         $form=$frame->add('Form',null,$login_tag);
-        
+
 
         $form
             ->addSeparator($this->title)
@@ -241,7 +247,7 @@ class BasicAuth extends AbstractController {
             ->addComment('<div align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
             		'will no longer have to use a password to enter this site,<br>until you explicitly ' .
             		'log out.</b></div>')
-			
+
             ->addSubmit('Login');
         $form->onLoad()->setFormFocus($form,'username');
         return $form;
@@ -275,7 +281,7 @@ class BasicAuth extends AbstractController {
         return $this;
     }
     function processLogin(){
-        // this function is called when authorization is not found. 
+        // this function is called when authorization is not found.
         // You should return true, if login process was successful.
         $this->memorizeOriginalURL();
 		$p=$this->showLoginForm();
@@ -284,7 +290,7 @@ class BasicAuth extends AbstractController {
                         $this->form->get('username'),
                         $this->encryptPassword($this->form->get('password'))
                         )){
-                $this->loggedIn($this->form->get('username'));
+                $this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
                 $this->memorize('info',$this->info);
                 $this->loginRedirect();
             }

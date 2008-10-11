@@ -3,10 +3,10 @@
  * Improved version of BasicAuth.
  * Login/password retrieved from DB table
  * Functionality of password recovery and new user registration is included.
- * 
+ *
  * Passwords could be stored as plain text or sha1 hash. By default they are encrypted.
  * If you do not want them to be encrypted - use Auth::setEncrypted(false)
- * 
+ *
  * If you want to use password recovery feature:
  * - create a fake page for password recovery (it is needed!)
  * - add a link to password recovery page: Auth::addPwdRecoveryLink()
@@ -23,16 +23,17 @@
  *     PRIMARY KEY  (id)
  *     ) ENGINE=MyISAM
  * - specify a period in minutes in which link to recovery will be actual ($config['auth']['pwd_recovery']['timeout'])
- * 
+ *
  * If you want to use register feature:
  * - create a page with the user registration data
  * - add a link to login form: Auth::addRegisterLink()
  * - specify register page in your config.php
- * 
+ *
  * Created on 04.07.2006 by *Camper* (camper@adevel.com)
  */
 class DBAuth extends BasicAuth{
     public $dq;
+    protected $table;
     public $email_field;
     public $pass_field;
     public $name_field;
@@ -61,12 +62,12 @@ class DBAuth extends BasicAuth{
 	//	if($this->doRecovery===true)$this->processRecovery();
 	//	else parent::check();
 	//}
-	
+
 	function getPwd(){
 		return $this->pwd_recovery;
 	}
-	
-	
+
+
 	function setEncrypted($secure=true){
 		if($secure)$this->usePasswordEncryption('sha1');
 		return $this;
@@ -75,6 +76,7 @@ class DBAuth extends BasicAuth{
 		return false;
 	}
     function setSource($table,$login='login',$password='password',$email='email'){
+    	$this->table=$table;
     	$this->name_field = $login;
     	$this->pass_field = $password;
     	$this->email_field = $email;
@@ -92,17 +94,22 @@ class DBAuth extends BasicAuth{
     	unset($this->dq->args['where']);
     	$data=$this->dq->where($this->name_field, $user)->do_getHash();
     	$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||$this->encryptPassword($data[$this->pass_field])==$password));
-    	if($result){
-    		$this->addInfo($data);
-        	$this->memorize('info',$this->info);
-    	}
+    	if($result)$this->addInfo($data);
     	return $result;
     }
 	function encrypt($str){
 		return $this->encryptPassword($str);
 	}
-    function loggedIn(){
-    	parent::loggedIn($this->get($this->name_field));
+    function login($username){
+    	// in order to store proper data performing verification
+    	$password=$this->api->db->dsql()->table($this->table)
+    		->where($this->name_field,$username)
+    		->field($this->pass_field)
+    		->do_getOne();
+    	if($this->verifyCredintials($username,$password)){
+    		$this->memorize('info',$this->info);
+    		$this->loggedIn($username,$password);
+    	}
     }
 	function addSignupProcessor($class_name='Auth_SignupProcessor'){
 		$this->signup_processor=$this->add($class_name);
