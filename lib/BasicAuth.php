@@ -182,7 +182,7 @@ class BasicAuth extends AbstractController {
         // Successful
         return true;
     }
-    function loggedIn($username,$password){
+    function loggedIn($username,$password,$memorize=false){
         /*
          * This function is always executed after successful login.
          *
@@ -195,7 +195,8 @@ class BasicAuth extends AbstractController {
         $this->debug("Login successful");
         $this->addInfo('username',$username);
 
-        if($this->form && $this->form->get('memorize')){
+		$memorize=$memorize||($this->form && $this->form->get('memorize'));
+        if($memorize){
             $this->debug('setting permanent cookie');
             setcookie($this->name."_username",$username,time()+60*60*24*30*6);
             setcookie($this->name."_password",$password,time()+60*60*24*30*6);

@@ -13,6 +13,7 @@ class FreeForm extends Form{
         $this->template->set('form_name',$this->name);
         $this->template_chunks['form']=$this->template;
         $this->template_chunks['form']->del('form_buttons');
+        $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
 		$this->api->addHook('pre-exec',array($this,'loadData'));
 		$this->getTemplateFields();
 	}

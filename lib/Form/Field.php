@@ -261,8 +261,7 @@ abstract class Form_Field extends AbstractView {
 class Form_Field_Free extends Form_Field{
 	function init(){
 		parent::init();
-		// free field template is the whole content of its tag
-		//$this->content=$this->owner
+        if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
 	}
 	function render(){
 		// we don't know the field type, so we set all possible properties
@@ -278,6 +277,11 @@ class Form_Field_Free extends Form_Field{
 			foreach($this->attr as $k=>$v)$attr.=$k.'="'.$v.'" ';
 		}
 		$this->template->trySet($this->short_name.'_attrs',$attr);
+        $this->template->trySet('field_error',
+             isset($this->owner->errors[$this->short_name])?
+             $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
+             :''
+             );
 		$this->output($this->template->render());
 	}
 }
