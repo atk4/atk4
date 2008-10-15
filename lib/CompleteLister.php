@@ -28,6 +28,11 @@ class CompleteLister extends Lister {
             $this->totals['plural_s']='s';
         }
     }
+    
+    function rowRender($row) {
+    	return $this->row_t->render(); 
+    }
+    
     function render(){
         $this->tr_class='';
         $this->template->del('rows');
@@ -36,7 +41,8 @@ class CompleteLister extends Lister {
             $this->formatRow();
             $this->row_t->set($this->current_row);
             $this->setTRClass();
-            $this->template->append('rows',$this->row_t->render());
+            $this->beforeRowRender();
+            $this->template->append('rows',$this->rowRender($this->current_row));
         }
         if($this->totals!==false && $this->totals_t){ 
             $t = $this->totals_t;
