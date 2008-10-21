@@ -68,7 +68,6 @@ class AjaxFileUploader extends AbstractController{
 		return $this;
 	}
 	function getFileSize(){
-		$this->api->logger->logVar($this->getFilePath());
 		return filesize($this->getFilePath());
 	}
 	function deleteFile(){
@@ -80,12 +79,10 @@ class AjaxFileUploader extends AbstractController{
 	protected function uploadFile($field_name){
 		$result=0;
 		try{
-			//$this->api->logger->logVar($_FILES);
 			if(isset($_FILES[$field_name])&&$_FILES[$field_name]['name']!=''){
 				$this->setFilePath($this->api->getConfig('ajax_uploads_dir','uploads').DIRECTORY_SEPARATOR.
 					$_FILES[$field_name]['name']);
 				// checking upload errors
-				//$this->api->logger->logVar($_FILES[$field_name]['name']);
 				if($_FILES[$field_name]['error']!=UPLOAD_ERR_OK){
 					switch($_FILES[$field_name]['error']){
 						case UPLOAD_ERR_INI_SIZE:
@@ -95,7 +92,6 @@ class AjaxFileUploader extends AbstractController{
 							throw new BaseException("File uploaded partially");
 					}
 				}
-				//$this->api->logger->logVar($this->getFilePath());
 				if(!move_uploaded_file($_FILES[$field_name]['tmp_name'],$this->getFilePath())){
 					throw new BaseException("Error uploading file");
 				}
