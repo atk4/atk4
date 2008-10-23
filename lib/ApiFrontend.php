@@ -19,23 +19,49 @@ class ApiFrontend extends ApiWeb{
 		$this->template->trySet('base_url',$this->getBaseURL());
 	}
 	function layout_Content(){
-		// This function initializes content. Content is page-dependant
-		if(method_exists($this,$pagefunc='page_'.$this->page)){
-			$this->page_object=$this->add('Page',$this->page);
-			$this->$pagefunc($this->page_object);
-		}else{
-			if(loadClass('page_'.$this->page))
-				$this->page_object=$this->add('page_'.$this->page,$this->page,'Content');
-			else{
-				// page not found, trying to load static content
-				if($this->template->findTemplate($static_page='page_'.strtolower($this->page)))
-					$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));
+		try{
+			// This function initializes content. Content is page-dependant
+			if(method_exists($this,$pagefunc='page_'.$this->page)){
+				$this->page_object=$this->add('Page',$this->page);
+				$this->$pagefunc($this->page_object);
+			}else{
+				if(loadClass('page_'.$this->page))
+					$this->page_object=$this->add('page_'.$this->page,$this->page,'Content');
 				else{
-					//header("HTTP/1.0 404 Not Found");
-					$this->page_object=$this->add('Page',$this->page,'Content',array('page_404','_top'));
+					// page not found, trying to load static content
+					if($this->template->findTemplate($static_page='page_'.strtolower($this->page)))
+						$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));
+					else{
+						//header("HTTP/1.0 404 Not Found");
+						$this->page_object=$this->add('Page',$this->page,'Content',array('page_404','_top'));
+					}
 				}
 			}
+		}catch(Exception $e){
+			$this->processException($e);
 		}
+	}
+	/**
+	 * Called on unhandled exception to show user friendly message
+	 */
+	function processException($e){
+		if (isset ($this->api->logger) && !is_null($this->api->logger))
+			$this->api->logger->logException($e);
+		// now showing this exception
+		if ($this->isAjaxOutput()) {
+			$this->add('Ajax')->displayAlert($this->formatAlert($e->getMessage()))->execute();
+		}
+		// rendering error page
+		$page=$this->add('page_Error')->setError($e);
+		$page->downCall('render');
+		$this->logVar($page->template->render());
+		echo $page->template->render();
+		exit;
+	}
+	function formatAlert($s) {
+		$r = addslashes(strip_tags($s));
+		$r = str_replace("\n", " | ", $r);
+		return $r;
 	}
 	/**
 	 * Adds a floating frame that will reload its content on show.

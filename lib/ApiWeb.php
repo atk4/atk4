@@ -217,7 +217,7 @@ class ApiWeb extends ApiCLI {
          * Use this function instead of issuing header("Location") stuff
          */
         $this->api->not_html=true;
-        header("Location: ".$this->getBaseURL().$this->getDestinationURL($page,$args));
+        header("Location: ".$this->getDestinationURL($page,$args));
         exit;
     }
 	function setIndexPage($page){
