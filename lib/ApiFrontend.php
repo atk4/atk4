@@ -52,10 +52,9 @@ class ApiFrontend extends ApiWeb{
 			$this->add('Ajax')->displayAlert($this->formatAlert($e->getMessage()))->execute();
 		}
 		// rendering error page
-		$page=$this->add('page_Error')->setError($e);
-		$page->downCall('render');
-		$this->logVar($page->template->render());
-		echo $page->template->render();
+		$t=$this->add('SMlite')->loadTemplate('page_error');
+		$t->trySet('message',$e->getMessage());
+		echo $t->render();
 		exit;
 	}
 	function formatAlert($s) {
