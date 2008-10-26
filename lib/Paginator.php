@@ -153,7 +153,7 @@ class Paginator extends AbstractView {
     }
     function outputNum($n){
         if($n==$this->cur_page){
-            $this->output($this->template_chunks['cur_item']->set('item',$n)->set('total_items',$this->found_rows)->render());
+            $this->output($this->template_chunks['cur_item']->trySet('item',$n)->trySet('total_items',$this->found_rows)->render());
         }else{
             $this->output($this->linkNoTemplate($n,array($this->name.'_skip'=>($n-1)*$this->ipp)));
         }
