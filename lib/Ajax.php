@@ -131,8 +131,9 @@ class Ajax extends AbstractModel {
         return $this;
     }
     function setInnerHTML($field_id,$value){
-        $value=str_replace("'",'',$value);
-        $value=str_replace("\r\n",'\\n',$value);  // this is for templates what saved with
+        $value=str_replace("'",'\'',$value);	// FIX: single quote was replaced by empty string
+        										// wonder why?
+        $value=str_replace("\r\n",'\n',$value);  // this is for templates that saved with
         										  // Windows line delimiters -- mvs
         $value=str_replace("\n",'\\n',$value);
 
