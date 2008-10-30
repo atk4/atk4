@@ -26,7 +26,6 @@ class FreeForm extends Form{
 			$tags=$this->template->tags;
 			// TODO: we should delete field data before collecting
 		}
-		//else $this->api->logger->logVar($tags);
 		foreach($tags as $name=>$tag){
 			if(stripos($name,'field_')!==false){
 				list($field,$number)=split('#',$name);

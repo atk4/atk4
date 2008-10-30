@@ -505,7 +505,6 @@ class Grid extends CompleteLister {
         	}
         	//walking and combining string
         	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
-        	//$this->api->logger->logVar($this->row_t->get("tdparam_$field"));
         	if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
         	else $this->row_t->set("tdparam_$field",trim($tdparam_str));
         }

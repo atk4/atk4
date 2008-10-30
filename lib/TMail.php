@@ -92,7 +92,6 @@ class TMail extends AbstractController{
                  * Sets the tag value throughout the template, including all parts
                  * Some parts could be strings, not templates
                  */
-                //$this->api->logger->logVar("setting $tag");
                 if(is_null($value)&&is_array($tag)){
                         foreach($tag as $k=>$v)$this->setTag($k,$v);
                         return $this;
@@ -103,7 +102,6 @@ class TMail extends AbstractController{
                 }
                 if($this->get('subject') instanceof SMlite){
                         $this->get('subject')->trySet($tag,$value);
-                        //$this->api->logger->logVar($this->get('subject')->render());
                 }
                 if($this->body instanceof SMlite)$this->body->trySet($tag,$value);
         if($this->sign instanceof SMlite)$this->sign->trySet($tag,$value);

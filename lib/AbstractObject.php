@@ -34,7 +34,6 @@ abstract class AbstractObject {
 		return "Object " . get_class($this) . "(" . $this->name . ")";
 	}
 	/*function __get($var){
-	$this->api->logger->logVar('hit');
 	if($this instanceof DummyObject){
 		return $this;
 	}else{
@@ -360,5 +359,15 @@ abstract class AbstractObject {
 	/////// LOGGER ////////
 	function logVar($var,$msg=""){
 		$this->api->getLogger()->logVar($var,$msg);
+	}
+	function logInfo($info,$msg=""){
+		$this->api->getLogger()->logLine($msg.' '.$info."\n");
+	}
+	function logError($error,$msg=""){
+		if(is_object($error)){
+			// we got exception object obviously
+			$error=$error->getMessage();
+		}
+		$this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
 	}
 }

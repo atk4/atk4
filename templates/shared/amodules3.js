@@ -668,3 +668,29 @@ function switchDateSelector(control,name){
 		if(year)year.disabled=false;
 	}
 }
+// checks the extension of the filename in the field specified
+function checkExtension(form_id, field_id, ext){
+	if(!ext)ext = new Array("jpg","jpeg","gif","bmp","png");
+	filename=aagv(form_id, field_id);
+	if(filename==''){
+		// no check for empty values, check them by other function
+		return true;
+	}
+	allowSubmit=false;
+	while (filename.indexOf("\\") != -1)filename = filename.slice(filename.indexOf("\\") + 1);
+	fileext = filename.split(".");
+	for (var i = 0; i < ext.length; i++) {
+		// file can have multiple extensions like file.jpg.html
+		for(j=0;j<fileext.length;j++){
+			extStr=fileext[j];
+			if (ext[i] == extStr) { allowSubmit = true; break; }
+		}
+	}
+	if (!allowSubmit){
+		alert("Please only upload files with extension "
+			+ (ext.join(", ")) + "\nPlease select a new "
+			+ "file to upload and submit again.");
+		return false;
+	}
+	return true;
+}

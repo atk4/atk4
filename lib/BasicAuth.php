@@ -209,23 +209,36 @@ class BasicAuth extends AbstractController {
     	$this->loggedIn($username,$this->allowed_credintals[$username]);
     }
     function loginRedirect(){
-        $this->debug("Redirecting to original page");
+		$this->debug("Redirecting to original page");
 
-        // Redirect to the page which was originally requested
-        if($original_request=$this->recall('original_request',false)){
-            $p=$original_request['page'];
-	    if(!$p)$p=null;
-            unset($original_request['page']);
-            unset($original_request['submit']);
-	    $this->debug("to $p");
-	    // erasing stored URL
-	    $this->forget('original_request');
-            $this->api->redirect($p,$original_request);
-        }
+		// Redirect to the page which was originally requested
+		if($original_request=$this->recall('original_request',false)){
+			$p=$original_request['page'];
+			if(!$p)$p=null;
+			unset($original_request['page']);
+			// the following parameters should not remain as thay break the page
+			unset($original_request['submit']);
+			// expanders should not be displayed, going to parent page instead
+			if(isset($original_request['expander'])){
+				$parts=split('_',$p);
+				if(count($parts)>0){
+					unset($parts[count($parts)-1]);
+					$p=join('_',$parts);
+				}
+				unset($original_request['expander']);
+				unset($original_request['expanded']);
+				unset($original_request['id']);
+			}
+			unset($original_request['cut_object']);
+			$this->debug("to $p");
+			// erasing stored URL
+			$this->forget('original_request');
+			$this->api->redirect($p,$original_request);
+		}
 
-        // Rederect to index page
-	$this->debug("to Index");
-        $this->api->redirect(null);
+		// Rederect to index page
+		$this->debug("to Index");
+		$this->api->redirect(null);
     }
 	function logout(){
         // Forces logout. This also cleans cookies
