@@ -144,7 +144,7 @@ abstract class Form_Field extends AbstractView {
 		);
     }
     function denyEnter(){
-    	$this->onKeyPress()->ajaxFunc('if(isKeyPressed(e, kReturn))return false');
+    	$this->onKeyPress()->ajaxFunc('if(isKeyPressed(event, kReturn))return false');
     	return $this;
     }
     function setSeparator($separator){
