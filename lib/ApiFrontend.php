@@ -5,11 +5,15 @@
  * - static pages
  * - events
  * - jobs
+ * This API works not only with pages, but also with RSS channels
+ * It is assumed that RSS channels are all under rss/ dir of project root,
+ * similar to page/ dir for pages.
  *
  * Created on 23.09.2008 by *Camper* (cmd@adevel.com)
  */
 class ApiFrontend extends ApiWeb{
 	protected $page_object=null;
+	protected $content_type='page';	// content type: rss/page/etc
 
 	function init(){
 		parent::init();
@@ -19,14 +23,17 @@ class ApiFrontend extends ApiWeb{
 		$this->template->trySet('base_url',$this->getBaseURL());
 	}
 	function layout_Content(){
+		// required class prefix depends on the content_type
 		try{
 			// This function initializes content. Content is page-dependant
-			if(method_exists($this,$pagefunc='page_'.$this->page)){
-				$this->page_object=$this->add('Page',$this->page);
-				$this->$pagefunc($this->page_object);
+			$class=$this->content_type.'_'.$this->page;
+			if(method_exists($this,$class)){
+				// for page we add Page class, for RSS - RSSchannel
+				$this->page_object=$this->add($this->content_type=='page'?'Page':'RSSchannel',$this->page);
+				$this->$class($this->page_object);
 			}else{
-				if(loadClass('page_'.$this->page))
-					$this->page_object=$this->add('page_'.$this->page,$this->page,'Content');
+				if(loadClass($class))
+					$this->page_object=$this->add($class,$this->page,'Content');
 				else{
 					// page not found, trying to load static content
 					if($this->template->findTemplate($static_page='page_'.strtolower($this->page)))
@@ -40,6 +47,37 @@ class ApiFrontend extends ApiWeb{
 		}catch(Exception $e){
 			$this->processException($e);
 		}
+	}
+	function calculatePageName(){
+		$u=$this->getServerURL();
+		// leading slash / should be removed
+		if((isset($u[0])) and ($u[0]=='/'))$u=substr($u,1);
+		if(stripos($u,'.xml')!==false)$this->content_type='rss';
+		else $this->content_type='page';
+		// renaming path to name
+		$u=str_replace('/','_',$u);
+		// removing extensions
+		$u=str_ireplace('.xml','',$u);
+		$u=str_ireplace('.html','',$u);
+		// assigning page
+		$_GET['page']=$u;
+		parent::calculatePageName();
+	}
+	function getServerURL(){
+		$u=$_SERVER['REDIRECT_URL'];
+		// removing server name and URL root from path
+		$u=str_ireplace($this->getConfig('url_root',''),'',$u);
+		return $u;
+	}
+	function getRSSURL($rss,$args=array()){
+		$tmp=array();
+		foreach($args as $arg=>$val){
+			if(!isset($val) || $val===false)continue;
+			if(is_array($val)||is_object($val))$val=serialize($val);
+			$tmp[]="$arg=".urlencode($val);
+		}
+		return
+			$rss.'.xml'.($tmp?'?'.join('&',$tmp):'');
 	}
 	/**
 	 * Called on unhandled exception to show user friendly message

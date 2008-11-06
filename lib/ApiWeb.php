@@ -103,6 +103,8 @@ class ApiWeb extends ApiCLI {
     function calculatePageName(){
         /**
          * Discover requested page name (class) from $_GET
+         * $_GET should be properly initialized, including 'page' parameter,
+         * before calling this method (e.g. with .htaccess)
          */
         if(!isset($_GET['page'])){
             $this->page_base=basename($_SERVER['REDIRECT_URL']);
