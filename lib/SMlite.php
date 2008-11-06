@@ -33,7 +33,7 @@
  *   working with objects
  *
  *  - you can manipulate with regions from different files.
- *  
+ *
  * Traditional recipe to work with lists in our templates are:
  *
  *  1. clone template of generic line
@@ -53,13 +53,13 @@
  * cache parsed template serialized inside array.
  *
  * Tag name looks like this:
- * 
+ *
  *  "misc/listings:student_list"
  *
  * Which means to seek tag <?student_list?> inside misc/listings.html
- *  
+ *
  * You may have same tag several times inside template. For example you can
- * use tag <?$title?> inside <head><title> and <h1>. 
+ * use tag <?$title?> inside <head><title> and <h1>.
  *
  * If you would set('title','My Title'); it will insert that value in
  * all those regions.
@@ -101,16 +101,16 @@ class SMlite extends AbstractModel {
      */
 
     var $settings=array();
-    
+
     /**
      * list of updated tags with values
      */
     public $updated_tag_list = array();
-    
+
     function getTagVal($tag) {
     	return (isset($this->updated_tag_list[$tag]))?$this->updated_tag_list[$tag]:null;
     }
-    
+
     function getDefaultSettings(){
         /*
          * This function specifies default settings for SMlite. Use
@@ -192,10 +192,10 @@ class SMlite extends AbstractModel {
           $new->rebuildTags();
           return $new;
         }
-        
+
         if(!$this->is_set($tag)){
             $o=$this->owner?" for ".$this->owner->__toString():"";
-            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
         }
         $class_name=get_class($this);
         $new=new $class_name();
@@ -259,7 +259,7 @@ class SMlite extends AbstractModel {
             $this->fatal("Cannot append to tag $tag");
         }
         foreach($this->tags[$tag] as $key=>$_){
-            
+
             if(!is_array($this->tags[$tag][$key])){
                 //throw new BaseException("Problem appending '".htmlspecialchars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
@@ -392,8 +392,8 @@ class SMlite extends AbstractModel {
     function loadTemplateFromString($template_string){
         $this->template=array();
         $this->tags=array();
-        $this->updated_tag_list = array(); 
-        
+        $this->updated_tag_list = array();
+
         $this->tmp_template=$template_string;
         $this->parseTemplate($this->template);
         return $this;
@@ -402,9 +402,9 @@ class SMlite extends AbstractModel {
         /*
          * Load template from file
          */
-        if($ext){ 
-            $tempext=$this->settings['extension']; 
-            $this->settings['extension']=$ext; 
+        if($ext){
+            $tempext=$this->settings['extension'];
+            $this->settings['extension']=$ext;
         };
         $this->tmp_template = $this->findTemplate($template_name);
 
@@ -460,7 +460,7 @@ class SMlite extends AbstractModel {
         $this->tags[$key][]=&$ref;
     }
     function isTopTag($tag){
-        return 
+        return
             (isset($this->top_tag) && ($tag==$this->top_tag)) ||
             ($tag=='_top');
     }
