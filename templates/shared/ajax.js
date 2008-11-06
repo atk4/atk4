@@ -209,8 +209,13 @@ function aacp( form_id ){
 		for(var i=0; i<frm.elements.length; i++){
 			if(res != '')res+='&';
 			switch(frm.elements[i].type){
-				case 'checkbox':
-					if(!frm.elements[i].checked)continue;
+				case 'checkbox': 
+					if (frm.elements[i].checked === false) {
+						continue;
+					} else {
+						res += frm.elements[i].name+'='+encodeURIComponent(frm.elements[i].value);	
+						break;
+					}
 				case 'radio':
 					elem = frm.elements[frm.elements[i].name];
 					val = 'null';
