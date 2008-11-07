@@ -60,6 +60,7 @@ class ApiFrontend extends ApiWeb{
 		$u=str_ireplace('.xml','',$u);
 		$u=str_ireplace('.html','',$u);
 		// assigning page
+		if(!$u)$u=$this->index_page;
 		$_GET['page']=$u;
 		parent::calculatePageName();
 	}
