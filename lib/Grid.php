@@ -289,7 +289,7 @@ class Grid extends CompleteLister {
             $f->recursiveRender();
         }
     	$this->current_row[$field]=
-            $this->add('Ajax')->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete '".$this->getRowTitle()."'?")->setFrameVisibility($f,true)->getLink('delete');
+            $this->add('Ajax')->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
     }
     function addRecordOrder($field,$table=''){
     	if(!$this->record_order){
