@@ -144,7 +144,7 @@ class Ajax extends AbstractModel {
     }
     function openExpander($lister,$id,$field){
     	// checking session
-    	return $this->ajaxFunc('expander_flip(\''.$lister->name.'\','.$id.',\''.
+    	return $this->ajaxFunc('expander_flip(\''.$lister->name.'\',\''.$id.'\',\''.
                     $field.'\',\''.
                     $this->api->getDestinationURL($this->api->page.'_'.$field,array('expander'=>$field,
 						'cut_object'=>$this->api->page.'_'.$field, 'expanded'=>$lister->name)).'&id=\')');
@@ -153,7 +153,7 @@ class Ajax extends AbstractModel {
         if(!$lister)$lister=$_GET['expanded'];
         $id=(int)$_GET['id'];
         $button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
-        return $this->ajaxFunc("expander_flip('".$lister."',".$id.",'".$button."','')");
+        return $this->ajaxFunc("expander_flip('".$lister."','".$id."','".$button."','')");
     }
     function memorizeExpander(){
 		$this->api->stickyGET('id');
