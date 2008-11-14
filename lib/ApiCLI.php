@@ -62,11 +62,10 @@ class ApiCLI extends AbstractView {
             if(is_array($val)||is_object($val))$val=serialize($val);
             $tmp[]="$arg=".urlencode($val);
         }
-        return
-            $this->getConfig('url_prefix','').
-            $page.
-            $this->getConfig('url_postfix','').
-            ($tmp?(stripos($this->getConfig('url_prefix',''),'?')===false?'?':'&').join('&',$tmp):'');
+		$r=$this->getConfig('url_prefix','');
+		if($page&&$page!='/')$r.=$page.$this->getConfig('url_postfix','');
+		$r.=($tmp?(stripos($this->getConfig('url_prefix',''),'?')===false?'?':'&').join('&',$tmp):'');
+		return $r;
     }
 
     function getLogger($class_name='Logger'){
