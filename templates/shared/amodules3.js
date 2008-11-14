@@ -682,7 +682,7 @@ function checkExtension(form_id, field_id, ext){
 	for (var i = 0; i < ext.length; i++) {
 		// file can have multiple extensions like file.jpg.html
 		for(j=0;j<fileext.length;j++){
-			extStr=fileext[j];
+			extStr=fileext[j].toLowerCase();
 			if (ext[i] == extStr) { allowSubmit = true; break; }
 		}
 	}
