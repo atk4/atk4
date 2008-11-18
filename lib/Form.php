@@ -33,6 +33,7 @@ class Form extends AbstractView {
     protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
+    protected $ajax_submits=array();	// contains AJAX instances assigned to buttons
 
     public $dq = null;
     function init(){
@@ -155,7 +156,35 @@ class Form extends AbstractView {
     function onLoad($ajax=null){
         return $this->onload=$ajax?$ajax:$this->add('Ajax');
     }
-
+    /**
+     * Makes text/dropdown fields on the form perform a submit on Enter key press
+     * @param $field if set, method executed on a certain field only. Should be a short name of a field
+     */
+	function submitOnEnter($field=null){
+		if(is_null($field)){
+			foreach($this->elements as $name=>$field){
+				if($field instanceof Form_Field_Line or
+				$field instanceof Form_Field_Password)
+					$this->submitOnEnter($name);
+			}
+			return $this;
+		}
+		// searching submit action
+		$action=$this->getAjaxSubmitAction();
+		$this->getElement($field)->onKeyPress()->ajaxFunc(
+			'if(isKeyPressed(event, kReturn)){'.$action->getAjaxOutput().'}'
+		);
+	}
+	/**
+	 * Returns the AJAX instance of the button supposed to be submit
+	 * Redefine this method for your specifics
+	 */
+	function getAjaxSubmitAction(){
+		foreach($this->ajax_submits as $key=>$ajax){
+			if($key=='Submit'||$key=='Save'||$key=='Update')return $ajax;
+		}
+		return null;
+	}
 
     // Operating with field values
     function get($field){
@@ -288,9 +317,9 @@ class Form extends AbstractView {
         return $this->onSubmit($this->addButton($label,$name,$color));
     }
     function addButton($label,$name=null,$color=null){
-
+		if(is_null($name))$name=$label;
         // Now add the regular button first
-        $field = $this->last_button = $this->add('Form_Button',isset($name)?$name:$label,'form_buttons')
+        $field = $this->last_button = $this->add('Form_Button',$name,'form_buttons')
             ->setLabel($label);
 
         if (!is_null($color))
@@ -299,7 +328,9 @@ class Form extends AbstractView {
         $field->setNoSave();
 
         // And teach it to use AJAX
-        return $field->onclick = $field->add('Ajax')->useProgressIndicator($this->name.'_loading');
+        $field->onclick = $field->add('Ajax')->useProgressIndicator($this->name.'_loading');
+        $this->ajax_submits[$name]=$field->onclick;
+        return $field->onclick;
     }
     function addCondition($field,$value=null){
         $this->dq

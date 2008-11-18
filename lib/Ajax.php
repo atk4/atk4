@@ -12,7 +12,7 @@ class Ajax extends AbstractModel {
     public $owner;
 
 
-    public $ajax_output="";
+    protected $ajax_output=array();
 
     public $spinner = null;
 
@@ -29,8 +29,11 @@ class Ajax extends AbstractModel {
 
     function execute(){
         $this->api->not_html=true;
-        echo $this->ajax_output;
+        echo $this->getAjaxOutput();
         exit;
+    }
+    function getAjaxOutput(){
+    	return join(';',$this->ajax_output);
     }
     function ajaxFlush(){
         // Now, since we are returning AJAX stuff, we don't need to render anything.
@@ -40,7 +43,7 @@ class Ajax extends AbstractModel {
     }
     function getString(){
         if($this->spinner)$this->ajaxFunc("spinner_off('".$this->spinner."')");
-        return $this->ajax_output;
+        return $this->getAjaxOutput();
     }
     function getLink($text){
         return '<a href="javascript: void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
@@ -59,9 +62,9 @@ class Ajax extends AbstractModel {
     function ajaxFunc($func_call){
         /*
          */
-        if(is_null($this->timeout))$this->ajax_output.="$func_call;";
+        if(is_null($this->timeout))$this->ajax_output[]="$func_call";
         else{
-        	$this->ajax_output.="setTimeout('".addslashes($func_call)."',$this->timeout);";
+        	$this->ajax_output[]="setTimeout('".addslashes($func_call)."',$this->timeout)";
         	$this->timeout=null;
         }
 
