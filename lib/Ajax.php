@@ -56,7 +56,7 @@ class Ajax extends AbstractModel {
 		// in order for JS not to find a string in the parameters of function itself,
 		// parameter should be encoded first
 		$key=str_replace(' ','=',$key);
-		return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."','$key')");
+		return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."','$key');");
 	}
 
     function ajaxFunc($func_call){
