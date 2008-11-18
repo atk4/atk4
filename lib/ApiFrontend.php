@@ -59,7 +59,7 @@ class ApiFrontend extends ApiWeb{
 		// removing extensions
 		$u=str_ireplace('.xml','',$u);
 		$u=str_ireplace('.html','',$u);
-		// assigning page
+		// assigning default page
 		if(!$u)$u=$this->index_page;
 		$_GET['page']=$u;
 		parent::calculatePageName();
@@ -67,7 +67,11 @@ class ApiFrontend extends ApiWeb{
 	function getServerURL(){
 		$u=$_SERVER['REDIRECT_URL'];
 		// removing server name and URL root from path
-		$u=str_ireplace($this->getConfig('url_root',''),'',$u);
+		// url_root value should be in $_SERVER, provided by .htaccess:
+		// RewriteRule .* - [E=URL_ROOT:/]
+		$url_root=isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'';
+		if($url_root=='/')$url_root='';
+		$u=str_ireplace($url_root,'',$u);
 		return $u;
 	}
 	function getRSSURL($rss,$args=array()){

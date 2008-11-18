@@ -11,13 +11,7 @@ class Menu extends CompleteLister {
         return array('shared','Menu');
     }
     function addMenuItem($label,$href=null){
-        if(!$href){
-            $href=ereg_replace('[^a-zA-Z0-9]','',$label);
-            if($label[0]==';'){
-                $label=substr($label,1);
-                $href=';'.$href;
-            }
-        }
+        if(!$href)$href=$this->getDefaultHref($label);
         $this->data[$href]=array(
 			'page'=>$href,
 			'href'=>$this->api->getDestinationURL($href),
@@ -26,6 +20,14 @@ class Menu extends CompleteLister {
 		);
 
         return $this;
+    }
+    protected function getDefaultHref($label){
+        $href=ereg_replace('[^a-zA-Z0-9]','',$label);
+        if($label[0]==';'){
+            $label=substr($label,1);
+            $href=';'.$href;
+        }
+        return $href;
     }
     function isCurrent($href){
     	// returns true if item being added is current
