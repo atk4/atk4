@@ -33,7 +33,7 @@ class Ajax extends AbstractModel {
         exit;
     }
     function getAjaxOutput(){
-    	return join(';',$this->ajax_output);
+    	return join(';',$this->ajax_output) . ';';
     }
     function ajaxFlush(){
         // Now, since we are returning AJAX stuff, we don't need to render anything.
