@@ -171,7 +171,7 @@ class Form extends AbstractView {
 		}
 		// searching submit action
 		$action=$this->getAjaxSubmitAction();
-		$this->getElement($field)->onKeyPress()->ajaxFunc(
+		if($action)$this->getElement($field)->onKeyPress()->ajaxFunc(
 			'if(isKeyPressed(event, kReturn)){'.$action->getAjaxOutput().'}'
 		);
 	}
