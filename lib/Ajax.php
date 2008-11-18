@@ -240,6 +240,14 @@ class Ajax extends AbstractModel {
 		$this->spinner=null;
 		return $this;
 	}
+	/**
+	 * Clears the ajax_output property, erasing all the functions
+	 * calls assigned so far
+	 */
+	function reset(){
+		$this->ajax_output=array();
+		return $this;
+	}
     function resetForm($form){
 		$this->ajaxFunc("resetForm('$form->name')");
 		return $this;
