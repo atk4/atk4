@@ -267,6 +267,7 @@ class Form_Field_Free extends Form_Field{
 		// we don't know the field type, so we set all possible properties
 		// value
 		$this->template->trySet('value',$this->get());
+		$this->template->trySet('name',$this->name);
 		// selected item (dropdowns)
 		$this->template->trySet($this->get().'_selected','selected="selected"');
 		// checked item (checkboxes, radiobuttons)

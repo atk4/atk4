@@ -64,6 +64,11 @@ class ApiFrontend extends ApiWeb{
 		$_GET['page']=$u;
 		parent::calculatePageName();
 	}
+	function getBaseURL(){
+		$r=parent::getBaseURL();
+		// here we need additional path
+		return $r.(isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'');
+	}
 	function getServerURL(){
 		$u=$_SERVER['REDIRECT_URL'];
 		// removing server name and URL root from path
