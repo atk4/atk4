@@ -31,7 +31,10 @@ class ApiCLI extends AbstractView {
     }
 	function getBaseURL(){
 		return (isset($_SERVER['HTTPS'])?'https':'http').'://'.$_SERVER['SERVER_NAME'].
-			(substr($root=$this->api->getConfig('url_root','/'),0,1)=='/'?'':'/').$root;
+			(substr($root=$this->getUrlRoot(),0,1)=='/'?'':'/').$root;
+	}
+	function getUrlRoot(){
+		return $this->api->getConfig('url_root','/');
 	}
 	function getBaseDir(){
 		return $this->base_dir;
