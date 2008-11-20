@@ -67,19 +67,21 @@ class ApiFrontend extends ApiWeb{
 	function getBaseURL(){
 		$r=parent::getBaseURL();
 		// here we need additional path
-		return $r.(isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'');
+		return $r.$this->getUrlRoot();
 	}
 	function getServerURL(){
 		$u=$_SERVER['REDIRECT_URL'];
 		// removing server name and URL root from path
 		// url_root value should be in $_SERVER, provided by .htaccess:
 		// RewriteRule .* - [E=URL_ROOT:/]
-		$url_root=$this->getUrlRoot()=='/'?'':$this->getUrlRoot();
+		$url_root=$this->getUrlRoot();
 		$u=str_ireplace($url_root,'',$u);
 		return $u;
 	}
 	function getUrlRoot(){
-		return isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'/';
+		$r=isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'';
+		if($r=='/')$r='';
+		return $r;
 	}
 	function getRSSURL($rss,$args=array()){
 		$tmp=array();
