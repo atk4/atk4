@@ -93,6 +93,10 @@ class Form extends AbstractView {
         }
     }
 
+    function showAjaxError($field,$msg){
+    	$this->add('Ajax')->displayAlert(strip_tags($msg))->execute();
+    }
+
     function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=$name;
 
