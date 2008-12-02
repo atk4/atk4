@@ -6,6 +6,8 @@ var buttonClicked = null;
 var am_loading='amodules3/img/loading.gif';
 var am_notloading='amodules3/img/not_loading.gif';
 var last_session_check = 0;
+
+
 /**
  * Shows the message provided. Replaces standard alert() toshow more handsome output
  */
@@ -124,7 +126,7 @@ function expander_flip(name,id,button,expander_url){
 	}
 }
 function reloadGridRow(url,name,id,callback){
-	$.get(url,null,function(json){
+	/*$.get(url,null,function(json){
 		// result contains JSON array
 		// see Grid::formatRowContent_jquery()
 		var row=json;
@@ -136,7 +138,7 @@ function reloadGridRow(url,name,id,callback){
 				//this.attr('style'
 			}
 		});
-	},'json');
+	},'json');*/
 }
 function setFormFocus(form,field){
 	var frm = document.getElementById(form);
