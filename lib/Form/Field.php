@@ -157,7 +157,7 @@ abstract class Form_Field extends AbstractView {
     }
     function render(){
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-        if(!$this->mandatory_template)$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
+        if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->trySet('field_comment',$this->comment);
