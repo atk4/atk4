@@ -21,10 +21,9 @@ class ApiWeb extends ApiCLI {
     public $apinfo=array();
 
     protected $page_base=null;
-
-    public $index_page='Index';	// TODO: protect this
-
-    public $sticky_get_arguments = array();	// TODO: protect this
+    protected $index_page='Index';	// TODO: protect this
+    protected $sticky_get_arguments = array();	// TODO: protect this
+    protected $ajax_class='Ajax';
 
     function __construct($realm=null,$skin='kt2'){
         $this->skin=$skin;
@@ -35,6 +34,13 @@ class ApiWeb extends ApiCLI {
     }
 	function initLayout(){
 		$this->addLayout('Content');
+	}
+	function getAjaxClass(){
+		return $this->ajax_class;
+	}
+	function setAjaxClass($class){
+		$this->ajax_class=$class;
+		return $this;
 	}
     /////////////// C o r e   f u n c t i o n s ///////////////////
     function caughtException($e){
@@ -64,6 +70,9 @@ class ApiWeb extends ApiCLI {
          */
         $this->initializeSession();
 
+        // checking session expire if needed
+        if(isset($_POST['check_session'])||isset($_GET['check_session']))$this->checkSessionExpired();
+
         // find out which page is to display
         $this->calculatePageName();
 
@@ -71,6 +80,16 @@ class ApiWeb extends ApiCLI {
         $this->sendHeaders();
         parent::init();
 
+    }
+    /**
+     * This function is called on AJAX request.
+     * @return corresponding
+     */
+    function checkSessionExpired(){
+    	$result=(isset($_SESSION['o'])?0:1);
+		header('Content-type: text/xml');
+		echo "<session_check><expired>$result</expired></session_check>";
+		exit;
     }
     function initializeSession(){
         // initialize session for this realm

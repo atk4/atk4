@@ -50,7 +50,7 @@ class Wizard extends AbstractView{
 		$this->buttons[$name] = $this->add('Form_Button',$name,'buttons')
             ->setLabel($label);
 
-        return $this->buttons[$name]->onclick = $this->buttons[$name]->add('Ajax')
+        return $this->buttons[$name]->onclick = $this->buttons[$name]->ajax()
         	->useProgressIndicator($this->name.'_loading');
 		
 	}

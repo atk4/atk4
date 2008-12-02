@@ -43,7 +43,7 @@ class QuickSearch extends Filter {
     }
     function submitted(){
         if(parent::submitted()){
-            $a=$this->add('Ajax');
+            $a=$this->ajax();
             $a->reload($this->owner);
             $a->execute();
         }

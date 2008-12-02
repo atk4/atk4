@@ -69,11 +69,15 @@ class BasicAuth extends AbstractController {
     function getAll(){
     	return $this->info;
     }
-    function allow($username,$password){
-        /*
-         * This function will add specified credintals to allowed user list. If they are entered
-         * properly to the login form, user will be granted access
-         */
+    /**
+     * This function will add specified credintals to allowed user list. If they are entered
+     * properly to the login form, user will be granted access
+     */
+    function allow($username,$password=null){
+    	if(is_null($password)&&is_array($username)){
+    		foreach($username as $user=>$pass)$this->allow($user,$pass);
+    		return $this;
+    	}
         $this->allowed_credintals[$username]=$password;
         return $this;
     }

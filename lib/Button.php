@@ -14,7 +14,7 @@ class Button extends AbstractView {
         return $this;
     }
     function onClick(){
-        return $this->onclick=$this->add('Ajax');
+        return $this->onclick=$this->ajax();
     }
     function setColor($color){
     	$this->setStyle('color',$color);

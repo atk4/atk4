@@ -9,8 +9,8 @@ var expander_open=new Array();
 	/* we remember opened expanders so we know what to do when clicked */
 var inline_active=new Array();
 	/* same as for expanders, but applying to inline edits. 
-	they should be processed differently 
-	this array contains URLs to close inlines
+	 they should be processed differently 
+	 this array contains URLs to close inlines
 	*/
 function inline_is_active(name,id){
 		if(inline_active[name])return inline_active[name][id];
@@ -82,11 +82,10 @@ function expand(id,step){
 
 function expander_flip(name,id,button,expander_url){
 	/*
-	* This opens / closes lister's expander. Use this function
-	* under 'onclick' for your table row. It will take care of
-	* adding additional row and loading content there. expander_url is
-	* a prefix, which will have id appended
-	*/
+	 * This opens / closes lister's expander. Use this function
+	 * under 'onclick' for your table row. It will take care of
+	 * adding additional row and loading content there. 
+	 */
 
 	row=document.getElementById(name+"_"+id);
 	expander_status = expander_is_open(name,id,button);
@@ -146,7 +145,7 @@ function expander_flip(name,id,button,expander_url){
 		// http://dev.adevel.com/chk/fssub.html 
 		// http://dev.adevel.com/chk/tmp/aaa&bbb=ccc
 		
-		aasn(name+"_expandedcontent_"+id, expander_url+id);
+		aasn(name+"_expandedcontent_"+id, expander_url);
 		
 		//aasn(name+"_expandedcontent_"+id, 'http://php5.chk/freespech/admin/'+expander_url+id);
 		expand('autoexpander_'+id,0);
@@ -470,9 +469,6 @@ function inline_hide(name, row_id, action, callback){
 	inline_active[name][row_id]=false;
 }
 
-
-
-
 /******* TreeView functions *******/
 function treenode_flip(expand,id,url){
 	button=new String(document.getElementById('ec_'+id).innerHTML);
@@ -494,14 +490,13 @@ function treenode_flip(expand,id,url){
 }
 // redraws a node specified and its branch
 function treenode_refresh(id,url){
-		aasn('p_'+id,url);
+	aasn('p_'+id,url);
 }
 
 /******* MISC FUNCTIONS *******/
 /**
-* Reloads a row of a Grid
-*/
-
+ * Reloads a row of a Grid
+ */
 function reloadGridRow(url,name,row_id,callback,settitle, reload_col){
 	//row contents could not be replaced with aasn
 	set_row_c = function(response_text, response_xml){
@@ -583,37 +578,37 @@ function switchFieldOn(check_field_id, switchto_field_id, check_len){
 	}
 }
 /**
-* Checks if session is expired and forces redirect to login if so
-* Check is performed by a key string in the results of the aarq request to
-* the specified URL
-* In order for function not to find a key in self parameters, key is passed with
-* spaces replaced by = (equals sign). Make sure your key has spaces :)
-* ### Zak ### 
-* Changed this to make ajax request to check sesson only if last check was done before mroe than 4 seconds,
-* This way server load will be reduced significantly if a lot of JSes needs to be executed.
-*/
+ * Checks if session is expired and forces redirect to login if so
+ * Check is performed by a key string in the results of the aarq request to
+ * the specified URL
+ * In order for function not to find a key in self parameters, key is passed with
+ * spaces replaced by = (equals sign). Make sure your key has spaces :)
+ * ### Zak ### 
+ * Changed this to make ajax request to check sesson only if last check was done before mroe than 4 seconds,
+ * This way server load will be reduced significantly if a lot of JSes needs to be executed.
+ */
 var last_session_check = 0;
 
 function checkSession(url,key){ 
-        if(key==undefined)key='session is expired, relogin';
-        // decoding encoded string
-        else key=key.replace(/=/g,' ');
-        
-        var callback=function(response_text,response_xml){
-                if(response_text.search(key)!=-1){
-                        alert('Your session has expired. Please log in again.');
-                        window.location='main.php';
-                        return false;
-                }
-        }
+	if(key==undefined)key='session is expired, relogin';
+	// decoding encoded string
+	else key=key.replace(/=/g,' ');
+	
+	var callback=function(response_text,response_xml){
+		if(response_text.search(key)!=-1){
+			alert('Your session has expired. Please log in again.');
+			window.location='main.php';
+			return false;
+		}
+	}
 
-        var curtime = new Date;
-        if (last_session_check + 4000 < curtime.getTime()) {
-        	last_session_check = curtime.getTime();
-        	aarq(url, callback);	
-        } else {
-        	return true;
-        }
+	var curtime = new Date;
+	if (last_session_check + 4000 < curtime.getTime()) {
+		last_session_check = curtime.getTime();
+		aarq(url, callback);	
+	} else {
+		return true;
+	}
 }
 
 // Refreshes available months and days for date selector <

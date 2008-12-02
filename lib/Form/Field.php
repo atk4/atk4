@@ -84,31 +84,31 @@ abstract class Form_Field extends AbstractView {
     }
 	function onChange(){
 		if(is_null($this->onchange)){
-			$this->onchange=$this->add('Ajax');
+			$this->onchange=$this->ajax();
 		}
 		return $this->onchange;
 	}
 	function onKeyPress(){
 		if(is_null($this->onkeypress)){
-			$this->onkeypress=$this->add('Ajax');
+			$this->onkeypress=$this->ajax();
 		}
 		return $this->onkeypress;
 	}
 	function onFocus(){
 		if(is_null($this->onfocus)){
-			$this->onfocus=$this->add('Ajax');
+			$this->onfocus=$this->ajax();
 		}
 		return $this->onfocus;
 	}
 	function onBlur(){
 		if(is_null($this->onblur)){
-			$this->onblur=$this->add('Ajax');
+			$this->onblur=$this->ajax();
 		}
 		return $this->onblur;
 	}
 	function onClick(){
 		if(is_null($this->onclick)){
-			$this->onclick=$this->add('Ajax');
+			$this->onclick=$this->ajax();
 		}
 		return $this->onclick;
 	}
@@ -485,7 +485,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
     function validate(){
         if(!isset($this->value_list[$this->value])){
         	if($this->api->isAjaxOutput()){
-		        $this->add('Ajax')->displayAlert($this->short_name.": This is not one of the offered values")
+		        $this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
 		        	->execute();
 		    }
             $this->owner->errors[$this->short_name]="This is not one of the offered values";
@@ -596,7 +596,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
     function validate(){
         if(!isset($this->value_list[$this->value])){
         	if($this->api->isAjaxOutput()){
-		        echo $this->add('Ajax')->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
+		        echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
 		    }
             $this->owner->errors[$this->short_name]="This is not one of offered values";
         }

@@ -5,10 +5,9 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title><?page_title?>AModules template "K2"<?/page_title?></title>
 
+  <?$ajax_scripts?>
 
 <script src="amodules3/templates/kt2/custom.js"></script>
-<script src="amodules3/templates/shared/ajax.js"></script>
-<script src="amodules3/templates/shared/amodules3.js"></script>
 <link rel="stylesheet" type="text/css" href="amodules3/templates/kt2/default.css" title="css_default">
 <link rel="alternate stylesheet" type="text/css" href="amodules3/templates/kt2/ie.css" title="css_ie">
 <script type="text/javascript" src="amodules3/templates/kt2/styleswitcher.js"></script>
@@ -20,6 +19,8 @@
 
 
 <body onLoad="<?$onload?>">
+<div id="gif_loading" style="display:none;"><img src="amodules3/img/loading.gif" /></div>
+<div id="gif_not_loading" style="display:none;"><img src="amodules3/img/not_loading.gif" /></div>
 
 <?Menu?>
 <table class="menu" border="0" cellpadding="0" cellspacing="1" width="100%">
@@ -30,7 +31,7 @@
 
     <?rows?>
      <?row?>
-      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><?href?><a href="#"><?/href?><?label?>About<?/label?><?chref?></a><?/chref?></td>
+      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a></td>
      <?/row?>
       <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a></td>
       <td class="current" nowrap="nowrap"><a href="#">Main page</a></td>

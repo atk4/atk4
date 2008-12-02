@@ -33,7 +33,7 @@ class Form_Field_Grouped extends Form_Field{
 			// onChange should contain switching to the next group
 			if($count>$i+1){
 				// 
-				$onchange=$this->add('Ajax')
+				$onchange=$this->ajax()
 					->ajaxFunc("switchFieldOn('$id','$next_id',$size)")
 					->getString();
 			}else{

@@ -446,13 +446,6 @@ function submitForm(form,spinner){
 			try {
 				eval(response_text);
 			}catch(e){
-				// checking if session is expired and login is requested
-				re = /session is expired, relogin/;
-				if (response_text.search(re)!=-1){
-					alert('Your session has expired. Please log in again.');
-					window.location='main.php';
-					return false;
-				};
 				//while some browsers prevents popup we better use alert
 				w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
 				if(w){

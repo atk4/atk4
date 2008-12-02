@@ -96,7 +96,7 @@ class ApiAdmin extends ApiWeb {
 
     function outputInfo($msg){
         if($this->isAjaxOutput()){
-            $this->add('Ajax')->displayAlert($msg)->execute();
+            $this->ajax()->displayAlert($msg)->execute();
         }else{
             $this->info_messages[]=array('no'=>count($this->info_messages),'content'=>htmlspecialchars($msg),'backtrace'=>debug_backtrace());
         }

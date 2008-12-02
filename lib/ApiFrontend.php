@@ -96,7 +96,7 @@ class ApiFrontend extends ApiWeb{
 			$this->api->logger->logException($e);
 		// now showing this exception
 		if ($this->isAjaxOutput()) {
-			$this->add('Ajax')->displayAlert($this->formatAlert($e->getMessage()))->execute();
+			$this->ajax()->displayAlert($this->formatAlert($e->getMessage()))->execute();
 		}
 		// rendering error page
 		$t=$this->add('SMlite')->loadTemplate('page_error');

@@ -60,7 +60,7 @@ class ReloadableView extends AbstractView {
         return $result;
     }
     function reload($ajax=null,$args=array()){
-        if(!$ajax)$ajax=$this->add('Ajax');
+        if(!$ajax)$ajax=$this->ajax();
         $args['cut_object']=$this->name;
         $url=$this->api->getDestinationURL(null,$args);
         $ajax->setVisibility("RD_".$this->name);

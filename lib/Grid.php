@@ -185,7 +185,7 @@ class Grid extends CompleteLister {
         		'cursor'=>'pointer',
 				'color'=>'blue'
         	),
-        	'onclick'=>$this->add('Ajax')->openExpander($this,$this->current_row[$idfield],$field)->getString(),
+        	'onclick'=>$this->ajax()->openExpander($this,$this->current_row[$idfield],$field)->getString(),
         );
         $this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
         if(!$this->current_row[$field]){
@@ -213,7 +213,7 @@ class Grid extends CompleteLister {
 			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-    	$this->current_row[$field]=$this->add('Ajax')->ajaxFunc(
+    	$this->current_row[$field]=$this->ajax()->ajaxFunc(
     		'inline_show(\''.$this->name.'\',\''.$col_id.'\','.$this->current_row[$idfield].', \''.
 			$this->api->getDestinationURL(null, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
@@ -250,7 +250,7 @@ class Grid extends CompleteLister {
 		 * the previuos expander state, clicked row ID is passed through $_GET['row_id']
 		 */
 		$this->current_row[$field]='<a href="javascript:void(\''.$this->current_row['id'].'\')" ' .
-			'onclick="'.$this->add('Ajax')
+			'onclick="'.$this->ajax()
 			->reloadExpander($this->api->page.'_'.$field,array('row_id'=>$this->current_row['id']))
 			->getString().'"><u>'.($this->current_row[$field]==null?$field:$this->current_row[$field]).'</u></a>';
 	}
@@ -278,7 +278,7 @@ class Grid extends CompleteLister {
 
             if($confirm->isSubmitted()){
                 $this->dq->where('id',$confirm->get('id'))->do_delete();
-                $this->add('Ajax')
+                $this->ajax()
                     ->setFrameVisibility($f,false)
                     ->displayAlert("Record ".$confirm->get('id')." deleted")
                     ->reload($this)
@@ -289,7 +289,7 @@ class Grid extends CompleteLister {
             $f->recursiveRender();
         }
     	$this->current_row[$field]=
-            $this->add('Ajax')->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
+            $this->ajax()->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
     }
     function addRecordOrder($field,$table=''){
     	if(!$this->record_order){
@@ -328,7 +328,7 @@ class Grid extends CompleteLister {
         }
        	// checking if this Grid was requested
         if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
-        	echo $this->getRowContent($_GET['id']);
+        	echo $this->getRowContent($_GET['id'],(isset($_GET['datatype'])?$_GET['datatype']:'ajax'));
         	exit;
         }
 		if($_GET['submit']==$this->name){
@@ -355,18 +355,12 @@ class Grid extends CompleteLister {
 		$this->dq->do_update();
 	}
 
-	function getRowAsCommaString($id){
-		/*
-		 * Obsolete function. Should be replaced with getRowContent()
-		 */
-		$this->debug('getRowAsCommaString() is renamed to getRowContent(). Please fix the code!');
-		return $this->getRowContent($id);
-	}
-	function getRowContent($id){
-		/**
-		 * Returns the properly formatted row content.
-		 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
-		 */
+	/**
+	 * Returns the properly formatted row content.
+	 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
+	 * @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
+	 */
+	function getRowContent($id,$datatype='ajax'){
 
 		// if DB source set
 		if(isset($this->dq)){
@@ -402,6 +396,10 @@ class Grid extends CompleteLister {
 		$this->formatRow();
 
 		// *** Combining result string ***
+		$func='formatRowContent_'.$datatype;
+		return $this->$func($id);
+	}
+	protected function formatRowContent_ajax($id){
 		$result="";
 		foreach($this->columns as $name=>$column){
 			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original'].
@@ -409,6 +407,36 @@ class Grid extends CompleteLister {
 				"<t>".$this->getFieldStyle($name,$id).
 				"<row_end>";
 		}
+		return $result;
+	}
+	protected function formatRowContent_jquery($id){
+		// we need JSON module for this
+		//require_once('JSON.php');
+		$result=array();
+		$i=1;
+		foreach($this->columns as $name=>$column){
+			$result[$i]['data']=array('actual'=>$this->current_row[$name],
+				'original'=>$this->current_row[$name.'_original']);
+			$result[$i]['style']=$this->tdparam[$this->getCurrentIndex()][$name];
+			$i++;
+			/*
+			// we can set style and class
+			$tdparam=$this->tdparam[$this->getCurrentIndex()][$name];
+			// style is array
+			$result.="'$name[]':" .
+				"[" .
+					"'".$this->current_row[$name]."'," .
+					"'".$this->current_row[$name.'_original']."'," .
+					// style goes first
+					"'".$tdparam['style']."'," .
+					"'".$tdparam['class']."'".
+				"]"
+			*/
+		}
+		//$result.='}';
+		//$json=new Services_JSON();
+		$result=json_encode($result);
+		$this->logVar($result);
 		return $result;
 	}
 	function getColumns(){
@@ -583,7 +611,7 @@ class Grid extends CompleteLister {
 		            if(isset($column['sortable'])){
 		                $s=$column['sortable'];
 		                // calculate sortlink
-		                $l = $this->add('Ajax')
+		                $l = $this->ajax()
 		                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
 		                	->getString();
 

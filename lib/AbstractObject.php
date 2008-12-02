@@ -20,6 +20,7 @@ abstract class AbstractObject {
 	 * Each object may have some childs.<F2>
 	 */
 	public $elements = array ();
+
 	/////////////// I n i t i a l i z e  o b j e c t /////////////
 	function init() {
 		/**
@@ -369,5 +370,18 @@ abstract class AbstractObject {
 			$error=$error->getMessage();
 		}
 		$this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
+	}
+	// AJAX
+	/**
+	 * Returns the AJAX instance
+	 * @param $instance - if false, returns new instance, similar to call ->add('Ajax')
+	 * 	- if set to any string - create/returns corresponding AJAX instance from the object's elements
+	 */
+	function ajax($instance=false){
+		if(!$instance)return $this->add($this->api->getAjaxClass());
+		if(!isset($this->elements[$instance]))$this->add($this->api->getAjaxClass(),$instance);
+		elseif(!$this->elements[$instance] instanceof AbstractAjax)
+			throw new BaseException("Instance requested ($instance) is not an AJAX instance");
+		return $this->getElement($instance);
 	}
 }

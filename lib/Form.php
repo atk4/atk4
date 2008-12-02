@@ -94,7 +94,7 @@ class Form extends AbstractView {
     }
 
     function showAjaxError($field,$msg){
-    	$this->add('Ajax')->displayAlert(strip_tags($msg))->execute();
+    	$this->ajax()->displayAlert(strip_tags($msg))->execute();
     }
 
     function addField($type,$name,$caption=null,$attr=null){
@@ -155,10 +155,10 @@ class Form extends AbstractView {
     }
 
     function onSubmit($ajax=null){
-        return $this->onsubmit=$ajax?$ajax:$this->add('Ajax');
+        return $this->onsubmit=$ajax?$ajax:$this->ajax();
     }
     function onLoad($ajax=null){
-        return $this->onload=$ajax?$ajax:$this->add('Ajax');
+        return $this->onload=$ajax?$ajax:$this->ajax();
     }
     /**
      * Makes text/dropdown fields on the form perform a submit on Enter key press
@@ -332,7 +332,7 @@ class Form extends AbstractView {
         $field->setNoSave();
 
         // And teach it to use AJAX
-        $field->onclick = $field->add('Ajax')->useProgressIndicator($this->name.'_loading');
+        $field->onclick = $field->ajax()->useProgressIndicator($this->name.'_loading',0);
         $this->ajax_submits[$name]=$field->onclick;
         return $field->onclick;
     }
