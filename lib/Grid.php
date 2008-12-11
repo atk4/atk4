@@ -19,12 +19,12 @@ class Grid extends CompleteLister {
      * Inline related property
      * If true - TAB key submits row and activates next row
      */
-    public $tab_moves_down=false;
+    protected $tab_moves_down=false;
     /**
      * Inline related property
      * Wether or not to show submit line
      */
-    public $show_submit=true;
+    protected $show_submit=true;
     private $record_order=null;
 
     public $title_col=array();
@@ -35,7 +35,8 @@ class Grid extends CompleteLister {
      * Following parameters treated and processed in a special way:
      * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
      * 		 style: style="param_name: param_value; param_name: param_value"
-     * 2) wrap: possible values are true|false; if true, 'wrap' is added
+     * 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
+     * 		use style/white-space property or simply format_wrap()
      *
      * All the rest are not checked and converted to a form of param_name="param_value"
      *
@@ -165,10 +166,10 @@ class Grid extends CompleteLister {
     		strtotime($this->current_row[$field]));
     }
     function format_nowrap($field){
-    	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=false;
+    	$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='nowrap';
     }
     function format_wrap($field){
-    	$this->tdparam[$this->getCurrentIndex()][$field]['wrap']=true;
+    	$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='wrap';
     }
     function format_template($field){
         $this->current_row[$field]=$this->columns[$field]['template']
@@ -180,10 +181,10 @@ class Grid extends CompleteLister {
         $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
         $tdparam=array(
         	'id'=>$n,
-        	'wrap'=>false,
         	'style'=>array(
         		'cursor'=>'pointer',
-				'color'=>'blue'
+				'color'=>'blue',
+				'white-space'=>'nowrap',
         	),
         	'onclick'=>$this->ajax()->openExpander($this,$this->current_row[$idfield],$field)->getString(),
         );
@@ -337,7 +338,8 @@ class Grid extends CompleteLister {
 			if($_GET['action']=='update'){
 				$this->update();
 			}
-			$row=$this->getRowContent($_GET['row_id']);
+			$row=$this->getRowContent($_GET['id']);
+			$this->logVar($row);
 			echo $row;
 			exit;
 		}
@@ -351,7 +353,7 @@ class Grid extends CompleteLister {
 		}
 		$idfield=$this->dq->args['fields'][0];
 		if($idfield=='*')$idfield='id';
-		$this->dq->where($idfield, $_GET['row_id']);
+		$this->dq->where($idfield, $_GET['id']);
 		$this->dq->do_update();
 	}
 
@@ -360,7 +362,7 @@ class Grid extends CompleteLister {
 	 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
 	 * @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
 	 */
-	function getRowContent($id,$datatype='ajax'){
+	function getRowContent($id,$datatype='jquery'){
 
 		// if DB source set
 		if(isset($this->dq)){
@@ -410,33 +412,15 @@ class Grid extends CompleteLister {
 		return $result;
 	}
 	protected function formatRowContent_jquery($id){
-		// we need JSON module for this
-		//require_once('JSON.php');
 		$result=array();
 		$i=1;
 		foreach($this->columns as $name=>$column){
 			$result[$i]['data']=array('actual'=>$this->current_row[$name],
 				'original'=>$this->current_row[$name.'_original']);
-			$result[$i]['style']=$this->tdparam[$this->getCurrentIndex()][$name];
+			$result[$i]['params']=$this->tdparam[$this->getCurrentIndex()][$name];
 			$i++;
-			/*
-			// we can set style and class
-			$tdparam=$this->tdparam[$this->getCurrentIndex()][$name];
-			// style is array
-			$result.="'$name[]':" .
-				"[" .
-					"'".$this->current_row[$name]."'," .
-					"'".$this->current_row[$name.'_original']."'," .
-					// style goes first
-					"'".$tdparam['style']."'," .
-					"'".$tdparam['class']."'".
-				"]"
-			*/
 		}
-		//$result.='}';
-		//$json=new Services_JSON();
 		$result=json_encode($result);
-		$this->logVar($result);
 		return $result;
 	}
 	function getColumns(){
@@ -455,7 +439,7 @@ class Grid extends CompleteLister {
 			foreach($style as $key=>$value){
 				switch($key){
 					//case 'background-color':$tdparam[]="$key:$value";break;
-					case 'style':
+					case 'style': case 'css':
 						// style is a nested array
 						foreach($value as $k=>$v){
 							$tdparam[]="$k::$v";
@@ -522,8 +506,7 @@ class Grid extends CompleteLister {
         // setting cell parameters (tdparam)
         $tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
         if(is_array($tdparam)){
-        	// wrap and style handled separately
-        	$tdparam_str=(isset($tdparam['wrap'])&&$tdparam['wrap']===false)?'nowrap ':'wrap ';
+        	// wrap is replaced by style property
         	unset($tdparam['wrap']);
         	if(is_array($tdparam['style'])){
 				$tdparam_str.='style="';
@@ -596,13 +579,13 @@ class Grid extends CompleteLister {
 	            if(isset($t_row)){
 	                $t_col->del('content');
 	                $t_col->set('content','<?$'.$name.'?>');
-	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
 	                $t_row->append('cols',$t_col->render());
 	            }
 
 	            // some types needs control over the td
 
-	            $col->set('tdparam','<?tdparam_'.$name.'?>nowrap<?/?>');
+	            $col->set('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
 
 	            $row->append('cols',$col->render());
 
@@ -681,5 +664,24 @@ class Grid extends CompleteLister {
 			}
 		}
 		$current_position=$value;
+	}
+	public function setTabMovesDown($down=true){
+		$this->tab_moves_down=$down;
+		return $this;
+	}
+	public function setShowSubmit($show=true){
+		$this->show_submit=$show;
+		return $this;
+	}
+	/**
+	 * Sets inline properties.
+	 * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
+	 * 	hash keys should replicate local properties names
+	 */
+	public function setInlineProperties($props){
+		foreach($props as $key=>$val){
+			$this->$key=$val;
+		}
+		return $this;
 	}
 }

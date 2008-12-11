@@ -230,3 +230,12 @@ font-weight: bold;
         vertical-align: top; 
         background-color: rgb(255, 255, 255);
 }
+.inline_submit_tr>td {
+	text-align: right;
+        border-style: solid; 
+        border-color: rgb(0, 0, 0); 
+        border-width: 1px 1px 1px 1px; 
+        padding: 4px; 
+        vertical-align: top; 
+        background-color: rgb(255, 255, 255);
+}

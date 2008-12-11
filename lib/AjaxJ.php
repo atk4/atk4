@@ -7,7 +7,7 @@
 class AjaxJ extends AbstractAjax{
 	function init(){
 		parent::init();
-		if($this->api->template->is_set('ajax_scripts'))$this->api->template->append('ajax_scripts',
+		if($this->api->template->is_set('ajax_scripts'))$this->api->template->trySet('ajax_scripts',
 			'<script src="amodules3/templates/js/jquery.js"></script>' .
 			'<script src="amodules3/templates/js/jquery.form.js"></script>' .
 			'<script src="amodules3/templates/js/jam3.js"></script>'
@@ -31,9 +31,10 @@ class AjaxJ extends AbstractAjax{
 		return $this->ajaxFunc("$('#$field_id').html('$value')");
 	}
 	function loadRegionURL($region_id,$url){
-		return $this->ajaxFunc("$.get('$url',function(result){".
+		/*return $this->ajaxFunc("$.get('$url',function(result){".
 			"$('#$region_id').html(result);".
-		"})");
+		"})");*/
+		return $this->ajaxFunc("$('#$region_id').load('$url')");
 	}
 	function executeUrl($url){
 		return $this->ajaxFunc("$.get('$url')");
