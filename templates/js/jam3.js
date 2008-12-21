@@ -3,8 +3,6 @@
  */
 var ajaxIsIE = false;
 var buttonClicked = null;
-var am_loading='amodules3/img/loading.gif';
-var am_notloading='amodules3/img/not_loading.gif';
 var last_session_check = 0;
 
 /**
@@ -63,7 +61,7 @@ function spinner_off(spinner){
 	// spinner is a place where image should be inserted
 	else spinner.html('<img src="'+$('#gif_not_loading img').attr('src')+'" alt="loading">');
 }
-function submitForm(form,spinner){
+function submitForm(form,button,spinner){
 	var successHandler=function(response_text){
 		if(response_text){
 			try {
@@ -95,7 +93,15 @@ function submitForm(form,spinner){
 		}
 		if(spinner)spinner_off(spinner);
 	};
+	// adding hidden field with clicked button value
+	if(button){
+		btn_value=button.substring(button.lastIndexOf('_')+1);
+		button=$('<input name="'+button+'" id="'+button+'" value="'+btn_value+'" type="hidden">');
+		$('#'+form).append(button);
+	}
 	$('#'+form).ajaxSubmit({success: successHandler});
+	// removing hidden field
+	button.remove();
 }
 /*
  * This would just return exander's state on a button click. If another expander is
@@ -414,6 +420,29 @@ function close_expanders(name,id){
 	});
 }
 function setFormFocus(form,field){
-	var frm = document.getElementById(form);
-	frm[form+"_"+field].focus();
+	$('#'+form+' input[name='+form+'_'+field).focus();
+}
+/******* TreeView functions *******/
+function treenode_flip(expand,id,url){
+	button=$('span#ec_'+id).html();
+	cll=$('#p_'+id);
+	if(expand==1){
+		cll.append($('#gif_loading img')).append($('<b>Loading. Stand by...</b>'));
+	}
+	cll.load(url);
+	
+	if(expand==1){
+		button=button.replace('plus.gif', 'minus.gif');
+		button=button.replace('ec_action=expand', 'ec_action=collapse');
+		button=button.replace('treenode_flip(1', 'treenode_flip(0');
+	}else{
+		button=button.replace('minus.gif', 'plus.gif');
+		button=button.replace('ec_action=collapse', 'ec_action=expand');
+		button=button.replace('treenode_flip(0', 'treenode_flip(1');
+	}
+	$('span#ec_'+id).html(button);
+}
+// redraws a node specified and its branch
+function treenode_refresh(id,url){
+	$('#p_'+id).load(url);
 }
