@@ -5,6 +5,8 @@ var ajaxIsIE = false;
 var buttonClicked = null;
 var last_session_check = 0;
 
+############################################
+############  Generic functions ############
 /**
  * Shows the message provided. Replaces standard alert() toshow more handsome output
  */
@@ -61,6 +63,8 @@ function spinner_off(spinner){
 	// spinner is a place where image should be inserted
 	else spinner.html('<img src="'+$('#gif_not_loading img').attr('src')+'" alt="loading">');
 }
+############################################
+############## Form functions ##############
 function submitForm(form,button,spinner){
 	var successHandler=function(response_text){
 		if(response_text){
@@ -103,6 +107,17 @@ function submitForm(form,button,spinner){
 	// removing hidden field
 	button.remove();
 }
+function setFormFocus(form,field){
+	$('#'+form+' input[name='+form+'_'+field).focus();
+}
+/**
+ * Sets the value of the field to a value returned by the specified URL
+ */
+function loadFieldValue(field,url){
+	
+}
+############################################
+############## Grid functions ##############
 /*
  * This would just return exander's state on a button click. If another expander is
  * open, it would not do anything, just return it's button's name.
@@ -129,7 +144,7 @@ function expander_is_open(name,id,button){
  * button - field name to expand
  * expander_url - URL to be loaded into expander
  */
-function expander_flip(name,id,button,expander_url){
+function expander_flip(name,id,button,expander_url,callback){
 	// adding new row
 	new_row_id=name+'_expandedcontent_'+id;
 	expanding_row_id=name+'_'+id;
@@ -141,6 +156,8 @@ function expander_flip(name,id,button,expander_url){
 			// removing row
 			//$('#'+expanding_row_id).next('.expander_tr').remove();
 			$('#'+new_row_id).remove();
+			// if callback set - calling it
+			if(callback)callback();
 		});
 		// removing tab-like style of a cell
 		button_off(button_id);
@@ -169,8 +186,9 @@ function expander_flip(name,id,button,expander_url){
 	}
 	else{
 		// other expander is open, its button name is in expander status. closing and open ours
-		expander_flip(name,id,expander_status);
-		expander_flip(name,id,button,expander_url);
+		expander_flip(name,id,expander_status,null,function(){
+			expander_flip(name,id,button,expander_url);
+		});
 	}
 }
 function reloadGridRow(url,name,id,callback){
@@ -419,10 +437,8 @@ function close_expanders(name,id){
 		if($(this).attr('class')=='expanded_this')expander_flip(name,id,$(this).data('button'));
 	});
 }
-function setFormFocus(form,field){
-	$('#'+form+' input[name='+form+'_'+field).focus();
-}
-/******* TreeView functions *******/
+############################################
+############ TreeView functions ############
 function treenode_flip(expand,id,url){
 	button=$('span#ec_'+id).html();
 	cll=$('#p_'+id);
@@ -446,3 +462,5 @@ function treenode_flip(expand,id,url){
 function treenode_refresh(id,url){
 	$('#p_'+id).load(url);
 }
+############################################
+

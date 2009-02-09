@@ -52,4 +52,29 @@ class Ajax extends AbstractAjax{
 				'id'=>$row_id),
 				$args)).'\',\''.$grid_name.'\','.$row_id.')');
 	}
+	/**
+	 * Puts form field value into a JS variable
+	 * @param $form - Form instance
+	 * @param $fild_name - Field's  short name
+	 * @param $var - optional, name of the variable to use for field value
+	 */
+	function getFormFieldValue($form,$field_name,$var='fv'){
+		$field_name=$form->getElement($field_name)->name;
+		return $this->ajaxFunc("$var=$('#$form->name input[name=$field_name]').val()");
+	}
+	/**
+	 * Sets the 'disabled' attribute to true
+	 * @param $control - object instance
+	 */
+	function disableControl($control){
+		return $this->ajaxFunc("$('#$control->name')->attr('disabled',true)");
+	}
+	/**
+	 * Loads field value from the specified URL
+	 * @param $field - Field instance
+	 * @param $url - URL to get value from. Calling the URL should return the text
+	 */
+	function loadFieldValue($field,$url){
+		return $this->ajaxFunc("loadFieldValue('$field->name','$url')");
+	}
 }
