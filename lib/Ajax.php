@@ -40,9 +40,6 @@ class Ajax extends AbstractAjax{
 		$this->spinner=null;
 		return $this;
 	}
-	function disableControl($control){
-		return $this->ajaxFunc("$('#{$control->name}').attr('disabled',true)");
-	}
 	function reloadGridRow($grid,$row_id,$url=null,$args=array()){
 		if(is_object($grid))$grid_name=$grid->name;
 		else $grid_name=$grid;
@@ -76,5 +73,24 @@ class Ajax extends AbstractAjax{
 	 */
 	function loadFieldValue($field,$url){
 		return $this->ajaxFunc("loadFieldValue('$field->name','$url')");
+	}
+	/**
+	 * Resets the form, all fields are set to default values
+	 */
+	function resetForm($form){
+		return $this->ajaxFunc("$('".$form->name."').resetForm()");
+	}
+	function setVisibility($element,$visible=true){
+		if(!is_string($element))$element=$element->name;
+		$this->ajaxFunc("$('#".$element."').".($visible?'show()':'hide()'));
+		return $this;
+	}
+	// FIXME: Review these methods
+	
+	function setFrameVisibility($frame,$visibility=true){
+		$this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
+		$this->setVisibility($frame->name."_bg",$visibility);
+		$this->setVisibility($frame->name."_fr",$visibility);
+		return $this;
 	}
 }

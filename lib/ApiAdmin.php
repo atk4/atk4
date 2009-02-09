@@ -64,7 +64,8 @@ class ApiAdmin extends ApiWeb {
             $this->ns=$this->namespaces[$namespace];
             $this->ns->initLayout();
         }else{
-        	$this->initLayout();
+        	// do nothing!
+        	//$this->initLayout();
         }
     }
     function initLayout(){

@@ -5,8 +5,9 @@ var ajaxIsIE = false;
 var buttonClicked = null;
 var last_session_check = 0;
 
-############################################
-############  Generic functions ############
+/*
+ *############  Generic functions ############
+ */ 
 /**
  * Shows the message provided. Replaces standard alert() toshow more handsome output
  */
@@ -63,8 +64,9 @@ function spinner_off(spinner){
 	// spinner is a place where image should be inserted
 	else spinner.html('<img src="'+$('#gif_not_loading img').attr('src')+'" alt="loading">');
 }
-############################################
-############## Form functions ##############
+/*############################################
+ *############## Form functions ##############
+ */ 
 function submitForm(form,button,spinner){
 	var successHandler=function(response_text){
 		if(response_text){
@@ -116,8 +118,9 @@ function setFormFocus(form,field){
 function loadFieldValue(field,url){
 	
 }
-############################################
-############## Grid functions ##############
+/*############################################
+ *############## Grid functions ##############
+ */ 
 /*
  * This would just return exander's state on a button click. If another expander is
  * open, it would not do anything, just return it's button's name.
@@ -437,8 +440,9 @@ function close_expanders(name,id){
 		if($(this).attr('class')=='expanded_this')expander_flip(name,id,$(this).data('button'));
 	});
 }
-############################################
-############ TreeView functions ############
+/*############################################
+ *############ TreeView functions ############
+ */ 
 function treenode_flip(expand,id,url){
 	button=$('span#ec_'+id).html();
 	cll=$('#p_'+id);
@@ -462,5 +466,5 @@ function treenode_flip(expand,id,url){
 function treenode_refresh(id,url){
 	$('#p_'+id).load(url);
 }
-############################################
-
+/*############################################
+ */

@@ -130,9 +130,12 @@ class ApiWeb extends ApiCLI {
             if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
                 $this->page_base=$this->index_page;
             }
-            if(!strpos($this->page_base,'.') && !strpos($this->page_base,'&')){
-                $_GET['page']=$this->page_base;
-            }
+            list($page)=preg_split("/[.&]/",$this->page_base);
+            if($page)$_GET['page']=$page;
+            // why is that?!
+            //if(!strpos($this->page_base,'.') && !strpos($this->page_base,'&')){
+            //    $_GET['page']=$this->page_base;
+            //}
         }
 
         if(!$this->page)$this->page = @$_GET['page'];

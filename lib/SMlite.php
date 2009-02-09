@@ -383,6 +383,7 @@ class SMlite extends AbstractModel {
          */
         $tmp_locations = split(PATH_SEPARATOR,$this->settings['templates']);
         foreach($tmp_locations as $loc)if($loc){
+        	$filename=str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']);
             if(file_exists(str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']))){
                 return join('',file($f));
             }
