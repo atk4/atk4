@@ -393,7 +393,7 @@ class Logger extends AbstractController {
 		// contains code from Logger::caughtException(), as this code won't launch
 		// if exception is caught
 		$frame=$e->my_backtrace[$e->shift-1];
-		$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error');
+		$this->logLine($this->txtLine(get_class($e).": (".$e->getCode().")".$e->getMessage(),$frame),2,'error');
 		return $this;
 	}
     function openLogFile($severity='error'){
