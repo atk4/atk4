@@ -1,211 +1,211 @@
 <?php
 class Grid extends CompleteLister {
-    protected $columns;
-    protected $no_records_message="No matching records to display";
-    private $table;
-    private $id;
+	protected $columns;
+	protected $no_records_message="No matching records to display";
+	private $table;
+	private $id;
 
 	public $last_column;
-    public $sortby='0';
-    public $sortby_db=null;
+	public $sortby='0';
+	public $sortby_db=null;
 	public $not_found=false;
 
-    public $displayed_rows=0;
+	public $displayed_rows=0;
 
 	private $totals_title_field=null;
 	private $totals_title="";
-    public $totals_t=null;
-    /**
-     * Inline related property
-     * If true - TAB key submits row and activates next row
-     */
-    protected $tab_moves_down=false;
-    /**
-     * Inline related property
-     * Wether or not to show submit line
-     */
-    protected $show_submit=true;
-    private $record_order=null;
+	public $totals_t=null;
+	/**
+	* Inline related property
+	* If true - TAB key submits row and activates next row
+	*/
+	protected $tab_moves_down=false;
+	/**
+	* Inline related property
+	* Wether or not to show submit line
+	*/
+	protected $show_submit=true;
+	private $record_order=null;
 
-    public $title_col=array();
+	public $title_col=array();
 
-    /**
-     * $tdparam property is an array with cell parameters specified in td tag.
-     * This should be a hash: 'param_name'=>'param_value'
-     * Following parameters treated and processed in a special way:
-     * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
-     * 		 style: style="param_name: param_value; param_name: param_value"
-     * 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
-     * 		use style/white-space property or simply format_wrap()
-     *
-     * All the rest are not checked and converted to a form of param_name="param_value"
-     *
-     * This is a tree-like array with the following structure:
-     * array(
-     * 		[level1]=>dataset_row=array(
-     * 			[level2]=>field=array(
-     * 				[level3]=>tdparam_elements=array(
-     * 					param_name=>param_value
-     * 				)
-     * 			)
-     * 		)
-     * )
-     */
-    protected $tdparam=array();
+	/**
+	* $tdparam property is an array with cell parameters specified in td tag.
+	* This should be a hash: 'param_name'=>'param_value'
+	* Following parameters treated and processed in a special way:
+	* 1) 'style': nested array, style parameter. items of this nested array converted to a form of
+	* 		 style: style="param_name: param_value; param_name: param_value"
+	* 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
+	* 		use style/white-space property or simply format_wrap()
+	*
+	* All the rest are not checked and converted to a form of param_name="param_value"
+	*
+	* This is a tree-like array with the following structure:
+	* array(
+	* 		[level1]=>dataset_row=array(
+	* 			[level2]=>field=array(
+	* 				[level3]=>tdparam_elements=array(
+	* 					param_name=>param_value
+	* 				)
+	* 			)
+	* 		)
+	* )
+	*/
+	protected $tdparam=array();
 
-    function init(){
-        parent::init();
-        $this->add('Reloadable');
-        $this->api->addHook('pre-render',array($this,'precacheTemplate'));
+	function init(){
+		parent::init();
+		$this->add('Reloadable');
+		$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
-        $this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
-        $this->api->addHook('post-submit', array($this,'submitted'), 3);
-    }
-    function defaultTemplate(){
-        return array('grid','grid');
-    }
-    function addColumn($type,$name=null,$descr=null){
-        if($name===null){
-            $name=$type;
-            $type='text';
-        }
-        if($descr===null)$descr=$name;
-        $this->columns[$name]=array(
-                'type'=>$type,
-                'descr'=>$descr
-                );
+		$this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
+		$this->api->addHook('post-submit', array($this,'submitted'), 3);
+	}
+	function defaultTemplate(){
+		return array('grid','grid');
+	}
+	function addColumn($type,$name=null,$descr=null){
+		if($name===null){
+			$name=$type;
+			$type='text';
+		}
+		if($descr===null)$descr=$name;
+		$this->columns[$name]=array(
+				'type'=>$type,
+				'descr'=>$descr
+				);
 
-        $this->last_column=$name;
+		$this->last_column=$name;
 
-        return $this;
-    }
-    function addButton($label,$name=null,$color='black'){
-        return $this->add('Button','gbtn'.count($this->elements),'grid_buttons')
-            ->setLabel($label)->setColor($color)->onClick();
-    }
-    function addQuickSearch($fields,$class='QuickSearch'){
-        return $this->add($class,null,'quick_search')
-            ->useFields($fields);
-    }
-    function makeSortable($db_sort=null){
-        // Sorting
-        $reverse=false;
-        if(substr($db_sort,0,1)=='-'){
-            $reverse=true;
-            $db_sort=substr($db_sort,1);
-        }
-        if(!$db_sort)$db_sort=$this->last_column;
+		return $this;
+	}
+	function addButton($label,$name=null,$color='black'){
+		return $this->add('Button','gbtn'.count($this->elements),'grid_buttons')
+			->setLabel($label)->setColor($color)->onClick();
+	}
+	function addQuickSearch($fields,$class='QuickSearch'){
+		return $this->add($class,null,'quick_search')
+			->useFields($fields);
+	}
+	function makeSortable($db_sort=null){
+		// Sorting
+		$reverse=false;
+		if(substr($db_sort,0,1)=='-'){
+			$reverse=true;
+			$db_sort=substr($db_sort,1);
+		}
+		if(!$db_sort)$db_sort=$this->last_column;
 
-        if($this->sortby==$this->last_column){
-            // we are already sorting by this column
-            $info=array('1',$reverse?0:("-".$this->last_column));
-            $this->sortby_db=$db_sort;
-        }elseif($this->sortby=="-".$this->last_column){
-            // We are sorted reverse by this column
-            $info=array('2',$reverse?$this->last_column:'0');
-            $this->sortby_db="-".$db_sort;
-        }else{
-            // we are not sorted by this column
-            $info=array('0',$reverse?("-".$this->last_column):$this->last_column);
-        }
-        $this->columns[$this->last_column]['sortable']=$info;
+		if($this->sortby==$this->last_column){
+			// we are already sorting by this column
+			$info=array('1',$reverse?0:("-".$this->last_column));
+			$this->sortby_db=$db_sort;
+		}elseif($this->sortby=="-".$this->last_column){
+			// We are sorted reverse by this column
+			$info=array('2',$reverse?$this->last_column:'0');
+			$this->sortby_db="-".$db_sort;
+		}else{
+			// we are not sorted by this column
+			$info=array('0',$reverse?("-".$this->last_column):$this->last_column);
+		}
+		$this->columns[$this->last_column]['sortable']=$info;
 
-        return $this;
-    }
-    function makeTitle(){
-        $this->title_col[]=$this->last_column;
-        return $this;
-    }
-    function format_number($field){
-    }
-    function format_text($field){
-    	$this->current_row[$field] = $this->current_row[$field];
-    }
-    function format_shorttext($field){
-    	$text=$this->current_row[$field];
-    	//TODO counting words, tags and trimming so that tags are not garbaged
-    	if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
-    	$this->current_row[$field]=$text;
-    	$this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
-    }
-    function format_html($field){
-    	$this->current_row[$field] = htmlentities($this->current_row[$field]);
-    }
-    function format_money($field){
-        $m=$this->current_row[$field];
-        $this->current_row[$field]=number_format($m,2);
-        if($m<0){
-            $this->setTDParam($field,'style/color','red');
-        }
-    }
-    function format_totals_number($field){
-        return $this->format_number($field);
-    }
-    function format_totals_money($field){
-        return $this->format_money($field);
-    }
-    function format_totals_text($field){
-    	// This method is mainly for totals title displaying
-    	if($field==$this->totals_title_field){
-    		$this->setTDParam($field,'style/font-weight','bold');
-    		//$this->current_row[$field]=$this->totals_title.':';
-    	}
+		return $this;
+	}
+	function makeTitle(){
+		$this->title_col[]=$this->last_column;
+		return $this;
+	}
+	function format_number($field){
+	}
+	function format_text($field){
+		$this->current_row[$field] = $this->current_row[$field];
+	}
+	function format_shorttext($field){
+		$text=$this->current_row[$field];
+		//TODO counting words, tags and trimming so that tags are not garbaged
+		if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
+		$this->current_row[$field]=$text;
+		$this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
+	}
+	function format_html($field){
+		$this->current_row[$field] = htmlentities($this->current_row[$field]);
+	}
+	function format_money($field){
+		$m=$this->current_row[$field];
+		$this->current_row[$field]=number_format($m,2);
+		if($m<0){
+			$this->setTDParam($field,'style/color','red');
+		}
+	}
+	function format_totals_number($field){
+		return $this->format_number($field);
+	}
+	function format_totals_money($field){
+		return $this->format_money($field);
+	}
+	function format_totals_text($field){
+		// This method is mainly for totals title displaying
+		if($field==$this->totals_title_field){
+			$this->setTDParam($field,'style/font-weight','bold');
+			//$this->current_row[$field]=$this->totals_title.':';
+		}
 		else $this->current_row[$field]='-';
-    }
+	}
 	function format_time($field){
 		$this->current_row[$field]=format_time($this->current_row[$field]);
 	}
-    function format_date($field){
-    	if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-    	$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
-    		strtotime($this->current_row[$field]));
-    }
-    function format_datetime($field){
-    	if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-    	$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
-    		strtotime($this->current_row[$field]));
-    }
-    function format_nowrap($field){
-    	$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='nowrap';
-    }
-    function format_wrap($field){
-    	$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='wrap';
-    }
-    function format_template($field){
-        $this->current_row[$field]=$this->columns[$field]['template']
-            ->set($this->current_row)
-            ->trySet('_value_',$this->current_row[$field])
-            ->render();
-    }
-    function format_expander($field, $idfield='id'){
-        $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-        $tdparam=array(
-        	'id'=>$n,
-        	'style'=>array(
-        		'cursor'=>'pointer',
+	function format_date($field){
+		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
+		$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
+			strtotime($this->current_row[$field]));
+	}
+	function format_datetime($field){
+		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
+		$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+			strtotime($this->current_row[$field]));
+	}
+	function format_nowrap($field){
+		$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='nowrap';
+	}
+	function format_wrap($field){
+		$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='wrap';
+	}
+	function format_template($field){
+		$this->current_row[$field]=$this->columns[$field]['template']
+			->set($this->current_row)
+			->trySet('_value_',$this->current_row[$field])
+			->render();
+	}
+	function format_expander($field, $idfield='id'){
+		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
+		$tdparam=array(
+			'id'=>$n,
+			'style'=>array(
+				'cursor'=>'pointer',
 				'color'=>'blue',
 				'white-space'=>'nowrap',
-        	),
-        	'onclick'=>$this->ajax()->openExpander($this,$this->current_row[$idfield],$field)->getString(),
-        );
-        $this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-        if(!$this->current_row[$field]){
-            $this->current_row[$field]='['.$this->columns[$field]['descr'].']';
-        }
-    }
-    function format_inline($field, $idfield='id'){
-    	/**
-    	 * Formats the InlineEdit: field that on click should substitute the text
-    	 * in the columns of the row by the edit controls
-    	 *
-    	 * The point is to set an Id for each column of the row. To do this, we should
-    	 * set a property showing that id should be added in prerender
-    	 */
-    	$col_id=$this->name.'_'.$field.'_inline';
-    	$show_submit=$this->show_submit?'true':'false';
-    	$tab_moves_down=$this->tab_moves_down?'true':'false';
-    	//setting text non empty
-    	$text=$this->current_row[$field]?$this->current_row[$field]:'null';
+			),
+			'onclick'=>$this->ajax()->openExpander($this,$this->current_row[$idfield],$field)->getString(),
+		);
+		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
+		if(!$this->current_row[$field]){
+			$this->current_row[$field]='['.$this->columns[$field]['descr'].']';
+		}
+	}
+	function format_inline($field, $idfield='id'){
+		/**
+		* Formats the InlineEdit: field that on click should substitute the text
+		* in the columns of the row by the edit controls
+		*
+		* The point is to set an Id for each column of the row. To do this, we should
+		* set a property showing that id should be added in prerender
+		*/
+		$col_id=$this->name.'_'.$field.'_inline';
+		$show_submit=$this->show_submit?'true':'false';
+		$tab_moves_down=$this->tab_moves_down?'true':'false';
+		//setting text non empty
+		$text=$this->current_row[$field]?$this->current_row[$field]:'null';
 		$tdparam=array(
 			'id'=>$col_id.'_'.$this->current_row[$idfield],
 			'style'=>array(
@@ -214,124 +214,124 @@ class Grid extends CompleteLister {
 			'title'=>$this->current_row[$field.'_original']
 		);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-    	$this->current_row[$field]=$this->ajax()->ajaxFunc(
-    		'inline_show(\''.$this->name.'\',\''.$col_id.'\','.$this->current_row[$idfield].', \''.
+		$this->current_row[$field]=$this->ajax()->ajaxFunc(
+			'inline_show(\''.$this->name.'\',\''.$col_id.'\','.$this->current_row[$idfield].', \''.
 			$this->api->getDestinationURL(null, array(
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
 			'\', '.$tab_moves_down.', '.$show_submit.')'
-    	)->getLink($text);
-    }
-    function format_nl2br($field) {
-    	$this->current_row[$field] = nl2br($this->current_row[$field]);
-    }
-    function format_order($field, $idfield='id'){
-        $n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-    	$this->tdparam[$this->getCurrentIndex()][$field]=array(
-    		'id'=>$n,
-    		'style'=>array(
-    			'cursor'=>'hand'
-    		)
-    	);
-    	$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
-    }
+		)->getLink($text);
+	}
+	function format_nl2br($field) {
+		$this->current_row[$field] = nl2br($this->current_row[$field]);
+	}
+	function format_order($field, $idfield='id'){
+		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
+		$this->tdparam[$this->getCurrentIndex()][$field]=array(
+			'id'=>$n,
+			'style'=>array(
+				'cursor'=>'hand'
+			)
+		);
+		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
+	}
 	function format_reload($field,$args=array()){
 		/**
-		 * Useful for nested Grids in expanders
-		 * Formats field as a link by clicking on which the whole expander area
-		 * is reloaded by specified page contents.
-		 * Page address is similar to expander field
-		 *
-		 * To return expander's previous content see Ajax methods:
-		 * - Ajax::reloadExpander()
-		 * - Ajax::reloadExpandedRow()
-		 * - Ajax::reloadExpandedField()
-		 *
-		 * WARNING!
-		 * As these Ajax methods use the current $_GET['id'] value to return
-		 * the previuos expander state, clicked row ID is passed through $_GET['row_id']
-		 */
+		* Useful for nested Grids in expanders
+		* Formats field as a link by clicking on which the whole expander area
+		* is reloaded by specified page contents.
+		* Page address is similar to expander field
+		*
+		* To return expander's previous content see Ajax methods:
+		* - Ajax::reloadExpander()
+		* - Ajax::reloadExpandedRow()
+		* - Ajax::reloadExpandedField()
+		*
+		* WARNING!
+		* As these Ajax methods use the current $_GET['id'] value to return
+		* the previuos expander state, clicked row ID is passed through $_GET['row_id']
+		*/
 		$this->current_row[$field]='<a href="javascript:void(\''.$this->current_row['id'].'\')" ' .
 			'onclick="'.$this->ajax()
 			->reloadExpander($this->api->page.'_'.$field,array('row_id'=>$this->current_row['id']))
 			->getString().'"><u>'.($this->current_row[$field]==null?$field:$this->current_row[$field]).'</u></a>';
 	}
-    function format_link($field){
-    	$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
-    		array('id'=>$this->current_row['id'])).'">'.
-    		$this->columns[$field]['descr'].'</a>';
-    }
-    function format_delete($field){
-        $l=$this->name.'_'.$field."_label";
-        if(isset($this->columns[$field]['del_frame'])){
-            $f=$this->columns[$field]['del_frame'];
-            $confirm=$this->columns[$field]['del_confirm'];
-        }else{
-            $f=$this->columns[$field]['del_frame']=$this->add('FloatingFrame',$field,'Misc');
-            $confirm = $f->frame("Delete record?")
-                ->add('Form');
+	function format_link($field){
+		$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
+			array('id'=>$this->current_row['id'])).'">'.
+			$this->columns[$field]['descr'].'</a>';
+	}
+	function format_delete($field){
+		$l=$this->name.'_'.$field."_label";
+		if(isset($this->columns[$field]['del_frame'])){
+			$f=$this->columns[$field]['del_frame'];
+			$confirm=$this->columns[$field]['del_confirm'];
+		}else{
+			$f=$this->columns[$field]['del_frame']=$this->add('FloatingFrame',$field,'Misc');
+			$confirm = $f->frame("Delete record?")
+				->add('Form');
 
-            $confirm->addLabel("<div id='".$l."'>Error..?</div>");
-            $confirm->addField('hidden','id','Hidden');
-            $confirm->addButton('Delete')->submitForm($confirm);
-            $confirm->addButton('Cancel')->setFrameVisibility($f,false);
+			$confirm->addLabel("<div id='".$l."'>Error..?</div>");
+			$confirm->addField('hidden','id','Hidden');
+			$confirm->addButton('Delete')->submitForm($confirm);
+			$confirm->addButton('Cancel')->setFrameVisibility($f,false);
 
-            $this->columns[$field]['del_confirm']=$confirm;
+			$this->columns[$field]['del_confirm']=$confirm;
 
-            if($confirm->isSubmitted()){
-                $this->dq->where('id',$confirm->get('id'))->do_delete();
-                $this->ajax()
-                    ->setFrameVisibility($f,false)
-                    ->displayAlert("Record ".$confirm->get('id')." deleted")
-                    ->reload($this)
-                    ->execute();
-            }
+			if($confirm->isSubmitted()){
+				$this->dq->where('id',$confirm->get('id'))->do_delete();
+				$this->ajax()
+					->setFrameVisibility($f,false)
+					->displayAlert("Record ".$confirm->get('id')." deleted")
+					->reload($this)
+					->execute();
+			}
 
 
-            $f->recursiveRender();
-        }
-    	$this->current_row[$field]=
-            $this->ajax()->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
-    }
-    function addRecordOrder($field,$table=''){
-    	if(!$this->record_order){
-    		$this->record_order=$this->add('RecordOrder');
-    		$this->record_order->setField($field,$table);
-    	}
-    	return $this;
-    }
-    function setSource($table,$db_fields=null){
-        parent::setSource($table,$db_fields);
-        if($this->sortby){
-            $desc=false;
-            $order=$this->sortby_db;
-            if(substr($this->sortby_db,0,1)=='-'){
-                $desc=true;
-                $order=substr($order,1);
-            }
-            $this->dq->order($order,$desc);
-        }
-        //we always need to calc rows
-        $this->dq->calc_found_rows();
-        return $this;
-    }
-    function setTemplate($template){
-        // This allows you to use Template
-        $this->columns[$this->last_column]['template']=$this->add('SMlite')
-            ->loadTemplateFromString($template);
-        return $this;
-    }
+			$f->recursiveRender();
+		}
+		$this->current_row[$field]=
+			$this->ajax()->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
+	}
+	function addRecordOrder($field,$table=''){
+		if(!$this->record_order){
+			$this->record_order=$this->add('RecordOrder');
+			$this->record_order->setField($field,$table);
+		}
+		return $this;
+	}
+	function setSource($table,$db_fields=null){
+		parent::setSource($table,$db_fields);
+		if($this->sortby){
+			$desc=false;
+			$order=$this->sortby_db;
+			if(substr($this->sortby_db,0,1)=='-'){
+				$desc=true;
+				$order=substr($order,1);
+			}
+			$this->dq->order($order,$desc);
+		}
+		//we always need to calc rows
+		$this->dq->calc_found_rows();
+		return $this;
+	}
+	function setTemplate($template){
+		// This allows you to use Template
+		$this->columns[$this->last_column]['template']=$this->add('SMlite')
+			->loadTemplateFromString($template);
+		return $this;
+	}
 
 	function submitted(){
-       	// checking if this Grid was requested
-        if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_field'){
-        	echo $this->getFieldContent($_GET['expander'],$_GET['id']);
-        	exit;
-        }
-       	// checking if this Grid was requested
-        if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
-        	echo $this->getRowContent($_GET['id'],(isset($_GET['datatype'])?$_GET['datatype']:'ajax'));
-        	exit;
-        }
+		// checking if this Grid was requested
+		if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_field'){
+			echo $this->getFieldContent($_GET['expander'],$_GET['id']);
+			exit;
+		}
+		// checking if this Grid was requested
+		if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
+			echo $this->getRowContent($_GET['id'],(isset($_GET['datatype'])?$_GET['datatype']:'ajax'));
+			exit;
+		}
 		if($_GET['submit']==$this->name){
 			//return;// false;
 			//saving to DB
@@ -358,10 +358,10 @@ class Grid extends CompleteLister {
 	}
 
 	/**
-	 * Returns the properly formatted row content.
-	 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
-	 * @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
-	 */
+	* Returns the properly formatted row content.
+	* Used firstly with Ajax::reloadExpandedRow() and in inline edit
+	* @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
+	*/
 	function getRowContent($id,$datatype='jquery'){
 
 		// if DB source set
@@ -428,9 +428,9 @@ class Grid extends CompleteLister {
 	}
 	function getFieldStyle($field,$id){
 		/**
-		 * Returns the structured string with row styles. Used along with getRowContent()
-		 * in row redrawing
-		 */
+		* Returns the structured string with row styles. Used along with getRowContent()
+		* in row redrawing
+		*/
 		$style=$this->tdparam[$this->getCurrentIndex()][$field];
 		$tdparam=null;
 		if(is_array($style)){
@@ -453,21 +453,21 @@ class Grid extends CompleteLister {
 		}
 		return (is_array($tdparam)?join($tdparam,'<s>'):'');
 	}
-    function getRowTitle(){
-        $title=' ';
-        foreach($this->title_col as $col){
-            $title.=$this->current_row[$col];
-        }
-        if($title==' '){
-            return "Row #".$this->current_row['id'];
-        }
-        return substr($title,1);
-    }
+	function getRowTitle(){
+		$title=' ';
+		foreach($this->title_col as $col){
+			$title.=$this->current_row[$col];
+		}
+		if($title==' '){
+			return "Row #".$this->current_row['id'];
+		}
+		return substr($title,1);
+	}
 	function getFieldContent($field,$id){
 		/**
-		 * Returns the properly formatted field content.
-		 * Used firstly with Ajax::reloadExpandedField()
-		 */
+		* Returns the properly formatted field content.
+		* Used firstly with Ajax::reloadExpandedField()
+		*/
 
 		// *** Getting required record from DB ***
 		$idfield=$this->dq->args['fields'][0];
@@ -487,59 +487,59 @@ class Grid extends CompleteLister {
 		// *** Returning required field value ***
 		return $row[$field];
 	}
-    function formatRow(){
-        foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
-            $this->current_row[$tmp.'_original']=$this->current_row[$tmp];
-            $formatters = split(',',$column['type']);
-            foreach($formatters as $formatter){
-                if(method_exists($this,$m="format_".$formatter)){
-                    $this->$m($tmp);
-                }else throw new BaseException("Grid does not know how to format type: ".$formatter);
-            }
-            // setting cell parameters (tdparam)
-            $this->applyTDParams($tmp);
-            if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
-        }
-        return $this->current_row;
-    }
-    function applyTDParams($field,$totals=false){
-        // setting cell parameters (tdparam)
-        $tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
-        if(is_array($tdparam)){
-        	// wrap is replaced by style property
-        	unset($tdparam['wrap']);
-        	if(is_array($tdparam['style'])){
+	function formatRow(){
+		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
+			$this->current_row[$tmp.'_original']=$this->current_row[$tmp];
+			$formatters = split(',',$column['type']);
+			foreach($formatters as $formatter){
+				if(method_exists($this,$m="format_".$formatter)){
+					$this->$m($tmp);
+				}else throw new BaseException("Grid does not know how to format type: ".$formatter);
+			}
+			// setting cell parameters (tdparam)
+			$this->applyTDParams($tmp);
+			if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
+		}
+		return $this->current_row;
+	}
+	function applyTDParams($field,$totals=false){
+		// setting cell parameters (tdparam)
+		$tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
+		if(is_array($tdparam)){
+			// wrap is replaced by style property
+			unset($tdparam['wrap']);
+			if(is_array($tdparam['style'])){
 				$tdparam_str.='style="';
-        		foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
-        		$tdparam_str.='" ';
-        		unset($tdparam['style']);
-        	}
-        	//walking and combining string
-        	foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
-        	if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
-        	else $this->row_t->set("tdparam_$field",trim($tdparam_str));
-        }
-    }
+				foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
+				$tdparam_str.='" ';
+				unset($tdparam['style']);
+			}
+			//walking and combining string
+			foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
+			if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
+			else $this->row_t->set("tdparam_$field",trim($tdparam_str));
+		}
+	}
 	function setTotalsTitle($field,$title="Total:"){
 		$this->totals_title_field=$field;
 		$this->totals_title=$title;
 		return $this;
 	}
-    function formatTotalsRow(){
-        foreach($this->columns as $tmp=>$column){
-            $formatters = split(',',$column['type']);
-            $all_failed=true;
-            foreach($formatters as $formatter){
-                if(method_exists($this,$m="format_totals_".$formatter)){
-                    $all_failed=false;
-                    $this->$m($tmp);
-                }
-            }
-            // setting cell parameters (tdparam)
-            $this->applyTDParams($tmp,true);
-            if($all_failed)$this->current_row[$tmp]='-';
-        }
-    }
+	function formatTotalsRow(){
+		foreach($this->columns as $tmp=>$column){
+			$formatters = split(',',$column['type']);
+			$all_failed=true;
+			foreach($formatters as $formatter){
+				if(method_exists($this,$m="format_totals_".$formatter)){
+					$all_failed=false;
+					$this->$m($tmp);
+				}
+			}
+			// setting cell parameters (tdparam)
+			$this->applyTDParams($tmp,true);
+			if($all_failed)$this->current_row[$tmp]='-';
+		}
+	}
 	function updateTotals(){
 		parent::updateTotals();
 		foreach($this->current_row as $key=>$val){
@@ -548,102 +548,102 @@ class Grid extends CompleteLister {
 			}
 		}
 	}
-    function precacheTemplate($full=true){
-        // pre-cache our template for row
-        // $full=false used for certain row init
-        $row = $this->row_t;
-        $col = $row->cloneRegion('col');
+	function precacheTemplate($full=true){
+		// pre-cache our template for row
+		// $full=false used for certain row init
+		$row = $this->row_t;
+		$col = $row->cloneRegion('col');
 
-        $row->set('row_id','<?$id?>');
-        $row->trySet('odd_even','<?$odd_even?>');
-        $row->del('cols');
+		$row->set('row_id','<?$id?>');
+		$row->trySet('odd_even','<?$odd_even?>');
+		$row->del('cols');
 
 		if($full){
-	        $header = $this->template->cloneRegion('header');
-	        $header_col = $header->cloneRegion('col');
-	        $header_sort = $header_col->cloneRegion('sort');
+			$header = $this->template->cloneRegion('header');
+			$header_col = $header->cloneRegion('col');
+			$header_sort = $header_col->cloneRegion('sort');
 
-	        if($t_row = $this->totals_t){
-	            $t_col = $t_row->cloneRegion('col');
-	            $t_row->del('cols');
-	        }
+			if($t_row = $this->totals_t){
+				$t_col = $t_row->cloneRegion('col');
+				$t_row->del('cols');
+			}
 
-        	$header->del('cols');
+			$header->del('cols');
 		}
 
-        if(count($this->columns)>0){
-	        foreach($this->columns as $name=>$column){
-	            $col->del('content');
-	            $col->set('content','<?$'.$name.'?>');
+		if(count($this->columns)>0){
+			foreach($this->columns as $name=>$column){
+				$col->del('content');
+				$col->set('content','<?$'.$name.'?>');
 
-	            if(isset($t_row)){
-	                $t_col->del('content');
-	                $t_col->set('content','<?$'.$name.'?>');
-	                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
-	                $t_row->append('cols',$t_col->render());
-	            }
+				if(isset($t_row)){
+					$t_col->del('content');
+					$t_col->set('content','<?$'.$name.'?>');
+					$t_col->trySet('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
+					$t_row->append('cols',$t_col->render());
+				}
 
-	            // some types needs control over the td
+				// some types needs control over the td
 
-	            $col->set('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
+				$col->set('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
 
-	            $row->append('cols',$col->render());
+				$row->append('cols',$col->render());
 
-	            if($full){
+				if($full){
 					$header_col->set('descr',$column['descr']);
-		            if(isset($column['sortable'])){
-		                $s=$column['sortable'];
-		                // calculate sortlink
-		                $l = $this->ajax()
-		                	->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
-		                	->getString();
+					if(isset($column['sortable'])){
+						$s=$column['sortable'];
+						// calculate sortlink
+						$l = $this->ajax()
+							->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
+							->getString();
 
-		                $header_sort->set('order',$column['sortable'][0]);
-		                $header_sort->set('sortlink',$l);
-		                $header_col->set('sort',$header_sort->render());
-		            }else{
-		                $header_col->del('sort');
-		            }
-		            $header->append('cols',$header_col->render());
-	            }
-	        }
-        }
-        $this->row_t = $this->api->add('SMlite');
-        $this->row_t->loadTemplateFromString($row->render());
+						$header_sort->set('order',$column['sortable'][0]);
+						$header_sort->set('sortlink',$l);
+						$header_col->set('sort',$header_sort->render());
+					}else{
+						$header_col->del('sort');
+					}
+					$header->append('cols',$header_col->render());
+				}
+			}
+		}
+		$this->row_t = $this->api->add('SMlite');
+		$this->row_t->loadTemplateFromString($row->render());
 
-        if(isset($t_row)){
-            $this->totals_t = $this->api->add('SMlite');
-            $this->totals_t->loadTemplateFromString($t_row->render());
-        }
+		if(isset($t_row)){
+			$this->totals_t = $this->api->add('SMlite');
+			$this->totals_t->loadTemplateFromString($t_row->render());
+		}
 
-        if($full)$this->template->set('header',$header->render());
-        // for certain row: required data is in $this->row_t
-        //var_dump(htmlspecialchars($this->row_t->tmp_template));
+		if($full)$this->template->set('header',$header->render());
+		// for certain row: required data is in $this->row_t
+		//var_dump(htmlspecialchars($this->row_t->tmp_template));
 
-    }
-    function render(){
-    	if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
-    	    $def_template = $this->defaultTemplate();
-    		$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
-    		$not_found->set('no_records_message',$this->no_records_message);
-    		$this->template->del('rows');
-    		$this->template->del('totals');
-    		$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
-    		$this->totals=false;
+	}
+	function render(){
+		if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
+			$def_template = $this->defaultTemplate();
+			$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
+			$not_found->set('no_records_message',$this->no_records_message);
+			$this->template->del('rows');
+			$this->template->del('totals');
+			$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
+			$this->totals=false;
 //    		return true;
-    	}
-        parent::render();
+		}
+		parent::render();
 
-    }
+	}
 
-    public function setWidth( $width ){
-    	$this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
-    	return $this;
-    }
-    public function setNoRecords($message){
-    	$this->no_records_message=$message;
-    	return $this;
-    }
+	public function setWidth( $width ){
+		$this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
+		return $this;
+	}
+	public function setNoRecords($message){
+		$this->no_records_message=$message;
+		return $this;
+	}
 	public function getCurrentIndex($idfield='id'){
 		// TODO: think more to optimize this method
 		if(is_array($this->data))return array_search(current($this->data),$this->data);
@@ -674,10 +674,10 @@ class Grid extends CompleteLister {
 		return $this;
 	}
 	/**
-	 * Sets inline properties.
-	 * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
-	 * 	hash keys should replicate local properties names
-	 */
+	* Sets inline properties.
+	* @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
+	* 	hash keys should replicate local properties names
+	*/
 	public function setInlineProperties($props){
 		foreach($props as $key=>$val){
 			$this->$key=$val;
