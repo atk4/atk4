@@ -313,7 +313,7 @@ class DBlite extends DBlite_Abstract {
          * This function initiates a DBlite_dsql objects.
          */
         $this->loadDriver('dsql');
-        $ds = new DBlite_dsql;
+        $ds = new $class;
         $ds->db = $this;
         return $ds;
     }
