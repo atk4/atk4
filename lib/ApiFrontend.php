@@ -48,6 +48,13 @@ class ApiFrontend extends ApiWeb{
 			$this->processException($e);
 		}
 	}
+	function execute(){
+		try{
+			parent::execute();
+		}catch(Exception $e){
+			$this->processException($e);
+		}
+	}
 	function calculatePageName(){
 		$u=$this->getServerURL();
 		// leading slash / should be removed
@@ -92,6 +99,7 @@ class ApiFrontend extends ApiWeb{
 	 * Called on unhandled exception to show user friendly message
 	 */
 	function processException($e){
+		throw $e;
 		if (isset ($this->api->logger) && !is_null($this->api->logger))
 			$this->api->logger->logException($e);
 		// now showing this exception

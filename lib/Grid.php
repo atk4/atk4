@@ -339,7 +339,7 @@ class Grid extends CompleteLister {
 				$this->update();
 			}
 			$row=$this->getRowContent($_GET['id']);
-			$this->logVar($row);
+			//$this->logVar($row);
 			echo $row;
 			exit;
 		}

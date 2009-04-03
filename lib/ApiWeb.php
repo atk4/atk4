@@ -196,16 +196,6 @@ class ApiWeb extends ApiCLI {
             throw $e;
 
         }
-        /*
-        if(isset($_GET['cut_object'])){
-            $res=parent::downCall("object_render");
-            if(!isset($res))throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");
-        }elseif(isset($_GET['cut_region'])){
-            parent::downCall("region_render");
-        }else{
-            parent::downCall("render");
-        }
-        */
     }
     function addLayout($name){
         if(method_exists($this,$lfunc='layout_'.$name)){

@@ -44,7 +44,15 @@ class Form extends AbstractView {
          * at all, form will work with default look.
          */
         parent::init();
+        
+        $this->getChunks();
 
+        // After init method have been executed, it's safe for you to add controls on the form. BTW, if
+        // you want to have default values such as loaded from the table, then intialize $this->data array
+        // to default values of those fields.
+        $this->api->addHook('pre-exec',array($this,'loadData'));
+    }
+    protected function getChunks(){
         // commonly replaceable chunks
         $this->grabTemplateChunk('form_comment');
         $this->grabTemplateChunk('form_separator');
@@ -63,11 +71,7 @@ class Form extends AbstractView {
         $this->template_chunks['form']->del('form_body');
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->set('form_name',$this->name);
-
-        // After init method have been executed, it's safe for you to add controls on the form. BTW, if
-        // you want to have default values such as loaded from the table, then intialize $this->data array
-        // to default values of those fields.
-        $this->api->addHook('pre-exec',array($this,'loadData'));
+		return $this;
     }
 
 	function initializeTemplate($tag, $template){
@@ -366,8 +370,7 @@ class Form extends AbstractView {
 	function isLoadedFromDB(){
 		return $this->loaded_from_db;
 	}
-	function update()
-	{
+	function update(){
         if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){

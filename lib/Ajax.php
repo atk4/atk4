@@ -75,6 +75,15 @@ class Ajax extends AbstractAjax{
 		return $this->ajaxFunc("loadFieldValue('$field->name','$url')");
 	}
 	/**
+	 * Sets the field value by field ID. No form ID required
+	 * @param $field_id ID of the field
+	 * @value valid field value
+	 * @return $this
+	 */
+	function setFieldValue($field_id,$value){
+		return $this->ajaxFunc("$('$field_id').val('$value')");
+	}
+	/**
 	 * Resets the form, all fields are set to default values
 	 */
 	function resetForm($form){
@@ -91,6 +100,20 @@ class Ajax extends AbstractAjax{
 		$this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
 		$this->setVisibility($frame->name."_bg",$visibility);
 		$this->setVisibility($frame->name."_fr",$visibility);
+		return $this;
+	}
+	function reload($element,$args=array(),$page=null){
+		if(is_null($element)||$element instanceof DummyObject)return $this;
+		if(!isset($element->reloadable) && is_object($element)){
+			$element->add('Reloadable');
+		}
+		if(is_object($element)){
+			$element=$element->name;
+		}
+		$args['cut_object']=$element;
+		$url=$this->api->getDestinationURL($page,$args);
+		$this->setVisibility("RD_".$element);
+		$this->loadRegionURL("RR_".$element,$url);
 		return $this;
 	}
 }

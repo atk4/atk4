@@ -7,7 +7,9 @@
  * @version		$Id$
  */
 class Page extends AbstractView {
-    function defaultTemplate(){
-        return 'Content';
-    }
+	function defaultTemplate(){
+		$page_name='page_'.strtolower($this->short_name);
+		if($this->api->template->findTemplate($page_name))return array($page_name,'_top');
+		else return 'Content';
+	}
 }
