@@ -146,4 +146,32 @@ class DBlite_mysql extends DBlite {
 		_file_put_contents ($file_name, $script);
 	}
 
+
+	//////////////////// Transaction support ///////////////////
+	
+	public function setAutocommit($bool=true) {
+		return $this->realQuery('SET autocommit = '.(($bool)?'1':'0'));
+	}
+	
+	/**
+	 * Begin a transaction, turning off autocommit
+	 */
+	public function beginTransaction($option=null) {
+		return $this->realQuery('START TRANSACTION '.$option);
+	}
+	
+	/**
+	 * Commit the changes
+	 */
+	public function commit($option=null) {
+		return $this->realQuery('COMMIT '.$option);
+	}
+	
+	/**
+	 * Rollback the changes
+	 */
+	public function rollback($option=null) {
+		return $this->realQuery('ROLLBACK '.$option);
+	}
+
 }

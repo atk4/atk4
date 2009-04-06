@@ -303,6 +303,27 @@ class DBlite extends DBlite_Abstract {
         return $this->getAll($q,$param1,DB_FETCHMODE_ASSOC+DB_FETCHMODE_IDROW);
     }
 
+	//////////////////// Transaction support ///////////////////
+	
+	/**
+	 * Begin a transaction, turning off autocommit
+	 */
+	public function beginTransaction() {
+	}
+	
+	/**
+	 * Commit the changes
+	 */
+	public function commit() {
+	}
+	
+	/**
+	 * Rollback the changes
+	 */
+	public function rollback() {
+	}
+	
+
     ///////////////////// Misc functions ///////////////////////
     function fatal($str,$static_call=false){
 		throw new SQLException($this->last_query,$str);
