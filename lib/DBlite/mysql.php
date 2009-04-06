@@ -173,5 +173,28 @@ class DBlite_mysql extends DBlite {
 	public function rollback($option=null) {
 		return $this->realQuery('ROLLBACK '.$option);
 	}
+	
+	/**
+	 * sets a named transaction savepoint with a name of identifier.
+	 */
+	public function savepoint($identifier) {
+		return $this->realQuery('SAVEPOINT '.$identifier);
+	}
+	
+	/**
+	 * rolls back a transaction to the named savepoint without terminating the transaction
+	 */
+	public function rollbackToSavepoint($identifier) {
+		return $this->realQuery('ROLLBACK TO SAVEPOINT '.$identifier);
+	}
+	
+	/**
+	 * Removes the named savepoint from the set of savepoints of the current transaction. 
+	 * No commit or rollback occurs. 
+	 * It is an error if the savepoint does not exist.
+	 */	
+	public function releaseSavepoint($identifier) {
+		return $this->realQuery('RELEASE SAVEPOINT '.$identifier);
+	}		
 
 }
