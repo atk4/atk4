@@ -10,7 +10,7 @@ function lowlevel_error($error,$lev=null){
     echo "<font color=red>Low level error:</font> $error in <b>".caller_lookup()."()</b><br><br>Backtrace:<pre>";
     $backtrace=print_r(debug_backtrace(),true);
     // restricting output by X symbols
-    $x=1024; //1k
+    $x=4096; //4k
     if(strlen($backtrace)>$x)$backtrace=substr($backtrace,0,$x).
 		"<br>... Backtrace is too long, trimmed to first $x symbols ...";
     echo $backtrace;
