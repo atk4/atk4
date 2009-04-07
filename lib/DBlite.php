@@ -334,6 +334,7 @@ class DBlite extends DBlite_Abstract {
          * This function initiates a DBlite_dsql objects.
          */
         $class=$this->loadDriver($class);
+        //$class=$this->loadDriver('dsql'); // TODO! mvs: temporary fix, need discuss with Camper
         $ds = new $class;
         $ds->db = $this;
         return $ds;
