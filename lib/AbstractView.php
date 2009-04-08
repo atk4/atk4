@@ -185,7 +185,7 @@ abstract class AbstractView extends AbstractObject {
             $title=$spot;
             $spot='Content';
         }
-        $f=$p->add('View','frame_'.(++$this->frame),$spot,array('shared','msgbox'));
+        $f=$p->add('View','frame_'.(++$this->frame),$spot,array('frames','MsgBox'));
         $f->template->set('title',$title);
         $f->template->trySet('opt',$opt);
         return $f;

@@ -1,0 +1,32 @@
+<?MsgBox?>
+	<center>
+	<table class="msgbox" border="0" cellpadding="0" cellspacing="0" <?$opt?>>
+		<tbody>
+			<tr>
+				<td class="header"><?title?>This is sample box<?/?></td>
+			</tr>
+			<tr>
+				<td style="height: 32px;">
+					<?Content?><?content?>
+						Welcome to our new template for AModules3. How cool is this, ? i think it's good enough.. ehmm. hm.<br>
+						<div style="text-align: right;"><a href="shared.html#">Read more...</a></div>
+					<?/content?><?/Content?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</center>
+<?/MsgBox?>
+
+<?FloatingFrame?>
+	<div id="<?$_name?>_bg"  style="z-index:1; display: none; position: fixed; left:0; right:0; top:0; bottom:0; filter:alpha(opacity=70); opacity: 0.7; -moz-opacity:0.7; background: white">
+	</div>
+	<div id="<?$_name?>_fr"  style="z-index:2; display: none; position: fixed; left:0; right:0; top:0; bottom:0">
+		<table height=70% style="left: 40%; right: 40%; top:100; text-align: left; margin-left: auto; margin-right: auto;" border="0" cellpadding="0" cellspacing="0" width="40%" <?$opts?>>
+		<!-- <table id="<?$_name?>_fr" style="z-index:2; display: none; left: 40%; right: 40%; top:0; text-align: left; margin-left: auto; margin-right: auto; position: fixed;" border="0" cellpadding="0" cellspacing="0" width="40%" <?$opts?>>-->
+			<tr><td>
+				<?$Content?>
+			</td></tr>
+		</table>
+	</div>
+<?/FloatingFrame?>
