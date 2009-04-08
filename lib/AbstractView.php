@@ -46,15 +46,6 @@ abstract class AbstractView extends AbstractObject {
     	return $this->controller;
     }
 
-	public function setController($classname) {
-		$this->controller = $this->add($classname);
-		return $this;
-	}
-	
-	public function getController() {
-		return $this->controller;
-	}
-
     /////////////// T E M P L A T E S ///////////////////////////
 	function initializeTemplate($template_spot=null,$template_branch=null){
         /**
