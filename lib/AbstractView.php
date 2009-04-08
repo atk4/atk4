@@ -1,5 +1,6 @@
 <?php
 abstract class AbstractView extends AbstractObject {
+	protected $controller;
 
     /**
      * $template describes how this object is rendered. Template
@@ -30,6 +31,15 @@ abstract class AbstractView extends AbstractObject {
      * information. Turn $api->debug to have all debug information
      */
     public $debug = null;
+
+	public function setController($classname) {
+		$this->controller = $this->add($classname);
+		return $this;
+	}
+	
+	public function getController() {
+		return $this->controller;
+	}
 
     /////////////// T E M P L A T E S ///////////////////////////
 	function initializeTemplate($template_spot=null,$template_branch=null){
