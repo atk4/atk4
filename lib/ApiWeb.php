@@ -238,6 +238,9 @@ class ApiWeb extends ApiCLI {
 		$this->index_page=$page;
 		return $this;
 	}
+	function getIndexPage(){
+		return $this->index_page;
+	}
     function defaultTemplate(){
         return array('shared','_top');
     }

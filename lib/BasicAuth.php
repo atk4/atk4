@@ -58,7 +58,7 @@ class BasicAuth extends AbstractController {
         $this->info=$this->recall('info',false);
 
         // Logout is fictional page. If user tries to access it, he will be logged out and redirected
-        if($this->api->page=='Logout'){
+        if(strtolower($this->api->page)=='logout'){
             $this->logout();
         }
     }
@@ -250,7 +250,7 @@ class BasicAuth extends AbstractController {
         setcookie($this->name."_username",null);
         setcookie($this->name."_password",null);
         $this->info=false;
-        $this->api->redirect('Index');
+        $this->api->redirect($this->api->getIndexPage());
 	}
     function createForm($frame,$login_tag='Content'){
         $form=$frame->add('Form',null,$login_tag);

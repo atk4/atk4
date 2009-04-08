@@ -1,7 +1,5 @@
 <?php
 abstract class AbstractView extends AbstractObject {
-	protected $controller;
-
     /**
      * $template describes how this object is rendered. Template
      * can be either string or array or SMlite cloned object.
@@ -9,6 +7,7 @@ abstract class AbstractView extends AbstractObject {
      * using SMlite this should be an object.
      */
     public $template=false;
+    protected $template_branch=array();
 
     /**
      * $template_flush is set to a spot on the template, which
@@ -31,6 +30,21 @@ abstract class AbstractView extends AbstractObject {
      * information. Turn $api->debug to have all debug information
      */
     public $debug = null;
+    
+    protected $controller=null; // View should initialize itself with the help of Controller instance
+    
+    function setController($controller){
+    	if(is_object($controller)){
+    		$this->controller=$controller;
+    		$this->controller->owner=$this;
+    	}else{
+    		$this->controller=$this->add($controller);
+    	}
+    	return $this;
+    }
+    function getController(){
+    	return $this->controller;
+    }
 
 	public function setController($classname) {
 		$this->controller = $this->add($classname);
@@ -50,6 +64,7 @@ abstract class AbstractView extends AbstractObject {
         if(!$template_spot)$template_spot='Content';
         if(!isset($template_branch))$template_branch=$this->defaultTemplate();
         if(isset($template_branch)){
+        	$this->template_branch=$template_branch;
 
             // template branch would tell us what kind of template we have to use. Let's 
             // look at several cases
@@ -90,6 +105,12 @@ abstract class AbstractView extends AbstractObject {
     }
     function defaultTemplate(){
         return null;//"_top";
+    }
+    /**
+     * returns actual template branch in same format as defaultTemplate()
+     */
+    function templateBranch(){
+    	return $this->template_branch;
     }
 
 

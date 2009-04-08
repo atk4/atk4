@@ -467,4 +467,30 @@ function treenode_refresh(id,url){
 	$('#p_'+id).load(url);
 }
 /*############################################
+ *############ Service  functions ############
  */
+/**
+ * Loads URL content to the specified region.
+ * Progress animation is displayed while the load process continues
+ * 
+ */
+function loadRegionEx(region_id,url,effect){
+	// incert spinner div and hidden content div
+	$('#'+region_id).html('<div id="image_div"></div><div style="display: none" id="content"></div>');
+	// spinner ON
+	s=spinner_on(region_id+' #image_div',0,'<b>Loading. Stand by...</b>');
+	// loading content into hidden div
+	$.get(url,function(result){
+		$('#'+region_id+' div#content').html(result);
+		// now handsomely showing the content and hiding spinner
+		$('#'+region_id+' #image_div').remove();
+		switch(effect){
+		case 'slide': 
+			$('#'+region_id+' div#content').slideDown('slow');
+			break;
+		default:
+			$('#'+region_id+' div#content').show();
+		}
+		
+	});
+}

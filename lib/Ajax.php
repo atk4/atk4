@@ -31,6 +31,15 @@ class Ajax extends AbstractAjax{
 		"})");*/
 		return $this->ajaxFunc("$('#$region_id').load('$url')");
 	}
+	/**
+	 * Same as loadRegionUrl(), but uses load progress indicator (spinner)
+	 * @param $region_id
+	 * @param $url complete URL
+	 * @param $effect string, effect to apply when show the region, could be 'slide'. if null, object just shows up
+	 */
+	function loadRegionUrlEx($region_id,$url,$effect=null){
+		return $this->ajaxFunc("loadRegionEx('$region_id','$url'".(is_null($effect)?'':"'$effect'").")");
+	}
 	function executeUrl($url){
 		return $this->ajaxFunc("$.get('$url')");
 	}
