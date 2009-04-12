@@ -11,7 +11,7 @@ class ApiAdmin extends ApiWeb {
     }
     function init(){
         parent::init();
-
+		$this->getLogger();
         $this->initializeTemplate();
     }
 
