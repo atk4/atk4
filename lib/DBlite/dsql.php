@@ -95,6 +95,12 @@ class DBlite_dsql  {
     function do_select(){ return $this->query($this->select()); }
     function do_delete(){ return $this->query($this->select()); }
     */
+
+    function do_delete(){ 
+    	return $this->db->query($this->delete()); 	
+    }
+
+
     function do_insert(){ $this->__call('do_insert',array()); return $this->db->lastID(); }
     function do_replace(){ $this->__call('do_replace',array()); return $this->db->lastID(); }
     //function do_select(){ $this->__call('do_select',array()); return $this; }
@@ -180,16 +186,36 @@ class DBlite_dsql  {
                 // if 1 argument is specified and is not array, then use it
                 // as-is
                 $this->args['set'][]=$set;
-            }elseif(is_null($val)){
-                $this->args['set'][$set]="NULL";
-            }else{
-                // numeric values MUST be without quotas for the correct rounding
-                if(is_decimal_number($val))$this->args['set'][$set]=$val;
-                else $this->args['set'][$set]="'".$this->db->escape($val)."'";
             }
+            $this->args['set'][$set]=$this->escapeValue($val);
+            
         }
         return $this;
     }
+    
+    /**
+     * Escape value for protect SQL injection and support complex strings
+     * @param mixed $val
+     * @return string 
+     */
+    private function escapeValue($val) {
+    	if(is_null($val)){
+            $res = 'NULL';
+        }else{
+            // numeric values MUST be without quotas for the correct rounding
+            if(is_decimal_number($val))
+            	$res = $val;
+            else 
+            	$res = "'".$this->db->escape($val)."'";
+        }
+        
+        return $res;
+    }
+    
+    public function call_sql_function($function_name, $params) {
+    	//TODO: Complete this
+    }
+    
     function setDate($field='ts',$value=null){
         /**
          * Accepts any date format
