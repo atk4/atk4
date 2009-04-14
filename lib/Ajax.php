@@ -12,6 +12,15 @@ class Ajax extends AbstractAjax{
 	function init(){
 		parent::init();
 	}
+	/**
+	 * Adds all the code collected to $.ready()
+	 * Same as execute() but does not breaks code flow
+	 * Code is inserted into document_ready tag, which should be inside $.ready(function(){here}) within head HTML-tag 
+	 */
+	function addOnReady(){
+		$this->api->template->append('document_ready',$this->getAjaxOutput());
+		return $this;
+	}
 	function checkSession(){
 		return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."')");
 	}
@@ -107,24 +116,32 @@ class Ajax extends AbstractAjax{
 		$this->ajaxFunc("$('#".$element."').".($visible?'show()':'hide()'));
 		return $this;
 	}
-	// FIXME: Review these methods
-	
-	function setFrameVisibility($frame,$visibility=true){
-		//$this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
-		//$this->setVisibility($frame->name."_bg",$visibility);
-		//$this->setVisibility($frame->name."_fr",$visibility);
-		return $this->notImplemented();
+	/**
+	 * Shows the floating frame with content loaded from the specified URL
+	 * This can be useful to show tips or dropdowns
+	 * @param $url complete URL to load content from
+	 */
+	function showFrame($id,$url){
+		return $this->ajaxFunc("showFrame('$id','$url')");
+	}
+	function hideFrame(){
+		
 	}
 	/**
 	 * Shows the modal dialog. Dialog contents are loaded from the URL specified
 	 * @param $url complete URL to a page where dialog contents are located
 	 */
-	function showModalDialog($url){
-		return $this->ajaxFunc("$.createDialog({".
-			"addr: '$url'," .
-			"opacity: 0.5" .
-		"})");
+	function showModalDialog($id,$url){
+		return $this->notImplemented();
 	}
+	/**
+	 * Closes the modal dialog created on a page
+	 * 
+	 */
+	function closeModalDialog(){
+		return $this->notImplemented();
+	}
+	// FIXME: Review these methods
 	function reload($element,$args=array(),$page=null){
 		if(is_null($element)||$element instanceof DummyObject)return $this;
 		if(!isset($element->reloadable) && is_object($element)){

@@ -494,3 +494,14 @@ function loadRegionEx(region_id,url,effect){
 		
 	});
 }
+/**
+ * Show the floating frame
+ * Uses aqLayer plugin
+ * Content is loaded from url specified
+ */
+function showFrame(id,url){
+	$('#'+id).aqLayer({closeBtn:true}).click(function(){
+		loadRegionEx('frame_content',url,'none');
+		$(this).aqLayer('<div id="frame_content"></div>');
+	});
+}
