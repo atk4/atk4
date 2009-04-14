@@ -32,9 +32,9 @@ class ApiFrontend extends ApiWeb{
 				$this->page_object=$this->add($this->content_type=='page'?'Page':'RSSchannel',$this->page);
 				$this->$class($this->page_object);
 			}else{
-				if(loadClass($class))
+				if(loadClass($class)){
 					$this->page_object=$this->add($class,$this->page,'Content');
-				else{
+				}else{
 					// page not found, trying to load static content
 					if($this->template->findTemplate($static_page='page_'.strtolower($this->page)))
 						$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));

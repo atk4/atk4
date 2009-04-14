@@ -21,8 +21,8 @@ class ApiWeb extends ApiCLI {
     public $apinfo=array();
 
     protected $page_base=null;
-    protected $index_page='Index';	// TODO: protect this
-    protected $sticky_get_arguments = array();	// TODO: protect this
+    protected $index_page='Index';	
+    protected $sticky_get_arguments = array();	
     protected $ajax_class='Ajax';
 
     function __construct($realm=null,$skin='kt2'){
@@ -137,7 +137,6 @@ class ApiWeb extends ApiCLI {
             //    $_GET['page']=$this->page_base;
             //}
         }
-
         if(!$this->page)$this->page = @$_GET['page'];
     }
 

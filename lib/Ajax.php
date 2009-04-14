@@ -1,6 +1,10 @@
 <?php
 /**
  * AJAX class implemented using jQuery (http://jquery.com/)
+ * 
+ * This class requires jQuery library and the following plugins:
+ * - jQuery Form Plugin (http://malsup.com/jquery/form/)
+ * - jDialog (http://www.gimiti.com/kltan/wordpress/?p=20)
  *
  * Created on 26.11.2008 by *Camper* (cmd@adevel.com)
  */
@@ -106,10 +110,20 @@ class Ajax extends AbstractAjax{
 	// FIXME: Review these methods
 	
 	function setFrameVisibility($frame,$visibility=true){
-		$this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
-		$this->setVisibility($frame->name."_bg",$visibility);
-		$this->setVisibility($frame->name."_fr",$visibility);
-		return $this;
+		//$this->ajaxFunc("setFloatingFrame('{$frame->name}', " . ($visibility ? 'true' : 'false') . ")");
+		//$this->setVisibility($frame->name."_bg",$visibility);
+		//$this->setVisibility($frame->name."_fr",$visibility);
+		return $this->notImplemented();
+	}
+	/**
+	 * Shows the modal dialog. Dialog contents are loaded from the URL specified
+	 * @param $url complete URL to a page where dialog contents are located
+	 */
+	function showModalDialog($url){
+		return $this->ajaxFunc("$.createDialog({".
+			"addr: '$url'," .
+			"opacity: 0.5" .
+		"})");
 	}
 	function reload($element,$args=array(),$page=null){
 		if(is_null($element)||$element instanceof DummyObject)return $this;
