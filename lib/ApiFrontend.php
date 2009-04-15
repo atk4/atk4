@@ -55,36 +55,6 @@ class ApiFrontend extends ApiWeb{
 			$this->processException($e);
 		}
 	}
-	function calculatePageName(){
-		$u=$this->getServerURL();
-		// leading slash / should be removed
-		if((isset($u[0])) and ($u[0]=='/'))$u=substr($u,1);
-		if(stripos($u,'.xml')!==false)$this->content_type='rss';
-		else $this->content_type='page';
-		// renaming path to name
-		$u=str_replace('/','_',$u);
-		// removing extensions
-		$u=str_ireplace('.xml','',$u);
-		$u=str_ireplace('.html','',$u);
-		// assigning default page
-		if(!$u)$u=$this->index_page;
-		$_GET['page']=$u;
-		parent::calculatePageName();
-	}
-	function getServerURL(){
-		$u=$_SERVER['REDIRECT_URL'];
-		// removing server name and URL root from path
-		// url_root value should be in $_SERVER, provided by .htaccess:
-		// RewriteRule .* - [E=URL_ROOT:/]
-		$url_root=$this->getUrlRoot();
-		$u=str_ireplace($url_root,'',$u);
-		return $u;
-	}
-	function getUrlRoot(){
-		$r=isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'';
-		if($r=='/')$r='';
-		return $r;
-	}
 	function getRSSURL($rss,$args=array()){
 		$tmp=array();
 		foreach($args as $arg=>$val){

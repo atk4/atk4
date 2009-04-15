@@ -119,26 +119,49 @@ class ApiWeb extends ApiCLI {
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");                                     // HTTP/1.0
     }
-    function calculatePageName(){
+	function calculatePageName(){
         /**
          * Discover requested page name (class) from $_GET
          * $_GET should be properly initialized, including 'page' parameter,
          * before calling this method (e.g. with .htaccess)
          */
-        if(!isset($_GET['page'])){
-            $this->page_base=basename($_SERVER['REDIRECT_URL']);
-            if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
-                $this->page_base=$this->index_page;
-            }
-            list($page)=preg_split("/[.&]/",$this->page_base);
-            if($page)$_GET['page']=$page;
-            // why is that?!
-            //if(!strpos($this->page_base,'.') && !strpos($this->page_base,'&')){
-            //    $_GET['page']=$this->page_base;
-            //}
-        }
+		$u=$this->getServerURL();
+		// leading slash / should be removed
+		if((isset($u[0])) and ($u[0]=='/'))$u=substr($u,1);
+		if(stripos($u,'.xml')!==false)$this->content_type='rss';
+		else $this->content_type='page';
+		// renaming path to name
+		$u=str_replace('/','_',$u);
+		// removing extensions
+		$u=str_ireplace('.xml','',$u);
+		$u=str_ireplace('.html','',$u);
+		// assigning default page
+		if(!$u)$u=$this->index_page;
+		$_GET['page']=$u;
+		if(!$_GET['page']){
+			$this->page_base=basename($_SERVER['REDIRECT_URL']);
+			if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
+				$this->page_base=$this->index_page;
+			}
+			list($page)=preg_split("/[.&]/",$this->page_base);
+			if($page)$_GET['page']=$page;
+		}
         if(!$this->page)$this->page = @$_GET['page'];
-    }
+	}
+	function getServerURL(){
+		$u=$_SERVER['REDIRECT_URL'];
+		// removing server name and URL root from path
+		// url_root value should be in $_SERVER, provided by .htaccess:
+		// RewriteRule .* - [E=URL_ROOT:/]
+		$url_root=$this->getUrlRoot();
+		$u=str_ireplace($url_root,'',$u);
+		return $u;
+	}
+	function getUrlRoot(){
+		$r=isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'';
+		if($r=='/')$r='';
+		return $r;
+	}
 
 
     /////////////// This is what you should call //////////////////
