@@ -64,6 +64,12 @@ class Grid extends CompleteLister {
 	function defaultTemplate(){
 		return array('grid','grid');
 	}
+	/**
+	 * Returns the ID value of the expanded content on the basis of GET parameters
+	 */
+	function getExpanderId(){
+		return $_GET['expanded'].'_expandedcontent_'.$_GET['id'];
+	}
 	function addColumn($type,$name=null,$descr=null){
 		if($name===null){
 			$name=$type;
