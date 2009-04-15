@@ -194,6 +194,15 @@ class DBlite_dsql  {
 	}
 	
 	/**
+	 * Support external access to args property
+	 * @param string $arg_type   
+	 * @return array
+	 */
+	public function getArgsList($args_type) {
+		return array_keys($this->args[$args_type]);
+	}
+	
+	/**
 	* Escape value for protect SQL injection and support complex strings
 	* @param mixed $val
 	* @return string 
