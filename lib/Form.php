@@ -34,6 +34,7 @@ class Form extends AbstractView {
     public $onsubmit = null;
     public $onload = null;
     protected $ajax_submits=array();	// contains AJAX instances assigned to buttons
+    protected $get_field=null;			// if condition was passed to a form throough GET, contains a GET field name
 
     public $dq = null;
     function init(){
@@ -350,6 +351,7 @@ class Form extends AbstractView {
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
         $this->api->stickyGET($get_field);
+        $this->get_field=$field;
         return $this->addCondition($field,$_GET[$get_field]);
     }
     function loadData(){
@@ -372,6 +374,7 @@ class Form extends AbstractView {
 	}
 	function update(){
         if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
+        if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
         foreach($this->elements as $short_name => $element)
         	if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))
