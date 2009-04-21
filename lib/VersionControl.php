@@ -95,6 +95,7 @@ class VersionControl extends AbstractController{
 		$this->results[]='Starting DB update. Setting script time limit to '.$limit;
 		set_time_limit($limit);
 		$sql=split(';',file_get_contents($this->working_dir.$file));
+		//$sql=$query=file_get_contents($this->working_dir.$file);
 		$error=false;
 		foreach($sql as $query)if(trim($query) != ''){
 			$this->results[]="[".date('d/m/Y H:i:s')."] Version control: SQL executing $query...";
