@@ -342,6 +342,7 @@ class Form extends AbstractView {
         return $field->onclick;
     }
     function addCondition($field,$value=null){
+        $this->get_field=$field;
         $this->dq
             ->set($field,$value)
             ->where($field,$value);
@@ -351,7 +352,6 @@ class Form extends AbstractView {
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
         $this->api->stickyGET($get_field);
-        $this->get_field=$field;
         return $this->addCondition($field,$_GET[$get_field]);
     }
     function loadData(){
