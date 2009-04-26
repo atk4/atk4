@@ -35,6 +35,7 @@ class Form extends AbstractView {
     public $onload = null;
     protected $ajax_submits=array();	// contains AJAX instances assigned to buttons
     protected $get_field=null;			// if condition was passed to a form throough GET, contains a GET field name
+    protected $conditions=array();
 
     public $dq = null;
     function init(){
@@ -345,6 +346,7 @@ class Form extends AbstractView {
         $this->dq
             ->set($field,$value)
             ->where($field,$value);
+        $this->conditions[$field]=$value;
         return $this;
     }
     function addConditionFromGET($field='id',$get_field=null){
@@ -360,6 +362,8 @@ class Form extends AbstractView {
          */
         if($this->bail_out)return;
         if($this->dq){
+        	// if no condition set, use id is null condition
+        	if(empty($this->conditions))$this->addCondition('id',null);
             // we actually initialize data from database
             $data = $this->dq->do_getHash();
             if($data){

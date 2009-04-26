@@ -165,7 +165,6 @@ class BasicAuth extends AbstractController {
         return $this;
     }
     function isLoggedIn(){
-    	$this->logVar($this->info);
         /*
          * This function determines - if user is already logged in or not. It does it by
          * looking at $this->info, which was loaded during init() from session.
