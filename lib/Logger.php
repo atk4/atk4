@@ -376,9 +376,11 @@ class Logger extends AbstractController {
             }else{
                 fputs($this->$log_file,$msg);
             }
-        }else{
+        }elseif($this->log_output){
             fputs($this->$log_file,"[".date("d-M-Y H:i:s")."] $msg");
-        }
+        }else{
+	    return;
+	}
         fflush($this->$log_file);
     }
     function logVar($var,$msg="",$shiftfunc=null,$severity='debug'){
