@@ -131,6 +131,7 @@ function expander_is_open(name,id,button){
 
 	button_id=name+"_"+button+"_"+id;
 	for(var index in $('#'+button_id).parent().children()){
+		if(typeof(index)!='number')return 'none';
 		col=$('#'+button_id).parent().children().get(index);
 		if($(col).hasClass('expanded_this')){
 			// if column name equals to button id - our column has expander open
