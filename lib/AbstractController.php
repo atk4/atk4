@@ -3,7 +3,6 @@ class AbstractController extends AbstractObject {
 	protected $model;
 	
 	public function setModel($classname) {
-		$this->logVar("$classname is to add");
 		$this->model = $this->add($classname);
 		return $this;
 	}
