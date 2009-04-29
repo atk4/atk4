@@ -193,6 +193,7 @@ class ApiWeb extends ApiCLI {
         if(!($this->template)){
             throw new BaseException("You should specify template for API object");
         }
+        $this->hook('pre-render-output');
         echo $this->template->render();
     }
     function execute(){

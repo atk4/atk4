@@ -183,6 +183,21 @@ class Grid extends CompleteLister {
 			->trySet('_value_',$this->current_row[$field])
 			->render();
 	}
+    function format_expander2($field, $idfield='id'){
+        // We are going to give class to this element and rel tag
+		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
+        $thparm=array(
+                'class'=>'expander',
+                'rel'=>$n.' '.$this->current_row[$idfield]
+                );
+        // Here we are going to initialise widget which will do the rest for us
+        $this->api->add('jUI');
+        $this->api->jui->addWidget('expander')
+            ->activate();
+		if(!$this->current_row[$field]){
+			$this->current_row[$field]='['.$this->columns[$field]['descr'].']';
+		}
+    }
 	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
 		$tdparam=array(
