@@ -16,7 +16,6 @@ class DBlite_dsql  {
 	function __call($function,$args){
 		/*
 		* This call wrapper implements the following function:
-		* do_select, do_insert, do_etc
 		*/
 		if(substr($function,0,3)=='do_'){
 			// do_select, do_insert combine functionality of generating insert/select and executing it
@@ -247,6 +246,8 @@ class DBlite_dsql  {
 						$where.=" '".$this->db->escape($equals)."'";
 					}elseif(substr($where,-5,5)==' like'){
 						$where.=" '".$this->db->escape($equals)."'";
+					}elseif(substr($where,-3,3)==' in'){
+						$where.=" ($equals)";
 					}else{
 						$where.=" = '".$this->db->escape($equals)."'";
 					}

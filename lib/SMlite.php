@@ -137,7 +137,9 @@ class SMlite extends AbstractModel {
         $path=array();
 
         if(isset($this->api->skin) && $this->api->skin){
-            $path[]=$this->api->getConfig('smlite/template_dir','templates').'/'.$this->api->skin;
+        	// there may be several paths
+        	$cp=split(';',$this->api->getConfig('smlite/template_dir','templates'));
+        	foreach($cp as $p)$path[]=$p.'/'.$this->api->skin;
         }
         $path[]=$this->api->getConfig('smlite/template_dir','templates');
 
