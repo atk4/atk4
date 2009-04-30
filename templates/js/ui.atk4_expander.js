@@ -5,8 +5,7 @@
  *   ui.core.js
  */
 
-
-var atk4_expander = {
+$.widget("ui.atk4_expander", {
     _init: function() { 
         var self=this;
         this.element.addClass("ui-atk4-expander");
@@ -29,18 +28,19 @@ var atk4_expander = {
         this.element.addClass("ui-atk4-expander-active");
 
         // add additional row after ours
-        el=this.element;
-        while(!el.is("tr")){
-            el=el.parent();
-        }
-        tmp=this.element.attr('rel').split(' ');
-        this.expander_id=tmp[0]+"_"+tmp[1];
-        this.id=tmp[1];
+        el=this.element.closest('tr');
 
-        el.after("<tr id='"+this.expander_id+"'><td colspan=4 class='ui-atk4-expander-bottom'><div>Loading name='"+this.expander_id+"', id="+this.id+"!</div></td></tr>");
+        this.expander_id=this.element.attr('id')+"_ex";
+
+        el.after("<tr id='"+this.expander_id+"'><td colspan="+el.children().length+" class='ui-atk4-expander-bottom'><div>Loading...</div></td></tr>");
 
         // Kick of annimation before we send request
-        $('#'+this.expander_id+' td div').animate({height: "200px"},1500);
+        var div=$('#'+this.expander_id+' td div');
+        div.animate({height: "200px"},1500);
+        div.load(this.element.attr('rel'),null,function(){
+                div.stop();
+                div.attr('style','display: block'); // clear overflow, height, etc
+                });
 
         this.expanded=true;
     },
@@ -50,11 +50,16 @@ var atk4_expander = {
         this.element.removeClass("ui-atk4-expander-active");
         this.element.addClass("ui-atk4-expander");
 
-        $('#'+this.expander_id).remove();
+        var remove_this=this.expander_id;
+
+        $('#'+this.expander_id+' td div').slideUp("fast",function(){
+                $('#'+remove_this).remove();
+                });
+
+
 
 
         this.expanded=false;
     }
 
-};
-
+});
