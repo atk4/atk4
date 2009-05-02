@@ -130,7 +130,20 @@ function expander_is_open(name,id,button){
 	//if(inline_is_active(name,id))return "inline_active";
 
 	button_id=name+"_"+button+"_"+id;
-	for(var index in $('#'+button_id).parent().children()){
+	var result='none';
+	$('#'+button_id).parent().children('td').each(function(index){
+		if(typeof(index)!='number')return 'none';
+		col=$('#'+button_id).parent().children().get(index);
+		if($(col).hasClass('expanded_this')){
+			// if column name equals to button id - our column has expander open
+			if($(col).attr('id')==button_id){
+				result='expanded_this';
+			}else{
+				if(result=='none')result=$(col).data('button');
+			}
+		}
+	});
+	/*for(var index in $('#'+button_id).parent().children()){
 		if(typeof(index)!='number')return 'none';
 		col=$('#'+button_id).parent().children().get(index);
 		if($(col).hasClass('expanded_this')){
@@ -138,7 +151,8 @@ function expander_is_open(name,id,button){
 			if($(col).attr('id')==button_id)return 'expanded_this';
 			else return $(col).data('button');
 		}
-	}
+	}*/
+	return result;
 	return 'none';
 }
 /**
