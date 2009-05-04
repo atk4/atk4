@@ -21,6 +21,7 @@ class jUI_widget extends AbstractController {
 }
 class jUI extends AbstractController {
     public $dir=null;
+    private $theme=false;
 
     function init(){
         parent::init();
@@ -29,18 +30,18 @@ class jUI extends AbstractController {
         $this->js_dir=$this->api->getConfig('js/dir','amodules3/templates/js');
         $this->css_dir=$this->api->getConfig('css/dir','amodules3/templates/css');
 
+        // default theme. Change with $jui->setTheme();
+        $this->theme=$this->css_dir.'/smoothness';
+
 
         if(!$this->api->template->is_set('js_include'))
             throw new BaseException('Tag js_include must be defined in shared.html');
         if(!$this->api->template->is_set('document_ready'))
             throw new BaseException('Tag document_ready must be defined in shared.html');
 
+
         $this->api->template->del('js_include');
 
-        // jQueryUI skin load
-        $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->css_dir.
-                '/smoothness/jquery-ui-1.7.1.custom.css" rel="stylesheet" />'."\n");
 
         $this->addInclude('jquery-1.3.2.min');
         $this->addInclude('jquery-ui-1.7.1.custom.min');
@@ -65,11 +66,15 @@ class jUI extends AbstractController {
         // if we can we should load jUI_widget_name <-- TODO
         return $this->add('jUI_widget',$name);
     }
-    function activate(){
+    function setTheme($theme){
+        $this->theme=$theme;
+        return $this;
     }
     function postRender(){
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
 
+        $this->api->template->append('js_include',
+                '<link type="text/css" href="'.$this->theme.'/jquery-ui-theme.css" rel="stylesheet" />'."\n");
 
     }
 }
