@@ -537,9 +537,9 @@ class Grid extends CompleteLister {
 			// wrap is replaced by style property
 			unset($tdparam['wrap']);
 			if(is_array($tdparam['style'])){
-				$tdparam_str.='style="';
+				@$tdparam_str.='style="';
 				foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
-				$tdparam_str.='" ';
+				@$tdparam_str.='" ';
 				unset($tdparam['style']);
 			}
 			//walking and combining string
