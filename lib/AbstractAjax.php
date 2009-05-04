@@ -148,6 +148,11 @@ abstract class AbstractAjax extends AbstractModel{
 		$button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
 		return $this->ajaxFunc("expander_flip('".$lister."','".$id."','".$button."','')");
 	}
+    function closeExpanderWidget(){
+        return $this->ajaxFunc("$('.expander').atk4_expander('collapse')");
+
+    }
+
 	function memorizeExpander(){
 		$this->api->stickyGET('id');
 		$this->api->stickyGET('row_id');

@@ -5,17 +5,17 @@
  * by romans
  */
 class jUI_widget extends AbstractController {
-    private $actitve=false;
+    private $active=false;
     function init(){
         parent::init();
         $this->api->jui
             ->addInclude('ui.atk4_'.basename($this->short_name))
             ;
     }
-    function activate($tag=null){
+    function activate($tag=null,$param=null){
         if($this->active)return;
         if(!$tag)$tag=".".$this->short_name;
-        $this->api->jui->addOnReady('$("'.$tag.'").atk4_'.$this->short_name.'()');
+        $this->api->jui->addOnReady('$("'.$tag.'").atk4_'.$this->short_name.'('.($param?"{".addslashes($param)."}":'').')');
         $this->active=true;
     }
 }
@@ -52,6 +52,7 @@ class jUI extends AbstractController {
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
+        $this->api->addHook('cut-output',array($this,'cutRender'));
     }
     function addInclude($file){
         $this->api->template->append('js_include',
@@ -59,6 +60,7 @@ class jUI extends AbstractController {
         return $this;
     }
     function addOnReady($js){
+        if(is_object($js))$js=$js->getAjaxClass();
         $this->api->template->append('document_ready', '    '.$js.";\n");
         return $this;
     }
@@ -69,6 +71,16 @@ class jUI extends AbstractController {
     function setTheme($theme){
         $this->theme=$theme;
         return $this;
+    }
+    function cutRender(){
+        echo "
+            <script>
+            $(function(){
+                    ".$this->api->template->get('document_ready')."
+                    });
+            </script>
+
+            ";
     }
     function postRender(){
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));

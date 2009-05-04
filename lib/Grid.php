@@ -183,6 +183,54 @@ class Grid extends CompleteLister {
 			->trySet('_value_',$this->current_row[$field])
 			->render();
 	}
+    function format_widget($field, $widget, $params=array(), $widget_json=null){
+		$class=$this->name.'_'.$field.'_expander';
+        $params=array(
+                'class'=>"$class $widget"
+                )+$params;
+        $this->api->add('jUI')->addWidget($widget)->activate('.'.$class,$widget_json);
+		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
+		if(!$this->current_row[$field]){
+			$this->current_row[$field]=$this->columns[$field]['descr'];
+        }
+    }
+    function format_inline_widget($field, $idfield='id'){
+        $this->format_widget(
+                $field,
+                'expander',
+                array(
+                    'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
+                    'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
+                        array('expander'=>$field,
+                            'cut_object'=>$this->api->page.'_'.$field,
+                            'expanded'=>$this->name,
+                            'id'=>$this->current_row[$idfield])
+                        )
+                    ),
+                'inline: true'
+                );
+
+        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
+            ><span class="ui-icon ui-icon-pencil"></span>'.$this->current_row[$field].'</a></td>';
+    }
+    function format_expander_widget($field, $idfield='id'){
+        $this->format_widget(
+                $field,
+                'expander',
+                array(
+                    'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
+                    'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
+                        array('expander'=>$field,
+                            'cut_object'=>$this->api->page.'_'.$field,
+                            'expanded'=>$this->name,
+                            'id'=>$this->current_row[$idfield]
+                            )
+                        )
+                    )
+                );
+        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
+            ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a></td>';
+    }
     function format_expander($field, $idfield='id'){
         // We are going to give class to this element and rel tag
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
@@ -533,13 +581,14 @@ class Grid extends CompleteLister {
 	function applyTDParams($field,$totals=false){
 		// setting cell parameters (tdparam)
 		$tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
+        $tdparam_str='';
 		if(is_array($tdparam)){
 			// wrap is replaced by style property
 			unset($tdparam['wrap']);
 			if(is_array($tdparam['style'])){
-				@$tdparam_str.='style="';
+				$tdparam_str.='style="';
 				foreach($tdparam['style'] as $key=>$value)$tdparam_str.=$key.':'.$value.';';
-				@$tdparam_str.='" ';
+				$tdparam_str.='" ';
 				unset($tdparam['style']);
 			}
 			//walking and combining string

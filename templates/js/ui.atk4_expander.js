@@ -6,7 +6,8 @@
  */
 
 $.widget("ui.atk4_expander", {
-    _init: function() { 
+    _init: function() {
+        if(this.options.inline)this.inline=true;
         var self=this;
         this.element.addClass("ui-atk4-expander");
         this.element.parent().bind("click.atk4_expander", function(event) { self.click(); });
@@ -20,7 +21,7 @@ $.widget("ui.atk4_expander", {
     expander_id: null,
     expander_url: null,
     this_tr: null,
-    inline: true,
+    inline: false,
     
     
     id: null,

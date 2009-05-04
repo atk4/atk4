@@ -213,6 +213,7 @@ class ApiWeb extends ApiCLI {
             }
         }catch(Exception $e){
             if($e instanceof RenderObjectSuccess){
+                $this->hook('cut-output');
                 echo $e->result;
                 return;
             }
