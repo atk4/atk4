@@ -36,7 +36,7 @@ $.widget("ui.atk4_expander", {
 
         this.expander_id=this.element.attr('id')+"_ex";
 
-        this.this_tr.after("<tr id='"+this.expander_id+"'><td colspan="+this.this_tr.children().length+" class='ui-atk4-expander-bottom'><div>Loading...</div></td></tr>");
+        this.this_tr.after("<tr id='"+this.expander_id+"' class='lister_editrow'><td colspan="+this.this_tr.children().length+" class='ui-atk4-expander-bottom'><div>Loading...</div></td></tr>");
 
         // Kick of annimation before we send request
         var div=$('#'+this.expander_id+' td div');
