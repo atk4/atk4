@@ -10,7 +10,9 @@ class Button extends AbstractView {
         return array('button','button');
     }
     function setLabel($label){
+        list($label,$icon)=explode(',',$label);
         $this->template->set('value',$label);
+        if($icon)$this->template->set('icon',$icon);
         return $this;
     }
     function onClick(){
