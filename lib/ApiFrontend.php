@@ -41,6 +41,7 @@ class ApiFrontend extends ApiWeb{
 					else{
 						//header("HTTP/1.0 404 Not Found");
 						$this->page_object=$this->add('Page',$this->page,'Content',array('page_404','_top'));
+						$this->page_object->add('Text')->set('<p>Page requested: /'.str_ireplace('_','/',$this->page).'.html</p>');
 					}
 				}
 			}
