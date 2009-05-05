@@ -19,6 +19,12 @@ class jUI_widget extends AbstractController {
         $this->active=true;
     }
 }
+class jUI_widget_todo extends jUI_widget {
+    function init(){
+        parent::init();
+        $this->api->template->append('Content','<div class="todo_frame" title="TODO list">Loading....</div>blah');
+    }
+}
 class jUI extends AbstractController {
     public $dir=null;
     private $theme=false;
@@ -66,6 +72,9 @@ class jUI extends AbstractController {
     }
     function addWidget($name){
         // if we can we should load jUI_widget_name <-- TODO
+        if(class_exists('jUI_widget_'.$name,false)){
+            return $this->add('jUI_widget_'.$name,$name);
+        }
         return $this->add('jUI_widget',$name);
     }
     function setTheme($theme){
