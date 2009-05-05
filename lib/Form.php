@@ -432,7 +432,7 @@ class Form extends AbstractView {
 			$this->template->trySet('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
 		}
 		if($this->onload){
-			$this->template->trySet('form_onload',str_replace("\n","",$this->onload->getString()));
+			$this->template->append('form_onload',str_replace("\n","",$this->onload->getString()));
 		}
 		$this->template_chunks['form']
 			->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
