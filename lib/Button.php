@@ -12,7 +12,7 @@ class Button extends AbstractView {
     function setLabel($label){
         list($label,$icon)=explode(',',$label);
         $this->template->set('value',$label);
-        if($icon)$this->template->set('icon',$icon);
+        if($icon)$this->template->trySet('icon',$icon);
         return $this;
     }
     function onClick(){
