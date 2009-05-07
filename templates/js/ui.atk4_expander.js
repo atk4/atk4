@@ -37,7 +37,9 @@ $.widget("ui.atk4_expander", {
 
         this.expander_id=this.element.attr('id')+"_ex";
 
-        this.this_tr.after("<tr id='"+this.expander_id+"' class='lister_editrow'><td colspan="+this.this_tr.children().length+" class='ui-atk4-expander-bottom'><div>Loading...</div></td></tr>");
+        this.this_tr.after("<tr id='"+this.expander_id+"' class='editrow'><td colspan="+this.this_tr.children().length+" class='lister_cell'><div class='editrow_top'></div> <div class='editrow_left'></div> <div class='editrow_right'></div> ROW1...</td></tr>"+
+                "<tr id='"+this.expander_id+"2' class='editrow2'><td valign=bottom colspan=8 class='lister_cell'>ROW2<div class='editrow_bottom'></div></td></tr>"
+                );
 
         // Kick of annimation before we send request
         var div=$('#'+this.expander_id+' td div');
@@ -71,6 +73,7 @@ $.widget("ui.atk4_expander", {
             // inline have no div to contract
             this.this_tr.show();
             $('#'+remove_this).remove();
+            $('#'+remove_this+'2').remove();
         }else{
             // expander contracts div
             $('#'+this.expander_id+' td div').slideUp("fast",function(){

@@ -82,10 +82,12 @@ class jUI extends AbstractController {
         return $this;
     }
     function cutRender(){
+        $x=$this->api->template->get('document_ready');
+        if(is_array($x))$x=join('',$x);
         echo "
             <script>
             $(function(){
-                    ".$this->api->template->get('document_ready')."
+                    ".$x."
                     });
             </script>
 
