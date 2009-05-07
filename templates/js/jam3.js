@@ -105,6 +105,8 @@ function submitForm(form,button,spinner){
 		button=$('<input name="'+button+'" id="'+button+'" value="'+btn_value+'" type="hidden">');
 		$('#'+form).append(button);
 	}
+	// adding a flag for ajax submit
+	$('#'+form).append($('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden">'));
 	$('#'+form).ajaxSubmit({success: successHandler});
 	// removing hidden field
 	button.remove();
