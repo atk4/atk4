@@ -116,6 +116,7 @@ class Form extends AbstractView {
 
 		$this->last_field->short_name = $name;
 
+		$this->setDefault(null);
 		return $this;
 	}
 	function disable(){
@@ -449,6 +450,13 @@ class Form extends AbstractView {
 			$existing = null;
 		}
 		$this->errors[$field] = $existing . $name;
+	}
+	/**
+	 * Makes field's value set to null if empty value has been specified
+	 */
+	function setDefault($default=null){
+		$this->last_field->default_value=$default;
+		return $this;
 	}
 }
 ?>

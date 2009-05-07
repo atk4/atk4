@@ -1,13 +1,7 @@
 <?form?>
 	<form id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" onsubmit="<?form_onsubmit?>spinner_on('<?$form_name?>_loading')<?/?>" method="POST" <?$enctype?>>
 	<table width="100%"  border="0">
-	<tr>
-		<?section_open?>
-			<!-- opening DIV: opening new cell and creating a table there -->
-			<td valign="top" <?SeparatorStyle?>style="border-left: solid black 1px;"<?/SeparatorStyle?>>
-				<table border="0">
-		<?/?>
-		<?form_body?>
+		<?field_templates?>
 			<?form_line?>
 				<tr style="vertical-align: middle;">
 					<td class="smalltext" align="right" nowrap style="padding-left: 20px;"><?field_caption?>Email:<?/?><?field_mandatory?><font color="red">*</font><?/?></td>
@@ -16,36 +10,17 @@
 					<td style="padding-right: 20px;"><font color="gray"><?field_comment?>&nbsp;<?/field_comment?></font></td>
 				</tr>
 			<?/form_line?>
-			<?form_separator?>
-				<tr valign="top"><td colspan="2" align="left" nowrap style="padding-left: 70px">
-					<u><?$separator?></u></td></tr>
-			<?/form_separator?>
-			<?form_comment?>
-				<tr><td colspan="3" valign="top" align="left" nowrap style="padding-left: 0px; padding-right: 8px; padding-bottom: 16px;"><font size="3"><?$comment?></font></td></tr>
-			<?/form_comment?>
 			<?hidden_form_line?>
 			<?hidden_field_input?> <?/?>
 			<?/hidden_form_line?>
-			<tr>
-				<td class="smalltext">Ticket Key:</td>
-				<td><input type="password" name="loginpassword" class="loginpassword" value=""></td>
-			</tr>
-			<tr>
-				<td class="smalltext">Remember Me:</td>
-				<td><input type="checkbox" name="rememberme" value="1"></td>
-			</tr>
+		<?/field_templates?>
+		<?form_body?>
+			<!-- Here goes actual form template. You can define it here or in separate file -->
+			
+			<!-- End of actual form template -->
 		<?/form_body?>
-		<?section_close?>
-			<!-- closing DIV: closing table and cell -->
-				</table>
-			</td>
-		<?/?>
-	</tr>
 	<tr>
-		<td colspan="<?$section_count?>"><hr></td>
-	</tr>
-	<tr>
-		<td colspan="<?$section_count?>">
+		<td>
 			<table width="100%" cellspacing="0" cellpadding="0" border="0">
 				<tr>
 					<td class="left"  width="100%">&nbsp;<img id="<?$form_name?>_loading" src="amodules3/img/not_loading.gif" border="0">

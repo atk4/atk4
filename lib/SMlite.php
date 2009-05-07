@@ -315,7 +315,7 @@ class SMlite extends AbstractModel {
         }
         if(!isset($this->tags[$tag])||!is_array($this->tags[$tag])){
             $o=$this->owner?" for ".$this->owner->__toString():"";
-            return $this->fatal("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+            return $this->fatal("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
             //return $this->fatal("No such tag '$tag' inside SMlite::set()");
         }
         foreach($this->tags[$tag] as $key=>$_){
@@ -352,7 +352,7 @@ class SMlite extends AbstractModel {
         }
         if(empty($this->tags[$tag])){
             $o=$this->owner?" for ".$this->owner->__toString():"";
-            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(',',array_keys($this->tags)));
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
         }
         foreach($this->tags[$tag] as $key=>$val){
             $this->tags[$tag][$key]=array();
