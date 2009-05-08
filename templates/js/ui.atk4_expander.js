@@ -5,23 +5,19 @@
  *   ui.core.js
  */
 
-$.widget("ui.atk4_expander", {
+$.widget("ui.atk4_inline", {
     _init: function() {
-        if(this.options.inline)this.inline=true;
         var self=this;
-        this.element.addClass("ui-atk4-expander");
-        this.element.parent().bind("click.atk4_expander", function(event) { self.click(); });
-        //this.element.click(function(){ alert($(this).expanded); $(this).expanded?$(this).collapse():$(this).expand(); });
+        this.element.parent().bind("click.atk4_inline", function(event) { self.click(); });
     },
     click: function() {
         if(this.expanded) this.collapse(); else this.expand();
 
     },
     expanded: false,
-    expander_id: null,
-    expander_url: null,
+    inline_id: null,
+    inline_url: null,
     this_tr: null,
-    inline: false,
     
     
     id: null,
@@ -29,51 +25,53 @@ $.widget("ui.atk4_expander", {
         if(this.expanded)return false;
 
         // Make button look like it's bein pushed
-        this.element.removeClass("ui-atk4-expander");
-        this.element.addClass("ui-atk4-expander-active");
 
         // add additional row after ours
         this.this_tr=this.element.closest('tr');
 
-        this.expander_id=this.element.attr('id')+"_ex";
+        this.inline_id=this.element.attr('id')+"_ex";
 
-        this.this_tr.after("<tr id='"+this.expander_id+"' class='editrow'><td colspan="+this.this_tr.children().length+" class='lister_cell'><div class='editrow_top'></div> <div class='editrow_left'></div> <div class='editrow_right'></div> ROW1...</td></tr>"+
-                "<tr id='"+this.expander_id+"2' class='editrow2'><td valign=bottom colspan=8 class='lister_cell'>ROW2<div class='editrow_bottom'></div></td></tr>"
+        // Substitute current row with a properly formatted "inline editing template"
+        this.this_tr.hide();
+        this.this_tr.after("<tr id='"+this.inline_id+"'><td colspan="+this.this_tr.children().length+"><div class='editrow_rel'><div class='editrow_top'><div></div></div><div class='editrow_left'></div><div class='editrow_right'></div>Loading...</div></td></tr>"
                 );
 
-        // Kick of annimation before we send request
-        var div=$('#'+this.expander_id+' td div');
-        if(this.inline){
-                // inline editor loads contents of <tr>
-            this.this_tr.hide();
-            $('#'+this.expander_id).load(this.element.attr('rel'),null,function(){
-                    div.stop();
-                    div.attr('style','display: block'); // clear overflow, height, etc
-                    $('.expander-close').click(function(){ $('.expander').atk4_expander("collapse"); return false; });
-                    });
-        }else{
-                // expander loands contents of <tr><td><div>
-            div.animate({height: "200px"},1500);
-            div.load(this.element.attr('rel'),null,function(){
-                    div.stop();
-                    div.attr('style','display: block'); // clear overflow, height, etc
-                    });
-        }
+        // Define local variables (because we will need them in functions)
+        var inline_id_ref=$('#'+this.inline_id);
+
+        // Replace contents of newly added row with AJAX
+        $.ajax({
+            type: "GET",
+            url: this.element.attr('rel'),
+            success: function(res){
+                // Firefox ignores <script>, so we need to extract it and evaluate it
+                // individually. But we need to load HTML first
+                html=res.replace(/<script(.|\s)*?\/script>/g, "");
+                inline_id_ref.html(html);
+
+                // We are going to evaluate each piece, but there is some mess with newlines
+                res
+                .replace(/\n/g,'\uffff')
+                .replace(/<script[^>]*>(.*)<\/script>(.*)/g, function(a,b){ 
+                    x=b.replace(/\uffff/g,'\n'); 
+                    eval(x);
+                    })
+                ;
+
+            }
+        });
         this.expanded=true;
     },
     collapse: function() {
+        // We are closing ourselves
+
         if(!this.expanded)return false;
 
-        this.element.removeClass("ui-atk4-expander-active");
-        this.element.addClass("ui-atk4-expander");
+        var remove_this=this.inline_id;
 
-        var remove_this=this.expander_id;
-
-        if(this.inline){
-            // inline have no div to contract
-            this.this_tr.show();
+        this.this_tr.show();
             $('#'+remove_this).remove();
-            $('#'+remove_this+'2').remove();
+/*            $('#'+remove_this+'2').remove(); */
         }else{
             // expander contracts div
             $('#'+this.expander_id+' td div').slideUp("fast",function(){
