@@ -70,7 +70,6 @@ class ApiFrontend extends ApiWeb{
 	 * Called on unhandled exception to show user friendly message
 	 */
 	function processException($e){
-		throw $e;
 		if (isset ($this->api->logger) && !is_null($this->api->logger))
 			$this->api->logger->logException($e);
 		// now showing this exception
