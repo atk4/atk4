@@ -111,3 +111,55 @@ function checkExtension(form_id, field_id, ext){
 	}
 	return true;
 }
+// Refreshes available months and days for date selector <
+function refreshDateSelector(name) {
+	
+	// Get day select  <
+	var days_select = document.getElementById(name + '_day');
+	
+	// get month and year value <
+	var month = document.getElementById(name + '_month').value;
+	var year = document.getElementById(name + '_year').value;
+	
+	// calculate max depending on year and month <
+	var max_day;
+	switch (month) {
+		case '1', '3', '5', '7', '8', '10', '12' : {max_day = 31; break;}
+		case '4', '6', '9', '11' : {max_day = 30; break;}
+		case '2' : {max_day = (year % 4 ? 28 : 29); break;}
+	}
+
+	// Get options <
+	var options = days_select.getElementsByTagName('option');
+	
+	// display all options except the one with the value <
+	for (var i = 0; i < options.length; i++) {
+		if (options.item(i).value > max_day) {
+			options.item(i).style.display = "none";
+		} else {
+			options.item(i).style.display = "";
+		}
+	}
+	
+	// Make new selection if the currently selected is the hidden <
+	if (days_select.value > max_day) {
+		days_select.value = max_day;
+	}
+}
+// enables or disables DateSelector on checkbox click
+function switchDateSelector(control,name){
+	var d=document;
+	var day=d.getElementById(name+'_day');
+	var month=d.getElementById(name+'_month');
+	var year=d.getElementById(name+'_year'); 
+	
+	if(!control.checked){
+		if(day)day.disabled=true;
+		if(month)month.disabled=true;
+		if(year)year.disabled=true;
+	}else{
+		if(day)day.disabled=false;
+		if(month)month.disabled=false;
+		if(year)year.disabled=false;
+	}
+}
