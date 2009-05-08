@@ -66,7 +66,7 @@ class jUI extends AbstractController {
         return $this;
     }
     function addOnReady($js){
-        if(is_object($js))$js=$js->getAjaxClass();
+        if(is_object($js))$js=$js->getString();
         $this->api->template->append('document_ready', '    '.$js.";\n");
         return $this;
     }
