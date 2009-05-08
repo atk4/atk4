@@ -197,7 +197,7 @@ class Grid extends CompleteLister {
     function format_inline_widget($field, $idfield='id'){
         $this->format_widget(
                 $field,
-                'expander',
+                'inline',
                 array(
                     'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
                     'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
@@ -206,8 +206,7 @@ class Grid extends CompleteLister {
                             'expanded'=>$this->name,
                             'id'=>$this->current_row[$idfield])
                         )
-                    ),
-                'inline: true'
+                    )
                 );
 
         $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
@@ -231,29 +230,7 @@ class Grid extends CompleteLister {
         $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
             ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a></td>';
     }
-    function format_expander($field, $idfield='id'){
-        // We are going to give class to this element and rel tag
-		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-        $tdparam=array(
-                'class'=>'expander',
-                'id'=>$n,
-                'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
-                    array('expander'=>$field,
-						'cut_object'=>$this->api->page.'_'.$field,
-                        'expanded'=>$this->name,
-                        'id'=>$this->current_row[$idfield])
-                    )
-                );
-        // Here we are going to initialise widget which will do the rest for us
-        $this->api->add('jUI');
-        $this->api->jui->addWidget('expander')
-            ->activate();
-		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-		if(!$this->current_row[$field]){
-			$this->current_row[$field]='<u>['.$this->columns[$field]['descr'].']</u>';
-		}
-    }
-	function format_expander2($field, $idfield='id'){
+	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
 		$tdparam=array(
 			'id'=>$n,
