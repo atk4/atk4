@@ -8,8 +8,7 @@
 $.widget("ui.atk4_expander", {
     _init: function() {
         var self=this;
-        this.element.addClass("ui-atk4-expander");
-        this.element.parent().bind("click.atk4_expander", function(event) { self.click(); });
+        this.element.bind("click.atk4_expander", function(event) { self.click(); });
         //this.element.click(function(){ alert($(this).expanded); $(this).expanded?$(this).collapse():$(this).expand(); });
     },
     click: function() {
