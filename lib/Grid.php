@@ -186,9 +186,9 @@ class Grid extends CompleteLister {
     function format_widget($field, $widget, $params=array(), $widget_json=null){
 		$class=$this->name.'_'.$field.'_expander';
         $params=array(
-                'class'=>"$class $widget"
+                'class'=>$class."_".$field." $widget"
                 )+$params;
-        $this->api->add('jUI')->addWidget($widget)->activate('.'.$class,$widget_json);
+        $this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];

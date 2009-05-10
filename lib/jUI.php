@@ -5,7 +5,7 @@
  * by romans
  */
 class jUI_widget extends AbstractController {
-    private $active=false;
+    private $active=array();
     function init(){
         parent::init();
         $this->api->jui
@@ -13,10 +13,10 @@ class jUI_widget extends AbstractController {
             ;
     }
     function activate($tag=null,$param=null){
-        if($this->active)return;
+        if($this->active[$tag])return;
         if(!$tag)$tag=".".$this->short_name;
         $this->api->jui->addOnReady('$("'.$tag.'").atk4_'.$this->short_name.'('.($param?"{".addslashes($param)."}":'').')');
-        $this->active=true;
+        $this->active[$tag]=true;
     }
 }
 class jUI_widget_todo extends jUI_widget {
