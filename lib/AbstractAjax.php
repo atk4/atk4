@@ -114,7 +114,6 @@ abstract class AbstractAjax extends AbstractModel{
 		return $this->redirectURL($this->api->getDestinationURL($page,$args));
 	}
 	function redirectURL($url){
-		$this->logVar("redirecting to $url");
 		return $this->ajaxFunc("document.location='".$url."'");
 	}
 	function confirm($msg="Are you sure?"){
