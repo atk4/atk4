@@ -417,7 +417,6 @@ class Form extends AbstractView {
 		// hurry up all the steps, but you will have ready-to-use form right away and can make submission handlers
 		// easier
 		$this->loadData();
-		$this->logVar($_POST);
 		$result = $_POST && $this->submitted();
 		$this->bail_out=true;
 		return $result;
