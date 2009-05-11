@@ -11,7 +11,7 @@
 </table>
 <table align="center" style="text-align: left; margin-left: auto; margin-right: auto;" class="lister" border="0" cellpadding="0" cellspacing="0" width="100%">
  <tbody>
-  <?header?><tr class="header">
+  <?full_table?><?header?><tr class="header">
    <?cols?>
     <?col?>
      <td nowrap <?$tdparam?>><?descr?>First Name<?/descr?><?sort?><a href="javascript:void(0);" onclick="<?$sortlink?>"><img border="0" align="absmiddle" src="amodules3/img/sort<?$order?>.gif"/></a><?/sort?></td>
@@ -20,7 +20,7 @@
      <td>Passport ID</td>
      <td>Picture</td>
    <?/cols?>
-  </tr><?/header?>
+  </tr><?/header?><?/full_table?>
   <?rows?>
    <?row?>
     <tr id="<?$_name?>_<?$row_id?>" class="<?$odd_even?>">
@@ -48,6 +48,7 @@
   <tr><td style="border: 0px; padding: 0px"><!-- for safari fix --></td></tr>
  </tbody>
 </table>
+<?not_found?><center><font color="red" size="xx-large"><strong>No Records Found</strong></font></center><?/not_found?>
 <table align="center" border="0" width="100%" class="grid_menu">
  <tr>
   <td width="33%" align="left" valign="bottom" nowrap><?grid_buttons?><?/?></td>
@@ -59,4 +60,3 @@
 </div>
 <?hidden_forms?><?/hidden_forms?>
 <?/grid?>
-<?not_found?><font color="red" size="xx-large"><strong><?$no_records_message?></strong></font><?/not_found?>

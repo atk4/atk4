@@ -678,14 +678,17 @@ class Grid extends CompleteLister {
 	function render(){
 		if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
 			$def_template = $this->defaultTemplate();
-			$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
-			$not_found->set('no_records_message',$this->no_records_message);
-			$this->template->del('rows');
-			$this->template->del('totals');
-			$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
+			//$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
+			//$this->template->set('no_records_message',$this->no_records_message);
+			//$this->template->del('rows');
+			//$this->template->del('totals');
+			//$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
 			$this->totals=false;
+            $this->template->del('full_table');
 //    		return true;
-		}
+		}else{
+            $this->template->del('not_found');
+        }
 		parent::render();
 
 	}

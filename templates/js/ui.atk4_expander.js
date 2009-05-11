@@ -25,6 +25,9 @@ $.widget("ui.atk4_expander", {
     expand: function() {
         if(this.expanded)return false;
 
+        // Collapse if any others are expanded
+        this.closest('table').find('.expander').atk4_expander('collapse');
+
         // Make button look like it's bein pushed
         this.element.removeClass("ui-atk4-expander");
         this.element.addClass("ui-atk4-expander-active");
@@ -34,7 +37,7 @@ $.widget("ui.atk4_expander", {
 
         this.expander_id=this.element.attr('id')+"_ex";
 
-        this.this_tr.after("<tr id='"+this.expander_id+"'><td colspan="+this.this_tr.children().length+"><div style='height: 0px' id='"+this.expander_id+"'>Loading....</div></td></tr>"
+        this.this_tr.after("<tr id='"+this.expander_id+"'><td class='lister_expander' colspan="+this.this_tr.children().length+"><div style='height: 0px' id='"+this.expander_id+"'>Loading....</div></td></tr>"
                 );
 
         // Kick of annimation before we send request
