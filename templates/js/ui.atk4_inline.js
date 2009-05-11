@@ -50,11 +50,11 @@ $.widget("ui.atk4_inline", {
                 inline_id_ref.html(html);
 
                 // We are going to evaluate each piece, but there is some mess with newlines
-                res
-                .replace(/\n/g,'\uffff')
-                .replace(/<script[^>]*>(.*)<\/script>(.*)/g, function(a,b){ 
-                    x=b.replace(/\uffff/g,'\n'); 
-                    eval(x);
+                res=res
+                  .replace(new RegExp("\\n","g"),' ')
+                  .replace(new RegExp("\\r","g"),' ')
+                  .replace(/<script[^>]*>(.*?)<\/script>/ig, function(a,b){ 
+                    eval(b);
                     })
                 ;
 

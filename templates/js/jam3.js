@@ -522,3 +522,10 @@ function showFrame(id,url){
 		$(this).aqLayer('<div id="frame_content"></div>');
 	});
 }
+
+$(function(){
+    // jQuery function ping() will temporarily highlight element. Use this for testing matches and javascript feedback.
+    jQuery.fn.ping = function(){
+        return this.effect("highlight", { color: 'red' }, 1500);
+    }
+})

@@ -149,6 +149,7 @@ abstract class AbstractAjax extends AbstractModel{
 		return $this->ajaxFunc("expander_flip('".$lister."','".$id."','".$button."','')");
 	}
     function closeExpanderWidget(){
+        // TODO: $(this).closest('.expander').atk4_expander('collapse')
         return $this->ajaxFunc("$('.expander').atk4_expander('collapse')");
 
     }
