@@ -22,7 +22,7 @@ class jUI_widget extends AbstractController {
 class jUI_widget_todo extends jUI_widget {
     function init(){
         parent::init();
-        $this->api->template->append('Content','<div class="todo_frame" title="TODO list">Loading....</div>');
+        $this->api->template->append('Content','<div class="todo_frame" title="TODO list"></div>');
     }
 }
 class jUI extends AbstractController {
