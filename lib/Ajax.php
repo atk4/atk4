@@ -22,7 +22,7 @@ class Ajax extends AbstractAjax{
 		return $this;
 	}
 	function checkSession(){
-		return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."')");
+		//return $this->ajaxFunc("checkSession('".$this->api->getDestinationURL(null)."')");
 	}
 	function useProgressIndicator($id,$timeout=null){
 		$this->spinner=$id;
@@ -62,6 +62,12 @@ class Ajax extends AbstractAjax{
 		$this->spinner=null;
 		return $this;
 	}
+    function addGridRowInline($grid,$column,$url){
+        // Add new row to the grid and activate it as InLine
+        // add a new row to the table
+        $this->ajaxFunc("$('#".$grid->name." table:eq(1)').find('tr:first').after('<tr><td colspan=8 ".
+                "id=newinline rel=\'".$url."\'>newelement</td></tr>');$('#newinline').atk4_inline().atk4_inline('expand');");
+    }
 	function reloadGridRow($grid,$row_id,$url=null,$args=array()){
 		if(is_object($grid))$grid_name=$grid->name;
 		else $grid_name=$grid;
