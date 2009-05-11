@@ -26,7 +26,7 @@ $.widget("ui.atk4_expander", {
         if(this.expanded)return false;
 
         // Collapse if any others are expanded
-        this.closest('table').find('.expander').atk4_expander('collapse');
+        this.element.closest('table').find('.expander').atk4_expander('collapse');
 
         // Make button look like it's bein pushed
         this.element.removeClass("ui-atk4-expander");
