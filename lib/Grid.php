@@ -199,6 +199,7 @@ class Grid extends CompleteLister {
                 $field,
                 'inline',
                 array(
+                    'width'=>'0',
                     'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
                     'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
                         array('expander'=>$field,
@@ -209,8 +210,7 @@ class Grid extends CompleteLister {
                     )
                 );
 
-        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
-            ><span class="ui-icon ui-icon-pencil"></span>'.$this->current_row[$field].'</a></td>';
+        $this->current_row[$field]='';
     }
     function format_expander_widget($field, $idfield='id'){
         $this->format_widget(
