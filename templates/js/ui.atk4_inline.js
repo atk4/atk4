@@ -33,7 +33,7 @@ $.widget("ui.atk4_inline", {
 
         // Substitute current row with a properly formatted "inline editing template"
         this.this_tr.hide();
-        this.this_tr.after("<tr id='"+this.inline_id+"'><td colspan="+this.this_tr.children().length+"><div class='editrow_rel'><div class='editrow_top'><div></div></div><div class='editrow_left'></div><div class='editrow_right'></div>Loading...</div></td></tr>"
+        this.this_tr.after("<tr id='"+this.inline_id+"' class='lister_editrow'><td colspan="+this.this_tr.children().length+"><div class='editrow_rel'><div class='editrow_top'><div></div></div><div class='editrow_left'></div><div class='editrow_right'></div>Loading...</div></td></tr>"
                 );
 
         // Define local variables (because we will need them in functions)

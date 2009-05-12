@@ -186,7 +186,7 @@ class Grid extends CompleteLister {
     function format_widget($field, $widget, $params=array(), $widget_json=null){
 		$class=$this->name.'_'.$field.'_expander';
         $params=array(
-                'class'=>$class."_".$field." $widget"
+                'class'=>$class."_".$field." $widget lister_cell"
                 )+$params;
         $this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
 		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
@@ -228,7 +228,7 @@ class Grid extends CompleteLister {
                     )
                 );
         $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
-            ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a></td>';
+            ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a>';
     }
 	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];

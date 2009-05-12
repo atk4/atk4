@@ -34,14 +34,15 @@ $.widget("ui.atk4_expander", {
 
         // add additional row after ours
         this.this_tr=this.element.closest('tr');
+        this.this_tr.addClass("lister_expander_parent");
 
         this.expander_id=this.element.attr('id')+"_ex";
 
-        this.this_tr.after("<tr id='"+this.expander_id+"'><td class='lister_expander' colspan="+this.this_tr.children().length+"><div style='height: 0px' id='"+this.expander_id+"'>Loading....</div></td></tr>"
+        this.this_tr.after("<tr id='"+this.expander_id+"'><td class='lister_expander' colspan="+this.this_tr.children().length+"><div class='lister_expander_inner' ><div class='lister_expander_inner2' style='height: 0px' id='"+this.expander_id+"_cell'>Loading....</div></div></td></tr>"
                 );
 
         // Kick of annimation before we send request
-        var div=$('#'+this.expander_id+' td div');
+        var div=$('#'+this.expander_id+'_cell');
         // expander loands contents of <tr><td><div>
         div.animate({height: "200px"},1500);
         div.load(this.element.attr('rel'),null,function(){
@@ -55,6 +56,8 @@ $.widget("ui.atk4_expander", {
 
         this.element.removeClass("ui-atk4-expander-active");
         this.element.addClass("ui-atk4-expander");
+
+        this.this_tr.removeClass("lister_expander_parent");
 
         var remove_this=this.expander_id;
 
