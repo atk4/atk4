@@ -19,7 +19,9 @@ class Form_Field_DatePicker extends Form_Field {
 		));
 	}
 	function set($value){
-		// value can be any valid date format
+		// value can be valid date format, as in config['locale']['date']
+		list($d,$m,$y)=explode('/',$value);
+		if($y)$value=join('/',array($m,$d,$y));
 		$value=date('Y-m-d',strtotime($value));
 		return parent::set($value);
 	}
