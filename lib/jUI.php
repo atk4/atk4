@@ -6,17 +6,24 @@
  */
 class jUI_widget extends AbstractController {
     private $active=array();
+    private $prefix='atk4_';
     function init(){
         parent::init();
         $this->api->jui
-            ->addInclude('ui.atk4_'.basename($this->short_name))
+            ->addInclude('ui.'.$this->prefix.basename($this->short_name))
             ;
     }
     function activate($tag=null,$param=null){
         if($this->active[$tag])return;
         if(!$tag)$tag=".".$this->short_name;
-        $this->api->jui->addOnReady('$("'.$tag.'").atk4_'.$this->short_name.'('.($param?"{".addslashes($param)."}":'').')');
+        $this->api->jui->addOnReady($o='$("'.$tag.'").'.$this->prefix.$this->short_name.'('.($param?"{".addslashes($param)."}":'').')');
         $this->active[$tag]=true;
+    }
+}
+class jUI_widget_datepicker extends jUI_widget {
+    private $prefix='';
+    function activate($tag=null,$param=null){
+        $this->api->jui->addOnReady($o='$("'.$tag.'").datepicker('.($param?"{".($param)."}":'').')');
     }
 }
 class jUI_widget_todo extends jUI_widget {
@@ -72,7 +79,7 @@ class jUI extends AbstractController {
     }
     function addWidget($name){
         // if we can we should load jUI_widget_name <-- TODO
-        if(class_exists('jUI_widget_'.$name,false)){
+        if(class_exists($n='jUI_widget_'.$name,false)){
             return $this->add('jUI_widget_'.$name,$name);
         }
         return $this->add('jUI_widget',$name);

@@ -65,7 +65,8 @@ class Ajax extends AbstractAjax{
     function addGridRowInline($grid,$column,$url){
         // Add new row to the grid and activate it as InLine
         // add a new row to the table
-        $this->ajaxFunc("$('#".$grid->name." table:eq(1)').find('tr:first').after('<tr><td colspan=8 ".
+        $this->ajaxFunc("$('.inline_new + tr').remove();$('#".$grid->name.
+                " table:eq(1)').find('tr:first').after('<tr class=inline_new><td colspan=8 ".
                 "id=newinline rel=\'".$url."\'>newelement</td></tr>');$('.lister_notfound').hide();$('#newinline').atk4_inline().atk4_inline('expand');");
     }
 	function reloadGridRow($grid,$row_id,$url=null,$args=array()){

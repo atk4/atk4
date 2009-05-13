@@ -19,6 +19,7 @@ $.widget("ui.atk4_expander", {
     expander_id: null,
     expander_url: null,
     this_tr: null,
+    this_div: null,
     
     
     id: null,
@@ -42,7 +43,8 @@ $.widget("ui.atk4_expander", {
                 );
 
         // Kick of annimation before we send request
-        var div=$('#'+this.expander_id+'_cell');
+        this.div=$('#'+this.expander_id+'_cell');
+        var div=this.div;
         // expander loands contents of <tr><td><div>
         div.animate({height: "200px"},1500);
         div.load(this.element.attr('rel'),null,function(){
@@ -62,7 +64,7 @@ $.widget("ui.atk4_expander", {
         var remove_this=this.expander_id;
 
         // expander contracts div
-        $('#'+this.expander_id+' td div').slideUp("fast",function(){
+        this.div.slideUp("fast",function(){
                 $('#'+remove_this).remove();
         });
 

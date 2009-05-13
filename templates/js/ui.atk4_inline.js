@@ -25,6 +25,7 @@ $.widget("ui.atk4_inline", {
         if(this.expanded)return false;
 
         // Make button look like it's bein pushed
+        $('.inline').atk4_inline('collapse');
 
         // add additional row after ours
         this.this_tr=this.element.closest('tr');
@@ -33,8 +34,11 @@ $.widget("ui.atk4_inline", {
 
         // Substitute current row with a properly formatted "inline editing template"
         this.this_tr.hide();
-        this.this_tr.after("<tr id='"+this.inline_id+"' class='lister_editrow'><td colspan="+this.this_tr.children().length+"><div class='editrow_rel'><div class='editrow_top'><div></div></div><div class='editrow_left'></div><div class='editrow_right'></div>Loading...</div></td></tr>"
+        this.this_tr.after("<tr id='"+this.inline_id+"' class='lister_editrow'><td colspan="+this.this_tr.children().length+"><div class='editrow_rel'><div class='editrow_top'><div></div></div><div class='editrow_left'></div><div class='editrow_right'></div><div class='loading'>Loading...</div></div></td></tr>"
                 );
+
+        var l=$('.loading');
+        l.animate({height: "6em"},1500);
 
         // Define local variables (because we will need them in functions)
         var inline_id_ref=$('#'+this.inline_id);
@@ -46,6 +50,7 @@ $.widget("ui.atk4_inline", {
             success: function(res){
                 // Firefox ignores <script>, so we need to extract it and evaluate it
                 // individually. But we need to load HTML first
+                l.stop();
                 html=res.replace(/<script(.|\s)*?\/script>/g, "");
                 inline_id_ref.html(html);
 

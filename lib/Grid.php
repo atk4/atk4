@@ -85,9 +85,9 @@ class Grid extends CompleteLister {
 
 		return $this;
 	}
-	function addButton($label,$name=null,$color='black'){
+	function addButton($label,$name=null){
 		return $this->add('Button','gbtn'.count($this->elements),'grid_buttons')
-			->setLabel($label)->setColor($color)->onClick();
+			->setLabel($label)->onClick();
 	}
 	function addQuickSearch($fields,$class='QuickSearch'){
 		return $this->add($class,null,'quick_search')
@@ -213,6 +213,7 @@ class Grid extends CompleteLister {
         $this->current_row[$field]='';
     }
     function format_expander_widget($field, $idfield='id'){
+        /*
         $this->format_widget(
                 $field,
                 'expander',
@@ -227,8 +228,22 @@ class Grid extends CompleteLister {
                         )
                     )
                 );
-        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon" id="dialog_link"
+                */
+		$class=$this->name.'_'.$field.'_expander';
+		if(!$this->current_row[$field]){
+			$this->current_row[$field]=$this->columns[$field]['descr'];
+        }
+        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon '.$class.' expander" 
+            id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
+            rel="'.$this->api->getDestinationURL($this->api->page.'_'.$field,
+                        array('expander'=>$field,
+                            'cut_object'=>$this->api->page.'_'.$field,
+                            'expanded'=>$this->name,
+                            'id'=>$this->current_row[$idfield]
+                            )
+                        ).'"
             ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a>';
+        $this->api->add('jUI')->addWidget('expander')->activate('.'.$class);
     }
 	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
