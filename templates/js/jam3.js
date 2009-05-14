@@ -39,7 +39,9 @@ function checkSession(url){
 	}
 }
 function spinner_on(spinner, timeout, text){
-	/* This function starts a spinning wheel */
+	/*
+	 * This function starts a spinning wheel 
+	 */
 	spinner_id=spinner;
 	spinner=$('#'+spinner_id);
 	
@@ -64,7 +66,8 @@ function spinner_off(spinner){
 	// spinner is a place where image should be inserted
 	else spinner.html('<img src="'+$('#gif_not_loading img').attr('src')+'" alt="loading">');
 }
-/*############################################
+/*
+ *############################################
  *############## Form functions ##############
  */ 
 function submitForm(form,button,spinner){
