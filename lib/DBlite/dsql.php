@@ -464,6 +464,7 @@ class DBlite_dsql  {
 	function calc_found_rows(){
 		$this->option("SQL_CALC_FOUND_ROWS");
 		$this->my[2]=true;
+        return $this;
 	}
 	function option($option){
 		if(!is_array($option))$option=array($option);
