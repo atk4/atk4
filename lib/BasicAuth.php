@@ -69,6 +69,9 @@ class BasicAuth extends AbstractController {
     function getAll(){
     	return $this->info;
     }
+	function getAllowedPages(){
+		return $this->allowed_pages;
+	}
     /**
      * This function will add specified credintals to allowed user list. If they are entered
      * properly to the login form, user will be granted access
