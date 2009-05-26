@@ -367,7 +367,6 @@ class Form extends AbstractView {
 			if(empty($this->conditions))$this->addCondition('id',null);
 			// we actually initialize data from database
 			$data = $this->dq->do_getHash();
-			$this->logVar($this->dq->select());
 			if($data){
 				$this->set($data);
 				$this->loaded_from_db=true;
