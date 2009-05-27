@@ -442,7 +442,7 @@ class Form_Field_Text extends Form_Field {
 
         return
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
-            htmlspecialchars(stripslashes($this->value)).
+            htmlspecialchars(stripslashes($this->value),ENT_COMPAT,'ISO-8859-1',false).
             $this->getTag('/textarea');
     }
 }
