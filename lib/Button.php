@@ -22,7 +22,11 @@ class Button extends AbstractView {
     	$this->setStyle('color',$color);
     	return $this;
     }
-    function setStyle($key,$value){
+    function setStyle($key,$value=null){
+    	if(is_null($value)&&is_array($key)){
+    		foreach($key as $k=>$v)$this->setStyle($k,$v);
+    		return $this;
+    	}
     	$this->style[]="$key: $value";
     	return $this;
     }
@@ -32,8 +36,8 @@ class Button extends AbstractView {
     }
     function render(){
         $this->template->set('name',$this->name);
-        $class=is_null($this->class)?'':'class="'.$this->class.'" ';
-        $this->template->set('style',$class.((count($this->style)?'style="'.implode(';',$this->style).'"':'')));
+        if(!is_null($this->class))$this->template->trySet('class',$this->class);
+        $this->template->set('style',((count($this->style)?'style="'.implode(';',$this->style).'"':'')));
         if($this->onclick)$this->template->set('onclick',$this->onclick->getString());
         return parent::render();
     }

@@ -327,14 +327,16 @@ class Form extends AbstractView {
 	function addDefaultButton($label,$name=null,$color=null){
 		return $this->onSubmit($this->addButton($label,$name,$color));
 	}
-	function addButton($label,$name=null,$color=null){
+	function addButton($label,$name=null,$class=null,$style=null){
 		if(is_null($name))$name=$label;
 		// Now add the regular button first
 		$field = $this->last_button = $this->add('Form_Button',$name,'form_buttons')
 			->setLabel($label);
 
-		if (!is_null($color))
-			$field->setColor($color);
+		if(!is_null($class))
+			$field->setClass($class);
+		if (!is_null($style))
+			$field->setStyle($style);
 
 		$field->setNoSave();
 
