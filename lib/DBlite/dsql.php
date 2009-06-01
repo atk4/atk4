@@ -185,9 +185,8 @@ class DBlite_dsql  {
 				// if 1 argument is specified and is not array, then use it
 				// as-is
 				$this->args['set'][]=$set;
-			}
-			$this->args['set'][$set]=$this->escapeValue($val);
-			
+			}else
+				$this->args['set'][$set]=$this->escapeValue($val);
 		}
 		return $this;
 	}
