@@ -240,12 +240,14 @@ class BasicAuth extends AbstractController {
 			$this->debug("to $p");
 			// erasing stored URL
 			$this->forget('original_request');
-			$this->api->redirect($p,$original_request);
+			if($this->api->isAjaxOutput())$this->ajax()->redirect($p,$original_request)->execute();
+			else $this->api->redirect($p,$original_request);
 		}
 
 		// Rederect to index page
 		$this->debug("to Index");
-		$this->api->redirect(null);
+		if($this->api->isAjaxOutput())$this->ajax()->redirect($this->api->getIndexPage())->execute();
+		$this->api->redirect($this->api->getIndexPage());
     }
 	function logout(){
         // Forces logout. This also cleans cookies
