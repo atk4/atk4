@@ -151,7 +151,6 @@ class TMail extends AbstractController{
 	* Returns the rendered mail body, sign included
 	*/
 	function getBody(){
-		$this->logVar("rendering body");
 		// first we should render the body if it was not rendered before
 		if(is_null($this->body)){
 			$this->set('body','');
@@ -211,7 +210,6 @@ class TMail extends AbstractController{
 		return is_object($this->sign)?$this->sign->render():$this->sign;
 	}
 	function getHeaders(){
-		$this->logVar("rendering headers");
 		// returns the rendered headers
 		$this->headers['From']=$this->get('from',false);
 		$this->headers['Bcc']=$this->get('bcc',false);
