@@ -110,7 +110,7 @@ class Ajax extends AbstractAjax{
 	 * @return $this
 	 */
 	function setFieldValue($field_id,$value){
-		return $this->ajaxFunc("$('$field_id').val('$value')");
+		return $this->ajaxFunc("$('#$field_id').val('$value')");
 	}
 	/**
 	 * Resets the form, all fields are set to default values

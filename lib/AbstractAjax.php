@@ -62,7 +62,7 @@ abstract class AbstractAjax extends AbstractModel{
 		return $this->getAjaxOutput();
 	}
 	function getLink($text){
-		return '<a onclick="'.$this->getString().'">'.$text.'</a>';
+		return '<a href="javascript: '.$this->getString().'">'.$text.'</a>';
 	}
 	function ajaxFlush(){
 		// Now, since we are returning AJAX stuff, we don't need to render anything.

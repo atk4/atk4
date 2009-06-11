@@ -341,14 +341,14 @@ class Grid extends CompleteLister {
 			$confirm->addLabel("<div id='".$l."'>Error..?</div>");
 			$confirm->addField('hidden','id','Hidden');
 			$confirm->addButton('Delete')->submitForm($confirm);
-			$confirm->addButton('Cancel')->setFrameVisibility($f,false);
+			$confirm->addButton('Cancel')->setVisibility($f,false);
 
 			$this->columns[$field]['del_confirm']=$confirm;
 
 			if($confirm->isSubmitted()){
 				$this->dq->where('id',$confirm->get('id'))->do_delete();
 				$this->ajax()
-					->setFrameVisibility($f,false)
+					->setVisibility($f,false)
 					->displayAlert("Record ".$confirm->get('id')." deleted")
 					->reload($this)
 					->execute();
@@ -358,7 +358,7 @@ class Grid extends CompleteLister {
 			$f->recursiveRender();
 		}
 		$this->current_row[$field]=
-			$this->ajax()->setFieldValue($confirm,'id',$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setFrameVisibility($f,true)->getLink('delete');
+			$this->ajax()->setFieldValue($confirm->getElement('id')->name,$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setVisibility($f,true)->getLink('delete');
 	}
 	function addRecordOrder($field,$table=''){
 		if(!$this->record_order){
