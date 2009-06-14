@@ -373,6 +373,7 @@ class Form extends AbstractView {
 				$this->set($data);
 				$this->loaded_from_db=true;
 			}
+            $this->hook('post-loadData');
 		}
 	}
 
