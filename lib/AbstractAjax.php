@@ -14,6 +14,8 @@ abstract class AbstractAjax extends AbstractModel{
 		parent::init();
 		// before proceed we need to check session
 		// only if we are on restricted page
+        // TODO: terrible code, need removal. Session is always checked before any pages
+        // are initialised, in app->init()
 		if(isset($this->api->auth)&&!is_null($this->api->auth)){
 			if($this->api->auth instanceof BasicAuth && !$this->api->auth->isPageAllowed($this->api->page))
 				$this->checkSession();
