@@ -484,6 +484,7 @@ class Form_Field_ValueList extends Form_Field {
 }
 class Form_Field_Dropdown extends Form_Field_ValueList {
     function validate(){
+        if(!$this->value)return parent::validate();
         if(!isset($this->value_list[$this->value])){
         	if($this->api->isAjaxOutput()){
 		        $this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
