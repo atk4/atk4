@@ -144,8 +144,10 @@ abstract class AbstractView extends AbstractObject {
         $this->output($this->template->render());
     }
     function output($txt){
-        if((isset($this->owner->template)) && (!empty($this->owner->template)))
-        	$this->owner->template->append($this->spot,$txt);
+        if(!$this->hook('output',$txt)){
+            if((isset($this->owner->template)) && (!empty($this->owner->template)))
+                $this->owner->template->append($this->spot,$txt);
+        }
     }
     function region_render(){
         /**
