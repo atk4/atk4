@@ -516,16 +516,19 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
                     .$this->getTag('/option');
             } else {
                 $output.=
-                    $this->getTag('option',array(
-                            'value'=>$value,
-                            'selected'=>$value == $this->value
-                        ))
+                    $this->getOption($value)
                     .htmlspecialchars($descr)
                     .$this->getTag('/option');
             }
         }
         $output.=$this->getTag('/select');
         return $output;
+    }
+    function getOption($value){
+        return $this->getTag('option',array(
+                    'value'=>$value,
+                    'selected'=>$value == $this->value
+                    ));
     }
 }
 class Form_Field_CheckboxList extends Form_Field_ValueList {
