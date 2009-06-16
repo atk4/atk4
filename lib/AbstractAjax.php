@@ -172,7 +172,7 @@ abstract class AbstractAjax extends AbstractModel{
 	function reloadExpander($url,$args=array()){
 		$this->memorizeExpander();
 		return $this->loadRegionURL($_GET['expanded'].'_expandedcontent_'.$_GET['id'],
-			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>$url),
+			$this->api->getDestinationURL($url, array_merge(array('cut_object'=>str_replace('/','_',$url)),
 				$args)));
 	}
 	function reloadExpandedRow($url,$args=array()){

@@ -34,7 +34,6 @@ class AuthHTTP extends AbstractController{
                 ->do_getHash();
 			echo "!";
 			$this->authenticated = $this->auth_data[$this->pwd_field] == $_SERVER['PHP_AUTH_PW'];
-                    // TODO - add cryptfunc support
             unset($this->auth_data[$this->pwd_field]);
 		}
 		if(!$this->authenticated)throw new BaseException('Authorization Required');

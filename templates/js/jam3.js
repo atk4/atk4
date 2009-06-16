@@ -460,6 +460,21 @@ function close_expanders(name,id){
 		if($(this).attr('class')=='expanded_this')expander_flip(name,id,$(this).data('button'));
 	});
 }
+/**
+ * Gets an array of selected checkboxes of the SelectGrid and
+ * passes then to a specified URL as comma-separated string
+ * @param name - name (ID) of the SelectGrid
+ * @param url - URL which should be called
+ */
+function processSelection(name,url){
+	result=new Array();
+	i=0;
+	$('#'+name+' input[type=checkbox]').each(function(){
+		result[i]=$(this).attr('value')+':'+($(this).attr('checked')==true?'Y':'N');
+		i++;
+	});
+	$.get(url+'&selected='+result.join(','));
+}
 /*############################################
  *############ TreeView functions ############
  */ 

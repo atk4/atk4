@@ -53,8 +53,16 @@ class Ajax extends AbstractAjax{
 	function loadRegionUrlEx($region_id,$url,$effect=null){
 		return $this->ajaxFunc("loadRegionEx('$region_id','$url'".(is_null($effect)?'':"'$effect'").")");
 	}
-	function executeUrl($url){
-		return $this->ajaxFunc("$.get('$url')");
+	/**
+	 * Executes a call to a specified URL
+	 * @param $url
+	 * @param $onsuccess AJAX object with code to be executed when call is finished
+	 */
+	function executeUrl($url,$onsuccess=null){
+		$callback=is_null($onsuccess)?'null':"function(){".
+			$onsuccess->getString().
+		"}";
+		return $this->ajaxFunc("$.get('$url',null,$callback)");
 	}
 	function submitForm($form){
 		$this->ajaxFunc("submitForm('".$form->name."','".$this->owner->name."','".$this->spinner."')");
@@ -77,6 +85,11 @@ class Ajax extends AbstractAjax{
 				array('cut_object'=>$url,'grid_action'=>'return_row','datatype'=>'jquery','expanded'=>$grid_name,
 				'id'=>$row_id),
 				$args)).'\',\''.$grid_name.'\','.$row_id.')');
+	}
+	function saveSelected($grid){
+		$page=null;
+		$url=$this->api->getDestinationUrl($page,array('save_selected'=>1));
+		return $this->ajaxFunc("processSelection('".$grid->name."','$url')");
 	}
 	/**
 	 * Puts form field value into a JS variable

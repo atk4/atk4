@@ -419,7 +419,7 @@ class Logger extends AbstractController {
         $log_file="log_$severity"."_file";
         $this->$log_file=fopen($full_filename,"a");
         if(!$this->$log_file)throw new IOException("Cannot open $severity log file");
-        if ($new_file) chmod($full_filename,0777); //TODO: Check for correct grants!
+        if ($new_file) chmod($full_filename,0777); //
     }
     function writeLogMessage(){
     }
@@ -551,8 +551,6 @@ class Logger extends AbstractController {
 
 	var $_prev_exec_time;
     */
-
-    // TODO for mvs, review the following functions ;)
 
     function Debug($filename) {
     	if (is_null($filename))
