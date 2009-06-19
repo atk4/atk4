@@ -178,7 +178,7 @@ abstract class AbstractView extends AbstractObject {
 	}
 
 
-    function frame($spot,$title=null,$p=null,$opt=''){
+    function frame($spot=null,$title=null,$p=null,$opt=''){
         /*
          * This function is just a shortcut in creating a frame
          */
