@@ -37,6 +37,10 @@ abstract class Form_Field extends AbstractView {
     	$this->mandatory=$mandatory;
     	return $this;
     }
+	function setReadonly($readonly=true){
+		$this->readonly=$readonly;
+		return $this;
+	}
     function isMandatory(){
     	return $this->mandatory;
     }
