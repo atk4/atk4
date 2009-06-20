@@ -29,7 +29,7 @@
  */
 class BasicAuth extends AbstractController {
 
-    protected $info=false;                      // info will contain data loaded about authenticated user. This
+    public $info=false;                      // info will contain data loaded about authenticated user. This
                                                 // property can be accessed through $this->get(); and should not
                                                 // be changed after authentication.
 
