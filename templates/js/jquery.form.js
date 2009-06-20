@@ -158,8 +158,8 @@ $.fn.ajaxSubmit = function(options) {
         var form = $form[0];
         
         if ($(':input[@name=submit]', form).length) {
-            alert('Error: Form elements must not be named "submit".');
-            return;
+            //alert('Error: Form elements must not be named "submit".');
+            //return;
         }
         
         var opts = $.extend({}, $.ajaxSettings, options);
