@@ -2,6 +2,13 @@
 /**
  * TreeView as an object you can use to display some self-dependant data. 
  * TreView uses Ajax technology to expand/collapse its branches.
+ * 
+ * Usage example:
+ * $tree=$this->add('TreeView');
+ * $tree
+ * 		->setSource('table')		// set source table with default id and parent_id fields
+ * 		->display('text','name')	// field 'name' will be displayed as text
+ * ;
  */
 class TreeView extends Lister{
 	protected $row_t;
