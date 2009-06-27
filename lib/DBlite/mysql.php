@@ -12,6 +12,8 @@ class DBlite_mysql extends DBlite {
      */
     var $cursor;
     var $handle;
+    var $transaction_depth=0;		// shows how many times beginTransaction() was called
+    
     /**
      * Copy of last executed query
      */
@@ -157,21 +159,28 @@ class DBlite_mysql extends DBlite {
 	 * Begin a transaction, turning off autocommit
 	 */
 	public function beginTransaction($option=null) {
-		return $this->realQuery('START TRANSACTION '.$option);
+		$this->transaction_depth++;
+		// transaction starts only if it was not started before
+		if($this->transaction_depth==1)return $this->realQuery('START TRANSACTION '.$option);
+		return false;
 	}
 	
 	/**
 	 * Commit the changes
 	 */
 	public function commit($option=null) {
-		return $this->realQuery('COMMIT '.$option);
+		$this->transaction_depth--;
+		if($this->transaction_depth==0)return $this->realQuery('COMMIT '.$option);
+		return false;
 	}
 	
 	/**
 	 * Rollback the changes
 	 */
 	public function rollback($option=null) {
-		return $this->realQuery('ROLLBACK '.$option);
+		$this->transaction_depth--;
+		if($this->transaction_depth==0)return $this->realQuery('ROLLBACK '.$option);
+		return false;
 	}
 	
 	/**
