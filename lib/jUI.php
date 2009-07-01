@@ -5,23 +5,34 @@
  * by romans
  */
 class jUI_widget extends AbstractController {
-    private $active=array();
-    private $prefix='atk4_';
+    protected $active=array();
+    protected $prefix='atk4_';
+    protected $dir='';
     function init(){
         parent::init();
         $this->api->jui
-            ->addInclude('ui.'.$this->prefix.basename($this->short_name))
+            ->addInclude($this->dir.'ui.'.$this->prefix.basename($this->short_name))
             ;
     }
     function activate($tag=null,$param=null){
         if($this->active[$tag])return;
         if(!$tag)$tag=".".$this->short_name;
-        $this->api->jui->addOnReady($o='$("'.$tag.'").'.$this->prefix.$this->short_name.'('.($param?"{".addslashes($param)."}":'').')');
+        $this->api->jui->addOnReady($o='$("'.$tag.'").'.$this->prefix.$this->short_name.'('.($param?
+                        json_encode($param):'').')');
         $this->active[$tag]=true;
     }
 }
+class jUI_stdWidget extends jUI_widget {
+    protected $prefix='';
+    function init(){
+        $this->dir=$this->short_name.'/';
+        parent::init();
+        $this->api->jui
+            ->addStylesheet($this->dir.'ui.'.$this->prefix.basename($this->short_name));
+    }
+}
 class jUI_widget_datepicker extends jUI_widget {
-    private $prefix='';
+    protected $prefix='';
     function activate($tag=null,$param=null){
         $this->api->jui->addOnReady($o='$("'.$tag.'").datepicker('.($param?"{".($param)."}":'').')');
     }
@@ -32,49 +43,66 @@ class jUI_widget_todo extends jUI_widget {
         $this->api->template->append('Content','<div class="todo_frame" title="TODO list"></div>');
     }
 }
-class jUI extends AbstractController {
+class jUI extends jQuery {
+    /*
+        ATK4 system for javascript file management
+      */
     public $dir=null;
     private $theme=false;
 
-    function init(){
-        parent::init();
+    private $atk4_initialised=false;
 
+    function init(){
+        $this->js_dir=$this->api->getConfig('js/dir','templates/js');
+        $this->css_dir=$this->api->getConfig('css/dir','templates/css');
+
+
+        parent::init();
         $this->api->jui=$this;
-        $this->js_dir=$this->api->getConfig('js/dir','amodules3/templates/js');
-        $this->css_dir=$this->api->getConfig('css/dir','amodules3/templates/css');
+
+
+
 
         // default theme. Change with $jui->setTheme();
         $this->theme=$this->css_dir.'/smoothness';
 
+        $this->addInclude('start-atk4');
+        $this->addOnReady('$.atk4.init({"base-url":"'.$this->api->getBaseURL().'"})');
+        $this->atk4_initialised=true;
 
-        if(!$this->api->template->is_set('js_include'))
-            throw new BaseException('Tag js_include must be defined in shared.html');
-        if(!$this->api->template->is_set('document_ready'))
-            throw new BaseException('Tag document_ready must be defined in shared.html');
-
-
-        $this->api->template->del('js_include');
-
-
-        $this->addInclude('jquery-1.3.2.min');
         $this->addInclude('jquery-ui-1.7.1.custom.min');
-
-        // temporarily for compatibility
-        $this->addInclude('jam3');
-        $this->addInclude('jquery.form');
-
-        // Controllers are not rendered, but we need to do some stuff manually
-        $this->api->addHook('pre-render-output',array($this,'postRender'));
-        $this->api->addHook('cut-output',array($this,'cutRender'));
     }
-    function addInclude($file){
-        $this->api->template->append('js_include',
-                '<script type="text/javascript" src="'.$this->js_dir.'/'.$file.'.js"></script>'."\n");
+    function addInclude($file,$ext='.js'){
+        $try=array();
+        if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
+        elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
+        elseif(file_exists($try[]=BASEDIR.'/'.($relative_path=$file).$ext));
+        else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
+
+
+        if(!$this->atk4_initialised){
+            return parent::addInclude($relative_path);
+        }
+
+        parent::addOnReady('$.atk4.includeJS("'.$relative_path.$ext.'")');
         return $this;
+    }
+    function addStylesheet($file,$ext='.css'){
+        if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
+        elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
+        elseif(file_exists($try[]=BASEDIR.'/'.($relative_path=$file).$ext));
+        else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
+
+
+        parent::addOnReady('$.atk4.includeCSS("'.$relative_path.$ext.'")');
     }
     function addOnReady($js){
         if(is_object($js))$js=$js->getString();
-        $this->api->template->append('document_ready', '    '.$js.";\n");
+        if(!$this->atk4_initialised){
+            return parent::addOnReady($js);
+        }
+
+        $this->api->template->append('document_ready', '$.atk4(function(){ '.$js."; });\n");
         return $this;
     }
     function addWidget($name){
@@ -83,6 +111,10 @@ class jUI extends AbstractController {
             return $this->add('jUI_widget_'.$name,$name);
         }
         return $this->add('jUI_widget',$name);
+    }
+    function addStdWidget($name){
+        // if we can we should load jUI_widget_name <-- TODO
+        return $this->add('jUI_stdWidget',$name);
     }
     function setTheme($theme){
         $this->theme=$theme;

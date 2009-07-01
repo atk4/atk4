@@ -21,14 +21,11 @@ class jQuery_plugin extends AbstractController {
     }
 }
 class jQuery extends AbstractController {
-    public $dir=null;
-
+    var $chains=array();
     function init(){
         parent::init();
 
         $this->api->jquery=$this;
-        $this->js_dir=$this->api->getConfig('js/dir','amodules3/templates/js');
-        $this->css_dir=$this->api->getConfig('css/dir','amodules3/templates/css');
 
         if(!$this->api->template->is_set('js_include'))
             throw new BaseException('Tag js_include must be defined in shared.html');
@@ -38,11 +35,7 @@ class jQuery extends AbstractController {
 
         $this->api->template->del('js_include');
 
-        $this->addInclude('jquery-1.3.2.min');
-
-        // temporarily for compatibility
-        $this->addInclude('jam3');
-        $this->addInclude('jquery.form');
+        $this->addInclude($this->api->getConfig('js/paths/jquery','amodules3/templates/js/jquery-1.3.2'));
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
@@ -50,18 +43,26 @@ class jQuery extends AbstractController {
     }
     function addInclude($file){
         $this->api->template->append('js_include',
-                '<script type="text/javascript" src="'.$this->js_dir.'/'.$file.'.js"></script>'."\n");
+                '<script type="text/javascript" src="'.$file.'.js"></script>'."\n");
         return $this;
     }
     function addStylesheet($file){
         $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->js_dir.'/'.$file.'.css" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$file.'.css" rel="stylesheet" />'."\n");
         return $this;
     }
     function addOnReady($js){
         if(is_object($js))$js=$js->getString();
-        $this->api->template->append('document_ready', '    '.$js.";\n");
+        $this->api->template->append('document_ready', $js.";\n");
         return $this;
+    }
+    function chain($tag){
+        return $this->chains[]=$this->api->add('jQuery_Chain','chain'.count($this->chains),'document_ready_obj')
+            ->_tag($tag);
+    }
+    function ajax($tag=null){
+        return $this->chains[]=$this->api->add('jQuery_Chain','chain'.count($this->chains),'document_ready_obj')
+            ->_univ($tag);
     }
     function addPlugin($name){
         return $this->add('jQuery_plugin',$name);
