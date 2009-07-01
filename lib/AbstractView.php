@@ -123,7 +123,11 @@ abstract class AbstractView extends AbstractObject {
         }
 
         if(!isset($_GET['cut_object'])){
-            $this->render();
+            if(isset($_GET['cut_region'])){
+                $this->region_render();
+            }else{
+                $this->render();
+            }
         }
         $this->hook('post-recursive-render');
         $this->debug("Rendering complete ".$this->__toString());
@@ -154,8 +158,7 @@ abstract class AbstractView extends AbstractObject {
          * if GET['ajax'] is set, we need only one chunk of a page
          */
         if($this->template_flush){
-            echo $this->template->cloneRegion($this->template_flush)->render();
-            return false;
+            throw new RenderObjectSuccess($this->template->cloneRegion($this->template_flush)->render());
         }
         $this->render();
         if($this->spot==$_GET['cut_region']){
