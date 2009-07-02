@@ -119,6 +119,9 @@ abstract class AbstractView extends AbstractObject {
 					foreach($chains as $chain){
 						$r.=$chain->_render().";\n";
 					}
+					break;
+				default:
+					echo "$key='$key'";
 			}
 		}
 		if($r)$this->api->jquery->addOnReady($r);
@@ -262,6 +265,7 @@ abstract class AbstractView extends AbstractObject {
 
 			*/
 		// Create new jQuery_Chain object
+		if(!isset($this->api->jquery))throw new BaseException("requires jQuery or jUI support");
 		if($instance && isset($this->js[$when][$instance])){
 			$js=$this->js[$when][$instance];
 		}else{
