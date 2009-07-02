@@ -1,0 +1,17 @@
+/* Autocomplete
+----------------------------------*/
+.ui-autocomplete {}
+.ui-autocomplete-results { overflow: hidden; z-index: 99999; padding: 1px; position: absolute; }
+.ui-autocomplete-results ul { width: 100%; list-style-position: outside; list-style: none; padding: 0; margin: 0; }
+
+/* if  the width: 100%, a horizontal scrollbar will appear when scroll: true. */
+/* !important! if line-height is not set, or is set to a relative unit, scroll will be broken in firefox */
+.ui-autocomplete-results li { margin: 0px; padding: 2px 5px; cursor: default; display: block; font: menu; font-size: 12px; line-height: 16px; overflow: hidden; border-collapse: collapse; }
+.ui-autocomplete-results li.ui-autocomplete-even { background-color: #fff; }
+.ui-autocomplete-results li.ui-autocomplete-odd { background-color: #eee; }
+
+.ui-autocomplete-results li.ui-autocomplete-state-default { background-color: #fff; border: 1px solid #fff; color: #212121; }
+.ui-autocomplete-results li.ui-autocomplete-state-active { color: #000; background:#E6E6E6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) repeat-x; border:1px solid #D3D3D3; }
+
+.ui-autocomplete-loading { background: white url('images/ui-anim.basic.16x16.gif') right center no-repeat; }
+.ui-autocomplete-over { background-color: #0A246A; color: white; }
