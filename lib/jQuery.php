@@ -21,6 +21,7 @@ class jQuery_plugin extends AbstractController {
     }
 }
 class jQuery extends AbstractController {
+	public $js_dir='';
 	private $chains=0;
     function init(){
         parent::init();
@@ -43,7 +44,7 @@ class jQuery extends AbstractController {
     }
     function addInclude($file){
         $this->api->template->append('js_include',
-                '<script type="text/javascript" src="'.$this->api->getBaseURL().$file.'.js"></script>'."\n");
+                '<script type="text/javascript" src="'.$this->api->getBaseURL().$this->js_dir.$file.'.js"></script>'."\n");
         return $this;
     }
     function addStylesheet($file){
