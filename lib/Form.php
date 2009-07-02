@@ -330,9 +330,10 @@ class Form extends AbstractView {
 	function addButton($label,$name=null,$class=null,$style=null){
 		if(is_null($name))$name=$label;
 		// Now add the regular button first
-		$field = $this->last_button = $this->add('Form_Button',$name,'form_buttons')
-			->setLabel($label);
+		return $this->last_button = $this->add('Button',$name,'form_buttons')
+			->setLabel($label)->js('click')->univ();
 
+		/*
 		if(!is_null($class))
 			$field->setClass($class);
 		if (!is_null($style))
@@ -340,10 +341,11 @@ class Form extends AbstractView {
 
 		$field->setNoSave();
 
+			*/
 		// And teach it to use AJAX
-		$field->onclick = $field->ajax()->useProgressIndicator($this->name.'_loading',0);
-		$this->ajax_submits[$name]=$field->onclick;
-		return $field->onclick;
+		//$field->onclick = $field->js('click')->univ()->useProgressIndicator($this->name.'_loading',0);
+		//$this->ajax_submits[$name]=$field->onclick;
+		//return $field->onclick;
 	}
 	function addCondition($field,$value=null){
 		$this->dq
