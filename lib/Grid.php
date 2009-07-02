@@ -241,7 +241,7 @@ class Grid extends CompleteLister {
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];
         }
-        $this->current_row[$field]='<a class="ui-state-default ui-corner-all ui-button-and-icon '.$class.' expander" 
+        $this->current_row[$field]='<a class="ui-state-default ui-corner-all '.$class.' expander" 
             id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
             rel="'.$this->api->getDestinationURL($this->api->page.'_'.$field,
                         array('expander'=>$field,
@@ -250,7 +250,7 @@ class Grid extends CompleteLister {
                             'id'=>$this->current_row[$idfield]
                             )
                         ).'"
-            ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a>';
+            >'.$this->current_row[$field].'</a>';
     }
 	function init_expander_widget($field){
 		$class=$this->name.'_'.$field.'_expander';
