@@ -83,7 +83,10 @@ class Grid extends CompleteLister {
 
 		$this->last_column=$name;
 
-		if(method_exists($this,$m='init_'.$type))$this->$m($name);
+		$subtypes=explode(',',$type);
+		foreach($subtypes as $subtype){
+			if(method_exists($this,$m='init_'.$subtype))$this->$m($name);
+		}
 
 		return $this;
 	}
@@ -249,8 +252,9 @@ class Grid extends CompleteLister {
                         ).'"
             ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a>';
     }
-	function init_expander_widget(){
-        $this->js(true)->_selector('.'.$class)->_load('expander')->activate();
+	function init_expander_widget($field){
+		$class=$this->name.'_'.$field.'_expander';
+        $this->js(true)->_selector('.'.$class)->atk4_expander();
 	}
 	function init_expander($field){
 		$class=$this->name.'_'.$field.'_expander';
