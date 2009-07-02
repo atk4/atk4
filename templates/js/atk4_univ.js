@@ -53,6 +53,9 @@ $.each({
 	closeExpander: function(){
         $('.expander').atk4_expander('collapse');
 	},
+	closeExpanderWidget: function(){
+		this.closeExpander();
+	},
 	loadRegionUrlEx: function(id,url){
 		$('#'+id).load(url);
 	},
