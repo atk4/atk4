@@ -21,7 +21,7 @@ class jQuery_plugin extends AbstractController {
     }
 }
 class jQuery extends AbstractController {
-    var $chains=array();
+	private $chains=0;
     function init(){
         parent::init();
 
@@ -56,30 +56,19 @@ class jQuery extends AbstractController {
         $this->api->template->append('document_ready', $js.";\n");
         return $this;
     }
-    function chain($tag){
-        return $this->chains[]=$this->api->add('jQuery_Chain','chain'.count($this->chains),'document_ready_obj')
-            ->_tag($tag);
-    }
-    function ajax($tag=null){
-        return $this->chains[]=$this->api->add('jQuery_Chain','chain'.count($this->chains),'document_ready_obj')
-            ->_univ($tag);
+    function chain($object){
+		if(!is_object($object))throw new BaseException("Specify \$this as argument if you call chain()");
+        return $object->add('jQuery_Chain');
     }
     function addPlugin($name){
         return $this->add('jQuery_plugin',$name);
     }
     function cutRender(){
         $x=$this->api->template->get('document_ready');
+		echo $x;
         if(is_array($x))$x=join('',$x);
         echo '<script type="text/javascript">'.$x.'</script>';
         return;
-        echo "
-            <script>
-            $(function(){
-                    ".$x."
-                    });
-            </script>
-
-            ";
     }
     function postRender(){
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
