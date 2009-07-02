@@ -83,6 +83,8 @@ class Grid extends CompleteLister {
 
 		$this->last_column=$name;
 
+		if(method_exists($this,$m='init_'.$type))$this->$m($name);
+
 		return $this;
 	}
 	function addButton($label,$name=null){
@@ -188,7 +190,10 @@ class Grid extends CompleteLister {
         $params=array(
                 'class'=>$class."_".$field." $widget lister_cell"
                 )+$params;
+		$this->js(true)->_tag('.'.$class.'_'.$field)->_load($widget)->activate($widget_json);
+		/*
         $this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
+		*/
 		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];
@@ -243,8 +248,14 @@ class Grid extends CompleteLister {
                             )
                         ).'"
             ><span class="ui-icon ui-icon-check"></span>'.$this->current_row[$field].'</a>';
-        $this->api->add('jUI')->addWidget('expander')->activate('.'.$class);
     }
+	function init_expander_widget(){
+        $this->js(true)->_selector('.'.$class)->_load('expander')->activate();
+	}
+	function init_expander($field){
+		$class=$this->name.'_'.$field.'_expander';
+        $this->js(true)->_selector('.'.$class)->atk4_expander();
+	}
 	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
 		$tdparam=array(
