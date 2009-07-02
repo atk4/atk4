@@ -107,6 +107,22 @@ abstract class AbstractView extends AbstractObject {
 
 
     /////////////// H T M L   H e l p e r ///////////////////////
+	function getJS(){
+
+		if(!$this->api->jquery)return;
+		$r='';
+		foreach($this->js as $key=>$chains){
+			switch($key){
+				case false:
+					continue;
+				case true: 
+					foreach($chains as $chain){
+						$r.=$chain->_render().";\n";
+					}
+			}
+		}
+		if($r)$this->api->jquery->addOnReady($r);
+	}
     function recursiveRender(){
         $cutting_here=false;
         $this->debug("Recursively rendering ".$this->__toString());
@@ -118,6 +134,7 @@ abstract class AbstractView extends AbstractObject {
             $cutting_here=true;
         }
 
+		$this->getJS();
         foreach($this->elements as $key=>$obj){
             if($obj instanceof AbstractView)$obj->recursiveRender();
         }
@@ -181,6 +198,7 @@ abstract class AbstractView extends AbstractObject {
 	}
 
 
+	// Helper functions
     function frame($spot=null,$title=null,$p=null,$opt=''){
         /*
          * This function is just a shortcut in creating a frame
@@ -195,4 +213,71 @@ abstract class AbstractView extends AbstractObject {
         $f->template->trySet('opt',$opt);
         return $f;
     }
+
+	// Javascript helpers
+	public $js=array();
+	function js($when=null,$code=null,$instance=null){
+		/*
+			This function is designed for particular object interaction with javascript. We are assuming
+			that any View object have HTML presence. We are also assuming that it at least adds
+			one dag to the render tree with ID=$this->name. 
+
+			First argument $when represents when code must be executed.
+			 * true -> code will be executed immediatelly
+			 * 'click' -> code will be executed if HTML is clicked
+			 * null, false -> code will not be executed, only returned
+
+			No matter $when you specify code to execute, function will return JS object, which
+			can be either chained, but if used as a string, it will return a proper JS code.
+
+			1. Calling with arguments:
+
+			$this->js();					// does nothing
+			$this->js(true,'alert(123)');	// does alert(123) after DOM is ready
+
+			2. When events are used, generated code will use different format
+			$this->js('click','alert(123)');	// $('#name').click(function(){ alert(123); });
+
+			This is very useful when you are trying to make multiple objects interract
+
+			$this->js('click',$form->js()->submit());
+			// $('#name').click(function(){ $('#form').submit(); });
+
+			3. calling js() will return jQuery_Chain object, which you can subsequentally call
+			to perform multiple actions.
+
+			$this->js(true)->parent().find('.current').removeClass('current');
+			//    $('#name').parent().find('.current').removeClass('current');
+
+			4. 3rd argument - instance
+
+			Sometimes you wish to get back and continue same chain.
+			$grid->js(null,$this->js()->hide(),'refresh');
+
+			In this case - grid might be pre-set non-executable chains for several actions. Example
+			above will add additional code to that chain which will hide $this element.
+
+			See individual component documentation for more information
+			
+
+			*/
+		// Create new jQuery_Chain object
+		if($instance && isset($this->js[$when][$instance])){
+			$js=$this->js[$when][$instance];
+		}else{
+			$js=$this->api->jquery->chain($this);
+		}
+
+		if($code)$js->_prepend($code);
+
+		if($instance){
+			$this->js[$when][$instance]=$js;
+		}else{
+			$this->js[$when][]=$js;
+		}
+		return $js;
+	}
+	function ajax($instance=false){
+		return $this->js(null,null,$instance===false?null:$instance)->univ();
+	}
 }

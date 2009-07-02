@@ -378,10 +378,6 @@ abstract class AbstractObject {
 	 * 	- if set to any string - create/returns corresponding AJAX instance from the object's elements
 	 */
 	function ajax($instance=false){
-		if(!$instance)return $this->add($this->api->getAjaxClass());
-		if(!isset($this->elements[$instance]))$this->add($this->api->getAjaxClass(),$instance);
-		elseif(!$this->elements[$instance] instanceof AbstractAjax)
-			throw new BaseException("Instance requested ($instance) is not an AJAX instance");
-		return $this->getElement($instance);
+		throw new BaseException("You can call js() or ajax() only for Views (derived from AbstractView)");
 	}
 }
