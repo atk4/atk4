@@ -107,25 +107,6 @@ abstract class AbstractView extends AbstractObject {
 
 
     /////////////// H T M L   H e l p e r ///////////////////////
-	function getJS(){
-
-		if(!$this->api->jquery)return;
-		$r='';
-		foreach($this->js as $key=>$chains){
-			switch($key){
-				case false:
-					continue;
-				case true: 
-					foreach($chains as $chain){
-						$r.=$chain->_render().";\n";
-					}
-					break;
-				default:
-					echo "$key='$key'";
-			}
-		}
-		if($r)$this->api->jquery->addOnReady($r);
-	}
     function recursiveRender(){
         $cutting_here=false;
         $this->debug("Recursively rendering ".$this->__toString());
@@ -137,7 +118,7 @@ abstract class AbstractView extends AbstractObject {
             $cutting_here=true;
         }
 
-		$this->getJS();
+		if($this->api->jquery)$this->api->jquery->getJS($this);
         foreach($this->elements as $key=>$obj){
             if($obj instanceof AbstractView)$obj->recursiveRender();
         }
@@ -266,6 +247,12 @@ abstract class AbstractView extends AbstractObject {
 			*/
 		// Create new jQuery_Chain object
 		if(!isset($this->api->jquery))throw new BaseException("requires jQuery or jUI support");
+
+		// Substitute $when to make it better work as a array key
+		if($when===true)$when='always';
+		if($when===false || $when===null)$when='never';
+
+
 		if($instance && isset($this->js[$when][$instance])){
 			$js=$this->js[$when][$instance];
 		}else{

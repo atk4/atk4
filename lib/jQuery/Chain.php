@@ -6,6 +6,7 @@ class jQuery_Chain extends AbstractModel {
 	private $str='';
 	private $prepend='';
 	private $selector=false;
+	private $enclose=false;
 	function __call($name,$arguments){
 		if($arguments){
 			$a2=array();
@@ -47,11 +48,33 @@ class jQuery_Chain extends AbstractModel {
 		$this->prepend=$code.';'.$this->prepend;
 		return $this;
 	}
+	function execute(){
+		echo $this->_render();
+		exit;
+	}
+	function reload($id){
+		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+		return $this->_fn('reload',array($id,$url));
+	}
+	function _enclose($fn){
+		// builds structure $('obj').$fn(function(){ $('obj').XX; });
+		$this->enclose=$fn;
+		return $this;
+	}
 	function _render(){
-		$ret=$this->prepend;
+		$ret='';
+		$ret.=$this->prepend;
 		if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
 		$ret.=$this->str;
+		if($this->enclose){
+			$ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
+				".".$this->enclose."(function(){ ".$ret." })";
+		}
 		return $ret;
+	}
+	function _css($file){
+		$this->api->jquery->addStylesheet($file);
+		return $this;
 	}
 	function _load($file){
 		$this->api->jquery->addInclude($file);

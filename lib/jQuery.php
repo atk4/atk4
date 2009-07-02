@@ -49,7 +49,7 @@ class jQuery extends AbstractController {
     }
     function addStylesheet($file){
         $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->api->getBaseURL().$file.'.css" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$this->api->getBaseURL().$this->css_dir.$file.'.css" rel="stylesheet" />'."\n");
         return $this;
     }
     function addOnReady($js){
@@ -66,7 +66,6 @@ class jQuery extends AbstractController {
     }
     function cutRender(){
         $x=$this->api->template->get('document_ready');
-		echo $x;
         if(is_array($x))$x=join('',$x);
         echo '<script type="text/javascript">'.$x.'</script>';
         return;
@@ -74,4 +73,34 @@ class jQuery extends AbstractController {
     function postRender(){
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
     }
+
+
+	function getJS($obj){
+
+		$r='';
+		foreach($obj->js as $key=>$chains){
+			$o='';
+			foreach($chains as $chain){
+				$o.=$chain->_render().";\n";
+			}
+			switch($key){
+				case 'never':
+					// send into debug output
+					if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
+					continue;
+				case 'click':
+					$o='';
+					foreach($chains as $chain){
+						$o.=$chain->_enclose('click')->_render().";\n";
+					}
+
+				case 'always':
+					$r.=$o;
+					break;
+				default:
+					if(strlen($o)>2)$this->addOnReady("if(console)console.warn('Element','".$obj->name."','unsupported action: ($key)','".str_replace("\n",'',addslashes($o))."')");
+			}
+		}
+		if($r)$this->addOnReady($r);
+	}
 }
