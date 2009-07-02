@@ -17,6 +17,8 @@ class jQuery_Chain extends AbstractModel {
 					}else{
 						$s="'#".$arg->name."'";
 					}
+				}elseif($arg===null){
+					$s="undefined";
 				}elseif(is_int($arg)){
 					$s="$arg";
 				}elseif(is_array($arg)){
