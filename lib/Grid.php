@@ -55,7 +55,7 @@ class Grid extends CompleteLister {
 
 	function init(){
 		parent::init();
-		$this->add('Reloadable');
+		//$this->add('Reloadable');
 		$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
 		$this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
