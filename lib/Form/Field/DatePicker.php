@@ -7,8 +7,9 @@
 class Form_Field_DatePicker extends Form_Field {
 	function init(){
 		parent::init();
-        $this->api->jui->addWidget('datepicker')->activate('#'.$this->name,"dateFormat:'"
-                .$this->api->getConfig('locale/date_js','dd/mm/yy')."'");
+        $this->js(true)->_load('ui.datepicker')->datepicker(array(
+					'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
+					));
 	}
 	function getInput($attr=array()){
 		// $this->value contains date in MySQL format
