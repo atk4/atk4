@@ -68,9 +68,9 @@ class jUI extends jQuery {
 
         $this->addInclude('start-atk4');
         $this->addOnReady('$.atk4.init({"base-url":"'.$this->api->getBaseURL().'"})');
+        $this->addInclude('jquery-ui-1.7.1.custom.min');
         $this->atk4_initialised=true;
 
-        $this->addInclude('jquery-ui-1.7.1.custom.min');
     }
     function addInclude($file,$ext='.js'){
         $try=array();
@@ -138,7 +138,7 @@ class jUI extends jQuery {
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
 
         $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->theme.'/jquery-ui-theme.css" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$this->api->getBaseURL().$this->theme.'/jquery-ui-theme.css" rel="stylesheet" />'."\n");
 
     }
 }

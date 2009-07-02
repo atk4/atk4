@@ -43,12 +43,12 @@ class jQuery extends AbstractController {
     }
     function addInclude($file){
         $this->api->template->append('js_include',
-                '<script type="text/javascript" src="'.$file.'.js"></script>'."\n");
+                '<script type="text/javascript" src="'.$this->api->getBaseURL().$file.'.js"></script>'."\n");
         return $this;
     }
     function addStylesheet($file){
         $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$file.'.css" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$this->api->getBaseURL().$file.'.css" rel="stylesheet" />'."\n");
         return $this;
     }
     function addOnReady($js){
