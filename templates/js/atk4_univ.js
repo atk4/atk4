@@ -109,6 +109,15 @@ $.each({
 			$(id).html(text);
 		});
 	},
+	saveSelected: function(name,url){
+		result=new Array();
+		i=0;
+		$('#'+name+' input[type=checkbox]').each(function(){
+			result[i]=$(this).attr('value')+':'+($(this).attr('checked')==true?'Y':'N');
+			i++;
+		});
+		$.get(url+'&selected='+result.join(','));
+	},
 
 
 },function(name,fn){

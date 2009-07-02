@@ -54,10 +54,20 @@ class jQuery_Chain extends AbstractModel {
 		echo $this->_render();
 		exit;
 	}
+
+
+
 	function reload($id){
 		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
 		return $this->_fn('reload',array($id,$url));
 	}
+	function saveSelected($grid){
+        $url=$this->api->getDestinationUrl(null,array('save_selected'=>1));
+		return $this->_fn('saveSelected',array($grid,$url));
+	}
+
+
+
 	function _enclose($fn){
 		// builds structure $('obj').$fn(function(){ $('obj').XX; });
 		$this->enclose=$fn;
