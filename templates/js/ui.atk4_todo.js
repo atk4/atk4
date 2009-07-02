@@ -17,7 +17,7 @@ $.widget("ui.atk4_todo", {
                     $(this).dialog("close");
                     }
             }});
-        this.element.parent().bind("click.atk4_todo", function(event) { self.click(); });
+        this.element.bind("click.atk4_todo", function(event) { self.click(); });
     },
     click: function() {
         $('.todo_frame').dialog('open').load('todo.html?cut_object=todo');
