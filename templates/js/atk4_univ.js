@@ -118,7 +118,7 @@ $.each({
 		});
 		$.get(url+'&selected='+result.join(','));
 	},
-	executeUrl(url,callback){
+	executeUrl: function(url,callback){
 		$.get(url,callback);
 	}
 
