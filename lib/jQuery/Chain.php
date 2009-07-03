@@ -84,6 +84,9 @@ class jQuery_Chain extends AbstractModel {
 		}
 		return $ret;
 	}
+	function getLink(){
+		return $this->_render();
+	}
 	function _css($file){
 		$this->api->jquery->addStylesheet($file);
 		return $this;
