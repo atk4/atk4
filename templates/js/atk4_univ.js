@@ -118,6 +118,9 @@ $.each({
 		});
 		$.get(url+'&selected='+result.join(','));
 	},
+	executeUrl(url,callback){
+		$.get(url,callback);
+	}
 
 
 },function(name,fn){
