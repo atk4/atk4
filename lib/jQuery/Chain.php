@@ -84,7 +84,10 @@ class jQuery_Chain extends AbstractModel {
 		}
 		return $ret;
 	}
-	function getLink(){
+	function getLink($text){
+		return '<a href="javascript:void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
+	}
+	function getString(){
 		return $this->_render();
 	}
 	function _css($file){
