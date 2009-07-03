@@ -21,6 +21,9 @@ $.each({
 	displayAlert: function(a){
 		alert(a);
 	},
+	redirect: function(url){
+		document.location=url;
+	},
 	redirectURL: function(page){
 		if($.atk4.page){
 			$.atk4.page(page);

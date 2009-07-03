@@ -66,8 +66,6 @@ class jQuery_Chain extends AbstractModel {
 		return $this->_fn('saveSelected',array($grid,$url));
 	}
 
-
-
 	function _enclose($fn){
 		// builds structure $('obj').$fn(function(){ $('obj').XX; });
 		$this->enclose=$fn;
