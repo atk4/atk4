@@ -123,7 +123,10 @@ $.each({
 	},
 	executeUrl: function(url,callback){
 		$.get(url,callback);
-	}
+	},
+	ajaxFunc:	function(str_code){
+		$.globalEval(str_code);
+	},
 
 
 },function(name,fn){
