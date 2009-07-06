@@ -118,7 +118,6 @@ abstract class AbstractView extends AbstractObject {
             $cutting_here=true;
         }
 
-		if($this->api->jquery)$this->api->jquery->getJS($this);
         foreach($this->elements as $key=>$obj){
             if($obj instanceof AbstractView)$obj->recursiveRender();
         }
@@ -130,6 +129,9 @@ abstract class AbstractView extends AbstractObject {
                 $this->render();
             }
         }
+
+		if($this->api->jquery)$this->api->jquery->getJS($this);
+
         $this->hook('post-recursive-render');
         $this->debug("Rendering complete ".$this->__toString());
         if($cutting_here){

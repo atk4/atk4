@@ -42,6 +42,9 @@ class jQuery_Chain extends AbstractModel {
 		// Wrapper for functons which use reserved words
 		return $this->__call($name,$arguments);
 	}
+	function __toString(){
+		return $this->_render();
+	}
 	function _selector($selector){
 		$this->selector=$selector;
 		return $this;
