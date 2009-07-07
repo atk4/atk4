@@ -31,8 +31,12 @@ $.each({
 			document.location=page;
 		}
 	},
-	log: function(arg){
-		console.log('log: ',arg);
+	log: function(arg1){
+		if(log){
+			log.info(arg1);
+		}else{
+			console.log(arg1);
+		}
 	},
 	confirm: function(msg){
 		if(!msg)msg='Are you sure?';
