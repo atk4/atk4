@@ -39,6 +39,7 @@ $.each({
 		if(!confirm(msg))this.ignore=true;
 	},
 	displayFormError: function(form,field,message){
+		console.log(form,field,message);
 		if(!message){
 			message=field;
 			field=form;
