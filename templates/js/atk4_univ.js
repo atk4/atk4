@@ -34,6 +34,7 @@ $.each({
 	log: function(arg1){
 		if(log){
 			log.info(arg1);
+			log.show();
 		}else{
 			console.log(arg1);
 		}

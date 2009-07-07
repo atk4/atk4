@@ -60,6 +60,10 @@ class jQuery_Chain extends AbstractModel {
 
 
 
+	function redirect($page=null,$arg=null){
+		$url=$this->api->getDestinationURL($page,$arg);
+		return $this->_fn('redirect',array($url));
+	}
 	function reload($id){
 		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
 		return $this->_fn('reload',array($id,$url));
