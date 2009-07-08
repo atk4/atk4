@@ -175,6 +175,13 @@ class DBlite_mysql extends DBlite {
 	}
 	
 	/**
+	 * Returns true if there is a transaction started
+	 */
+	public function inTransaction(){
+		return $this->transaction_depth>0;
+	}
+	
+	/**
 	 * Rollback the changes
 	 */
 	public function rollback($option=null) {
