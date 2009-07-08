@@ -270,7 +270,8 @@ abstract class AbstractView extends AbstractObject {
 		}
 		return $js;
 	}
-	function ajax($instance=false){
-		return $this->js(null,null,$instance===false?null:$instance)->univ();
+	function ajax($instance=null){
+		if(!is_null($instance)&&isset($this->js['never'][$instance]))return $this->js['never'][$instance];
+		return $this->js(null,null,$instance)->univ();
 	}
 }

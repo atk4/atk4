@@ -98,7 +98,11 @@ class Form extends AbstractView {
 			// hmm.. i wonder what ? :)
 		}
 	}
-
+	/**
+	 * Should show error in field. Override this method to change from default alert
+	 * @param object $field Field instance that caused error
+	 * @param string $msg message to show
+	 */
 	function showAjaxError($field,$msg){
 		$this->ajax()->displayAlert(strip_tags($msg))->execute();
 	}
@@ -283,8 +287,9 @@ class Form extends AbstractView {
 
 	function validateNotNULL($msg=''){
 		$this->last_field->setMandatory();
-		$this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
-					($msg?$msg:'".$this->caption." is a mandatory field!').'");');
+		$this->validateField('$this->get()',($msg?$msg:'".$this->caption." is a mandatory field!'));
+		//$this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
+		//			($msg?$msg:'".$this->caption." is a mandatory field!').'");');
 		return $this;
 	}
 
@@ -292,9 +297,6 @@ class Form extends AbstractView {
 	function setNotNull($msg=''){
 		$this->validateNotNULL($msg);
 		return $this;
-
-
-		// TODO: mark field so that it have that red asterisk
 	}
 	function setNoSave(){
 		$this->last_field->setNoSave();
