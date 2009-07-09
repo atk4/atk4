@@ -42,6 +42,7 @@ class ApiCLI extends AbstractView {
     function getDestinationURL($page=null,$args=array()){
         // If first argument is null, stay on the same page
         if(is_null($page)||$page=='')$page=$this->page;
+		if(is_null($args))$args=array();
 
         // Check sticky arguments. If argument value is true,
         // GET is checked for actual value.
@@ -60,6 +61,7 @@ class ApiCLI extends AbstractView {
             }
         }
         $tmp=array();
+		if(!is_array($args))throw new BaseException('Wrong arguments for getDestinationURL');
         foreach($args as $arg=>$val){
             if(!isset($val) || $val===false)continue;
             if(is_array($val)||is_object($val))$val=serialize($val);
