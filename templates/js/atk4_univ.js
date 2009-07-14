@@ -133,6 +133,11 @@ $.each({
 	ajaxFunc:	function(str_code){
 		$.globalEval(str_code);
 	},
+	reloadRow:	function(id){
+		// Reload row of active grid
+		var grid=this.jquery.closest('.atk4_grid');
+		grid.atk4_grid('reloadRow',id);
+	},
 
 
 },function(name,fn){
@@ -156,7 +161,9 @@ $.each([
 
 $.fn.extend({
 		univ: function(){
-			return $.univ;
+			var u=new $.univ;
+			u.jquery=this;
+			return u;
 		}
 
 });

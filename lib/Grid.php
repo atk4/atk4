@@ -485,7 +485,6 @@ class Grid extends CompleteLister {
 	}
 	protected function formatRowContent_html($id){
 		$this->row_t->set($this->current_row);
-		$this->setTRClass();
 		return $this->rowRender($this->current_row);
 	}
 	protected function formatRowContent_ajax($id){
