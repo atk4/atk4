@@ -483,6 +483,11 @@ class Grid extends CompleteLister {
 		$func='formatRowContent_'.$datatype;
 		return $this->$func($id);
 	}
+	protected function formatRowContent_html($id){
+		$this->row_t->set($this->current_row);
+		$this->setTRClass();
+		return $this->rowRender($this->current_row);
+	}
 	protected function formatRowContent_ajax($id){
 		$result="";
 		foreach($this->columns as $name=>$column){

@@ -8,6 +8,7 @@ class Form_Field_DatePicker extends Form_Field {
 	function init(){
 		parent::init();
         $this->js(true)->datepicker(array(
+					'duration'=>0,
 					'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
 					));
 	}
