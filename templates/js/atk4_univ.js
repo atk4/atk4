@@ -138,6 +138,15 @@ $.each({
 		var grid=this.jquery.closest('.atk4_grid');
 		grid.atk4_grid('reloadRow',id);
 	},
+	removeRow:	function(id){
+		// Reload row of active grid
+		var grid=this.jquery.closest('.atk4_grid');
+		grid.atk4_grid('removeRow',id);
+	},
+	removeOverlay: function(){
+		var grid=this.jquery.closest('.atk4_grid');
+		grid.atk4_grid('removeOverlay');
+	},
 
 
 },function(name,fn){

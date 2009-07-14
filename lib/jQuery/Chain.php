@@ -87,7 +87,7 @@ class jQuery_Chain extends AbstractModel {
 		$ret.=$this->str;
 		if($this->enclose){
 			$ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
-				".".$this->enclose."(function(){ ".$ret." })";
+				".".$this->enclose."(function(ev){ ev.preventDefault(); ".$ret." })";
 		}
 		return $ret;
 	}
