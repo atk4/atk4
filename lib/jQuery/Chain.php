@@ -54,8 +54,10 @@ class jQuery_Chain extends AbstractModel {
 		return $this;
 	}
 	function execute(){
-		echo $this->_render();
-		exit;
+		if(isset($_POST['ajax_submit'])){
+			echo $this->_render();
+			exit;
+		}else return $this;
 	}
 
 
