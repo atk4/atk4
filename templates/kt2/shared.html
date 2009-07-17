@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<base href="<?$base_url?>"/>
 
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title><?page_title?>AModules template "K2"<?/page_title?></title>
@@ -12,13 +11,28 @@
 <script type="text/javascript" src="amodules3/templates/js/jquery.js"></script>
 <script type="text/javascript" src="amodules3/templates/js/jquery.form.js"></script>
 <script type="text/javascript" src="amodules3/templates/js/jam3.js"></script>
-<?/?>
+
 <script type="text/javascript" src="amodules3/templates/js/obsolete.js"></script>
 <script type="text/javascript" src="amodules3/templates/kt2/custom.js"></script>
-<link rel="stylesheet" type="text/css" href="amodules3/templates/kt2/default.css" title="css_default">
-<link rel="alternate stylesheet" type="text/css" href="amodules3/templates/kt2/ie.css" title="css_ie">
+<script type="text/javascript" src="templates/js/accounting.js"></script>
 <script type="text/javascript" src="amodules3/templates/kt2/styleswitcher.js"></script>
+
+
+<?/?>
+<link rel="stylesheet" type="text/css" href="amodules3/templates/kt2/default.css" title="css_default">
+<link rel="stylesheet" type="text/css" href="amodules3/templates/js/admin/jquery-ui.css" title="css_default">
+<link rel="alternate stylesheet" type="text/css" href="amodules3/templates/kt2/ie.css" title="css_ie">
 <script type="text/javascript">
+
+
+if(!window.console){
+	window.console={
+		log: function(){
+			// console / firebug is not present. Ignore all debug messages
+		},
+	}
+}
+
 
 $(function(){
 <?$document_ready?>
@@ -35,34 +49,6 @@ $(function(){
 <div id="gif_not_loading" style="display:none;"><img src="amodules3/img/not_loading.gif" /></div>
 
 <?Menu?>
-<table class="menu" border="0" cellpadding="0" cellspacing="1" width="100%">
-
-  <tbody>
-
-    <tr>
-
-    <?rows?>
-     <?row?>
-      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a></td>
-     <?/row?>
-      <td class="<?tdclass?>separator<?/?>" nowrap="nowrap"><a href="<?$href?>"><?label?>About<?/label?></a></td>
-      <td class="current" nowrap="nowrap"><a href="#">Main page</a></td>
-
-      <td class="separator" nowrap="nowrap"><a href="#">Preferences</a></td>
-
-      <td class="separator" nowrap="nowrap"><a href="#">About</a></td>
-      <?/rows?>
-
-      <td style="text-align: right;" width="100%"></td>
-
-      <td class="about" nowrap="nowrap" valign="bottom"><a target="_blank" href="<?url?>http://adevel.com/amodules3/<?/url?>"><?name?>AModules3<?/name?></a><br>
-<?version?>v0.1<?/version?>
-    </td>
-
-    </tr>
-
-  </tbody>
-</table>
 <?/Menu?>
 
 <?Locator?>
@@ -85,20 +71,18 @@ $(function(){
 
           <tr>
 
-            <td class="header"><?title?>This
-is sample box<?/?></td>
+            <td class="header"><?title?>This is sample box<?/?></td>
 
           </tr>
 
           <tr>
 
-            <td style="height: 32px;"><?Content?><?content?>Welcome to our new
-template for AModules3. How cool is this, ? i think it's good enough..
+            <td style="height: 32px;"><div id="frame_content"><?Content?><?content?>Welcome to our new template for AModules3. How cool is this, ? i think it's good enough..
 ehmm. hm.<br>
 
             <div style="text-align: right;"><a href="shared.html#">Read
 more...</a></div>
-<?/content?><?/Content?>
+<?/content?><?/Content?></div>
 
             </td>
 
