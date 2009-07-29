@@ -34,7 +34,7 @@ $.each({
 	log: function(arg1){
 		if(log){
 			log.info(arg1);
-			log.show();
+			//log.show();
 		}else{
 			console.log(arg1);
 		}
@@ -145,6 +145,9 @@ $.each({
 	},
 	removeOverlay: function(){
 		var grid=this.jquery.closest('.atk4_grid');
+		if(!grid.length){
+			console.log('removeOverlay cannot find grid');
+		}
 		grid.atk4_grid('removeOverlay');
 	},
 
