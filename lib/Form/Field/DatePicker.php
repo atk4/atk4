@@ -9,6 +9,11 @@ class Form_Field_DatePicker extends Form_Field {
 		parent::init();
         $this->js(true)->datepicker(array(
 					'duration'=>0,
+					//'showOn'=>'button',
+					//'buttonImage'=>'images/calendar.gif', 
+					//'buttonImageOnly'=> true,
+					'changeMonth'=>true,
+					'changeYear'=>true,
 					'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
 					));
 	}
@@ -17,12 +22,13 @@ class Form_Field_DatePicker extends Form_Field {
 		// we need it in locale format
 		return parent::getInput(array_merge(
 			array(
-				'value'=>date($this->api->getConfig('locale/date'),strtotime($this->value)),
+				'value'=>$this->value?(date($this->api->getConfig('locale/date'),strtotime($this->value))):'',
 			),$attr
 		));
 	}
 	function set($value){
 		// value can be valid date format, as in config['locale']['date']
+		if(!$value)return parent::set($value);
 		list($d,$m,$y)=explode('/',$value);
 		if($y)$value=join('/',array($m,$d,$y));
         elseif($m)$value=join('/',array($m,$d));
