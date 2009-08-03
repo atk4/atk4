@@ -232,7 +232,7 @@ abstract class AbstractView extends AbstractObject {
 			3. calling js() will return jQuery_Chain object, which you can subsequentally call
 			to perform multiple actions.
 
-			$this->js(true)->parent().find('.current').removeClass('current');
+			$this->js(true)->parent()->find('.current')->removeClass('current');
 			//    $('#name').parent().find('.current').removeClass('current');
 
 			4. 3rd argument - instance
