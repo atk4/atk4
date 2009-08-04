@@ -14,6 +14,16 @@ $.univ = function(){
 	return $.univ;
 };
 
+
+$.univ._import=function(name,fn){
+	$.univ[name]=function(){
+		if(!$.univ.ignore){
+			fn.apply($.univ,arguments);
+		}
+		return $.univ;
+	}
+}
+
 $.each({
 	alert: function(a){
 		alert(a);
@@ -22,7 +32,11 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url){
-		document.location=url;
+		if($.atk4.page){
+			$.atk4.page(url);
+		}else{
+			document.location=url;
+		}
 	},
 	redirectURL: function(page){
 		if($.atk4.page){
@@ -30,6 +44,9 @@ $.each({
 		}else{
 			document.location=page;
 		}
+	},
+	page: function(page){
+		$.atk4.page(page);
 	},
 	log: function(arg1){
 		if(log){
@@ -151,15 +168,8 @@ $.each({
 		grid.atk4_grid('removeOverlay');
 	},
 
-
-},function(name,fn){
-	$.univ[name]=function(){
-		if(!$.univ.ignore){
-			fn.apply($.univ,arguments);
-		}
-		return $.univ;
-	}
-});
+},$.univ._import
+);
 
 
 $.each([
