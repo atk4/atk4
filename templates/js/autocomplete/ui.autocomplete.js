@@ -41,6 +41,7 @@ $.widget("ui.autocomplete", {
 			// TODO refactor select into its own widget? if not, try to merge with widget methods
 			select = $.ui.autocomplete.select(options, input, selectCurrent, config);
 
+		console.log(options);
 		if(!this.options.hidden) this.options.hidden = $input.next();
 		this.options.input = $input;
 		options.result = function(a,b){
