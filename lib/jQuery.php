@@ -86,7 +86,7 @@ class jQuery extends AbstractController {
 			switch($key){
 				case 'never':
 					// send into debug output
-					if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
+					//if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
 					continue;
 				case 'click':
 					$o='';
