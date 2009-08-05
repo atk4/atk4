@@ -190,6 +190,7 @@ class ApiWeb extends ApiCLI {
 
         /////////////// Application execution /////////////////////////
     function render(){
+		if($this->api->jquery)$this->api->jquery->getJS($this);
         if(!($this->template)){
             throw new BaseException("You should specify template for API object");
         }

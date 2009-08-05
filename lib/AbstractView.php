@@ -119,7 +119,10 @@ abstract class AbstractView extends AbstractObject {
         }
 
         foreach($this->elements as $key=>$obj){
-            if($obj instanceof AbstractView)$obj->recursiveRender();
+            if($obj instanceof AbstractView){
+				$obj->recursiveRender();
+				$obj->moveJStoParent();
+			}
         }
 
         if(!isset($_GET['cut_object'])){
@@ -130,16 +133,21 @@ abstract class AbstractView extends AbstractObject {
             }
         }
 
-		if($this->api->jquery)$this->api->jquery->getJS($this);
 
         $this->hook('post-recursive-render');
         $this->debug("Rendering complete ".$this->__toString());
         if($cutting_here){
             $result=$this->owner->template->cloneRegion($this->spot)->render();
+			if($this->api->jquery)$this->api->jquery->getJS($this);
             $e=new RenderObjectSuccess($result);
             throw $e;
         }
+		// if template wasn't cut, we move all JS chains to parent
+
     }
+	function moveJStoParent(){
+		$this->owner->js=array_merge_recursive($this->owner->js,$this->js);
+	}
     function render(){
         /**
          * For visual objects, their default action while rendering is rely on SMlite engine.
@@ -161,6 +169,7 @@ abstract class AbstractView extends AbstractObject {
          * if GET['ajax'] is set, we need only one chunk of a page
          */
         if($this->template_flush){
+			if($this->api->jquery)$this->api->jquery->getJS($this);
             throw new RenderObjectSuccess($this->template->cloneRegion($this->template_flush)->render());
         }
         $this->render();

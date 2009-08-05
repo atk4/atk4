@@ -88,17 +88,16 @@ class jQuery extends AbstractController {
 					// send into debug output
 					//if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
 					continue;
-				case 'click':
-					$o='';
-					foreach($chains as $chain){
-						$o.=$chain->_enclose('click')->_render().";\n";
-					}
 
 				case 'always':
 					$r.=$o;
 					break;
 				default:
-					if(strlen($o)>2)$this->addOnReady("if(console)console.warn('Element','".$obj->name."','unsupported action: ($key)','".str_replace("\n",'',addslashes($o))."')");
+					$o='';
+					foreach($chains as $chain){
+						$o.=$chain->_enclose($key)->_render().";\n";
+					}
+					$r.=$o;
 			}
 		}
 		if($r)$this->addOnReady($r);
