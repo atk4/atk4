@@ -135,6 +135,11 @@ $.each({
 			$(id).html(text);
 		});
 	},
+	reloadArgs: function(url,key,value){
+		var u=$.atk4.addArgument(url,key+'='+value);
+		console.log(url);
+		this.jquery.atk4_load(u);
+	},
 	saveSelected: function(name,url){
 		result=new Array();
 		i=0;

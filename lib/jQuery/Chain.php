@@ -13,7 +13,7 @@ class jQuery_Chain extends AbstractModel {
 			foreach($arguments as $arg){
 				if(is_object($arg)){
 					if($arg instanceof jQuery_Chain){
-						$s="function(){ ".$arg->_render()." }";
+						$s=$arg->_render();
 					}else{
 						$s="'#".$arg->name."'";
 					}
@@ -66,17 +66,24 @@ class jQuery_Chain extends AbstractModel {
 		$url=$this->api->getDestinationURL($page,$arg);
 		return $this->_fn('redirect',array($url));
 	}
-	function reload($id){
-		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+	function reload($id=null,$url=null){
+		if(!$id)$id=$this->owner;
+		if($url==null)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
 		return $this->_fn('reload',array($id,$url));
+	}
+	function reloadArgs($key,$value){
+		$id=$this->owner;
+		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+		return $this->_fn('reloadArgs',array($url,$key,$value));
 	}
 	function saveSelected($grid){
         $url=$this->api->getDestinationUrl(null,array('save_selected'=>1));
 		return $this->_fn('saveSelected',array($grid,$url));
 	}
 
-	function _enclose($fn){
+	function _enclose($fn=null){
 		// builds structure $('obj').$fn(function(){ $('obj').XX; });
+		if($fn===null)$fn=true;
 		$this->enclose=$fn;
 		return $this;
 	}
@@ -85,7 +92,9 @@ class jQuery_Chain extends AbstractModel {
 		$ret.=$this->prepend;
 		if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
 		$ret.=$this->str;
-		if($this->enclose){
+		if($this->enclose===true){
+			$ret="function(){ ".$ret." }";
+		}elseif($this->enclose){
 			$ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
 				".".$this->enclose."(function(ev){ ev.preventDefault(); ".$ret." })";
 		}
