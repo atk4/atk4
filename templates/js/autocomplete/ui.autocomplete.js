@@ -45,7 +45,7 @@ $.widget("ui.autocomplete", {
 		if(!this.options.hidden) this.options.hidden = $input.next();
 		this.options.input = $input;
 		options.result = function(a,b){
-			options.hidden.val(b.id);
+			options.hidden.val(b.id).change();
 		}
 
 
