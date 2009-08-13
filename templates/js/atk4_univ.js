@@ -130,15 +130,35 @@ $.each({
 		// removing hidden field
 		if(button)button.remove();
 	},
-	reload: function(id,url){
-		$.get(url,function(text){
-			$(id).html(text);
-		});
-	},
 	reloadArgs: function(url,key,value){
 		var u=$.atk4.addArgument(url,key+'='+value);
 		console.log(url);
 		this.jquery.atk4_load(u);
+	},
+	reload: function(url,arg,fn){
+		/*
+		 * $obj->js()->reload();	 will now properly reload most of the objects. 
+		 * This function can be also called on a low level, however URL have to be
+		 * specified. 
+		 * $('#obj').univ().reload('http://..');
+		 *
+		 * Difference between atk4_load and this function is that this function will
+		 * correctly replace element and insert it into container when reloading. It
+		 * is more suitable for reloading existing elements
+		 */
+
+		if(arg){
+			$.each(arg,function(key,value){
+				url=$.atk4.addArgument(url,key+'='+value);
+			});
+		}
+
+		var el=this.jquery.eq(0);
+		if(el.parent().children().length>1){
+			el.wrap('<div class="reloadable">');
+		}
+		el=el.parent();
+		el.atk4_load(url,fn);
 	},
 	saveSelected: function(name,url){
 		result=new Array();
@@ -187,11 +207,14 @@ $.each([
 });
 
 $.fn.extend({
-		univ: function(){
-			var u=new $.univ;
-			u.jquery=this;
-			return u;
-		}
-
+	univ: function(){
+		var u=new $.univ;
+		u.jquery=this;
+		return u;
+	},
+	atk4_reload: function(url,arg,fn){
+		this.univ().reload(url,arg,fn);
+		return null;		// this will result in destruction of provided element
+	}
 });
 })($);

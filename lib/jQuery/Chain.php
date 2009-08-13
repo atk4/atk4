@@ -9,30 +9,8 @@ class jQuery_Chain extends AbstractModel {
 	private $enclose=false;
 	function __call($name,$arguments){
 		if($arguments){
-			$a2=array();
-			foreach($arguments as $arg){
-				if(is_object($arg)){
-					if($arg instanceof jQuery_Chain){
-						$s=$arg->_render();
-					}else{
-						$s="'#".$arg->name."'";
-					}
-				}elseif($arg===null){
-					$s="undefined";
-				}elseif(is_int($arg)){
-					$s="$arg";
-				}elseif(is_array($arg)){
-					$s=json_encode($arg);
-				}elseif(is_bool($arg)){
-					$s=$arg?"true":"false";
-				}elseif(is_string($arg)){
-					$s="'".addslashes($arg)."'";
-				}else{
-					throw new BaseException("wrong argument type to jQuery_Chain: ".$arg );
-				}
-				$a2[]=$s;
-			}
-			$this->str.=".$name(".join(",",$a2).")";
+			$a2=$this->_flattern_objects($arguments,true);
+			$this->str.=".$name(".$a2.")";
 		}else{
 			$this->str.=".$name()";
 		}
@@ -60,21 +38,72 @@ class jQuery_Chain extends AbstractModel {
 		}else return $this;
 	}
 
+	function _flattern_objects($arg,$return_comma_list=false){
+		/*
+		 * This function is very similar to json_encode, however it will traverse array
+		 * before encoding in search of objects based on AbstractObject. Those would
+		 * be replaced with their json representation if function exists, otherwise
+		 * with string representation
+		 */
+		if(is_object($arg)){
+			if($arg instanceof jQuery_Chain){
+				return $arg->_render();
+			}else{
+				return "'#".$arg->name."'";
+			}
+		}elseif(is_array($arg)){
+			$a2=array();
+			// is array associative? (hash)
+			$assoc=$arg!=array_values($arg);
+
+			foreach($arg as $key=>$value){
+				$v=$this->_flattern_objects($value);
+				if(!$assoc || $return_comma_list){
+					$a2[]=$v;
+				}else{
+					$a2[]='"'.$key.'":'.$v;
+				}
+			}
+			if($return_comma_list){
+				$s=join(',',$a2);
+			}elseif($assoc){
+					$s='{'.join(',',$a2).'}';
+			}else{
+					$s='['.join(',',$a2).']';
+			}
+		}else{
+			$s=json_encode($arg);
+		}
+
+		return $s;
+	}
+
 
 
 	function redirect($page=null,$arg=null){
 		$url=$this->api->getDestinationURL($page,$arg);
 		return $this->_fn('redirect',array($url));
 	}
-	function reload($id=null,$url=null){
-		if(!$id)$id=$this->owner;
-		if($url==null)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
-		return $this->_fn('reload',array($id,$url));
-	}
-	function reloadArgs($key,$value){
+	function reload($arguments=array(),$fn=null,$url=null){
+		/*
+		 * $obj->js()->reload();	 will now properly reload most of the objects. 
+		 * This function can be also called on a low level, however URL have to be
+		 * specified. 
+		 * $('#obj').univ().reload('http://..');
+		 *
+		 * Difference between atk4_load and this function is that this function will
+		 * correctly replace element and insert it into container when reloading. It
+		 * is more suitable for reloading existing elements
+		 *
+		 * $fn if specified - should be ->js();
+		 */
+		if(!is_array($arguments)){
+			throw new BaseException('symantic for js()->reload() have changed. Please consult documentation.');
+		}
+		if($fn)$fn->_enclose();
 		$id=$this->owner;
-		$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
-		return $this->_fn('reloadArgs',array($url,$key,$value));
+		if(!$url)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+		return $this->_fn('atk4_reload',array($url,$arguments,$fn));
 	}
 	function saveSelected($grid){
         $url=$this->api->getDestinationUrl(null,array('save_selected'=>1));
