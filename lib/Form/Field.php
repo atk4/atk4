@@ -33,6 +33,8 @@ abstract class Form_Field extends AbstractView {
     // Field customization
     private $separator=':';
 
+	public $show_input_only;
+
     function setMandatory($mandatory=true){
     	$this->mandatory=$mandatory;
     	return $this;
@@ -160,6 +162,10 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     function render(){
+		if($this->show_input_only){
+			$this->output($this->getInput());
+			return;
+		}
         if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
         if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');

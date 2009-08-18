@@ -147,18 +147,25 @@ $.each({
 		 * is more suitable for reloading existing elements
 		 */
 
+		var el=this.jquery;
+
+		var p=this.jquery=$('<div class="reloadable">');
+
+		this.reloadContents(url,arg,function(){ el.replaceWith(p.children()[0]); if(fn)fn()});
+	},
+	reloadContents: function(url,arg,fn){
+		/*
+		 * Identical to reload(), but instead of reloading element itself,
+		 * it will reload only contents of the element.
+		 */
+
 		if(arg){
 			$.each(arg,function(key,value){
 				url=$.atk4.addArgument(url,key+'='+value);
 			});
 		}
 
-		var el=this.jquery.eq(0);
-		if(el.parent().children().length>1){
-			el.wrap('<div class="reloadable">');
-		}
-		el=el.parent();
-		el.atk4_load(url,fn);
+		this.jquery.atk4_load(url,fn);
 	},
 	saveSelected: function(name,url){
 		result=new Array();
