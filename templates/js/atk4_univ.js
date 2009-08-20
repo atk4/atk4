@@ -147,11 +147,7 @@ $.each({
 		 * is more suitable for reloading existing elements
 		 */
 
-		var el=this.jquery;
-
-		var p=this.jquery=$('<div class="reloadable">');
-
-		this.reloadContents(url,arg,function(){ el.replaceWith(p.children()[0]); if(fn)fn()});
+		this.jquery.atk4_reload(url,arg,fn);
 	},
 	reloadContents: function(url,arg,fn){
 		/*
@@ -218,10 +214,6 @@ $.fn.extend({
 		var u=new $.univ;
 		u.jquery=this;
 		return u;
-	},
-	atk4_reload: function(url,arg,fn){
-		this.univ().reload(url,arg,fn);
-		return null;		// this will result in destruction of provided element
 	}
 });
 })($);
