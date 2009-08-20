@@ -7,6 +7,7 @@ class jQuery_Chain extends AbstractModel {
 	private $prepend='';
 	private $selector=false;
 	private $enclose=false;
+	private $preventDefault=false;
 	function __call($name,$arguments){
 		if($arguments){
 			$a2=$this->_flattern_objects($arguments,true);
@@ -110,10 +111,11 @@ class jQuery_Chain extends AbstractModel {
 		return $this->_fn('saveSelected',array($grid,$url));
 	}
 
-	function _enclose($fn=null){
+	function _enclose($fn=null,$preventDefault=false){
 		// builds structure $('obj').$fn(function(){ $('obj').XX; });
 		if($fn===null)$fn=true;
 		$this->enclose=$fn;
+		$this->preventDefault=$preventDefault;
 		return $this;
 	}
 	function _render(){
@@ -122,7 +124,11 @@ class jQuery_Chain extends AbstractModel {
 		if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
 		$ret.=$this->str;
 		if($this->enclose===true){
-			$ret="function(){ ".$ret." }";
+			if($this->preventDefault){
+				$ret="function(ev){ev.preventDefault(); ".$ret." }";
+			}else{
+				$ret="function(){ ".$ret." }";
+			}
 		}elseif($this->enclose){
 			$ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
 				".".$this->enclose."(function(ev){ ev.preventDefault(); ".$ret." })";
