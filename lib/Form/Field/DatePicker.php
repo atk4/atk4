@@ -35,4 +35,10 @@ class Form_Field_DatePicker extends Form_Field {
 		$value=date('Y-m-d',strtotime($value));
 		return parent::set($value);
 	}
+	function get(){
+		$value=parent::get();
+		// date cannot be empty string
+		if($value=='')return null;
+		return $value;
+	}
 }
