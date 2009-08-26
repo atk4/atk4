@@ -246,6 +246,11 @@ class DBlite_dsql  {
 					}elseif(substr($where,-5,5)==' like'){
 						$where.=" '".$this->db->escape($equals)."'";
 					}elseif(substr($where,-3,3)==' in'){
+						$eq=explode(',',$equals);$eq2=array();
+						foreach($eq as $eq3){
+							$eq2[]="'".$this->db->escape($eq3)."'";
+						}
+						$equals=join(',',$eq2);
 						$where.=" ($equals)";
 					}else{
 						$where.=" = '".$this->db->escape($equals)."'";
