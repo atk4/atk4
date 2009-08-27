@@ -231,7 +231,9 @@ class DBlite_dsql  {
 		elseif(is_string($value))$value=strtotime($value);
 		return $this->set($field,date('Y-m-d H:i:s',$value));
 	}
-	function where($where,$equals=false){
+	function where($where,$equals=false,$escape=true){
+		// Argument 3 only applies on cases when you are using "in" clause.
+		// If you plan to pass sub-queries - use false
 		if(!is_array($where)){
 			if($equals!==false){
 				if(is_null($equals)){
@@ -246,11 +248,16 @@ class DBlite_dsql  {
 					}elseif(substr($where,-5,5)==' like'){
 						$where.=" '".$this->db->escape($equals)."'";
 					}elseif(substr($where,-3,3)==' in'){
-						$eq=explode(',',$equals);$eq2=array();
-						foreach($eq as $eq3){
-							$eq2[]="'".$this->db->escape($eq3)."'";
+						if($escape){
+							$eq=explode(',',$equals);$eq2=array();
+							if(strtolower(substr($eq3,0,6))=='select'){
+								throw new BaseException("use 3rd argument if you pass sub-queries to where()");
+							}
+							foreach($eq as $eq3){
+								$eq2[]="'".$this->db->escape($eq3)."'";
+							}
+							$equals=join(',',$eq2);
 						}
-						$equals=join(',',$eq2);
 						$where.=" ($equals)";
 					}else{
 						$where.=" = '".$this->db->escape($equals)."'";
