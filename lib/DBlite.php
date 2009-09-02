@@ -61,6 +61,7 @@ class DBlite extends DBlite_Abstract {
 
 
     var $owner=null;         // link to your API class. Mainly for fatal()
+    var $api=null;			// alias for owner, to be AModules3 consistent
     ///////////////////// Core functions //////////////////////
     function &connect($dsn, $default_assoc = DB_FETCHMODE_ORDERED){
         /**

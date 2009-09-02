@@ -4,12 +4,14 @@
  */
 class SQLException extends BaseException { // used if DBlite error is occured
 	function __construct($last_query='', $message=null, $func=null,$shift=1){
+		$last_query=htmlentities($last_query);
 		$mysql_error = mysql_error();
 
 		$cause = ereg_replace('.*near \'(.*)\' at line .*','\1',$mysql_error);
 		if($cause!=$mysql_error){
 			$last_query=str_replace($cause,"<font color=blue><b>".$cause."</b></font>",$last_query);
 		}
+		list($message)=split('select',$message);
 		$msg = '<p>'.$message.'</p>';
 		
 		if ($mysql_error)

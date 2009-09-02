@@ -468,7 +468,8 @@ class DBlite_dsql  {
 			}
 		}
 		if($this->debug){
-			echo '<font color=blue>'.join('',$result).'</font>';
+			//$this->db->owner->logVar($result);
+			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>';
 		}
 		return join('', $result);
 	}
