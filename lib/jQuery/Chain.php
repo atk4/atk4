@@ -34,15 +34,13 @@ class jQuery_Chain extends AbstractModel {
 	}
 	function execute(){
 		if(isset($_POST['ajax_submit'])){
-			$this->owner->info('Outputing js only form '.($this->owner->name));
-
 			if($this->api->jquery)$this->api->jquery->getJS($this->owner);
 			$x=$this->api->template->get('document_ready');
 			if(is_array($x))$x=join('',$x);
 
+			echo $this->_render();
 
 			echo $x;
-			//echo $this->_render();
 			exit;
 		}else return $this;
 	}
