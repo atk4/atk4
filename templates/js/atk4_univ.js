@@ -51,7 +51,11 @@ $.each({
 	log: function(arg1){
 		if(log){
 			log.info(arg1);
-			//log.show();
+			var s=$('#header_widgets').children('a:last').children('span');
+			var i=parseInt(s.text());
+			if(i>0)i++;else i='1';
+			s.text(i);
+			var s=$('#header_widgets').children('a:last').children('img').stop().effect('bounce');
 		}else{
 			console.log(arg1);
 		}

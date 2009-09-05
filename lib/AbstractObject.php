@@ -233,7 +233,8 @@ abstract class AbstractObject {
 		 * $this->info("User tried buying traffic without enough money in bank");
 		 */
 
-		$this->upCall('outputInfo', $msg);
+		if(!$this->api->hook('outputInfo',array($msg,$this)))
+			$this->upCall('outputInfo', $msg);
 	}
 	function debug($msg, $file = null, $line = null) {
 		/**
