@@ -17,10 +17,12 @@ $.univ = function(){
 
 $.univ._import=function(name,fn){
 	$.univ[name]=function(){
+		var ret;
+
 		if(!$.univ.ignore){
-			fn.apply($.univ,arguments);
+			ret=fn.apply($.univ,arguments);
 		}
-		return $.univ;
+		return ret?ret:$.univ;
 	}
 }
 
@@ -203,7 +205,7 @@ $.each({
 },$.univ._import
 );
 
-
+////// Define deprecated functions ////////////
 $.each([
 	'openExpander'
 ],function(name,val){
