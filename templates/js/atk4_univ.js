@@ -34,7 +34,7 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url){
-		if($.atk4.page){
+		if($.atk && $.atk4.page){
 			$.atk4.page(url);
 		}else{
 			document.location=url;
@@ -176,7 +176,21 @@ $.each({
 			result[i]=$(this).attr('value')+':'+($(this).attr('checked')==true?'Y':'N');
 			i++;
 		});
-		$.get(url+'&selected='+result.join(','));
+		$.get(url+'&selected='+result.join(','),null,function(res){
+			try {
+				eval(res);
+			}catch(e){
+				//while some browsers prevents popup we better use alert
+				w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+				if(w){
+					w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
+					w.document.write(res);
+					w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+				}else{
+					showMessage("Error in AJAX response: "+e+"\n"+response_text);
+				}
+			}
+		});
 	},
 	executeUrl: function(url,callback){
 		$.get(url,callback);
