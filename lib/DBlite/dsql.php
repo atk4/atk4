@@ -197,7 +197,7 @@ class DBlite_dsql  {
 	 * @return array
 	 */
 	public function getArgsList($args_type) {
-		return array_keys($this->args[$args_type]);
+		return isset($this->args[$args_type])?array_keys($this->args[$args_type]):array();
 	}
 	
 	/**
