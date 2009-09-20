@@ -34,7 +34,7 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url){
-		if($.atk && $.atk4.page){
+		if($.atk4 && $.atk4.page){
 			$.atk4.page(url);
 		}else{
 			document.location=url;
