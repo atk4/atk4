@@ -283,7 +283,7 @@ abstract class AbstractObject {
 			return false;
 		return $this->owner->upCall($type, $args);
 	}
-	function downCall($type, $args = null) {
+	function downCall($type, $args = array()) {
 		/**
 		 * Unlike upCallHandler, this will pass call down to all childs. This
 		 * one is useful for a "render" or "submitted" calls.

@@ -35,6 +35,10 @@ class jQuery_Chain extends AbstractModel {
 	function execute(){
 		if(isset($_POST['ajax_submit'])){
 			//if($this->api->jquery)$this->api->jquery->getJS($this->owner);
+
+			// TODO: currently does not support ability to execute multiple chains
+			// also in some cases we might be called without ajax_submit
+
 			$x=$this->api->template->get('document_ready');
 			if(is_array($x))$x=join('',$x);
 
@@ -53,7 +57,9 @@ class jQuery_Chain extends AbstractModel {
 		 */
 		if(is_object($arg)){
 			if($arg instanceof jQuery_Chain){
-				return $arg->_render();
+				$r=$arg->_render();
+				if(substr($r,-1)==';')$r=substr($r,0,-1);
+				return $r;
 			}else{
 				return "'#".$arg->name."'";
 			}

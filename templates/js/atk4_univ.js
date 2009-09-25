@@ -33,22 +33,22 @@ $.each({
 	displayAlert: function(a){
 		alert(a);
 	},
-	redirect: function(url){
+	redirect: function(url,fn){
 		if($.atk4 && $.atk4.page){
-			$.atk4.page(url);
+			$.atk4.page(url,fn);
 		}else{
 			document.location=url;
 		}
 	},
-	redirectURL: function(page){
+	redirectURL: function(page,fn){
 		if($.atk4.page){
-			$.atk4.page(page);
+			$.atk4.page(page,fn);
 		}else{
 			document.location=page;
 		}
 	},
-	page: function(page){
-		$.atk4.page(page);
+	page: function(page,fn){
+		$.atk4.page(page,fn);
 	},
 	log: function(arg1){
 		if(log){
