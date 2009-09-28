@@ -254,6 +254,9 @@ class BasicAuth extends AbstractController {
 		$this->forget('info');
         setcookie($this->name."_username",null);
         setcookie($this->name."_password",null);
+   	 	setcookie(session_name(), '', time()-42000, '/');
+		session_destroy();
+		
         $this->info=false;
         $this->api->redirect($this->api->getIndexPage());
 	}
