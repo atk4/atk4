@@ -42,7 +42,7 @@ class jQuery_Chain extends AbstractModel {
 			$x=$this->api->template->get('document_ready');
 			if(is_array($x))$x=join('',$x);
 
-			echo $x.';';
+			//echo $x.';';
 			echo $this->_render();
 			exit;
 		}else return $this;
