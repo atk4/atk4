@@ -242,7 +242,7 @@ $.each({
 		}
 		//f.change(onchange);
 		f.keyup(onkeyup);
-	},
+	}
 
 },$.univ._import
 );
