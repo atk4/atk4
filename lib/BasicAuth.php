@@ -62,7 +62,8 @@ class BasicAuth extends AbstractController {
             $this->logout();
         }
     }
-    function get($property,$default=null){
+    function get($property=null,$default=null){
+    	if(is_null($property))return $this->info;
         if(!isset($this->info[$property]))return $default;
         return $this->info[$property];
     }
