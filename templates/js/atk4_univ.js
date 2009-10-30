@@ -6,25 +6,8 @@
 
 ;
 $||console.error("jQuery must be loaded");
-$.univ||(function($){
+(function($){
 
-$.univ = function(){
-	var ignore=true;
-	$.univ.ignore=false;
-	return $.univ;
-};
-
-
-$.univ._import=function(name,fn){
-	$.univ[name]=function(){
-		var ret;
-
-		if(!$.univ.ignore){
-			ret=fn.apply($.univ,arguments);
-		}
-		return ret?ret:$.univ;
-	}
-}
 
 $.each({
 	alert: function(a){
