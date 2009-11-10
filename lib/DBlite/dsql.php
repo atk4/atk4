@@ -231,7 +231,7 @@ class DBlite_dsql  {
 		elseif(is_string($value))$value=strtotime($value);
 		return $this->set($field,date('Y-m-d H:i:s',$value));
 	}
-	function where($where,$equals=false,$escape=true){
+	function where($where,$equals=false,$escape=true,$cond='where'){
 		// Argument 3 only applies on cases when you are using "in" clause.
 		// If you plan to pass sub-queries - use false
 		if(!is_array($where)){
@@ -266,36 +266,15 @@ class DBlite_dsql  {
 			}
 			$where = array($where);
 		}
-		$this->args['where'] = safe_array_merge($this->args['where'], $where);
+		$this->args[$cond] = safe_array_merge($this->args[$cond], $where);
 		return $this;
 	}
 	function clear_args($arg_name){
 		unset($this->args[$arg_name]);
 		return $this;
 	}
-	function having($having,$equals=false){
-		if(!is_array($having)){
-			if($equals!==false){
-				if(is_null($equals)){
-					$having.=" is null";
-				}else{
-					if(substr($having,-1,1)==' ')$having=substr($having,0,-1);
-					// let's see if there is a sign, so we don't put there anything
-					$c=substr($having,-1,1);
-					if($c=='<' || $c=='>' || $c=='='){
-						// no need to add sign, it's already there
-						$having.=" '".$this->db->escape($equals)."'";
-					}elseif(substr($having,-5,5)==' like'){
-						$having.=" '".$this->db->escape($equals)."'";
-					}else{
-						$having.=" = '".$this->db->escape($equals)."'";
-					}
-				}
-			}
-			$having = array($having);
-		}
-		$this->args['having'] = safe_array_merge($this->args['having'], $having);
-		return $this;
+	function having($having,$equals=false,$escape=true){
+		return $this->where($having,$equals,$escape);
 	}
 	function join ($table,$on,$type='inner'){
 		$this->args['join'][$table]="$type join ".DTP.$table." on $on";
