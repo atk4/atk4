@@ -219,6 +219,7 @@ $.each({
 			}
 			timer=setTimeout(function(){
 					$.data(f0,'timer',null);
+					f.trigger('autochange');
 					f.change();
 					},500);
 			$.data(f0,'timer',timer);
