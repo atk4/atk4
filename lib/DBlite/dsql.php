@@ -205,7 +205,7 @@ class DBlite_dsql  {
 	* @param mixed $val
 	* @return string 
 	*/
-	private function escapeValue($val) {
+	protected function escapeValue($val) {
 		if(is_null($val)){
 			$res = 'NULL';
 		}else{
@@ -330,6 +330,7 @@ class DBlite_dsql  {
 		* This function generates actual value for the arguments, which
 		* will be placed into template
 		*/
+		$args=array();
 		if(isset($required['field'])) {
 			// comma separated fields, such as for select
 			$fields=array();
@@ -367,7 +368,7 @@ class DBlite_dsql  {
 			}
 			foreach($this->args['set'] as $key=>$val) {
 				if(is_numeric($key)){
-					list($sf[],$sv[])=split('=',$val,2);
+					list($sf[],$sv[])=explode('=',$val,2);
 					continue;
 				}
 				$sf[]="`$key`";
@@ -417,7 +418,6 @@ class DBlite_dsql  {
 			}
 		}
 
-
 		return $args;
 	}
 	function parseTemplate($template) {
@@ -425,13 +425,13 @@ class DBlite_dsql  {
 		* When given query template, this method will get required arguments
 		* for it and place them inside returning ready to use query.
 		*/
-		$parts = split('\[', $template);
+		$parts = explode('[', $template);
 		$required = array();
 
 		// 1st part is not a variable
 		$result = array(array_shift($parts));
 		foreach($parts as $part) {
-			list($keyword, $rest)=split('\]', $part);
+			list($keyword, $rest)=explode(']', $part);
 			$result[] = array($keyword); $required[$keyword]=true;
 			$result[] = $rest;
 		}
