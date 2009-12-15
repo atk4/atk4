@@ -274,7 +274,7 @@ class DBlite_dsql  {
 		return $this;
 	}
 	function having($having,$equals=false,$escape=true){
-		return $this->where($having,$equals,$escape);
+		return $this->where($having,$equals,$escape,'having');
 	}
 	function join ($table,$on,$type='inner'){
 		$this->args['join'][$table]="$type join ".DTP.$table." on $on";
