@@ -5,9 +5,10 @@
 class jQuery_Chain extends AbstractModel {
 	private $str='';
 	private $prepend='';
-	private $selector=false;
+	private $selector=null;
 	private $enclose=false;
 	private $preventDefault=false;
+	public $base='';
 	function __call($name,$arguments){
 		if($arguments){
 			$a2=$this->_flattern_objects($arguments,true);
@@ -132,7 +133,11 @@ class jQuery_Chain extends AbstractModel {
 	function _render(){
 		$ret='';
 		$ret.=$this->prepend;
-		if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
+		if($this->selector===false){
+			$ret.="$";
+		}else{
+			if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
+		}
 		$ret.=$this->str;
 		if($this->enclose===true){
 			if($this->preventDefault){
