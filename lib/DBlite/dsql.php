@@ -408,7 +408,7 @@ class DBlite_dsql  {
 
 		if(isset($required['group'])) {
 			if($this->args['group']) {
-				$args['group'] = "group by ".join(',',$this->args['group']);
+				$args['group'] = "group by ".join(', ',$this->args['group']);
 			}
 		}
 
