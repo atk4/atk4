@@ -200,7 +200,7 @@ abstract class AbstractObject {
 		return $this->elements[$short_name];
 	}
 	function removeElement($short_name){
-		if(isset($this->elements[$short_name]))unset($this->elements[$short_name]);
+		if(isset($this->elements[$short_name]))$this->elements[$short_name]=null;
 		return $this;
 	}
 	function getName(){
