@@ -307,6 +307,16 @@ class DBlite_dsql  {
 		}
 		return $this;
 	}
+	/**
+	 * Returns true if specified $value already set for $param
+	 * E.g. paramExists('group',$field) returns true if grouping by $field was already set
+	 * 
+	 * May not work for where or having, as they are implemented like shit
+	 */
+	function paramExists($param,$value){
+		if(!isset($this->args[$param]))return false;
+		return array_search($value,$this->args[$param])!==false;
+	}
 	function select(){
 		return $this->parseTemplate("select [options] [field] from [table] [join] [where] [group] [having] [order] [limit]");
 	}
