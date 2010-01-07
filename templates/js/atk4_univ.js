@@ -30,6 +30,9 @@ $.each({
 			document.location=page;
 		}
 	},
+	location: function(url){
+		document.location=url;
+	},
 	page: function(page,fn){
 		$.atk4.page(page,fn);
 	},
@@ -198,20 +201,13 @@ $.each({
 		}
 		grid.atk4_grid('removeOverlay');
 	},
-	autoChange: function(){
+	autoChange: function(interval){
 	// Normally onchange gets triggered only when field is submitted. However this function
 	// will make field call on_change one second since last key is pressed. This makes event
 	// triggering more user-friendly
 		var f=this.jquery;
 		var f0=f.get(0);
 
-		/*
-		function onchange(){
-			var timer=$.data(f0,'timer');
-			if(timer)clearTimeout(timer);
-			$.data(f0,'timer',null);
-		}
-		*/
 		function onkeyup(){
 			var timer=$.data(f0,'timer');
 			if(timer){
@@ -221,7 +217,7 @@ $.each({
 					$.data(f0,'timer',null);
 					f.trigger('autochange');
 					f.change();
-					},500);
+					},interval?interval:500);
 			$.data(f0,'timer',timer);
 		}
 		//f.change(onchange);
