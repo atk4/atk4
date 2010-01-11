@@ -146,9 +146,9 @@ class Logger extends AbstractController {
                                     //
                                     // You can change in $config['logger']['log_dir']
 
-    private $log_error_file;        // File we are currently logging errors to
-    private $log_debug_file;        // File we are currently logging errors to
-    private $log_info_file;         // File we are currently logging errors to
+    protected $log_error_file;        // File we are currently logging errors to
+    protected $log_debug_file;        // File we are currently logging errors to
+    protected $log_info_file;         // File we are currently logging errors to
     public $details=array();
 
 
@@ -379,8 +379,8 @@ class Logger extends AbstractController {
         }elseif($this->log_output){
             fputs($this->$log_file,"[".date("d-M-Y H:i:s")."] $msg");
         }else{
-	    return;
-	}
+		    return;
+		}
         fflush($this->$log_file);
     }
     function logVar($var,$msg="",$shiftfunc=null,$severity='debug'){
