@@ -289,6 +289,18 @@ class DBlite_dsql  {
 		}
 		return $this;
 	}
+	/**
+	 * Returns true if argument $option has been set for the $field in this query
+	 * I.e. isArgSet('where','id') returns true if where('id',$value) was called
+	 */
+	function isArgSet($option,$field){
+		if(!isset($this->args[$option]) || empty($this->args[$option]))return false;
+		foreach($this->args[$option] as $arg){
+			// option may contain field prefix and suffixes like 'desc'
+			if(stripos($arg,$field)!==false)return true;
+		}
+		return false;
+	}
 	function limit($cnt,$shift=0){
 		$this->args['limit']=array(
 				'cnt'=>$cnt,
