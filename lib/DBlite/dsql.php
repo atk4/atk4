@@ -281,8 +281,9 @@ class DBlite_dsql  {
 		return $this;
 	}
 	function order($order,$desc=null,$prepend=null){
+		if(!$order)throw new SQLException("Empty order provided");
 		if($desc)$order.=" desc";
-		if($prepend){
+		if($prepend && isset($this->args['order'])){
 			array_unshift($this->args['order'], $order);
 		}else{
 			$this->args['order'][]=$order;
