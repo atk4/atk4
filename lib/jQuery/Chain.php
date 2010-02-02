@@ -29,6 +29,10 @@ class jQuery_Chain extends AbstractModel {
 		$this->selector=$selector;
 		return $this;
 	}
+	function _selectorThis(){
+		$this->selector=true;
+		return $this;
+	}
 	function _prepend($code){
 		$this->prepend=$code.';'.$this->prepend;
 		return $this;
@@ -135,6 +139,8 @@ class jQuery_Chain extends AbstractModel {
 		$ret.=$this->prepend;
 		if($this->selector===false){
 			$ret.="$";
+		}elseif($this->selector===true){
+			$ret.="$(this)";
 		}else{
 			if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
 		}
