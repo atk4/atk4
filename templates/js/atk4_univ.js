@@ -208,7 +208,10 @@ $.each({
 		var f=this.jquery;
 		var f0=f.get(0);
 
+		f.attr('data-val',f.val());
+
 		function onkeyup(){
+			if(f.attr('data-val')==f.val())return;
 			var timer=$.data(f0,'timer');
 			if(timer){
 				clearTimeout(timer);
