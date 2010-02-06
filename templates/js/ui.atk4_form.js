@@ -49,10 +49,11 @@ $.widget("ui.atk4_form", {
 			var a=$('<a class="gbutton button_style1"></a>');
 			var s=$(this);
 			a.text(s.attr('value'));
+			a.attr('tabIndex',s.attr('tabIndex')+1);
 			a.click(function(){ 
 				form.element.submit()});
 			$(this).after(a);
-			s.hide();
+			s.remove();
 		});
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
 		if(this.options.base_url)this.base_url=this.options.base_url;
