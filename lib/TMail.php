@@ -73,7 +73,7 @@ class TMail extends AbstractController{
 		//
 		// look at the provided sample template in templates/kt2/mail
 		$this->reset();
-		$this->template=$this->add('SMlite')->loadTemplate($template,$type);
+		$this->template=$this->getTemplateEngine()->loadTemplate($template,$type);
 		if($type=='.html'){
 			$this->setBodyType('html');
 		}
@@ -139,11 +139,14 @@ class TMail extends AbstractController{
 		}
 		return $this;
 	}
+	function getTemplateEngine(){
+		return $this->add('SMlite');
+	}
 	function loadDefaultTemplate(){
 		/**
 		 * Loads default template and sets sign and headers from it
 		 */
-		$template=$this->add('SMlite')->loadTemplate('mail/mail','.txt');
+		$template=$this->getTemplateEngine()->loadTemplate('mail/mail','.txt');
 		if($this->is_html)$template->set('content_type','text/html');
 		$this->sign=$template->cloneRegion('sign');
 	}
