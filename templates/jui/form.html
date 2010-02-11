@@ -1,0 +1,24 @@
+<?form?>
+<form id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
+	<div class="ui-dialog-content ui-widget-content">
+	<fieldset>
+		<?form_body?>			
+			<?form_line?>
+				<label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label>
+				<div class="form_field"><?field_input?><input/><?/?></div>
+			<?/form_line?>
+
+			<?form_separator?></fieldset><fieldset>
+			<div class="form_block"><h2 class="green_dots"><?separator?>Personal information<?/?></h2><?/form_separator?>
+		<?/form_body?>
+	</fieldset>
+	</div>
+
+	<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+		<?form_buttons?>
+			<input type="button" value="Save" class="gbutton button_style1" />
+		<?/form_buttons?>
+	</div>
+</form>
+<?/form?>
+

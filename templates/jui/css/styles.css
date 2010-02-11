@@ -1,0 +1,22 @@
+/* Common */
+
+body {
+	background: url(../images/bg.jpg);
+}
+
+.clear {
+	clear: both;
+	font-size: 0;
+	line-height: 0;
+}
+
+a:link, a:visited {
+	color: #0071a5;
+}
+
+/* Typography */
+
+body {
+	font-size: 12px;
+	font-family: Arial, serif;
+}

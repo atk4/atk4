@@ -1,0 +1,54 @@
+<?grid?>
+<?$Misc?>
+<div id="<?$_name?>">
+	<div class="grid_panel"><?grid_buttons?><?/?></div>
+	<table class="ui-widget ui-widget-content" width="100%">
+		<?header?>
+		  <thead>
+		   <?cols?>
+		    <?col?>
+			<th class="ui-widget-header" data-sort="<?$sort?>" nowrap <?$thparam?>><?descr?>Customer<?/?></th>
+			<?/col?>
+		   <?/cols?>
+		  </thead>
+	 	 <?/header?>
+					
+		  <tbody class="grid_body">
+			  <?rows?>
+			   <?row?>
+			    <tr id="<?$_name?>_<?$row_id?>" rel="<?$row_id?>">
+			    <?cols?>
+			     <?col?>
+			      <td <?$tdparam?>><?$content?></td>
+			     <?/col?>
+			    <?/cols?>
+			    </tr>
+		   <?/row?>
+					
+					   <?totals?>
+					    <tr class="totals">
+					    <?cols?>
+					     <?col?>
+					      <td <?$tdparam?>><?$content?></td>
+					     <?/col?>
+					    <?/cols?>
+					    </tr>
+					   <?/totals?>
+					  <?/rows?>
+					
+					
+					 </tbody>
+					  <?full_table?>
+					  <?/full_table?>
+					</table>
+					<?not_found?><span class="lister_notfound">No Records Found</span><?/not_found?>
+<table align="center" border="0" width="100%" class="grid_menu grid_menu_bottom" cellpadding="0" cellspacing="0">
+ <tr>
+  <td width="33%" align="left" valign="bottom" nowrap></td>
+  <td width="34%" align="center" valign="bottom" nowrap><?paginator?><?/?></td>
+  <td width="33%" align="right" valign="bottom" nowrap></td>
+ </tr>
+</table>
+</div>
+<?hidden_forms?><?/hidden_forms?>
+<?/grid?>
