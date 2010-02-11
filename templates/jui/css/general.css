@@ -30,9 +30,36 @@ body {
 	margin-top: 1.5em;
 }
 
-#navigation {
+ul#navigation {
+	float: right;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul#navigation li {
 	float: left;
+	padding: 0;
+	margin: 0;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #fff;
+}
+
+ul#navigation li a {
+	display: block;
+	padding: 0.5em 1em;
+}
+
+/* Left Column */
+
+/*
+#left_column {
 	width: 220px;
+	float: left;
+}
+
+#navigation {
+	margin-bottom: 2em;
 }
 
 #navigation ul {
@@ -40,9 +67,7 @@ body {
 }
 
 #navigation ul li {
-	height: 2em;
-	line-height: 2em;
-	padding: 0 1em;
+	padding: 0.5em 1em;
 	margin-bottom: 0.5em;
 	position: relative;
 }
@@ -53,20 +78,14 @@ body {
 	-webkit-border-radius: 10px;
 }
 
-#navigation ul li i {
-	left: 1em;
-	top: 0.3em;
-	width: 16px;
-	height: 16px;
-	position: absolute;
-	background: red;
+#navigation ul li.current a:link,
+#navigation ul li.current a:visited {
+	color: #292d2d;
 }
-
-#navigation ul li a {
-	margin-left: 22px;
-}
+*/
 
 #content {
-	float: right;
-	width: 740px;
+
+
 }
+
