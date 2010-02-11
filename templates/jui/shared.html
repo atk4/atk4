@@ -4,10 +4,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<title>bw01</title>
 		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/reset.css" rel="stylesheet" />	
-		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/general.css" rel="stylesheet" />
+		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/general.css" rel="stylesheet" />	
+		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/themes/<?theme?>redmond<?/?>/jquery-ui.css" rel="stylesheet" />	
 		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/styles.css" rel="stylesheet" />	
-		<link type="text/css" href="<?$base_href?>amodules3/templates/jui/css/jui.css" rel="stylesheet" />		
-
 
 		<?$js_include?>
 		<script type="text/javascript">
@@ -28,17 +27,21 @@
 		<div id="layout">
 			<div id="wrapper">
 				<div id="header">
-					<a href="javascript:void(0);">Logo</a>
+					<div style="float:left"><b><?name?>Logo<?/?></b><br/><?$version?></div>
+					<?Menu?>
 					<ul id="navigation" class="ui-state-default ui-corner-all">
 						<li style="border-left: none"><a href="javascript:void(0)">Dashboard</a></li>
 						<li><a href="javascript:void(0)">Pipeline</a></li>
 						<li><a href="javascript:void(0)">Engagements</a></li>
 						<li style="border-right: none"><a href="javascript:void(0)">Settings</a></li>
 					</ul>
+					<?/?>
+					
 					<!-- <div id="top_navigation">Username | <a href="javascript:void(0);">Log Out</a> &raquo;</div> -->
 				</div>
 
 				<div id="content">
+					<!-- <?$Locator?><?$LeftSidebar?><?$RightSidebar?><?$InfoWindow?>  those are obsolete -->
 					<?Content?>
 						<h1 style="font-size: 200%">bw_01 &ndash; Element library</h1>
 												
@@ -603,7 +606,8 @@
 				</div>
 				<div class="clear"></div>
 				<div id="footer">
-					Copyright &copy;2010 BizViz
+					This system is implemented using <a href="http://agiletech.ie/work/agile_toolkit/">Agile Toolkit™ / AModules</a>. &copy; 1999-2010
+					| <?theme?>jui<?/?> Theme
 				</div>
 			</div>
 		</div>

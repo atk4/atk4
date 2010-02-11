@@ -45,9 +45,21 @@ ul#navigation li {
 	border-left: 1px solid #fff;
 }
 
+ul#navigation > li:first-child {
+	border-left: none;
+}
+ul#navigation > li:last-child {
+	border-right: none;
+}
+
 ul#navigation li a {
 	display: block;
 	padding: 0.5em 1em;
+}
+
+#footer {
+	padding-top: 0.5em;
+	text-align: center
 }
 
 /* Left Column */
