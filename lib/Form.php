@@ -148,6 +148,7 @@ class Form extends AbstractView {
 		return $this;
 	}
 	function addComment($comment){
+		if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
 		$this->add('Text','c'.count($this->elements),'form_body')->set(
 			$this->template_chunks['form_comment']->set('comment',$comment)->render()
 		);
