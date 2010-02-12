@@ -1,7 +1,13 @@
 <?php
+
+class Button extends View_Button {
+}
+
+
 // This class is experemental!
 //
 //
+/*
 class Button extends AbstractView {
     public $onclick=null;
     protected $style=array();
@@ -42,3 +48,4 @@ class Button extends AbstractView {
         return parent::render();
     }
 }
+*/
