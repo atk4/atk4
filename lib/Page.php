@@ -12,7 +12,7 @@ class Page extends AbstractView {
 	function defaultTemplate(){
 		$page_name='page/'.strtolower($this->short_name);
 		if($this->api->template->findTemplate($page_name))return array($page_name,'_top');
-		else return 'Content';
+		else return array('page','_top');
 	}
 	function getTitle(){
 		return $this->title;

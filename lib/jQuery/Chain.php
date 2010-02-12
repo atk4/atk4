@@ -25,7 +25,7 @@ class jQuery_Chain extends AbstractModel {
 	function __toString(){
 		return $this->_render();
 	}
-	function _selector($selector){
+	function _selector($selector=null){
 		$this->selector=$selector;
 		return $this;
 	}
@@ -53,7 +53,7 @@ class jQuery_Chain extends AbstractModel {
 		}else return $this;
 	}
 
-	function _flattern_objects($arg,$return_comma_list=false){
+	protected function _flattern_objects($arg,$return_comma_list=false){
 		/*
 		 * This function is very similar to json_encode, however it will traverse array
 		 * before encoding in search of objects based on AbstractObject. Those would
