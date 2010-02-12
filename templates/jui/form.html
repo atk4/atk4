@@ -8,6 +8,11 @@
 					<div class="form_row">
 						<label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label>
 						<div class="form_field"><?field_input?><input/><?/?></div>
+						<?field_error?>
+						<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+						<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+						<strong>Error:</strong><?$field_error_str?></p> </div>
+						<?/?>
 					</div>	
 					<?/form_line?>
 		
