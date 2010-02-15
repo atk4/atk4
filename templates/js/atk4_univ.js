@@ -17,15 +17,15 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url,fn){
-		if($.atk4 && $.atk4.page){
-			$.atk4.page(url,fn);
+		if($.atk4){
+			$.univ.page(url,fn);
 		}else{
 			document.location=url;
 		}
 	},
 	redirectURL: function(page,fn){
-		if($.atk4.page){
-			$.atk4.page(page,fn);
+		if($.atk4){
+			$.univ.page(page,fn);
 		}else{
 			document.location=page;
 		}
@@ -34,7 +34,7 @@ $.each({
 		document.location=url;
 	},
 	page: function(page,fn){
-		$.atk4.page(page,fn);
+		$('#Content').atk4_load(page,fn);
 	},
 	log: function(arg1){
 		if(log){
