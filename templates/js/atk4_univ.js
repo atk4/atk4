@@ -17,7 +17,7 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url,fn){
-		if($.atk4){
+		if($.fn.atk4_load){
 			$.univ.page(url,fn);
 		}else{
 			document.location=url;
