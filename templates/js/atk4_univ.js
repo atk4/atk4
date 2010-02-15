@@ -122,7 +122,7 @@ $.each({
 		// removing hidden field
 		if(button)button.remove();
 	},
-	reloadArgs: function(url,key,value){
+	reloadArgs: function(url,key,value){	
 		var u=$.atk4.addArgument(url,key+'='+value);
 		console.log(url);
 		this.jquery.atk4_load(u);
@@ -201,6 +201,186 @@ $.each({
 		}
 		grid.atk4_grid('removeOverlay');
 	},
+dialogPrepare: function(options){
+/*
+ * This function creates a new dialog and makes sure other dialog-related functions will 
+ * work perfectly with it
+ */
+	var dialog=$('<div class="dialog" title="Untitled">Loading<div></div></div>').appendTo('body');
+	dialog.dialog(options);
+	$.data(dialog.get(0),'opener',this.jquery);
+	$.data(dialog.get(0),'options',options);
+
+	return dialog;
+},
+getDialogData: function(key){
+
+	var dlg=this.jquery.closest('.dialog').get(0);
+
+	if(!dlg)this.log('must be called from inside dialog',this.jquery);
+
+	var r=$.data(dlg,key);
+	if(!r){
+  		this.log('key',key,' does not have data for ',this.jquery.closest('.dialog').get(0));
+	}
+
+	return r;
+},
+getFrameOpener: function(){
+	return $(this.getDialogData('opener'));
+},
+dialogBox: function(options){
+	return this.dialogPrepare($.extend({
+		bgiframe: true,
+		modal: true,
+		width: 800,
+//		height: 700,
+		position: 'top',
+		autoOpen:false,
+		beforeclose: function(){
+			if($(this).is('.atk4_loader')){
+				if(!$(this).atk4_loader('remove'))return false;
+			}
+		},
+		buttons: {
+			'Cancel': function(){
+				$(this).dialog('close');
+			},
+			'Ok': function(){
+				var f=$(this).find('form');
+				if(f.length)f.eq(0).submit(); else $(this).dialog('close');
+			}
+		},
+		close: function(){
+			$(this).dialog('destroy'); 
+			$(this).remove();
+		}
+	},options));
+},
+dialogURL: function(title,url,options,callback){
+	var dlg=this.dialogBox($.extend(options,{title: title,autoOpen: true}));
+	dlg.atk4_load(url,callback);
+	dlg.dialog('open');
+},
+dialogOK: function(title,text,fn,options){
+	var dlg=this.dialogBox($.extend({
+		title: title, 
+		width: 450, 
+		//height: 150,
+		close: fn, 
+		open: function() { 
+			$(this).parents('.ui-dialog-buttonpane button:eq(0)').focus(); 
+		},
+		buttons: {
+			'Ok': function(){
+				$(this).dialog('close');
+			}
+		}
+	},options));
+	dlg.html(text);
+	dlg.dialog('open');
+	
+},
+dialogConfirm: function(title,text,fn,options){
+	/*
+	 * Displays confirmation dialogue.
+	 */
+	var dlg=this.dialogBox($.extend({title: title, width: 450, height: 200,
+	buttons: {
+		'Cancel': function(){
+			$(this).dialog('close');
+		},
+		'Ok': function(){
+			$(this).dialog('close');
+			if(fn)fn();
+		}
+	}},options));
+
+	dlg.html("<form></form>"+text);
+	dlg.find('form').submit(function(ev){ ev.preventDefault(); console.log('ok clicked'); fn; dlg.dialog('close'); });
+	dlg.dialog('open');
+},
+dialogError: function(text,options){
+	this.dialogConfirm('Error','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,options);
+},
+dialogAttention: function(text,fn){
+	this.dialogConfirm('Attention!','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,fn);
+},
+successMessage: function(msg){
+	var html="";
+	html = '<p class="growl">'+msg
+		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
+
+	var growl=$(html).prependTo('#float-messages');
+	growl.find('.growl_close').click(function(){
+			growl.fadeOut(500,function(){ growl.remove(); });
+	});
+
+	growl.slideDown(200)
+	   	.animate({opacity: 1.0},4000) // few seconds to show message
+   		.fadeOut(500,function() {
+				growl.remove();
+				});
+
+	growl.mouseover(function(){
+			$(this).stop(true);
+			$(this).find(".growl_close").css("display","block");
+			});
+	growl.mouseout(function(){
+			$(this).animate({opacity: 1.0},4000) // few seconds to show message
+			.fadeOut(500,function() {
+				growl.remove();
+				});
+			$(this).find(".growl_close").css("display","none");
+			});
+
+	//this.dialogAttention(text);
+},
+fillFormFromFrame: function(options){
+	/*
+	 * Use this function from inside frame to insert values into the form which originally opened it
+	 */
+	var j=this.jquery;
+	var form=this.getFrameOpener();
+	form=form.closest('form');
+	var form_id=form.attr('id');
+
+	$.each(options, function(key,value){
+		form.atk4_form('setFieldValue',key,value);
+	});
+	this.jquery=j;
+
+},
+closeDialog: function(){
+	var r=this.getFrameOpener();
+	this.jquery.closest('.dialog').dialog('close');
+	this.jquery=r;
+},
+getjQuery: function(){
+	return this.jquery;
+},
+ajaxec: function(url){
+	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
+	$.get(url,function(ret){
+		if(ret.substr(0,5)=='ERROR'){
+			$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
+			return;
+		}	
+		try{
+			eval(ret)
+		}catch(e){
+			w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+			if(w){
+				w.document.write('<h2>Error in AJAXec response: '+e+'</h2>');
+				w.document.write(ret);
+				w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+			}else{
+				showMessage("Error in AJAXec response: "+e+"\n"+response_text);
+			}
+		}
+
+	});
+},
 	autoChange: function(interval){
 	// Normally onchange gets triggered only when field is submitted. However this function
 	// will make field call on_change one second since last key is pressed. This makes event

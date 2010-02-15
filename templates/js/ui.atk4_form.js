@@ -16,20 +16,34 @@ $.widget("ui.atk4_form", {
 	loading: undefined,
 	submitted: undefined,
 	base_url: undefined,
+	loader: undefined,
+	changed: false,
     _init: function(options){
         $.extend(this.options,options);
         var form=this;
+		
+		form.loader=this.element.parents('.atk4_loader');
+		
+		if(form.loader.length){
+			form.loader.bind('atk4_loaderbeforeclose.'+form.element.attr('id'),function(){
+				if(form.changed && !confirm('Are you sure? Form '+form.element.attr('id')+' changes will be lost!'))return false;
+			});
+		}
 
 		this.element.addClass('atk4_form');
 
 		this.loading=this.element.find('img.form_loading');
 
-		$('input').live('keypress',function(e){
+		$('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
 			if(e.keyCode==13){
 				$(this).closest('form').submit();
 				return false;
 			}
+		});
+		$(':input').bind('change',function(){
+			if(!form.changed)form.element.addClass('form_changed');
+			form.changed=true;
 		});
 
 		this.loading.click(function(){
@@ -58,6 +72,12 @@ $.widget("ui.atk4_form", {
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
 		if(this.options.base_url)this.base_url=this.options.base_url;
     },
+	destroy: function(){
+		form=this;
+		if(form.loader){
+			form.loader.unbind('atk4_loaderbeforeclose.'+form.element.attr('id'));
+		}
+	},
 	indicateLoading: function(){
 		var img=this.loading.attr('src').replace('not_loading','loading');
 		this.loading.attr('src',img);
@@ -199,10 +219,11 @@ $.widget("ui.atk4_form", {
 		if(btn)params[btn]=1;
 
 		$.post(this.element.attr('action'),params,function(res){
+			var c=form.changed;form.changed=false;
 			if(res.substr(0,5)=='ERROR'){
 				$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
 				return;
-			}	
+			}
 			try {
 				eval(res);
 			}catch(e){
@@ -216,6 +237,7 @@ $.widget("ui.atk4_form", {
 					alert("Error in AJAX response: "+e+"\n"+res);
 				}
 			}
+			form.changed=c;
 		});
 	}
 });

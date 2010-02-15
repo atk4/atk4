@@ -1,25 +1,53 @@
-/* Welcome to Agile Toolkit JS framework. This is a main file which provides extensions on top of jQuery-UI */
+/*
+ Welcome to Agile Toolkit JS framework.
+ 
+ This is a main file which provides core functionality.
 
-// do not allow user to navigate away: http://msdn.microsoft.com/en-us/magazine/dd898316.aspx
-// DHTML style guide: http://dev.aol.com/dhtml_style_guide
+ ATK4 Initialisation Script.
+ 
+ Usage:
+ 
+ // in $api->init():
+  
+  $this->add('jUI');
+  $this->js(true)->_load('start-atk4');
+*/
 
-;jQuery.atk4||(function($){
+;$.atk4||(function($){
     
+/*
+ 
+ $.atk4 is a function, which acts as an enhanced onReady handler.
+ Syntax: 
+  
+$(function(){
+
+ $.atk4.includeJS('js/mylib.js');
+ 
+ $.atk4(funciton(){
+	mylib();
+ });
+
+})
+  
+  
+*/
 $.atk4 = function(readycheck,lastcall){
-    return $.atk4.ready(readycheck,lastcall);
+    return $.atk4._onReady(readycheck,lastcall);
 };
 
+/*
+ This is initial support for univ chain. Univ chain is a part of ATK4 framework, and you
+ can optionally extend it by adding your own functions
+*/
 $.univ = function(){
 	var ignore=true;
 	$.univ.ignore=false;
 	return $.univ;
 };
-
-
 $.univ._import=function(name,fn){
 	$.univ[name]=function(){
 		var ret;
-
 		if(!$.univ.ignore){
 			ret=fn.apply($.univ,arguments);
 		}
@@ -27,142 +55,223 @@ $.univ._import=function(name,fn){
 	}
 }
 
-
+/*
+ ATK4 Library initialisation
+*/
 
 $.extend($.atk4,{
-    verison: "1.1",
-
-
-    currentPage: "",
-    base: "",
-
+    verison: "2.0",
+	
+	// Is this a production environment?
+	production: false,
+	
+	/* It's posible that we might get called multiple times. Be aware */
     initialised: false,
+	
+	///////////////////////// ERROR HANDLING //////////////////////////
+	
+	/*
+	 We store the knowledge whether this is production environment
+	 or not. We also provide a way how user will be notified about
+	 critical JS errors
+	*/
+	/*
+	 Something has gone wrong. We should display error to the user.
+	*/
+	errorMessage: function(msg,moreinfo){
+		if(this.production){
+			console.log('Surpressed user error in production environment',text);
+			return;
+		}
+		
+        w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
+        if(w){
+            w.document.write('<h2>JavaScript Error: '+e+'</h2>');
+            w.document.write(response_text);
+            w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
+        }else{
+            showMessage("JavaScript Error: "+e+"\n"+response_text);
+        }
+	},
+	/*
+	 This function is used to display success messages. This should probably be
+	 redefined and should make appear pretty for the user
+	 
+	 Set 2nd argument to true, if it's a system message, which most likely will
+	 not be interesting to the user on production environment
+	*/
+	successMessage: function(msg,system){
+		if(system && this.production)return;
+		console.log('Success: ',msg);
+	},
 
-    // Initialisation of $.atk subsystem. Call this with options.
-    init: function(options){
-        if(this.initialised)return;
-        this.initialised=true;
-		if(options && options['base-url'])this.base=options['base-url'];
-        region=$(document);
-    },
 
-    get: function(url, data, callback){
-        if($.isFunction(data)){
+	//////////////////////////////// AJAX ///////////////////////////////////
+	/*
+	 This is lowest-level AJAX function. It will attepmt to get document from
+	 the server and perform some very basic validation. For instance it will
+	 check if server's session is expired or if it returns error.
+	 
+	 Other modules of ATK4 should rely on this function. If you want to
+	 load your own AJAX, use $('..').atk4_load() instead.
+	 
+	 NOTE: get does not assume regarding the type of returned data.
+	*/
+    loading: 0,	// How many files are currently being requested
+	
+	// readyList contains array of functions which must be executed
+	// after loading is complete. Note that some of those functions
+	// may request more files to be loaded.
+    _readyList: [],
+	
+	// readyLast is a function which will be executed when all the
+	// files are completed. It is used to turn off loading indicator
+	_readyLast: undefined,
+	
+	
+	get: function(url, data, callback){
+        var self=this;
+		if($.isFunction(data)){
+			// data argument may be ommitted
             callback=data; data=null;
         }
+		var timeout=setTimeout(function(){ 
+			self._stillLoading(url);
+		},2000);
+		
+		
+		// Another file is being loaded.
+        this.loading++;
         return $.ajax({
             type: "GET",
             url: url,
             data: data,
-            success: function(res){ $.atk4.checkSession(res) && callback(res); },
-            error: function(a,b,c){ $.atk4.ajaxError(url,a,b,c); }
+			// We tell the backend that we will verify output for "TIMEOUT" output
+			beforeSend: function(xhr){xhr.setRequestHeader('X-ATK4-Timeout', 'true');},
+
+            success: function(res){
+					clearTimeout(timeout);
+					$.atk4._checkSession(res) && callback && callback(res);
+		            if(!--$.atk4.loading)$.atk4._readyExec();
+				},
+            error: function(a,b,c){
+					clearTimeout(timeout);
+					$.atk4._ajaxError(url,a,b,c);
+		            if(!--$.atk4.loading)$.atk4._readyExec();
+					// kill readycheck handlers by not reducing
+					// the counter.
+				}
         });
     },
-	addArgument: function(url,a){
-        return url+(url.indexOf('?')==-1?'?':'&')+a;
+	_stillLoading: function(url){
+		if(this.loading){
+			console.log('Slow loading of: ',url,'remaining:',this.loading);
+			$('#loading_screen1,#loading_screen2').fadeIn('fast');
+			$.atk4(function(){
+				$('#loading_screen1,#loading_screen2').stop().hide();
+			});
+		}
 	},
-    ajaxError: function(url,a,b,c){
-        console.error("Failed to load file: ",url," (",a,b,c,")");
+	/*
+	 Use $.atk4.prototype to redeclare below 2 functions to your liking.
+	*/
+    _ajaxError: function(url,a,b,c){
+		console.error("Failed to load file: ",url," (",a,b,c,")");
     },
-    checkSession: function(text){
+    _checkSession: function(text){
+		// TODO: use proper session handling instead
         if($.trim(text)=="SESSION TIMEOUT"){
             alert('session has timed out');
-            // insert redirect here
+            document.location="/";
             return false;
         }
         return true;
     },
-
-    // $.atk4.load - replaces default jQuery loading method
-    load: function(el, url, callback, reload){
-        region=el;
-
-		var selector, off = url.indexOf(" ");
-		if ( off >= 0 ) {
-			selector = url.slice(off, url.length);
-			url = url.slice(0, off);
-		}
-
-		$.atk4.loading=setTimeout(function(){ 
-			if($.atk4.loading)$('#loading_screen1,#loading_screen2').fadeIn('fast');
-		},2000);
-        this.get(url,function(res){
-			if($.atk4.loading){
-				clearTimeout($.atk4.loading);
-				$('#loading_screen1,#loading_screen2').fadeOut('fast');
-				$.atk4.loading=null;
-			}
-			if(res.substr(0,13)=='SESSION OVER:'){
-				$.univ.dialogOK('Session over','Your session have been timed out',function(){ document.location='/'});
-				return;
-			}
-            var scripts=[], source=res;
-
-
-            while((s=source.indexOf("<script"))>=0){
-                s2=source.indexOf(">",s);
-                e=source.indexOf("</script",s2);
-                e2=source.indexOf(">",e);
-
-
-                scripts.push(source.substring(s2+1,e));
-                source=source.substring(0,s)+source.substring(e2+1);
-            }
-
-			if(reload){
-				el.replaceWith(selector?$('<div/>').append(source).find(selector):source);
+	/*
+	 queues function to be executed when loading are complete.
+	 If "lastcall" is specified as true, then function will be
+	 executed after everything else. Only one function can be
+	 specified as lastCall.
+	 
+	 If nothing is being loaded, then functions are executed
+	 immediatelly
+	*/
+    _onReady: function(fn,lastcall){
+		if(lastcall){
+			if(!this.loading){
+				fn.call(document);
 			}else{
-				el.html(selector?$('<div/>').append(source).find(selector):source);
+				this._readyLast=fn;
 			}
-
-            for(var i in scripts){
-				try{
-					eval(scripts[i]);
-				}catch(e){
-					console.error("JS:",e,scripts[i]);
-				}
-            };
-
-			if(callback)$.atk4(callback,true);
-       });
+			return;
+		}
+        if(!this.loading){
+            fn.call(document);
+        }else{
+            this._readyList.push(fn);
+        }
     },
-    click: function(el,fn){
-	   	el.click(function(ev){
-			ev.preventDefault();
-			fn.call(this,this.href);
-        });
+	/*
+	 if _onReady functions were not executed immediatelly, then
+	 this function will be called at the end and will execute them
+	 all in order. If any of the functions will start loading
+	 more files, execution will terminate and will be resumed
+	 after all files are loaded again.
+	*/
+    _readyExec: function(){
+        while(this._readyList.length){
+            fn=this._readyList.shift();
+            fn.call(document);
+
+			// We are loading more data, resume after
+			if($.atk4.loading)return;
+        }
+		if(this._readyLast){
+			this._readyLast.call(document);
+			this._readyLast=undefined;
+		}
     },
-
-
-    inProgress: 0,
-    readyList: [],
-	readyLast: undefined,
-    includes: {},
+	
+	//////////////////// Dynamic Includes (CSS and JS) ////////////////
+	
+	/*
+	 Based on get() we add number of functions to dynamically load
+	 JS and CSS files.
+	*/
+	
+	
+	// Lists of files we have already loaded. This is to ensure we do
+	// not include JS and CSS files more than once
+    _includes: {},
+	
+	// Loads javascript file and evals it
     includeJS: function(url){
-        if(this.base)url=this.base+url;
-        // Create tag
-        if(this.isIncluded(url))return;
+		
+		// Perhaps file is already included. We do not to load it twice
+        if(this._isIncluded(url))return;
 
-        this.inProgress++;
+		// Continue with loading
         this.get(url,function(code){
             //$.globalEval(code);
             try{
                 eval(code);
             }catch(e){
-                if(String(e).indexOf("Parse error")){
-                    //console.error("Eval failed for "+url+", trying to include");
-                    $.atk4.evalJS(url)
-                    // kill readycheck handlers by not reducing inProgress counter
-                    return;
-
-                }else log.error("Eval error: "+e);
+				// For non-production we better try to expose faulty code
+				// through browser JS parser
+				if(String(e).indexOf("Parse error")){
+					if($.atk4.production){
+						console.log("Eval failed for "+url);
+					}else{
+						console.error("Eval failed for "+url+", trying to include directly for debugging");
+	                   $.atk4._evalJS(url)
+					}
+                }else console.error("Eval error: "+e);
             }
-
-            if(!--$.atk4.inProgress)$.atk4.readyExec();
         });
-
     },
-    evalJS: function(url,clean) {
+	// Use browser to natively include JS
+    _evalJS: function(url,clean) {
+		// remove previously evaled piece of code
         var old = document.getElementById('atk4_eval_clean');
         if (old != null) {
             old.parentNode.removeChild(old);
@@ -177,41 +286,18 @@ $.extend($.atk4,{
         script.src = url;
         head.appendChild(script);
     },
-    
-    ready: function(fn,lastcall){
-		if(lastcall){
-			if(!this.inProgress){
-				fn.call(document);
-			}else{
-				this.readyLast=fn;
-			}
-			return;
-		}
-        if(!this.inProgress){
-            fn.call(document);
-        }else{
-            this.readyList.push(fn);
-        }
-    },
-    readyExec: function(){
-        while(this.readyList.length){
-            fn=this.readyList.shift();
-            fn.call(document);
-
-			// We are loading more data, resume after
-			if($.atk4.inProgress)return;
-        }
-		if(this.readyLast){
-			this.readyLast.call(document);
-			this.readyLast=undefined;
-		}
-    },
+	/*
+	 WARNING: this function will include CSS file in global context,
+	 which means relative paths will be counted from current directory
+	 and not the URL of the CSS file. This breaks url(../images) in
+	 CSS files
+	 
+	 This function will dynamically load CSS file
+	*/
     includeCSS: function(url){
-        if(this.base)url=this.base+url;
-        // Create tag
-        if(this.isIncluded(url))return;
+        if(this._isIncluded(url))return;
 
-        $.get(url,function(code){
+        this.get(url,function(code){
             var cssTag = document.createElement('style');
             cssTag.setAttribute('type', 'text/css');
 			if(cssTag.styleSheet){ // IE quirk
@@ -224,38 +310,33 @@ $.extend($.atk4,{
             headerTag.appendChild(cssTag);
         });
     },
-    isIncluded: function(url){
-        if(this.includes[url])return true;
-        this.includes[url]=true;
+    _isIncluded: function(url){
+        if(this._includes[url])return true;
+        this._includes[url]=true;
         return false;
     },
-    production: false,
-    exceptionHandler: function(o,e){
-        var c=[];
-        for(i in e){
-            c.push(i+": ".e[i]);
-        }
-        log.error('exception by ',o,c.join("\n"));
-    },
+	
+	//////////////////////////// MISC //////////////////////////////////
+	
+	/*
+	 Utility function. When you give it an URL, and argument, it will
+	 append argument to the URL.
+	 
+	 TODO: this function is incomplete. It should also check if argument is
+	 already in the URL and handle that properly.
+	
+	 See also: http://api.jquery.com/jQuery.param/
+	*/
+	addArgument: function(url,a,b){
+		if(b)$a+='='+encodeURIComponent(b);
+        return url+(url.indexOf('?')==-1?'?':'&')+a;
+	}
 
-
-
-
-    // Problem during JS evaluation. Pop up a message
-    evalProblem: function(e,response_text){
-        //while some browsers prevents popup we better use alert
-        w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
-        if(w){
-            w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
-            w.document.write(response_text);
-            w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
-        }else{
-            showMessage("Error in AJAX response: "+e+"\n"+response_text);
-        }
-    }
 });
 
+	/*
 $.fn.extend({
+	 moved to atk4_loader
     atk4_load: function(url,fn){
         $.atk4.load(this,url,fn);
     },
@@ -265,26 +346,21 @@ $.fn.extend({
 				url=$.atk4.addArgument(url,key+'='+value);
 			});
 		}
-        $.atk4.load(this,url,fn,true);
-    },
-    atk4_click: function(url){
-        $.atk4.click(this,url);
+        $.atk4_load(url,fn,true);
     }
 });
+	*/
 
 
-})(jQuery);
+})($);
 
 
+// we use console.log a lot. It is handy in WebKit and Firebug, but
+// would produce error in other browers. If method is not present,
+// we define a blank one to avoid errors.
 if(!window.console){
 	window.console={
 		log: function(){
-			// console / firebug is not present. Ignore all debug messages
 		}
 	}
 }
-
-
-// 1. Core: Initialise checks and add our core functions
-//
-// 1-atk4_load: Load page for matched region. You may use 
