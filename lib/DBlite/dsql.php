@@ -282,10 +282,13 @@ class DBlite_dsql  {
 	}
 	function order($order,$desc=null,$prepend=null){
 		if(!$order)throw new SQLException("Empty order provided");
+		$field=$order;
 		if($desc)$order.=" desc";
 		if($prepend && isset($this->args['order'])){
 			array_unshift($this->args['order'], $order);
 		}else{
+			// existing ordering must be overwritten
+			if(($index=$this->isArgSet('order',$field))!==false)unset($this->args['order'][$index]);
 			$this->args['order'][]=$order;
 		}
 		return $this;
@@ -296,9 +299,9 @@ class DBlite_dsql  {
 	 */
 	function isArgSet($option,$field){
 		if(!isset($this->args[$option]) || empty($this->args[$option]))return false;
-		foreach($this->args[$option] as $arg){
+		foreach($this->args[$option] as $index=>$arg){
 			// option may contain field prefix and suffixes like 'desc'
-			if(stripos($arg,$field)!==false)return true;
+			if(stripos($arg,$field)!==false)return $index;
 		}
 		return false;
 	}
