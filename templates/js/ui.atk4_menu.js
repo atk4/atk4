@@ -111,7 +111,7 @@ $.widget("ui.atk4_menu", {
             this.options['callback'].call(el,url,fn);
         }else{
 			if(el.hasClass('nav_item'))return;
-            if(url!='#')$('#Content').atk4_load2(url,fn);
+            if(url!='#')$('#Content').atk4_load(url,fn);
         }
     }
 });
