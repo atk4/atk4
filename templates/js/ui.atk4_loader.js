@@ -176,7 +176,9 @@ $.widget('ui.atk4_loader', {
             for(var i in scripts){
 				try{
 					window.region=self.element;
-					eval(scripts[i]);
+					if(eval.call)eval.call(window,scripts[i]);else
+					// IE-pain
+					with(window)eval(scripts[i]);
 				}catch(e){
 					console.error("JS:",e,scripts[i]);
 				}
