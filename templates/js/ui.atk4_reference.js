@@ -120,10 +120,14 @@ $.widget("ui.atk4_reference", {
 		var val=$(el).val();
 		var ref=this;
 
+	console.log('newEntry for ',el);
 		// Not adding empty entries
 		if(!val && ref.element.val()!=''){
 			ref.element.val('');
-			ref.element.trigger('change_ref');
+			if(ref.element.attr('data-initvalue')!=ref.element.val()){
+				ref.element.attr('data-initvalue',ref.element.val());
+				ref.element.trigger('change_ref');
+			}
 			return false;
 		}
 
@@ -134,7 +138,10 @@ $.widget("ui.atk4_reference", {
 		this.element.children().each(function(){
 			if($(this).text()==val){
 				ref.element.val($(this).val());
-				ref.element.trigger('change_ref');
+				if(ref.element.attr('data-initvalue')!=ref.element.val()){
+					ref.element.attr('data-initvalue',ref.element.val());
+					ref.element.trigger('change_ref');
+				}
 				matches_other=true;
 			}
 		});

@@ -25,7 +25,8 @@ $.widget("ui.atk4_form", {
 		form.loader=this.element.parents('.atk4_loader');
 		
 		if(form.loader.length){
-			form.loader.bind('atk4_loaderbeforeclose.'+form.element.attr('id'),function(){
+			form.loader.bind('atk4_loaderbeforeclose.'+form.element.attr('id'),function(event){
+				event.stopPropagation();
 				if(form.changed && !confirm('Are you sure? Form '+form.element.attr('id')+' changes will be lost!'))return false;
 			});
 		}
@@ -34,14 +35,23 @@ $.widget("ui.atk4_form", {
 
 		this.loading=this.element.find('img.form_loading');
 
-		$('input').bind('keypress',function(e){
+		this.element.find('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
 			if(e.keyCode==13){
 				$(this).closest('form').submit();
 				return false;
-			}
+				}
 		});
-		$(':input').bind('change',function(){
+		this.element.find(':input').each(function(){
+			$(this).attr('data-initvalue',$(this).val())
+		})
+		.bind('change',function(ev){
+			if($(this).attr('data-initvalue')==$(this).val()){
+				ev.preventDefault();
+				return;
+			}else {
+				$(this).attr('data-initvalue',$(this).val());
+			}
 			if(!form.changed)form.element.addClass('form_changed');
 			form.changed=true;
 		});
@@ -122,11 +132,14 @@ $.widget("ui.atk4_form", {
 
 		f.val(value).change();
 	},
-	reloadField: function(field_name,fn){
+	reloadField: function(field_name,fn,arg,val){
 		var field_id=this.element.attr('id')+'_'+field_name;
 		var url=this.base_url;
+		console.log('Field reloading: ',field_name);
 
 		url=$.atk4.addArgument(url,"cut_object="+field_id);
+		if(arg)url=$.atk4.addArgument(url,arg,val);
+		
 
 		var f=$("#"+field_id);
 		if(f.hasClass('field_reference')){
@@ -136,7 +149,10 @@ $.widget("ui.atk4_form", {
 
 
 		}
+		console.log('url=',url,f[0]);
+		var c=this.changed;this.changed=false;
 		f.atk4_reload(url,null,fn);
+		this.changed=c;
 	},
 	fieldError: function(field_name,error){
 		var field=

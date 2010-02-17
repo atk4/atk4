@@ -69,7 +69,6 @@ $.widget('ui.atk4_loader', {
 		
 		var self=this;
 		
-		
 		this.element.addClass('atk4_loader');
 		 
 		if(this.options.debug){
@@ -167,15 +166,40 @@ $.widget('ui.atk4_loader', {
 
 			var m=el;
 			m.hide();
+			
+			// Parse into Document
+			var n=$('<div/>').append(source).children();
+			
+			//console.log('New content: ',n[0]);
+			
+//			console.log("Load check", el.attr('id'),' vs ',n.attr('id'));
+			
+			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==el.attr('id')))){
+				console.log('RELOAD');
+				n=n.children();
+			}else if(reload){
+				console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
+				
+			}
+			el.empty();
+			
+			n.each(function(){
+//				console.log('iterating through ',this);
+				$(this).remove().appendTo(el);
+			});
+			
+			
+			/*
 			if(reload){
 				el.replaceWith(selector?$('<div/>').append(source).find(selector):source);
 			}else{
 				el.html(selector?$('<div/>').append(source).find(selector):source);
 			}
+			*/
 
             for(var i in scripts){
 				try{
-					window.region=self.element;
+					window.region=el;
 					if(eval.call)eval.call(window,scripts[i]);else
 					// IE-pain
 					with(window)eval(scripts[i]);
@@ -205,6 +229,7 @@ $.widget('ui.atk4_loader', {
 	},
 	remove: function(){
 		var self=this;
+		console.log('called REMOVE');
 		self.helper && self.helper.css({background:'red'});
 		if(false === self._trigger('beforeclose')){
 			self.helper.css({background:'#fe8'});
@@ -219,10 +244,15 @@ $.widget('ui.atk4_loader', {
 		console.log('cancelClose');
 	},
 	
-	loadURL: function(url,fn){
+	loadURL: function(url,fn,strip_layer){
 		/*
 		 Function provided mainly for compatibility. It will load URL in the selector
 		 and will set "fn" to fire off when loading is complete
+		 
+		 Sometimes you would want to reload (atk4_reload) an element. This means,
+		 you will receive the same element from AJAX. New element comes with the
+		 same ID and sub-elements. What we have to do is copy children from the
+		 received data into existing element.
 		*/
 		var self = this;
 		
@@ -248,8 +278,18 @@ $.extend($.ui.atk4_loader, {
 
 $.fn.extend({
 	atk4_load: function(url,fn){
-		this.atk4_loader({debug: true})
+		this.atk4_loader()
 			.atk4_loader('loadURL',url,fn)
+			;
+	},
+	atk4_reload: function(url,arg,fn){
+        if(arg){
+            $.each(arg,function(key,value){
+                url=$.atk4.addArgument(url,key+'='+value);
+            });
+        }
+		this.atk4_loader()
+			.atk4_loader('loadURL',url,fn,null,true)
 			;
 	}
 });

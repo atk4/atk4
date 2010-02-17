@@ -328,7 +328,7 @@ $.extend($.atk4,{
 	 See also: http://api.jquery.com/jQuery.param/
 	*/
 	addArgument: function(url,a,b){
-		if(b)$a+='='+encodeURIComponent(b);
+		if(b)a+='='+encodeURIComponent(b);
         return url+(url.indexOf('?')==-1?'?':'&')+a;
 	}
 
