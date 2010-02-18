@@ -9,6 +9,7 @@
 class Menu extends AbstractView {
 	protected $items=array();
 	protected $last_item=null;
+	protected $current_menu_class="current";
 	
     function init(){
         parent::init();
@@ -29,7 +30,7 @@ class Menu extends AbstractView {
 				'page'=>$href,
 				'href'=>$this->api->getDestinationURL($href),
 				'label'=>$label,
-				'class'=>$this->isCurrent($href)?"current":"separator",
+				'class'=>$this->isCurrent($href)?$this->current_menu_class:"separator",
 			));
 
         return $this;
