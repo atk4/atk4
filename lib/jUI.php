@@ -86,7 +86,7 @@ class jUI extends jQuery {
 			return $this;
         }
 
-        parent::addOnReady('$.atk4.includeJS("'.$relative_path.$ext.'")');
+        parent::addOnReady('$.atk4.includeJS("'.$this->api->getBaseURL().$relative_path.$ext.'")');
         return $this;
     }
     function addStylesheet($file,$ext='.css'){
