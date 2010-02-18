@@ -14,6 +14,7 @@ class Page extends AbstractView {
 		parent::init();
 	}
 	function defaultTemplate(){
+		if($_GET['cut_page'])return array('page','Content');
 		$page_name='page/'.strtolower($this->short_name);
 		if($this->api->template->findTemplate($page_name))return array($page_name,'_top');
 		else return 'Content';
