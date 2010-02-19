@@ -17,14 +17,14 @@ $.each({
 		alert(a);
 	},
 	redirect: function(url,fn){
-		if($.fn.atk4_load){
+		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
 			$.univ.page(url,fn);
 		}else{
 			document.location=url;
 		}
 	},
 	redirectURL: function(page,fn){
-		if($.atk4){
+		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
 			$.univ.page(page,fn);
 		}else{
 			document.location=page;
