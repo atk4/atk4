@@ -38,7 +38,7 @@ class jQuery_Chain extends AbstractModel {
 		return $this;
 	}
 	function execute(){
-		if(isset($_POST['ajax_submit'])){
+		if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
 			//if($this->api->jquery)$this->api->jquery->getJS($this->owner);
 
 			// TODO: currently does not support ability to execute multiple chains
