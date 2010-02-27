@@ -25,12 +25,17 @@ class System_ProcessIO extends AbstractModel {
     // Initialization and starting process
     function init(){
         parent::init();
+		$this->debug('ProcessIO initialised, setting descriptor options');
         $this->descriptorspec=array(
                 0 => array("pipe", "r"),  // stdin
                 1 => array("pipe", "w"),  // stdout
-                2 => array("pipe", "w")  // stderr ?? instead of a file
+                2 => array("pipe", "w"),
+				//2 => array("file", BASEDIR.'/logs/exec.log', 'a' )  // stderr ?? instead of a file
                 );
     }
+	function debugStatus(){
+		$this->debug('process status: '.print_r(proc_get_status($this->process),true));
+	}
     function exec($cmd,$args=array()){
         // Arguments must be safe
         if(!is_array($args))$args=array($args);
@@ -42,6 +47,7 @@ class System_ProcessIO extends AbstractModel {
         // Command myst be safe
         $this->cmd=escapeshellcmd($cmd);
 
+		$this->debug('Executing '.$cmd.($this->args?' with options '.join(',',$this->args):''));
         // Now do the execution
         $this->execute_raw($this->cmd.' '.join(' ',$this->args));
         return $this;
@@ -55,7 +61,9 @@ class System_ProcessIO extends AbstractModel {
         if(!is_resource($this->process)){
             throw new System_ProcessIO_Exception("Failed to execute");
         }
-
+		$this->debug('Execute successful');
+		$this->debugStatus();
+		
         $this->pipes['in'] =& $pipes[0];
         $this->pipes['out'] =& $pipes[1];
         $this->pipes['err'] =& $pipes[2];
@@ -68,7 +76,9 @@ class System_ProcessIO extends AbstractModel {
         // always adds newline at the end
         if(!is_resource($this->pipes['in']))
             throw new System_ProcessIO_Exception("stdin is closed or haven't been opened. Cannot write to process");
-        fwrite($this->pipes['in'],$str."\n");
+        $this->debug('writing '.$str.'+newline into stdin');
+		fwrite($this->pipes['in'],$str."\n");
+		$this->debugStatus();
         return $this;
     }
     function write_all($str){
@@ -78,6 +88,7 @@ class System_ProcessIO extends AbstractModel {
         if(substr($str,-1,1)=="\n")$str=substr($str,0,-1);
         $this->write($str);
         $this->close('in');
+		$this->debugStatus();
         return $this;
     }
     function read_line($res='out'){
@@ -89,10 +100,11 @@ class System_ProcessIO extends AbstractModel {
     }
     function read_all($res='out'){
         // Reads all output and returns. Closes stdout when EOF reached.
+		// set $safety
         $str='';
-        while(!feof($this->pipes[$res])){
-            $str.=fgets($this->pipes[$res],1024);
-        }
+		$this->debugStatus();
+		$this->debug('reading all output');
+		$str=stream_get_contents($this->pipes[$res]);
         $this->close($res);
         if(substr($str,-1,1)!="\n")$str.="\n";
         
@@ -108,7 +120,8 @@ class System_ProcessIO extends AbstractModel {
         foreach($this->pipes as $key=>$res){
             $this->close($key);
         }
-        proc_terminate($this->process,$sig);
+        $this->debug('process terminated');
+		proc_terminate($this->process,$sig);
     }
     function close($res=null){
         // This function will finish reading from in/err streams
@@ -118,8 +131,11 @@ class System_ProcessIO extends AbstractModel {
         // use terminate() instead;
         //
         if(is_null($res)){
+			$this->debug('closing ALL streams, starting with IN');
             $this->close('in');
 
+
+			$this->debug('Reading all data from OUT');
             // Read remaining of stdout if not read
             if(!feof($this->pipes['out']))$out=$this->read_all();
             $out=$this->close('out');
@@ -130,17 +146,14 @@ class System_ProcessIO extends AbstractModel {
 
             return $out;
         }else{
+			$this->debug('Closing '.$res);
             if(is_resource($this->pipes[$res])){
                 fclose($this->pipes[$res]);
                 $this->pipes[$res]=null;
+				$this->debugStatus();
             }
         }
-        $this->exit_code = proc_close($this->process);
-    }
-
-    // Dump
-    function dump(){
-        var_dump(proc_get_status($this->process));
+        //$this->exit_code = proc_close($this->process);
     }
 
     // Misc
