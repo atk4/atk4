@@ -177,10 +177,10 @@ class Grid extends CompleteLister {
 			strtotime($this->current_row[$field]));
 	}
 	function format_nowrap($field){
-		$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='nowrap';
+		$this->tdparam[$this->getCurrentIndex()][$field]['style']='nwhite-space: nowrap';
 	}
 	function format_wrap($field){
-		$this->tdparam[$this->getCurrentIndex()][$field]['style/white-space']='wrap';
+		$this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: wrap';
 	}
 	function format_template($field){
 		$this->current_row[$field]=$this->columns[$field]['template']

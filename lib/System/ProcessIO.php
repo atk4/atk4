@@ -104,6 +104,7 @@ class System_ProcessIO extends AbstractModel {
         $str='';
 		$this->debugStatus();
 		$this->debug('reading all output');
+		//stream_set_blocking($this->pipes[$res],0);
 		$str=stream_get_contents($this->pipes[$res]);
         $this->close($res);
         if(substr($str,-1,1)!="\n")$str.="\n";

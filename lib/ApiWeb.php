@@ -96,7 +96,8 @@ class ApiWeb extends ApiCLI {
         if($this->name && session_id()==""){
             // If name is given, initialize session. If not, initialize
             // later when loading config file.
-            session_name($this->name);
+            if($_GET['SESSION_ID'])session_id($_GET['SESSION_ID']);
+			session_name($this->name);
             session_start();
         }
     }
