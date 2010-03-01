@@ -107,6 +107,10 @@ $.widget("ui.atk4_reference", {
 		this.autocomplete.mouseout(function(){
 			ref.element.mouseout()
 		});
+		
+		if(ref.element.attr('disabled')){
+			this.autocomplete.attr('disabled',true);
+		}
 
 	   /*
 		dropdown.click(function(e){
