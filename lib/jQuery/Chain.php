@@ -119,7 +119,7 @@ class jQuery_Chain extends AbstractModel {
 		}
 		if($fn)$fn->_enclose();
 		$id=$this->owner;
-		if(!$url)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+		if(!$url)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name),false);
 		return $this->_fn('atk4_reload',array($url,$arguments,$fn));
 	}
 	function saveSelected($grid){
