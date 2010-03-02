@@ -151,7 +151,7 @@ $.widget("ui.atk4_form", {
 		}
 		console.log('url=',url,f[0]);
 		var c=this.changed;this.changed=false;
-		f.atk4_reload(url,null,fn);
+		f.atk4_load(url,fn);
 		this.changed=c;
 	},
 	fieldError: function(field_name,error){
