@@ -207,7 +207,7 @@ $.widget('ui.atk4_loader', {
 					console.error("JS:",e,scripts[i]);
 				}
             };
-
+			
 			if(callback)$.atk4(callback,true);
 			m.show();
        });
@@ -266,7 +266,7 @@ $.widget('ui.atk4_loader', {
 		self.base_url=url;
 		
 		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);
-		this._loadHTML(self.element,url,fn);
+		this._loadHTML(self.element,url,fn,strip_layer);
 		console.log('loading complete for ',self.element[0]);
 	}
 	
@@ -289,7 +289,7 @@ $.fn.extend({
             });
         }
 		this.atk4_loader()
-			.atk4_loader('loadURL',url,fn,null,true)
+			.atk4_loader('loadURL',url,fn,true)
 			;
 	}
 });

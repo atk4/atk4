@@ -201,7 +201,16 @@ $.extend($.atk4,{
 			if(!this.loading){
 				fn.call(document);
 			}else{
-				this._readyLast=fn;
+				if(this._readyLast){
+					var prev=this._readyLast;
+					// call both functions if one is already there
+					this._readyLast=function(){
+						prev();
+						fn();
+					}
+				}else{
+					this._readyLast=fn;
+				}
 			}
 			return;
 		}
