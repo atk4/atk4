@@ -57,20 +57,17 @@ $.widget('ui.atk4_loader', {
 	*/
 	helper: undefined,
 	
-	/*
-	options: {
-		debug: true,
-		anchoring: false
-	},
-	*/
-	
-	
 	_init: function(){
 		
 		var self=this;
+		/*
+		this.options.debug=true;
+		this.options.anchoring=true;
+		*/
 		
 		this.element.addClass('atk4_loader');
 		 
+		 console.log("OPTioNS:",this.options);
 		if(this.options.debug){
 			var d=$('<div/>');
 			d.css({background:'#fe8',border: '1px solid black',position:'absolute',width:'100px',height:'50px'});
@@ -243,7 +240,11 @@ $.widget('ui.atk4_loader', {
 	cancelClose: function(){
 		console.log('cancelClose');
 	},
-	
+	setURL: function(url){
+		var self=this;
+		
+		self.base_url=url;
+	},
 	loadURL: function(url,fn,strip_layer){
 		/*
 		 Function provided mainly for compatibility. It will load URL in the selector
