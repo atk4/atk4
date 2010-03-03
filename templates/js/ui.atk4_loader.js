@@ -140,8 +140,14 @@ $.widget('ui.atk4_loader', {
 		//if(false===self._loadingRegion()){
 			//console.log('Page loading was canceled loadingStart trigger');
 //		}
+		if(self.loading){
+			$.univ().loadingInProgress();
+			return false;
+		}
 		
+		self.loading=true;
         $.atk4.get(url,function(res){
+			self.loading=false;
 			/*
 			if(res.substr(0,13)=='SESSION OVER:'){
 				$.univ.dialogOK('Session over','Your session have been timed out',function(){ document.location='/'});
@@ -256,6 +262,11 @@ $.widget('ui.atk4_loader', {
 		 received data into existing element.
 		*/
 		var self = this;
+		
+		if(self.loading){
+			$.univ().loadingInProgress();
+			return false;
+		}
 		
 		console.log('triggering beforeClose',self.element[0]);
 		self.helper && self.helper.css({background:'red'});

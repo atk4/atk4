@@ -381,6 +381,13 @@ ajaxec: function(url){
 
 	});
 },
+loadingInProgress: function(){
+	if(this.successMessage){
+		this.successMessage('Loading is in progress. Please wait');
+	}else{
+		alert('Loading is in progress. Please wait');
+	}
+},
 	autoChange: function(interval){
 	// Normally onchange gets triggered only when field is submitted. However this function
 	// will make field call on_change one second since last key is pressed. This makes event

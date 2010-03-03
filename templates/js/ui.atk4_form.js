@@ -13,10 +13,10 @@
 
 $.widget("ui.atk4_form", {
 
-	loading: undefined,
 	submitted: undefined,
 	base_url: undefined,
 	loader: undefined,
+	loading: false,
 	changed: false,
     _init: function(options){
         $.extend(this.options,options);
@@ -32,8 +32,6 @@ $.widget("ui.atk4_form", {
 		}
 
 		this.element.addClass('atk4_form');
-
-		this.loading=this.element.find('img.form_loading');
 
 		this.element.find('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
@@ -54,10 +52,6 @@ $.widget("ui.atk4_form", {
 			}
 			if(!form.changed)form.element.addClass('form_changed');
 			form.changed=true;
-		});
-
-		this.loading.click(function(){
-			form.indicateLoading();
 		});
 
 		this.overlay_prototype=this.element.find('.form_iedit');
@@ -87,14 +81,6 @@ $.widget("ui.atk4_form", {
 		if(form.loader){
 			form.loader.unbind('atk4_loaderbeforeclose.'+form.element.attr('id'));
 		}
-	},
-	indicateLoading: function(){
-		var img=this.loading.attr('src').replace('not_loading','loading');
-		this.loading.attr('src',img);
-	},
-	indicateNotLoading: function(){
-		var img=this.loading.attr('src').replace('loading','not_loading');
-		this.loading.attr('src',img);
 	},
 	setFieldValue: function(field_name,value){
 		var f=$('#'+this.element.attr('id')+'_'+field_name);
@@ -222,6 +208,10 @@ $.widget("ui.atk4_form", {
 	},
 	submitForm: function(btn){
 		var params={}, form=this;
+		if(form.loading){
+			$.univ().loadingInProgress();
+			return false;
+		}
 		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], option[selected], textarea")
 		.each(function() {
 			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
@@ -234,7 +224,9 @@ $.widget("ui.atk4_form", {
 		// btn is clicked
 		if(btn)params[btn]=1;
 
+		form.loading=true;
 		$.post(this.element.attr('action'),params,function(res){
+			form.loading=false;
 			var c=form.changed;form.changed=false;
 			if(res.substr(0,5)=='ERROR'){
 				$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
