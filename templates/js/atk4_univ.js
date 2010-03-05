@@ -399,6 +399,7 @@ loadingInProgress: function(){
 
 		function onkeyup(){
 			if(f.attr('data-val')==f.val())return;
+			f.attr('data-val',f.val());
 			var timer=$.data(f0,'timer');
 			if(timer){
 				clearTimeout(timer);
