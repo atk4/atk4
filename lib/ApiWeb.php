@@ -21,8 +21,8 @@ class ApiWeb extends ApiCLI {
     public $apinfo=array();
 
     protected $page_base=null;
-    protected $index_page='Index';	
-    protected $sticky_get_arguments = array();	
+    protected $index_page='Index';
+    protected $sticky_get_arguments = array();
     protected $ajax_class='Ajax';
 
     function __construct($realm=null,$skin='kt2'){
@@ -107,6 +107,9 @@ class ApiWeb extends ApiCLI {
     function stickyForget($name){
 		unset($this->sticky_get_arguments[$name]);
     }
+	function getStickyArguments(){
+		return $this->sticky_get_arguments;
+	}
     function sendHeaders(){
         /**
          * Send headers to browser

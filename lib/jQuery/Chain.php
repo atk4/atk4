@@ -65,8 +65,10 @@ class jQuery_Chain extends AbstractModel {
 				$r=$arg->_render();
 				if(substr($r,-1)==';')$r=substr($r,0,-1);
 				return $r;
-			}else{
+			}elseif($arg instanceof AbstractView){
 				return "'#".$arg->name."'";
+			}else{
+				return "'".$arg."'";	// indirectly call toString();
 			}
 		}elseif(is_array($arg)){
 			$a2=array();
@@ -103,9 +105,9 @@ class jQuery_Chain extends AbstractModel {
 	}
 	function reload($arguments=array(),$fn=null,$url=null){
 		/*
-		 * $obj->js()->reload();	 will now properly reload most of the objects. 
+		 * $obj->js()->reload();	 will now properly reload most of the objects.
 		 * This function can be also called on a low level, however URL have to be
-		 * specified. 
+		 * specified.
 		 * $('#obj').univ().reload('http://..');
 		 *
 		 * Difference between atk4_load and this function is that this function will
