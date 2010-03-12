@@ -92,7 +92,7 @@ class DBlite extends DBlite_Abstract {
             // pre-parsed DSN
             $type=$dsn['type'];
         }else{
-            list($type, $rest)=split('://', $dsn, 2);
+            list($type, $rest)=explode('://', $dsn, 2);
         }
 
         // We are going to include file only if the class does not exist. This way

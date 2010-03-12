@@ -138,7 +138,7 @@ class SMlite extends AbstractModel {
 
         if(isset($this->api->skin) && $this->api->skin){
         	// there may be several paths
-        	$cp=split(';',$this->api->getConfig('smlite/template_dir','templates'));
+        	$cp=explode(';',$this->api->getConfig('smlite/template_dir','templates'));
         	foreach($cp as $p)$path[]=$p.'/'.$this->api->skin;
         }
         $path[]=$this->api->getConfig('smlite/template_dir','templates');
@@ -383,7 +383,7 @@ class SMlite extends AbstractModel {
         /*
          * Find template location inside search directory path
          */
-        $tmp_locations = split(PATH_SEPARATOR,$this->settings['templates']);
+        $tmp_locations = explode(PATH_SEPARATOR,$this->settings['templates']);
         foreach($tmp_locations as $loc)if($loc){
         	$filename=str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']);
             if(file_exists(str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']))){
@@ -483,7 +483,7 @@ class SMlite extends AbstractModel {
         if(!isset($branch))throw new BaseException("Cannot rebuild tags, because template is empty");
         foreach($branch as $key=>$val){
             if(is_int($key))continue;
-            list($real_key,$junk)=split('#',$key);
+            list($real_key,$junk)=explode('#',$key);
             $this->registerTag($real_key,null,$branch[$key]);
             $this->registerTag($key,null,$branch[$key]);
             if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);

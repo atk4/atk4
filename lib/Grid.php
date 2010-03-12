@@ -577,7 +577,7 @@ class Grid extends CompleteLister {
 	function formatRow(){
 		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
 			$this->current_row[$tmp.'_original']=$this->current_row[$tmp];
-			$formatters = split(',',$column['type']);
+			$formatters = explode(',',$column['type']);
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_".$formatter)){
 					$this->$m($tmp);

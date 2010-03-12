@@ -129,7 +129,7 @@ class ApiCLI extends AbstractView {
         if(is_null($this->config)){
             $this->readConfig();
         }
-        $parts = split('/',$path);
+        $parts = explode('/',$path);
         $current_position = $this->config;
         foreach($parts as $part){
             if(!array_key_exists($part,$current_position)){
