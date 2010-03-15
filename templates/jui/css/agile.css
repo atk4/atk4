@@ -1,0 +1,524 @@
+/* Agile Toolkit (c) Agile Technologies // http://www.agiletech.ie/ */
+
+/* ------------ Resetting elements */
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { 
+	margin:0;
+	padding:0;
+}
+
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+fieldset,img { 
+	border:0;
+}
+
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style:normal;
+	font-weight:normal;
+}
+
+ol,ul {
+	list-style:none;
+}
+
+caption,th {
+	text-align:left;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-size:100%;
+	font-weight:normal;
+}
+
+q:before,q:after {
+	content:'';
+}
+
+abbr,acronym { border:0;
+}
+
+
+/* ------------ Typography */
+
+h1, h2, h3, h4, h5, h6 {
+	line-height: 1.3;
+	margin: 0.5em 0 1em 0;
+	font-weight: bold;
+}
+
+h1 { font-size: 2em;margin: .67em 0; }
+h2 { font-size: 1.5em; margin: .75em 0; }
+h3 { font-size: 1.3em; margin: .83em 0; }
+h4 { font-size: 1.1em; }
+h5 { font-size: .83em;margin: 1.5em 0; }
+h6 { font-size: .75em; margin: 1.67em 0; }
+
+h4, p,
+blockquote, ul,
+fieldset, form,
+ol, dl, dir, menu { margin: 1.12em 0; }
+
+p { line-height: 1.4; }
+
+ol, ul, dir, menu, dd { margin-left: 40px }
+ol { list-style-type: decimal }
+ol ul, ul ol, ul ul, ol ol { margin-top: 0; margin-bottom: 0 }
+
+h1:first-child { margin-top: 0; }
+
+strong {
+	font-weight: bold;
+}
+
+
+/* ------------ jQuery UI settings */
+
+.atk-frame.ui-widget-content {
+	padding: 0;
+	border: 0;
+}
+
+.atk-frame.ui-widget>.ui-widget-header {
+	padding: 0.5em 0.8em;
+	font-size: 120%;
+}
+
+.atk-frame.ui-widget>.ui-widget-content {
+	padding: 1em;
+}
+
+.ui-widget {
+	margin-bottom: 1.5em;
+}
+
+/*
+.ui-widget-content .ui-widget {
+	margin-bottom: 1.5em;
+}
+*/
+
+.ui-widget.ui-button {
+	margin-bottom: 0;
+}
+
+
+/* ------------ Common settings */
+
+.atk-button-panel>.ui-button,
+.atk-form-simple dl.atk-form-buttons .ui-button {
+	margin-right: 0.5em;
+}
+
+.atk-paginator,
+.atk-button-panel {
+	margin: 0.7em 0;
+}
+
+.atk-lister-row {
+	border-bottom: 1px solid #eee;
+}
+
+/* ------------ Features */
+
+
+#atk-logo {
+	border: none;
+	font-size: 0;
+	line-height: 0;
+	width: 162px;
+	height: 78px;
+	overflow: hidden;
+}
+
+#atk-version {
+	float: right;
+}
+
+.clear {
+	clear: both;
+	font-size: 0;
+	line-height: 0;
+}
+
+.clearfix {
+    overflow: hidden;
+	width: 100%;
+}
+
+.float-left { float: left; }
+.float-right { float:right; }
+
+.wrapper {
+	width: 980px;
+	margin: auto;
+}
+
+
+/* ------------ Styles */
+
+body {
+	font-size: 10pt;
+	font-family: Arial, serif;
+}
+
+a:link {
+	color: #3886b3;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #3886b3;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: #ff8400;
+}
+
+.atk-link-sep {
+	margin: 0 0.2em;
+	color: #999;
+}
+
+/* ------------ Sticky footer */
+
+
+html {
+	height: 100%;
+}
+
+body {
+	min-height: 100%;
+	height: 100%;
+}
+
+div#layout {
+	height: auto !important;
+	height: 100%;
+	min-height: 100%;
+}
+
+div#footer-guard {
+	height: 4em;
+	clear:both;
+}
+
+#footer {
+	height: 3em;
+	margin-top: -3em;
+}
+
+
+/* ------------ Elements */
+
+/* Paginator */
+
+.atk-paginator {
+	padding: 0.5em 0;
+	border-top: 1px solid #ccc;
+	text-align: center;
+}
+
+.atk-paginator>a {
+	padding: 0 0.3em;
+}
+
+.atk-paginator>a.ui-state-active {
+	text-decoration: none;
+}
+
+.atk-paginator-next {
+	float: right;
+}
+
+.atk-paginator-previous {
+	float: left;
+}
+
+/* Grid */
+
+/*
+.atk-grid>table {
+	width: 100%;
+}
+*/
+
+.atk-grid>table>thead>tr>th,
+.atk-grid>table>tbody>tr>td {
+	padding: 0.3em 0.6em;
+	vertical-align: top;
+}
+
+html>/**/body .atk-grid>table>thead>tr>th {
+	background: none;
+}
+
+.atk-grid>table>tbody>tr>td {
+	border-top: 1px solid #eee;
+}
+.atk-grid>table>tbody>tr:first-child>td {
+	border-top: none;
+}
+
+
+.atk-grid>.atk-paginator {
+	margin-top: 0;
+}
+
+.atk-grid-notfound {
+	width: 14em;
+	margin: 1em auto;
+	text-align: center;
+	padding: 0.3em 0.3em 0.3em 0.5em;
+	white-space: nowrap;
+}
+
+.atk-grid-notfound .ui-icon {
+	margin-right: 0.2em;
+}
+
+.atk-grid>table>tbody>tr.atk-grid-totals>td {
+	font-weight: bold;
+	border-color: #000;
+}
+
+/* Lister */
+
+.atk-lister>.ui-widget-content {
+	padding: 0.2em;
+}
+
+.atk-lister>.ui-widget-content>.ui-widget-header {
+	margin-bottom: 0.2em;
+}
+
+.atk-lister>.ui-widget-content>.ui-widget-header,
+.atk-lister-row {
+	padding: 0.4em 0.8em;
+}
+
+.atk-lister-row.odd {
+	background: #f5f5f5;
+}
+
+.atk-lister>.ui-widget-content>.atk-lister-row:last-child {
+	border-bottom: none;
+}
+
+/* ------------ Menu */
+
+.atk-menu {
+	overflow: hidden;
+}
+
+.atk-menu ul,
+.atk-menu ul li {
+	margin: 0;
+	padding: 0;
+	
+}
+
+.atk-menu-vertical ul li a,
+.atk-menu-horizontal ul li a {
+	padding: 0.4em 0.8em;
+	display: block;
+}
+
+/* Menu Horizontal */
+
+.atk-menu-horizontal ul li {
+	float: left;
+	border-width: 1px 0px 1px 1px;
+}
+
+.atk-menu-horizontal ul li:last-child {
+	border-width: 1px;
+	border-right-width: 1px !important;
+}
+
+.atk-menu-horizontal ul li.ui-state-active {
+	border-width: 1px;
+}
+
+.atk-menu-horizontal ul li.ui-state-active+li {
+	border-width: 1px 0px 1px 0;
+}
+
+/* Menu Vertical */
+
+
+.atk-menu-vertical ul li {
+	border-width: 1px 1px 0px 1px;
+}
+
+.atk-menu-vertical ul li:last-child {
+	border-width: 1px;
+	border-bottom-width: 1px !important;
+}
+
+.atk-menu-vertical ul li.ui-state-active {
+	border-width: 1px;
+}
+
+.atk-menu-vertical ul li.ui-state-active+li {
+	border-width: 0px 1px;
+}
+
+/* ------------ Forms */
+
+.atk-form>form>dl.atk-form-buttons,
+.atk-form>form>dl.atk-form-buttons>dt,
+.atk-form>form>dl.atk-form-buttons>dd,
+.atk-form>form>fieldset>dl,
+.atk-form>form>fieldset>dl>dt,
+.atk-form>form>fieldset>dl>dd {
+	margin: 0;
+	padding: 0;
+}
+
+.atk-form>form>fieldset {
+	margin-bottom: 1em;
+	border-bottom: 1px solid #eee;
+}
+
+.atk-form>form>dl.atk-form-buttons,
+.atk-form>form>fieldset>dl {
+	margin-bottom: 1em;
+}
+
+.atk-form>form>fieldset .ui-state-error {
+	padding: 0.3em 0.6em 0.3em 0.4em;
+	font-size: 80%;
+}
+
+.atk-form>form>fieldset .ui-state-error .ui-icon {
+	margin: 0 0.3em 0 0;
+	float: left;
+}
+
+.atk-form dt label {
+	color: #444;
+	position: relative;
+	z-index: 2;
+}
+
+.atk-form dt label span {
+	color: #ce0000;
+	position: absolute;
+	right: -0.7em;
+	top: 0;
+	margin-right: 0;
+}
+
+.atk-form ins {
+	color: #999;
+	font-size: 90%;
+	text-decoration: none;
+}
+
+/* Common form settings */
+
+/*
+.atk-form-simple>form>fieldset>dl>dd>div {
+	padding-right: 3px;
+}
+
+.atk-form-simple>form>fieldset>dl>dd>div>textarea,
+.atk-form-simple>form>fieldset>dl>dd>div>input[type="text"] {
+	width: 100%;
+}
+*/
+
+
+/* Form Simple */
+
+.atk-form-simple>form>fieldset>dl>dt {
+	margin-right: -100%;
+	float: left;
+	width: 10em;
+}
+
+.atk-form-simple>form>dl.atk-form-buttons>dd,
+.atk-form-simple>form>fieldset>dl>dd {
+	padding-left: 12em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-field {
+	margin-bottom: 0.2em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
+	margin-top: 0.3em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error {
+	overflow: hidden;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div {
+	float: left;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div>.ui-icon {
+	background-position: -160px -192px;
+}
+
+/* Form Simple 
+
+.atk-form-simple dl {
+	display: inline-block;
+	width: 100%;
+	.zoom: 1;
+}
+
+.atk-form-simple dl:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.atk-form-simple>form>fieldset>dl>dt,
+.atk-form-simple>form>fieldset>dl>dd {
+	float: left;
+	margin-right: -100%;
+	display: inline;
+}
+
+.atk-form-simple>form>fieldset>dl>dt {
+	width: 10em;
+	margin-right: -100%;
+	z-index: 2;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-field,
+.atk-form-simple>form>dl.atk-form-buttons {
+	padding-left: 12em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-field {
+	width: 14em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error {
+	padding-left: 27em;
+	margin-right: 0;
+}
+
+.atk-form-simple>form>dl.atk-form-buttons {
+	overflow: hidden;
+}
+
+.atk-form-simple>form>dl.atk-form-buttons:after {
+	display:none;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
+	margin-top: 0.3em;
+	display: block;
+}
