@@ -27,6 +27,12 @@ div#header {
 	padding: 0.5em 1em;
 }
 
+.wrapper {
+	width: auto;
+	padding: 0 2em;
+	min-width: 1000px;
+}
+
 #footer {
 	text-align: center;
 }
