@@ -402,7 +402,7 @@ html>/**/body .atk-grid>table>thead>tr>th {
 
 .atk-form dt label {
 /* 	color: #444; */
-	opacity: 0.7;
+/* 	opacity: 0.7; */
 	position: relative;
 	z-index: 2;
 }
