@@ -59,7 +59,6 @@ h6 { font-size: .75em; margin: 1.67em 0; }
 
 h4, p,
 blockquote, ul,
-fieldset, form,
 ol, dl, dir, menu { margin: 1.12em 0; }
 
 p { line-height: 1.4; }
@@ -438,13 +437,24 @@ html>/**/body .atk-grid>table>thead>tr>th {
 
 /* Form Simple */
 
+
 .atk-form-simple>form>dl.atk-form-buttons,
 .atk-form-simple>form>fieldset>dl {
-	overflow: hidden;
+	display: inline-block;
+	width: 100%;
+	.zoom: 1;
 }
 
-.atk-form-simple>form>fieldset>dl>dt,
-.atk-form-simple>form>fieldset>dl>dd {
+.atk-form-simple>form>dl.atk-form-buttons:after,
+.atk-form-simple>form>fieldset>dl:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.atk-form-simple>form>fieldset>dl>dt {
 	float: left;
 }
 
@@ -454,8 +464,9 @@ html>/**/body .atk-grid>table>thead>tr>th {
 	margin-right: 2em;
 }
 
-.atk-form-simple>form>dl.atk-form-buttons {
-	padding-left: 12em;
+.atk-form-simple>form>fieldset>dl>dd,
+.atk-form-simple>form>dl.atk-form-buttons>dd {
+	margin-left: 12em;
 }
 
 .atk-form-simple>form>fieldset>dl>dd.atk-field {
@@ -467,7 +478,7 @@ html>/**/body .atk-grid>table>thead>tr>th {
 }
 
 .atk-form-simple>form>fieldset>dl>dd.atk-error {
-	overflow: hidden;
+	margin-top: 0.5em;
 }
 
 .atk-form-simple>form>fieldset>dl>dd.atk-error>div {
