@@ -315,6 +315,8 @@ class Form extends AbstractView {
 	}
 
 	function addSubmit($label,$name=null,$color=null){
+		if(!$name)$name=str_replace(' ','_',$label);
+
 		$this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
 			->setLabel($label)
 			->setNoSave();
@@ -333,6 +335,7 @@ class Form extends AbstractView {
 	function addButton($label,$name=null,$class=null,$style=null){
 		if(is_null($name))$name=$label;
 		// Now add the regular button first
+		$name=str_replace(' ','_',$name);
 		return $this->last_button = $this->add('Button',$name,'form_buttons')
 			->setLabel($label)->js('click')->univ();
 
