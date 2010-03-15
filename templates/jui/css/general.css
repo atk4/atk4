@@ -31,6 +31,8 @@ div#header {
 	width: auto;
 	padding: 0 2em;
 	min-width: 1000px;
+	margin: 0;
+	.overflow: hidden;
 }
 
 #footer {
