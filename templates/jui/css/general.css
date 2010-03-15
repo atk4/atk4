@@ -5,6 +5,19 @@ div#header {
 	margin-bottom: 1em;
 }
 
+#header-right {
+	float: right;
+}
+
+#header-right .atk-menu {
+	float: right;
+}
+
+#header-right #atk-version {
+	clear: both;
+	float: right;
+}
+
 #navigation ul {
 	overflow: hidden;
 }

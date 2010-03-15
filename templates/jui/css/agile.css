@@ -134,10 +134,6 @@ strong {
 	overflow: hidden;
 }
 
-#atk-version {
-	float: right;
-}
-
 .clear {
 	clear: both;
 	font-size: 0;
