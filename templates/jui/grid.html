@@ -1,10 +1,10 @@
 <?grid?>
 <?$Misc?>
-<div id="<?$_name?>" class="ui-grid ui-corner-all ui-widget-content">
-	<div class="ui-grid-buttonpane ui-helper-clearfix"><?grid_buttons?><?/?></div>
-	<table width="100%">
+<div id="<?$_name?>" class="atk-grid ui-widget">
+	<div class="atk-button-panel"><?grid_buttons?><?/?></div>
+	<table width="<?table_width?>100%<?/?>">
 		<?header?>
-		  <thead><tr>
+		  <thead class="ui-widget-header"><tr>
 		   <?cols?>
 		    <?col?>
 			<th class="ui-widget-header" data-sort="<?$sort?>" nowrap <?$thparam?>><?descr?>Customer<?/?></th>
@@ -26,7 +26,7 @@
 		   <?/row?>
 					
 					   <?totals?>
-					    <tr class="totals">
+					    <tr class="atk-grid-totals">
 					    <?cols?>
 					     <?col?>
 					      <td <?$tdparam?>><?$content?></td>
@@ -41,7 +41,7 @@
 					  <?full_table?>
 					  <?/full_table?>
 					</table>
-					<?not_found?><span class="lister_notfound">No Records Found</span><?/not_found?>
+					<?not_found?><div class="atk-grid-notfound ui-state-highlight ui-corner-all"><i class="ui-icon ui-icon-alert float-left"></i>No Records Found</div><?/not_found?>
 <table align="center" border="0" width="100%" class="grid_menu grid_menu_bottom" cellpadding="0" cellspacing="0">
  <tr>
   <td width="33%" align="left" valign="bottom" nowrap></td>

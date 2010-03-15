@@ -1,34 +1,40 @@
 <?form?>
-<form id="<?$_name?>" class="id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
-	<div class="ui-form">
-		<div class="ui-widget-content ui-corner-top">
-			<fieldset>
-				<?form_body?>			
-					<?form_line?>
-					<div class="form_row">
-						<label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label>
-						<div class="form_field"><?field_input?><input/><?/?></div>
-						<?field_error?>
-						<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
-						<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
-						<strong>Error:</strong><?$field_error_str?></p> </div>
-						<?/?>
-					</div>	
-					<?/form_line?>
-		
-					<?form_separator?></fieldset><fieldset>
-					<div class="form_block"><h2 class="green_dots"><?separator?>Personal information<?/?></h2><?/form_separator?>
-					<?form_comment?><?$comment?> <?/?>
-				<?/form_body?>
-			</fieldset>
-		</div>
-		<div class="ui-widget-content ui-corner-bottom ui-form-buttonpane ui-helper-clearfix">
-		<?form_buttons?>
-			<input type="button" value="Save" class="gbutton button_style1" />
-		<?/form_buttons?>
-		</div>
-	</div>
+<div class="atk-form atk-form-simple ui-widget">
+	<form id="<?$_name?>" class="id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 
-</form>
+		<fieldset>
+			<?form_body?>			
+				<?form_line?>
+				<dl>
+					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
+					<dd class="atk-field"><?field_input?><input/><?/?></dd>
+					<?field_error?>
+					<dd class="atk-error"> 
+						<p class="ui-state-error ui-corner-all"><span class="ui-icon ui-icon-alert float-left"></span><?$field_error_str?></p>
+					</dd>
+					<?/?>
+				</dl>	
+				<?/form_line?>
+	
+				<?form_separator?>
+				</fieldset>
+				<fieldset>
+					<?separator?>Personal information<?/?><?/form_separator?>
+					<?form_comment?><?$comment?><?/?>
+			<?/form_body?>
+		</fieldset>
+
+		<dl class="atk-form-buttons">
+			<dt></dt>
+			<dd class="atk-field">
+			<?form_buttons?>
+				<input type="button" value="Save" class="no" />
+			<?/form_buttons?>
+			</dd>
+		</dl>
+	
+
+	</form>
+</div>
 <?/form?>
 
