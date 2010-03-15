@@ -64,9 +64,10 @@ class jUI extends jQuery {
 
 
         // default theme. Change with $jui->setTheme();
-        $this->theme=$this->css_dir.'/smoothness';
+        $this->theme=$this->css_dir.'/agile';
 
         $this->addInclude('start-atk4');
+        $this->addInclude('ui.atk4_loader');
         $this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.7.1.custom.min'));
 
         $this->atk4_initialised=true;
