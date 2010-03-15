@@ -403,6 +403,7 @@ html>/**/body .atk-grid>table>thead>tr>th {
 .atk-form dt label {
 /* 	color: #444; */
 /* 	opacity: 0.7; */
+	line-height: 1.3;
 	position: relative;
 	z-index: 2;
 }
@@ -437,14 +438,23 @@ html>/**/body .atk-grid>table>thead>tr>th {
 
 /* Form Simple */
 
-.atk-form-simple>form>fieldset>dl>dt {
-	margin-right: -100%;
-	float: left;
-	width: 10em;
+.atk-form-simple>form>dl.atk-form-buttons,
+.atk-form-simple>form>fieldset>dl {
+	overflow: hidden;
 }
 
-.atk-form-simple>form>dl.atk-form-buttons>dd,
+.atk-form-simple>form>fieldset>dl>dt,
 .atk-form-simple>form>fieldset>dl>dd {
+	float: left;
+}
+
+.atk-form-simple>form>fieldset>dl>dt {	
+	width: 10em;
+	min-width: 10em;
+	margin-right: 2em;
+}
+
+.atk-form-simple>form>dl.atk-form-buttons {
 	padding-left: 12em;
 }
 
