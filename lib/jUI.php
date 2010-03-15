@@ -141,7 +141,7 @@ class jUI extends jQuery {
         //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
 
         $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->api->getBaseURL().$this->theme.'/jquery-ui-theme.css" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$this->api->getBaseURL().$this->theme.'/jquery-ui.css" rel="stylesheet" />'."\n");
 
     }
 }
