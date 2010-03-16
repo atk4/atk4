@@ -35,6 +35,7 @@ class View_Button extends View_HtmlElement {
     	return $this;
     }
     function render(){
+		$this->js(true)->button();
 
 		if($this->icon){
 			$this->addClass('ui-button-and-icon');
