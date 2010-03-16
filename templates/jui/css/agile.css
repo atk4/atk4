@@ -475,6 +475,7 @@ html>/**/body .atk-grid>table>thead>tr>th {
 
 .atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
 	margin-top: 0.3em;
+	display: block;
 }
 
 .atk-form-simple>form>fieldset>dl>dd.atk-error {
@@ -487,60 +488,4 @@ html>/**/body .atk-grid>table>thead>tr>th {
 
 .atk-form-simple>form>fieldset>dl>dd.atk-error>div>.ui-icon {
 	background-position: -160px -192px;
-}
-
-/* Form Simple 
-
-.atk-form-simple dl {
-	display: inline-block;
-	width: 100%;
-	.zoom: 1;
-}
-
-.atk-form-simple dl:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
-
-.atk-form-simple>form>fieldset>dl>dt,
-.atk-form-simple>form>fieldset>dl>dd {
-	float: left;
-	margin-right: -100%;
-	display: inline;
-}
-
-.atk-form-simple>form>fieldset>dl>dt {
-	width: 10em;
-	margin-right: -100%;
-	z-index: 2;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-field,
-.atk-form-simple>form>dl.atk-form-buttons {
-	padding-left: 12em;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-field {
-	width: 14em;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-error {
-	padding-left: 27em;
-	margin-right: 0;
-}
-
-.atk-form-simple>form>dl.atk-form-buttons {
-	overflow: hidden;
-}
-
-.atk-form-simple>form>dl.atk-form-buttons:after {
-	display:none;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
-	margin-top: 0.3em;
-	display: block;
 }
