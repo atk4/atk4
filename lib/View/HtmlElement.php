@@ -33,7 +33,7 @@ class View_HtmlElement extends View {
 		return $this;
 	}
 	function setText($text){
-		$this->template->trySet('element_content',$text);
+		$this->template->trySet('Content',$text);
 		return $this;
 	}
 	function set($text){

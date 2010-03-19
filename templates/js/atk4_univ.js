@@ -122,16 +122,16 @@ $.each({
 		// removing hidden field
 		if(button)button.remove();
 	},
-	reloadArgs: function(url,key,value){	
+	reloadArgs: function(url,key,value){
 		var u=$.atk4.addArgument(url,key+'='+value);
 		console.log(url);
 		this.jquery.atk4_load(u);
 	},
 	reload: function(url,arg,fn){
 		/*
-		 * $obj->js()->reload();	 will now properly reload most of the objects. 
+		 * $obj->js()->reload();	 will now properly reload most of the objects.
 		 * This function can be also called on a low level, however URL have to be
-		 * specified. 
+		 * specified.
 		 * $('#obj').univ().reload('http://..');
 		 *
 		 * Difference between atk4_load and this function is that this function will
@@ -140,6 +140,21 @@ $.each({
 		 */
 
 		this.jquery.atk4_reload(url,arg,fn);
+	},
+	reloadParent: function(depth,args){
+		if(!depth)depth=1;
+		var atk=this.jquery;
+		var patk=atk;
+		while(depth-->0){
+			atk=atk.closest('.atk4_loader');
+			if(atk.length)patk=atk;
+			if(!depth){
+				if(atk.length)atk.atk4_loader('reload',args);else
+					patk.atk4_loader('reload',args);
+			}else{
+				atk=atk.parent();
+			}
+		}
 	},
 	reloadContents: function(url,arg,fn){
 		/*
@@ -203,7 +218,7 @@ $.each({
 	},
 dialogPrepare: function(options){
 /*
- * This function creates a new dialog and makes sure other dialog-related functions will 
+ * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
 	var dialog=$('<div class="dialog" title="Untitled">Loading<div></div></div>').appendTo('body');
@@ -252,7 +267,7 @@ dialogBox: function(options){
 			}
 		},
 		close: function(){
-			$(this).dialog('destroy'); 
+			$(this).dialog('destroy');
 			$(this).remove();
 		}
 	},options));
@@ -264,12 +279,12 @@ dialogURL: function(title,url,options,callback){
 },
 dialogOK: function(title,text,fn,options){
 	var dlg=this.dialogBox($.extend({
-		title: title, 
-		width: 450, 
+		title: title,
+		width: 450,
 		//height: 150,
-		close: fn, 
-		open: function() { 
-			$(this).parents('.ui-dialog-buttonpane button:eq(0)').focus(); 
+		close: fn,
+		open: function() {
+			$(this).parents('.ui-dialog-buttonpane button:eq(0)').focus();
 		},
 		buttons: {
 			'Ok': function(){
@@ -279,7 +294,7 @@ dialogOK: function(title,text,fn,options){
 	},options));
 	dlg.html(text);
 	dlg.dialog('open');
-	
+
 },
 dialogConfirm: function(title,text,fn,options){
 	/*
@@ -365,7 +380,7 @@ ajaxec: function(url){
 		if(ret.substr(0,5)=='ERROR'){
 			$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
 			return;
-		}	
+		}
 		try{
 			eval(ret)
 		}catch(e){
