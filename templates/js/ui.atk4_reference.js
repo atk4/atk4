@@ -53,9 +53,9 @@ $.widget("ui.atk4_reference", {
 		var ref=this;
 		var types=this.element.attr('nomtypes');
 		if(types)types=eval('('+types+')');
-		var foo;
-		this.autocomplete.autocomplete(foo=$.extend({
+		this.autocomplete.autocomplete($.extend({
 			minChars: 0,
+			mustMatch: true,
 			data:this.getData(),
 			matchContains: true,
 			//data:[[1,'january'],[2,'february'],[3,'march']],
@@ -93,11 +93,11 @@ $.widget("ui.atk4_reference", {
 		this.autocomplete.blur(function(){
 			ref.fixBrokenAutocomplete(this);
 		});
-		this.autocomplete.keyup(function(){ 
+		this.autocomplete.keyup(function(){
 			ref.fixBrokenAutocomplete(this);
 		});
 
-		this.autocomplete.focus(function(){ 
+		this.autocomplete.focus(function(){
 			ref.element.trigger('focus_ref');
 		});
 
@@ -107,17 +107,18 @@ $.widget("ui.atk4_reference", {
 		this.autocomplete.mouseout(function(){
 			ref.element.mouseout()
 		});
-		
+
 		if(ref.element.attr('disabled')){
 			this.autocomplete.attr('disabled',true);
 		}
 
-	   /*
-		dropdown.click(function(e){
+/*
+		this.autocomplete.click(function(e){
 			e.preventDefault();
-			ref.autocomplete.click();
+			alert('clicked me');
+			//ref.autocomplete.click();
 		});
-		*/
+*/
 
 	},
 	isNewEntry: function(el){
@@ -190,4 +191,3 @@ $.widget("ui.atk4_reference", {
 		return data;
 	}
 });
-
