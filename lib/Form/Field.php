@@ -87,6 +87,7 @@ abstract class Form_Field extends AbstractView {
     }
     function setProperty($property,$value){
         $this->attr[$property]=$value;
+		return $this;
     }
 	function onChange(){
 		if(is_null($this->onchange)){
