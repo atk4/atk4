@@ -118,7 +118,7 @@ $.widget("ui.atk4_form", {
 
 		f.val(value).change();
 	},
-	reloadField: function(field_name,fn,arg,val){
+	reloadField: function(field_name,fn,arg,val,notrigger){
 		var field_id=this.element.attr('id')+'_'+field_name;
 		var url=this.base_url;
 		console.log('Field reloading: ',field_name);
@@ -128,6 +128,9 @@ $.widget("ui.atk4_form", {
 		
 
 		var f=$("#"+field_id);
+		
+		if(!notrigger)f.trigger('reload_field');
+		
 		if(f.hasClass('field_reference')){
 			var f2=f.prev();
 			f.remove();

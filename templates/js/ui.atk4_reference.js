@@ -125,7 +125,6 @@ $.widget("ui.atk4_reference", {
 		var val=$(el).val();
 		var ref=this;
 
-	console.log('newEntry for ',el);
 		// Not adding empty entries
 		if(!val && ref.element.val()!=''){
 			ref.element.val('');
