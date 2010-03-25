@@ -98,9 +98,11 @@ $.widget('ui.atk4_loader', {
 	},
 	destroy: function(){
 		var self=this;
+		/*
 		if(self.parent_loader){
 			self.parent_loader.unbind('atk4_loaderbeforeclose.'+self.element.attr('id'));
 		}
+		*/
 		this.element.removeClass('atk4_loader');
 		if(this.helper){
 			this.helper.remove();
@@ -236,9 +238,9 @@ $.widget('ui.atk4_loader', {
 		var self=this;
 		console.log('called REMOVE');
 		self.helper && self.helper.css({background:'red'});
-		if(false === self._trigger('beforeclose')){
-			self.helper.css({background:'#fe8'});
-			return false;
+		//if(false === self._trigger('beforeclose')){
+		if(self.element.find('.form_changed').length){
+			if(!confirm('Changes on the form will be lost. Continue?'))return false;
 		}
 		return true;
 	},
@@ -271,12 +273,10 @@ $.widget('ui.atk4_loader', {
 		}
 
 		console.log('triggering beforeClose',self.element[0]);
-		self.helper && self.helper.css({background:'red'});
-		if(false === self._trigger('beforeclose')){
-			self.helper.css({background:'#fe8'});
-			return false;
+		//if(false === self._trigger('beforeclose')){
+		if(self.element.find('.form_changed').length){
+			if(!confirm('Changes on the form will be lost. Continue?'))return false;
 		}
-		self.helper && self.helper.css({background:'#fe8'});
 		self.base_url=url;
 
 		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);

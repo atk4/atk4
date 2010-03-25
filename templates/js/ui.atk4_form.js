@@ -17,19 +17,28 @@ $.widget("ui.atk4_form", {
 	base_url: undefined,
 	loader: undefined,
 	loading: false,
-	changed: false,
+	
+	_getChanged: function(){
+		return this.element.hasClass('form_changed');
+	},
+	_setChanged: function(state){
+		if(state)this.element.addClass('form_changed');else this.element.removeClass('form_changed');
+	},
+	
     _init: function(options){
         $.extend(this.options,options);
         var form=this;
 		
-		form.loader=this.element.parents('.atk4_loader');
 		
+		/*
+		form.loader=this.element.parents('.atk4_loader');
 		if(form.loader.length){
 			form.loader.bind('atk4_loaderbeforeclose.'+form.element.attr('id'),function(event){
 				event.stopPropagation();
-				if(form.changed && !confirm('Are you sure? Form '+form.element.attr('id')+' changes will be lost!'))return false;
+				if(form._getChanged() && !confirm('Are you sure? Form '+form.element.attr('id')+' changes will be lost!'))return false;
 			});
 		}
+		*/
 
 		this.element.addClass('atk4_form');
 
@@ -50,8 +59,7 @@ $.widget("ui.atk4_form", {
 			}else {
 				$(this).attr('data-initvalue',$(this).val());
 			}
-			if(!form.changed)form.element.addClass('form_changed');
-			form.changed=true;
+			form._setChanged(true);
 		});
 
 		this.overlay_prototype=this.element.find('.form_iedit');
@@ -139,9 +147,9 @@ $.widget("ui.atk4_form", {
 
 		}
 		console.log('url=',url,f[0]);
-		var c=this.changed;this.changed=false;
+		var c=this._getChanged();this._setChanged(false);
 		f.atk4_load(url,fn);
-		this.changed=c;
+		this._setChanged(c);
 	},
 	fieldError: function(field_name,error){
 		var field=
@@ -230,7 +238,7 @@ $.widget("ui.atk4_form", {
 		form.loading=true;
 		$.post(this.element.attr('action'),params,function(res){
 			form.loading=false;
-			var c=form.changed;form.changed=false;
+			var c=form._getChanged();form._setChanged(false);
 			if(res.substr(0,5)=='ERROR'){
 				$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
 				return;
@@ -248,7 +256,7 @@ $.widget("ui.atk4_form", {
 					alert("Error in AJAX response: "+e+"\n"+res);
 				}
 			}
-			form.changed=c;
+			form._setChanged(c);
 		});
 	}
 });
