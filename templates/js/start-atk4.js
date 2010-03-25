@@ -129,7 +129,7 @@ $.extend($.atk4,{
 	_readyLast: undefined,
 	
 	
-	get: function(url, data, callback){
+	get: function(url, data, callback, load_end_callback){
         var self=this;
 		if($.isFunction(data)){
 			// data argument may be ommitted
@@ -151,11 +151,13 @@ $.extend($.atk4,{
 
             success: function(res){
 					clearTimeout(timeout);
+					load_end_callback && load_end_callback();
 					$.atk4._checkSession(res) && callback && callback(res);
 		            if(!--$.atk4.loading)$.atk4._readyExec();
 				},
             error: function(a,b,c){
 					clearTimeout(timeout);
+					load_end_callback && load_end_callback();
 					$.atk4._ajaxError(url,a,b,c);
 		            if(!--$.atk4.loading)$.atk4._readyExec();
 					// kill readycheck handlers by not reducing
@@ -180,6 +182,11 @@ $.extend($.atk4,{
     },
     _checkSession: function(text){
 		// TODO: use proper session handling instead
+        if(text.substr(0,7)=="ERROR: "){
+			var msg=text.substr(7);
+			alert(msg);
+			return false;
+		}
         if($.trim(text)=="SESSION TIMEOUT"){
             alert('session has timed out');
             document.location="/";

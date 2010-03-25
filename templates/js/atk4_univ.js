@@ -315,11 +315,13 @@ dialogConfirm: function(title,text,fn,options){
 	dlg.find('form').submit(function(ev){ ev.preventDefault(); console.log('ok clicked'); fn; dlg.dialog('close'); });
 	dlg.dialog('open');
 },
-dialogError: function(text,options){
-	this.dialogConfirm('Error','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,options);
+dialogError: function(text,options,fn){
+	this.dialogConfirm('Error','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,
+					   $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
 },
-dialogAttention: function(text,fn){
-	this.dialogConfirm('Attention!','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,fn);
+dialogAttention: function(text,options,fn){
+	this.dialogConfirm('Attention!','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,
+					   $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
 },
 successMessage: function(msg){
 	var html="";

@@ -148,8 +148,7 @@ $.widget('ui.atk4_loader', {
 		}
 
 		self.loading=true;
-        $.atk4.get(url,function(res){
-			self.loading=false;
+        $.atk4.get(url,null,function(res){
 			/*
 			if(res.substr(0,13)=='SESSION OVER:'){
 				$.univ.dialogOK('Session over','Your session have been timed out',function(){ document.location='/'});
@@ -215,7 +214,9 @@ $.widget('ui.atk4_loader', {
 
 			if(callback)$.atk4(callback,true);
 			m.show();
-       });
+		},function(){	// second callback, which is always called, when loading is completed
+			self.loading=false;
+		});
     },
 	/*
 	 This function is called before HTML loading is started. Redifine it
