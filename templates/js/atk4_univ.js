@@ -386,7 +386,7 @@ ajaxec: function(url){
 			return;
 		}
 		*/
-		if(!$.atk4._checkSession(res))return;
+		if(!$.atk4._checkSession(ret))return;
 		try{
 			eval(ret)
 		}catch(e){
