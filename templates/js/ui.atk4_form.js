@@ -239,10 +239,14 @@ $.widget("ui.atk4_form", {
 		$.post(this.element.attr('action'),params,function(res){
 			form.loading=false;
 			var c=form._getChanged();form._setChanged(false);
+			
+			if(!$.atk4._checkSession(res))return;
+			/*
 			if(res.substr(0,5)=='ERROR'){
 				$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
 				return;
 			}
+			*/
 			try {
 				eval(res);
 			}catch(e){
