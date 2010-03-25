@@ -379,10 +379,13 @@ getjQuery: function(){
 ajaxec: function(url){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	$.get(url,function(ret){
+		/*
+		 // error handling goes away from here
 		if(ret.substr(0,5)=='ERROR'){
 			$.univ().dialogOK('Error','There was error with your request. System maintainers have been notified.');
 			return;
 		}
+		*/
 		try{
 			eval(ret)
 		}catch(e){
