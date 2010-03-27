@@ -386,25 +386,13 @@ html>/**/body .atk-grid>table>thead>tr>th {
 	padding: 0;
 }
 
-.atk-form>form>fieldset {
-	margin-bottom: 1em;
-	border-bottom: 1px solid #eee;
-}
+.atk-form>form>fieldset { margin-bottom: 1em; border-bottom: 1px solid #eee; }
 
 .atk-form>form>dl.atk-form-buttons,
-.atk-form>form>fieldset>dl {
-	margin-bottom: 1em;
-}
+.atk-form>form>fieldset>dl { margin-bottom: 1em; }
 
-.atk-form>form>fieldset .ui-state-error {
-	padding: 0.3em 0.6em 0.3em 0.4em;
-	font-size: 80%;
-}
-
-.atk-form>form>fieldset .ui-state-error .ui-icon {
-	margin: 0 0.3em 0 0;
-	float: left;
-}
+.atk-form>form>fieldset .ui-state-error { padding: 0.3em 0.6em 0.3em 0.4em; font-size: 80%; }
+.atk-form>form>fieldset .ui-state-error .ui-icon { margin: 0 0.3em 0 0; float: left; }
 
 .atk-form dt label {
 /* 	color: #444; */
@@ -422,24 +410,13 @@ html>/**/body .atk-grid>table>thead>tr>th {
 	margin-right: 0;
 }
 
-.atk-form ins {
-	color: #999;
-	font-size: 90%;
-	text-decoration: none;
-}
+.atk-form ins { color: #999; font-size: 90%; text-decoration: none; }
+
+.atk-form>form>fieldset>dl>dd.atk-field>div input[type=checkbox],
+.atk-form>form>fieldset>dl>dd.atk-field>div input[type=radio] { margin-right: 0.4em; }
 
 /* Common form settings */
 
-/*
-.atk-form-simple>form>fieldset>dl>dd>div {
-	padding-right: 3px;
-}
-
-.atk-form-simple>form>fieldset>dl>dd>div>textarea,
-.atk-form-simple>form>fieldset>dl>dd>div>input[type="text"] {
-	width: 100%;
-}
-*/
 
 
 /* Form Simple */
