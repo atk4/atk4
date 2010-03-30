@@ -4,7 +4,7 @@
  *
  * @author      Romans <romans@adevel.com>
  * @copyright   See file COPYING
- * @version     DBlite/2.0, driver revision 1
+ * @version     DBlite/2.0, driver revision 2 (updated by MVS)
  */
 class DBlite_mysql extends DBlite {
     /**
@@ -13,15 +13,23 @@ class DBlite_mysql extends DBlite {
     var $cursor;
     var $handle;
     var $transaction_depth=0;		// shows how many times beginTransaction() was called
-    
-    /**
-     * Copy of last executed query
-     */
 
-    function realConnect($dsn){
-        // First analyze settings
+    public $last_query; // last executed query (final SQL)
 
-        $this->settings=$this->parseDSN($dsn);
+    private $charset = 'utf8'; // client charset
+
+    public function setCharsetProp($name) {
+        $this->charset = $name;
+    }
+
+    public function getCharsetProp() {
+        return $this->charset;
+    }
+
+    function realConnect($dsn=null){
+        // First analyze settings, if passed not array
+        if (!is_null($dsn))
+            $this->settings=$this->parseDSN($dsn);
 
         // Then let's do real connect
         $this->handle=mysql_connect(
@@ -30,21 +38,80 @@ class DBlite_mysql extends DBlite {
                                      $this->settings['password'],
                                      true // MVS: fix issue with DB connect replacing in case same host/username/pass
                                     );
+
+        if(!$this->handle) {
+        	sleep(1);
+            // try connect again
+            $this->handle=mysql_connect(
+                                         $this->settings['hostspec'],
+                                         $this->settings['username'],
+                                         $this->settings['password'],
+                                         true
+                                        );
+            if(!$this->handle) {
+                sleep(2);
+                // last attempt
+                $this->handle=mysql_connect(
+                                             $this->settings['hostspec'],
+                                             $this->settings['username'],
+                                             $this->settings['password'],
+                                             true
+                                            );
+            }
+
+        }
+
+
         if(!$this->handle)return('Could not connect to mysql');
         if(!mysql_select_db($this->settings['database'],$this->handle))
             return('Could not select db');
-        mysql_query("/*!40101 SET NAMES utf8 */",$this->handle);
+
+        $this->set_names();
+
+        // Set timezone for MySQL session
+        if (function_exists('date_default_timezone_get')) {
+        	mysql_query("/*!40101 SET time_zone = '".date_default_timezone_get()."' */",$this->handle);
+        }
+        
         return true;
     }
+
+	function set_names($name=null) {
+        if (is_null($name))
+            $name = $this->charset;
+        else
+            $this->setCharsetProp($name);
+
+        mysql_query("/*!40101 SET NAMES ".$name." */",$this->handle);
+	}
+
     function useDB($db){
         if(!mysql_select_db($db,$this->handle))
             return('Could not switch db to '.$db);
     }
     function realQuery($query, $params=null, $allow_extra=null){
         $this->last_query=$query;
+
         if(!$this->cursor = mysql_query($query,$this->handle)){
-            $this->fatal('Could not execute query: '."\n".$query."\n");
+            // if error related with DB connection, try to reconnect
+            switch (mysql_errno($this->handle)) {
+                case 2006: // MySQL server has gone away
+                case 2013: // Lost connection to MySQL server during query
+                case 2055: // Lost connection to MySQL server at '%s', system error: %d
+                    if (!mysql_ping($this->handle)){
+                        if (!$this->realConnect()) {
+                             $this->fatal('Could not reconnect to server!');
+                        }
+                    }
+                    if(!$this->cursor = mysql_query($query,$this->handle)){
+                         $this->fatal('Could not execute query: '."\n".$query."\n");
+                    }
+                    break;
+                default:
+                    $this->fatal('Could not execute query: '."\n".$query."\n");
+            }
         }
+
         if($this->calc_found_rows){
             $this->calc_found_rows=false;
             $tmp_cursor = @mysql_query("select found_rows()",$this->handle);
