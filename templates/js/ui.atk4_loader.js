@@ -172,7 +172,8 @@ $.widget('ui.atk4_loader', {
 			m.hide();
 
 			// Parse into Document
-			var n=$('<div/>').append(source).children();
+			var source=$('<div/>').append(source);
+			var n=source.children();
 
 			//console.log('New content: ',n[0]);
 
@@ -180,10 +181,13 @@ $.widget('ui.atk4_loader', {
 
 			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==el.attr('id')))){
 				console.log('RELOAD');
-				n=n.children();
-			}else if(reload){
-				console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
-
+				n=n.contents();
+			}else{
+				if(reload){
+					console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
+				}
+				// fix n
+				n=source.contents();
 			}
 			el.empty();
 
