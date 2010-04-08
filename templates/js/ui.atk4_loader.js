@@ -108,8 +108,6 @@ $.widget('ui.atk4_loader', {
 			this.helper.remove();
 			this.helper=undefined;
 		}
-		//$.Widget.prototype.destroy.apply( this, arguments );
-
 	},
 
 
@@ -119,8 +117,6 @@ $.widget('ui.atk4_loader', {
 	 $('..').load('http://'), however it improves evaluation
 	 of scripts supplied inside loaded chunk.
 	*/
-
-
     _loadHTML: function(el, url, callback, reload){
 		var self=this;
 
@@ -136,12 +132,6 @@ $.widget('ui.atk4_loader', {
 
 		// Before actual loading start, we call a method, which might want
 		// to display loading indicator somewhere on the page.
-		//
-		// Consider using beforeClose event, which will not be used
-		// on initial load.
-		//if(false===self._loadingRegion()){
-			//console.log('Page loading was canceled loadingStart trigger');
-//		}
 		if(self.loading){
 			$.univ().loadingInProgress();
 			return false;
@@ -175,35 +165,23 @@ $.widget('ui.atk4_loader', {
 			var source=$('<div/>').append(source);
 			var n=source.children();
 
-			//console.log('New content: ',n[0]);
-
-//			console.log("Load check", el.attr('id'),' vs ',n.attr('id'));
-
 			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==el.attr('id')))){
-				console.log('RELOAD');
+				// Only one child have been returned to us. We also checked ID's and they match
+				// with existing element. In this case we will be copying contents of
+				// provided element
 				n=n.contents();
 			}else{
+				// otherwise we will be copying all the elements (including text)
 				if(reload){
 					console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
 				}
-				// fix n
 				n=source.contents();
 			}
 			el.empty();
 
 			n.each(function(){
-//				console.log('iterating through ',this);
 				$(this).remove().appendTo(el);
 			});
-
-
-			/*
-			if(reload){
-				el.replaceWith(selector?$('<div/>').append(source).find(selector):source);
-			}else{
-				el.html(selector?$('<div/>').append(source).find(selector):source);
-			}
-			*/
 
             for(var i in scripts){
 				try{
