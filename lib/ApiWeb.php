@@ -27,7 +27,11 @@ class ApiWeb extends ApiCLI {
 
     function __construct($realm=null,$skin='kt2'){
         $this->skin=$skin;
-        parent::__construct($realm);
+		try {
+			parent::__construct($realm);
+		}catch (Exception $e){
+			$this->caughtException($e);
+		}
     }
     function initDefaults(){
     	parent::initDefaults();
