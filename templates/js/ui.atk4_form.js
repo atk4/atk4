@@ -173,7 +173,7 @@ $.widget("ui.atk4_form", {
 		$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
 	
 		$.atk4(function(){
-			field.closest('.form_field').attr('title',error).tipTip({'activation':'click'}).click();
+			field.closest('.form_field').attr('title',error).addClass('red_tiptip').tipTip({'activation':'click'}).click();
 		});
 		return;
 	
