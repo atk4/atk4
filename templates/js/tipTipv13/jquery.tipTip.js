@@ -175,6 +175,7 @@
 					}
 					tiptip_arrow.css({"margin-left": arrow_left+"px", "margin-top": arrow_top+"px"});
 					tiptip_holder.css({"margin-left": marg_left+"px", "margin-top": marg_top+"px"}).attr("class","tip"+t_class);
+					if(org_elem.hasClass('red_tiptip'))tiptip_holder.addClass('red_tiptip');
 					
 					if (timeout){ clearTimeout(timeout); }
 					timeout = setTimeout(function(){ tiptip_holder.stop(true,true).fadeIn(opts.fadeIn); }, opts.delay);	

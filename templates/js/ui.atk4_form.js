@@ -165,7 +165,19 @@ $.widget("ui.atk4_form", {
 			return;
 		}
 
-		if(!error)error="must be specified properly";
+		if(!error || error=='0')error="must be specified properly";
+		
+		
+		// First - we need to include the sucker
+		$.atk4.includeJS("/amodules3/templates/js/tipTipv13/jquery.tipTip.js");
+		$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
+	
+		$.atk4(function(){
+			field.closest('.form_field').attr('title',error).tipTip({'activation':'click'}).click();
+		});
+		return;
+	
+		
 		field.closest('.form_field').find('.field_hint').hide();
 		field.closest('form').find('.field_error').remove();
 
