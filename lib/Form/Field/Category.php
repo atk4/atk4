@@ -1,32 +1,32 @@
 <?
-// 
+//
 // TODO: why this class is here and how can it be used?
 //
 class Form_Field_Category extends Form_Field_ValueList {
-    function validate(){
-        if(!isset($this->value_list[$this->value])){
-            $this->owner->errors[$this->short_name]="This is not one of offered values";
-        }
-        return parent::validate();
-    }
-    function getInput($attr=array()){
-        $output=$this->getTag('select',array_merge(array(
-                        'name'=>$this->name,
-                        'id'=>$this->name,
-                        ),
-                    $attr,
-                    $this->attr)
-                );
-        foreach($this->getValueList() as $value=>$descr){
-            $output.=
-                $this->getTag('option',array(
-                        'value'=>$value,
-                        'selected'=>$value == $this->value
-                    ))
-                .htmlspecialchars($descr)
-                .$this->getTag('/option');
-        }
-        $output.=$this->getTag('/select');
+	function validate(){
+		if(!isset($this->value_list[$this->value])){
+			$this->owner->errors[$this->short_name]="This is not one of offered values";
+		}
+		return parent::validate();
+	}
+	function getInput($attr=array()){
+		$output=$this->getTag('select',array_merge(array(
+						'name'=>$this->name,
+						'id'=>$this->name,
+						),
+					$attr,
+					$this->attr)
+				);
+		foreach($this->getValueList() as $value=>$descr){
+			$output.=
+				$this->getTag('option',array(
+						'value'=>$value,
+						'selected'=>$value == $this->value
+					))
+				.htmlspecialchars($descr)
+				.$this->getTag('/option');
+		}
+		$output.=$this->getTag('/select');
 		$output.=$this->getTag('img', array_merge(
 											array(
 												'src' => 'http://www.myadminimages.com/images/icons/trash_b.gif',
@@ -52,6 +52,6 @@ class Form_Field_Category extends Form_Field_ValueList {
 											)
 										)
 				 );
-        return $output;
-    }
+		return $output;
+	}
 }

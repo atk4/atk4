@@ -32,14 +32,14 @@
  * Created on 04.07.2006 by *Camper* (camper@adevel.com)
  */
 class DBAuth extends BasicAuth{
-    public $dq;
-    protected $table;
-    public $email_field;
-    public $pass_field;
-    public $name_field;
-    protected $signup = null;
-    protected $pwd_recovery = null;
-    protected $signup_processor = null;
+	public $dq;
+	protected $table;
+	public $email_field;
+	public $pass_field;
+	public $name_field;
+	protected $signup = null;
+	protected $pwd_recovery = null;
+	protected $signup_processor = null;
 
 	function processLogin(){
 		/**
@@ -75,42 +75,42 @@ class DBAuth extends BasicAuth{
 	function setPassword($password){
 		return false;
 	}
-    function setSource($table,$login='login',$password='password',$email='email'){
-    	$this->table=$table;
-    	$this->name_field = $login;
-    	$this->pass_field = $password;
-    	$this->email_field = $email;
-        $this->dq=$this->api->db->dsql()
-            ->table($table)
-            ->field($this->name_field)
-            ->field($this->pass_field)
-        ;
-        return $this;
-    }
-    function verifyCredintials($user,$password){
-    	/**
-    	 * Verifying user and password. Password in params should be an SHA1 hash in ALL cases
-    	 */
-    	unset($this->dq->args['where']);
-    	$data=$this->dq->where($this->name_field, $user)->do_getHash();
-    	$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||$this->encryptPassword($data[$this->pass_field])==$password));
-    	if($result)$this->addInfo($data);
-    	return $result;
-    }
+	function setSource($table,$login='login',$password='password',$email='email'){
+		$this->table=$table;
+		$this->name_field = $login;
+		$this->pass_field = $password;
+		$this->email_field = $email;
+		$this->dq=$this->api->db->dsql()
+			->table($table)
+			->field($this->name_field)
+			->field($this->pass_field)
+		;
+		return $this;
+	}
+	function verifyCredintials($user,$password){
+		/**
+		 * Verifying user and password. Password in params should be an SHA1 hash in ALL cases
+		 */
+		unset($this->dq->args['where']);
+		$data=$this->dq->where($this->name_field, $user)->do_getHash();
+		$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||$this->encryptPassword($data[$this->pass_field])==$password));
+		if($result)$this->addInfo($data);
+		return $result;
+	}
 	function encrypt($str){
 		return $this->encryptPassword($str);
 	}
-    function login($username){
-    	// in order to store proper data performing verification
-    	$password=$this->api->db->dsql()->table($this->table)
-    		->where($this->name_field,$username)
-    		->field($this->pass_field)
-    		->do_getOne();
-    	if($this->verifyCredintials($username,$password)){
-    		$this->memorize('info',$this->info);
-    		$this->loggedIn($username,$password);
-    	}
-    }
+	function login($username){
+		// in order to store proper data performing verification
+		$password=$this->api->db->dsql()->table($this->table)
+			->where($this->name_field,$username)
+			->field($this->pass_field)
+			->do_getOne();
+		if($this->verifyCredintials($username,$password)){
+			$this->memorize('info',$this->info);
+			$this->loggedIn($username,$password);
+		}
+	}
 	function addSignupProcessor($class_name='Auth_SignupProcessor'){
 		$this->signup_processor=$this->add($class_name);
 		return $this;
@@ -136,7 +136,7 @@ class DBAuth extends BasicAuth{
 		return ($_SERVER['HTTPS']?'https':'http').'://'.($full?$server:str_replace('www.', '', $server));
 	}
 	function createForm($frame,$login_tag='Content'){
-        $form=$frame->add('Auth_Form',null,$login_tag);
+		$form=$frame->add('Auth_Form',null,$login_tag);
 		return $form;
 	}
 }

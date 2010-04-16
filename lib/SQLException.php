@@ -22,13 +22,13 @@ class SQLException extends BaseException { // used if DBlite error is occured
 		parent::__construct($msg, $func, $shift);
 	}
 
-    function getHTML($message=null){
-        $html='';
-        $html.= '<h2>'.get_class($this).(isset($message)?': '.$message:'').'</h2>';
-        $html.= '<p>' . $this->getMessage() . '</p>';
-        $html.= '<p><font color=blue>' . $this->getMyFile() . ':' . $this->getMyLine() . '</font></p>';
-        $html.=$this->getDetailedHTML();
-        $html.= backtrace($this->shift+1,$this->getMyTrace());
-        return $html;
-    }
+	function getHTML($message=null){
+		$html='';
+		$html.= '<h2>'.get_class($this).(isset($message)?': '.$message:'').'</h2>';
+		$html.= '<p>' . $this->getMessage() . '</p>';
+		$html.= '<p><font color=blue>' . $this->getMyFile() . ':' . $this->getMyLine() . '</font></p>';
+		$html.=$this->getDetailedHTML();
+		$html.= backtrace($this->shift+1,$this->getMyTrace());
+		return $html;
+	}
 }

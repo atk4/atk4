@@ -25,10 +25,10 @@ class View_HtmlElement extends View {
 		return $this;
 	}
 	function addStyle($property,$style=null){
-    	if(is_null($style)&&is_array($property)){
-    		foreach($property as $k=>$v)$this->setStyle($k,$v);
-    		return $this;
-    	}
+		if(is_null($style)&&is_array($property)){
+			foreach($property as $k=>$v)$this->setStyle($k,$v);
+			return $this;
+		}
 		$this->template->append('style',";".$property.':'.$style);
 		return $this;
 	}

@@ -19,28 +19,28 @@
 
 class MultipleInheritance {
 
-    private $_mapings=array();
+	private $_mapings=array();
 
-    function _setParents($classes){
-        //$this->_build_mappings($classes,'vars');
-        foreach($classes as $class){
-            $e=get_class_methods($class);
-            foreach($e as $entry){
-                if(!isset($this->_mapings[$entry])){
-                    $this->_mapings[$entry]=$class;
-                }
-            }
-        }
-    }
+	function _setParents($classes){
+		//$this->_build_mappings($classes,'vars');
+		foreach($classes as $class){
+			$e=get_class_methods($class);
+			foreach($e as $entry){
+				if(!isset($this->_mapings[$entry])){
+					$this->_mapings[$entry]=$class;
+				}
+			}
+		}
+	}
 
-    function __call($name,$args){
-        // look up which class we have to go into
-        if(!isset($this->_mapings[$name])){
-            lowlevel_error('Method is not defined '.get_class($this).'::'.$name);
-        }
+	function __call($name,$args){
+		// look up which class we have to go into
+		if(!isset($this->_mapings[$name])){
+			lowlevel_error('Method is not defined '.get_class($this).'::'.$name);
+		}
 
 
-        $class = $this->_mapings[$name];
-        return call_user_func_array(array($class,$name),$args);
-    }
+		$class = $this->_mapings[$name];
+		return call_user_func_array(array($class,$name),$args);
+	}
 }

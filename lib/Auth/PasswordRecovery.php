@@ -1,13 +1,13 @@
 <?php
 /**
  * Password recovery plugin for DBAuth
- * 
+ *
  * Created on 26.05.2007 by *Camper* (camper@adevel.com)
  */
 class Auth_PasswordRecovery extends AbstractController{
 	protected $page=null;
 	protected $mailer=null;
-	
+
 	function init(){
 		parent::init();
 		// password recovery process triggers by the page which set in config
@@ -37,7 +37,7 @@ class Auth_PasswordRecovery extends AbstractController{
 	}
 	function processStage1(){
 		/**
-		 * First stage of recovery: 
+		 * First stage of recovery:
 		 * - showing a form with password request
 		 * - sending a link with change password form by email
 		 */
@@ -69,10 +69,10 @@ class Auth_PasswordRecovery extends AbstractController{
 	}
 	function processStage2(){
 		/**
-		 * Second stage of recovery: 
-		 * - showing a change password form 
+		 * Second stage of recovery:
+		 * - showing a change password form
 		 * - changing password
-		 * - sending password by email 
+		 * - sending password by email
 		 */
 		//user clicked link in e-mail
 		$this->api->stickyGET('rp');
@@ -80,24 +80,24 @@ class Auth_PasswordRecovery extends AbstractController{
 		$id=$_GET['rp'];
 		$key=$_GET['key'];
    		$row=$this->api->db->getHash("select * from ".DTP.$this->api->getConfig('auth/pwd_recovery/table').
-    			" where id=$id and changed=0");
-    	//looking for the key in DB and checking expiration dts
+				" where id=$id and changed=0");
+		//looking for the key in DB and checking expiration dts
    		$db_key=($row['id'])?sha1($row['id'].$row['email'].strtotime($row['expire'])):'';
    		$can_change=$db_key==$key&&strtotime($row['expire'])>time();
-    	if($can_change){
-    		//displaying changepass form
-    		$username=$this->api->db->dsql()->table($this->owner->dq->args['table'])
-    			->field($this->owner->name_field)
-    			->where('id',$row['user_id'])
-    			->do_getOne();
-    		
+		if($can_change){
+			//displaying changepass form
+			$username=$this->api->db->dsql()->table($this->owner->dq->args['table'])
+				->field($this->owner->name_field)
+				->where('id',$row['user_id'])
+				->do_getOne();
+
 			$form=$this->page->frame('Content', "Change password for $username")->add('Form', null, 'content');
 			$form
 				->addField('hidden', 'rp_id')
 				->addField('password', 'password', 'Enter new password')
 					->validateField('strlen($this->get())>=6', 'Password is too short')
 				->addField('password', 'password2', 'Confirm new password')
-					->validateField('$this->get()==$this->owner->get(\'password\')', 
+					->validateField('$this->get()==$this->owner->get(\'password\')',
 					'Confirmation differs from password')
 					->addField('checkbox', 'send', 'Send me new password by e-mail')
 			;
@@ -128,17 +128,17 @@ class Auth_PasswordRecovery extends AbstractController{
 					->addSubmit('Change')
 				;
 			}
-    	}else{
-    		//denial page
+		}else{
+			//denial page
 			unset($this->api->sticky_get_arguments['rp']);
 			unset($this->api->sticky_get_arguments['key']);
-    		$this->page->frame('Content', 'Request error')->add('Text', null, 'content')
-    			->set("Sorry, this page is not valid. Activation period might have been expired." .
-    			" <a href=".
+			$this->page->frame('Content', 'Request error')->add('Text', null, 'content')
+				->set("Sorry, this page is not valid. Activation period might have been expired." .
+				" <a href=".
 				$this->api->getDestinationURL($this->api->getConfig('auth/pwd_recovery/page')).
 				">Click here</a> if You want to repeat Your request.");
-    	}
-    	$this->render();
+		}
+		$this->render();
 	}
 	function render(){
 		/**
@@ -183,7 +183,7 @@ class Auth_PasswordRecovery extends AbstractController{
 			->do_insert();
 		//combining a message
 		$link=$this->getChangeLink($id,$address,$expire);
-		
+
 		$this->getMailer()->loadTemplate($this->api->getConfig('auth/mail/pwd_recovery_link'));
 		$address=$this->api->db->dsql()->table($this->owner->dq->args['table'])
 			->field($this->owner->email_field)

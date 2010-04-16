@@ -45,7 +45,7 @@ class DBlite_dsql  {
 	function foundRows(){
 		return $this->my[1];
 	}
-	////// Speed-access functions 
+	////// Speed-access functions
 	function s(){
 		/*
 		* We are willing to preserve existing state of associated database.
@@ -60,32 +60,32 @@ class DBlite_dsql  {
 		list($this->db->cursor,$this->db->found_rows,$this->db->calc_found_rows) = $this->saved;
 		return $a;
 	}
-	function do_getHash($f=null){ 
-		$this->s(); 
-		return $this->l($this->db->getHash($this->select(),$f)); 
+	function do_getHash($f=null){
+		$this->s();
+		return $this->l($this->db->getHash($this->select(),$f));
 	}
-	function do_getAll($f=null){ 
-		$this->s(); 
-		return $this->l($this->db->getAll($this->select(),$f)); 
+	function do_getAll($f=null){
+		$this->s();
+		return $this->l($this->db->getAll($this->select(),$f));
 	}
-	function do_getAllHash($f=null){ 
-		$this->s(); 
-		return $this->l($this->db->getAllHash($this->select(),$f)); 
+	function do_getAllHash($f=null){
+		$this->s();
+		return $this->l($this->db->getAllHash($this->select(),$f));
 	}
-	function do_getRow($f=null){ 
-		$this->s(); 
-		return $this->l($this->db->getRow($this->select(),$f)); 
+	function do_getRow($f=null){
+		$this->s();
+		return $this->l($this->db->getRow($this->select(),$f));
 	}
-	function do_getOne(){ 
-		$this->s(); 
-		return $this->l($this->db->getOne($this->select())); 
+	function do_getOne(){
+		$this->s();
+		return $this->l($this->db->getOne($this->select()));
 	}
-	function do_getAssoc(){ 
-		$this->s(); 
-		return $this->l($this->db->getAssoc($this->select())); 
+	function do_getAssoc(){
+		$this->s();
+		return $this->l($this->db->getAssoc($this->select()));
 	}
-	function do_select(){ 
-		$this->s(); 
+	function do_select(){
+		$this->s();
 		$r=$this->db->query($this->select());
 		return $this->l($this);
 	}
@@ -95,8 +95,8 @@ class DBlite_dsql  {
 	function do_delete(){ return $this->query($this->select()); }
 	*/
 
-	function do_delete(){ 
-		return $this->db->query($this->delete()); 	
+	function do_delete(){
+		return $this->db->query($this->delete());
 	}
 
 
@@ -107,13 +107,13 @@ class DBlite_dsql  {
 		$this->s();
 		return $this->l($this->db->query($str));
 	}
-	function do_fetchRow($l=null){ 
-		$this->s(); 
-		return $this->l($this->db->fetchRow($l)); 
+	function do_fetchRow($l=null){
+		$this->s();
+		return $this->l($this->db->fetchRow($l));
 	}
-	function do_fetchHash($l=null){ 
-		$this->s(); 
-		return $this->l($this->db->fetchHash($l)); 
+	function do_fetchHash($l=null){
+		$this->s();
+		return $this->l($this->db->fetchHash($l));
 	}
 
 	function debug(){
@@ -190,20 +190,20 @@ class DBlite_dsql  {
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Support external access to args property
-	 * @param string $arg_type   
+	 * @param string $arg_type
 	 * @return array
 	 */
 	public function getArgsList($args_type) {
 		return isset($this->args[$args_type])?array_keys($this->args[$args_type]):array();
 	}
-	
+
 	/**
 	* Escape value for protect SQL injection and support complex strings
 	* @param mixed $val
-	* @return string 
+	* @return string
 	*/
 	protected function escapeValue($val) {
 		if(is_null($val)){
@@ -212,17 +212,17 @@ class DBlite_dsql  {
 			// numeric values MUST be without quotas for the correct rounding
 			if(is_decimal_number($val))
 				$res = $val;
-			else 
+			else
 				$res = "'".$this->db->escape($val)."'";
 		}
-		
+
 		return $res;
 	}
-	
+
 	public function call_sql_function($function_name, $params) {
 		//TODO: Complete this
 	}
-	
+
 	function setDate($field='ts',$value=null){
 		/**
 		* Accepts any date format
@@ -326,7 +326,7 @@ class DBlite_dsql  {
 	/**
 	 * Returns true if specified $value already set for $param
 	 * E.g. paramExists('group',$field) returns true if grouping by $field was already set
-	 * 
+	 *
 	 * May not work for where or having, as they are implemented like shit
 	 */
 	function paramExists($param,$value){
@@ -481,7 +481,7 @@ class DBlite_dsql  {
 	function calc_found_rows(){
 		$this->option("SQL_CALC_FOUND_ROWS");
 		$this->my[2]=true;
-        return $this;
+		return $this;
 	}
 	function option($option){
 		if(!is_array($option))$option=array($option);

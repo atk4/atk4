@@ -3,25 +3,25 @@
  * Created on 26.03.2006 by *Camper*
  */
 class VersionControl extends AbstractController{
-    private $table;
-    private $dirname;
-    private $db_version;
-	
+	private $table;
+	private $dirname;
+	private $db_version;
+
 	function init(){
 		parent::init();
 		if(!defined('DTP'))define('DTP','');
 		$this->table = DTP.$this->api->getConfig('VersionControl/table','sys_config');
 		$this->dirname = $this->api->getConfig('VersionControl/dirname');
 		if(substr($this->dirname, strlen($this->dirname))!=DIRECTORY_SEPARATOR)
-            // todo - substr($str,-1);
+			// todo - substr($str,-1);
 			$this->dirname.=DIRECTORY_SEPARATOR;
-        $this->api->addHook('api-defaults',array($this,'versionUpdate'));
+		$this->api->addHook('api-defaults',array($this,'versionUpdate'));
 	}
-    function showInfo(){
-        $this->getVersion();
-        $this->info("Running database version ".$this->db_version);
-        return $this;
-    }
+	function showInfo(){
+		$this->getVersion();
+		$this->info("Running database version ".$this->db_version);
+		return $this;
+	}
 	function getVersion(){
 		/**
 		 * Checking table that contains version info
@@ -33,15 +33,15 @@ class VersionControl extends AbstractController{
 		$this->db_version = $this->api->db->getOne("select db_version from $this->table");
 	}
 	function versionUpdate(){
-        $this->getVersion();
+		$this->getVersion();
 		if($this->db_version != $this->api->apinfo['release']){
 			//getting scripts
 			$scripts=array();
 			if ($handle = opendir($this->dirname)) {
 				//getting files to an array
-				while (false !== ($file = readdir($handle))) { 
+				while (false !== ($file = readdir($handle))) {
 					if($this->neededFile($file)){
-						$scripts[sprintf('%06d.%03d.%03d', $this->fileVersion($file), 
+						$scripts[sprintf('%06d.%03d.%03d', $this->fileVersion($file),
 							$this->fileSubVersion($file), $this->fileSequenceNo($file))]=$file;
 					}
 				}
@@ -55,7 +55,7 @@ class VersionControl extends AbstractController{
 				closedir($handle);
 				//updating DB version
 				$this->api->db->query("update $this->table set db_version = '".$this->api->apinfo['release']."'");
-                $this->debug('Version control: DB updated to '.$this->api->apinfo['release']."\n");
+				$this->debug('Version control: DB updated to '.$this->api->apinfo['release']."\n");
 			}
 		}
 	}
@@ -73,7 +73,7 @@ class VersionControl extends AbstractController{
 				$this->debug("Version control: FAILED! ".mysql_error()."\n");
 			}
 		}
-        $this->debug("Version control: executed $file\n");
+		$this->debug("Version control: executed $file\n");
 	}
 	function execPHP($file){
 		/**

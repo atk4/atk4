@@ -1,7 +1,7 @@
 <?php
 /**
  * AJAX class implemented using jQuery (http://jquery.com/)
- * 
+ *
  * This class requires jQuery library and the following plugins:
  * - jQuery Form Plugin (http://malsup.com/jquery/form/)
  * - jDialog (http://www.gimiti.com/kltan/wordpress/?p=20)
@@ -15,7 +15,7 @@ class Ajax extends AbstractAjax{
 	/**
 	 * Adds all the code collected to $.ready()
 	 * Same as execute() but does not breaks code flow
-	 * Code is inserted into document_ready tag, which should be inside $.ready(function(){here}) within head HTML-tag 
+	 * Code is inserted into document_ready tag, which should be inside $.ready(function(){here}) within head HTML-tag
 	 */
 	function addOnReady(){
 		$this->api->template->append('document_ready',$this->getAjaxOutput());
@@ -70,13 +70,13 @@ class Ajax extends AbstractAjax{
 		$this->spinner=null;
 		return $this;
 	}
-    function addGridRowInline($grid,$column,$url){
-        // Add new row to the grid and activate it as InLine
-        // add a new row to the table
-        $this->ajaxFunc("$('.inline_new + tr').remove();$('#".$grid->name.
-                " table:eq(1)').find('tr:first').after('<tr class=inline_new><td colspan=8 ".
-                "id=newinline rel=\'".$url."\'>newelement</td></tr>');$('.lister_notfound').hide();$('#newinline').atk4_inline().atk4_inline('expand');");
-    }
+	function addGridRowInline($grid,$column,$url){
+		// Add new row to the grid and activate it as InLine
+		// add a new row to the table
+		$this->ajaxFunc("$('.inline_new + tr').remove();$('#".$grid->name.
+	" table:eq(1)').find('tr:first').after('<tr class=inline_new><td colspan=8 ".
+	"id=newinline rel=\'".$url."\'>newelement</td></tr>');$('.lister_notfound').hide();$('#newinline').atk4_inline().atk4_inline('expand');");
+	}
 	function reloadGridRow($grid,$row_id,$url=null,$args=array()){
 		if(is_object($grid))$grid_name=$grid->name;
 		else $grid_name=$grid;
@@ -145,7 +145,7 @@ class Ajax extends AbstractAjax{
 		return $this->ajaxFunc("showFrame('$id','$url')");
 	}
 	function hideFrame(){
-		
+
 	}
 	/**
 	 * Shows the modal dialog. Dialog contents are loaded from the URL specified
@@ -156,7 +156,7 @@ class Ajax extends AbstractAjax{
 	}
 	/**
 	 * Closes the modal dialog created on a page
-	 * 
+	 *
 	 */
 	function closeModalDialog(){
 		return $this->notImplemented();

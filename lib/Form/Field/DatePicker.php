@@ -7,10 +7,10 @@
 class Form_Field_DatePicker extends Form_Field {
 	function init(){
 		parent::init();
-        $this->js(true)->datepicker(array(
+		$this->js(true)->datepicker(array(
 					'duration'=>0,
 					//'showOn'=>'button',
-					//'buttonImage'=>'images/calendar.gif', 
+					//'buttonImage'=>'images/calendar.gif',
 					//'buttonImageOnly'=> true,
 					'changeMonth'=>true,
 					'changeYear'=>true,
@@ -31,7 +31,7 @@ class Form_Field_DatePicker extends Form_Field {
 		if(!$value)return parent::set($value);
 		list($d,$m,$y)=explode('/',$value);
 		if($y)$value=join('/',array($m,$d,$y));
-        elseif($m)$value=join('/',array($m,$d));
+		elseif($m)$value=join('/',array($m,$d));
 		$value=date('Y-m-d',strtotime($value));
 		return parent::set($value);
 	}

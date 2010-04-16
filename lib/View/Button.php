@@ -2,39 +2,39 @@
 class View_Button extends View_HtmlElement {
 	private $icon=null;
 	private $link=null;
-    function defaultTemplate(){
-        return array('button','button');
-    }
+	function defaultTemplate(){
+		return array('button','button');
+	}
 	function setIcon($icon){
 		$this->icon=$icon;
 		$this->template->set('icon',$icon);
 	}
-    function setLabel($label){
-        list($label,$icon)=explode(',',$label);
-        $this->setText($label);
+	function setLabel($label){
+		list($label,$icon)=explode(',',$label);
+		$this->setText($label);
 
-        if($icon)$this->setIcon($icon);
+		if($icon)$this->setIcon($icon);
 
-        return $this;
-    }
+		return $this;
+	}
 	function setButtonStyle($n){
 		$this->template->set('button_style',$n);
 		return $this;
 	}
-    function setStyle($key,$value=null){
+	function setStyle($key,$value=null){
 		return $this->addStyle($key,$value);
-    	//$this->style[]="$key: $value";
-    	//return $this;
-    }
+		//$this->style[]="$key: $value";
+		//return $this;
+	}
 	function setLink($link){
 		//$this->addClass('atk4-link');
 		return $this->setAttr('href',$link);
 	}
-    function setClass($class){
-    	$this->class=$class;
-    	return $this;
-    }
-    function render(){
+	function setClass($class){
+		$this->class=$class;
+		return $this;
+	}
+	function render(){
 		$this->js(true)->button();
 
 		if($this->icon){
@@ -44,8 +44,8 @@ class View_Button extends View_HtmlElement {
 			$this->template->tryDel('icon_span');
 		}
 
-        return parent::render();
-    }
+		return parent::render();
+	}
 	function onClick(){
 		return $this->js('click')->univ();
 	}

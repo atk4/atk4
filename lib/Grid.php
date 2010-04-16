@@ -190,78 +190,78 @@ class Grid extends CompleteLister {
 			->trySet('_value_',$this->current_row[$field])
 			->render();
 	}
-    function format_widget($field, $widget, $params=array(), $widget_json=null){
+	function format_widget($field, $widget, $params=array(), $widget_json=null){
 		$class=$this->name.'_'.$field.'_expander';
-        $params=array(
-                'class'=>$class."_".$field." $widget lister_cell"
-                )+$params;
+		$params=array(
+				'class'=>$class."_".$field." $widget lister_cell"
+				)+$params;
 		$this->js(true)->_tag('.'.$class.'_'.$field)->_load($widget)->activate($widget_json);
 		/*
-        $this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
+		$this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
 		*/
 		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];
-        }
-    }
-    function format_inline_widget($field, $idfield='id'){
-        $this->format_widget(
-                $field,
-                'inline',
-                array(
-                    'width'=>'0',
-                    'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
-                    'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
-                        array('expander'=>$field,
-                            'cut_object'=>$this->api->page.'_'.$field,
-                            'expanded'=>$this->name,
-                            'id'=>$this->current_row[$idfield])
-                        )
-                    )
-                );
+		}
+	}
+	function format_inline_widget($field, $idfield='id'){
+		$this->format_widget(
+				$field,
+				'inline',
+				array(
+					'width'=>'0',
+					'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
+					'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
+						array('expander'=>$field,
+							'cut_object'=>$this->api->page.'_'.$field,
+							'expanded'=>$this->name,
+							'id'=>$this->current_row[$idfield])
+						)
+					)
+				);
 
-        $this->current_row[$field]='';
-    }
-    function format_expander_widget($field, $idfield='id'){
-        /*
-        $this->format_widget(
-                $field,
-                'expander',
-                array(
-                    'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
-                    'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
-                        array('expander'=>$field,
-                            'cut_object'=>$this->api->page.'_'.$field,
-                            'expanded'=>$this->name,
-                            'id'=>$this->current_row[$idfield]
-                            )
-                        )
-                    )
-                );
-                */
+		$this->current_row[$field]='';
+	}
+	function format_expander_widget($field, $idfield='id'){
+		/*
+		$this->format_widget(
+				$field,
+				'expander',
+				array(
+					'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
+					'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
+						array('expander'=>$field,
+							'cut_object'=>$this->api->page.'_'.$field,
+							'expanded'=>$this->name,
+							'id'=>$this->current_row[$idfield]
+							)
+						)
+					)
+				);
+				*/
 		$class=$this->name.'_'.$field.'_expander';
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];
-        }
-//		.'<a class=" '.$class.' expander" 
-        $this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'" 
-            id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
-            rel="'.$this->api->getDestinationURL($this->api->page.'_'.$field,
-                        array('expander'=>$field,
-                            'cut_object'=>$this->api->page.'_'.$field,
-                            'expanded'=>$this->name,
-                            'id'=>$this->current_row[$idfield]
-                            )
-                        ).'"
-            >'.$this->current_row[$field].'</button>';
-    }
+		}
+//		.'<a class=" '.$class.' expander"
+		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
+			id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
+			rel="'.$this->api->getDestinationURL($this->api->page.'_'.$field,
+						array('expander'=>$field,
+							'cut_object'=>$this->api->page.'_'.$field,
+							'expanded'=>$this->name,
+							'id'=>$this->current_row[$idfield]
+							)
+						).'"
+			>'.$this->current_row[$field].'</button>';
+	}
 	function init_expander_widget($field){
 		$class=$this->name.'_'.$field.'_expander';
-        $this->js(true)->_selector('.'.$class)->atk4_expander();
+		$this->js(true)->_selector('.'.$class)->atk4_expander();
 	}
 	function init_expander($field){
 		$class=$this->name.'_'.$field.'_expander';
-        $this->js(true)->_selector('.'.$class)->atk4_expander();
+		$this->js(true)->_selector('.'.$class)->atk4_expander();
 	}
 	function format_expander($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
@@ -594,7 +594,7 @@ class Grid extends CompleteLister {
 	function applyTDParams($field,$totals=false){
 		// setting cell parameters (tdparam)
 		$tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
-        $tdparam_str='';
+		$tdparam_str='';
 		if(is_array($tdparam)){
 			// wrap is replaced by style property
 			unset($tdparam['wrap']);
@@ -720,11 +720,11 @@ class Grid extends CompleteLister {
 			//$this->template->del('totals');
 			//$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
 			$this->totals=false;
-            $this->template->del('full_table');
+			$this->template->del('full_table');
 //    		return true;
 		}else{
-            $this->template->del('not_found');
-        }
+			$this->template->del('not_found');
+		}
 		parent::render();
 
 	}

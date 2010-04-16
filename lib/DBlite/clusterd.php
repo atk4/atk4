@@ -100,13 +100,13 @@ while (list($k,$v)=each($slaves))
   {
 // comment the line in config if cannot connect
   reset($Config);
-    
+
   while (list($kk,$vv)=each($Config))
    {
    if (strpos($vv,$slaves[$k]))
-    {
-    $Config[$kk] = '#'.$vv;
-    }
+	{
+	$Config[$kk] = '#'.$vv;
+	}
    }
   }
  }
@@ -130,20 +130,20 @@ if ($cmaster)
    {
  // if master appeared (after status 1), push the dumps and set status to 0
    if ($status == 1)
-    {
+	{
  // push the dumps
-    exec('for dumps in `ls '.SPOOLDIR.'`; do mysql -h '.$master.' -u '.SPOOLUSER.' -p'.SPOOLPASS.' < '.SPOOLDIR.'$dumps; done');
-    setstatus(0);
-    $status = 0;
-    }
+	exec('for dumps in `ls '.SPOOLDIR.'`; do mysql -h '.$master.' -u '.SPOOLUSER.' -p'.SPOOLPASS.' < '.SPOOLDIR.'$dumps; done');
+	setstatus(0);
+	$status = 0;
+	}
    }
   else
    {
    if ($status == 0)
-    {
-    setstatus(1);
-    $status = 1;
-    }
+	{
+	setstatus(1);
+	$status = 1;
+	}
    }
   }
  }
@@ -167,9 +167,9 @@ while (list($k,$v) = each($cslaves))
    $Data = @mysql_fetch_array($res,MYSQL_ASSOC);
 
    if ($Data['Slave_IO_Running'] != 'Yes')
-    {
-    $cslaves[$k] = false;
-    }
+	{
+	$cslaves[$k] = false;
+	}
    }
   } // if connection alive
 
@@ -177,13 +177,13 @@ while (list($k,$v) = each($cslaves))
  if ($cslaves[$k] == false) // we need to check again!
   {
   reset($Config);
-   
+
   while (list($kk,$vv)=each($Config))
    {
    if (strpos($vv,$slaves[$k]))
-    {
-    $Config[$kk] = '#'.$vv;
-    }
+	{
+	$Config[$kk] = '#'.$vv;
+	}
    }
   }
  } // while slaves

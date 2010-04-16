@@ -16,22 +16,22 @@ class AjaxForm extends Form {
 		}
 	}
 	function reloadFieldCallback(){
-        $f=substr($_GET['reload_field_'.$this->name],strlen($this->name)+1);
-        if(!isset($this->elements[$f]))return;
+		$f=substr($_GET['reload_field_'.$this->name],strlen($this->name)+1);
+		if(!isset($this->elements[$f]))return;
 
-        echo $this->elements[$f]->getInput();
-        exit;
+		echo $this->elements[$f]->getInput();
+		exit;
 	}
 	function addSubmit($label,$name=null){
-        $field = $this->add('Form_AjaxSubmit',isset($name)?$name:$label);
-        $field -> setLabel($label);
-        return $field;
+		$field = $this->add('Form_AjaxSubmit',isset($name)?$name:$label);
+		$field -> setLabel($label);
+		return $field;
 	}
 	function submited(){
 		if(parent::submited()){
-            $this->api->addHook('post-submit',$this,'ajaxFlush');
-            return true;
-        }
+			$this->api->addHook('post-submit',$this,'ajaxFlush');
+			return true;
+		}
 	}
 	function ajaxFlush(){
 		exit;

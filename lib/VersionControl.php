@@ -1,21 +1,21 @@
 <?php
 /**
  * Implements a DB update and/or php scripts launch
- * 
+ *
  * This component is to be added to API ($api->add('VersionControl')) in order
  * to perform scheduled DB updates or PHP scripts.
- * 
+ *
  * If VersionControl is to perform DB updates, you should connect to DB BEFORE adding
  * VersionControl
- * 
+ *
  * It looks the specified directory forongoing updates, executes them and puts
  * results of executing in files:
  * - {update_name}.ok : if update was successful, empty file
  * - {update_name}.fail : if update failed, contains error message
- * 
+ *
  * Results of update execution can be reviewed manually in the update directory or
  * in the related application which gives the visual interface for update monitoring
- * 
+ *
  * Created on 09.08.2007 by *Camper* (camper@adevel.com)
  */
 class VersionControl extends AbstractController{
@@ -24,7 +24,7 @@ class VersionControl extends AbstractController{
 	protected $updates_done=0;
 	protected $prefix='';
 	protected $db=null;
-	
+
 	function init(){
 		parent::init();
 		$this->working_dir=$this->api->getConfig('VersionControl/dirname').DIRECTORY_SEPARATOR;
@@ -119,7 +119,7 @@ class VersionControl extends AbstractController{
 		}
 		$this->results[]='DB update finished. Setting script time limit to 30';
 		set_time_limit(30);
-	    $this->results[]="[".date('d/m/Y H:i:s')."] Version control: executed $file";
+		$this->results[]="[".date('d/m/Y H:i:s')."] Version control: executed $file";
 	}
 	function execPHP($file,$last_result=array()){
 		/**
@@ -161,7 +161,7 @@ class VersionControl extends AbstractController{
 	private function getDb(){
 		/**
 		 * Returns a connection to a DB
-		 * This method useful for the DB which are not from API connection, 
+		 * This method useful for the DB which are not from API connection,
 		 * but from separate one (such as own component's DB connection)
 		 */
 		return is_null($this->db)?$this->api->db:$this->db;

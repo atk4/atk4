@@ -2,12 +2,12 @@
 /**
  * This class shows help on the pages in the 'Tip of the day' style
  * Tips are displayed from the DB or static sources.
- * 
+ *
  * Tip datasource structure are in doc/tip_of_theday_db.pdf
- * 
+ *
  * If no user datasource set - lastreads are not stored. This mode is useful for context
  * help displaying.
- * 
+ *
  * Created on 07.09.2006 by *Camper* (camper@adevel.com)
  */
 class Tip extends Lister{
@@ -19,7 +19,7 @@ class Tip extends Lister{
 	protected $section=null;
 	protected $seen_tips=null;
 	public $types=array('regular'=>'regular','trigger'=>'trigger','announce'=>'announce');
-	
+
 	function init(){
 		parent::init();
 		$this->safe_html_output=false;
@@ -131,117 +131,117 @@ class Tip extends Lister{
 		else $this->seen_tips=$this->recall($this->name.'_seen_tips','');
 		return $this->seen_tips;
 	}
-    function setUserSource($table,$db_fields="*",$user_id=null){
-    	/**
-    	 * Sets the DB source for users lastreads. $user_id should be specified to make it work
-    	 */
-        if(!$this->api->db)throw new BaseException('DB must be initialized if you want to use setSource');
-        $this->user_dq = $this->api->db->dsql();
-        $this->user_id=$user_id;
+	function setUserSource($table,$db_fields="*",$user_id=null){
+		/**
+		 * Sets the DB source for users lastreads. $user_id should be specified to make it work
+		 */
+		if(!$this->api->db)throw new BaseException('DB must be initialized if you want to use setSource');
+		$this->user_dq = $this->api->db->dsql();
+		$this->user_id=$user_id;
 
-        $this->user_dq->table($table);
-        $this->user_dq->field($db_fields);
-        $this->user_dq->where('user_id',$this->user_id);
-        return $this;
-    }
-    function setStaticUserSource($data){
-    	/**
-    	 * Sets the static source for users lastreads.
-    	 * Should contain only needed user data!
-    	 */
-        $this->user_data=$data;
-        return $this;
-    }
-    function applyDQ(){
-    	/**
-    	 * Filters sources to the current tip
-    	 */
-    	if(is_array($this->data)){
-    		if($this->tip_id==null)return;
-    		while($this->current_row=array_shift($this->data)){
-    			if($this->current_row['id']==$this->tip_id)return;
-    		}
-    		throw new BaseException('No tip with ID="'.$this->tip_id.'" present in static data');
-    	}
-    	elseif(isset($this->dq))$this->dq->where('id',$this->tip_id);
-    }
-    function execQuery(){
-    	if(isset($this->dq)){
-    		parent::execQuery();
-    		$this->current_row=$this->dq->do_fetchHash();
-    	}
-    	if(isset($this->user_dq))$this->user_dq->do_select();
-    }
-    function getTip($id=true){
-    	/**
-    	 * Returns the tip ID by the following conditions:
-    	 * $id === true: next tip
-    	 * $id === false: previous tip
-    	 * $id is int: appropriate tip by $id
-    	 */
+		$this->user_dq->table($table);
+		$this->user_dq->field($db_fields);
+		$this->user_dq->where('user_id',$this->user_id);
+		return $this;
+	}
+	function setStaticUserSource($data){
+		/**
+		 * Sets the static source for users lastreads.
+		 * Should contain only needed user data!
+		 */
+		$this->user_data=$data;
+		return $this;
+	}
+	function applyDQ(){
+		/**
+		 * Filters sources to the current tip
+		 */
+		if(is_array($this->data)){
+			if($this->tip_id==null)return;
+			while($this->current_row=array_shift($this->data)){
+				if($this->current_row['id']==$this->tip_id)return;
+			}
+			throw new BaseException('No tip with ID="'.$this->tip_id.'" present in static data');
+		}
+		elseif(isset($this->dq))$this->dq->where('id',$this->tip_id);
+	}
+	function execQuery(){
+		if(isset($this->dq)){
+			parent::execQuery();
+			$this->current_row=$this->dq->do_fetchHash();
+		}
+		if(isset($this->user_dq))$this->user_dq->do_select();
+	}
+	function getTip($id=true){
+		/**
+		 * Returns the tip ID by the following conditions:
+		 * $id === true: next tip
+		 * $id === false: previous tip
+		 * $id is int: appropriate tip by $id
+		 */
    		$seen_tips=$this->getSeenTips();
-			
-    	if($id===true){
-    		if(is_array($this->data)){
-    			$id=null; $break=false;
-    			foreach($this->data as $tip){
-    				//comparing sections
-    				$break=
-    					($tip['sections']==''||strpos($tip['sections'],$this->section)!==false)&&
-    				//comparing to seen tips
-    					((strpos($seen_tips,','.$tip['id'])===false&&
-    						strpos($seen_tips,$tip['id'].',')===false&&
-    						$seen_tips!=$tip['id'])||
-    					$seen_tips=='')
-    				;
-    				if($break==true){
-    					$id=$tip['id'];
-    					break;
-    				}
-    			}
-    		}
-    		elseif(isset($this->dq)){
-    			$query="select id from ".$this->dq->args['table']." where " .
+
+		if($id===true){
+			if(is_array($this->data)){
+				$id=null; $break=false;
+				foreach($this->data as $tip){
+					//comparing sections
+					$break=
+						($tip['sections']==''||strpos($tip['sections'],$this->section)!==false)&&
+					//comparing to seen tips
+						((strpos($seen_tips,','.$tip['id'])===false&&
+							strpos($seen_tips,$tip['id'].',')===false&&
+							$seen_tips!=$tip['id'])||
+						$seen_tips=='')
+					;
+					if($break==true){
+						$id=$tip['id'];
+						break;
+					}
+				}
+			}
+			elseif(isset($this->dq)){
+				$query="select id from ".$this->dq->args['table']." where " .
 					($this->section?"(sections like '%$this->section%') ":"(sections='') ") .
 					($seen_tips!=''?"and id not in (".$seen_tips.") ":"").
 					"order by coalesce(ord, id)";
 				$id=$this->api->db->getOne($query);
-    		}
-    	}
-    	elseif($id===false){
-    		if(is_array($this->data)){
-    			$id==null; $break=false;
-    			//reversing an array cause we are going back
-    			$this->data=array_reverse($this->data);
-    			foreach($this->data as $tip){
-    				//comparing sections
-    				$break=
-    					($tip['sections']==''||strpos($tip['sections'],$this->section)!==false)&&
-    				//comparing to seen tips
-    					((strpos($seen_tips,','.$tip['id'])!==false||
-    						strpos($seen_tips,$tip['id'].',')!==false||
-    						$seen_tips==$tip['id'])||
-    						$seen_tips=='')
-    				;
-    				if($break==true){
-    					$id=$tip['id'];
-    					break;
-    				}
-    			}
-    			if($id==null)$id=$this->last_read;
-    		}
-    		elseif(isset($this->dq)){
-	       		$query="select id from ".$this->dq->args['table']." where " .
+			}
+		}
+		elseif($id===false){
+			if(is_array($this->data)){
+				$id==null; $break=false;
+				//reversing an array cause we are going back
+				$this->data=array_reverse($this->data);
+				foreach($this->data as $tip){
+					//comparing sections
+					$break=
+						($tip['sections']==''||strpos($tip['sections'],$this->section)!==false)&&
+					//comparing to seen tips
+						((strpos($seen_tips,','.$tip['id'])!==false||
+							strpos($seen_tips,$tip['id'].',')!==false||
+							$seen_tips==$tip['id'])||
+							$seen_tips=='')
+					;
+					if($break==true){
+						$id=$tip['id'];
+						break;
+					}
+				}
+				if($id==null)$id=$this->last_read;
+			}
+			elseif(isset($this->dq)){
+		   		$query="select id from ".$this->dq->args['table']." where " .
 					"(sections like '%$this->section%' or sections='') " .
 					($seen_tips!=''?"and id in (".$seen_tips.") ":"").
 					"order by coalesce(ord, id) desc";
 				$id=$this->getTipType($this->last_read)=='trigger'?$this->api->db->getOne($query):
 					$seen_tips==''?$this->last_read:$this->api->db->getOne($query);
-    		}
-    	}
+			}
+		}
 		$this->memorize($this->name.'_last_read',$id);
 		return $id;
-    }
+	}
 	function defaultTemplate(){
 		return array('tipoftheday',$this->recall($this->name.'_hidden',false)?'TipHide':'TipShow');
 	}

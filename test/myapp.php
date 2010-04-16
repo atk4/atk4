@@ -6,8 +6,8 @@ $api = new ApiBase('MyApi');
 
 $menu = $api -> add('Menu');
 
-$menu -> add("Page_Welcome"); 
-$menu -> add("Form_Preferences"); 
+$menu -> add("Page_Welcome");
+$menu -> add("Form_Preferences");
 $wizard = $menu -> add("Wizard");
 
 $wizard -> add("Wizard_Tutorial_Introduction");
@@ -24,7 +24,6 @@ $form -> addField('line','hello','Hello World');
 $form -> addSubmit('ok');
 
 if($form->execute()){
-    echo "Thank you for submiting my form :)";
-    exit;
+	echo "Thank you for submiting my form :)";
+	exit;
 }
-

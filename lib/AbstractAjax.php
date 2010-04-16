@@ -14,8 +14,8 @@ abstract class AbstractAjax extends AbstractModel{
 		parent::init();
 		// before proceed we need to check session
 		// only if we are on restricted page
-        // TODO: terrible code, need removal. Session is always checked before any pages
-        // are initialised, in app->init()
+		// TODO: terrible code, need removal. Session is always checked before any pages
+		// are initialised, in app->init()
 		if(isset($this->api->auth)&&!is_null($this->api->auth)){
 			if($this->api->auth instanceof BasicAuth && !$this->api->auth->isPageAllowed($this->api->page))
 				$this->checkSession();
@@ -149,11 +149,11 @@ abstract class AbstractAjax extends AbstractModel{
 		$button=preg_replace('/.*_(.*)/','\\1',$this->api->page);
 		return $this->ajaxFunc("expander_flip('".$lister."','".$id."','".$button."','')");
 	}
-    function closeExpanderWidget(){
-        // TODO: $(this).closest('.expander').atk4_expander('collapse')
-        return $this->ajaxFunc("$('.expander').atk4_expander('collapse')");
+	function closeExpanderWidget(){
+		// TODO: $(this).closest('.expander').atk4_expander('collapse')
+		return $this->ajaxFunc("$('.expander').atk4_expander('collapse')");
 
-    }
+	}
 
 	function memorizeExpander(){
 		$this->api->stickyGET('id');

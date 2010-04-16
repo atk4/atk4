@@ -42,35 +42,35 @@
  */
 
 class SQLAuth extends BasicAuth {
-    private $login_field;
-    private $password_field;
+	private $login_field;
+	private $password_field;
 
-    
-    function init(){
-        parent::init();
-        $this->dq=$this->api->db->dsql();
-    }
-    function setSource($table,$login_field,$password_field){
-        $this->debug("using source for SQLAuth: table=$table, login_field=$login_field, password_field=$password_field");
-        $this->dq->table($table);
-        $this->dq->field($password_field);
-        $this->login_field=$login_field;
-        $this->password_field=$password_field;
-        return $this->dq;
-    }
-    function addInfo($key,$val=null){
-        if($key==$this->password_field)return $this;        // skip password field
-        return parent::addInfo($key,$val);
-    }
-    function verifyCredintials($login,$password){
-        $this->debug("Verifying credintals for $login / $password");
-        $this->dq->where($this->login_field,$login);
-        $data=$this->dq->do_getHash();
-        // If passwords are matched we will record some information
-        if($data && $data[$this->password_field]==$password){
-            $this->addInfo($data);
-            return true;
-        }
-        return false;
-    }
+
+	function init(){
+		parent::init();
+		$this->dq=$this->api->db->dsql();
+	}
+	function setSource($table,$login_field,$password_field){
+		$this->debug("using source for SQLAuth: table=$table, login_field=$login_field, password_field=$password_field");
+		$this->dq->table($table);
+		$this->dq->field($password_field);
+		$this->login_field=$login_field;
+		$this->password_field=$password_field;
+		return $this->dq;
+	}
+	function addInfo($key,$val=null){
+		if($key==$this->password_field)return $this;        // skip password field
+		return parent::addInfo($key,$val);
+	}
+	function verifyCredintials($login,$password){
+		$this->debug("Verifying credintals for $login / $password");
+		$this->dq->where($this->login_field,$login);
+		$data=$this->dq->do_getHash();
+		// If passwords are matched we will record some information
+		if($data && $data[$this->password_field]==$password){
+			$this->addInfo($data);
+			return true;
+		}
+		return false;
+	}
 }

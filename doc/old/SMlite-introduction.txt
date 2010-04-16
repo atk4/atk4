@@ -63,20 +63,20 @@ text is of no use for us and we would simple replace it, howether check the foll
  <?rows?>
   <?row?>
    <tr>
-    <td><?id?>1<?/?></td>
-    <td><?name?>John<?/?></td>
-    <td><?surname?>Smith<?/?></td>
+	<td><?id?>1<?/?></td>
+	<td><?name?>John<?/?></td>
+	<td><?surname?>Smith<?/?></td>
    </tr>
   <?/row?>
    <tr>
-    <td>2</td>
-    <td>Bill</td>
-    <td>Stivens</td>
+	<td>2</td>
+	<td>Bill</td>
+	<td>Stivens</td>
    </tr>
    <tr>
-    <td>3</td>
-    <td>Dorothy</td>
-    <td>Atkinson</td>
+	<td>3</td>
+	<td>Dorothy</td>
+	<td>Atkinson</td>
    </tr>
   <?/rows?>
 </table>
@@ -95,7 +95,7 @@ then for each record we:
 
 3) render "row" for to build each row
 4) add rendered text into "rows" spot
-    
+
 and after that we:
 
 5) render "lister"
@@ -107,8 +107,8 @@ $row = $lister->cloneBranch('row');
 $lister -> del('rows');
 
 while($row_data = getAssocDataRow()){
-    $row->set($row_data);
-    $lister->append('rows',$row->render());
+	$row->set($row_data);
+	$lister->append('rows',$row->render());
 }
 
 echo $lister->render();

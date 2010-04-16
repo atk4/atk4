@@ -1,41 +1,41 @@
 <?php
 /**
- * TODO TipManager will be implemented as a full-functional Namespace later. 
- * 
+ * TODO TipManager will be implemented as a full-functional Namespace later.
+ *
  * TipManager is a namespace that should be added to your administration interface
  * if you are using DB aware tips.
- * 
+ *
  * Once added it will appear in the application menu and will not require any
  * additional code
- * 
+ *
  * Use descendants if you want to change its looks
- * 
+ *
  * Created on 08.09.2006 by *Camper* (camper@adevel.com)
  */
 class TipManager extends Namespace{
 	public $tip_types=array('regular'=>'regular','trigger'=>'trigger','announce'=>'announce');
-	
+
 	function initNamespace(){
 		//use tips to show help on how to use them
 		$this->api->getElement('menu')->addMenuItem('Tip manager',$this->short_name.';Index');
 	}
-    function initLayout(){
-        parent::initLayout();
+	function initLayout(){
+		parent::initLayout();
 		$this->add('Text', 'back', 'Locator')->set('<center><a href="Index">' .
 				'Back to Index</a></center>');
-        $this->template->del('LeftSidebar');
-        $this->template->del('RightSidebar');
-        $this->template->del('InfoWindow');
-        $this->template->del('Locator');
-        $this->template->del('Menu');
-        //$this->template->del('SelfTips');
-        
+		$this->template->del('LeftSidebar');
+		$this->template->del('RightSidebar');
+		$this->template->del('InfoWindow');
+		$this->template->del('Locator');
+		$this->template->del('Menu');
+		//$this->template->del('SelfTips');
+
 		$this->tips=$this->getTipsFromTemplate();
 		$tip=$this->add('Tip','regular','Locator')
 			->setStaticSource($this->tips)
 			->setSection($this->api->page?$this->api->page:'Index')
 		;
-    }
+	}
 	function getTipsFromTemplate(){
 		$template=$this->add('SMlite');
 		$template->loadTemplate('tipmanager');
@@ -55,7 +55,7 @@ class TipManager extends Namespace{
 		return $result;
 	}
 	function defaultTemplate(){
-        return array('shared','_top');
+		return array('shared','_top');
 	}
 	function page_Index($p){
 		$filter=$p->frame('Content','Quick search')->add('TipFilter',null,'content');
@@ -65,7 +65,7 @@ class TipManager extends Namespace{
 			->addColumn('shorttext','sections','Used in sections')
 			->addColumn('shorttext,wrap','tip','Text')
 			->addColumn('expander','Edit')
-			
+
 			->setSource('tip')
 		;
 		$grid->addButton('Add new')->redirect('EditTip');
@@ -86,10 +86,10 @@ class TipForm extends Form{
 			->addField('dropdown','type','Tip type')->setValueList($this->owner->owner->owner->tip_types)
 			->addField('line','sections','Used in sections')->setProperty('size', 60)
 			->addField('text','tip','Text')->setNotNull()->setProperty('cols', '"80"')
-			
+
 			->setSource('tip')
 			->addConditionFromGET('id')
-			
+
 			->addSubmit('Save')
 			->addButton('Cancel')->redirect('Index')
 		;
@@ -105,9 +105,9 @@ class TipFilter extends Filter{
 		$this
 			->addField('dropdown','type','Tip type')->setValueList($this->owner->owner->owner->tip_types)
 			->addField('line','tip','Text')->setNoSave()
-			
+
 			->setSource('tip')
-			
+
 			->addSubmit('Show')
 			->addButton('Clear')
 		;

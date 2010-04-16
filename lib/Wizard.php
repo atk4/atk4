@@ -1,7 +1,7 @@
 <?php
 /**
  * Simple class to create wizard-like interfaces
- * 
+ *
  * Created on 08.09.2006 by *Camper* (camper@adevel.com)
  */
 class Wizard extends AbstractView{
@@ -10,7 +10,7 @@ class Wizard extends AbstractView{
 	protected $current;
 	public $form=null;
 	public $finish=null;
-	
+
 	function init(){
 		parent::init();
 		$this->api->stickyGET('step');
@@ -48,11 +48,11 @@ class Wizard extends AbstractView{
 	function addButton($label, $name=null){
 		$name=isset($name)?$name:$label;
 		$this->buttons[$name] = $this->add('Form_Button',$name,'buttons')
-            ->setLabel($label);
+			->setLabel($label);
 
-        return $this->buttons[$name]->onclick = $this->buttons[$name]->ajax()
-        	->useProgressIndicator($this->name.'_loading');
-		
+		return $this->buttons[$name]->onclick = $this->buttons[$name]->ajax()
+			->useProgressIndicator($this->name.'_loading');
+
 	}
 	function addNextButton(){
 		/**

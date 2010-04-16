@@ -1,7 +1,7 @@
 <?
 $safe_extensions=array(
-        'gif','jpg','css','js','png'
-        );
+		'gif','jpg','css','js','png'
+		);
 @list($fn,$ext,$junk)=explode('.',$_GET['file']);
 header("Content-type: ".str_replace(',','/',$_GET['ct']));
 if(isset($junk))exit;

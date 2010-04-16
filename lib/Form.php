@@ -46,7 +46,7 @@ class Form extends AbstractView {
 		* at all, form will work with default look.
 		*/
 		parent::init();
-		
+
 		$this->getChunks();
 
 		// After init method have been executed, it's safe for you to add controls on the form. BTW, if
@@ -382,7 +382,7 @@ class Form extends AbstractView {
 				$this->loaded_from_db=true;
 			}
 		}
-        $this->hook('post-loadData');
+		$this->hook('post-loadData');
 	}
 
 	function isLoadedFromDB(){

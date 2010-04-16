@@ -24,40 +24,40 @@
  */
 class MultiuserAuth extends BasicAuth {
 
-    private $user_field;
-    private $password_field;
+	private $user_field;
+	private $password_field;
 
 	//TODO Check this method
-    function processLogin($return){
-        // if($ ---> add comment by MVS, not completed method???
-        $this->getCredentials();
-        
-    }
-    function filterCredentials(&$source){
-        return hash_filter($source,array('username','password'));
-    }
+	function processLogin($return){
+		// if($ ---> add comment by MVS, not completed method???
+		$this->getCredentials();
 
-    function getCredentials(){
-        if(empty($this->credentials))$this->credentials=$this->filterCredentials($_POST);
-        if(empty($this->credentials))$this->credentials=$this->filterCredentials($_GET);
-        if(empty($this->credentials))$this->credentials=$this->filterCredentials($_COOKIE);
-    }
-    function getUser(){
-        return $this->info[$this->user_field];
-    }
-    function setSource($table='user',$user_field='user',$password_field='password'){
-        $this->user_field=$user_field;
-        $this->password_field=$password_field;
-        $this->dq=$this->api->dq->dsql()
-            ->table($table)
-            ->field('*')
-            ;
-        return $this;
-    }
-    function encryptPasswordMD5(){
-        return $this->customEncryptor('$password=md5($password)');
-    }
-    function encryptPasswordSHA(){
-        return $this->customEncryptor('$password=sha($password)');
-    }
+	}
+	function filterCredentials(&$source){
+		return hash_filter($source,array('username','password'));
+	}
+
+	function getCredentials(){
+		if(empty($this->credentials))$this->credentials=$this->filterCredentials($_POST);
+		if(empty($this->credentials))$this->credentials=$this->filterCredentials($_GET);
+		if(empty($this->credentials))$this->credentials=$this->filterCredentials($_COOKIE);
+	}
+	function getUser(){
+		return $this->info[$this->user_field];
+	}
+	function setSource($table='user',$user_field='user',$password_field='password'){
+		$this->user_field=$user_field;
+		$this->password_field=$password_field;
+		$this->dq=$this->api->dq->dsql()
+			->table($table)
+			->field('*')
+			;
+		return $this;
+	}
+	function encryptPasswordMD5(){
+		return $this->customEncryptor('$password=md5($password)');
+	}
+	function encryptPasswordSHA(){
+		return $this->customEncryptor('$password=sha($password)');
+	}
 }

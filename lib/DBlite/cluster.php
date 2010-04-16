@@ -14,7 +14,7 @@ if (!defined('DEBUG'))
  {
  define('DEBUG',false);
  }
- 
+
 class DBlite_cluster extends DBlite
  {
  var $cursor;
@@ -49,7 +49,7 @@ function real_connect($dsn)
   return false;
   }
 
- DEBUG and print "Global status is set to $this->status\n";  
+ DEBUG and print "Global status is set to $this->status\n";
 
 // no matter what the status is (0 or 1), read and parse the config
  $Config = @file(CONFIG);
@@ -58,7 +58,7 @@ function real_connect($dsn)
   DEBUG and print "Failed to open config file\n";
   return false;
   }
- 
+
  while (list($k,$v) = each($Config))
   {
   if (($v{0} != '#') and ($s = trim($v))) // not a comment; not a spaced line
@@ -66,35 +66,35 @@ function real_connect($dsn)
    list($key,$val) = split('=',$s);
    $key = trim($key);
    $val = trim($val);
-   
+
    switch ($key)
-    {
-    case 'master' : $this->master = $val; break;
-    case 'slave'  : $this->slaves[] = $val; break;
-    case 'status1': if ($val)
-                     {
-                     DEBUG and print "User $val will get status 1\n";
-                     $this->userstatus[0][] = $val;
-                     }
-                    else
-                     {
-                     DEBUG and print "Status 1 is set for all users\n";
-                     $this->status = 1;
-                     }
-                    break; 
-    case 'status2': if ($val)
-                     {
-                     DEBUG and print "User $val will get status 2\n";
-                     $this->userstatus[1][] = $val;
-                     }
-                    else
-                     {
-                     DEBUG and print "Status 2 is set for all users\n";
-                     return false;
-                     }
-                    break;
-    default       : DEBUG and print "Unknown setting $key was ignored\n";
-    }
+	{
+	case 'master' : $this->master = $val; break;
+	case 'slave'  : $this->slaves[] = $val; break;
+	case 'status1': if ($val)
+					 {
+					 DEBUG and print "User $val will get status 1\n";
+					 $this->userstatus[0][] = $val;
+					 }
+					else
+					 {
+					 DEBUG and print "Status 1 is set for all users\n";
+					 $this->status = 1;
+					 }
+					break;
+	case 'status2': if ($val)
+					 {
+					 DEBUG and print "User $val will get status 2\n";
+					 $this->userstatus[1][] = $val;
+					 }
+					else
+					 {
+					 DEBUG and print "Status 2 is set for all users\n";
+					 return false;
+					 }
+					break;
+	default       : DEBUG and print "Unknown setting $key was ignored\n";
+	}
    }
   }
 // now let's check what we've got
@@ -103,7 +103,7 @@ function real_connect($dsn)
   DEBUG and print "Master was not set\n";
   return false;
   }
- 
+
  if (sizeof($this->slaves) == 0)
   {
   DEBUG and print "Slaves not found, setting to master\n";
@@ -124,7 +124,7 @@ function real_connect($dsn)
    DEBUG and print "Connection to master failed\n";
    return mysql_error();
    }
-   
+
   if (!@mysql_select_db($this->settings['database'],$this->mhandle))
    {
    DEBUG and print "Failed to select database at master\n";
@@ -136,7 +136,7 @@ function real_connect($dsn)
  srand((float) microtime() * 10000000);
  $slavehost = $this->slaves[array_rand($this->slaves)];
 
- $this->shandle = @mysql_pconnect($slavehost,$this->settings['username'],$this->settings['password']); 
+ $this->shandle = @mysql_pconnect($slavehost,$this->settings['username'],$this->settings['password']);
  if (!$this->shandle)
   {
   DEBUG and print "Connection to slave failed\n";
@@ -148,28 +148,28 @@ function real_connect($dsn)
   DEBUG and print "Failed to select database at slave\n";
   return mysql_error();
   }
- 
+
  return true;
  } // real_connect
-    
+
 function parseParamType($type, $name, $value)
  {
  switch ($type)
   {
   case 'date': if ((!is_null($value)) and ($value==''))
-                {
-                return $this->error('Value not set for DATE parameter "'.$name.'"', $this->last_query);
-                }
+				{
+				return $this->error('Value not set for DATE parameter "'.$name.'"', $this->last_query);
+				}
 
-               if (is_numeric($value))
-                {
-                $value = date('Y-m-d H:i:s',$value);
-                }
-               return (is_null($value)) ? 'null' : "'".$value."'";
-      default: return parent::parseParamType($type, $name, $value);        
+			   if (is_numeric($value))
+				{
+				$value = date('Y-m-d H:i:s',$value);
+				}
+			   return (is_null($value)) ? 'null' : "'".$value."'";
+	  default: return parent::parseParamType($type, $name, $value);
   }
  } // parseParamType
-    
+
 function query($query)
  {
  $this->last_query = array('caller'=>$this->getCaller());
@@ -178,7 +178,7 @@ function query($query)
   {
   return false;
   }
-        
+
  $this->last_query['query_str']=$_query;
 
  if ($this->cursor) @mysql_free_result($this->cursor);
@@ -207,10 +207,10 @@ function query($query)
    $fp = @fopen(SPOOLDIR.$this->settings['database'],'a');
 
    if ($fp === false)
-    {
-    DEBUG and print "Error opening spool file ".SPOOLDIR.$this->settings['database']."\n";
-    return $this->error("Could not open spool file",$this->last_query);
-    }
+	{
+	DEBUG and print "Error opening spool file ".SPOOLDIR.$this->settings['database']."\n";
+	return $this->error("Could not open spool file",$this->last_query);
+	}
 
    $_query = str_replace("\n",' ',$_query)."\n"; // one query per line
    @fwrite($fp,$_query);
@@ -219,15 +219,15 @@ function query($query)
   else // status should be 0 here
    {
    if (!($this->cursor = mysql_query($_query,$this->mhandle)))
-    {
-    DEBUG and print "Master query failed";
-    return $this->query_error("Could not execute query",$this->mhandle);
-    }
+	{
+	DEBUG and print "Master query failed";
+	return $this->query_error("Could not execute query",$this->mhandle);
+	}
    }
   }
  return $this;
  } // query
- 
+
 function fetchRow()
  {
  if (!$row = mysql_fetch_row($this->cursor)) // slave only
@@ -247,7 +247,7 @@ function fetchHash()
   }
  return $row;
  }
-    
+
 function numRows()
  {
 // Rows after select statement
@@ -275,7 +275,7 @@ function affectedRows()
 
 function lastID()
  {
-// Cluster users are not supposed to use it 
+// Cluster users are not supposed to use it
  if ($this->status == 0)
   {
   return mysql_insert_id($this->mhandle);

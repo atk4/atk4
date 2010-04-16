@@ -17,12 +17,12 @@ require('./nsfw/amodules3/lib/DBlite.php');
 
 // parse config
  $Config = @file(CONFIG);
- 
+
  if ($Config === false)
   {
   print("<p>Failed to open config file</p>");
   }
- 
+
  while (list($k,$v) = each($Config))
   {
   if (($v{0} != '#') and ($s = trim($v))) // not a comment; not a spaced line
@@ -30,15 +30,15 @@ require('./nsfw/amodules3/lib/DBlite.php');
    list($key,$val) = split('=',$s);
    $key = trim($key);
    $val = trim($val);
-   
+
    if ($key == 'master')
-    {
-    $master = $val;
-    }
+	{
+	$master = $val;
+	}
    else if ($key == 'slave')
-    {
-    $slaves[] = $val;
-    }
+	{
+	$slaves[] = $val;
+	}
    }
   }
 
@@ -58,7 +58,7 @@ if (isset($_GET['name']))
  $db->query($sql);
  $sql = "flush privileges";
  $db->query($sql);
- 
+
  while (list($k,$v)=each($slaves))
   {
   $db = DBlite::connect('mysql://granter:f3l0cv]@'.$v.'/mysql');
@@ -75,7 +75,7 @@ if (isset($_GET['revoke']))
  {
  array_push($slaves,$master);
  $slaves = array_unique($slaves);
- 
+
  while (list($k,$v)=each($slaves))
   {
   $db = DBlite::connect('mysql://granter:f3l0cv]@'.$v.'/mysql');

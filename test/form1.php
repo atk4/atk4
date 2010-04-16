@@ -11,7 +11,6 @@ $form -> addField('text','address','Address')->nn('Enter your address');
 $form -> addSubmit('ok');
 
 if($form->execute()){
-    echo "Thank you for submiting my form, ".$form->get('name')." :)";
-    exit;
+	echo "Thank you for submiting my form, ".$form->get('name')." :)";
+	exit;
 }
-

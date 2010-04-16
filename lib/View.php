@@ -1,6 +1,6 @@
 <?php
 class View extends AbstractView {
-    function defaultTemplate(){
-        return '';
-    }
+	function defaultTemplate(){
+		return '';
+	}
 }

@@ -5,29 +5,29 @@
  * be rendered properly
  */
 class sw_layout extends sw_component {
-    function init(){
-        parent::init();
+	function init(){
+		parent::init();
 
-        $tag=$this->template->top_tag;
-        list($class,$junk)=split('#',$tag);
+		$tag=$this->template->top_tag;
+		list($class,$junk)=split('#',$tag);
 
-        $name="layout".($class=='layout'?'':('_'.$class));
+		$name="layout".($class=='layout'?'':('_'.$class));
 
-        $this->debug("Loading template $name for layout");
+		$this->debug("Loading template $name for layout");
 
-        $t = $this->template;
+		$t = $this->template;
 
-        $this->template=$this->add('SMlite')->loadTemplate($name);
+		$this->template=$this->add('SMlite')->loadTemplate($name);
 
-        $c=$this->add('View','content','content',$t);
+		$c=$this->add('View','content','content',$t);
 
-        $this->api->processTemplate($c);
+		$this->api->processTemplate($c);
 
-        if($this->template->is_set('location'))$this->add('sw_location','location','location','location');
-    }
-    function processRecursively(){}
-    function render(){
-        $this->template->set($this->api->info);
-        parent::render();
-    }
+		if($this->template->is_set('location'))$this->add('sw_location','location','location','location');
+	}
+	function processRecursively(){}
+	function render(){
+		$this->template->set($this->api->info);
+		parent::render();
+	}
 }

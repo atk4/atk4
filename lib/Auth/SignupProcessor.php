@@ -9,7 +9,7 @@ class Auth_SignupProcessor extends AbstractController{
 			return;
 		}
 		$p=$this->add('Page');
-        $p->template->loadTemplate('empty');
+		$p->template->loadTemplate('empty');
 		$p->add('page_'.$this->api->getConfig('auth/register_page'), null, 'Content');
 		$p->template->set('page_title',trim($this->getResourceTitle().' Sign Up'));
 		$p->downCall('render');
