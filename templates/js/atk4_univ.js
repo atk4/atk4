@@ -409,6 +409,10 @@ loadingInProgress: function(){
 		alert('Loading is in progress. Please wait');
 	}
 },
+	ajaxifyLinks: function(){
+		// Links of the current container will be opened in the closest loader
+		this.jquery.find('td a').click(function(ev){ ev.preventDefault(); $(this).closest('.atk4_loader').atk4_loader('loadURL',$(this).attr('href')); });
+	},
 	autoChange: function(interval){
 	// Normally onchange gets triggered only when field is submitted. However this function
 	// will make field call on_change one second since last key is pressed. This makes event
