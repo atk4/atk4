@@ -40,6 +40,7 @@ $.widget("ui.atk4_form", {
 		}
 		*/
 
+		this.element.prepend('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
 		this.element.addClass('atk4_form');
 
 		this.element.find('input').bind('keypress',function(e){
@@ -242,7 +243,7 @@ $.widget("ui.atk4_form", {
 			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = this.value;
 		});
 
-		params['ajax_submit']=1;
+		//params['ajax_submit']=1;
 
 		// btn is clicked
 		if(btn)params[btn]=1;
