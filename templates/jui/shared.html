@@ -6,27 +6,27 @@
 	<head>
 		<title><?page_title?>Agile Toolkit<?/?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		
+
 		<link rel="shortcut icon" href="<?$base_href?>amodules3/templates/jui/images/favicon.ico" type="image/x-icon"  />
 		<link rel="shortcut icon" href="<?$base_href?>amodules3/templates/jui/images/favicon.ico" />
-		
-		<link rel="stylesheet" type="text/css" href="<?$base_href?>amodules3/templates/jui/css/themes/<?theme?>agile<?/?>/jquery-ui.css" />	
+
+		<link rel="stylesheet" type="text/css" href="<?$base_href?>amodules3/templates/jui/css/themes/<?theme?>agile<?/?>/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="<?$base_href?>amodules3/templates/jui/css/agile.css" />
 		<link rel="stylesheet" type="text/css" href="<?$base_href?>amodules3/templates/jui/css/general.css" />
-		
+
 		<?$js_include?>
 		<script type="text/javascript">
 			$(function(){
 				<?$document_ready?>
 			});
 		</script>
-		
+
 	</head>
 	<body>
 		<div id="layout">
 			<div class="wrapper">
 				<div id="header">
-					<div id="atk-logo" class="ui-widget-header float-left"><img src="<?$base_href?>amodules3/templates/jui/images/atk-logo.png" /></div>
+					<?logo?><div id="atk-logo" class="ui-widget-header float-left"><img src="<?$base_href?><?logo_url?>amodules3/templates/jui/images/atk-logo.png<?/?>" /></div><?/logo?>
 					<div id="header-right">
 						<?Menu?>
 							<ul class="ui-state-default ui-corner-all">
@@ -56,5 +56,3 @@
 		</div>
 	</body>
 </html>
-
-
