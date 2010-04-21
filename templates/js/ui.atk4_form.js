@@ -9,7 +9,7 @@
 //     <input type=> <!-- could be any type really -->
 //
 //	 <img class="form_loading">
-//		
+//
 
 $.widget("ui.atk4_form", {
 
@@ -17,19 +17,19 @@ $.widget("ui.atk4_form", {
 	base_url: undefined,
 	loader: undefined,
 	loading: false,
-	
+
 	_getChanged: function(){
 		return this.element.hasClass('form_changed');
 	},
 	_setChanged: function(state){
 		if(state)this.element.addClass('form_changed');else this.element.removeClass('form_changed');
 	},
-	
+
     _init: function(options){
         $.extend(this.options,options);
         var form=this;
-		
-		
+
+
 		/*
 		form.loader=this.element.parents('.atk4_loader');
 		if(form.loader.length){
@@ -77,7 +77,7 @@ $.widget("ui.atk4_form", {
 			var s=$(this);
 			a.text(s.attr('value'));
 			a.attr('tabIndex',s.attr('tabIndex')+1);
-			a.click(function(){ 
+			a.click(function(){
 				form.element.submit()});
 			$(this).after(a);
 			s.remove();
@@ -134,12 +134,12 @@ $.widget("ui.atk4_form", {
 
 		url=$.atk4.addArgument(url,"cut_object="+field_id);
 		if(arg)url=$.atk4.addArgument(url,arg,val);
-		
+
 
 		var f=$("#"+field_id);
-		
+
 		if(!notrigger)f.trigger('reload_field');
-		
+
 		if(f.hasClass('field_reference')){
 			var f2=f.prev();
 			f.remove();
@@ -167,18 +167,18 @@ $.widget("ui.atk4_form", {
 		}
 
 		if(!error || error=='0')error="must be specified properly";
-		
-		
-		// First - we need to include the sucker
-		$.atk4.includeJS("/amodules3/templates/js/tipTipv13/jquery.tipTip.js");
-		$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
-	
-		$.atk4(function(){
-			field.closest('.form_field').attr('title',error).tipTip({'activation':'click','color':'red'}).click();
-		});
-		return;
-	
-		
+
+		if(this.options.useTipTip){
+			// First - we need to include the sucker
+			$.atk4.includeJS("/amodules3/templates/js/tipTipv13/jquery.tipTip.js");
+			$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
+
+			$.atk4(function(){
+				field.closest('.form_field').attr('title',error).tipTip({'activation':'click','color':'red'}).click();
+			});
+			return;
+		}
+
 		field.closest('.form_field').find('.field_hint').hide();
 		field.closest('form').find('.field_error').remove();
 
@@ -252,7 +252,7 @@ $.widget("ui.atk4_form", {
 		$.post(this.element.attr('action'),params,function(res){
 			form.loading=false;
 			var c=form._getChanged();form._setChanged(false);
-			
+
 			if(!$.atk4._checkSession(res))return;
 			/*
 			if(res.substr(0,5)=='ERROR'){
@@ -277,4 +277,3 @@ $.widget("ui.atk4_form", {
 		});
 	}
 });
-
