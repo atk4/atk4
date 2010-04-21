@@ -378,6 +378,18 @@ class Grid extends CompleteLister {
 		$this->current_row[$field]=
 			$this->ajax()->setFieldValue($confirm->getElement('id')->name,$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setVisibility($f,true)->getLink('delete');
 	}
+	function format_button($field){
+		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
+		'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+			array($field=>$this->current_row['id'])).'\')">'.
+			$this->columns[$field]['descr'].'</button>';
+	}
+	function format_ask($field){
+		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
+		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+			array($field=>$this->current_row['id'])).'&value=\'+value)">'.
+			$this->columns[$field]['descr'].'</button>';
+	}
 	function addRecordOrder($field,$table=''){
 		if(!$this->record_order){
 			$this->record_order=$this->add('RecordOrder');
