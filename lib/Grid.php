@@ -384,7 +384,7 @@ class Grid extends CompleteLister {
 			array($field=>$this->current_row['id'])).'\')">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
-	function format_ask($field){
+	function format_prompt($field){
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
 		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'])).'&value=\'+value)">'.
