@@ -390,6 +390,16 @@ class Grid extends CompleteLister {
 			array($field=>$this->current_row['id'])).'&value=\'+value)">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
+	function format_checkbox($field){
+		$this->current_row[$field] = '<input type="checkbox" id="cb_'.
+			$this->current_row['id'].'" name="cb_'.$this->current_row['id'].
+			'" value="'.$this->current_row['id'].'"'.
+			($this->current_row['selected']=='Y'?" checked ":" ").//'" onclick="'.
+			//$this->onClick($field).
+			'/>';
+		$this->setTDParam($field,'width','10');
+		$this->setTDParam($field,'align','center');
+	}
 	function addRecordOrder($field,$table=''){
 		if(!$this->record_order){
 			$this->record_order=$this->add('RecordOrder');
