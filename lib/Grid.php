@@ -789,4 +789,25 @@ class Grid extends CompleteLister {
 		}
 		return $this;
 	}
+	function addOrder(){
+		return $this->add('Order','columns')
+			->useArray($this->columns)
+			;
+	}
+	/**
+	 * Adds column on the basis of Model definition
+	 * If $type is passed - column type is replaced by this value
+	 */
+	function addSelectable($field){
+		$this->js_widget=null;
+		$this->js(true)
+			->_load('ui.atk4_checkboxes')
+			->atk4_checkboxes(array('dst_field'=>$field));
+		$this->addColumnPlain('checkbox','selected');
+
+		$this->addOrder()
+			->useArray($this->columns)
+			->move('selected','first')
+			->now();
+	}
 }
