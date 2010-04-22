@@ -314,7 +314,7 @@ class Form extends AbstractView {
 		return $this->last_field->onKeyPress();
 	}
 
-	function addSubmit($label,$name=null,$color=null){
+	function addSubmit($label='Save',$name=null,$color=null){
 		if(!$name)$name=str_replace(' ','_',$label);
 
 		$this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
