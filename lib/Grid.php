@@ -813,7 +813,7 @@ class Grid extends CompleteLister {
 		$this->js(true)
 			->_load('ui.atk4_checkboxes')
 			->atk4_checkboxes(array('dst_field'=>$field));
-		$this->addColumnPlain('checkbox','selected');
+		$this->addColumn('checkbox','selected');
 
 		$this->addOrder()
 			->useArray($this->columns)

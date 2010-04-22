@@ -7,25 +7,23 @@ $.widget("ui.atk4_checkboxes", {
 		try{
 			if($.parseJSON){
 				ivalue=$.parseJSON(ivalue);
+				if(!ivalue)ivalue=[];
 			}else{
 				ivalue=eval('('+ivalue+')')
 			}
 		}catch(err){
-			ivalue=Array();
+			ivalue=[];
 		}
 		$.each(ivalue,function(k,v){
 			ivalue[k]=String(v);
 		});
 		
-		console.log('initilaising with field: ',this.options.dst_field,', init value: ',ivalue);
 		
 		this.element.find('tbody').selectable({filter: 'tr',stop: function(){ chb.stop.apply(chb,[this]) }}).css({cursor:'crosshair'});
 		this.element.find('input[type=checkbox]')
 		.each(function(){
 			var o=$(this);
-			console.log('checking if ',o.val(),' is in array ',ivalue);
 			if($.inArray(o.val(), ivalue)>-1){
-				console.log('found');
 				o.attr('checked',true);
 				$(this).closest('tr').addClass('ui-selected');
 			}
@@ -50,7 +48,6 @@ $.widget("ui.atk4_checkboxes", {
 		this.element.find('input:checked').each(function(){
 			r.push($(this).val());
 		});
-		console.log(this.options.dst_field);
 		if(this.options.dst_field){
 			$(this.options.dst_field).val($.univ.toJSON(r));
 		}
