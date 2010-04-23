@@ -221,7 +221,8 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-	var dialog=$('<div class="dialog" title="Untitled">Loading<div></div></div>').appendTo('body');
+	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
+	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	$.data(dialog.get(0),'opener',this.jquery);
 	$.data(dialog.get(0),'options',options);
@@ -249,7 +250,8 @@ dialogBox: function(options){
 		bgiframe: true,
 		modal: true,
 		width: 800,
-//		height: 700,
+		height: 700,
+		resize: 'auto',
 		position: 'top',
 		autoOpen:false,
 		beforeclose: function(){
