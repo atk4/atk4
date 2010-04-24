@@ -599,6 +599,7 @@ class Grid extends CompleteLister {
 		return $row[$field];
 	}
 	function formatRow(){
+		if(!$this->columns)throw new BaseException('No column defined for grid');
 		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
 			$this->current_row[$tmp.'_original']=$this->current_row[$tmp];
 			$formatters = explode(',',$column['type']);
