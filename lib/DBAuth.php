@@ -92,6 +92,7 @@ class DBAuth extends BasicAuth{
 		 * Verifying user and password. Password in params should be an SHA1 hash in ALL cases
 		 */
 		unset($this->dq->args['where']);
+		$password=$this->encryptPassword($password);
 		$data=$this->dq->where($this->name_field, $user)->do_getHash();
 		$result=(sizeof($data)>0&&($data[$this->pass_field]==$password||$this->encryptPassword($data[$this->pass_field])==$password));
 		if($result)$this->addInfo($data);
