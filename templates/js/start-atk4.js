@@ -1,36 +1,36 @@
 /*
  Welcome to Agile Toolkit JS framework.
- 
+
  This is a main file which provides core functionality.
 
  ATK4 Initialisation Script.
- 
+
  Usage:
- 
+
  // in $api->init():
-  
+
   $this->add('jUI');
   $this->js(true)->_load('start-atk4');
 */
 
 ;$.atk4||(function($){
-    
+
 /*
- 
+
  $.atk4 is a function, which acts as an enhanced onReady handler.
- Syntax: 
-  
+ Syntax:
+
 $(function(){
 
  $.atk4.includeJS('js/mylib.js');
- 
+
  $.atk4(funciton(){
 	mylib();
  });
 
 })
-  
-  
+
+
 */
 $.atk4 = function(readycheck,lastcall){
     return $.atk4._onReady(readycheck,lastcall);
@@ -61,15 +61,15 @@ $.univ._import=function(name,fn){
 
 $.extend($.atk4,{
     verison: "2.0",
-	
+
 	// Is this a production environment?
 	production: false,
-	
+
 	/* It's posible that we might get called multiple times. Be aware */
     initialised: false,
-	
+
 	///////////////////////// ERROR HANDLING //////////////////////////
-	
+
 	/*
 	 We store the knowledge whether this is production environment
 	 or not. We also provide a way how user will be notified about
@@ -83,7 +83,7 @@ $.extend($.atk4,{
 			console.log('Surpressed user error in production environment',text);
 			return;
 		}
-		
+
         w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
         if(w){
             w.document.write('<h2>JavaScript Error: '+e+'</h2>');
@@ -96,7 +96,7 @@ $.extend($.atk4,{
 	/*
 	 This function is used to display success messages. This should probably be
 	 redefined and should make appear pretty for the user
-	 
+
 	 Set 2nd argument to true, if it's a system message, which most likely will
 	 not be interesting to the user on production environment
 	*/
@@ -111,40 +111,42 @@ $.extend($.atk4,{
 	 This is lowest-level AJAX function. It will attepmt to get document from
 	 the server and perform some very basic validation. For instance it will
 	 check if server's session is expired or if it returns error.
-	 
+
 	 Other modules of ATK4 should rely on this function. If you want to
 	 load your own AJAX, use $('..').atk4_load() instead.
-	 
+
 	 NOTE: get does not assume regarding the type of returned data.
 	*/
     loading: 0,	// How many files are currently being requested
-	
+
 	// readyList contains array of functions which must be executed
 	// after loading is complete. Note that some of those functions
 	// may request more files to be loaded.
     _readyList: [],
-	
+
 	// readyLast is a function which will be executed when all the
 	// files are completed. It is used to turn off loading indicator
 	_readyLast: undefined,
-	
-	
+
+	// If url is an object {..} then it's passed to ajax as 1st argument
+
+
 	get: function(url, data, callback, load_end_callback){
         var self=this;
 		if($.isFunction(data)){
 			// data argument may be ommitted
             callback=data; data=null;
         }
-		var timeout=setTimeout(function(){ 
+		var timeout=setTimeout(function(){
 			self._stillLoading(url);
 		},2000);
-		
-		
+
+		if(typeof(url)=="string")url={url:url};
+
 		// Another file is being loaded.
         this.loading++;
-        return $.ajax({
+        return $.ajax($.extend({
             type: "GET",
-            url: url,
             data: data,
 			// We tell the backend that we will verify output for "TIMEOUT" output
 			beforeSend: function(xhr){xhr.setRequestHeader('X-ATK4-Timeout', 'true');},
@@ -163,7 +165,7 @@ $.extend($.atk4,{
 					// kill readycheck handlers by not reducing
 					// the counter.
 				}
-        });
+        },url));
     },
 	_stillLoading: function(url){
 		if(this.loading){
@@ -199,7 +201,7 @@ $.extend($.atk4,{
 	 If "lastcall" is specified as true, then function will be
 	 executed after everything else. Only one function can be
 	 specified as lastCall.
-	 
+
 	 If nothing is being loaded, then functions are executed
 	 immediatelly
 	*/
@@ -247,22 +249,22 @@ $.extend($.atk4,{
 			this._readyLast=undefined;
 		}
     },
-	
+
 	//////////////////// Dynamic Includes (CSS and JS) ////////////////
-	
+
 	/*
 	 Based on get() we add number of functions to dynamically load
 	 JS and CSS files.
 	*/
-	
-	
+
+
 	// Lists of files we have already loaded. This is to ensure we do
 	// not include JS and CSS files more than once
     _includes: {},
-	
+
 	// Loads javascript file and evals it
     includeJS: function(url){
-		
+
 		// Perhaps file is already included. We do not to load it twice
         if(this._isIncluded(url))return;
 
@@ -307,7 +309,7 @@ $.extend($.atk4,{
 	 which means relative paths will be counted from current directory
 	 and not the URL of the CSS file. This breaks url(../images) in
 	 CSS files
-	 
+
 	 This function will dynamically load CSS file
 	*/
     includeCSS: function(url){
@@ -331,16 +333,16 @@ $.extend($.atk4,{
         this._includes[url]=true;
         return false;
     },
-	
+
 	//////////////////////////// MISC //////////////////////////////////
-	
+
 	/*
 	 Utility function. When you give it an URL, and argument, it will
 	 append argument to the URL.
-	 
+
 	 TODO: this function is incomplete. It should also check if argument is
 	 already in the URL and handle that properly.
-	
+
 	 See also: http://api.jquery.com/jQuery.param/
 	*/
 	addArgument: function(url,a,b){

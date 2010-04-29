@@ -248,8 +248,13 @@ $.widget("ui.atk4_form", {
 		// btn is clicked
 		if(btn)params[btn]=1;
 
+		var properties={
+			type: "POST",
+			url: this.element.attr('action')
+		};
+
 		form.loading=true;
-		$.post(this.element.attr('action'),params,function(res){
+		$.atk4.get(properties,params,function(res){
 			form.loading=false;
 			var c=form._getChanged();form._setChanged(false);
 

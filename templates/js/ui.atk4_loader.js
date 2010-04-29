@@ -260,6 +260,8 @@ $.widget('ui.atk4_loader', {
 		if(self.element.find('.form_changed').length){
 			if(!confirm('Changes on the form will be lost. Continue?'))return false;
 		}
+		// remove error messages
+		$('#tiptip_holder').remove();
 		self.base_url=url;
 
 		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);
