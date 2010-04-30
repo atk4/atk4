@@ -416,7 +416,7 @@ loadingInProgress: function(){
 		this.jquery.find('td a').click(function(ev){ ev.preventDefault(); $(this).closest('.atk4_loader').atk4_loader('loadURL',$(this).attr('href')); });
 	},
 	autoChange: function(interval){
-	// Normally onchange gets triggered only when field is submitted. However this function
+	// Normally onchange gets triggered only when field is blured. However this function
 	// will make field call on_change one second since last key is pressed. This makes event
 	// triggering more user-friendly
 		var f=this.jquery;
