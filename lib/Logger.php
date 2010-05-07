@@ -254,8 +254,12 @@ class Logger extends AbstractController {
 		$e->shift-=1;
 		if($this->log_output){
 			//$frame=$this->findFrame('warning',$shift);
+
+			if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
+			else $trace=$e->getTrace();
+
 			$frame=$e->my_backtrace[$e->shift];
-			$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error');
+			$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
 		}
 		if(!$this->web_output){
 			echo $this->public_error_message;
@@ -355,7 +359,7 @@ class Logger extends AbstractController {
 					($prefix?"$prefix: ":"")."$msg\n\n";
 		}
 	}
-	function logLine($msg,$shiftfunc=null,$severity='info'){
+	function logLine($msg,$shiftfunc=null,$severity='info',$trace=null){
 		$log_file='log_'.$severity.'_file';
 		if($this->log_output==='full' && $severity=='error'){
 			if(!$this->header_sent++){
@@ -370,7 +374,7 @@ class Logger extends AbstractController {
 				fputs($this->$log_file,
 						"------------------------------------------------------------\n".
 						" Stack trace\n".
-						$this->txtBacktrace($shiftfunc).
+						$this->txtBacktrace($shiftfunc,$trace).
 						"\n"
 					 );
 			}else{
