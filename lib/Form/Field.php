@@ -90,7 +90,7 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setFieldHint($text){
-		$this->add('Text','hint','after_field')->set('<ins>'.$text.'</ins>');
+		$this->add('Text','hint','after_field')->set(' <ins>'.$text.'</ins>');
 		return $this;
 	}
 	function setFieldTitle($text){
@@ -434,6 +434,9 @@ class Form_Field_Text extends Form_Field {
 	function init(){
 		$this->attr=array('cols'=>'30','rows'=>5);
 		parent::init();
+	}
+	function setFieldHint($text){
+		return parent::setFieldHint('<br/>'.$text);
 	}
 	function getInput($attr=array()){
 
