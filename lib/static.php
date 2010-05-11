@@ -129,7 +129,7 @@ function htmlize_exception($e,$msg){
 		include_once($fullpath);
 		if(class_exists($class))return;
 
-		lowlevel_error("Class $class is not defined in $file");
+		lowlevel_error("Class $class is not defined in included file");
 	}
 };if(!function_exists('format_time')){
 	function format_time($s, $exclude_seconds = false){
