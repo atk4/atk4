@@ -31,7 +31,7 @@ $.widget("ui.atk4_expander", {
 
         // Make button look like it's bein pushed
         this.element.removeClass("ui-atk4-expander");
-        this.element.addClass("ui-atk4-expander-active");
+        this.element.addClass("ui-atk4-expander-active").addClass('expander');
 
         // add additional row after ours
         this.this_tr=this.element.closest('tr');
@@ -56,7 +56,7 @@ $.widget("ui.atk4_expander", {
     collapse: function() {
         if(!this.expanded)return false;
 
-        this.element.removeClass("ui-atk4-expander-active");
+        this.element.removeClass("ui-atk4-expander-active").removeClass('expander');
         this.element.addClass("ui-atk4-expander");
 
         this.this_tr.removeClass("lister_expander_parent");
