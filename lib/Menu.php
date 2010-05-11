@@ -9,7 +9,8 @@
 class Menu extends AbstractView {
 	protected $items=array();
 	protected $last_item=null;
-	protected $current_menu_class="ui-state-active";
+	public $current_menu_class="ui-state-active";
+	public $inactive_menu_class="ui-state-default";
 
 	function init(){
 		parent::init();
@@ -36,7 +37,7 @@ class Menu extends AbstractView {
 		return $this;
 	}
 	protected function getDefaultHref($label){
-		$href=ereg_replace('[^a-zA-Z0-9]','',$label);
+		$href=preg_replace('/[^a-zA-Z0-9]/','',$label);
 		if($label[0]==';'){
 			$label=substr($label,1);
 			$href=';'.$href;

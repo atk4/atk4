@@ -1,21 +1,21 @@
 <?form?>
-<div class="atk-form atk-form-simple ui-widget">
+<div class="atk-form atk-form-<?form_class?>simple<?/?> ui-widget">
 	<form id="<?$_name?>" class="id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 
 		<fieldset>
-			<?form_body?>			
+			<?form_body?>
 				<?form_line?>
 				<dl>
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
-					<dd class="atk-field"><div><?field_input?><input/><?/?></div></dd>
+					<dd class="atk-field"><div class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div></dd>
 					<?field_error?>
-					<dd class="atk-error"> 
+					<dd class="atk-error">
 						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
 					</dd>
 					<?/?>
-				</dl>	
+				</dl>
 				<?/form_line?>
-	
+
 				<?form_separator?>
 				</fieldset>
 				<fieldset>
@@ -31,9 +31,8 @@
 			<?/form_buttons?>
 			</dd>
 		</dl>
-	
+
 
 	</form>
 </div>
 <?/form?>
-

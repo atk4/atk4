@@ -94,7 +94,7 @@ class Grid extends CompleteLister {
 		$button=$this->add('Button','gbtn'.count($this->elements),'grid_buttons');
 		$button->setLabel($label);
 		if($return_button)return $button;
-		return $button->onClick();
+		return $button;
 	}
 	function addQuickSearch($fields,$class='QuickSearch'){
 		return $this->add($class,null,'quick_search')

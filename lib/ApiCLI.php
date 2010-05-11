@@ -3,7 +3,6 @@ class ApiCLI extends AbstractView {
 	public $db=null;
 	protected $config = null;     // use getConfig method to access this variable
 	public $logger=null;	// TODO: protect this
-	protected $base_dir='';
 
 	function __construct($realm=null){
 		$this->owner = null;
@@ -22,6 +21,18 @@ class ApiCLI extends AbstractView {
 			$this->caughtException($e);
 		}
 	}
+	function locate($type,$filename='',$return='relative'){
+		return $this->pathfinder->locate($type,$filename,$return);
+	}
+	function locateURL($type,$filename=''){
+		return $this->pathfinder->locate($type,$filename,'url');
+	}
+	function locatePath($type,$filename=''){
+		return $this->pathfinder->locate($type,$filename,'path');
+	}
+	function addLocation($location,$contents){
+		return $this->pathfinder->addLocation($location,$contents);
+	}
 	function init(){
 		parent::init();
 		$this->addHook('api-defaults',array($this,'initDefaults'));
@@ -30,49 +41,17 @@ class ApiCLI extends AbstractView {
 		if(!defined('DTP'))define('DTP','');
 	}
 	function getBaseURL(){
-		return (isset($_SERVER['HTTPS'])?'https':'http').'://'.$_SERVER['SERVER_NAME'].
-			(substr($root=$this->getUrlRoot(),0,1)=='/'?'':'/').$root;
+		return $this->pm->base_location->getURL();
 	}
-	function getUrlRoot(){
-		return $this->api->getConfig('url_root','/');
-	}
-	function getBaseDir(){
-		return $this->base_dir;
-	}
-	function getDestinationURL($page=null,$args=array()){
-		// If first argument is null, stay on the same page
-		if(is_null($page)||$page=='')$page=$this->page;
-		if(is_null($args))$args=array();
-
-		// Check sticky arguments. If argument value is true,
-		// GET is checked for actual value.
-		if(isset($this->sticky_get_arguments)){
-			foreach($this->sticky_get_arguments as $key=>$val){
-				if($val===true){
-					if(isset($_GET[$key])){
-						$val=$_GET[$key];
-					}else{
-						continue;
-					}
-				}
-				if(!isset($args[$key])){
-					$args[$key]=$val;
-				}
-			}
+	function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
+		if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
+		if(is_object($page) && $page instanceof URL){
+			// we receive URL
+			return $page->setArguments($arguments);
 		}
-		$tmp=array();
-		if(!is_array($args))throw new BaseException('Wrong arguments for getDestinationURL');
-		foreach($args as $arg=>$val){
-			if(!isset($val) || $val===false)continue;
-			if(is_array($val)||is_object($val))$val=serialize($val);
-			$tmp[]="$arg=".urlencode($val);
-		}
-		$r=$this->getConfig('url_prefix','');
-		if($page&&$page!='/')$r.=$page.$this->getConfig('url_postfix','');
-		$r.=($tmp?(stripos($this->getConfig('url_prefix',''),'?')===false?'?':'&').join('&',$tmp):'');
-		return $r;
+		$url=$this->add('URL','url_'.$this->url_object_count++);
+		return $url->setPage($page)->setArguments($arguments);
 	}
-
 	function getLogger($class_name='Logger'){
 		if(is_null($this->logger)){
 			$this->logger=$this->add($class_name);

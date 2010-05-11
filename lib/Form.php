@@ -26,9 +26,6 @@ class Form extends AbstractView {
 							//  should use $this->setStaticSource() to load values from hash
 							//  AAAAAAAAAA: this array is no more!
 
-	public $last_field = null;  // contains reference to last-added field
-	public $last_button = null; // contains last added button
-
 	public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
 	protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
 	public $onsubmit = null;
@@ -110,7 +107,7 @@ class Form extends AbstractView {
 	function addField($type,$name,$caption=null,$attr=null){
 		if($caption===null)$caption=$name;
 
-		$this->last_field=$this->add('Form_Field_'.$type,$name,'form_body','form_line')
+		$last_field=$this->add('Form_Field_'.$type,$name,'form_body','form_line')
 			->setCaption($caption);
 		if (is_array($attr)){
 			foreach ($attr as $key => $value){
@@ -118,10 +115,7 @@ class Form extends AbstractView {
 			}
 		}
 
-		$this->last_field->short_name = $name;
-
-		$this->setDefault(null);
-		return $this;
+		return $last_field;
 	}
 	function disable(){
 		// disables last field
@@ -134,11 +128,11 @@ class Form extends AbstractView {
 		$this->last_field->denyEnter();
 		return $this;
 	}
+
+	/*
+	 OBSOLETE - fields can have their own comments
+
 	function setFieldComment($comment){
-		/**
-		* Adds a comment to the last field.
-		* Comment will be inserted to the field_comment tag of the form template
-		*/
 		$this->last_field->comment=$comment;
 		return $this;
 	}
@@ -147,65 +141,23 @@ class Form extends AbstractView {
 		else throw new BaseException("This field type does not support formats");
 		return $this;
 	}
+	*/
 	function addComment($comment){
 		if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
-		$this->add('Text','c'.count($this->elements),'form_body')->set(
+		return $this->add('Text','c'.count($this->elements),'form_body')->set(
 			$this->template_chunks['form_comment']->set('comment',$comment)->render()
 		);
-		return $this;
 	}
 	function addSeparator($separator='<hr>'){
-
 		if(!isset($this->template_chunks['form_separator']))return $this->addComment('<u>'.$separator.'</u>');
-
-		$this->add('Text','c'.count($this->elements),'form_body')->set(
+		return  $this->add('Text','c'.count($this->elements),'form_body')->set(
 			$this->template_chunks['form_separator']->set('separator',$separator)->render());
-		return $this;
-	}
-	function addLabel($label){
-		return $this->addComment($label);
-	}
-
-	function onSubmit($ajax=null){
-		return $this->onsubmit=$ajax?$ajax:$this->ajax();
-	}
-	function onLoad($ajax=null){
-		return $this->onload=$ajax?$ajax:$this->ajax();
-	}
-	/**
-	* Makes text/dropdown fields on the form perform a submit on Enter key press
-	* @param $field if set, method executed on a certain field only. Should be a short name of a field
-	*/
-	function submitOnEnter($field=null){
-		if(is_null($field)){
-			foreach($this->elements as $name=>$field){
-				if($field instanceof Form_Field_Line or
-				$field instanceof Form_Field_Password)
-					$this->submitOnEnter($name);
-			}
-			return $this;
-		}
-		// searching submit action
-		$action=$this->getAjaxSubmitAction();
-		if($action)$this->getElement($field)->onKeyPress()->ajaxFunc(
-			'if(isKeyPressed(event, kReturn)){'.$action->getAjaxOutput().'}'
-		);
-	}
-	/**
-	* Returns the AJAX instance of the button supposed to be submit
-	* Redefine this method for your specifics
-	*/
-	function getAjaxSubmitAction(){
-		foreach($this->ajax_submits as $key=>$ajax){
-			if($key=='Submit'||$key=='Save'||$key=='Update')return $ajax;
-		}
-		return null;
 	}
 
 	// Operating with field values
 	function get($field){
-		if(!isset($this->elements[$field]))throw new BaseException('Trying to get value of not-existing field: '.$field);
-		return ($this->elements[$field] instanceof Form_Field)?$this->elements[$field]->get():null;
+		if(!$f=$this->hasField($field))throw new BaseException('Trying to get value of not-existing field: '.$field);
+		return ($f instanceof Form_Field)?$f->get():null;
 	}
 	function clearData(){
 		$this->downCall('clearFieldValue');
@@ -234,8 +186,7 @@ class Form extends AbstractView {
 				}
 				return $this;
 			}else{
-				$value=$field_or_array;
-				$field_or_array=$this->last_field->short_name;
+				throw new ObsoleteException('Please specify 2 arguments to $form->set()');
 			}
 		}
 
@@ -251,7 +202,6 @@ class Form extends AbstractView {
 		else{
 			//throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
 		}
-
 		return $this;
 	}
 	function getAllData($include_nosave=false){
@@ -264,6 +214,7 @@ class Form extends AbstractView {
 		return $data;
 	}
 
+	/*
 	// Modifying existing field properties and behavior
 	function setProperty($property,$value=null){
 		// Add property to field TAG
@@ -271,13 +222,9 @@ class Form extends AbstractView {
 		return $this;
 	}
 
+	*/
 
 
-	function validateField($condition,$msg=''){
-		$this->last_field->addHook('validate','if(!('.$condition.'))$this->displayFieldError("'.
-					($msg?$msg:'Error in ".$this->caption."').'");');
-		return $this;
-	}
 
 
 /*    function validateNotNULL($msg=''){
@@ -286,86 +233,46 @@ class Form extends AbstractView {
 		return $this;
 	}*/
 
-	function validateNotNULL($msg=''){
-		$this->last_field->setMandatory();
-		$this->validateField('$this->get()',($msg?$msg:'".$this->caption." is a mandatory field!'));
-		//$this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
-		//			($msg?$msg:'".$this->caption." is a mandatory field!').'");');
-		return $this;
-	}
-
-
-	function setNotNull($msg=''){
-		$this->validateNotNULL($msg);
-		return $this;
-	}
-	function setNoSave(){
-		$this->last_field->setNoSave();
-		return $this;
-	}
-	function setValueList($list){
-		$this->last_field->setValueList($list);
-		return $this;
-	}
-	function onChange(){
-		return $this->last_field->onChange();
-	}
-	function onKeyPress(){
-		return $this->last_field->onKeyPress();
-	}
 
 	function addSubmit($label='Save',$name=null,$color=null){
 		if(!$name)$name=str_replace(' ','_',$label);
 
-		$this->last_field = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
+		$submit = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
 			->setLabel($label)
 			->setNoSave();
 		if (!is_null($color))
-			$this->last_field->setColor($color);
+			$submit->setColor($color);
 
-		if(!isset($this->onsubmit))$this->onsubmit=false;  // do not perform ajax submit
-		return $this;
-	}
-	function addAjaxButtonAction($label,$name=null){
-		return $this->addButton($label,$name);
-	}
-	function addDefaultButton($label,$name=null,$color=null){
-		return $this->onSubmit($this->addButton($label,$name,$color));
+		return $submit;
 	}
 	function addButton($label,$name=null,$class=null,$style=null){
 		if(is_null($name))$name=$label;
 		// Now add the regular button first
 		$name=str_replace(' ','_',$name);
-		return $this->last_button = $this->add('Button',$name,'form_buttons')
-			->setLabel($label)->js('click')->univ();
-
-		/*
-		if(!is_null($class))
-			$field->setClass($class);
-		if (!is_null($style))
-			$field->setStyle($style);
-
-		$field->setNoSave();
-
-			*/
-		// And teach it to use AJAX
-		//$field->onclick = $field->js('click')->univ()->useProgressIndicator($this->name.'_loading',0);
-		//$this->ajax_submits[$name]=$field->onclick;
-		//return $field->onclick;
+		return $this->add('Button',$name,'form_buttons')
+			->setLabel($label);
 	}
-	function addCondition($field,$value=null){
+
+	function setCondition($field,$value=null){
+		if(!$this->dq)throw new BaseException('Cannot set condition on empty $form->dq');
 		$this->dq
 			->set($field,$value)
 			->where($field,$value);
 		$this->conditions[$field]=$value;
 		return $this;
 	}
-	function addConditionFromGET($field='id',$get_field=null){
+	function setConditionFromGET($field='id',$get_field=null){
 		// If GET pases an argument you need to put into your where clause, this is the function you should use.
 		if(!isset($get_field))$get_field=$field;
 		$this->get_field=$field;
 		$this->api->stickyGET($get_field);
-		return $this->addCondition($field,$_GET[$get_field]);
+		return $this->setCondition($field,$_GET[$get_field]);
+	}
+	function addConditionFromGET($field='id',$get_field=null){
+		$this->setConditionFromGET($field,$get_field);
+	}
+	function addCondition($field,$value=null){
+		return $this->setCondition($field,$value);
 	}
 	function loadData(){
 		/**
@@ -374,7 +281,7 @@ class Form extends AbstractView {
 		if($this->bail_out)return;
 		if($this->dq){
 			// if no condition set, use id is null condition
-			if(empty($this->conditions))$this->addCondition('id',null);
+			if(empty($this->conditions))$this->setCondition('id',null);
 			// we actually initialize data from database
 			$data = $this->dq->do_getHash();
 			if($data){
@@ -404,9 +311,6 @@ class Form extends AbstractView {
 			return $this->dq->do_insert();
 		}
 	}
-
-
-
 	function submitted(){
 		/**
 		* Default down-call submitted will automatically call this method if form was submitted
@@ -437,21 +341,15 @@ class Form extends AbstractView {
 		// Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons
 
 		// That means - we will submit our form through Ajax
-		if(!isset($this->onsubmit)){
-			$this->onSubmit()->submitForm($this);
-		}
-		if($this->onsubmit){
-			$this->template->trySet('form_onsubmit',$this->onsubmit->ajaxFunc('return false')->getString());
-		}
-		if($this->onload){
-			$this->template->trySet('form_onload',str_replace("\n","",$this->onload->getString()));
-		}
 		$this->template_chunks['form']
 			->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
 		$this->owner->template->append($this->spot,$r=$this->template_chunks['form']->render());
 	}
+	function hasField($name){
+		return isset($this->elements[$name])?$this->elements[$name]:false;
+	}
 	function isClicked($name){
-		return $this->api->isClicked($this->name.'_'.$name);
+		return $_POST['ajax_submit']==$name;
 	}
 	/* external error management */
 	function setFieldError($field, $name){
@@ -465,9 +363,5 @@ class Form extends AbstractView {
 	/**
 	 * Makes field's value set to null if empty value has been specified
 	 */
-	function setDefault($default=null){
-		$this->last_field->default_value=$default;
-		return $this;
-	}
 }
 ?>

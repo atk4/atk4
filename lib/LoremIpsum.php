@@ -1,6 +1,8 @@
 <?php
 class LoremIpsum extends ReloadableView {
 	private $message;
+	private $paragraphs=3;
+	private $words=200;
 
 	function create_greeking($words, $min_words = 3, $max_words = 10) {
 		$punctuation = array(". ", ". ", ". ", ". ", ". ", ". ", ". ", ". ", "... ", "! ", "? ");
@@ -53,13 +55,16 @@ class LoremIpsum extends ReloadableView {
 		return $greeking;
 	}
 
+	function setLength($paragraphs,$words){
+		$this->paragraphs=$paragraphs;
+		$this->words=$words;
+		return $this;
+	}
 	function render(){
-		$this->output('<p>');
-		$this->output($this->create_greeking(200));
-		$this->output('</p><p>');
-		$this->output($this->create_greeking(200));
-		$this->output('</p><p>');
-		$this->output($this->create_greeking(300));
-		$this->output('</p>');
+		for($x=0;$x<$this->paragraphs;$x++){
+			$this->output('<p>');
+			$this->output($this->create_greeking($this->words));
+			$this->output('</p>');
+		}
 	}
 }

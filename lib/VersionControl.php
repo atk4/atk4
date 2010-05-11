@@ -27,7 +27,8 @@ class VersionControl extends AbstractController{
 
 	function init(){
 		parent::init();
-		$this->working_dir=$this->api->getConfig('VersionControl/dirname').DIRECTORY_SEPARATOR;
+		//$this->working_dir=$this->api->getConfig('VersionControl/dirname').DIRECTORY_SEPARATOR;
+		$this->working_dir=$this->api->locatePath('dbupdates').DIRECTORY_SEPARATOR;
 	}
 	function execute(){
 		foreach($this->getOngoingUpdates() as $update=>$last_result){

@@ -89,35 +89,13 @@ abstract class Form_Field extends AbstractView {
 		$this->attr[$property]=$value;
 		return $this;
 	}
-	function onChange(){
-		if(is_null($this->onchange)){
-			$this->onchange=$this->ajax();
-		}
-		return $this->onchange;
+	function setFieldHint($text){
+		$this->add('Text','hint','after_field')->set('<ins>'.$text.'</ins>');
+		return $this;
 	}
-	function onKeyPress(){
-		if(is_null($this->onkeypress)){
-			$this->onkeypress=$this->ajax();
-		}
-		return $this->onkeypress;
-	}
-	function onFocus(){
-		if(is_null($this->onfocus)){
-			$this->onfocus=$this->ajax();
-		}
-		return $this->onfocus;
-	}
-	function onBlur(){
-		if(is_null($this->onblur)){
-			$this->onblur=$this->ajax();
-		}
-		return $this->onblur;
-	}
-	function onClick(){
-		if(is_null($this->onclick)){
-			$this->onclick=$this->ajax();
-		}
-		return $this->onclick;
+	function setFieldTitle($text){
+		$this->template->trySet('field_title',$text);
+		return $this;
 	}
 
 	function clearFieldValue(){
@@ -136,6 +114,25 @@ abstract class Form_Field extends AbstractView {
 		// and perform their checks
 		if(is_bool($result = $this->hook('validate')))return $result;
 	}
+	function validateField($condition,$msg=''){
+		$this->addHook('validate','if(!('.$condition.'))$this->displayFieldError("'.
+					($msg?$msg:'Error in ".$this->caption."').'");');
+		return $this;
+	}
+	function validateNotNULL($msg=''){
+		$this->setMandatory();
+		$this->validateField('$this->get()',($msg?$msg:'".$this->caption." is a mandatory field!'));
+		return $this;
+	}
+	function setNotNull($msg=''){
+		$this->validateNotNULL($msg);
+		return $this;
+	}
+	function setDefault($default=null){
+		$this->default_value=$default;
+		return $this;
+	}
+
 	function getInput($attr=array()){
 		// This function returns HTML tag for the input field. Derived classes should inherit this and add
 		// new properties if needed
@@ -144,19 +141,8 @@ abstract class Form_Field extends AbstractView {
 				'name'=>$this->name,
 				'id'=>$this->name,
 				'value'=>$this->value,
-				'onchange'=>(is_null($this->onchange)?'':$this->onchange->getString()),
-				/* Since all browsers except Opera handle only button cancelling on even onKeyDown and Opera on KeyPress
-				   Determine whats the browser and put JS in proper event  */
-				(stripos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false ? 'onKeyPress' : 'onKeyDown') =>(is_null($this->onkeypress)?'':$this->onkeypress->getString()),
-				'onfocus'=>(is_null($this->onfocus)?'':$this->onfocus->getString()),
-				'onblur'=>(is_null($this->onblur)?'':$this->onblur->getString()),
-				'onclick'=>(is_null($this->onclick)?'':$this->onclick->getString()),
 			),$attr,$this->attr)
 		);
-	}
-	function denyEnter(){
-		$this->onKeyPress()->ajaxFunc('if(isKeyPressed(event, kReturn))return false');
-		return $this;
 	}
 	function setSeparator($separator){
 		$this->separator = $separator;
@@ -271,6 +257,10 @@ abstract class Form_Field extends AbstractView {
 		}
 		return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
 	}
+
+	function addField($x,$y=null,$z=null){
+		throw new ObsoleteException('$form->addField() now returns Field object and not Form. Do not chain it.');
+	}
 }
 
 
@@ -375,6 +365,7 @@ class Form_Field_Readonly extends Form_Field {
 	}
 	function setValueList($list){
 		$this->value_list = $list;
+		return $this;
 	}
 
 }
@@ -446,11 +437,6 @@ class Form_Field_Text extends Form_Field {
 	}
 	function getInput($attr=array()){
 
-		// Disable the deny edit here <
-		if (is_null($this->onkeypress)) {
-			$this->onKeyPress();
-		}
-
 		return
 			parent::getInput(array_merge(array(''=>'textarea'),$attr)).
 			htmlspecialchars(stripslashes($this->value),ENT_COMPAT,'ISO-8859-1',false).
@@ -481,6 +467,7 @@ class Form_Field_ValueList extends Form_Field {
 	}
 	function setValueList($list){
 		$this->value_list = $list;
+		return $this;
 	}
 	function loadPOST(){
 		$data=$_POST[$this->name];
@@ -568,6 +555,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 		$output='<table border=0>';
 		$column=0;
 		$current_values=explode(',',$this->value);
+		$i=0;//Skai
 		foreach($this->getValueList() as $value=>$descr){
 			if($column==0){
 				$output.="<tr><td align=\"left\">";
@@ -579,7 +567,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 				$this->getTag('input',array(
 							'type'=>'checkbox',
 							'value'=>$value,
-							'name'=>$this->name.'[]',
+							'name'=>$this->name.'['.$i++.']',//Skai
 							'checked'=>in_array($value,$current_values)
 							)).htmlspecialchars($descr);
 			$column++;

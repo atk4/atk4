@@ -5,10 +5,7 @@ class ApiAdmin extends ApiWeb {
 	public $ns=null;            // current namespace object or null if none
 
 	public $not_html=false;     // this is true if output is NOT html. It might be javascript ajax response or redirect
-	function __construct($realm=null,$skin='kt2'){
-		parent::__construct($realm,$skin);
-		if(!$this->ns)$this->hook('init-namespaces');
-	}
+
 	function init(){
 		parent::init();
 		$this->getLogger();
@@ -16,43 +13,6 @@ class ApiAdmin extends ApiWeb {
 	}
 
 	/////////////// H e l p e r   f u n c t i o n s ///////////////
-	function getDestinationURL($page=null,$args=array()){
-		/**
-		 * Construct URL for getting to page
-		 */
-
-		// If first argument is null, stay on the same page
-		if(is_null($page)||$page=='')$page=$this->page;
-
-		/*
-		 *
-		 * TODO: this should be implemented php friendly. Php sets cookie php_sess or something,
-		 * if that cookie is not available, we need to add using stickyGET. we shouldn't
-		 * modify this method.
-		 * from camper: without this line user cannot login with cookies disabled. i think until
-		 * this problem solved another way - we need to have this line to avoid "strange" bugs
-		 */
-		// checking whether cookies are enabled and, if no, including SID
-		if(!$_COOKIE[$this->name])$args=array_merge($args, array($this->name=>session_id()));
-
-		if($this->ns){
-			if(substr($page,0,1)===';'){
-				// Going to main namespace
-				$page=substr($page,1);
-			}elseif(strpos($page,';')!==false){
-				// Going to some other namespace
-			}else{
-				// Staying in this namespace
-				$page=$this->ns->short_name.';'.$page;
-			}
-		}else{
-			if(substr($page,0,1)===';'){
-				// Going to main namespace
-				$page=substr($page,1);
-			}
-		}
-		return parent::getDestinationURL($page,$args);
-	}
 	function initDefaults(){
 		ApiCLI::initDefaults(); // DTP constant checked
 		if(strpos($_GET['page'],';')!==false){
@@ -88,11 +48,6 @@ class ApiAdmin extends ApiWeb {
 	}
 	function layout_InfoWindow(){
 		$this->add('InfoWindow',null,'InfoWindow');//,'InfoWindow');
-	}
-
-	function addNamespace($nm,$name=null){
-		include_once($nm.'/'.$nm.'.php');
-		$this->add($nm,$name?$name:$nm);
 	}
 
 	function outputInfo($msg){

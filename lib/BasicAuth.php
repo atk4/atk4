@@ -217,8 +217,9 @@ class BasicAuth extends AbstractController {
 		$this->loggedIn($username,$this->allowed_credintals[$username]);
 	}
 	function loginRedirect(){
-		$this->debug("Redirecting to original page");
 
+		/*
+		$this->debug("Redirecting to original page");
 		// Redirect to the page which was originally requested
 		if($original_request=$this->recall('original_request',false)){
 			$p=$original_request['page'];
@@ -244,6 +245,7 @@ class BasicAuth extends AbstractController {
 			if($this->api->isAjaxOutput())$this->ajax()->redirect($p,$original_request)->execute();
 			else $this->api->redirect($p,$original_request);
 		}
+		*/
 
 		// Rederect to index page
 		$this->debug("to Index");
@@ -265,18 +267,15 @@ class BasicAuth extends AbstractController {
 		$form=$frame->add('Form',null,$login_tag);
 
 
-		$form
-			->addSeparator($this->title)
-			->addField('Line','username','Login')
-			->addField('Password','password','Password')
+		$form->addField('Line','username','Login');
+		$form->addField('Password','password','Password');
 
-			->addField('Checkbox','memorize','Remember me')
-			->addComment('<div align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
+		$form->addField('Checkbox','memorize','Remember me');
+		$form->addComment('<div align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
 					'will no longer have to use a password to enter this site,<br>until you explicitly ' .
-					'log out.</b></div>')
+					'log out.</b></div>');
 
-			->addSubmit('Login');
-		$form->onLoad()->setFormFocus($form,'username');
+		$form->addSubmit('Login');
 		return $form;
 	}
 	function showLoginForm(){
@@ -285,14 +284,17 @@ class BasicAuth extends AbstractController {
 		 * otherwise simple login form is displayed
 		 */
 		$this->debug("initializating authentication page");
-		if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
+		//if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
 		$p=$this->add('Page');
-		if($p->template->findTemplate('login')){
+		try{
 			$p->template->loadTemplate('login');
 			$this->form=$this->createForm($p,'Login');
-		}else{
+		}catch(PathFinder_Exception $e){
 			$p->template->loadTemplate('empty');
+			$p->template->trySet('base_href',
+								$q=$this->api->pm->base_url.'/'
+								);
 			$frame=$p->frame('Authentication');
 			$this->form=$this->createForm($frame);
 		}

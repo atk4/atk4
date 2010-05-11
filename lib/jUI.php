@@ -53,18 +53,12 @@ class jUI extends jQuery {
 	private $atk4_initialised=false;
 
 	function init(){
-		$this->js_dir=$this->api->getConfig('js/dir','templates/js');
-		$this->css_dir=$this->api->getConfig('css/dir','templates/css');
-
 
 		parent::init();
 		$this->api->jui=$this;
 
 
 
-
-		// default theme. Change with $jui->setTheme();
-		$this->theme=$this->css_dir.'/agile';
 
 		$this->addInclude('start-atk4');
 		$this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.7.1.custom.min'));
@@ -74,30 +68,31 @@ class jUI extends jQuery {
 
 	}
 	function addInclude($file,$ext='.js'){
-		$try=array();
-		if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
-		elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
-		elseif(file_exists($try[]=BASEDIR.'/'.($relative_path=$file).$ext));
-		else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
-
+		$url=$this->api->locateURL('js',$file.$ext);
 
 		if(!$this->atk4_initialised){
+			parent::addInclude($file,$ext);
 			$this->api->template->append('js_include',
-				'<script type="text/javascript" src="'.$this->api->getBaseURL().$relative_path.'.js"></script>'."\n");
+				'<script type="text/javascript" src="'.$url.'"></script>'."\n");
 			return $this;
 		}
 
-		parent::addOnReady('$.atk4.includeJS("'.$this->api->getBaseURL().$relative_path.$ext.'")');
+		parent::addOnReady('$.atk4.includeJS("'.$url.'")');
 		return $this;
 	}
 	function addStylesheet($file,$ext='.css'){
+		/*
 		if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
 		elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
 		elseif(file_exists($try[]=BASEDIR.'/'.($relative_path=$file).$ext));
 		else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
+		*/
+		$url=$this->api->locateURL('css',$file.$ext);
+		if(!$this->atk4_initialised){
+			parent::addStylesheet($file,$ext);
+		}
 
-
-		parent::addOnReady('$.atk4.includeCSS("'.$relative_path.$ext.'")');
+		parent::addOnReady('$.atk4.includeCSS("'.$url.'")');
 	}
 	function addOnReady($js){
 		if(is_object($js))$js=$js->getString();
@@ -119,10 +114,6 @@ class jUI extends jQuery {
 		// if we can we should load jUI_widget_name <-- TODO
 		return $this->add('jUI_stdWidget',$name);
 	}
-	function setTheme($theme){
-		$this->theme=$theme;
-		return $this;
-	}
 	function cutRender(){
 		$x=$this->api->template->get('document_ready');
 		if(is_array($x))$x=join('',$x);
@@ -136,12 +127,5 @@ class jUI extends jQuery {
 			</script>
 
 			";
-	}
-	function postRender(){
-		//echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
-
-		$this->api->template->append('js_include',
-				'<link type="text/css" href="'.$this->api->getBaseURL().$this->theme.'/jquery-ui-theme.css" rel="stylesheet" />'."\n");
-
 	}
 }

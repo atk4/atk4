@@ -30,7 +30,11 @@ class jQuery_Chain extends AbstractModel {
 		return $this;
 	}
 	function _selectorThis(){
-		$this->selector=true;
+		$this->selector='__atk_selector_this';
+		return $this;
+	}
+	function _selectorRegion(){
+		$this->selector='__atk_selector_region';
 		return $this;
 	}
 	function _prepend($code){
@@ -141,8 +145,10 @@ class jQuery_Chain extends AbstractModel {
 		$ret.=$this->prepend;
 		if($this->selector===false){
 			$ret.="$";
-		}elseif($this->selector===true){
+		}elseif($this->selector==='__atk_selector_this'){
 			$ret.="$(this)";
+		}elseif($this->selector==='__atk_selector_region'){
+			$ret.="$(region)";
 		}else{
 			if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')";
 		}

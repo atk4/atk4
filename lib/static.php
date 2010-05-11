@@ -107,6 +107,13 @@ function htmlize_exception($e,$msg){
 };if(!function_exists('__autoload')){
 	function loadClass($class){
 		$file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+		if(isset($GLOBALS['atk_pathfinder'])){
+			// If PathFinder is loaded, we will rather use that for loading our classes
+			if(substr($class,0,5)=='page_'){
+				return $GLOBALS['atk_pathfinder']->locate('page',substr($file,5),'path');
+			}
+			return $GLOBALS['atk_pathfinder']->locate('php',$file,'path');
+		}
 		foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
 			$fullpath = $path . DIRECTORY_SEPARATOR . $file;
 			if (file_exists($fullpath)) {
@@ -116,7 +123,6 @@ function htmlize_exception($e,$msg){
 		return false;
 	}
 	function __autoload($class){
-
 		if(!$fullpath=loadClass($class)){
 			lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
 		}
@@ -228,6 +234,13 @@ function htmlize_exception($e,$msg){
 	function __unserialize($sObject) {
 		$__ret =preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $sObject );
 		return unserialize($__ret);
+	}
+};if(!function_exists('unix_dirname')){
+	function unix_dirname($path){
+		$chunks=explode('/',$path);
+		array_pop($chunks);
+		if(!$chunks)return '/';
+		return implode('/',$chunks);
 	}
 };if(!function_exists('array2json')){
 	function array2json($arr) {

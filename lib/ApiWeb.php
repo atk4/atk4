@@ -39,13 +39,6 @@ class ApiWeb extends ApiCLI {
 	function initLayout(){
 		$this->addLayout('Content');
 	}
-	function getAjaxClass(){
-		return $this->ajax_class;
-	}
-	function setAjaxClass($class){
-		$this->ajax_class=$class;
-		return $this;
-	}
 	/////////////// C o r e   f u n c t i o n s ///////////////////
 	function caughtException($e){
 		$this->hook('caught-exception',array($e));
@@ -66,7 +59,6 @@ class ApiWeb extends ApiCLI {
 		if($this->hook('output-info',array($msg,$shift)))return true;
 		echo "<font color=red>",$msg,"</font>";
 	}
-
 	function init(){
 		/**
 		 * Redifine this function instead of default constructor. Do not forget
@@ -74,14 +66,13 @@ class ApiWeb extends ApiCLI {
 		 */
 		$this->initializeSession();
 
-		// checking session expire if needed
-		if(isset($_POST['check_session'])||isset($_GET['check_session']))$this->checkSessionExpired();
-
 		// find out which page is to display
-		$this->calculatePageName();
+		//$this->calculatePageName();
+		$this->add('PageManager');
 
 		// send headers, no caching
 		$this->sendHeaders();
+
 		parent::init();
 
 	}
@@ -89,12 +80,6 @@ class ApiWeb extends ApiCLI {
 	 * This function is called on AJAX request.
 	 * @return corresponding
 	 */
-	function checkSessionExpired(){
-		$result=(isset($_SESSION['o'])?0:1);
-		header('Content-type: text/xml');
-		echo "<session_check><expired>$result</expired></session_check>";
-		exit;
-	}
 	function initializeSession(){
 		// initialize session for this realm
 		if($this->name && session_id()==""){
@@ -114,6 +99,7 @@ class ApiWeb extends ApiCLI {
 	function getStickyArguments(){
 		return $this->sticky_get_arguments;
 	}
+
 	function sendHeaders(){
 		/**
 		 * Send headers to browser
@@ -127,50 +113,6 @@ class ApiWeb extends ApiCLI {
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");                                     // HTTP/1.0
 	}
-	function calculatePageName(){
-		/**
-		 * Discover requested page name (class) from $_GET
-		 * $_GET should be properly initialized, including 'page' parameter,
-		 * before calling this method (e.g. with .htaccess)
-		 */
-		$u=$this->getServerURL();
-		// leading slash / should be removed
-		if((isset($u[0])) and ($u[0]=='/'))$u=substr($u,1);
-		if(stripos($u,'.xml')!==false)$this->content_type='rss';
-		else $this->content_type='page';
-		// renaming path to name
-		$u=str_replace('/','_',$u);
-		// removing extensions
-		$u=str_ireplace('.xml','',$u);
-		$u=str_ireplace('.html','',$u);
-		// assigning default page
-		if(!$u)$u=$this->index_page;
-		$_GET['page']=$u;
-		if(!$_GET['page']){
-			$this->page_base=basename($_SERVER['REDIRECT_URL']);
-			if(substr($_SERVER['REDIRECT_URL'],-1,1)=='/'){
-				$this->page_base=$this->index_page;
-			}
-			list($page)=preg_split("/[.&]/",$this->page_base);
-			if($page)$_GET['page']=$page;
-		}
-		if(!$this->page)$this->page = @$_GET['page'];
-	}
-	function getServerURL(){
-		$u=$_SERVER['REDIRECT_URL'];
-		// removing server name and URL root from path
-		// url_root value should be in $_SERVER, provided by .htaccess:
-		// RewriteRule .* - [E=URL_ROOT:/]
-		$url_root=$this->getUrlRoot();
-		$u=str_ireplace($url_root,'',$u);
-		return $u;
-	}
-	function getUrlRoot(){
-		$r=isset($_SERVER['REDIRECT_URL_ROOT'])?$_SERVER['REDIRECT_URL_ROOT']:'';
-		if($r=='/')$r='';
-		return $r;
-	}
-
 
 	/////////////// This is what you should call //////////////////
 	function main(){
@@ -199,12 +141,27 @@ class ApiWeb extends ApiCLI {
 		/////////////// Application execution /////////////////////////
 	function render(){
 		if($this->api->jquery)$this->api->jquery->getJS($this);
+
+		// absolute path to base location
+		$this->template->trySet('atk_path',$q=
+								$this->api->pathfinder->atk_location->getURL().'/');
+		$this->template->trySet('base_path',$q=$this->api->pm->base_path);
+		
+		// We are using new capability of SMlite to process tags individually
+		$this->template->eachTag('template',array($this,'locateTemplate'));
+		
+
 		if(!($this->template)){
 			throw new BaseException("You should specify template for API object");
 		}
+
 		$this->hook('pre-render-output');
 		echo $this->template->render();
 	}
+	function locateTemplate($path){
+		return $this->locateURL('template',$path);
+	}
+
 	function execute(){
 		$this->rendered['sub-elements']=array();
 
@@ -230,6 +187,7 @@ class ApiWeb extends ApiCLI {
 
 		}
 	}
+
 	function addLayout($name){
 		if(method_exists($this,$lfunc='layout_'.$name)){
 			if($this->template->is_set($name)){
@@ -241,21 +199,19 @@ class ApiWeb extends ApiCLI {
 	function layout_Content(){
 		// This function initializes content. Content is page-dependant
 
-		if(method_exists($this,$pagefunc='page_'.$this->page)){
+		$page=str_replace('/','_',$this->page);
+
+		if(method_exists($this,$pagefunc='page_'.$page)){
 			$p=$this->add('Page',$this->page,'Content');
 			$this->$pagefunc($p);
 		}else{
-			$this->add('page_'.$this->page,$this->page,'Content');
+			$this->api->locate('page',str_replace('_','/',$this->page).'.php');
+			$this->add('page_'.$page,$page,'Content');
 			//throw new BaseException("No such page: ".$this->page);
 		}
 	}
-	function isClicked($button_name){
-		/**
-		 * Will return true if button with this name was clicked
-		 */
-		return isset($_POST[$button_name])||isset($_POST[$button_name.'_x']);
-	}
 	function isAjaxOutput(){
+		// TODO: rename into isJSOutput();
 		return isset($_POST['ajax_submit']);
 	}
 	function redirect($page=null,$args=array()){
@@ -263,7 +219,6 @@ class ApiWeb extends ApiCLI {
 		 * Redirect to specified page. $args are $_GET arguments.
 		 * Use this function instead of issuing header("Location") stuff
 		 */
-		$this->api->not_html=true;
 		header("Location: ".$this->getDestinationURL($page,$args));
 		exit;
 	}

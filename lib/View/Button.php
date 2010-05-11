@@ -64,4 +64,7 @@ class View_Button extends View_HtmlElement {
 		}
 		return $this;
 	}
+	function redirect($page){
+		return $this->js('click')->univ()->redirect($this->api->getDestinationURL($page));
+	}
 }

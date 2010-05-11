@@ -373,7 +373,7 @@ class SMlite extends AbstractModel {
 		if(!isset($this->tags[$tag]))return;
 		$t=$this->tags[$tag];
 		foreach($t as $key=>$text){
-			$this->tags[$tag][$key][0]=$callable($this->renderRegion($text));
+			$this->tags[$tag][$key][0]=call_user_func($callable,$this->renderRegion($text));
 
 		}
 	}
@@ -383,14 +383,8 @@ class SMlite extends AbstractModel {
 		/*
 		 * Find template location inside search directory path
 		 */
-		$tmp_locations = explode(PATH_SEPARATOR,$this->settings['templates']);
-		foreach($tmp_locations as $loc)if($loc){
-			$filename=str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']);
-			if(file_exists(str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $f=$loc.'/'.$template_name.$this->settings['extension']))){
-				return join('',file($f));
-			}
-		}
-		return null;
+        $f=$this->api->locatePath('template',$template_name.$this->settings['extension']);
+		return join('',file($f));
 	}
 	function loadTemplateFromString($template_string){
 		$this->template=array();

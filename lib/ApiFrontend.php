@@ -20,40 +20,38 @@ class ApiFrontend extends ApiWeb{
 		$this->getLogger();
 		$this->initializeTemplate();
 		// base url is requred due to a Home/Events/Article.html links style
-		$this->template->trySet('base_url',$this->getBaseURL());
 	}
 	function layout_Content(){
 		// required class prefix depends on the content_type
-		try{
-			// This function initializes content. Content is page-dependant
-			$class=$this->content_type.'_'.$this->page;
-			if(method_exists($this,$class)){
-				// for page we add Page class, for RSS - RSSchannel
-				$this->page_object=$this->add($this->content_type=='page'?'Page':'RSSchannel',$this->page);
-				$this->$class($this->page_object);
-			}else{
-				if(loadClass($class)){
-					$this->page_object=$this->add($class,$this->page,'Content');
-				}else{
-					// page not found, trying to load static content
-					if($this->template->findTemplate($static_page='page/'.strtolower($this->page)))
-						$this->page_object=$this->add('Page',$this->page,'Content',array($static_page,'_top'));
-					else{
-						//header("HTTP/1.0 404 Not Found");
-						$this->page_object=$this->add('Page',$this->page,'Content',array('page_404','_top'));
-						$this->page_object->add('Text')->set('<p>Page requested: /'.str_ireplace('_','/',$this->page).'.html</p>');
-					}
+		// This function initializes content. Content is page-dependant
+		$page=str_replace('/','_',$this->page);
+		$class=$this->content_type.'_'.$page;
+		if(method_exists($this,$class)){
+			// for page we add Page class, for RSS - RSSchannel
+			$this->page_object=$this->add($this->content_type=='page'?'Page':'RSSchannel','page_'.$this->page);
+			$this->$class($this->page_object);
+		}else{
+			try{
+				loadClass($class);
+			}catch(PathFinder_Exception $e){
+				// page not found, trying to load static content
+				try{
+					$this->page_object=$this->add('Page','page_'.$this->page,'Content',array('page/'.strtolower($this->page),'_top'));
+				}catch(PathFinder_Exception $e2){
+					// throw original error
+					throw $e;
 				}
+				return;
 			}
-		}catch(Exception $e){
-			$this->processException($e);
+			// i wish they implemented "finally"
+			$this->page_object=$this->add($class,'page_'.$this->page,'Content');
 		}
 	}
 	function execute(){
 		try{
 			parent::execute();
 		}catch(Exception $e){
-			$this->processException($e);
+			$this->caughtException($e);
 		}
 	}
 	function getRSSURL($rss,$args=array()){
@@ -65,22 +63,6 @@ class ApiFrontend extends ApiWeb{
 		}
 		return
 			$rss.'.xml'.($tmp?'?'.join('&',$tmp):'');
-	}
-	/**
-	 * Called on unhandled exception to show user friendly message
-	 */
-	function processException($e){
-		if (isset ($this->api->logger) && !is_null($this->api->logger))
-			$this->api->logger->logException($e);
-		// now showing this exception
-		if ($this->isAjaxOutput()) {
-			$this->ajax()->displayAlert($this->formatAlert($e->getMessage()))->execute();
-		}
-		// rendering error page
-		$t=$this->add('SMlite')->loadTemplate('page_error');
-		$t->trySet('message',$e->getMessage());
-		echo $t->render();
-		exit;
 	}
 	function formatAlert($s) {
 		$r = addslashes(strip_tags($s));

@@ -380,6 +380,7 @@ getjQuery: function(){
 },
 ajaxec: function(url){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
+	region=this.jquery;
 	$.get(url,function(ret){
 		/*
 		 // error handling goes away from here
@@ -403,6 +404,9 @@ ajaxec: function(url){
 		}
 
 	});
+},
+newWindow: function(url){
+	window.open(url);
 },
 loadingInProgress: function(){
 	if(this.successMessage){

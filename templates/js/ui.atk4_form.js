@@ -168,6 +168,7 @@ $.widget("ui.atk4_form", {
 
 		if(!error || error=='0')error="must be specified properly";
 
+		field.focus();
 		if(this.options.useTipTip){
 			// First - we need to include the sucker
 			$.atk4.includeJS("/amodules3/templates/js/tipTipv13/jquery.tipTip.js");

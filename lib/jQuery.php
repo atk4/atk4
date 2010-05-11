@@ -21,7 +21,6 @@ class jQuery_plugin extends AbstractController {
 	}
 }
 class jQuery extends AbstractController {
-	public $js_dir='';
 	private $chains=0;
 	function init(){
 		parent::init();
@@ -36,21 +35,26 @@ class jQuery extends AbstractController {
 
 		$this->api->template->del('js_include');
 
-		$this->addInclude($this->api->getConfig('js/paths/jquery','amodules3/templates/js/').
-				'jquery-'.$this->api->getConfig('js/versions/jquery','1.3.2'));
+		$this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.4.2'));
 
 		// Controllers are not rendered, but we need to do some stuff manually
 		$this->api->addHook('pre-render-output',array($this,'postRender'));
 		$this->api->addHook('cut-output',array($this,'cutRender'));
 	}
-	function addInclude($file){
+	function addInclude($file,$ext){
+		$url=$this->api->locateURL('js',$file.$ext);
 		$this->api->template->append('js_include',
-				'<script type="text/javascript" src="'.$this->api->getBaseURL().$this->js_dir.$file.'.js"></script>'."\n");
+			'<script type="text/javascript" src="'.$url.'"></script>'."\n");
 		return $this;
 	}
 	function addStylesheet($file){
+		$file=$this->api->locateURL('css',$file.$ext);
+		if(!$this->atk4_initialised){
+			parent::addStylesheet($file,$ext);
+		}
+
 		$this->api->template->append('js_include',
-				'<link type="text/css" href="'.$this->api->getBaseURL().$this->css_dir.$file.'.css" rel="stylesheet" />'."\n");
+				'<link type="text/css" href="'.$this->api->locate('css',$file.'.css').'" rel="stylesheet" />'."\n");
 		return $this;
 	}
 	function addOnReady($js){
