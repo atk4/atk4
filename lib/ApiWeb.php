@@ -140,7 +140,7 @@ class ApiWeb extends ApiCLI {
 
 		/////////////// Application execution /////////////////////////
 	function render(){
-		if($this->api->jquery)$this->api->jquery->getJS($this);
+		if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
 		// absolute path to base location
 		$this->template->trySet('atk_path',$q=

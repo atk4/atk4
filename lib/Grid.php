@@ -640,7 +640,7 @@ class Grid extends CompleteLister {
 	}
 	function formatTotalsRow(){
 		foreach($this->columns as $tmp=>$column){
-			$formatters = split(',',$column['type']);
+			$formatters = explode(',',$column['type']);
 			$all_failed=true;
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_totals_".$formatter)){
@@ -768,7 +768,7 @@ class Grid extends CompleteLister {
 	}
 	public function setTDParam($field,$path,$value){
 		// adds a parameter. nested ones can be specified like 'style/color'
-		$path=split('/',$path);
+		$path=explode('/',$path);
 		$current_position=&$this->tdparam[$this->getCurrentIndex()][$field];
 		if(!is_array($current_position))$current_position=array();
 		foreach($path as $part){

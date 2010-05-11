@@ -31,7 +31,7 @@ class Menu extends AbstractView {
 				'page'=>$href,
 				'href'=>$this->api->getDestinationURL($href),
 				'label'=>$label,
-				'class'=>$this->isCurrent($href)?$this->current_menu_class:"ui-state-default",
+				'class'=>$this->isCurrent($href)?$this->current_menu_class:$this->inactive_menu_class,
 			));
 
 		return $this;

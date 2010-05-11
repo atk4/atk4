@@ -268,6 +268,14 @@ class Logger extends AbstractController {
 		echo "<h2>".get_class($e)."</h2>\n";
 		echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
 		if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
+		if($e->more_info){
+		   echo '<p>Additional information: <ul>';
+		   foreach($e->more_info as $key=>$info){
+			   if(is_array($info))$info=print_r($info,true);
+			   echo '<li>'.$key.': '.$info.'</li>';
+		   }
+		   echo '</ul></p>';
+		}
 		if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
 		if(method_exists($e,'getMyTrace'))echo $this->backtrace($e->shift,$e->getMyTrace());

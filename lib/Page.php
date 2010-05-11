@@ -16,8 +16,13 @@ class Page extends AbstractView {
 	function defaultTemplate(){
 		if($_GET['cut_page'])return array('page','Content');
 		$page_name='page/'.strtolower($this->short_name);
-		if($this->api->template->findTemplate($page_name))return array($page_name,'_top');
-		else return 'Content';
+	 	// See if we can locate the page
+		try{
+			$p=$this->api->locate('templates',$page_name.'.html');
+		}catch(PathFinder_Exception $e){
+			return 'Content';
+		}
+		return array($page_name,'_top');
 	}
 	function getTitle(){
 		return $this->title;

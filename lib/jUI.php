@@ -61,12 +61,13 @@ class jUI extends jQuery {
 
 
 		$this->addInclude('start-atk4');
-		$this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.7.1.custom.min'));
+		$this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.8.custom.min'));
 		$this->addInclude('ui.atk4_loader');
 
 		$this->atk4_initialised=true;
 
 	}
+
 	function addInclude($file,$ext='.js'){
 		$url=$this->api->locateURL('js',$file.$ext);
 

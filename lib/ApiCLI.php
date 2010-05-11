@@ -3,6 +3,8 @@ class ApiCLI extends AbstractView {
 	public $db=null;
 	protected $config = null;     // use getConfig method to access this variable
 	public $logger=null;	// TODO: protect this
+	protected $pathfinder_class='PathFinder';
+
 
 	function __construct($realm=null){
 		$this->owner = null;
@@ -12,6 +14,7 @@ class ApiCLI extends AbstractView {
 		set_error_handler("error_handler");
 
 		try {
+			$this->add($this->pathfinder_class);
 			$this->init();
 
 			$this->hook('api-defaults');

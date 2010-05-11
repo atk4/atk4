@@ -123,8 +123,6 @@ class SMlite extends AbstractModel {
 		 * editor or will be properly treated with wysiwyg html editors.
 		 */
 		return array(
-					 'templates'=>'templates',      // directory where templates are located.
-													// You may specify multiple directories
 													// by separating them with ':'
 					 'ldelim'=>'<?',                // tag delimiter
 					 'rdelim'=>'?>',
@@ -136,26 +134,8 @@ class SMlite extends AbstractModel {
 	function init(){
 		$path=array();
 
-		if(isset($this->api->skin) && $this->api->skin){
-			// there may be several paths
-			$cp=explode(';',$this->api->getConfig('smlite/template_dir','templates'));
-			foreach($cp as $p)$path[]=$p.'/'.$this->api->skin;
-		}
-		$path[]=$this->api->getConfig('smlite/template_dir','templates');
-
-		if(defined('AMODULES3_DIR')){
-			if(isset($this->api->skin) && $this->api->skin){
-				$path[]=AMODULES3_DIR.'/templates/'.$this->api->skin;
-			}
-			$path[]=AMODULES3_DIR.'/templates/shared';
-		}
 		$this->settings=$this->getDefaultSettings();
-		$this->settings['templates']=join(PATH_SEPARATOR,$path);
 		$this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
-	}
-	function addToPath($dir){
-		$this->settings['templates'].=PATH_SEPARATOR.$dir;
-		return $this;
 	}
 	function SMlite($template=array(),$settings=array()){
 		/*
@@ -170,7 +150,7 @@ class SMlite extends AbstractModel {
 		if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
 	}
 	function __clone(){
-		if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
+        if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
 		// may be some of the following lines are unneeded...
 		$this->template=unserialize(serialize($this->template));
 		$this->tags=unserialize(serialize($this->tags));
@@ -189,6 +169,7 @@ class SMlite extends AbstractModel {
 			$new=new $class_name();
 			$new->template=unserialize(serialize($this->template));
 			$new->owner=$this->owner;
+			$new->api=$this->api;
 			$new->top_tag=$tag;
 			$new->settings=$this->settings;
 		  $new->rebuildTags();

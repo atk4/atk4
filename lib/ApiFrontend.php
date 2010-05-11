@@ -20,6 +20,7 @@ class ApiFrontend extends ApiWeb{
 		$this->getLogger();
 		$this->initializeTemplate();
 		// base url is requred due to a Home/Events/Article.html links style
+
 	}
 	function layout_Content(){
 		// required class prefix depends on the content_type
