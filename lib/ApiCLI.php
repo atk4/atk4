@@ -44,7 +44,7 @@ class ApiCLI extends AbstractView {
 		if(!defined('DTP'))define('DTP','');
 	}
 	function getBaseURL(){
-		return $this->pm->base_location->getURL();
+		return $this->pm->base_path;
 	}
 	function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
 		if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
