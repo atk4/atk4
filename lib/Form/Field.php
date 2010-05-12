@@ -555,7 +555,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 		return true;
 	}
 	function getInput($attr=array()){
-		$output='<table border=0>';
+		$output='<table border=0 id="'.$this->name.'"><tbody>';
 		$column=0;
 		$current_values=explode(',',$this->value);
 		$i=0;//Skai
@@ -579,7 +579,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 				$column=0;
 			}
 		}
-		$output.="</table>";
+		$output.="</tbody></table>";
 		return $output;
 	}
 
