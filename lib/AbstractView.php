@@ -52,7 +52,7 @@ abstract class AbstractView extends AbstractObject {
 		 * This class will be called BEFORE init(), so that it can prepare template
 		 * for us to use
 		 */
-		if(!$template_spot)$template_spot='Content';
+		if(!$template_spot)$template_spot=$this->defaultSpot();
 		if(!isset($template_branch))$template_branch=$this->defaultTemplate();
 		if(isset($template_branch)){
 			$this->template_branch=$template_branch;
@@ -96,6 +96,9 @@ abstract class AbstractView extends AbstractObject {
 	}
 	function defaultTemplate(){
 		return null;//"_top";
+	}
+	function defaultSpot(){
+		return 'Content';
 	}
 	/**
 	 * returns actual template branch in same format as defaultTemplate()
