@@ -136,6 +136,7 @@ $.widget('ui.atk4_loader', {
 			$.univ().loadingInProgress();
 			return false;
 		}
+		var m;
 
 		self.loading=true;
         $.atk4.get(url,null,function(res){
@@ -158,7 +159,7 @@ $.widget('ui.atk4_loader', {
                 source=source.substring(0,s)+source.substring(e2+1);
             }
 
-			var m=el;
+			m=el;
 			m.hide();
 
 			// Parse into Document
@@ -195,7 +196,7 @@ $.widget('ui.atk4_loader', {
             };
 
 			if(callback)$.atk4(callback,true);
-			m.show();
+			$.atk4(function(){ m.show(); });
 		},function(){	// second callback, which is always called, when loading is completed
 			self.loading=false;
 		});

@@ -221,7 +221,8 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-	var dialog=$('<div class="dialog" title="Untitled">Loading<div></div></div>').appendTo('body');
+	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
+	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	$.data(dialog.get(0),'opener',this.jquery);
 	$.data(dialog.get(0),'options',options);
@@ -376,10 +377,10 @@ closeDialog: function(){
 getjQuery: function(){
 	return this.jquery;
 },
-ajaxec: function(url){
+ajaxec: function(url,data){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	region=this.jquery;
-	$.get(url,function(ret){
+	$.atk4.get(url,data,function(ret){
 		/*
 		 // error handling goes away from here
 		if(ret.substr(0,5)=='ERROR'){
