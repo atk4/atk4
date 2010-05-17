@@ -326,6 +326,7 @@ dialogAttention: function(text,options,fn){
 },
 successMessage: function(msg){
 	var html="";
+	if(!$('#float-messages').length)return alert(msg);
 	html = '<p class="growl">'+msg
 		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
 
