@@ -141,6 +141,7 @@ $.extend($.atk4,{
 			self._stillLoading(url);
 		},2000);
 
+		if(typeof(url)=="object" && url[0])url=$.atk4.addArgument(url);
 		if(typeof(url)=="string")url={url:url};
 
 		// Another file is being loaded.
@@ -346,6 +347,17 @@ $.extend($.atk4,{
 	 See also: http://api.jquery.com/jQuery.param/
 	*/
 	addArgument: function(url,a,b){
+		if(typeof(url)=='object'){
+			if(url[0]){
+				var u=url[0];
+				delete(url[0]);
+				$.each(url,function(_a,_b){
+					u=$.atk4.addArgument(u,_a,_b);
+				});
+				url=u;
+			}
+		}
+		if(typeof(a)=='undefined')return url;
 		if(b)a+='='+encodeURIComponent(b);
         return url+(url.indexOf('?')==-1?'?':'&')+a;
 	}
