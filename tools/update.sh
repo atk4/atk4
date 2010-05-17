@@ -20,6 +20,7 @@ for x in *.sql; do
 		echo 'ok'
 	else
 		echo 'fail'
+		cat $x.fail
 	fi
 done
 
