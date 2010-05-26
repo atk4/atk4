@@ -135,7 +135,7 @@ class PathFinder_Location extends AbstractModel {
 
 		$this->relative_path=$this->short_name;
 
-		if($this->short_name[0]=='/'){
+		if($this->short_name[0]=='/' || $this->short_name[1]==':'){
 			// Absolute path. Independent from base_location
 
 		}else{
