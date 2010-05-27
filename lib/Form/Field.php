@@ -121,7 +121,7 @@ abstract class Form_Field extends AbstractView {
 	}
 	function validateNotNULL($msg=''){
 		$this->setMandatory();
-		$this->validateField('$this->get()',($msg?$msg:'".$this->caption." is a mandatory field!'));
+		$this->validateField('$this->get()',(($msg && (is_string($msg)))?$msg:'".$this->caption." is a mandatory field!'));
 		return $this;
 	}
 	function setNotNull($msg=''){
