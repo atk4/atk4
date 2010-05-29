@@ -67,7 +67,10 @@ $.widget('ui.atk4_loader', {
 
 		this.element.addClass('atk4_loader');
 
-		 console.log("OPTioNS:",this.options);
+		 if(this.options.cut_object){
+			 this.cut_mode='object';
+			 this.cut=this.options.cut_object;
+		 }
 		if(this.options.debug){
 			var d=$('<div/>');
 			d.css({background:'#fe8',border: '1px solid black',position:'absolute',width:'100px',height:'50px'});
