@@ -73,8 +73,6 @@ class jUI extends jQuery {
 
 		if(!$this->atk4_initialised){
 			parent::addInclude($file,$ext);
-			$this->api->template->append('js_include',
-				'<script type="text/javascript" src="'.$url.'"></script>'."\n");
 			return $this;
 		}
 

@@ -122,6 +122,9 @@ $.each({
 		// removing hidden field
 		if(button)button.remove();
 	},
+	addArgument: function(url,args){
+		return $.atk4.addArgument(url,args);
+	},
 	reloadArgs: function(url,key,value){
 		var u=$.atk4.addArgument(url,key+'='+value);
 		console.log(url);
