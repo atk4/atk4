@@ -21,6 +21,11 @@ class ApiCLI extends AbstractView {
 			$this->hook('post-init');
 
 		}catch(Exception $e){
+
+			// This exception is used to abort initialisation of the objects but when
+			// normal rendering is still required
+			if($e instanceof Exception_StopInit)return;
+
 			$this->caughtException($e);
 		}
 	}

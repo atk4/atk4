@@ -131,6 +131,7 @@ class URL extends AbstractModel {
 
 		$tmp=array();
 		foreach($this->arguments as $key=>$value){
+			if($value===false)continue;
 			$tmp[]=$key.'='.urlencode($value);
 		}
 

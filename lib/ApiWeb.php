@@ -21,7 +21,7 @@ class ApiWeb extends ApiCLI {
 	public $apinfo=array();
 
 	protected $page_base=null;
-	protected $index_page='Index';
+	protected $index_page='index';
 	protected $sticky_get_arguments = array();
 	protected $ajax_class='Ajax';
 
@@ -30,6 +30,11 @@ class ApiWeb extends ApiCLI {
 		try {
 			parent::__construct($realm);
 		}catch (Exception $e){
+
+			// This exception is used to abort initialisation of the objects but when
+			// normal rendering is still required
+			if($e instanceof Exception_StopInit)return;
+
 			$this->caughtException($e);
 		}
 	}
