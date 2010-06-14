@@ -285,4 +285,8 @@ function htmlize_exception($e,$msg){
 		if($is_list) return '[' . $json . ']';//Return numerical JSON
 		return '{' . $json . '}';//Return associative JSON
 	}
+};if(!function_exists('htmlentities_utf8')){
+	function htmlentities_utf8($string, $quote_style = ENT_COMPAT, $charset='UTF-8'){
+		return htmlentities($string,$quote_style,$charset);
+	}
 }
