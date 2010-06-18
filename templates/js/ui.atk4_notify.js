@@ -12,8 +12,9 @@ $.widget('ui.atk4_notify', {
 	
 	_defineBehaviour: function(message){
 		// When click button is present - use it
+		var self=this;
 		if(message.find('.close').length){
-			message.find('.close').click(function(){
+			message.find('.close').hide().click(function(){
 				message.fadeOut(500,function(){
 					message.remove();
 				});
@@ -28,16 +29,17 @@ $.widget('ui.atk4_notify', {
 		}
 
 		message.mouseenter(function(){
+			console.log('entered');
 			message.stop(true);
 			message.css({opacity:1});
 			message.find('.close').show();
 		});
 
 		message.mouseleave(function(){
-			message.animate({opacity:1},this.getTimeout(message)).fadeOut(500,function(){
+			message.find('.close').hide();
+			message.animate({opacity:1},self._getTimeout(message)).fadeOut(500,function(){
 				message.remove();
 			});
-			message.find('.close').hide();
 		});
 
 	},
@@ -52,8 +54,8 @@ $.widget('ui.atk4_notify', {
 	},
 
 	_getTimeout: function(message){
-		// TODO: based on length of the message return different values
-		return 4000;
+		var r=3000+message.text().length*25;
+		return r;
 	},
 	_customiseMessage: function(message){
 		/*
