@@ -329,6 +329,12 @@ dialogAttention: function(text,options,fn){
 },
 successMessage: function(msg){
 	var html="";
+
+	if($.ui.atk4_notify && $('#float-messages').length){
+		$('#float-messages').atk4_notify().atk4_notify('successMessage',msg);
+		return;
+	}
+
 	if(!$('#float-messages').length)return alert(msg);
 	html = '<p class="growl">'+msg
 		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
