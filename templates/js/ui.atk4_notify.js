@@ -9,8 +9,8 @@ $.widget('ui.atk4_notify', {
 
 	// Few different ways to display a message
 	options: {
-		show: function(){ return this.fadeIn() },
-		hide: function(){ return this.fadeOut() }
+		show: function(){ this.fadeIn() },
+		hide: function(){ this.fadeOut() }
 	},
 	
 	_defineBehaviour: function(message){
