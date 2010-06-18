@@ -8,7 +8,10 @@
 $.widget('ui.atk4_notify', {
 
 	// Few different ways to display a message
-	//
+	options: {
+		show: function(){ return this.fadeIn() },
+		hide: function(){ return this.fadeOut() }
+	},
 	
 	_defineBehaviour: function(message){
 		// When click button is present - use it
@@ -31,13 +34,15 @@ $.widget('ui.atk4_notify', {
 		message.mouseenter(function(){
 			console.log('entered');
 			message.stop(true);
-			message.css({opacity:1});
+			message.css({'data-delay':1});
 			message.find('.close').show();
 		});
 
 		message.mouseleave(function(){
 			message.find('.close').hide();
-			message.animate({opacity:1},self._getTimeout(message)).fadeOut(500,function(){
+			message.delay(self._getTimeout(message));
+			self.options.hide.call(message);
+			message.hide(0,function(){
 				message.remove();
 			});
 		});
@@ -47,8 +52,12 @@ $.widget('ui.atk4_notify', {
 		/* 
 		 * Add message into container
 		 */
+		message.hide();
 		this.element.prepend(message);
-		message.slideDown(200).animate({opacity:1},this._getTimeout(message)).fadeOut(500,function(){
+		this.options.show.call(message);
+		message.delay(this._getTimeout(message));
+		this.options.hide.call(message);
+		message.hide(0,function(){
 			message.remove();
 		});
 	},
@@ -64,7 +73,6 @@ $.widget('ui.atk4_notify', {
 		message.addClass('light-gray');
 	},
 	messageHTML: function(message){
-
 		this._customiseMessage(message);
 		this._defineBehaviour(message);
 		this._insertMessage(message);
