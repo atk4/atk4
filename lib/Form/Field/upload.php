@@ -27,7 +27,7 @@ class Form_Field_Upload extends Form_Field {
 			$t=json_decode(stripslashes($_POST[$this->name.'_token']));
 			$_FILES[$this->name]=array(
 					'name'=>$t->fileInfo->name,
-					'tmp_name'=>ROOTDIR.'/upload/temp/'.$t->filename,
+					'tmp_name'=>'upload/temp/'.$t->filename,
 					);
 		}
 	}

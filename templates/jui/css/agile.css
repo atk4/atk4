@@ -1,5 +1,5 @@
 /* Agile Toolkit (c) Agile Technologies // http://www.agiletech.ie/ */
-/* Updated on 06/05/10 */
+/* Updated on 21/06/10 */
 
 
 /* ------------ Resetting elements */
@@ -164,7 +164,7 @@ html>/**/body .atk-grid>table>thead>tr>th {background:none;}
 .atk-form-simple>form>dl.atk-form-buttons:after,
 .atk-form-simple>form>fieldset>dl:after {content:".";display:block;height:0;clear:both;visibility:hidden;}
 .atk-form-simple>form>fieldset>dl>dt {float:left;}
-.atk-form-simple>form>fieldset>dl>dt {width:10em;min-width:10em;margin-right:2em;}
+.atk-form-simple>form>fieldset>dl>dt {width:10em;min-width:10em;margin-right:2em;text-align:right;}
 .atk-form-simple>form>fieldset>dl>dd,
 .atk-form-simple>form>dl.atk-form-buttons>dd {margin-left:12em;}
 .atk-form-simple>form>fieldset>dl>dd.atk-field {margin-bottom:0.2em;}
