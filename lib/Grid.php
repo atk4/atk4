@@ -246,7 +246,7 @@ class Grid extends CompleteLister {
 //		.'<a class=" '.$class.' expander"
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
-			rel="'.$this->api->getDestinationURL($this->api->page.'_'.$field,
+			rel="'.$this->api->getDestinationURL($this->api->page.'/'.$field,
 						array('expander'=>$field,
 							'cut_object'=>$this->api->page.'_'.$field,
 							'expanded'=>$this->name,

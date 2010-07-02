@@ -31,7 +31,7 @@ class ApiFrontend extends ApiWeb{
 		$class=$this->content_type.'_'.$page;
 		if(method_exists($this,$class)){
 			// for page we add Page class, for RSS - RSSchannel
-			$this->page_object=$this->add($this->content_type=='page'?$this->page_class:'RSSchannel','page_'.$this->page);
+			$this->page_object=$this->add($this->content_type=='page'?$this->page_class:'RSSchannel',$this->page);
 			$this->$class($this->page_object);
 		}else{
 			try{
@@ -39,7 +39,7 @@ class ApiFrontend extends ApiWeb{
 			}catch(PathFinder_Exception $e){
 				// page not found, trying to load static content
 				try{
-					$this->page_object=$this->add($this->page_class,'page_'.$this->page,'Content',array('page/'.strtolower($this->page),'_top'));
+					$this->page_object=$this->add($this->page_class,$this->page,'Content',array('page/'.strtolower($this->page),'_top'));
 				}catch(PathFinder_Exception $e2){
 					// throw original error
 					throw $e;
@@ -47,7 +47,7 @@ class ApiFrontend extends ApiWeb{
 				return;
 			}
 			// i wish they implemented "finally"
-			$this->page_object=$this->add($class,'page_'.$this->page,'Content');
+			$this->page_object=$this->add($class,$this->page,'Content');
 		}
 	}
 	function execute(){
