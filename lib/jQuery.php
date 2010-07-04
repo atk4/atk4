@@ -47,14 +47,11 @@ class jQuery extends AbstractController {
 			'<script type="text/javascript" src="'.$url.'"></script>'."\n");
 		return $this;
 	}
-	function addStylesheet($file){
-		$file=$this->api->locateURL('css',$file.$ext);
-		if(!$this->atk4_initialised){
-			parent::addStylesheet($file,$ext);
-		}
+	function addStylesheet($file,$ext='.css'){
+		//$file=$this->api->locateURL('css',$file.$ext);
 
 		$this->api->template->append('js_include',
-				'<link type="text/css" href="'.$this->api->locate('css',$file.'.css').'" rel="stylesheet" />'."\n");
+				'<link type="text/css" href="'.$this->api->locateURL('css',$file.$ext).'" rel="stylesheet" />'."\n");
 		return $this;
 	}
 	function addOnReady($js){

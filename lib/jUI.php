@@ -79,7 +79,7 @@ class jUI extends jQuery {
 		parent::addOnReady('$.atk4.includeJS("'.$url.'")');
 		return $this;
 	}
-	function addStylesheet($file,$ext='.css'){
+	function addStylesheet($file,$ext='.css',$template=false){
 		/*
 		if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
 		elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
@@ -87,8 +87,8 @@ class jUI extends jQuery {
 		else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
 		*/
 		$url=$this->api->locateURL('css',$file.$ext);
-		if(!$this->atk4_initialised){
-			parent::addStylesheet($file,$ext);
+		if(!$this->atk4_initialised || $template){
+			return parent::addStylesheet($file,$ext);
 		}
 
 		parent::addOnReady('$.atk4.includeCSS("'.$url.'")');
