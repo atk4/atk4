@@ -59,7 +59,7 @@ class Grid extends CompleteLister {
 		$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
 		$this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
-		$this->api->addHook('post-submit', array($this,'submitted'), 3);
+		//$this->api->addHook('post-submit', array($this,'submitted'), 3);
 	}
 	function defaultTemplate(){
 		return array('grid','grid');
