@@ -84,7 +84,7 @@ class jQuery_Chain extends AbstractModel {
 				if(!$assoc || $return_comma_list){
 					$a2[]=$v;
 				}else{
-					$a2[]='"'.$key.'":'.$v;
+					$a2[]='\''.$key.'\':'.$v;
 				}
 			}
 			if($return_comma_list){
@@ -95,7 +95,7 @@ class jQuery_Chain extends AbstractModel {
 					$s='['.join(',',$a2).']';
 			}
 		}else{
-			$s=json_encode($arg);
+			$s=str_replace('"','\'',json_encode($arg));
 		}
 
 		return $s;
