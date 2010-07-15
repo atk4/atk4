@@ -149,6 +149,8 @@ class Grid extends CompleteLister {
 		$this->current_row[$field]=number_format($m,2);
 		if($m<0){
 			$this->setTDParam($field,'style/color','red');
+		}else{
+			$this->setTDParam($field,'style/color',null);
 		}
 	}
 	function format_totals_number($field){
