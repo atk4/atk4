@@ -126,9 +126,11 @@ class PageManager extends AbstractController {
 			if(!$page)$page='index';
 
 			// Remove postfix from page if any
-			$page=str_replace(array('.html','.xml',$this->api->getConfig('url_postfix',''))
-			 		,'',$page);
+			$page=preg_replace('/\..*$/','',$page);
+			$page=preg_replace('/\/$/','',$page);
 			$page=str_replace('/','_',$page);
+
+			if(substr($page,-1,1)=='_')$page=substr($page,0,-1);
 		}
 
 		if(strpos($page,'.')!==false)throw new BaseException("Failed to determine page name. Page name may not contain ".
