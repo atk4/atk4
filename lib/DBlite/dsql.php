@@ -260,7 +260,15 @@ class DBlite_dsql  {
 						}
 						$where.=" ($equals)";
 					}else{
-						$where.=" = '".$this->db->escape($equals)."'";
+						if(is_array($equals)){
+							// adding all conditions as OR clause
+							$w=array();
+							foreach($equals as $e){
+								$w[]=$where." = '".$this->db->escape($e)."'";
+							}
+							$where=join(' OR ',$w);
+						}else
+							$where.=" = '".$this->db->escape($equals)."'";
 					}
 				}
 			}
