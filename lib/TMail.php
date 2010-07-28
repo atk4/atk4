@@ -179,7 +179,7 @@ class TMail extends AbstractController{
 		if(count($this->mime)==0)$result.=$this->plain_text;
 		// adding mail parts 
 		foreach($this->mime as $name=>$att){
-			list($type,)=split(';',$att['type']);
+			list($type,)=explode(';',$att['type']);
 			// $name is a file name/part name, $att is a hash with type and content
 			// depending on the type adding a header
 			switch($type){

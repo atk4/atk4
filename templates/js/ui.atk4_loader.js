@@ -97,7 +97,6 @@ $.widget('ui.atk4_loader', {
 			self.helper=d;
 			self.element.css({border:'1px dashed green'});
 		}
-		console.log('init done');
 	},
 	destroy: function(){
 		var self=this;
@@ -163,7 +162,7 @@ $.widget('ui.atk4_loader', {
             }
 
 			m=el;
-			m.hide();
+			if(!(jQuery.browser.msie))m.hide();
 
 			// Parse into Document
 			var source=$('<div/>').append(source);
@@ -227,7 +226,6 @@ $.widget('ui.atk4_loader', {
 	},
 	remove: function(){
 		var self=this;
-		console.log('called REMOVE');
 		self.helper && self.helper.css({background:'red'});
 		//if(false === self._trigger('beforeclose')){
 		if(self.element.find('.form_changed').length){
@@ -263,7 +261,6 @@ $.widget('ui.atk4_loader', {
 			return false;
 		}
 
-		console.log('triggering beforeClose',self.element[0]);
 		//if(false === self._trigger('beforeclose')){
 		if(self.element.find('.form_changed').length){
 			if(!confirm('Changes on the form will be lost. Continue?'))return false;
@@ -274,7 +271,6 @@ $.widget('ui.atk4_loader', {
 
 		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);
 		this._loadHTML(self.element,url,fn,strip_layer);
-		console.log('loading complete for ',self.element[0]);
 	}
 
 });

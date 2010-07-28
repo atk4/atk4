@@ -418,42 +418,47 @@ newWindow: function(url){
 	window.open(url);
 },
 loadingInProgress: function(){
-	if(this.successMessage){
-		this.successMessage('Loading is in progress. Please wait');
-	}else{
-		alert('Loading is in progress. Please wait');
-	}
+	this.successMessage('Loading is in progress. Please wait');
 },
-	ajaxifyLinks: function(){
-		// Links of the current container will be opened in the closest loader
-		this.jquery.find('td a').click(function(ev){ ev.preventDefault(); $(this).closest('.atk4_loader').atk4_loader('loadURL',$(this).attr('href')); });
-	},
-	autoChange: function(interval){
+ajaxifyLinks: function(){
+	// Links of the current container will be opened in the closest loader
+	this.jquery.find('td a').click(function(ev){
+		ev.preventDefault();
+		$(this).closest('.atk4_loader').atk4_loader('loadURL',$(this).attr('href'));
+	});
+},
+autoChange: function(interval){
 	// Normally onchange gets triggered only when field is submitted. However this function
 	// will make field call on_change one second since last key is pressed. This makes event
 	// triggering more user-friendly
-		var f=this.jquery;
-		var f0=f.get(0);
+	var f=this.jquery;
+	var f0=f.get(0);
+	if(typeof interval == 'undefined')interval=1000;
 
+	f.attr('data-val',f.val());
+
+	function onkeyup(){
+		if(f.attr('data-val')==f.val())return;
 		f.attr('data-val',f.val());
-
-		function onkeyup(){
-			if(f.attr('data-val')==f.val())return;
-			f.attr('data-val',f.val());
-			var timer=$.data(f0,'timer');
-			if(timer){
-				clearTimeout(timer);
-			}
+		var timer=$.data(f0,'timer');
+		if(timer){
+			clearTimeout(timer);
+		}
+		if(interval){
 			timer=setTimeout(function(){
 					$.data(f0,'timer',null);
 					f.trigger('autochange');
 					f.change();
-					},interval?interval:500);
+					},interval);
 			$.data(f0,'timer',timer);
+		}else{
+			f.trigger('autochange');
+			f.change();
 		}
-		//f.change(onchange);
-		f.keyup(onkeyup);
 	}
+	//f.change(onchange);
+	f.keyup(onkeyup);
+}
 
 },$.univ._import
 );

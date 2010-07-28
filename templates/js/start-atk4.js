@@ -128,6 +128,29 @@ $.extend($.atk4,{
 	// files are completed. It is used to turn off loading indicator
 	_readyLast: undefined,
 
+	// Server-side implements session timeout
+	_refreshTimeout: function(){
+		if(document.session_timeout){
+			if(document.session_timeout_timer1)clearTimeout(document.session_timeout_timer1);
+			if(document.session_timeout_timer2)clearTimeout(document.session_timeout_timer2);
+
+			document.session_timeout_timer1=setTimeout(function(){
+				if($.univ && $.univ().successMessage){
+					$.univ().successMessage('Your session will expire in 1 minute due to lack of activity');
+				}
+
+			},(document.session_timeout-1)*60*1000);
+
+			document.session_timeout_timer2=setTimeout(function(){
+				if($.univ()){
+					$.univ().dialogOK('Session timeout','You have been inactive for '+document.session_timeout+' minutes. You will need to log-in again',function(){ document.location='/' });
+				}else{
+					alert('Your session have expired');document.location='/';
+				}
+			},(document.session_timeout)*60*1000);
+		}
+	},
+
 	// If url is an object {..} then it's passed to ajax as 1st argument
 
 
@@ -154,12 +177,14 @@ $.extend($.atk4,{
 
             success: function(res){
 					clearTimeout(timeout);
+					$.atk4._refreshTimeout();
 					load_end_callback && load_end_callback();
 					$.atk4._checkSession(res) && callback && callback(res);
 		            if(!--$.atk4.loading)$.atk4._readyExec();
 				},
             error: function(a,b,c){
 					clearTimeout(timeout);
+					$.atk4._refreshTimeout();
 					load_end_callback && load_end_callback();
 					$.atk4._ajaxError(url,a,b,c);
 		            if(!--$.atk4.loading)$.atk4._readyExec();
@@ -246,8 +271,9 @@ $.extend($.atk4,{
 			if($.atk4.loading)return;
         }
 		if(this._readyLast){
-			this._readyLast.call(document);
+			var x=this._readyLast;
 			this._readyLast=undefined;
+			x.call(document);
 		}
     },
 

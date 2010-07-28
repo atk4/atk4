@@ -15,6 +15,8 @@ class Grid extends CompleteLister {
 	private $totals_title_field=null;
 	private $totals_title="";
 	public $totals_t=null;
+
+	public $grid_update_compatibility=false;
 	/**
 	* Inline related property
 	* If true - TAB key submits row and activates next row
@@ -452,6 +454,9 @@ class Grid extends CompleteLister {
 			//return;// false;
 			//saving to DB
 			if($_GET['action']=='update'){
+				if(!$this->grid_update_compatibility)
+					throw new BaseException('Grid::update is unsafe. If you wish to continue using it, '.
+							'set $grid->grid_update_compatibility');
 				$this->update();
 			}
 			$row=$this->getRowContent($_GET['id']);
@@ -463,7 +468,7 @@ class Grid extends CompleteLister {
 		foreach($_GET as $name=>$value){
 			if(strpos($value,'%'))$value=urldecode($value);
 			if(strpos($name, 'field_')!==false){
-				$this->dq->set(substr($name, 6)."='$value'");
+				$this->dq->set(substr($name, 6),$value);
 			}
 		}
 		$idfield=$this->dq->args['fields'][0];

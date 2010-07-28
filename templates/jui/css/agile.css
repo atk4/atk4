@@ -105,6 +105,15 @@ html>/**/body .atk-grid>table>thead>tr>th {background:none;}
 .atk-grid-notfound .ui-icon {margin-right:0.2em;}
 .atk-grid>table>tbody>tr.atk-grid-totals>td {font-weight:bold;border-color:#000;}
 
+.lister_expander_parent>td {background:#f5f5f5;border-top:1px solid #aaa !important;border-bottom:1px solid #ddd;}
+.lister_expander_parent>td:first-child {border-left:1px solid #aaa;}
+.lister_expander_parent>td:last-child {border-right:1px solid #aaa;}
+.lister_expander {padding:0 !important;}
+td.lister_expander {background:#f5f5f5;border:1px solid #bbb;padding:0 !important;}
+td.lister_expander>div {border-top:1px solid #fff;padding:2em;}
+td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {margin-bottom:0;display:block;}
+
+
 /* Lister */
 
 .atk-lister.ui-widget-content {padding:0.2em;}
@@ -174,5 +183,19 @@ html>/**/body .atk-grid>table>thead>tr>th {background:none;}
 
 /* Form Vertical */
 
-.atk-form-vertical>form>fieldset>dl>dt, .atk-form-vertical>form>fieldset>dl>dd.atk-field>div {margin-bottom:0.3em;}
-.atk-form-vertical>form>fieldset>dl>dd.atk-field {margin-bottom:0.5em;}
+.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
+	margin-top: 0.3em;
+	display: block;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error {
+	margin-top: 0.5em;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div {
+	float: left;
+}
+
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div>.ui-icon {
+	background-position: -160px -192px;
+}

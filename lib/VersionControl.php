@@ -84,7 +84,7 @@ class VersionControl extends AbstractController{
 		// executing file on the basis of it's extension
 		$fileext=strrchr($filename, '.');
 		// transforming last_result to an array
-		$last_result=split("\n",$last_result);
+		$last_result=explode("\n",$last_result);
 		if($fileext=='.sql')$this->execSQL($filename,$last_result);
 		elseif($fileext=='.php')$this->execPHP($filename,$last_result);
 	}
@@ -95,7 +95,7 @@ class VersionControl extends AbstractController{
 		$limit=600;
 		$this->results[]='Starting DB update. Setting script time limit to '.$limit;
 		set_time_limit($limit);
-		$sql=split(';',file_get_contents($this->working_dir.$file));
+		$sql=explode(';',file_get_contents($this->working_dir.$file));
 		//$sql=$query=file_get_contents($this->working_dir.$file);
 		$error=false;
 		foreach($sql as $query)if(trim($query) != ''){

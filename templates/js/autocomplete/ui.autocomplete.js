@@ -4,7 +4,7 @@
  * Copyright (c) 2007, 2008 Dylan Verheul, Dan G. Switzer, Anjesh Tuladhar, Jörn Zaefferer
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
- * 
+ *
  * http://docs.jquery.com/UI/Autocomplete
  *
  * Depends:
@@ -31,7 +31,7 @@ $.widget("ui.autocomplete", {
 			KEY = $.ui.keyCode,
 			previousValue = "",
 			cache = $.ui.autocomplete.cache(options),
-			hasFocus = 0,
+			hasFocus = 1,
 			config = {
 				mouseDownOnSelect: false
 			},
@@ -40,14 +40,6 @@ $.widget("ui.autocomplete", {
 			lastKeyPressCode,
 			// TODO refactor select into its own widget? if not, try to merge with widget methods
 			select = $.ui.autocomplete.select(options, input, selectCurrent, config);
-
-		console.log(options);
-		if(!this.options.hidden) this.options.hidden = $input.next();
-		this.options.input = $input;
-		options.result = function(a,b){
-			options.hidden.val(b.id).change();
-		}
-
 
 		// TODO is there a more generic way for callbacks?
 		if (options.result) {
@@ -66,6 +58,9 @@ $.widget("ui.autocomplete", {
 		// TODO verify
 		// only opera doesn't trigger keydown multiple times while pressed, others don't work with keypress at all
 		$input.bind(($.browser.opera ? "keypress" : "keydown") + ".autocomplete", function(event) {
+			// a keypress means the input has focus
+			// avoids issue where input had focus before the autocomplete was applied
+			hasFocus = 1;
 			// track last key pressed
 			lastKeyPressCode = event.keyCode;
 			switch(event.keyCode) {
@@ -110,10 +105,10 @@ $.widget("ui.autocomplete", {
 				// matches also semicolon
 				case options.multiple && $.trim(options.multipleSeparator) == "," && KEY.COMMA:
 				// TODO implement behaviour based on focus-option
-				case KEY.TAB:
 				case KEY.ENTER:
-					if( selectCurrent() ) {
+				case KEY.TAB:
 						// stop default to prevent a form submit, Opera needs special handling
+					if( selectCurrent() ) {
 						event.preventDefault();
 						blockSubmit = true;
 						return false;
@@ -134,10 +129,9 @@ $.widget("ui.autocomplete", {
 			// track whether the field has focus, we shouldn't process any
 			// results if the field no longer has focus
 			hasFocus++;
-			onChange(0,true);
 		})
 		.bind('blur.autocomplete', function() {
-			hasFocus = 0;
+			hasFocus = 1;
 			if (!config.mouseDownOnSelect) {
 				hideResults();
 			}
@@ -145,7 +139,12 @@ $.widget("ui.autocomplete", {
 		.bind('click.autocomplete', function() {
 			// show select when clicking in a focused field
 			if ( hasFocus++ > 1 && !select.visible() ) {
-				onChange(0, true);
+				console.log('select clicked');
+				$input.select();
+
+				//onChange(0, true);
+
+				request('',receiveData,hideResultsNow);
 			}
 		}).bind("search.autocomplete", function() {
 			// TODO why not just specifying both arguments?
@@ -191,7 +190,7 @@ $.widget("ui.autocomplete", {
 		// TODO move to instance method
 		function selectCurrent() {
 			var selected = select.selected();
-			if( !selected ) return false;
+			if( selected == 0 ) return false;
 
 			var v = selected.result;
 			previousValue = v;
@@ -241,19 +240,13 @@ $.widget("ui.autocomplete", {
 
 		// TODO without the multiple stuff, this shouldn't be necessary anymore
 		function trimWords(value) {
-			if ( !value ) {
+			if (!value)
 				return [""];
-			}
-			if ( !options.multiple ) {
-				return [value];
-			}
-			var words = value.split( options.multipleSeparator );
-			var result = [];
-			$.each(words, function(i, value) {
-				if ( $.trim(value) )
-					result[i] = $.trim(value);
+			if (!options.multiple)
+				return [$.trim(value)];
+			return $.map(value.split(options.multipleSeparator), function(word) {
+				return $.trim(value).length ? $.trim(word) : null;
 			});
-			return result;
 		};
 
 		// TODO should be abl to remove this, too
@@ -298,18 +291,18 @@ $.widget("ui.autocomplete", {
 								var words = trimWords($input.val()).slice(0, -1);
 								$input.val( words.join(options.multipleSeparator) + (words.length ? options.multipleSeparator : "") );
 							}
-							else
+							else {
 								$input.val( "" );
+								$input.trigger("result", null);
+							}
 						}
 					}
 				);
 			}
 			// TODO implement focus-option
-			/*
-			if (wasVisible)
+			//if (wasVisible)
 				// position cursor at end of input field
-				$.ui.autocomplete.selection(input, input.value.length, input.value.length);
-				*/
+				//$.ui.autocomplete.selection(input, input.value.length, input.value.length);
 		};
 
 		// TODO refactor, move to source-related method(s)
@@ -399,7 +392,7 @@ $.widget("ui.autocomplete", {
 		};
 
 	}, //End _init
-	
+
 	// TODO update to latest ui.core, most likely using _trigger instead
 	_propagate: function(n, event) {
 		$.ui.plugin.call(this, n, [event, this.ui()]);
@@ -466,7 +459,7 @@ $.extend($.ui.autocomplete, {
 		matchContains: false,
 		// TODO verify usefulness
 		cacheLength: 10,
-		scrollMax: 150,
+		scrollMax: 500,
 		noScrollMax: 10,
 		mustMatch: false,
 		// TODO replace
@@ -474,8 +467,8 @@ $.extend($.ui.autocomplete, {
 		// TODO remove
 		selectFirst: true,
 		// TODO remove, replaced by parse/source
-		formatItem: function(row) { return row.name; },
-		// TODO remove, replaced by parse/source0
+		formatItem: function(row) { return row[0]; },
+		// TODO remove, replaced by parse/source
 		formatMatch: null,
 		// TODO replace with focus-option: "fill"
 		autoFill: false,
@@ -492,7 +485,6 @@ $.extend($.ui.autocomplete, {
 		scrollHeight: 180
 	}
 });
-
 
 // TODO replace cache related options and matching with cacheMatch option (false = no caching, otherwise implementation to match terms)
 $.ui.autocomplete.cache = function(options) {
@@ -512,7 +504,7 @@ $.ui.autocomplete.cache = function(options) {
 		if (length > options.cacheLength){
 			flush();
 		}
-		if (!data[q]){ 
+		if (!data[q]){
 			length++;
 		}
 		data[q] = value;
@@ -545,9 +537,6 @@ $.ui.autocomplete.cache = function(options) {
 			if( !stMatchSets[firstChar] )
 				stMatchSets[firstChar] = [];
 
-			if(rawValue.id==options.hidden.val()){
-				options.input.val(value);
-			}
 			// if the match is a string
 			var row = {
 				value: value,
@@ -588,7 +577,7 @@ $.ui.autocomplete.cache = function(options) {
 		load: function(q) {
 			if (!options.cacheLength || !length)
 				return null;
-			/* 
+			/*
 			 * if dealing w/local data and matchContains than we must make sure
 			 * to loop through all the data collections looking for matches
 			 */
@@ -610,7 +599,7 @@ $.ui.autocomplete.cache = function(options) {
 					}
 				}
 				return csub;
-			} else 
+			} else
 			// if the exact item exists, use it
 			if (data[q]){
 				return data[q];
@@ -681,7 +670,7 @@ $.ui.autocomplete.select = function (options, input, select, config) {
 			element.css("width", options.width);
 
 		needsInit = false;
-	} 
+	}
 
 	// TODO replace with closest("li")?
 	function target(event) {

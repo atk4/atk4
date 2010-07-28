@@ -141,8 +141,8 @@ $.widget("ui.atk4_form", {
 		if(!notrigger)f.trigger('reload_field');
 
 		if(f.hasClass('field_reference')){
-			var f2=f.prev();
-			f.remove();
+			var f2=f.closest('.form_field');
+			//f.remove();
 			f=f2;
 
 
@@ -175,7 +175,7 @@ $.widget("ui.atk4_form", {
 			$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
 
 			$.atk4(function(){
-				field.closest('.form_field').attr('title',error).tipTip({'activation':'click','color':'red'}).click();
+				field.closest('.form_field').attr('title',error).tipTip({'color':'red'}).mouseenter();
 			});
 			return;
 		}
@@ -256,7 +256,6 @@ $.widget("ui.atk4_form", {
 
 		form.loading=true;
 		$.atk4.get(properties,params,function(res){
-			form.loading=false;
 			var c=form._getChanged();form._setChanged(false);
 
 			if(!$.atk4._checkSession(res))return;
@@ -280,6 +279,8 @@ $.widget("ui.atk4_form", {
 				}
 			}
 			form._setChanged(c);
+		},function(){
+			form.loading=false;
 		});
 	}
 });

@@ -94,6 +94,7 @@ abstract class AbstractObject {
 		if ($debug) {
 			$element = new Debug($class);
 		} else {
+			if(!is_string($class) || !$class)throw new BaseException("Class is not valid");
 			$element = new $class ();
 		}
 

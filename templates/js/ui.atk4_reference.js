@@ -28,7 +28,8 @@ $.widget("ui.atk4_reference", {
 	},
 	initAutocomplete: function(ac_options){
 		// Add new field after ourselves for auto-complete
-		this.element.before('<span class="input_autocomplete"><i></i><input class="input_style1" id="'+this.name+'_autocomplete"/></span>');
+		var t=$('<span class="input_autocomplete wo_button"><span><i></i><input class="input_style1" id="'+this.name+'_autocomplete"/></span></span>');
+		this.element.before(t);
 
 
 
@@ -53,6 +54,9 @@ $.widget("ui.atk4_reference", {
 		var ref=this;
 		var types=this.element.attr('nomtypes');
 		if(types)types=eval('('+types+')');
+
+		//t.find('i').click(function(){ ref.autocomplete.trigger('focus_ref'); });
+
 		this.autocomplete.autocomplete($.extend({
 			minChars: 0,
 			mustMatch: true,
@@ -168,7 +172,8 @@ $.widget("ui.atk4_reference", {
 	setPlusUrl: function(url,options,title){
 		this.options.plus_url=url;
 		var ref=this;
-		this.autocomplete.after('<a href="'+this.options.plus_url+'" id="'+this.name+'_addlink" class="ref_model_add autocomplete_add gbutton button_style2">+</a>');
+		this.autocomplete.parent().after('<a href="'+this.options.plus_url+'" id="'+this.name+'_addlink" class="ref_model_add autocomplete_add gbutton button_style2">+</a>');
+		this.autocomplete.parent().parent().removeClass('wo_button');
 
 		$('#'+this.name+'_addlink').click(function(ev){
 			ev.preventDefault();
@@ -184,7 +189,7 @@ $.widget("ui.atk4_reference", {
 		var data=[];
 		this.element.children('option').each(function(key,val){
 			if($(val).val()){
-				data.push([$(val).val(),$(val).text()]);
+				data.push([$(val).val(),$.trim($(val).text())]);
 			}
 		});
 		return data;
