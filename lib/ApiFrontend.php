@@ -31,12 +31,31 @@ class ApiFrontend extends ApiWeb{
 		$class=$this->content_type.'_'.$page;
 		if(method_exists($this,$class)){
 			// for page we add Page class, for RSS - RSSchannel
+			// TODO - this place is suspicious. Can it call arbitary function from API?
 			$this->page_object=$this->add($this->content_type=='page'?$this->page_class:'RSSchannel',$this->page);
 			$this->$class($this->page_object);
 		}else{
 			try{
 				loadClass($class);
 			}catch(PathFinder_Exception $e){
+
+				$class_parts=explode('_',$page);
+				$funct_parts=array();
+				while($class_parts){
+					try {
+						array_unshift($funct_parts,array_pop($class_parts));
+						$fn='page_'.join('_',$funct_parts);
+						$in='page_'.join('_',$class_parts);
+						loadClass($in);
+						$this->pageObject=$this->add($in,$this->page);
+						$this->pageObject->$fn();
+						return;
+					}catch(PathFinder_Exception $e2){
+						// ignore
+					}
+				}
+
+
 				// page not found, trying to load static content
 				try{
 					$this->page_object=$this->add($this->page_class,$this->page,'Content',array('page/'.strtolower($this->page),'_top'));
@@ -48,6 +67,7 @@ class ApiFrontend extends ApiWeb{
 			}
 			// i wish they implemented "finally"
 			$this->page_object=$this->add($class,$this->page,'Content');
+			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
 	}
 	function execute(){
