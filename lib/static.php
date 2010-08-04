@@ -129,7 +129,7 @@ function htmlize_exception($e,$msg){
 			lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
 		}
 		include_once($fullpath);
-		if(class_exists($class))return;
+		if(class_exists($class) || interface_exists($class))return;
 
 		lowlevel_error("Class $class is not defined in included file");
 	}
