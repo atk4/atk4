@@ -50,7 +50,9 @@ class ApiFrontend extends ApiWeb{
 						}catch(PathFinder_Exception $e2){
 							continue;
 						}
-						if(!method_exists($in,$fn))continue;
+						// WorkAround for PHP5.2.12+ PHP bug #51425
+						$tmp=new $in;
+						if(!method_exists($tmp,$fn))continue;
 						$this->pageObject=$this->add($in,$this->page);
 						$this->pageObject->$fn();
 						return;
