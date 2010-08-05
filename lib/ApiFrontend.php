@@ -42,17 +42,18 @@ class ApiFrontend extends ApiWeb{
 				$class_parts=explode('_',$page);
 				$funct_parts=array();
 				while($class_parts){
-					try {
 						array_unshift($funct_parts,array_pop($class_parts));
 						$fn='page_'.join('_',$funct_parts);
 						$in='page_'.join('_',$class_parts);
-						loadClass($in);
+						try {
+							loadClass($in);
+						}catch(PathFinder_Exception $e2){
+							continue;
+						}
+						if(!method_exists($in,$fn))continue;
 						$this->pageObject=$this->add($in,$this->page);
 						$this->pageObject->$fn();
 						return;
-					}catch(PathFinder_Exception $e2){
-						// ignore
-					}
 				}
 
 

@@ -308,6 +308,7 @@ abstract class AbstractObject {
 	/////////////// Hooking /////////////////////////////////////
 	function addHook($hook_spot, $callable, $priority = 5) {
 		$this->hooks[$hook_spot][$priority][] = $callable;
+		return $this;
 	}
 	function hook($hook_spot, $arg = array ()) {
 		if (isset ($this->hooks[$hook_spot])) {
