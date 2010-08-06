@@ -43,6 +43,7 @@ class PathFinder extends AbstractController {
 			'php'=>'lib',
 			'page'=>'page',
 			'template'=>'templates/'.$this->api->skin,
+			'mail'=>'templates/mail',
 			'js'=>'templates/js',
 			'banners'=>'banners',
 			'logs'=>'logs',
