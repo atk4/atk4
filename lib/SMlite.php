@@ -103,6 +103,11 @@ class SMlite extends AbstractModel {
 	var $settings=array();
 
 	/**
+	 * Type of resource to look for pathFinder
+	 */
+	var $template_type='template';
+
+	/**
 	 * list of updated tags with values
 	 */
 	public $updated_tag_list = array();
@@ -364,7 +369,7 @@ class SMlite extends AbstractModel {
 		/*
 		 * Find template location inside search directory path
 		 */
-        $f=$this->api->locatePath('template',$template_name.$this->settings['extension']);
+        $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
 		return join('',file($f));
 	}
 	function loadTemplateFromString($template_string){
