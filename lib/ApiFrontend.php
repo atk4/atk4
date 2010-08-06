@@ -28,6 +28,7 @@ class ApiFrontend extends ApiWeb{
 		// required class prefix depends on the content_type
 		// This function initializes content. Content is page-dependant
 		$page=str_replace('/','_',$this->page);
+		$page=str_replace('-','',$page);
 		$class=$this->content_type.'_'.$page;
 		if(method_exists($this,$class)){
 			// for page we add Page class, for RSS - RSSchannel
