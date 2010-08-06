@@ -73,7 +73,9 @@ class TMail extends AbstractController{
 		//
 		// look at the provided sample template in templates/kt2/mail
 		$this->reset();
-		$this->template=$this->getTemplateEngine()->loadTemplate($template,$type);
+		$this->template=$this->getTemplateEngine();
+		$this->template->template_type='mail';
+		$this->template->loadTemplate($template,$type);
 		if($type=='.html'){
 			$this->setBodyType('html');
 		}
@@ -340,7 +342,7 @@ class TMail extends AbstractController{
 	*/
 	function send($address,$add_params=null){
 		// checking if from is set
-		if(!$this->get('from'))$this->set('from',$address);
+		if(!$this->get('from'))$this->set('from',$this->api->getConfig('mail/from','nobody@atk4.com'));
 		// send an email with defined parameters
 		$this->headers['X-B64']=base64_encode($address);
 		mail($address, $this->get('subject',false),
