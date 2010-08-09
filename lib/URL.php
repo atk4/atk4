@@ -101,7 +101,10 @@ class URL extends AbstractModel {
 		if(!is_array($arguments)){
 			throw new BaseException('Arguments must be always an array');
 		}
-		$this->arguments=array_merge($this->arguments,$arguments);
+		$this->arguments=$args=array_merge($this->arguments,$arguments);
+		foreach($args as $arg=>$val){
+			if(is_null($val))unset($this->arguments[$arg]);
+		}
 		return $this;
 	}
 	function __toString(){
