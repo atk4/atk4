@@ -37,6 +37,7 @@ $.each({
 		$('#Content').atk4_load(page,fn);
 	},
 	log: function(arg1){
+			 /*
 		if(log){
 			log.info(arg1);
 			var s=$('#header_widgets').children('a:last').children('span');
@@ -45,8 +46,9 @@ $.each({
 			s.text(i);
 			var s=$('#header_widgets').children('a:last').children('img').stop().effect('bounce');
 		}else{
+		*/
 			console.log(arg1);
-		}
+		//}
 	},
 	confirm: function(msg){
 		if(!msg)msg='Are you sure?';
