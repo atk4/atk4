@@ -616,6 +616,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 				$this->getTag('input',
 				array_merge(
 					array(
+						'id'=>$this->name.'_'.$value,
 						'name'=>$this->name,
 						'type'=>'radio',
 						'value'=>$value,
@@ -625,7 +626,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 					$attr
 				))
 				.$this->getTag('/input')
-				.htmlspecialchars($descr) . "<br />";
+				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
 		}
 		return $output;
 	}
