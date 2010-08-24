@@ -147,7 +147,7 @@ class Grid extends CompleteLister {
 		$this->current_row[$field] = htmlentities($this->current_row[$field]);
 	}
 	function format_money($field){
-		$m=$this->current_row[$field];
+		$m=(float)$this->current_row[$field];
 		$this->current_row[$field]=number_format($m,2);
 		if($m<0){
 			$this->setTDParam($field,'style/color','red');
