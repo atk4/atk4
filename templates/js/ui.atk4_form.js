@@ -185,39 +185,20 @@ $.widget("ui.atk4_form", {
 
 		var h;
 
-		if($('body').attr('rel')=='front'){
-			h=$('<span class="form_error field_error"><i></i>'+error+'</span>').
-				appendTo(field.closest('dd'));
-		}else if ((jQuery.browser.msie && parseInt(jQuery.browser.version) <= 7)) {
-			field.closest('dl,td').addClass('form_has_error');
-			h=$('<span class="form_error2 field_error"><i></i>'+error+'</span>')
-				.insertAfter(field);
-		}else{
-			// highlight field
-			field.closest('dl,td').addClass('form_has_error');
-			h=$(//'<div class="clear"></div><span class="form_error"><i></i>'+error+'</span>');
-'<div class="field_hint form_error">'+
-'	<div class="field_hint_wrap">'+
-'		<p><i></i>'+error+'</p>'+
-'		<div class="f_h_cn f_h_tl"></div>'+
-'		<div class="f_h_cn f_h_tr"></div>'+
-'	</div>'+
-'	<div class="f_h_cn f_h_bl"></div>'+
-'	<div class="f_h_cn f_h_br"></div>'+
-'</div>').insertAfter(field);
-		}
+		// highlight field
+		var block=field.closest('.atk-field').addClass('field_has_error');
+		h=$(//'<div class="clear"></div><span class="form_error"><i></i>'+error+'</span>');
+		 '<dd class="atk-error"><div class="ui-state-error ui-corner-all"><span class="ui-icon"></span>'+
+			 error+'</div></dd>').insertAfter(block);
 
-		h.find('.field_hint_wrap').click(function(){ $(this).parent().remove(); });
+		h.click(function(){ $(this).prev().removeClass('field_has_error'); $(this).remove(); });
 
 
 		// make it remove error automatically when edited
-		field.bind('focus.errorhide',function(){
+		field.bind('change.errorhide',function(){
 			var t=$(this);
-			t.unbind('focus.errorhide');
-			t.closest('.form_field').find('.field_hint').hide();
-			t.closest('dl,td').removeClass('form_has_error');
-			t.closest('dl,td').find('.form_error').remove();
-
+			t.unbind('change.errorhide');
+			var block=t.closest('.atk-field').removeClass('field_has_error').next('.atk-error').remove();
 		});
 	},
 	clearError: function(field){
