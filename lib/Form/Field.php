@@ -29,6 +29,7 @@ abstract class Form_Field extends AbstractView {
 	public $comment='&nbsp;';
 	protected $disabled=false;
 	protected $mandatory=false;
+	protected $default_value=null;
 
 	// Field customization
 	private $separator=':';
@@ -105,8 +106,10 @@ abstract class Form_Field extends AbstractView {
 		$gpc = get_magic_quotes_gpc();
 		if ($gpc){
 			if(isset($_POST[$this->name]))$this->set(stripslashes($_POST[$this->name]));
+			else $this->set($this->default_value);
 		} else {
 			if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
+			else $this->set($this->default_value);
 		}
 	}
 	function validate(){
@@ -308,6 +311,10 @@ class Form_Field_Search extends Form_Field {
 	}
 }
 class Form_Field_Checkbox extends Form_Field {
+	function init(){
+		parent::init();
+		$this->default_value='N';
+	}
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
 		return parent::getInput(array_merge(
