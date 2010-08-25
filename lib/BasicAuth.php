@@ -97,7 +97,7 @@ class BasicAuth extends AbstractController {
 		return $this;
 	}
 	function isPageAllowed($page){
-		return in_array($page,$this->allowed_pages);
+		return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
 	}
 	function usePasswordEncryption($method){
 		$this->password_encryption=$method;
