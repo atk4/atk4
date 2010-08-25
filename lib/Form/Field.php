@@ -135,6 +135,9 @@ abstract class Form_Field extends AbstractView {
 		$this->default_value=$default;
 		return $this;
 	}
+	function getDefault(){
+		return $this->default_value;
+	}
 
 	function getInput($attr=array()){
 		// This function returns HTML tag for the input field. Derived classes should inherit this and add
