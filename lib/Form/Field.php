@@ -113,6 +113,8 @@ abstract class Form_Field extends AbstractView {
 		}
 	}
 	function validate(){
+		// NoSave fields should not be validated, disabled as well
+		if($this->disabled || $this->no_save)return true;
 		// we define "validate" hook, so actual validators could hook it here
 		// and perform their checks
 		if(is_bool($result = $this->hook('validate')))return $result;
