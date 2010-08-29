@@ -292,6 +292,8 @@ class BasicAuth extends AbstractController {
 			$this->form=$this->createForm($p,'Login');
 		}catch(PathFinder_Exception $e){
 			$p->template->loadTemplate('empty');
+			$p->template->trySet('atk_path',$q=
+								$this->api->pathfinder->atk_location->getURL().'/');
 			$p->template->trySet('base_href',
 								$q=$this->api->pm->base_url.'/'
 								);
