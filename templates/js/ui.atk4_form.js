@@ -17,6 +17,7 @@ $.widget("ui.atk4_form", {
 	base_url: undefined,
 	loader: undefined,
 	loading: false,
+	plain_submit: false,
 
 	_getChanged: function(){
 		return this.element.hasClass('form_changed');
@@ -66,6 +67,12 @@ $.widget("ui.atk4_form", {
 		this.overlay_prototype=this.element.find('.form_iedit');
 
 		this.element.submit(function(e){
+
+			if(form.plain_submit){
+				form.plain_submit=false;
+				return;// executes default action
+			}
+
 			e.preventDefault();
 			form.submitForm();
 		});
@@ -85,6 +92,12 @@ $.widget("ui.atk4_form", {
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
 		if(this.options.base_url)this.base_url=this.options.base_url;
     },
+	submitPlain: function(){
+		// Disable AJAX handling, perform submit to a specified target then restore functionality.
+		// This function is used by file upload
+		this.plain_submit=true;
+		this.element.trigger('submit');
+	},
 	destroy: function(){
 		form=this;
 		if(form.loader){
