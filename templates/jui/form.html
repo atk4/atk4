@@ -2,6 +2,10 @@
 <div class="atk-form atk-form-<?form_class?>simple<?/?> ui-widget">
 	<form id="<?$_name?>" class="" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 
+	<style>
+	 .mandatory { font-weight: bold; }
+	</style>
+	<div style="float: right; width: 350px"><?$hint?></div>
 		<fieldset>
 			<?form_body?>
 				<?form_line?>
