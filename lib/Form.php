@@ -34,6 +34,10 @@ class Form extends AbstractView {
 	protected $get_field=null;			// if condition was passed to a form throough GET, contains a GET field name
 	protected $conditions=array();
 
+	public $js_widget='ui.atk4_form';
+	public $js_widget_arguments=array();
+
+
 	public $dq = null;
 	function init(){
 		/**
@@ -50,6 +54,7 @@ class Form extends AbstractView {
 		// you want to have default values such as loaded from the table, then intialize $this->data array
 		// to default values of those fields.
 		$this->api->addHook('pre-exec',array($this,'loadData'));
+
 	}
 	protected function getChunks(){
 		// commonly replaceable chunks
@@ -336,11 +341,39 @@ class Form extends AbstractView {
 		$this->bail_out=true;
 		return $result;
 	}
+	function setLayout($template){
+		// Instead of building our own form_body we will take it from
+		// pre-defined template and insert fields into there
+		$this->template_chunks['custom_layout']=$this->add('SMLite')->loadTemplate($template);
+		$this->template_chunks['custom_layout']->trySet('_name',$this->name);
+		$this->template->trySet('form_class','form_'.basename($template));
+		return $this;
+	}
 	function render(){
 		// Assuming, that child fields already inserted their HTML code into 'form'/form_body using 'form_line'
 		// Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons
 
-		// That means - we will submit our form through Ajax
+		if($this->js_widget){
+			$fn=str_replace('ui.','',$this->js_widget);
+			$this->js(true)->_load($this->js_widget)->$fn($this->js_widget_arguments);
+		}
+
+		if(isset($this->template_chunks['custom_layout'])){
+			foreach($this->elements as $key=>$val){
+				if($val instanceof Form_Field){
+					$prop=$this->template_chunks['custom_layout']->get($key);
+					if(is_array($prop))$prop=join(' ',$prop);
+					if($prop){
+						$val->setProperty('style',$prop);
+					}
+					if(!$this->template_chunks['custom_layout']->is_set($key)){
+						$this->js(true)->univ()->log('No field in layout: '.$key);
+					}
+					$this->template_chunks['custom_layout']->trySet($key,$val->getInput());
+				}
+			}
+			$this->template->set('form_body',$this->template_chunks['custom_layout']->render());
+		}
 		$this->template_chunks['form']
 			->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
 		$this->owner->template->append($this->spot,$r=$this->template_chunks['form']->render());
