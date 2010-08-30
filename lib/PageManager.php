@@ -100,7 +100,14 @@ class PageManager extends AbstractController {
 
 		// 2. Continue building. We are adding hostname next and port.
 		$url .= "://".$_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
+		//if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
+        if($_SERVER["SERVER_PORT"]!="80"){
+            if ($_SERVER["SERVER_PORT"]=="448"){
+                $url .= ":443";
+            } else {
+                $url .= ":".$_SERVER['SERVER_PORT'];
+            }
+        }
 
 		// We have now arrived at base_url as defined
 		$this->base_url=$url;
