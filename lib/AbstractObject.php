@@ -200,6 +200,9 @@ abstract class AbstractObject {
 				return null;
 		return $this->elements[$short_name];
 	}
+	function hasElement($name){
+		return isset($this->elements[$name])?$this->elements[$name]:false;
+	}
 	function removeElement($short_name){
 		if(isset($this->elements[$short_name]))$this->elements[$short_name]=null;
 		return $this;
