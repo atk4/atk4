@@ -1,5 +1,5 @@
 <?php
-class Page_EntityManager extends AbAdminPage {
+class Page_EntityManager extends Page {
 	public $controller='Controller_Coupon';
 	public $returnpage='coupons';
 
@@ -8,13 +8,16 @@ class Page_EntityManager extends AbAdminPage {
 	public $allow_delete=true;
 
 	public $grid_actual_fields=false;
+	public $edit_actual_fields=false;
+	public $add_actual_fields; // by default same as edit
 	public $read_only=false;
 	function init(){
 		parent::init();
+		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
 	}
 
 	function initMainPage(){
-		$g=$this->add('AbGrid');
+		$g=$this->add('MVCGrid','grid');
 
 		$c=$g->add($this->controller);
 		
@@ -47,13 +50,25 @@ class Page_EntityManager extends AbAdminPage {
 	}
 	function page_edit(){
 		if(!$this->allow_edit)exit;
-		$f=$this->add('AbForm');
-
+		$f=$this->add('MVCForm','form');
 		$c=$f->add($this->controller);
+
+		if($_GET['id']){
+			if($this->edit_actual_fields)
+				$c->setActualFields($this->edit_actual_fields);
+		}else{
+			if($this->add_actual_fields)
+				$c->setActualFields($this->add_actual_fields);
+		}
+
 		$f->setController($c);
 		if($this->read_only){
 			unset($f->elements['Save']);
 			$f->js(true)->find('input,select')->attr('disabled',true);
+		}
+
+		if($_GET['id']){
+			$f->addSubmit('Save');
 		}
 
 		if($_GET['id'])$c->loadData($_GET['id']);
