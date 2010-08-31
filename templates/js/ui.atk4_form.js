@@ -41,7 +41,7 @@ $.widget("ui.atk4_form", {
 		}
 		*/
 
-		this.element.prepend('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
+		this.element.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
 		this.element.addClass('atk4_form');
 
 		this.element.find('input').bind('keypress',function(e){
@@ -52,9 +52,13 @@ $.widget("ui.atk4_form", {
 				}
 		});
 		this.element.find(':input').each(function(){
-			$(this).attr('data-initvalue',$(this).val())
+			if($(this).attr('type')=='checkbox')
+				$(this).attr('data-initvalue',$(this).attr('checked'))
+			else
+				$(this).attr('data-initvalue',$(this).val())
 		})
 		.bind('change',function(ev){
+			//if($(this).attr('type')=='checkbox')
 			if($(this).attr('data-initvalue')==$(this).val()){
 				ev.preventDefault();
 				return;
@@ -63,6 +67,12 @@ $.widget("ui.atk4_form", {
 			}
 			form._setChanged(true);
 		});
+
+		this.element.find('input[type=radio]').click(function(){
+			form._setChanged(true);
+		}).change(function(){
+			form._setChanged(true);
+		});;
 
 		this.overlay_prototype=this.element.find('.form_iedit');
 
@@ -238,10 +248,11 @@ $.widget("ui.atk4_form", {
 			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = this.value;
 		});
 
-		//params['ajax_submit']=1;
 
 		// btn is clicked
-		if(btn)params[btn]=1;
+		if(btn){
+			params['ajax_submit']=btn;
+		}
 
 		var properties={
 			type: "POST",
