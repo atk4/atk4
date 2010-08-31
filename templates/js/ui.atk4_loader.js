@@ -72,7 +72,7 @@ $.widget('ui.atk4_loader', {
 			 this.cut=this.options.cut_object;
 		 }
 		if(this.options.debug){
-			var d=$('<div/>');
+			var d=$('<div style="z-index: 2000"/>');
 			d.css({background:'#fe8',border: '1px solid black',position:'absolute',width:'100px',height:'50px'});
 			$('<a/>').attr('title','Canceled close').attr('href','javascript: void(0)').text('X').css({float:'right'})
 				.click(function(){ $(this).closest('div').next().css({border:'0px'});$(this).closest('div').remove(); }).appendTo(d);
