@@ -31,6 +31,7 @@ $.each({
 		}
 	},
 	location: function(url){
+		if(!url)return;
 		document.location=url;
 	},
 	page: function(page,fn){
@@ -49,7 +50,7 @@ $.each({
 		*/
 			console.log(arg1);
 		//}
-	},
+   	},
 	confirm: function(msg){
 		if(!msg)msg='Are you sure?';
 		if(!confirm(msg))this.ignore=true;
@@ -416,8 +417,8 @@ ajaxec: function(url,data){
 
 	});
 },
-newWindow: function(url){
-	window.open(url);
+newWindow: function(url,name,options){
+	window.open(url,name,options);
 },
 loadingInProgress: function(){
 	this.successMessage('Loading is in progress. Please wait');
