@@ -9,8 +9,14 @@ $.widget("ui.atk4_uploader", {
     options: {
 		'flash': false,
 		'iframe': false,
+		'multiple': 1
     },
 	shown: true,
+
+	_setChanged: function(){
+		this.element.closest('form').addClass('form_changed');
+	},
+
 
     _init: function(){
 		var self=this;
@@ -53,6 +59,7 @@ $.widget("ui.atk4_uploader", {
 			});
 			console.log(i);
 		});
+		
 
 	},
 	upload: function(){
@@ -67,24 +74,74 @@ $.widget("ui.atk4_uploader", {
 		f
 		.attr('action',oa+'&'+this.element.attr('name')+'_upload_action='+this.name)
 		.attr('target',this.name+"_iframe")
-		.atk4_form('submitPlain',this.name+"_iframe")
+		.atk4_form('submitPlain')
 		.removeAttr('target')
 		.attr('action',oa)
 		;
 
-		this.element.clone().attr('id',this.name+'_').insertAfter(this.element).atk4_uploader(this.options);
-		this.element.attr('disabled',true);
-		$('<br/>').insertAfter(this.element);
+		var el=this.element.clone().attr('id',this.name+'_').insertAfter(this.element).atk4_uploader(this.options);
+		var files=$("#"+this.element.attr('name')+"_files").find('tbody').children('tr').not('.template').length;
+		if(files+1>=this.options.multiple)el.hide(); //does this work actually? I mean the el.hide()
+//		this.element.attr('disabled',true);
+	},
+	addFiles: function(data){
+		// Uses template to populate rows in the table
+		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var self=this;
+		var act=this.element.closest('form').attr('action');
+
+		$.each(data,function(i,row){
+			var tpl=tb.find('.template')
+				.clone().attr('rel',row['id'])// <--easier to debug
+				.removeClass('template')
+				.show();
+			$.each(row,function(key,val){
+				tpl.find('[data-template='+key+']').text(val);
+			});
+			tpl.find('.delete_doc').click(function(ev){
+				ev.preventDefault();
+				$(this).univ().ajaxec(act+'&'+
+					self.element.attr('name')+'_delete_action='+
+					$(this).closest('tr').attr('rel') //row['id']?
+					// well we could, but this also works
+				);
+			})
+			tpl.appendTo(tb);
+		});
+		self.updateToken();
+		var files=$("#"+this.element.attr('name')+"_files").find('tbody').children('tr').not('.template').length;
+		if(files>=this.options.multiple)this.element.hide();
+
+	},
+	removeFiles: function(ids){
+		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var self=this;
+		$.each(ids,function(junk,id){
+			tb.find('[rel='+id+']').remove();
+		});
+		self.updateToken();
+		this.element.show();
+	},
+	updateToken: function(){
+		console.log('update token');
+		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var ids=[];
+		tb.find('tr').not('.template').each(function(){
+			console.log('adding id',this);
+			ids.push($(this).attr('rel'));
+		});
+		$("#"+this.element.attr('name')+"_token").val(ids.join(','));
 	},
 	uploadComplete: function(data){
 		// This method is called when iFrame upload is complete
 		//$('#'+this.name+'_progress').remove();
-		//$('#'+this.name+'_iframe').remove();
 		this.element.trigger('upload');
 		this.element.attr('disabled',false);
-		$('<b>Upload of '+this.element.val()+' successful!</b>').insertBefore(this.element);
+		this.addFiles([data]);
 		//this.element.next('br').remove();
 		this.element.remove();
+		this._setChanged();
+		//$('#'+this.name+'_token').val(data.id);
 	},
 	uploadFailed: function(message){
 		this.element.next('br').remove();
@@ -92,7 +149,6 @@ $.widget("ui.atk4_uploader", {
 		alert(message);
 	},
 	completeSWF: function(a,b,c,d,e){
-		console.log('yo');
 		var token={
 			'fileInfo':c,
 			'filename':d
@@ -100,6 +156,7 @@ $.widget("ui.atk4_uploader", {
 		try{
 			$('#'+this.name+'_token').val($.univ().toJSON(token));
 			this.element.after('File: '+token.fileInfo.name+' uploaded successfuly <br/>');
+			this._setChanged();
 		}catch(e){
 			console.log(e);
 		}

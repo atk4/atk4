@@ -16,10 +16,10 @@
 
 
 
-  * allowMultiple(boolean)
+  * allowMultiple(boolean=true)
   *  this function will allow you to specify whether you want user to upload multiple files.
   * 
-  * by default, multiple file upload is allowed.
+  * by default, single mode is used
 
 
 
@@ -68,19 +68,24 @@
 class Form_Field_Upload extends Form_Field {
 	public $max_file_size=null;
 	public $mode='iframe';
+	public $multiple=false;
 
 
+	function allowMultiple($multiple=50){
+		// Allow no more than $multiple files to be present in the table
+		$this->multiple=$multiple;
+		return $this;
+	}
 	function setMode($mode){
 		$this->mode=$mode;
 		return $this;
 	}
 	function loadPOST(){
 		parent::loadPOST();
-		if($this->n=$_GET[$this->name.'_upload_action']){
+		if($_GET[$this->name.'_upload_action']){
 			// This is JavaScript upload. We do not want to trigger form submission event
 			$_POST=array();
 		}
-
 		if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
 			if($c=$this->getController()){
 
@@ -97,6 +102,8 @@ class Form_Field_Upload extends Form_Field {
 				$this->uploadComplete($c->get());
 			}
 		}
+		if(isset($_POST[$this->name.'_token']))$this->set($_POST[$this->name.'_token']);
+		else $this->set($this->default_value);
 	}
 	function uploadComplete($data=null){
 		echo "<html><head><script>window.top.$('#".
@@ -161,21 +168,44 @@ class Form_Field_Upload extends Form_Field {
 
 	function getUploadedFiles(){
 		if($c=$this->getController()){
+
+			$files=join(',',filter_var_array(explode(",", $this->value),FILTER_VALIDATE_INT));
+			$c->addCondition('id in','(' . ($files?$files:0) .')');
+
 			$data=$c->getRows(array('id','original_filename','filesize'));
 			return $this->formatFiles($data);
 		}
 	}
 	function formatFiles($data){
-		$o='<table border=1>';
+		$this->js(true)->atk4_uploader('addFiles',$data);
+        $o = $this->add('SMLite')->loadTemplate("view/uploaded_files")->render();
+
+			/*
 		foreach($data as $row){
-			$o.='<tr><td>'.$row['original_filename'].'</td><td><a href="javascript:$(this).univ().alert(\'delete\')">del</a></tr>';
+			$o.='<tr><td>'.$row['original_filename'].
+				'</td><td><a href="javascript:$(this).univ().ajaxec('.
+				addslashes($this->api->getDestinationURL(null,)).')">del</a></tr>';
 		}
-		$o.='</table>';
+				*/
 		return $o;
 	}
 
 
 	function getInput(){
+		if($id=$_GET[$this->name.'_delete_action']){
+			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
+			// This is JavaScript upload. We do not want to trigger form submission event
+			if($c=$this->getController()){
+				$c->loadData($id);
+				$c->delete();
+				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
+				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+			}
+		}
+
+
+
+
 		if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
 		$o='';
 
@@ -190,6 +220,9 @@ class Form_Field_Upload extends Form_Field {
 						 $options['flash']=true;
 						 break;
 
+		}
+		if($this->multiple){
+			$options['multiple']=$this->multiple;
 		}
 		if($this->mode!='simple'){
 			$this->js(true)->_load('ui.atk4_uploader')->atk4_uploader($options);
@@ -206,13 +239,20 @@ class Form_Field_Upload extends Form_Field {
 						'name'=>'MAX_FILE_SIZE',
 						'value'=>$this->max_file_size
 						));
+		$o.=
+			$this->getTag('input',array(
+						'type'=>'hidden',
+						'name'=>$this->name.'_token',
+						'value'=>$this->value,
+						'id'=>$this->name.'_token',
+						));
 
 
 		$o.=parent::getInput();
 		return $o;
 	}
 	function isUploaded(){
-		return isset($_FILES[$this->name]);
+		return isset($_FILES[$this->name]) && $_FILES[$this->name]['name'];
 	}
 	function getOriginalName(){
 		return $_FILES[$this->name]['name'];
