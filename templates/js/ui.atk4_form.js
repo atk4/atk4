@@ -26,7 +26,7 @@ $.widget("ui.atk4_form", {
 		if(state)this.element.addClass('form_changed');else this.element.removeClass('form_changed');
 	},
 
-    _init: function(options){
+    _create: function(options){
         $.extend(this.options,options);
         var form=this;
 
