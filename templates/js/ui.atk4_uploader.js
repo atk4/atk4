@@ -80,13 +80,13 @@ $.widget("ui.atk4_uploader", {
 		;
 
 		var el=this.element.clone().attr('id',this.name+'_').insertAfter(this.element).atk4_uploader(this.options);
-		var files=$("#"+this.element.attr('name')+"_files").find('tbody').children('tr').not('.template').length;
+		var files=$("#"+this.element.attr('name')+"_files").find('.files-container').children('div').not('.template').length;
 		if(files+1>=this.options.multiple)el.hide(); //does this work actually? I mean the el.hide()
 //		this.element.attr('disabled',true);
 	},
 	addFiles: function(data){
 		// Uses template to populate rows in the table
-		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var tb=$("#"+this.element.attr('name')+"_files").find('.files-container');
 		var self=this;
 		var act=this.element.closest('form').attr('action');
 
@@ -102,19 +102,19 @@ $.widget("ui.atk4_uploader", {
 				ev.preventDefault();
 				$(this).univ().ajaxec(act+'&'+
 					self.element.attr('name')+'_delete_action='+
-					$(this).closest('tr').attr('rel') //row['id']?
+					$(this).closest('div').attr('rel') //row['id']?
 					// well we could, but this also works
 				);
 			})
 			tpl.appendTo(tb);
 		});
 		self.updateToken();
-		var files=$("#"+this.element.attr('name')+"_files").find('tbody').children('tr').not('.template').length;
+		var files=$("#"+this.element.attr('name')+"_files").find('.files-container').children('div').not('.template').length;
 		if(files>=this.options.multiple)this.element.hide();
 
 	},
 	removeFiles: function(ids){
-		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var tb=$("#"+this.element.attr('name')+"_files").find('.files-container');
 		var self=this;
 		$.each(ids,function(junk,id){
 			tb.find('[rel='+id+']').remove();
@@ -124,9 +124,9 @@ $.widget("ui.atk4_uploader", {
 	},
 	updateToken: function(){
 		console.log('update token');
-		var tb=$("#"+this.element.attr('name')+"_files").find('tbody');
+		var tb=$("#"+this.element.attr('name')+"_files").find('.files-container');
 		var ids=[];
-		tb.find('tr').not('.template').each(function(){
+		tb.find('div').not('.template').each(function(){
 			console.log('adding id',this);
 			ids.push($(this).attr('rel'));
 		});
