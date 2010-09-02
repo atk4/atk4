@@ -8,6 +8,7 @@ class View_Button extends View_HtmlElement {
 	function setIcon($icon){
 		$this->icon=$icon;
 		$this->template->set('icon',$icon);
+		return $this;
 	}
 	function setLabel($label){
 		list($label,$icon)=explode(',',$label);
