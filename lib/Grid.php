@@ -92,6 +92,11 @@ class Grid extends CompleteLister {
 
 		return $this;
 	}
+	function removeColumn($name){
+		unset($this->columns[$name]);
+		if($this->last_column==$name)$this->last_column=null;
+		return $this;
+	}
 	function addButton($label,$name=null,$return_button=false){
 		$button=$this->add('Button','gbtn'.count($this->elements),'grid_buttons');
 		$button->setLabel($label);
@@ -674,6 +679,32 @@ class Grid extends CompleteLister {
 			}
 		}
 	}
+	/**
+	 * Adds paginator to the grid
+	 * @param $ipp row count per page
+	 * @param $name if set, paginator will get the name specified. Useful for saving
+	 * 		different page numbers for different filtering conditions
+	 */
+	function addPaginator($ipp=25,$name=null){
+		// adding ajax paginator
+		$this->paginator=$this->add('Paginator', $name, 'paginator', array('paginator', 'ajax_paginator'));
+		// depending on where this grid is rendered...
+		if($_GET['expanded']){
+			// in expanded region
+			$this->paginator->region($this->getExpanderId());
+			$this->paginator->cutObject($this->owner->name);
+			$this->api->stickyGET('expanded');
+			$this->api->stickyGET('expander');
+			$this->api->stickyGET('id');
+		}else{
+			// on the page directly
+			$this->paginator->region($this->name);//$_GET['expanded'].'_expandedcontent_'.$_GET['id']);
+			$this->paginator->cutObject($this->name);
+		}
+		$this->paginator->ipp($ipp);
+		$this->current_row_index=$this->paginator->skip-1;
+		return $this;
+	}
 	function precacheTemplate($full=true){
 		// pre-cache our template for row
 		// $full=false used for certain row init
@@ -720,8 +751,8 @@ class Grid extends CompleteLister {
 					if(isset($column['sortable'])){
 						$s=$column['sortable'];
 						// calculate sortlink
-						$l = $this->ajax()
-							->reload($this->name,array('id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
+						$l = $this->js()->closest('.atk4-loader')
+							->reload(array('cut_object'=>$this->name,'id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
 							->getString();
 
 						$header_sort->set('order',$column['sortable'][0]);
