@@ -170,7 +170,7 @@ class Form_Field_Upload extends Form_Field {
 		if($c=$this->getController()){
 
 			$files=join(',',filter_var_array(explode(",", $this->value),FILTER_VALIDATE_INT));
-			$c->addCondition('id in','(' . ($files?$files:0) .')');
+			$c->addCondition('id in',($files?$files:0));
 
 			$data=$c->getRows(array('id','original_filename','filesize'));
 			return $this->formatFiles($data);

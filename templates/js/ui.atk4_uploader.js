@@ -67,9 +67,14 @@ $.widget("ui.atk4_uploader", {
 		var oa=f.attr('action');
 
 
-		var i=$('<iframe id="'+this.name+'_iframe" src="about:blank" style="width:0;height:0;border:0px solid black;"></iframe>').
-		insertBefore(this.element);
+		// add dynamically if it's missing
+		var i=$('<div style="display: inline"/>');
+		i.insertBefore(this.element);
+		i[0].innerHTML='<iframe id="'+this.name+'_iframe" name="'+this.name+'_iframe" src="about:blank" style="width:0;height:0;border:0px solid black;"></iframe>';
+			//insertBefore(this.element);
 
+		var g=$('<div class="atk-loader" id="'+this.name+'_progress"><i></i>Uploading '+this.element.val()+'</div>').
+		insertBefore(this.element);
 
 		f
 		.attr('action',oa+'&'+this.element.attr('name')+'_upload_action='+this.name)
@@ -79,10 +84,19 @@ $.widget("ui.atk4_uploader", {
 		.attr('action',oa)
 		;
 
-		var el=this.element.clone().attr('id',this.name+'_').insertAfter(this.element).atk4_uploader(this.options);
+		// fool-proof way to clone element. Firefox will copy seelcted file, while safari will not
+		var el=this.element.clone().attr('id',this.name+'_');
+
+		// Silly firefox - copies uploaded file value
+		el=el.wrap('<div/>').parent();
+		el[0].innerHTML=el[0].innerHTML;
+		el=el.find('input');
+
+		el.insertAfter(this.element).atk4_uploader(this.options);
+
 		var files=$("#"+this.element.attr('name')+"_files").find('.files-container').children('div').not('.template').length;
 		if(files+1>=this.options.multiple)el.hide(); //does this work actually? I mean the el.hide()
-//		this.element.attr('disabled',true);
+		this.element.hide();
 	},
 	addFiles: function(data){
 		// Uses template to populate rows in the table
@@ -123,18 +137,16 @@ $.widget("ui.atk4_uploader", {
 		this.element.show();
 	},
 	updateToken: function(){
-		console.log('update token');
 		var tb=$("#"+this.element.attr('name')+"_files").find('.files-container');
 		var ids=[];
 		tb.find('div').not('.template').each(function(){
-			console.log('adding id',this);
 			ids.push($(this).attr('rel'));
 		});
 		$("#"+this.element.attr('name')+"_token").val(ids.join(','));
 	},
 	uploadComplete: function(data){
 		// This method is called when iFrame upload is complete
-		//$('#'+this.name+'_progress').remove();
+		$('#'+this.name+'_progress').remove();
 		this.element.trigger('upload');
 		this.element.attr('disabled',false);
 		this.addFiles([data]);
