@@ -67,6 +67,9 @@ $.widget('ui.atk4_loader', {
 
 		this.element.addClass('atk4_loader');
 
+		if(this.options.url){
+			this.base_url=this.options.url;
+		}
 		 if(this.options.cut_object){
 			 this.cut_mode='object';
 			 this.cut=this.options.cut_object;
