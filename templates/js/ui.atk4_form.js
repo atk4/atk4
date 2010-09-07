@@ -47,6 +47,7 @@ $.widget("ui.atk4_form", {
 		this.element.find('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
 			if(e.keyCode==13){
+				$(this).trigger('change');
 				$(this).closest('form').submit();
 				return false;
 				}
