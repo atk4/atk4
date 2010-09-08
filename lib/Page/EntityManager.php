@@ -68,7 +68,10 @@ class Page_EntityManager extends Page {
 		}
 
 		if($_GET['id']){
+			if(!$f->hasElement('Save'))
 			$f->addSubmit('Save');
+		}else{
+			unset($f->elements['Save']);
 		}
 
 		if($_GET['id'])$c->loadData($_GET['id']);
