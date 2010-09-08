@@ -70,7 +70,7 @@ $.widget('ui.atk4_notify', {
 		/*
 		 * redefine this to add some custom markup for your messages
 		 */
-		message.addClass('light-gray');
+		message.addClass('light-gray ui-state-highlight ui-corner-all');
 	},
 	messageHTML: function(message){
 		this._customiseMessage(message);
