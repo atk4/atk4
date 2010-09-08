@@ -865,4 +865,14 @@ class Grid extends CompleteLister {
 			->move('selected','first')
 			->now();
 	}
+	function addFormatter($field,$formatter){
+		/*
+		   * add extra formatter to existing field
+		   */
+		if(!isset($this->columns[$field])){
+			throw new BaseException('Cannot format nonexistant field '.$field);
+		}
+		$this->columns[$field]['type'].=','.$formatter;
+		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+	}
 }
