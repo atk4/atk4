@@ -26,6 +26,10 @@ class Form_Submit extends View_Button {
 		$this->no_save=true;
 		return $this;
 	}
+	function disable(){
+		$this->js(true)->attr('disabled','disabled');
+		return $this;
+	}
 	/*
 	function render(){
 		$this->owner->template_chunks['form']
