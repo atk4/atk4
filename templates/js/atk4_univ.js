@@ -330,6 +330,12 @@ dialogAttention: function(text,options,fn){
 	this.dialogConfirm('Attention!','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,
 					   $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
 },
+message: function(msg,icon){
+	if($.ui.atk4_notify && $('#float-messages').length){
+		$('#float-messages').atk4_notify().atk4_notify('message',msg,icon);
+		return;
+	}
+},
 successMessage: function(msg){
 	var html="";
 

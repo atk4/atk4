@@ -422,6 +422,19 @@ class Grid extends CompleteLister {
 		}
 		return $this;
 	}
+	function staticSortCompare($row1,$row2){
+		if($this->sortby[0]=='-'){
+			return strcmp($row2[substr($this->sortby,1)],$row1[substr($this->sortby,1)]);
+		}
+		return strcmp($row1[$this->sortby],$row2[$this->sortby]);
+	}
+	function setStaticSource($data){
+		$this->data=$data;
+		if($this->sortby){
+			usort($this->data,array($this,'staticSortCompare'));
+		}
+		return $this;
+	}
 	function setSource($table,$db_fields=null){
 		parent::setSource($table,$db_fields);
 		if($this->sortby){
@@ -751,15 +764,16 @@ class Grid extends CompleteLister {
 					if(isset($column['sortable'])){
 						$s=$column['sortable'];
 						// calculate sortlink
-						$l = $this->js()->closest('.atk4-loader')
-							->reload(array('cut_object'=>$this->name,'id'=>$_GET['id'],$this->name.'_sort'=>$s[1]))
-							->getString();
+						$l = $this->api->getDestinationURL(null,array($this->name.'_sort'=>$s[1]));
 
-						$header_sort->set('order',$column['sortable'][0]);
+						$header_sort->trySet('order',$column['sortable'][0]);
+						$sicons=array('vertical','top','bottom');
+						$header_sort->trySet('sorticon',$sicons[$column['sortable'][0]]);
 						$header_sort->set('sortlink',$l);
 						$header_col->set('sort',$header_sort->render());
 					}else{
 						$header_col->del('sort');
+						$header_col->tryDel('sort_del');
 					}
 					$header->append('cols',$header_col->render());
 				}

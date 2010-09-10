@@ -70,7 +70,7 @@ $.widget('ui.atk4_notify', {
 		/*
 		 * redefine this to add some custom markup for your messages
 		 */
-		message.addClass('light-gray ui-state-highlight ui-corner-all');
+		//message.addClass('light-gray');
 	},
 	messageHTML: function(message){
 		this._customiseMessage(message);
@@ -81,9 +81,10 @@ $.widget('ui.atk4_notify', {
 		/*
 		 * This display a message which you would commonly use on successful operation completion.
 		 */
-		var html=$('<div class="growl"><i class="icon"></i><span>Sample Text</span><b></b></div>');
+		var html=$('<div class="growl"><i class="atk-icon"></i><span>Sample Text</span><b></b></div>');
 		if(!icon)icon='success';
-		html.find('i').addClass('icon-'+icon);
+		html.find('i').addClass('atk-icon-red');
+		html.find('i').addClass('atk-icon-'+icon);
 		html.find('span').text(text);
 		html.find('b').addClass('close');
 

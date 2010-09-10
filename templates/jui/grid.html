@@ -8,7 +8,10 @@
 		  <thead class="ui-widget-header"><tr>
 		   <?cols?>
 		    <?col?>
-			<th class="ui-widget-header" data-sort="<?$sort?>" nowrap <?$thparam?>><?descr?>Customer<?/?></th>
+			<th class="ui-widget-header" nowrap
+			<?$thparam?>><?sort?><i 
+			class="atk-icon atk-icons-nobg atk-icon-arrows-<?$sorticon?>"></i><a 
+			href="<?$sortlink?>"><?/sort?><?descr?>Customer<?/?><?sort_del?></a><?/?></th>
 			<?/col?>
 		   <?/cols?>
 		  </tr></thead>

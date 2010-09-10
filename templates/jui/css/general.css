@@ -16,6 +16,7 @@ div#header {
 #header-right #atk-version {
 	clear: both;
 	float: right;
+	margin-top:1em;
 }
 
 #navigation ul {

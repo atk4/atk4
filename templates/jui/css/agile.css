@@ -6,13 +6,15 @@
 
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0;padding:0;}
 table {border-collapse:collapse;border-spacing:0;}
-fieldset,img { border:0;}
+fieldset,img {border:0;}
 address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal;}
 ol,ul {list-style:none;}
 caption,th {text-align:left;}
 h1,h2,h3,h4,h5,h6 {font-size:100%;font-weight:normal;}
 q:before,q:after {content:'';}
-abbr,acronym { border:0;}
+abbr,acronym {border:0;}
+a:active {outline:none; -moz-outline-style:none;}
+a:focus {outline:none; -moz-outline-style:none;}
 
 
 /* ------------ Typography */
@@ -26,15 +28,22 @@ h5 {font-size:0.83em;margin:1.4em 0 0.7em 0}
 h6 {font-size:0.75em;margin:1.4em 0 0.7em 0}
 
 p,blockquote, ul, ol, dl, dir, menu {margin:0 0 1.12em 0;}
-p { line-height:1.4; }
+p {line-height:1.4;}
 
-ol, ul, dir, menu, dd { margin-left:40px }
-ol { list-style-type:decimal }
-ol ul, ul ol, ul ul, ol ol { margin-top:0; margin-bottom:0 }
+dir, menu {margin-left:40px}
+ol, ul {margin-left:20px;}
+ol {list-style-type:decimal}
+ul {list-style-type:disc;}
+ol ul, ul ol, ul ul, ol ol {margin-top:0; margin-bottom:0}
 ul li, ol li {margin-bottom:0.8em;}
 
-h1:first-child { margin-top:0; }
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child {margin-top:0;}
 strong {font-weight:bold;}
+
+.hr, .hr-small {height:60px;background:url(../images/hr.png) repeat-x center;}
+.hr-small {height:30px;}
+.hr+h1, .hr+h2, .hr+h3, .hr+h4, .hr+h5 {margin-top:0;}
+
 
 
 /* ------------ jQuery UI settings */
@@ -42,36 +51,48 @@ strong {font-weight:bold;}
 .atk-frame.ui-widget-content {padding:0;border:0;}
 .atk-frame.ui-widget>.ui-widget-header {padding:0.5em 0.8em;font-size:120%;}
 .atk-frame.ui-widget>.ui-widget-content {padding:1em;}
+.atk-frame>.ui-widget-header+.ui-widget-content {border-top:none;}
 
-.ui-widget {margin-bottom:1.5em;}
+.ui-widget {margin-bottom:0;}
 .ui-widget.ui-button {margin-bottom:0;}
 
-
-/* ------------ Common settings */
-
-.atk-button-panel>.ui-button, .atk-form-vertical dl.atk-form-buttons .ui-button, .atk-form-simple dl.atk-form-buttons .ui-button {margin-right:0.5em;}
-.atk-paginator, .atk-button-panel {margin:0.7em 0;}
 
 /* ------------ Features */
 
 
-#atk-logo {border:none;font-size:0;line-height:0;width:162px;height:78px;overflow:hidden;}
+#atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
 .clear {clear:both;font-size:0;line-height:0;}
 .clearfix {overflow:hidden;width:100%;}
-.float-left { float:left; }
-.float-right { float:right; }
+.float-left {float:left;}
+.float-right {float:right;}
 .wrapper {width:980px;margin:auto;}
+.clearing:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.clearing {.zoom:1;.display:block;}
+.atk-button-panel>button {margin:0 .5em 1em 0 !important;}
 
 
-/* ------------ Styles */
+/* ------------ Styling */
 
-body {font-size:10pt;font-family:Arial,serif;}
-a:link {color:#3886b3;text-decoration:underline;}
-
+body {font-size:10pt;font-family:Arial,sans-serif;}
+a:link, a:hover {color:#3886b3;text-decoration:underline;}
 a:visited {color:#3886b3;text-decoration:underline;}
-a:hover {color:#ff8400;}
 
-.atk-link-sep {margin:0 0.2em;color:#999;}
+.atk-sep {margin:0 0.2em;color:#999;}
+
+.atk-button {padding:0;margin:0;background:#eee;border:none;background:none;}
+.atk-button::-moz-focus-inner{padding:0;border:none}
+
+.atk-layout>div {float:left;margin-left:40px;}
+.atk-layout.fluid>div {margin-left:4%;}
+.atk-layout>div:first-child {margin-left:0!important;}
+.atk-layout.c2>div {width:470px;}
+.atk-layout.c3>div {width:300px;}
+.atk-layout.c4>div {width:215px;}
+.atk-layout.fluid.c2>div {width:48%}
+.atk-layout.fluid.c3>div {width:30.6%}
+.atk-layout.fluid.c4>div {width:22%}
+.atk-layout:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.atk-layout {.zoom:1;.display:block;}
 
 
 /* ------------ Sticky footer */
@@ -87,7 +108,7 @@ div#footer-guard {height:4em;clear:both;}
 
 /* Paginator */
 
-.atk-paginator {padding:0.5em 0;border-top:1px solid #ccc;text-align:center;}
+.atk-paginator {padding:0.5em 0;margin:0.7em 0;border-top:1px solid #ccc;text-align:center;}
 .atk-paginator>a {padding:0 0.3em;}
 .atk-paginator>a.ui-state-active {text-decoration:none;}
 .atk-paginator-next {float:right;}
@@ -95,6 +116,7 @@ div#footer-guard {height:4em;clear:both;}
 
 /* Grid */
 
+.atk-grid>table {width:100%;border-spacing:0px;}
 .atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;vertical-align:top;}
 .atk-grid>table>thead>tr>th {font-weight:bold;}
 html>/**/body .atk-grid>table>thead>tr>th {background:none;}
@@ -129,10 +151,8 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 /* ------------ Menu */
 
 .atk-menu {overflow:hidden;}
-.atk-menu ul,
-.atk-menu ul li {margin:0;padding:0;}
-.atk-menu-vertical ul li a,
-.atk-menu-horizontal ul li a {padding:0.4em 0.8em;display:block;}
+.atk-menu ul, .atk-menu ul li {margin:0;padding:0;list-style-type:none;}
+.atk-menu-vertical ul li a, .atk-menu-horizontal ul li a {padding:0.4em 0.8em;display:block;}
 
 /* Menu Horizontal */
 
@@ -148,19 +168,22 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 .atk-menu-vertical ul li.ui-state-active {border-width:1px;}
 .atk-menu-vertical ul li.ui-state-active+li {border-width:0px 1px;}
 
+
 /* ------------ Forms */
 
-.atk-form>form>dl.atk-form-buttons, .atk-form>form>dl.atk-form-buttons>dt, .atk-form>form>dl.atk-form-buttons>dd, .atk-form>form>fieldset>dl, .atk-form>form>fieldset>dl>dt, .atk-form>form>fieldset>dl>dd {margin:0;padding:0;}
-.atk-form>form>fieldset { margin-bottom:1em; border-bottom:1px solid #eee; }
-.atk-form>form>dl.atk-form-buttons,
-.atk-form>form>fieldset>dl { margin-bottom:1em; }
-.atk-form>form>fieldset .ui-state-error { padding:0.3em 0.6em 0.3em 0.4em; font-size:90%; }
-.atk-form>form>fieldset .ui-state-error .ui-icon { margin:0 0.3em 0 0; float:left; }
+.atk-form>form>fieldset>dl, .atk-form>form>fieldset>dl>dt, .atk-form>form>fieldset>dl>dd {margin:0;padding:0;}
+.atk-form-buttons, .atk-form>form>fieldset {margin-top:1em;padding-top:1em;border-top:1px solid #eee;}
+.atk-form>form>fieldset:first-child {margin-top:0;padding-top:0;border-top:none;}
+.atk-form>form>fieldset>dl {margin-top:1em;}
+.atk-form>form>fieldset>dl:first-child {margin-top:0;}
+.atk-form>form>fieldset .ui-state-error {padding:0.3em 0.6em 0.3em 0.4em; font-size:90%;}
+.atk-form>form>fieldset .ui-state-error .ui-icon {margin:0 0.3em 0 0;float:left;}
 .atk-form dt label {line-height:1.3;position:relative;z-index:2;}
 .atk-form dt label span {color:#ce0000;position:absolute;right:-0.7em;top:0;margin-right:0;}
-.atk-form ins { color:#999; font-size:90%; text-decoration:none; }
+.atk-form ins {color:#999; font-size:90%;text-decoration:none;}
 .atk-form>form>fieldset>dl>dd.atk-field>div input[type=checkbox],
-.atk-form>form>fieldset>dl>dd.atk-field>div input[type=radio] { margin-right:0.4em; }
+.atk-form>form>fieldset>dl>dd.atk-field>div input[type=radio] {margin-right:0.4em;}
+.atk-form-buttons button {margin-right:0.5em;}
 
 /* Common form settings */
 
@@ -168,14 +191,12 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 
 /* Form Simple */
 
-.atk-form-simple>form>dl.atk-form-buttons,
-.atk-form-simple>form>fieldset>dl {display:inline-block;width:100%;.zoom:1;}
-.atk-form-simple>form>dl.atk-form-buttons:after,
+.atk-form-simple>form>fieldset>dl {display:block;width:100%;.zoom:1;}
 .atk-form-simple>form>fieldset>dl:after {content:".";display:block;height:0;clear:both;visibility:hidden;}
 .atk-form-simple>form>fieldset>dl>dt {float:left;}
 .atk-form-simple>form>fieldset>dl>dt {width:10em;min-width:10em;margin-right:2em;text-align:right;}
-.atk-form-simple>form>fieldset>dl>dd,
-.atk-form-simple>form>dl.atk-form-buttons>dd {margin-left:12em;}
+.atk-form-simple>form>fieldset>dl>dd {margin-left:12em;}
+.atk-form-simple .atk-form-buttons {padding-left:12em;}
 .atk-form-simple>form>fieldset>dl>dd.atk-field {margin-bottom:0.2em;}
 .atk-form-simple>form>fieldset>dl>dd.atk-field>ins {margin-top:0.3em;display:block;}
 .atk-form-simple>form>fieldset>dl>dd.atk-error {margin-top:0.5em;}
@@ -183,19 +204,7 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 
 /* Form Vertical */
 
-.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {
-	margin-top: 0.3em;
-	display: block;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-error {
-	margin-top: 0.5em;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-error>div {
-	float: left;
-}
-
-.atk-form-simple>form>fieldset>dl>dd.atk-error>div>.ui-icon {
-	background-position: -160px -192px;
-}
+.atk-form-simple>form>fieldset>dl>dd.atk-field>ins {margin-top:0.3em;display:block;}
+.atk-form-simple>form>fieldset>dl>dd.atk-error {margin-top:0.5em;}
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div {float:left;}
+.atk-form-simple>form>fieldset>dl>dd.atk-error>div>.ui-icon {background-position:-160px -192px;}
