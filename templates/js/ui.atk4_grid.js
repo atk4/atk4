@@ -18,9 +18,18 @@ $.widget("ui.atk4_grid", {
 	row_prototype: undefined,
 	base_url: undefined,
 	loading: false,
-    _init: function(options){
-		// Initialize external elements
-        $.extend(this.options,this.default_options,options);
+
+	_init: function(){
+		// If there are sortable things, sort them
+		var thead=this.element.find('thead');
+		var self=this;
+		thead.find('a').click(function(ev){
+			ev.preventDefault();
+			self.element.atk4_load({0:$(this).attr('href'),cut_object:self.element.attr('id')});
+
+
+		});
+
 	},
 	init17: function(){
 		this.name=this.element.attr('id');
