@@ -437,6 +437,11 @@ class Grid extends CompleteLister {
 	}
 	function setSource($table,$db_fields=null){
 		parent::setSource($table,$db_fields);
+		//we always need to calc rows
+		$this->dq->calc_found_rows();
+		return $this;
+	}
+	function execQuery(){
 		if($this->sortby){
 			$desc=false;
 			$order=$this->sortby_db;
@@ -444,11 +449,9 @@ class Grid extends CompleteLister {
 				$desc=true;
 				$order=substr($order,1);
 			}
-			$this->dq->order($order,$desc);
+			if($order)$this->dq->order($order,$desc);
 		}
-		//we always need to calc rows
-		$this->dq->calc_found_rows();
-		return $this;
+		return parent::execQuery();
 	}
 	function setTemplate($template){
 		// This allows you to use Template
