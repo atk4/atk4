@@ -8,4 +8,7 @@ class Text extends AbstractView {
 	function render(){
 		$this->output($this->text);
 	}
+	function setSource(){
+		return call_user_func_array(array($this->owner,'setSource'),func_get_args());
+	}
 }

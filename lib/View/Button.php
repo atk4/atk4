@@ -71,4 +71,7 @@ class View_Button extends View_HtmlElement {
 	function redirect($page){
 		return $this->js('click')->univ()->redirect($this->api->getDestinationURL($page));
 	}
+	function submitForm($form){
+		return $this->js('click',$form->js()->submit());
+	}
 }
