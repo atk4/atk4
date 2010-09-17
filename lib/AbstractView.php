@@ -142,6 +142,7 @@ abstract class AbstractView extends AbstractObject {
 		if($cutting_here){
 			$result=$this->owner->template->cloneRegion($this->spot)->render();
 			if($this->api->jquery)$this->api->jquery->getJS($this);
+			$this->logVar("finishing cut on $this->name");
 			$e=new RenderObjectSuccess($result);
 			throw $e;
 		}
