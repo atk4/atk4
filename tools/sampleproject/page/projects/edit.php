@@ -2,13 +2,18 @@
 class page_projects_edit extends Page {
 	function init(){
 		parent::init();
-		$c=$this->add('Controller_User');
-		$f=$this->add('MVCForm')
-			->setController($c);
+		$f=$this->add('Form');
+		$f->addField('line','title');
+		$f->addField('text','descr','Description');
 
+		$f->setSource('project');
+		$f->setConditionFromGET('id');
 
-		if($f->hasElement('Save')){
-			unset($f->elements['Save']);
+		// be sure to add restrcitions, such as make sure record belongs to current user
+		// $f->dq->where('user_id',$this->api->auth->get('id'));
+
+		if($_GET['id']){
+			$f->addSubmit();
 		}
 
 		// This is form's submit handler. Since your form is Ajax - you should
@@ -18,7 +23,7 @@ class page_projects_edit extends Page {
 			$f->update();
 			$f->js()
 				->univ()
-				->successMessage('Added new project')
+				->successMessage($_GET['id']?'Saved changes':'Added new project')
 				->closeDialog()
 				->page('projects')
 				->execute();
