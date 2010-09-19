@@ -1,0 +1,7 @@
+If you are going to use TMail class, it will be looking for templates
+in this directory by default. Referr to pathfinder and tmail documentation
+for more information
+
+
+http://www.atk4.com/doc/tmail
+http://www.atk4.com/doc/pathfinder
