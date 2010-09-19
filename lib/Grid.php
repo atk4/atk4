@@ -77,7 +77,7 @@ class Grid extends CompleteLister {
 			$name=$type;
 			$type='text';
 		}
-		if($descr===null)$descr=$name;
+		if($descr===null)$descr=ucwords(str_replace('_',' ',$name));
 		$this->columns[$name]=array(
 				'type'=>$type,
 				'descr'=>$descr

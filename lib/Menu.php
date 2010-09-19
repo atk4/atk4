@@ -25,7 +25,10 @@ class Menu extends AbstractView {
 		return array('menu','Menu');
 	}
 	function addMenuItem($label,$href=null){
-		if(!$href)$href=$this->getDefaultHref($label);
+		if(!$href){
+			$href=$this->getDefaultHref($label);
+			$label=ucwords($label);
+		}
 		$this->items[]=$this->last_item=$this->add('MenuItem',$this->short_name."_$href",'Item')
 			->setProperty(array(
 				'page'=>$href,

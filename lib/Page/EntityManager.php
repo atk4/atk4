@@ -78,7 +78,7 @@ class Page_EntityManager extends Page {
 
 		if($f->isSubmitted() && !$this->read_only){
 			$f->update();
-			$f->js()->univ()->successMessage('Changes saved')->location($this->api->getDestinationURL($this->returnpage))
+			$f->js()->univ()->successMessage('Changes saved')->page($this->api->getDestinationURL($this->returnpage))
 				->execute();
 		}
 	}

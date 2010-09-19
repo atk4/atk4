@@ -236,19 +236,17 @@ dialogPrepare: function(options){
 	return dialog;
 },
 getDialogData: function(key){
-
 	var dlg=this.jquery.closest('.dialog').get(0);
-
-	if(!dlg)this.log('must be called from inside dialog',this.jquery);
-
+	if(!dlg)return null;
 	var r=$.data(dlg,key);
 	if(!r){
-  		this.log('key',key,' does not have data for ',this.jquery.closest('.dialog').get(0));
+  		return null;
 	}
-
 	return r;
 },
 getFrameOpener: function(){
+	var d=this.getDialogData('opener');
+	if(!d)return null;
 	return $(this.getDialogData('opener'));
 },
 dialogBox: function(options){
@@ -390,6 +388,7 @@ fillFormFromFrame: function(options){
 },
 closeDialog: function(){
 	var r=this.getFrameOpener();
+	if(!r)return;
 	this.jquery.closest('.dialog').dialog('close');
 	this.jquery=r;
 },
