@@ -11,13 +11,16 @@ class Page_EntityManager extends Page {
 	public $edit_actual_fields=false;
 	public $add_actual_fields; // by default same as edit
 	public $read_only=false;
+
+	public $grid;
+
 	function init(){
 		parent::init();
 		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
 	}
 
 	function initMainPage(){
-		$g=$this->add('MVCGrid','grid');
+		$this->grid=$g=$this->add('MVCGrid','grid');
 
 		$c=$g->add($this->controller);
 		
@@ -78,7 +81,10 @@ class Page_EntityManager extends Page {
 
 		if($f->isSubmitted() && !$this->read_only){
 			$f->update();
-			$f->js()->univ()->successMessage('Changes saved')->page($this->api->getDestinationURL($this->returnpage))
+			$f->js()->univ()
+				->successMessage($_GET['id']?'Changes saved':'Record added')
+				->closeDialog()
+				->page($this->api->getDestinationURL($this->returnpage))
 				->execute();
 		}
 	}
