@@ -626,13 +626,15 @@ class Grid extends CompleteLister {
 		$this->precacheTemplate(false);
 
 		// *** Rendering row ***
-		$this->current_row=$row_data;
+		$this->current_row=(array)$row_data;
 		$row=$this->formatRow();
 
 		// *** Returning required field value ***
 		return $row[$field];
 	}
 	function formatRow(){
+		// Support for StdObject grids
+		if(!is_array($this->current_row))$this->current_row=(array)$this->current_row;
 		if(!$this->columns)throw new BaseException('No column defined for grid');
 		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
 			$this->current_row[$tmp.'_original']=$this->current_row[$tmp];
