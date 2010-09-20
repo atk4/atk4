@@ -25,6 +25,8 @@ $.ui.tabs.prototype.load=function(index) {
 					$.data(a, 'cache.tabs', true); // if loaded once do not load them again
 				}
 
+				window.location.hash=self.anchors[index].hash;
+
 				// callbacks
 				self._trigger('load', null, self._ui(self.anchors[index], self.panels[index]));
 				try {
