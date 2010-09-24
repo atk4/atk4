@@ -346,7 +346,7 @@ class Form extends AbstractView {
 		// pre-defined template and insert fields into there
 		$this->template_chunks['custom_layout']=$this->add('SMLite')->loadTemplate($template);
 		$this->template_chunks['custom_layout']->trySet('_name',$this->name);
-		$this->template->trySet('form_class','form_'.basename($template));
+		$this->template->trySet('form_class_layout',$c='form_'.basename($template));
 		return $this;
 	}
 	function render(){
@@ -370,6 +370,11 @@ class Form extends AbstractView {
 						$this->js(true)->univ()->log('No field in layout: '.$key);
 					}
 					$this->template_chunks['custom_layout']->trySet($key,$val->getInput());
+
+					if($this->errors[$key]){
+						$this->template_chunks['custom_layout']
+							->trySet($key.'_error',$val->error_template->set('field_error_str',$this->errors[$key])->render());
+					}
 				}
 			}
 			$this->template->set('form_body',$this->template_chunks['custom_layout']->render());
