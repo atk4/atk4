@@ -203,6 +203,28 @@ class Form_Field_Upload extends Form_Field {
 			}
 		}
 
+		if($id=$_GET[$this->name.'_save_action']){
+			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
+			// This is JavaScript upload. We do not want to trigger form submission event
+			if($c=$this->getController()){
+				$c->loadData($id);
+				$f=$c;
+				$mime = $f->getRef('filestore_type_id')->get('mime_type');
+				$path = $f->getPath();
+				$name = $f->get("original_filename");
+				$len = $f->get("filesize");
+				header("Content-type: $mime");
+				header("Content-legnth: $len");
+				if(!$_GET['view']){
+					header("Content-disposition: attachment; filename=\"$name\"");
+				}
+				print(file_get_contents($path));
+				exit;
+				
+				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
+				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+			}
+		}
 
 
 

@@ -116,8 +116,21 @@ $.widget("ui.atk4_uploader", {
 				ev.preventDefault();
 				$(this).univ().ajaxec(act+'&'+
 					self.element.attr('name')+'_delete_action='+
-					$(this).closest('div').attr('rel') //row['id']?
-					// well we could, but this also works
+					$(this).closest('div').attr('rel') 
+				);
+			})
+			tpl.find('.view_doc').click(function(ev){
+				ev.preventDefault();
+				$(this).univ().newWindow(act+'&view=true&'+
+					self.element.attr('name')+'_save_action='+
+					$(this).closest('div').attr('rel') 
+				);
+			})
+			tpl.find('.save_doc').click(function(ev){
+				ev.preventDefault();
+				$(this).univ().location(act+'&'+
+					self.element.attr('name')+'_save_action='+
+					$(this).closest('div').attr('rel') 
 				);
 			})
 			tpl.appendTo(tb);
