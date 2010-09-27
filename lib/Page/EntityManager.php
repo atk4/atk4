@@ -1,6 +1,7 @@
 <?php
 class Page_EntityManager extends Page {
 	public $controller='Controller_Coupon';
+	public $c;
 	public $returnpage='coupons';
 
 	public $allow_add=true;
@@ -17,17 +18,17 @@ class Page_EntityManager extends Page {
 	function init(){
 		parent::init();
 		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
+		$this->c=$this->add($this->controller);
 	}
 
 	function initMainPage(){
 		$this->grid=$g=$this->add('MVCGrid','grid');
 
-		$c=$g->add($this->controller);
 		
 		if($this->grid_actual_fields)
-			$c->setActualFields($this->grid_actual_fields);
+			$c=$this->c->setActualFields($this->grid_actual_fields);
 
-		$g->setController($c);
+		$g->setController($c=$this->c);
 
 		if($this->allow_edit)
 			$g->addColumnPlain('expander_widget', 'edit', $this->read_only?'view':'edit');
@@ -54,7 +55,7 @@ class Page_EntityManager extends Page {
 	function page_edit(){
 		if(!$this->allow_edit)exit;
 		$f=$this->add('MVCForm','form');
-		$c=$f->add($this->controller);
+		$c=$this->c;
 
 		if($_GET['id']){
 			if($this->edit_actual_fields)
@@ -70,9 +71,9 @@ class Page_EntityManager extends Page {
 			$f->js(true)->find('input,select')->attr('disabled',true);
 		}
 
-		if($_GET['id']){
+		if($_GET['id'] && !$this->read_only){
 			if(!$f->hasElement('Save'))
-			$f->addSubmit('Save');
+				$f->addSubmit('Save');
 		}else{
 			unset($f->elements['Save']);
 		}
