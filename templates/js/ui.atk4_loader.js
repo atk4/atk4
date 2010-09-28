@@ -291,7 +291,7 @@ $.fn.extend({
 	atk4_reload: function(url,arg,fn){
         if(arg){
             $.each(arg,function(key,value){
-                url=$.atk4.addArgument(url,key+'='+value);
+                url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
             });
         }
 		this.atk4_loader()
