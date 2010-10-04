@@ -168,6 +168,17 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 .atk-menu-vertical ul li.ui-state-active {border-width:1px;}
 .atk-menu-vertical ul li.ui-state-active+li {border-width:0px 1px;}
 
+/* Sidebar */
+ul.sidebar {float:left;width:200px;}
+ul.sidebar, ul.sidebar li {margin:0;padding:0;list-style-type:none;}
+ul.sidebar>li.sidebar-row {border:1px solid #ccc;border-top:0px;}
+ul.sidebar>li>a {display:block;text-decoration:none;background:#fff;padding:0.5em 1em;}
+ul.sidebar>li.ui-widget-header {border-bottom:none;padding:0.5em 1em;}
+ul.sidebar>li.ui-widget-header>span {text-transform:uppercase;font-size:90%;}
+ul.sidebar>li.ui-state-active>a {background: #999;}
+
+
+
 
 /* ------------ Forms */
 
