@@ -57,6 +57,24 @@ class jQuery_Chain extends AbstractModel {
 		}else return $this;
 	}
 
+	function _safe_js_string($str) {
+		$l=strlen($str);
+		$ret="";
+		for($i=0;$i<$l;++$i) {
+			switch($str[$i]) {
+				case "\r": $ret.="\\r"; break;
+				case "\n": $ret.="\\n"; break;
+				case "\"":     case "'":     case "<": case ">":  case "&":  case "\\":
+						   $ret.='\x'.dechex( ord($str[$i] ) );
+						   break;
+				default:
+						   $ret.=$str[$i];
+						   break;
+			}
+		}
+		return $ret;
+	}
+	
 	protected function _flattern_objects($arg,$return_comma_list=false){
 		/*
 		 * This function is very similar to json_encode, however it will traverse array
@@ -72,7 +90,7 @@ class jQuery_Chain extends AbstractModel {
 			}elseif($arg instanceof AbstractView){
 				return "'#".$arg->name."'";
 			}else{
-				return "'".$arg."'";	// indirectly call toString();
+				return "'".$this->_safe_js_string((string)$arg)."'";	// indirectly call toString();
 			}
 		}elseif(is_array($arg)){
 			$a2=array();
@@ -80,11 +98,12 @@ class jQuery_Chain extends AbstractModel {
 			$assoc=$arg!=array_values($arg);
 
 			foreach($arg as $key=>$value){
-				$v=$this->_flattern_objects($value);
+				$value=$this->_flattern_objects($value);
+				$key=$this->_flattern_objects($key);
 				if(!$assoc || $return_comma_list){
-					$a2[]=$v;
+					$a2[]=$value;
 				}else{
-					$a2[]='\''.$key.'\':'.$v;
+					$a2[]=$key.':'.$value;
 				}
 			}
 			if($return_comma_list){
@@ -94,8 +113,16 @@ class jQuery_Chain extends AbstractModel {
 			}else{
 					$s='['.join(',',$a2).']';
 			}
+		}elseif(is_string($arg)){
+			$s="'".$this->_safe_js_string($arg)."'";
+		}elseif(is_bool($arg)){
+			$s=json_encode($arg);
+		}elseif(is_numeric($arg)){
+			$s=json_encode($arg);
+		}elseif(is_null($arg)){
+			$s=json_encode($arg);
 		}else{
-			$s=str_replace('"','\'',json_encode($arg));
+			var_dump($s);
 		}
 
 		return $s;
