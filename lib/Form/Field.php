@@ -503,10 +503,12 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 	function validate(){
 		if(!$this->value)return parent::validate();
 		if(!isset($this->value_list[$this->value])){
+			/*
 			if($this->api->isAjaxOutput()){
 				$this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
 					->execute();
 			}
+			*/
 			$this->owner->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
@@ -618,15 +620,17 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 class Form_Field_Radio extends Form_Field_ValueList {
 	function validate(){
 		if(!isset($this->value_list[$this->value])){
+			/*
 			if($this->api->isAjaxOutput()){
 				echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
 			}
-			$this->owner->errors[$this->short_name]="This is not one of offered values";
+			*/
+			$this->displayFieldError("This is not one of offered values");
 		}
 		return parent::validate();
 	}
 	function getInput($attr=array()){
-		$output = "";
+		$output = '<div id="'.$this->name.'">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
 				$this->getTag('input',
@@ -644,6 +648,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 				.$this->getTag('/input')
 				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
 		}
+		$output .= '</div>';
 		return $output;
 	}
 }

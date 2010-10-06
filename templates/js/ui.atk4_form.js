@@ -186,7 +186,7 @@ $.widget("ui.atk4_form", {
 			field=this.element.find('[name="'+field_name+'"]');
 		}
 		if(!field.length){
-			alert('Field not found: ',field_name,', error is',error);
+			alert('Field not found: '+field_name+', error is: '+error);
 			return;
 		}
 
@@ -211,6 +211,10 @@ $.widget("ui.atk4_form", {
 
 		// highlight field
 		var block=field.closest('.atk-field').addClass('field_has_error');
+
+		// Clear previosu errors
+		while(block.next().is('.atk-error'))block.next().remove();
+
 		h=$(//'<div class="clear"></div><span class="form_error"><i></i>'+error+'</span>');
 		 '<dd class="atk-error"><div class="ui-state-error ui-corner-all"><span class="ui-icon"></span>'+
 			 error+'</div></dd>').insertAfter(block);
