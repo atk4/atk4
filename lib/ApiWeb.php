@@ -170,9 +170,9 @@ class ApiWeb extends ApiCLI {
 	function execute(){
 		$this->rendered['sub-elements']=array();
 
-		$this->hook('pre-render');
 
 		try {
+			$this->hook('pre-render');
 			$this->recursiveRender();
 			if(isset($_GET['cut_object']))
 				throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");

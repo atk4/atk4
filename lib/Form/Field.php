@@ -36,6 +36,18 @@ abstract class Form_Field extends AbstractView {
 
 	public $show_input_only;
 
+	function init(){
+		parent::init();
+		if($_GET[$this->owner->name.'_cut_field']==$this->name){
+			$this->api->addHook('pre-render',array($this,'_cutField'));
+		}
+	}
+	function _cutField(){
+		// this method is used by ui.atk4_form, when doing reloadField();
+		if($this->api->jquery)$this->api->jquery->getJS($this);
+		$e=new RenderObjectSuccess($this->getInput());
+		throw $e;
+	}
 	function setMandatory($mandatory=true){
 		$this->mandatory=$mandatory;
 		return $this;
@@ -387,6 +399,7 @@ class Form_Field_Readonly extends Form_Field {
 }
 class Form_Field_File extends Form_Field {
 	function init(){
+		parent::init();
 		$this->attr['type'] = 'file';
 		//we have to set enctype for file upload
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");

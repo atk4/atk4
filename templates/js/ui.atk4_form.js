@@ -151,26 +151,23 @@ $.widget("ui.atk4_form", {
 
 		f.val(value).change();
 	},
-	reloadField: function(field_name,fn,arg,val,notrigger){
+	reloadField: function(field_name,url,fn,notrigger){
 		var field_id=this.element.attr('id')+'_'+field_name;
-		var url=this.base_url;
+		if(!url)url=this.base_url;
 		console.log('Field reloading: ',field_name);
 
-		url=$.atk4.addArgument(url,"cut_object="+field_id);
-		if(arg)url=$.atk4.addArgument(url,arg,val);
-
-
+		url=$.atk4.addArgument(url,this.element.attr('id')+'_cut_field',field_id);
 		var f=$("#"+field_id);
 
 		if(!notrigger)f.trigger('reload_field');
 
-		if(f.hasClass('field_reference')){
+		//if(f.hasClass('field_reference')){
 			var f2=f.closest('.form_field');
 			//f.remove();
 			f=f2;
 
 
-		}
+		//}
 		console.log('url=',url,f[0]);
 		var c=this._getChanged();this._setChanged(false);
 		f.atk4_load(url,fn);
