@@ -169,9 +169,10 @@ $.widget("ui.atk4_uploader", {
 		//$('#'+this.name+'_token').val(data.id);
 	},
 	uploadFailed: function(message){
-		this.element.next('br').remove();
+		this.element.closest('form').atk4_form('fieldError',this.element,message);
+		$('#'+this.name+'_progress').remove();
+		this.element.next().show()
 		this.element.remove();
-		alert(message);
 	},
 	completeSWF: function(a,b,c,d,e){
 		var token={

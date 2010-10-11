@@ -41,6 +41,3 @@ div#header {
 }
 
 /* ferre - sort this out */
-.atk-loader {display:inline-block;background:#eee;border:1px solid #ccc;padding:.3em .6em;border-radius:10px;-moz-border-radius:10px;-webkit-border-radius:10px;text-transform:uppercase;text-shadow:0 1px 0 #fff;font-size:80%;}
-.atk-loader>i {background:url(../images/loader.gif);width:16px;height:16px;float:left;position:relative;top:-0.2em;margin-right:0.5em;}
-

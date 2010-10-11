@@ -222,7 +222,7 @@ class Grid extends CompleteLister {
 					'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
 					'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
 						array('expander'=>$field,
-							'cut_object'=>$this->api->page.'_'.$field,
+							'cut_page'=>1,
 							'expanded'=>$this->name,
 							'id'=>$this->current_row[$idfield])
 						)
@@ -257,7 +257,7 @@ class Grid extends CompleteLister {
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
 			rel="'.$this->api->getDestinationURL($this->api->page.'/'.$field,
 						array('expander'=>$field,
-							'cut_object'=>$this->api->page.'_'.$field,
+							'cut_page'=>1,
 							'expanded'=>$this->name,
 							'id'=>$this->current_row[$idfield]
 							)

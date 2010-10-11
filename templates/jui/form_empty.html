@@ -1,7 +1,7 @@
 <?form?>
-<form class="form_style2 <?$form_class?> form_compact" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
+<form class="<?$form_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 
-<div style="float:right"><?$Hint?></div>
+<?$Hint?>
 
 <!--
 	<?form_error?><dl><dd><span style="color:red; font-size: 200%"><?form_error_str?>Error on form!!<?/?></span></dd></dl><?/?>
@@ -9,18 +9,16 @@
 		<?form_body?>			
 			<?form_line?>
 				<!-- <?$field_caption?> -->
-				<?$field_caption?>&nbsp;<?field_input?><span class="form_field"><input type="text" name="loginemail" class="logintext" value=""></span><?/?><?field_error?><span class="form_error"><?field_error_str?>Error<?/?></span><?/?>
+				<label><?$field_caption?></label><?field_input?><span class="form_field"><input type="text" name="loginemail" class="logintext" value=""></span><?/?><?field_error?><span class="form_error"><?field_error_str?>Error<?/?></span><?/?>
 				<!--<?field_comment?><span class="form_comment">Password must be 6&ndash;16 characters long</span><?/?>-->
 			<?/form_line?>
 			<?form_separator?>
-			</div>
-			<div class="form_block"><h2 class="green_dots"><?separator?>Personal information<?/?></h2><?/form_separator?></div>
+			
+			<?separator?>Personal information<?/?><?/form_separator?>
 		<?/form_body?>
-		<div class="form_buttons" style="text-align: right; float: right;">
 			<?form_buttons?>
 			<input type="button" value="Save" class="gbutton button_style1" />
 			<?/form_buttons?>
-		</div>
 	</form>
 <?/form?>
 

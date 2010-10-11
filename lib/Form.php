@@ -154,10 +154,13 @@ class Form extends AbstractView {
 			$this->template_chunks['form_comment']->set('comment',$comment)->render()
 		);
 	}
-	function addSeparator($separator='<hr>'){
-		if(!isset($this->template_chunks['form_separator']))return $this->addComment('<u>'.$separator.'</u>');
+	function addSeparator($separator_text=''){
+		if(!isset($this->template_chunks['form_separator']))return $this;
+
+		$c=clone $this->template_chunks['form_separator'];
+		if(!$separator_text)$c->tryDel('separator');else $c->trySet('separator_text',$separator_text);
 		return  $this->add('Text','c'.count($this->elements),'form_body')->set(
-			$this->template_chunks['form_separator']->set('separator',$separator)->render());
+			$c->render());
 	}
 
 	// Operating with field values

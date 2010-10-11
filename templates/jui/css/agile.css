@@ -1,5 +1,5 @@
 /* Agile Toolkit (c) Agile Technologies // http://www.agiletech.ie/ */
-/* **** BETA **** Updated on 07/09/10 */
+/* **** BETA **** Updated on 07/10/10 */
 
 
 /* ------------ Resetting elements */
@@ -27,7 +27,7 @@ h4 {font-size:1.1em;}
 h5 {font-size:0.83em;margin:1.4em 0 0.7em 0}
 h6 {font-size:0.75em;margin:1.4em 0 0.7em 0}
 
-p,blockquote, ul, ol, dl, dir, menu {margin:0 0 1.12em 0;}
+p,blockquote, ul, ol, dir, menu {margin:0 0 1.12em 0;}
 p {line-height:1.4;}
 
 dir, menu {margin-left:40px}
@@ -45,7 +45,6 @@ strong {font-weight:bold;}
 .hr+h1, .hr+h2, .hr+h3, .hr+h4, .hr+h5 {margin-top:0;}
 
 
-
 /* ------------ jQuery UI settings */
 
 .atk-frame.ui-widget-content {padding:0;border:0;}
@@ -58,7 +57,6 @@ strong {font-weight:bold;}
 
 
 /* ------------ Features */
-
 
 #atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
 .clear {clear:both;font-size:0;line-height:0;}
@@ -93,6 +91,17 @@ a:visited {color:#3886b3;text-decoration:underline;}
 .atk-layout.fluid.c4>div {width:22%}
 .atk-layout:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
 .atk-layout {.zoom:1;.display:block;}
+
+.atk-hint {padding:.5em;}
+.atk-hint>div {margin-bottom:.5em;}
+.atk-hint>div>.ui-icon {display:inline-block;margin-right:.3em;position:relative;top:.2em}
+.atk-hint p {margin-bottom:0;}
+
+.atk-loader {display:inline-block;background:#eee;border:1px solid #ccc;padding:.3em .6em;border-radius:10px;-moz-border-radius:10px;-webkit-border-radius:10px;text-transform:uppercase;text-shadow:0 1px 0 #fff;font-size:80%;color:#333;}
+.atk-loader>i {background:url(../images/loader.gif);width:16px;height:16px;float:left;position:relative;top:0;margin-right:0.5em;}
+
+.files-container {overflow:hidden;}
+.files-container .atk-sep {margin:0 .7em;}
 
 
 /* ------------ Sticky footer */
@@ -169,6 +178,7 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 .atk-menu-vertical ul li.ui-state-active+li {border-width:0px 1px;}
 
 /* Sidebar */
+
 ul.sidebar {float:left;width:200px;}
 ul.sidebar, ul.sidebar li {margin:0;padding:0;list-style-type:none;}
 ul.sidebar>li.sidebar-row {border:1px solid #ccc;border-top:0px;}
@@ -176,8 +186,6 @@ ul.sidebar>li>a {display:block;text-decoration:none;background:#fff;padding:0.5e
 ul.sidebar>li.ui-widget-header {border-bottom:none;padding:0.5em 1em;}
 ul.sidebar>li.ui-widget-header>span {text-transform:uppercase;font-size:90%;}
 ul.sidebar>li.ui-state-active>a {background: #999;}
-
-
 
 
 /* ------------ Forms */
@@ -195,6 +203,8 @@ ul.sidebar>li.ui-state-active>a {background: #999;}
 .atk-form>form>fieldset>dl>dd.atk-field>div input[type=checkbox],
 .atk-form>form>fieldset>dl>dd.atk-field>div input[type=radio] {margin-right:0.4em;}
 .atk-form-buttons button {margin-right:0.5em;}
+.atk-form .atk-hint {margin-bottom:2em;}
+.atk-form-title {margin-bottom:1em;}
 
 /* Common form settings */
 

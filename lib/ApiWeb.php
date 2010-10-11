@@ -16,7 +16,6 @@ class ApiWeb extends ApiCLI {
 	 * DB handle
 	 */
 	public $page=null;
-	public $skin = null;      // skin used to render everything
 	private $page_title = null;	// TODO remove this property
 	public $apinfo=array();
 

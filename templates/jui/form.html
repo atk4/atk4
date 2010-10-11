@@ -1,17 +1,13 @@
 <?form?>
 <div class="atk-form atk-form-<?form_class?>simple<?/?> <?$form_class_layout?> ui-widget">
+	<?$hint?>
 	<form id="<?$_name?>" class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
-
-	<style>
-	 .mandatory { font-weight: bold; }
-	</style>
-	<div style="float: right; width: 350px"><?$hint?></div>
 		<fieldset>
 			<?form_body?>
 				<?form_line?>
 				<dl>
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
-					<dd class="atk-field"><div class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div></dd>
+					<dd class="atk-field"><div class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div><?$field_hint?></dd>
 					<?field_error?>
 					<dd class="atk-error">
 						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
@@ -23,11 +19,10 @@
 				<?form_separator?>
 				</fieldset>
 				<fieldset>
-					<?separator?>Personal information<?/?><?/form_separator?>
+					<?separator?><h3 class="atk-form-title"><?$separator_text?></h3><?/?><?/form_separator?>
 					<?form_comment?><?$comment?><?/?>
 			<?/form_body?>
 		</fieldset>
-
 		<dl class="atk-form-buttons">
 			<dd class="atk-field">
 			<?form_buttons?>
