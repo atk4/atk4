@@ -3,6 +3,7 @@ class Filter extends Form {
 	private $limiters=array();
 	function init(){
 		parent::init();
+		$this->js_widget=null;
 		$this->api->addHook('post-init',array($this,'recallAll'));
 	}
 	function recallAll(){
