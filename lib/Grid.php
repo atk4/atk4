@@ -16,7 +16,6 @@ class Grid extends CompleteLister {
 	private $totals_title="";
 	public $totals_t=null;
 
-	public $grid_update_compatibility=false;
 	/**
 	* Inline related property
 	* If true - TAB key submits row and activates next row
@@ -61,7 +60,6 @@ class Grid extends CompleteLister {
 		$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
 		$this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
-		//$this->api->addHook('post-submit', array($this,'submitted'), 3);
 	}
 	function defaultTemplate(){
 		return array('grid','grid');
@@ -214,6 +212,7 @@ class Grid extends CompleteLister {
 		}
 	}
 	function format_inline_widget($field, $idfield='id'){
+		/*
 		$this->format_widget(
 				$field,
 				'inline',
@@ -230,6 +229,7 @@ class Grid extends CompleteLister {
 				);
 
 		$this->current_row[$field]='';
+		*/
 	}
 	function format_expander_widget($field, $idfield='id'){
 		/*
@@ -288,6 +288,12 @@ class Grid extends CompleteLister {
 			$this->current_row[$field]='['.$this->columns[$field]['descr'].']';
 		}
 	}
+	function _getFieldType($field){
+		return 'line';
+	}
+	function _inlineUpdate($field,$id,$value){
+		$this->dq->set($field,$value)->where($this->dq->args['table'].'.id',$id)->do_update();
+	}
 	function format_inline($field, $idfield='id'){
 		/**
 		* Formats the InlineEdit: field that on click should substitute the text
@@ -296,6 +302,7 @@ class Grid extends CompleteLister {
 		* The point is to set an Id for each column of the row. To do this, we should
 		* set a property showing that id should be added in prerender
 		*/
+		/*
 		$col_id=$this->name.'_'.$field.'_inline';
 		$show_submit=$this->show_submit?'true':'false';
 		$tab_moves_down=$this->tab_moves_down?'true':'false';
@@ -315,6 +322,31 @@ class Grid extends CompleteLister {
 			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
 			'\', '.$tab_moves_down.', '.$show_submit.')'
 		)->getLink($text);
+		*/
+		$val=$this->current_row[$field];
+		$this->current_row[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
+			$this->current_row['id']).'" >'.
+			$this->current_row[$field].'<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i></span>';
+		$this->js(true)->_selector('#'.$s)->click(
+				$this->js()->_enclose()->_selectorThis()->parent()->atk4_load($this->api->getDestinationURL(null,array($s=>true)))
+				);
+		if($_GET[$s]){
+			// clicked on link
+			$this->api->stickyGET($s);
+			$f=$this->owner->add('Form',$s,null,array('form_empty','form'));
+			$ff=$f->addField($this->_getFieldType($field),'e','');
+			$ff->set($val);
+			$ff->js('blur',$this->js()->atk4_grid('reloadRow',$this->current_row['id']));
+			$ff->js(true)->css(array('width'=>'100%'));
+			$_GET['cut_object']=$f->name;
+
+			if($f->isSubmitted()){
+				$this->_inlineUpdate($field,$this->current_row['id'],$f->get('e'));
+				$this->js()->atk4_grid('reloadRow',$this->current_row['id'])->execute();
+			}
+
+			$f->recursiveRender();
+		}
 	}
 	function format_nl2br($field) {
 		$this->current_row[$field] = nl2br($this->current_row[$field]);
@@ -355,54 +387,34 @@ class Grid extends CompleteLister {
 			array('id'=>$this->current_row['id'])).'">'.
 			$this->columns[$field]['descr'].'</a>';
 	}
+	function _performDelete($id){
+		$this->dq->where($this->dq->args['table'].'.id',$id)->do_delete();
+	}
 	function format_delete($field){
-		$l=$this->name.'_'.$field."_label";
-		if(isset($this->columns[$field]['del_frame'])){
-			$f=$this->columns[$field]['del_frame'];
-			$confirm=$this->columns[$field]['del_confirm'];
-		}else{
-			$f=$this->columns[$field]['del_frame']=$this->add('FloatingFrame',$field,'Misc');
-			$confirm = $f->frame("Delete record?")
-				->add('Form');
-
-			$confirm->addLabel("<div id='".$l."'>Error..?</div>");
-			$confirm->addField('hidden','id','Hidden');
-			$confirm->addButton('Delete')->submitForm($confirm);
-			$confirm->addButton('Cancel')->setVisibility($f,false);
-
-			$this->columns[$field]['del_confirm']=$confirm;
-
-			if($confirm->isSubmitted()){
-				$this->dq->where('id',$confirm->get('id'))->do_delete();
-				$this->ajax()
-					->setVisibility($f,false)
-					->displayAlert("Record ".$confirm->get('id')." deleted")
-					->reload($this)
-					->execute();
-			}
-
-
-			$f->recursiveRender();
+		if(!$this->dq)throw new BaseException('delete column requires $dq to be set');
+		if($id=$_GET[$this->name.'_'.$field]){
+			// this was clicked
+			$this->_performDelete($id);
+			$this->js()->univ()->successMessage('Deleted Successfully')->getjQuery()->reload()->execute();
 		}
-		$this->current_row[$field]=
-			$this->ajax()->setFieldValue($confirm->getElement('id')->name,$this->current_row['id'])->setInnerHTML($l,"Delete \\'".$this->getRowTitle()."\\'?")->setVisibility($f,true)->getLink('delete');
+		return $this->format_confirm($field);
 	}
 	function format_button($field){
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
 		'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
-			array($field=>$this->current_row['id'])).'\')">'.
+			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_confirm($field){
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
 		'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
-			array($field=>$this->current_row['id'])).'\')">'.
+			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_prompt($field){
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
 		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
-			array($field=>$this->current_row['id'])).'&value=\'+value)">'.
+			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'&value=\'+value)">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_checkbox($field){
@@ -460,49 +472,12 @@ class Grid extends CompleteLister {
 		return $this;
 	}
 
-	function submitted(){
-		// checking if this Grid was requested
-		if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_field'){
-			echo $this->getFieldContent($_GET['expander'],$_GET['id']);
-			exit;
-		}
-		// checking if this Grid was requested
-		if($_GET['expanded']==$this->name&&$_GET['grid_action']=='return_row'){
-			echo $this->getRowContent($_GET['id'],(isset($_GET['datatype'])?$_GET['datatype']:'ajax'));
-			exit;
-		}
-		if($_GET['submit']==$this->name){
-			//return;// false;
-			//saving to DB
-			if($_GET['action']=='update'){
-				if(!$this->grid_update_compatibility)
-					throw new BaseException('Grid::update is unsafe. If you wish to continue using it, '.
-							'set $grid->grid_update_compatibility');
-				$this->update();
-			}
-			$row=$this->getRowContent($_GET['id']);
-			echo $row;
-			exit;
-		}
-	}
-	function update(){
-		foreach($_GET as $name=>$value){
-			if(strpos($value,'%'))$value=urldecode($value);
-			if(strpos($name, 'field_')!==false){
-				$this->dq->set(substr($name, 6),$value);
-			}
-		}
-		$idfield=$this->dq->args['fields'][0];
-		if($idfield=='*')$idfield='id';
-		$this->dq->where($idfield, $_GET['id']);
-		$this->dq->do_update();
-	}
-
 	/**
 	* Returns the properly formatted row content.
 	* Used firstly with Ajax::reloadExpandedRow() and in inline edit
 	* @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
 	*/
+	/* Temporary not working, untill ui.atk4_grid will regain functionality to reload one cell
 	function getRowContent($id,$datatype='jquery'){
 
 		// if DB source set
@@ -542,35 +517,7 @@ class Grid extends CompleteLister {
 		$func='formatRowContent_'.$datatype;
 		return $this->$func($id);
 	}
-	protected function formatRowContent_html($id){
-		$this->row_t->set($this->current_row);
-		return $this->rowRender($this->current_row);
-	}
-	protected function formatRowContent_ajax($id){
-		$result="";
-		foreach($this->columns as $name=>$column){
-			$result.=$this->current_row[$name]."<t>".$this->current_row[$name.'_original'].
-				// appending styles as structured string
-				"<t>".$this->getFieldStyle($name,$id).
-				"<row_end>";
-		}
-		return $result;
-	}
-	protected function formatRowContent_jquery($id){
-		$result=array();
-		$i=1;
-		foreach($this->columns as $name=>$column){
-			$result[$i]['data']=array('actual'=>$this->current_row[$name],
-				'original'=>$this->current_row[$name.'_original']);
-			$result[$i]['params']=$this->tdparam[$this->getCurrentIndex()][$name];
-			$i++;
-		}
-		$result=json_encode($result);
-		return $result;
-	}
-	function getColumns(){
-		return $this->columns;
-	}
+	*/
 	function getFieldStyle($field,$id){
 		/**
 		* Returns the structured string with row styles. Used along with getRowContent()

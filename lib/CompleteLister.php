@@ -50,6 +50,15 @@ class CompleteLister extends Lister {
 			$t->set($this->current_row);
 			$this->template->append('rows',$t->render());
 		}
+
+		// If partial reload is requested, then we only return rows, not the complete template
+		if($_GET[$this->name.'_reload_row']){
+			$r=$this->template->cloneRegion('rows')->render();
+			if($this->api->jquery)$this->api->jquery->getJS($this);
+			$e=new RenderObjectSuccess($r);
+			throw $e;
+		}
+
 		$this->output($this->template->render());
 	}
 	function setTRClass(){

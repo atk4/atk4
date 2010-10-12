@@ -72,10 +72,25 @@ $.each({
 		$('#'+form+' input[name='+form+'_'+field).focus();
 	},
 	closeExpander: function(){
-        $('.expander').atk4_expander('collapse');
+		var e=this.jquery.closest('.lister_expander').parent().prev().find('.expander');
+		if(!e.length)e=$('.expander');
+
+        e.atk4_expander('collapse');
 	},
 	closeExpanderWidget: function(){
 		this.closeExpander();
+	},
+	reloadExpandedRow: function(id){
+		if(!id)id=this.jquery.closest('.lister_expander').parent().prev().attr('rel');
+		this.closeExpander();
+		var g=this.jquery.closest('.atk4_grid');
+		g.atk4_grid('reloadRow',id);
+	},
+	removeExpandedRow: function(id){
+		if(!id)id=this.jquery.closest('.lister_expander').parent().prev().attr('rel');
+		this.closeExpander();
+		var g=this.jquery.closest('.atk4_grid');
+		g.atk4_grid('removeRow',id);
 	},
 	loadRegionUrlEx: function(id,url){
 		$('#'+id).load(url);

@@ -19,29 +19,35 @@ $.widget("ui.atk4_grid", {
 	base_url: undefined,
 	loading: false,
 
-	_init: function(){
+	_create: function(){
 		// If there are sortable things, sort them
-		var thead=this.element.find('thead');
 		var self=this;
+
+
+		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
+		if(this.options.base_url)this.base_url=this.options.base_url;
+		this.element.addClass('atk4_grid');
+		this.name=this.element.attr('id');
+
+
+		/*
+		var thead=this.element.find('thead');
 		thead.find('a').click(function(ev){
 			ev.preventDefault();
 			self.element.atk4_load({0:$(this).attr('href'),cut_object:self.element.attr('id')});
 
 
 		});
+		*/
 
 	},
 	init17: function(){
-		this.name=this.element.attr('id');
 
-		this.element.addClass('atk4_grid');
 
 
 		this.initTableContent();
 
 		//this.element.find('tbody').sortable();
-		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
-		if(this.options.base_url)this.base_url=this.options.base_url;
 
 
 		this.checkIfEmptyTable(false);
@@ -249,10 +255,10 @@ $.widget("ui.atk4_grid", {
 		//el.children().effect('highlight',{color: 'red'},1000);
 		var grid=this;
 		// causes problem!
-		//el.children().animate({'color':'white'}, function(){
+		el.children().animate({'color':'white'}, function(){
 			el.remove();
 			grid.checkIfEmptyTable(true);
-		//});
+		});
 	},
 
 	// Further is a series of functions which call ourselves to find out more information
@@ -290,17 +296,15 @@ $.widget("ui.atk4_grid", {
 
 		this.removeOverlay();
 
-		this.requestData({
-			'grid_action':'return_row',
-			'datatype':'html',
-			'id':id
-		},function(content){
+		var args={};
+		args[this.name+'_reload_row']=id;
+		this.requestData(args,function(content){
 			grid.element.find('tr[rel='+id+']').replaceWith(content);
 			var el=grid.element.find('tr[rel='+id+']');
-			el.children('td:last').remove();
-			el.find('td.grid_cell').click(function(){
-			   	grid.click($(this));
-			});
+			//el.children('td:last').remove();
+			//el.find('td.grid_cell').click(function(){
+			   	//grid.click($(this));
+			//});
 			if(fn)fn();else grid.highlightRow(id);
 		});
 	},

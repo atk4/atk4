@@ -29,7 +29,7 @@ abstract class Form_Field extends AbstractView {
 	public $comment='&nbsp;';
 	protected $disabled=false;
 	protected $mandatory=false;
-	protected $default_value=null;
+	public $default_value=null;
 
 	// Field customization
 	private $separator=':';

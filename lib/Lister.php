@@ -25,7 +25,25 @@ class Lister extends View {
 		$this->data=$data;
 		return $this;
 	}
+	function handlePartialRender(){
+
+		// If Partial render was requested though GET, then limit our output to those values only
+
+		if($ids=$_GET[$this->name.'_reload_row']){
+			// we were requseted to only show one row through AJAX request
+			if(is_array($this->data)){
+				$idsarr=explode(',',$ids);
+				$this->data=array_filter($this->data,function($var){
+					return in_array($var['id'],$idsarr);
+				});
+			}
+			if(isset($this->dq)){
+				$this->dq->where($this->dq->args['table'].'.id in',$ids);
+			}
+		}
+	}
 	function execQuery(){
+		$this->handlePartialRender();
 		$this->dq->do_select();
 	}
 	function formatRow(){
@@ -44,7 +62,9 @@ class Lister extends View {
 		return (bool)($this->current_row=$this->dq->do_fetchHash());
 	}
 
+
 	function render(){
+
 		while($this->fetchRow()){
 			$this->formatRow();
 			$this->template->set($this->current_row);
