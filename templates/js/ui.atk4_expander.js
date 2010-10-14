@@ -6,7 +6,7 @@
  */
 
 $.widget("ui.atk4_expander", {
-    _init: function() {
+    _create: function() {
         var self=this;
         this.element.bind("click.atk4_expander", function(event) { self.click(); });
         //this.element.click(function(){ alert($(this).expanded); $(this).expanded?$(this).collapse():$(this).expand(); });

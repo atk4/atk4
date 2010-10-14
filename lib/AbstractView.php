@@ -26,6 +26,11 @@ abstract class AbstractView extends AbstractObject {
 	public $spot;
 
 	/**
+	  * Support for output buffering
+	  */
+	public $output_buffer=null;
+
+	/**
 	 * Debug switch. Turn this on if you want this object to generate debug
 	 * information. Turn $api->debug to have all debug information
 	 */
@@ -70,7 +75,7 @@ abstract class AbstractView extends AbstractObject {
 						->loadTemplate($template_branch[0]);    // we'll use it as a file
 				}
 				// Now that we loaded it, let's see which tag we need to cut out
-				$this->template=$this->template->cloneRegion($template_branch[1]);
+				$this->template=$this->template->cloneRegion($template_branch[1]?:'_top');
 			}else{  // brach could be just a string - a region to clone off parent
 				if(isset($this->owner->template)){
 					$this->template=$this->owner->template->cloneRegion($template_branch);
@@ -85,7 +90,7 @@ abstract class AbstractView extends AbstractObject {
 		if(isset($template_spot)){
 			$this->spot=$template_spot;
 			if($this->owner && (isset($this->owner->template)) && (!empty($this->owner->template))){
-		$this->owner->template->del($template_spot);
+				$this->owner->template->del($template_spot);
 			}
 		}
 

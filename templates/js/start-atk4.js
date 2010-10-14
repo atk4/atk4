@@ -390,24 +390,6 @@ $.extend($.atk4,{
 
 });
 
-	/*
-$.fn.extend({
-	 moved to atk4_loader
-    atk4_load: function(url,fn){
-        $.atk4.load(this,url,fn);
-    },
-    atk4_reload: function(url,arg,fn){
-		if(arg){
-			$.each(arg,function(key,value){
-				url=$.atk4.addArgument(url,key+'='+value);
-			});
-		}
-        $.atk4_load(url,fn,true);
-    }
-});
-	*/
-
-
 })($);
 
 

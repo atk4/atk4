@@ -24,7 +24,9 @@ $.widget("ui.atk4_grid", {
 		var self=this;
 
 
-		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
+		var len=window.location.href.indexOf('#');
+		if(len<0)len=window.location.href.length;
+		this.base_url=window.location.href.substr(0,len);
 		if(this.options.base_url)this.base_url=this.options.base_url;
 		this.element.addClass('atk4_grid');
 		this.name=this.element.attr('id');
@@ -298,6 +300,13 @@ $.widget("ui.atk4_grid", {
 
 		var args={};
 		args[this.name+'_reload_row']=id;
+		args[0]=this.base_url;
+		grid.element.find('tr[rel='+id+']').atk4_load(args,function(){
+			if(fn)fn;else grid.highlightRow(id);
+
+		});
+		/*
+		replaceWith(content);
 		this.requestData(args,function(content){
 			grid.element.find('tr[rel='+id+']').replaceWith(content);
 			var el=grid.element.find('tr[rel='+id+']');
@@ -307,6 +316,7 @@ $.widget("ui.atk4_grid", {
 			//});
 			if(fn)fn();else grid.highlightRow(id);
 		});
+		*/
 	},
 	reload: function(){
 		var url=this.base_url;

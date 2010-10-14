@@ -54,6 +54,9 @@ class Grid extends CompleteLister {
 	*/
 	protected $tdparam=array();
 
+	public $js_widget='ui.atk4_grid';
+	public $js_widget_arguments=array();
+
 	function init(){
 		parent::init();
 		//$this->add('Reloadable');
@@ -78,14 +81,17 @@ class Grid extends CompleteLister {
 		if($descr===null)$descr=ucwords(str_replace('_',' ',$name));
 		$this->columns[$name]=array(
 				'type'=>$type,
-				'descr'=>$descr
 				);
+		if(is_array($descr))
+			$this->columns[$name]=array_merge($this->columns[$name],$descr);
+		else
+			$this->columns[$name]['descr']=$descr;
 
 		$this->last_column=$name;
 
 		$subtypes=explode(',',$type);
 		foreach($subtypes as $subtype){
-			if(method_exists($this,$m='init_'.$subtype))$this->$m($name);
+			if(method_exists($this,$m='init_'.$subtype))$this->$m($name,$descr);
 		}
 
 		return $this;
@@ -211,82 +217,37 @@ class Grid extends CompleteLister {
 			$this->current_row[$field]=$this->columns[$field]['descr'];
 		}
 	}
-	function format_inline_widget($field, $idfield='id'){
-		/*
-		$this->format_widget(
-				$field,
-				'inline',
-				array(
-					'width'=>'0',
-					'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
-					'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
-						array('expander'=>$field,
-							'cut_page'=>1,
-							'expanded'=>$this->name,
-							'id'=>$this->current_row[$idfield])
-						)
-					)
-				);
-
-		$this->current_row[$field]='';
-		*/
+	function format_expander_widget($field,$column){
+		return $this->format_expander($field,$column);
 	}
-	function format_expander_widget($field, $idfield='id'){
-		/*
-		$this->format_widget(
-				$field,
-				'expander',
-				array(
-					'id'=>$this->name.'_'.$field.'_'.$this->current_row[$idfield],
-					'rel'=>$this->api->getDestinationURL($this->api->page.'_'.$field,
-						array('expander'=>$field,
-							'cut_object'=>$this->api->page.'_'.$field,
-							'expanded'=>$this->name,
-							'id'=>$this->current_row[$idfield]
-							)
-						)
-					)
-				);
-				*/
+	function format_expander($field, $column){
 		$class=$this->name.'_'.$field.'_expander';
 		if(!$this->current_row[$field]){
-			$this->current_row[$field]=$this->columns[$field]['descr'];
+			$this->current_row[$field]=$column['descr'];
 		}
-//		.'<a class=" '.$class.' expander"
+		// TODO: 
+		// reformat this using Button, once we have more advanced system to bypass rendering of
+		// sub-elements.
+		// $this->current_row[$field]=$this->add('Button',null,false)
+		//  ->
+		//
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
-			id="'.$this->name.'_'.$field.'_'.$this->current_row[$idfield].'"
+			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?:'id'].'"
 			rel="'.$this->api->getDestinationURL($this->api->page.'/'.$field,
 						array('expander'=>$field,
 							'cut_page'=>1,
 							'expanded'=>$this->name,
-							'id'=>$this->current_row[$idfield]
+							'id'=>$this->current_row[$column['idfield']?:'id']
 							)
 						).'"
 			>'.$this->current_row[$field].'</button>';
 	}
 	function init_expander_widget($field){
-		$class=$this->name.'_'.$field.'_expander';
-		$this->js(true)->_selector('.'.$class)->atk4_expander();
+		return $this->init_expander($field);
 	}
 	function init_expander($field){
 		$class=$this->name.'_'.$field.'_expander';
-		$this->js(true)->_selector('.'.$class)->atk4_expander();
-	}
-	function format_expander($field, $idfield='id'){
-		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
-		$tdparam=array(
-			'id'=>$n,
-			'style'=>array(
-				'cursor'=>'pointer',
-				'color'=>'blue',
-				'white-space'=>'nowrap',
-			),
-			'onclick'=>$this->ajax()->openExpander($this,$this->current_row[$idfield],$field)->getString(),
-		);
-		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-		if(!$this->current_row[$field]){
-			$this->current_row[$field]='['.$this->columns[$field]['descr'].']';
-		}
+		$this->js(true)->_selector('.'.$class)->_load('ui.atk4_expander')->atk4_expander();
 	}
 	function _getFieldType($field){
 		return 'line';
@@ -302,31 +263,12 @@ class Grid extends CompleteLister {
 		* The point is to set an Id for each column of the row. To do this, we should
 		* set a property showing that id should be added in prerender
 		*/
-		/*
-		$col_id=$this->name.'_'.$field.'_inline';
-		$show_submit=$this->show_submit?'true':'false';
-		$tab_moves_down=$this->tab_moves_down?'true':'false';
-		//setting text non empty
-		$text=$this->current_row[$field]?$this->current_row[$field]:'null';
-		$tdparam=array(
-			'id'=>$col_id.'_'.$this->current_row[$idfield],
-			'style'=>array(
-				'cursor'=>'hand'
-			),
-			'title'=>$this->current_row[$field.'_original']
-		);
-		$this->tdparam[$this->getCurrentIndex()][$field]=$tdparam;
-		$this->current_row[$field]=$this->ajax()->ajaxFunc(
-			'inline_show(\''.$this->name.'\',\''.$col_id.'\','.$this->current_row[$idfield].', \''.
-			$this->api->getDestinationURL(null, array(
-			'cut_object'=>$this->api->page, 'submit'=>$this->name)).
-			'\', '.$tab_moves_down.', '.$show_submit.')'
-		)->getLink($text);
-		*/
 		$val=$this->current_row[$field];
 		$this->current_row[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
 			$this->current_row['id']).'" >'.
-			$this->current_row[$field].'<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i></span>';
+			'<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i>'.
+			$this->current_row[$field].
+			'</span>';
 		$this->js(true)->_selector('#'.$s)->click(
 				$this->js()->_enclose()->_selectorThis()->parent()->atk4_load($this->api->getDestinationURL(null,array($s=>true)))
 				);
@@ -360,27 +302,6 @@ class Grid extends CompleteLister {
 			)
 		);
 		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
-	}
-	function format_reload($field,$args=array()){
-		/**
-		* Useful for nested Grids in expanders
-		* Formats field as a link by clicking on which the whole expander area
-		* is reloaded by specified page contents.
-		* Page address is similar to expander field
-		*
-		* To return expander's previous content see Ajax methods:
-		* - Ajax::reloadExpander()
-		* - Ajax::reloadExpandedRow()
-		* - Ajax::reloadExpandedField()
-		*
-		* WARNING!
-		* As these Ajax methods use the current $_GET['id'] value to return
-		* the previuos expander state, clicked row ID is passed through $_GET['row_id']
-		*/
-		$this->current_row[$field]='<a href="javascript:void(\''.$this->current_row['id'].'\')" ' .
-			'onclick="'.$this->ajax()
-			->reloadExpander($this->api->page.'_'.$field,array('row_id'=>$this->current_row['id']))
-			->getString().'"><u>'.($this->current_row[$field]==null?$field:$this->current_row[$field]).'</u></a>';
 	}
 	function format_link($field){
 		$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
@@ -588,7 +509,7 @@ class Grid extends CompleteLister {
 			$formatters = explode(',',$column['type']);
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_".$formatter)){
-					$this->$m($tmp);
+					$this->$m($tmp,$column);
 				}else throw new BaseException("Grid does not know how to format type: ".$formatter);
 			}
 			// setting cell parameters (tdparam)
@@ -745,6 +666,12 @@ class Grid extends CompleteLister {
 
 	}
 	function render(){
+
+		if($this->js_widget){
+			$fn=str_replace('ui.','',$this->js_widget);
+			$this->js(true)->_load($this->js_widget)->$fn($this->js_widget_arguments);
+		}
+
 		if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
 			$def_template = $this->defaultTemplate();
 			//$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
