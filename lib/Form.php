@@ -359,7 +359,7 @@ class Form extends AbstractView {
 
 		if($this->js_widget){
 			$fn=str_replace('ui.','',$this->js_widget);
-			$this->js(true)->_load($this->js_widget)->find('form')->$fn($this->js_widget_arguments);
+			$this->js(true)->_load($this->js_widget)->$fn($this->js_widget_arguments);
 		}
 
 		if(isset($this->template_chunks['custom_layout'])){

@@ -658,7 +658,6 @@ class Form_Field_Radio extends Form_Field_ValueList {
 					$this->attr,
 					$attr
 				))
-				.$this->getTag('/input')
 				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
 		}
 		$output .= '</div>';

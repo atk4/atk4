@@ -2,57 +2,64 @@
 
 // The following HTML structure should be used:
 //
-// <form action="url">     <!-- binding to this element -->
+// <div id='formid'>     <!-- binding to this element -->
+// <form action="url">
 //   ..
-//     <input type=> <!-- could be any type really -->
-//     <input type=> <!-- could be any type really -->
-//     <input type=> <!-- could be any type really -->
 //
-//	 <img class="form_loading">
 //
+//   <... class='atk-field'>
+//     <input id='formid_fieldid' type=> <!-- could be any type really -->
+//     field, etc
+//   </...>
+//   <error inserts here
+//
+//   ..repeats..
+//
+//   <div class="field-error-template" style="display: none"> .<span class="field-error-text">error template</span> </div>
+// </form>	
+//</div>
 
 $.widget("ui.atk4_form", {
 
+	form: undefined,
+	id: undefined,
+
 	submitted: undefined,
 	base_url: undefined,
-	loader: undefined,
 	loading: false,
 	plain_submit: false,
 
+	template: {},
+
 	_getChanged: function(){
-		return this.element.hasClass('form_changed');
+		return this.form.hasClass('form_changed');
 	},
 	_setChanged: function(state){
-		if(state)this.element.addClass('form_changed');else this.element.removeClass('form_changed');
+		if(state)this.form.addClass('form_changed');else this.form.removeClass('form_changed');
 	},
 
-    _create: function(options){
-        $.extend(this.options,options);
-        var form=this;
+    _create: function(){
+		var self=this;
+
+		this.id=this.element.attr('id');
+		this.form=this.element;
+
+		// If we are not being bound to form directly, then find form inside ourselves
+		if(!this.form.is('form'))this.form=this.form.find('form');
 
 
-		/*
-		form.loader=this.element.parents('.atk4_loader');
-		if(form.loader.length){
-			form.loader.bind('atk4_loaderbeforeclose.'+form.element.attr('id'),function(event){
-				event.stopPropagation();
-				if(form._getChanged() && !confirm('Are you sure? Form '+form.element.attr('id')+' changes will be lost!'))return false;
-			});
-		}
-		*/
+		this.form.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
+		this.form.addClass('atk4_form');
 
-		this.element.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
-		this.element.addClass('atk4_form');
-
-		this.element.find('input').bind('keypress',function(e){
+		this.form.find('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
 			if(e.keyCode==13){
 				$(this).trigger('change');
-				$(this).closest('form').submit();
+				self.submitForm();
 				return false;
 				}
 		});
-		this.element.find(':input').each(function(){
+		this.form.find(':input').each(function(){
 			if($(this).attr('type')=='checkbox')
 				$(this).attr('data-initvalue',$(this).attr('checked'))
 			else
@@ -66,31 +73,37 @@ $.widget("ui.atk4_form", {
 			}else {
 				$(this).attr('data-initvalue',$(this).val());
 			}
-			form._setChanged(true);
+			self._setChanged(true);
 		});
 
-		this.element.find('input[type=radio]').click(function(){
-			form._setChanged(true);
+		this.form.find('input[type=radio]').click(function(){
+			self._setChanged(true);
 		}).change(function(){
-			form._setChanged(true);
+			self._setChanged(true);
 		});;
 
-		this.overlay_prototype=this.element.find('.form_iedit');
+		// This class defines field error template
+		// <div class="field-error-template"> .. <span class="field-error-text">..</span></div>
 
-		this.element.submit(function(e){
+		// The following markup is using to show that form field contains errors.
+		this.template['field_error']=this.element.find('.field-error-template').remove()
 
-			if(form.plain_submit){
-				form.plain_submit=false;
+		this.form.submit(function(e){
+
+			if(self.plain_submit){
+				self.plain_submit=false;
 				return;// executes default action
 			}
 
 			e.preventDefault();
-			form.submitForm();
+			self.submitForm();
 		});
 
-		this.element.find('.form_error').remove();
+		//this.element.find('.form_error').remove();
 
-		this.element.find('input[type=submit]').each(function(){
+		/*
+		-- obsolete code
+		this.form.find('input[type=submit]').each(function(){
 			var a=$('<a class="gbutton button_style1"></a>');
 			var s=$(this);
 			a.text(s.attr('value'));
@@ -100,6 +113,7 @@ $.widget("ui.atk4_form", {
 			$(this).after(a);
 			s.remove();
 		});
+		*/
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
 		if(this.options.base_url)this.base_url=this.options.base_url;
     },
@@ -107,16 +121,13 @@ $.widget("ui.atk4_form", {
 		// Disable AJAX handling, perform submit to a specified target then restore functionality.
 		// This function is used by file upload
 		this.plain_submit=true;
-		this.element.trigger('submit');
+		this.form.trigger('submit');
 	},
 	destroy: function(){
-		form=this;
-		if(form.loader){
-			form.loader.unbind('atk4_loaderbeforeclose.'+form.element.attr('id'));
-		}
+		// TODO: need to unbind things
 	},
 	setFieldValue: function(field_name,value){
-		var f=$('#'+this.element.attr('id')+'_'+field_name);
+		var f=$('#'+this.id+'_'+field_name);
 
 		if(!f.length){
 			console.log('Unable to find field ',field_name,' and fill in ',value);
@@ -135,10 +146,10 @@ $.widget("ui.atk4_form", {
 				return;
 			}
 
-			var form=this;
+			var self=this;
 
 			this.reloadField(field_name,function(){
-				var f=$('#'+form.element.attr('id')+'_'+field_name);
+				var f=$('#'+self.id+'_'+field_name);
 				var opt=f.find('option[value='+value+']');
 				if(opt.length){
 					f.val(value).change().trigger('change_ref');
@@ -152,11 +163,11 @@ $.widget("ui.atk4_form", {
 		f.val(value).change();
 	},
 	reloadField: function(field_name,url,fn,notrigger){
-		var field_id=this.element.attr('id')+'_'+field_name;
+		var field_id=this.id+'_'+field_name;
 		if(!url)url=this.base_url;
 		console.log('Field reloading: ',field_name);
 
-		url=$.atk4.addArgument(url,this.element.attr('id')+'_cut_field',field_id);
+		url=$.atk4.addArgument(url,this.id+'_cut_field',field_id);
 		var f=$("#"+field_id);
 
 		if(!notrigger)f.trigger('reload_field');
@@ -168,19 +179,24 @@ $.widget("ui.atk4_form", {
 
 
 		//}
-		console.log('url=',url,f[0]);
 		var c=this._getChanged();this._setChanged(false);
 		f.atk4_load(url,fn);
 		this._setChanged(c);
 	},
 	fieldError: function(field_name,error){
+
+		if(this.options.error_handler){
+			// Allows you to define custom error display handler
+			return this.options.error_handler(field_name,error);
+		}
+
 		var field=
 			typeof(field_name)=='string'?
-				$('#'+this.element.attr('id')+'_'+field_name):
+				$('#'+this.id+'_'+field_name):
 				field_name;
 
 		if(!field.length){
-			field=this.element.find('[name="'+field_name+'"]');
+			field=this.form.find('[name="'+field_name+'"]');
 		}
 		if(!field.length){
 			alert('Field not found: '+field_name+', error is: '+error);
@@ -189,53 +205,55 @@ $.widget("ui.atk4_form", {
 
 		if(!error || error=='0')error="must be specified properly";
 
+
 		field.focus();
-		if(this.options.useTipTip){
-			// First - we need to include the sucker
-			$.atk4.includeJS("/amodules3/templates/js/tipTipv13/jquery.tipTip.js");
-			$.atk4.includeCSS("/amodules3/templates/js/tipTipv13/tipTip.css");
 
-			$.atk4(function(){
-				field.closest('.form_field').attr('title',error).tipTip({'color':'red'}).mouseenter();
-			});
-			return;
-		}
-
-		field.closest('.form_field').find('.field_hint').hide();
+		//field.closest('.form_field').find('.field_hint').hide();
 		field.closest('form').find('.field_error').remove();
 
-		var h;
-
 		// highlight field
-		var block=field.closest('.atk-field').addClass('field_has_error');
+		var field_highlight=field.closest('.atk-field').addClass('field_has_error');
 
 		// Clear previosu errors
-		while(block.next().is('.atk-error'))block.next().remove();
+		while(field_highlight.next().is('.atk-error'))field_highlight.next().remove();
 
+		var error_bl=this.template['field_error'].clone();
+		error_bl.find('.field-error-text').text(error);
+		error_bl.insertAfter(field_highlight).fadeIn();
+
+		this.form.addClass('form_has_error');
+
+		/*
 		h=$(//'<div class="clear"></div><span class="form_error"><i></i>'+error+'</span>');
 		 '<dd class="atk-error"><div class="ui-state-error ui-corner-all"><span class="ui-icon"></span>'+
-			 error+'</div></dd>').insertAfter(block);
+			 error+'</div></dd>').insertAfter(field_highlight);
+		*/
 
-		h.click(function(){ $(this).prev().removeClass('field_has_error'); $(this).remove(); });
+		error_bl.click(function(){ field_highlight.removeClass('field_has_error'); error_bl.remove(); });
 
+		var self=this;
 
 		// make it remove error automatically when edited
 		field.bind('change.errorhide',function(){
 			var t=$(this);
 			t.unbind('change.errorhide');
-			var block=t.closest('.atk-field').removeClass('field_has_error').next('.atk-error').remove();
+
+			self.form.removeClass('form_has_error');
+			field_highlight.removeClass('field_has_error');
+			error_bl.fadeOut(function(){ error_bl.remove(); });
 		});
 	},
 	clearError: function(field){
-		if(!field){
-			field=this.element.find('.form_has_error');
+		if(field){
+			field=field.closest('.field_has_error');
 		}else{
-			field=field.closest('.form_has_error');
+			field=this.form.find('.field_has_error');
 		}
 
-		field.closest('.form_field').find('.field_hint').hide();
-		field.closest('dl,td').find('.form_error').remove();
-		field.removeClass('form_has_error');
+		field.nextAll('.atk-error').fadeOut(function(){ $(this).remove(); });
+		field.removeClass('field_has_error');
+
+		if(!this.form.find('.field_has_error').length)this.form.removeClass('form_has_error');
 	},
 	submitForm: function(btn){
 		var params={}, form=this;
@@ -258,7 +276,7 @@ $.widget("ui.atk4_form", {
 
 		var properties={
 			type: "POST",
-			url: this.element.attr('action')
+			url: this.form.attr('action')
 		};
 
 		form.loading=true;
