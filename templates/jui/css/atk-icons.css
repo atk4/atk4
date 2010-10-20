@@ -1,4 +1,4 @@
-.atk-icon {display:inline-block;height:16px;width:16px;position:relative;margin-right:0.4em;top:2px;}
+.atk-icon {display:inline-block;height:16px;width:16px;position:relative;margin-right:0.4em;top:.25em;}
 .atk-icon.atk-icon-right {margin-left:0.4em;margin-right:0;}
 
 .atk-icons-red {background-image:url(../images/atk-icons/atk-icons-red.png);}
