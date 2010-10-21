@@ -18,7 +18,7 @@ class Page_EntityManager extends Page {
 	function init(){
 		parent::init();
 		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
-		$this->c=$this->add($this->controller);
+		if(!$this->c)$this->c=$this->add($this->controller);
 	}
 
 	function initMainPage(){
