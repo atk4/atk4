@@ -45,7 +45,12 @@ $.widget("ui.atk4_form", {
 		this.form=this.element;
 
 		// If we are not being bound to form directly, then find form inside ourselves
-		if(!this.form.is('form'))this.form=this.form.find('form');
+		if(!this.form.is('form')){
+			this.form=this.form.find('form');
+			this.element.bind('submit',function(){
+				self.submitForm();
+			});
+		}
 
 
 		this.form.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
