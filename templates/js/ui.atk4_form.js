@@ -96,6 +96,7 @@ $.widget("ui.atk4_form", {
 		this.form.submit(function(e){
 
 			if(self.plain_submit){
+				e.stopPropagation();
 				self.plain_submit=false;
 				return;// executes default action
 			}

@@ -20,6 +20,7 @@ $.widget("ui.atk4_uploader", {
 
     _init: function(){
 		var self=this;
+		if(!this.options.form)this.options.form="#"+closest('form').parent().attr('id');
 		this.name=this.element.attr('id');
 
 		if(this.options.flash){
@@ -63,8 +64,10 @@ $.widget("ui.atk4_uploader", {
 
 	},
 	upload: function(){
-		var f=this.element.closest('form');
-		var oa=f.attr('action');
+		var form_wrapper=$(this.options.form);
+		var form=form_wrapper.find('form');
+		var oa=form.attr('action');
+
 
 
 		// add dynamically if it's missing
@@ -76,10 +79,13 @@ $.widget("ui.atk4_uploader", {
 		var g=$('<div class="atk-loader" id="'+this.name+'_progress"><i></i>Uploading '+this.element.val()+'</div>').
 		insertBefore(this.element);
 
-		f
+		form
 		.attr('action',oa+'&'+this.element.attr('name')+'_upload_action='+this.name)
-		.attr('target',this.name+"_iframe")
-		.atk4_form('submitPlain')
+		.attr('target',this.name+"_iframe");
+
+		form_wrapper.atk4_form('submitPlain');
+
+		form
 		.removeAttr('target')
 		.attr('action',oa)
 		;
@@ -169,7 +175,7 @@ $.widget("ui.atk4_uploader", {
 		//$('#'+this.name+'_token').val(data.id);
 	},
 	uploadFailed: function(message){
-		this.element.closest('form').atk4_form('fieldError',this.element,message);
+		$(this.options.form).atk4_form('fieldError',this.element,message);
 		$('#'+this.name+'_progress').remove();
 		this.element.next().show()
 		this.element.remove();

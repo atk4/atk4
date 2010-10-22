@@ -247,6 +247,7 @@ class Form_Field_Upload extends Form_Field {
 			$options['multiple']=$this->multiple;
 		}
 		if($this->mode!='simple'){
+			$options['form']=$this->owner;
 			$this->js(true)->_load('ui.atk4_uploader')->atk4_uploader($options);
 		}
 
