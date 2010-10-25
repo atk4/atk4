@@ -19,6 +19,8 @@ class System_HTMLSanitizer extends AbstractController {
 		// First HTML may use badly written templates, such as <li> without closing them off.
 		// We are using DOMDocument to convert them into valid XML
 
+		if(!$html_string)return '';
+
 		$html=new DOMDocument();
 		libxml_use_internal_errors(true);
 		$html->loadHTML($html_string);
