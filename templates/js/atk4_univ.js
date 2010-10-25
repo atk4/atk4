@@ -481,6 +481,71 @@ autoChange: function(interval){
 	}
 	//f.change(onchange);
 	f.keyup(onkeyup);
+},
+bindConditionalShow: function(conditions,tag){
+	// Warning
+	//   this function does not handle recursive cases,
+	//   when element A hides element B which should also hide
+	//   element C. You may end up with B hidden and C still showing.
+	var f=this.jquery;
+	if(!tag)tag='div';
+
+	var sel=function(name){
+		var s=[]
+		var fid=f.closest('form').attr('id');
+		$.each(name,function(){
+			s.push($(a='#'+fid+'_'+this)[0]);
+			console.log('looking for ',a);
+		});
+		s=$(s);
+		console.log('chain length=',s.length);
+		return s.closest(tag);
+	}
+
+	var ch=function(){
+		var v=f.val();
+		if(f.is(':checkbox'))v=f[0].checked?v:'';
+		if(f.is('select')){
+			v=f.find('option[selected]').val();
+		}
+		console.log('value=',v);
+
+		// first, lets hide everything we can
+		$.each(conditions,function(k,x){
+			s=sel(this);
+			if(s.length){
+				console.log('hidinh',this);
+				s.hide();
+			}
+		});
+
+		console.log('looking for exact match in ',conditions,' for ',v);
+		// Next, let's see if there is an exact match for that
+		var exact_match=null;
+		if(typeof conditions[v] != 'undefined'){
+			console.log('direct match found ',conditions[v]);
+			exact_match=sel(conditions[v]);
+		}else if(typeof conditions['*'] != 'undefined'){
+			// catch-all value exists
+			console.log('catchall match found ',conditions['*']);
+			exact_match=sel(conditions['*']);
+		}
+
+		console.log('done looking for matchh');
+		if(exact_match && exact_match.length){
+			console.log('showing',exact_match.length,'elements');
+			exact_match.show();
+		}
+	}
+	if(f.hasClass('field_reference')){
+		f.bind('change_ref',ch);
+	}else{
+		if (f.is(':checkbox') && (jQuery.browser.msie && parseInt(jQuery.browser.version) <= 7)) {
+			f.click(ch)
+		}else f.change(ch);
+	}
+	ch();
+	//console.log(conditions);
 }
 
 },$.univ._import
