@@ -43,6 +43,7 @@ class PathFinder extends AbstractController {
 			'php'=>'lib',
 			'page'=>'page',
 			'template'=>'templates/'.$this->api->skin,
+			'xslt'=>'templates/xslt',
 			'mail'=>'templates/mail',
 			'js'=>'templates/js',
 			'banners'=>'banners',
@@ -57,12 +58,17 @@ class PathFinder extends AbstractController {
 		$atk_url=basename($atk_directory);
 
 		$this->atk_location=$this->addLocation('amodules3',array(
-			'docs'=>'',	// files like README, COPYING etc
-			'images'=>'img',
 			'php'=>'lib',
+			// page: for security reasons no pages are allowed
+			'docs'=>'',	// files like README, COPYING etc
+			'template'=>array('templates/'.$this->api->skin,'templates'=>'templates/shared'),
+			'xslt'=>'templates/xslt',
+			// mail templates are not provided
 			'js'=>'templates/js',
+
+			// TODO: check that the folowing two are actually being used
+			'images'=>'img',
 			'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
-			'template'=>array('templates/'.$this->api->skin,'templates'=>'templates/shared')
 			))
 		->setBasePath(dirname(dirname(__FILE__)))
 		->setBaseURL($this->api->getConfig('atk/base_path','/amodules3/'))

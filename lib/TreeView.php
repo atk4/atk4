@@ -228,7 +228,8 @@ class TreeView extends Lister{
 					'ec_action'=>$expand?'expand':'collapse'
 				))."')";
 			;
-			$button='<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
+			$button='<i class="atk-icon atk-icons-red atk-icon-arrows-'.($extend?'right':'bottomright').'"></i>';
+				<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
 				'id="button_'.$id.'"'.
 				' onclick="'.$onclick.'">';
 		}else return '';

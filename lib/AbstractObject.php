@@ -78,6 +78,8 @@ abstract class AbstractObject {
 		if (!$short_name)
 			$short_name = strtolower($class);
 
+		$short_name=$this->_unique($this->elements,$short_name);
+
 		if (isset ($this->elements[$short_name])) {
 			if ($this->elements[$short_name] instanceof AbstractView) {
 				// AbstractView classes shouldn't be created with the same name. If someone
@@ -390,4 +392,21 @@ abstract class AbstractObject {
 	function ajax($instance=false){
 		throw new BaseException("You can call js() or ajax() only for Views (derived from AbstractView)");
 	}
+	/*
+	   DO NOT USE THIS FUNCTION, it might relocate
+
+	   This funcion given the associative $array and desired new key will return
+	   the best matching key which is not yet in the arary. For example if you have
+	   array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'. If 
+	   'foo_2' key also exists in that array, then 'foo_3' is returned and so on.
+	   */
+    function _unique(&$array,$desired=null){
+        $postfix=1;$attempted_key=$desired;
+        while(isset($array[$attempted_key])){
+            // already used, move on
+            $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
+        }       
+        return $attempted_key;
+    }
+	
 }
