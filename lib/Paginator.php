@@ -23,7 +23,6 @@ class Paginator extends AbstractView {
 		$this->grabTemplateChunk('cur_item');
 		$this->grabTemplateChunk('separator');
 		$this->grabTemplateChunk('next');
-
 		$this->skip=$this->learn('skip',
 				$_GET[$this->name.'_skip'])+0;
 
@@ -157,16 +156,19 @@ class Paginator extends AbstractView {
 			$this->output($this->linkNoTemplate($n,array($this->name.'_skip'=>($n-1)*$this->ipp)));
 		}
 	}
+    function linkUrl($url_args = array()){
+        return $this->api->getDestinationURL(null, $url_args);
+    }
 	function link($chunk,$url_args,$tpl_args=array()){
 		$this->template_chunks['link']->set(array(
-											'link_url'=>$this->api->getDestinationURL(null,$url_args),
+											'link_url'=>$this->linkUrl($url_args),
 											'link_text'=>$this->template_chunks[$chunk]->set($tpl_args)->render()
 										   ));
 		return $this->template_chunks['link']->render();
 	}
 	function linkNoTemplate($text,$url_args,$tpl_args=array()){
 		$this->template_chunks['link']->set(array(
-											'link_url'=>$this->api->getDestinationURL(null,$url_args),
+											'link_url'=>$this->linkUrl($url_args),
 											//'region'=>$this->region,
 											'link_text'=>$text
 										   ));

@@ -291,5 +291,9 @@ function htmlize_exception($e,$msg){
 	function htmlentities_utf8($string, $quote_style = ENT_COMPAT, $charset='UTF-8'){
 		return htmlentities($string,$quote_style,$charset);
 	}
+};if(!function_exists('__')){
+	function __($string){
+		return $string;
+	}
 }
 

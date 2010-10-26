@@ -213,8 +213,8 @@ class BasicAuth extends AbstractController {
 		unset($_GET['submit']);
 		unset($_GET['page']);
 	}
-	function login($username){
-		$this->loggedIn($username,$this->allowed_credintals[$username]);
+	function login($username,$memorize=false){
+		$this->loggedIn($username,$this->allowed_credintals[$username],$memorize);
 	}
 	function loginRedirect(){
 

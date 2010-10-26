@@ -280,4 +280,11 @@ class DBlite_mysql extends DBlite {
 		return $this->realQuery('RELEASE SAVEPOINT '.$identifier);
 	}
 
+	/**
+	 * Retturns true if specified table has this field
+	 */
+	function tableHasField($table,$field){
+		$d=$this->getAssoc("desc $table");
+		return in_array($field,array_keys($d));
+	}
 }

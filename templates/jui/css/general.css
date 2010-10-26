@@ -41,3 +41,15 @@ div#header {
 }
 
 /* ferre - sort this out */
+.atk-loader {display:inline-block;background:#eee;border:1px solid #ccc;padding:.3em .6em;border-radius:10px;-moz-border-radius:10px;-webkit-border-radius:10px;text-transform:uppercase;text-shadow:0 1px 0 #fff;font-size:80%;}
+.atk-loader>i {background:url(../images/loader.gif);width:16px;height:16px;float:left;position:relative;top:-0.2em;margin-right:0.5em;}
+
+.tree,.tree ul,.tree li {list-style:none;margin:0;padding:0;zoom:1;}
+.tree ul {margin-left:2em;}
+.tree li a {color:#555;padding:.1em 7px .1em 27px;display:block;text-decoration:none;border:2px dashed #fff;background:url(../images/icon-file.gif) 5px 50% no-repeat;}
+.tree li a.tree-parent {background:url(../images/icon-folder-open.gif) 5px 50% no-repeat;}
+.tree li a.tree-parent-collapsed {background:url(../images/icon-folder.gif) 5px 50% no-repeat;}
+.tree li a:hover,.tree li a.tree-parent:hover,.tree li a:focus,.tree li a.tree-parent:focus,.tree li a.tree-item-active {color:#000;border:2px solid#ebeded;background-color:#fafafa;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px;}
+.tree li a:focus,.tree li a.tree-parent:focus,.tree li a.tree-item-active {border:2px solid #5F5964;;background-color:#f2fafd;}
+.tree ul.tree-group-collapsed {display:none;}
+

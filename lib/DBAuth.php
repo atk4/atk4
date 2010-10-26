@@ -101,7 +101,7 @@ class DBAuth extends BasicAuth{
 	function encrypt($str){
 		return $this->encryptPassword($str);
 	}
-	function login($username){
+	function login($username,$memorize=false){
 		// in order to store proper data performing verification
 		$password=$this->api->db->dsql()->table($this->table)
 			->where($this->name_field,$username)
@@ -109,7 +109,7 @@ class DBAuth extends BasicAuth{
 			->do_getOne();
 		if($this->verifyCredintials($username,$password)){
 			$this->memorize('info',$this->info);
-			$this->loggedIn($username,$password);
+			$this->loggedIn($username,$password,$memorize);
 		}
 	}
 	function addSignupProcessor($class_name='Auth_SignupProcessor'){

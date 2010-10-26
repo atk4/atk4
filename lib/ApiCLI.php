@@ -4,7 +4,7 @@ class ApiCLI extends AbstractView {
 	protected $config = null;     // use getConfig method to access this variable
 	public $logger=null;	// TODO: protect this
 	protected $pathfinder_class='PathFinder';
-	public $skin = null;      // skin used to render everything
+	public $skin='jui';	// for PathFinder not to produce warnings
 
 
 	function __construct($realm=null){
