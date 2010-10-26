@@ -488,16 +488,24 @@ bindConditionalShow: function(conditions,tag){
 	//   when element A hides element B which should also hide
 	//   element C. You may end up with B hidden and C still showing.
 	var f=this.jquery;
-	if(!tag)tag='div';
+	if(typeof tag == 'undefined')tag='div';
 
 	var sel=function(name){
 		var s=[]
 		var fid=f.closest('form').attr('id');
 		$.each(name,function(){
-			s.push($(a='#'+fid+'_'+this)[0]);
+			var dom=$(a='#'+fid+'_'+this)[0];
+			if(dom){
+				s.push(dom);
+			}else{
+				console.log("Field is not defined",a);
+			}
 		});
 		s=$(s);
-		return s.closest(tag);
+		if(tag){
+			s=s.closest(tag);
+		}
+		return s;
 	}
 
 	var ch=function(){
