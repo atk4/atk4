@@ -1,0 +1,55 @@
+Welcome to Agile Toolkit
+
+This is a mini-project which will help you get started. 
+
+REQUIREMENTS
+
+ - Apache web server
+ - PHP5.2 + 
+ - Linux, Unix or MacOSX preferably, Windows is also supported.
+   (we recommend using MAMP on MacOSX or WAMP on Windows)
+
+INSTALLATION
+
+1. Unpack this archive [done]
+2. Move this directory inside a webroot on your webserver or subdirectory
+3. Create a database and import doc/agileproject.001.sql 
+4. Edit config.php file
+ 4a. update DSN with your mysql settings
+ 4b. update base_path to the location, where atk directory is located.
+   ( if you installed into webroot, you can leave it as-is )
+
+5. On UNIX go into /doc/ and execute "update.sh" which will upgrade your
+ database. On Windows you will have to import doc/dbupdates/ manually.
+
+
+NEXT STEPS
+
+Congrutilations! However you have only started. Agile Toolkit is an
+amazing platform to write your own web software. 
+
+By doing steps above you have achieved the following:
+ - integrated jQuery and jQuery UI
+ - added template engine
+ - added a powerful MVC engine
+ - created database for your users and another sample database for projects
+ - installed system for incremental database upgrades
+ - added first model and a couple of sample pages
+ - configured pretty-urls and mod_rewrite
+
+But that's just a beginning. Agile Toolkit is about result and
+helping you create things faster. Visit this site to learn how to build
+things with Agile Toolkit
+
+http://www.atk4.com
+
+LICENSING
+
+Agile Toolkit is distributed under terms of General Public License v3. 
+You are free to use it without limitations in your projects as long as your
+own projects are using General Public License as well. If you wish to
+use Agile Toolkit in a commercial product, please contact us at
+
+atk@agiletech.ie
+
+Thank you and enjoy web development.
