@@ -142,7 +142,7 @@ class Logger extends AbstractController {
 
 	public $log_dir;                // Directory where logs are created. It should be
 									// used solely by AModules3. If not set, then
-									// /var/log/amodules3/<realm> will be used.
+									// /var/log/atk4/<realm> will be used.
 									//
 									// You can change in $config['logger']['log_dir']
 
@@ -182,7 +182,7 @@ class Logger extends AbstractController {
 
 		if($this->log_output){
 			$this->log_dir=$this->api->getConfig('logger/log_dir',
-					"/var/log/amodules3/".$this->api->name);
+					"/var/log/atk4/".$this->api->name);
 			$this->openLogFile('error');
 			$this->openLogFile('debug');
 			$this->openLogFile('info');
@@ -478,7 +478,7 @@ class Logger extends AbstractController {
 				}
 			}
 
-			if(($sh==null && strpos($bt['file'],'/amodules3/lib/')===false) || (!is_int($sh) && $bt['function']==$sh)){
+			if(($sh==null && strpos($bt['file'],'/atk4/lib/')===false) || (!is_int($sh) && $bt['function']==$sh)){
 				$sh=$n;
 			}
 

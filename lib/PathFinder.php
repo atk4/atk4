@@ -30,7 +30,7 @@ class PathFinder extends AbstractController {
 
 	function addDefaultLocations(){
 		// Typically base directory is good for includes,
-		// but amodules3/ can also contain some data
+		// but atk4/ can also contain some data
 
 		// Primary search point is the webroot directory. We are defining
 		// those so you don't have to
@@ -57,7 +57,7 @@ class PathFinder extends AbstractController {
 		$atk_directory=dirname(dirname(__FILE__));
 		$atk_url=basename($atk_directory);
 
-		$this->atk_location=$this->addLocation('amodules3',array(
+		$this->atk_location=$this->addLocation('atk4',array(
 			'php'=>'lib',
 			// page: for security reasons no pages are allowed
 			'docs'=>'',	// files like README, COPYING etc
@@ -71,7 +71,7 @@ class PathFinder extends AbstractController {
 			'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
 			))
 		->setBasePath(dirname(dirname(__FILE__)))
-		->setBaseURL($this->api->getConfig('atk/base_path','/amodules3/'))
+		->setBaseURL($this->api->getConfig('atk/base_path','/atk4/'))
 		;
 	}
 
