@@ -1,53 +1,82 @@
 ===============================================================================
-                    Web Administration library AModules3
-                    Website: http://adevel.com/amodules3
-    Copyright (C) 1999-2005 romans@adevel.com and contributors
+					Agile Toolkit 4
+                    Web Interface Library and MVC Framework
+                    www.atk4.com
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+    Copyright (C) 1999-2010 Agile Technologies Limited
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This library is available under GPL or Commercial license
 ===============================================================================
 
 1. About
 
- AModules3 library is aimed to help development of administration systems,
- web pages, web portals, web systems and other web applications. It provides
- a flexible and extendable framework to simplify application development and
- maintenance.
+Agile Toolkit 4 focuses on a quick development of Web Software
 
-2. What's new in AModules3
+It consists from ATK4 Core and Interafce Library.
+ 
+ATK4 Core
+ - Base Object Oriented PHP5.3 framework
+ - Template Engine
+ - Model support
+ - Database drivers
+ - jQuery / AJAX integration
+ - Multi-API for different deployments
+ - Database management, update framework, dynamic SQL
+ - Plugin suport
+ - many more
+ 
+Interface Library
+ - Forms (Many field formats, conditions, validation, native AJAX)
+ - Grids (Pagination, Searches, native AJAX)
+ - Lists (customizable)
+ - Menues
+ - Pages
+ - Trees
+ - many more
 
- Version 3 brings complete rewrite of the library and now targets much wider
- range of web applications. Major new improvements include:
-  - Template support through SMlite
-  - Flexible and modular API system
-  - PHP5+ (using exceptions and other new features)
-  - AJAX support, many other improvements
+2. Why?
 
-3. Licensing
+Agile Toolkit focuses on a quick start and continious project development.
+Main concepts which differs it from other frameworks are:
 
- lib/       Code of AModules3 is licensed under terms of LGPL
- samples/   Samples are public domain unless they cary different LICENSE
- doc/       Docs are licensed under terms of GPL
- templates/ Templates and images are public domain
- ajax.js    JavaScript code is under terms of GPL
+ - Lazy development. Write less code, get more results.
+ - Native jQuery UI integration. Really easy to use 3rd party plugins.
+ - Develop highly AJAXified web, with almost no JavaScript use.
+ - No code duplication. No shell scripts for creating file copies.
+ - Only create files (php, templates, js) when you really need them.
+ - Complete interface control, bind JS to PHP objects.
+ - Add + Configure your objects. ATK will link and render them.
+   (this concept might be more familiar to Desktop UI)
+ - Inherit only when needed, objects work by default
+ - Integration. Configure views with models or dynamic sql.
+   (they will fetch data if render is necessary)
+ - PHP5.3 required. And we take advantage of language syntax.
+ - Extend base classes. Standard components will use yours.
+ - Controllers. You can even use few of them at once.
+ - Secure by default.
+ - Combination of Speed and Flexibility. Move features into modules.
+ - Development is art. You'll be amazed at how simple things are!
+   (most of the code is easily readable. And it's short yet efficient)
+ - Use of PHP features rather than 3rd party or our implementaiton.
+   (compile php with XML, DOM, XSLT, SOAP)
+ - Nothing is global. Not even class names. Easier and better than namespaces.
 
- GPL is General Public License, http://www.gnu.org/copyleft/gpl.html
-  (software derived or based on GPL code must be GPL)
- LPGL is Lesser General Public License, http://www.gnu.org/copyleft/lesser.html
-  (derived software must be LPGL, howether you may use library inside
-   proprietary code)
- Public domain means no rigts are reserved, any use of code is allowed
+3. Additional modules
 
- Code author(s) are noted inside file headers
+Agile Toolkit allows you to integrate plug additional code into your software.
+For example, by using payment gateway addon you introduce new Models, Controllers
+and schema.
+ - Payment Gateway (supports PayPal and Realex Payments). You can extend with your classes.
+ - Filestore. Stores files in hashed directories but meta information in database.
+ - CRM integations such as Campaign Monitor
+ - more modules available comercially
+
+4. Contribute! Either commercially or through opensource.
+
+If you are Open-Source-minded person, contribute code to ATK. Fellow developers will
+benefit from your contributions.
+
+If you are professional web developer or company - go for commercial support option.
+Our ATK team will continue to develop additional components. Open source community
+will benefit from your custom.
 
