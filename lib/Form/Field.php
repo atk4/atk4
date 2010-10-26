@@ -587,7 +587,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 		return true;
 	}
 	function getInput($attr=array()){
-		$output='<table border=0 id="'.$this->name.'"><tbody>';
+		$output='<table class="atk-checkboxlist" border=0 id="'.$this->name.'"><tbody>';
 		$column=0;
 		$current_values=explode(',',$this->value);
 		$i=0;//Skai
@@ -644,7 +644,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 		return parent::validate();
 	}
 	function getInput($attr=array()){
-		$output = '<div id="'.$this->name.'">';
+		$output = '<div id="'.$this->name.'" class="atk-radio">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
 				$this->getTag('input',

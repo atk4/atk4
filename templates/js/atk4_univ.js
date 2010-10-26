@@ -495,50 +495,68 @@ bindConditionalShow: function(conditions,tag){
 		var fid=f.closest('form').attr('id');
 		$.each(name,function(){
 			s.push($(a='#'+fid+'_'+this)[0]);
-			console.log('looking for ',a);
 		});
 		s=$(s);
-		console.log('chain length=',s.length);
 		return s.closest(tag);
 	}
 
 	var ch=function(){
-		var v=f.val();
+		if(f.is('.atk-checkboxlist,.atk-radio')){
+			var v=[];
+			f.find('input:checked').each(function(){
+				v.push(this.value);
+			});
+		}else{
+			var v=f.val();
+		}
 		if(f.is(':checkbox'))v=f[0].checked?v:'';
 		if(f.is('select')){
 			v=f.find('option[selected]').val();
 		}
-		console.log('value=',v);
 
 		// first, lets hide everything we can
 		$.each(conditions,function(k,x){
 			s=sel(this);
 			if(s.length){
-				console.log('hidinh',this);
 				s.hide();
 			}
 		});
 
-		console.log('looking for exact match in ',conditions,' for ',v);
 		// Next, let's see if there is an exact match for that
 		var exact_match=null;
-		if(typeof conditions[v] != 'undefined'){
-			console.log('direct match found ',conditions[v]);
-			exact_match=sel(conditions[v]);
-		}else if(typeof conditions['*'] != 'undefined'){
-			// catch-all value exists
-			console.log('catchall match found ',conditions['*']);
-			exact_match=sel(conditions['*']);
+		if(v instanceof Array){
+			exact_match=[];
+			$.each(v,function(k,val){
+				if(typeof conditions[val] != 'undefined'){
+					exact_match.push(sel(conditions[val]));
+				}
+			});
+			if(!exact_match.length && typeof conditions['*'] != 'undefined'){
+				exact_match=sel(conditions['*']);
+			}
+		}else{
+			if(typeof conditions[v] != 'undefined'){
+				exact_match=sel(conditions[v]);
+			}else if(typeof conditions['*'] != 'undefined'){
+				// catch-all value exists
+				exact_match=sel(conditions['*']);
+			}
 		}
 
-		console.log('done looking for matchh');
 		if(exact_match && exact_match.length){
-			console.log('showing',exact_match.length,'elements');
-			exact_match.show();
+			if(exact_match instanceof Array){
+				$.each(exact_match,function(k,val){
+					val.show();
+				});
+			}else{
+				exact_match.show();
+			}
 		}
 	}
 	if(f.hasClass('field_reference')){
 		f.bind('change_ref',ch);
+	}else if(f.hasClass('atk-checkboxlist')){
+		f.find('input[type=checkbox]').bind('change',ch);
 	}else{
 		if (f.is(':checkbox') && (jQuery.browser.msie && parseInt(jQuery.browser.version) <= 7)) {
 			f.click(ch)
