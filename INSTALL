@@ -5,7 +5,7 @@ This is a mini-project which will help you get started.
 REQUIREMENTS
 
  - Apache web server
- - PHP5.2 + 
+ - PHP5.3 + 
  - Linux, Unix or MacOSX preferably, Windows is also supported.
    (we recommend using MAMP on MacOSX or WAMP on Windows)
 
