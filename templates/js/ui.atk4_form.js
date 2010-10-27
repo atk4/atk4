@@ -91,7 +91,8 @@ $.widget("ui.atk4_form", {
 		// <div class="field-error-template"> .. <span class="field-error-text">..</span></div>
 
 		// The following markup is using to show that form field contains errors.
-		this.template['field_error']=this.element.find('.field-error-template').remove()
+		this.template['field_error']=this.element.find('.field-error-template').remove();
+		if(!this.template['field_error'].length)console.log('Warning: form template does not have form-error-template class');
 
 		this.form.submit(function(e){
 
@@ -220,7 +221,7 @@ $.widget("ui.atk4_form", {
 		// highlight field
 		var field_highlight=field.closest('.atk-field').addClass('field_has_error');
 
-		// Clear previosu errors
+		// Clear previous errors
 		while(field_highlight.next().is('.atk-error'))field_highlight.next().remove();
 
 		var error_bl=this.template['field_error'].clone();
