@@ -12,9 +12,9 @@ class Form_Field_DatePicker extends Form_Field {
 
 		$this->js(true)->datepicker(array_merge(array(
 					'duration'=>0,
-					//'showOn'=>'button',
-					//'buttonImage'=>'images/calendar.gif',
-					//'buttonImageOnly'=> true,
+					'showOn'=>'button',
+					'buttonImage'=>$this->api->locateURL('images','calendar.gif'),
+					'buttonImageOnly'=> true,
 					'changeMonth'=>true,
 					'changeYear'=>true,
 					'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
