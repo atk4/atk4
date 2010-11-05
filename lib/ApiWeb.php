@@ -146,7 +146,7 @@ class ApiWeb extends ApiCLI {
 	function render(){
 		if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
-		$this->setTags($this-template);
+		$this->setTags($this->template);
 
 		if(!($this->template)){
 			throw new BaseException("You should specify template for API object");
