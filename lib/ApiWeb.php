@@ -20,7 +20,7 @@ class ApiWeb extends ApiCLI {
 	public $apinfo=array();
 
 	protected $page_base=null;
-	protected $index_page='index';
+	public $index_page='index';
 	protected $sticky_get_arguments = array();
 	protected $ajax_class='Ajax';
 
