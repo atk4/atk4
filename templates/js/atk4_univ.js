@@ -481,6 +481,7 @@ autoChange: function(interval){
 	}
 	//f.change(onchange);
 	f.keyup(onkeyup);
+	f.bind('autochange_manual',onkeyup);
 },
 bindConditionalShow: function(conditions,tag){
 	// Warning
