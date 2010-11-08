@@ -31,6 +31,11 @@ abstract class AbstractObject {
 		 * Don't forget to call parent::init();
 		 */
 	}
+	function __clone(){
+		// fix short name and add ourselves to the parent
+		$this->short_name=$this->_unique($this->owner->elements,$this->short_name);
+		$this->owner->add($this);
+	}
 	function __toString() {
 		return "Object " . get_class($this) . "(" . $this->name . ")";
 	}
