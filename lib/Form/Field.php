@@ -500,6 +500,16 @@ class Form_Field_ValueList extends Form_Field {
 			2=>'No available options #3'
 			);
 	function getValueList(){
+
+		if($this->getController()){
+			// Rely on controller to get our data
+			$data=$this->getController()->getRows($this->getController()->getListFields());
+			$res=array();
+			foreach($data as $row){
+				$res[$row['id']]=$row['name'];
+			}
+			return $res;
+		}
 		return $this->value_list;
 	}
 	function setValueList($list){

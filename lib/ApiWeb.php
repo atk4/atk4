@@ -20,7 +20,7 @@ class ApiWeb extends ApiCLI {
 	public $apinfo=array();
 
 	protected $page_base=null;
-	protected $index_page='index';
+	public $index_page='index';
 	protected $sticky_get_arguments = array();
 	protected $ajax_class='Ajax';
 
@@ -146,14 +146,7 @@ class ApiWeb extends ApiCLI {
 	function render(){
 		if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
-		// absolute path to base location
-		$this->template->trySet('atk_path',$q=
-								$this->api->pathfinder->atk_location->getURL().'/');
-		$this->template->trySet('base_path',$q=$this->api->pm->base_path);
-		
-		// We are using new capability of SMlite to process tags individually
-		$this->template->eachTag('template',array($this,'locateTemplate'));
-		
+		$this->setTags($this->template);
 
 		if(!($this->template)){
 			throw new BaseException("You should specify template for API object");
@@ -161,6 +154,16 @@ class ApiWeb extends ApiCLI {
 
 		$this->hook('pre-render-output');
 		echo $this->template->render();
+	}
+	function setTags($t){
+		// absolute path to base location
+		$t->trySet('atk_path',$q=
+								$this->api->pathfinder->atk_location->getURL().'/');
+		$t->trySet('base_path',$q=$this->api->pm->base_path);
+		
+		// We are using new capability of SMlite to process tags individually
+		$t->eachTag('template',array($this,'locateTemplate'));
+		
 	}
 	function locateTemplate($path){
 		return $this->locateURL('template',$path);

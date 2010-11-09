@@ -38,6 +38,11 @@ abstract class AbstractView extends AbstractObject {
 
 	protected $controller=null; // View should initialize itself with the help of Controller instance
 
+	function __clone(){
+		parent::__clone();
+		if($this->template)$this->template=clone $this->template;
+		if($this->controller)$this->controller=clone $this->controller;
+	}
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;

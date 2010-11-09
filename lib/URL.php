@@ -61,7 +61,7 @@ class URL extends AbstractModel {
 		// 'page' = sets webroot/page.html
 		// './page' = set page relatively to current page
 		// '..' = parent page
-		// '../page' = also available
+		// '../page' = page besides our own (foo/bar -> foo/page)
 		// 'index' = properly points to the index page defined in API
 
 		$destination='';
@@ -76,14 +76,15 @@ class URL extends AbstractModel {
 			}
 
 			if($component=='..'){
+				if(!$destination)$destination=str_replace('_','/',$this->api->page);
 				$tmp=explode('/',$destination);
-				array_shift($tmp);
+				array_pop($tmp);
 				$destination=join('/',$tmp);
 				continue;
 			}
 
 			if($component=='index' && $destination=''){
-				$destination=$api->index_page;
+				$destination=$this->api->index_page;
 				continue;
 			}
 
@@ -91,6 +92,7 @@ class URL extends AbstractModel {
 			$destination=$destination?$destination.'/'.$component:$component;
 
 		}
+		if($destination==='')$destination=$this->api->index_page;
 
 		$this->page=$destination;
 		return $this;

@@ -49,7 +49,7 @@ $.widget("ui.atk4_checkboxes", {
 			r.push($(this).val());
 		});
 		if(this.options.dst_field){
-			$(this.options.dst_field).val($.univ.toJSON(r));
+			$(this.options.dst_field).val($.univ.toJSON(r)).trigger('autochange_manual');
 		}
 	}
 });

@@ -53,6 +53,7 @@ class Lister extends View {
 				if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
 			}
 		}
+		$this->hook('formatRow');
 	}
 	function fetchRow(){
 		if(is_array($this->data)){
