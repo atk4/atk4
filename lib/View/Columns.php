@@ -4,10 +4,10 @@ class View_Columns extends View {
 	function init(){
 		parent::init();
 	}
-	function addColumn($width='*'){
+	function addColumn($width='*',$name='column'){
 		// TODO: implement  width
-
-		$c=$this->add('View',++$this->cnt,'Columns',array('view/columns','Columns'));
+		++$this->cnt;
+		$c=$this->add('View',$name,'Columns',array('view/columns','Columns'));
 		$c->template->trySet('width',$width);
 		$this->template->set('cnt',$this->cnt);
 		return $c;

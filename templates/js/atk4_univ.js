@@ -488,11 +488,15 @@ bindConditionalShow: function(conditions,tag){
 	//   when element A hides element B which should also hide
 	//   element C. You may end up with B hidden and C still showing.
 	var f=this.jquery;
+	var n=f.closest('form');
+	if(!n.attr('id'))n=n.parent();
+	n=n.attr('id');
+
 	if(typeof tag == 'undefined')tag='div';
 
 	var sel=function(name){
 		var s=[]
-		var fid=f.closest('form').attr('id');
+		fid=n;
 		$.each(name,function(){
 			var dom=$(a='#'+fid+'_'+this)[0];
 			if(dom){

@@ -55,6 +55,7 @@ $.widget("ui.atk4_form", {
 
 		this.form.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
 		this.form.addClass('atk4_form');
+		this.element.addClass('atk4_form_widget');
 
 		this.form.find('input').bind('keypress',function(e){
 			if($(this).is('.ui-autocomplete-input'))return true;
@@ -264,10 +265,13 @@ $.widget("ui.atk4_form", {
 	},
 	submitForm: function(btn){
 		var params={}, form=this;
+		console.log('submitform called');
+	//	$.univ.printStackTrace();
 		if(form.loading){
 			$.univ().loadingInProgress();
 			return false;
 		}
+		console.log('started loading');
 		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], option[selected], textarea")
 		.each(function() {
 			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
@@ -287,8 +291,10 @@ $.widget("ui.atk4_form", {
 		};
 
 		form.loading=true;
+		console.log('about to send');
 		$.atk4.get(properties,params,function(res){
 			var c=form._getChanged();form._setChanged(false);
+			console.log('result is back,',res);
 
 			if(!$.atk4._checkSession(res))return;
 			/*
@@ -310,6 +316,8 @@ $.widget("ui.atk4_form", {
 					alert("Error in AJAX response: "+e+"\n"+res);
 				}
 			}
+			console.log('eval complete');
+			form.loading=false;
 			form._setChanged(c);
 		},function(){
 			form.loading=false;
