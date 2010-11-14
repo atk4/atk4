@@ -22,7 +22,7 @@ class Form_Field_DatePicker extends Form_Field {
 
 		return parent::getInput(array_merge(
 			array(
-				'value'=>$this->value?(date($this->api->getConfig('locale/date'),strtotime($this->value))):'',
+				'value'=>$this->value?(date($this->api->getConfig('locale/date','d/m/Y'),strtotime($this->value))):'',
 			),$attr
 		));
 	}
