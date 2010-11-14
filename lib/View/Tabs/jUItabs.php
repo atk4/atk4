@@ -1,7 +1,7 @@
 <?
-class View_Tabs_jUItabs extends View {
-	protected $tab_template=null;
-	protected $tab_count=0;
+class View_Tabs_jUItabs extends View_Tabs {
+	public $tab_template=null;
+	public $tab_count=0;
 
 	function init(){
 		parent::init();
