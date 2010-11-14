@@ -225,6 +225,11 @@ $.widget("ui.atk4_form", {
 		// Clear previous errors
 		while(field_highlight.next().is('.atk-error'))field_highlight.next().remove();
 
+		if(!this.template['field_error'].length){
+			// no template, use alert;
+			alert(error);
+			return;
+		}
 		var error_bl=this.template['field_error'].clone();
 		error_bl.find('.field-error-text').text(error);
 		error_bl.insertAfter(field_highlight).fadeIn();
