@@ -71,6 +71,7 @@ class URL extends AbstractModel {
 		foreach($path as $component){
 			if($component=='')continue;
 			if($component=='.' && $destination==''){
+				if($this->api->page=='index')continue;
 				$destination=str_replace('_','/',$this->api->page);
 				continue;
 			}
