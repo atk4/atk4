@@ -2,7 +2,6 @@
 class Page_EntityManager extends Page {
 	public $controller='Controller_Coupon';
 	public $c;
-	public $returnpage='coupons';
 
 	public $allow_add=true;
 	public $allow_edit=true;
@@ -17,12 +16,18 @@ class Page_EntityManager extends Page {
 
 	function init(){
 		parent::init();
+		if(!$_GET['entitymanager'])$_GET['entitymanager']=$this->name;
+		$this->api->stickyGET('entitymanager');
 		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
 		if(!$this->c)$this->c=$this->add($this->controller);
+	}
+	function reloadJS(){
+		return $this->js()->_selector('#'.$_GET['entitymanager'].'_grid')->atk4_loader('reload');
 	}
 
 	function initMainPage(){
 		$this->grid=$g=$this->add('MVCGrid','grid');
+		$g->js(true)->atk4_loader(array('url'=>$this->api->getDestinationURL(null,array('cut_object'=>$g->name))));
 
 		
 		if($this->grid_actual_fields)
@@ -41,14 +46,6 @@ class Page_EntityManager extends Page {
 				$c->loadData($_GET['delete']);
 				$c->delete();
 				$g->js(null,$g->js()->univ()->successMessage('Record deleted'))->reload()->execute();
-			}
-		}
-		
-		
-		if($this->allow_edit){
-			if($_GET['edit']){
-				$this->js()->univ()->location($this->api->getDestinationURL($this->returnpage,
-							Array('id' => $_GET['edit'])))->execute();
 			}
 		}
 	}
@@ -82,10 +79,9 @@ class Page_EntityManager extends Page {
 
 		if($f->isSubmitted() && !$this->read_only){
 			$f->update();
-			$f->js()->univ()
+			$f->js(null,$this->reloadJS())->univ()
 				->successMessage($_GET['id']?'Changes saved':'Record added')
 				->closeDialog()
-				->page($this->api->getDestinationURL($this->returnpage))
 				->execute();
 		}
 	}
