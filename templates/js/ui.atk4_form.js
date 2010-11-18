@@ -48,7 +48,7 @@ $.widget("ui.atk4_form", {
 		if(!this.form.is('form')){
 			this.form=this.form.find('form');
 			this.element.bind('submit',function(){
-				self.submitForm();
+				if(!self.loading)self.submitForm();
 			});
 		}
 
