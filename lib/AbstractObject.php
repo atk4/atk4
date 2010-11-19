@@ -49,6 +49,13 @@ abstract class AbstractObject {
 		return new DummyObject();
 	}
 	}*/
+	function destroy(){
+		foreach($this->elements as $el){
+			$el->destroy();
+		}
+		unset($this->elements);
+		$this->owner->removeElement($this->short_name);
+	}
 	function add($class, $short_name = null, $template_spot = null, $template_branch = null, $debug = null) {
 		/**
 		 * When you want to add element to your container, always use this
