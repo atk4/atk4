@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- coursety of http://broadcast.oreilly.com/2008/10/xslt-based-xhtml-markup-saniti.html -->
+<!-- thanks -->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:lookup="http://xameleon.org/lookup" xmlns:html="http://www.w3.org/1999/xhtml" version="1.0" exclude-result-prefixes="html lookup">
+	<xsl:output method="xml" omit-xml-declaration="yes"/>
+    <lookup:html>
+        <html:p use="p"/>
+        <html:em use="em"/>
+        <html:strong use="b"/>
+        <html:b use="b"/>
+        <html:i use="i"/>
+        <html:blockquote use="blockquote"/>
+        <html:cite use="cite"/>
+		<html:br use="br"/>
+    </lookup:html>
+    <xsl:variable name="safe-elements" select="document('')//lookup:html/*"/>
+    <xsl:template match="body">
+	<div>
+         <xsl:apply-templates mode="validate"/>
+		 </div>
+    </xsl:template>
+    <xsl:template match="html:div" mode="validate">
+        <xsl:apply-templates select="*|text()" mode="validate"/>
+    </xsl:template>
+    <xsl:template match="*" mode="validate">
+        <xsl:variable name="local-name" select="local-name()"/>
+        <xsl:apply-templates select="$safe-elements[local-name() = $local-name]/@use" mode="safe">
+            <xsl:with-param name="node" select="."/>
+        </xsl:apply-templates>
+    </xsl:template>
+    <xsl:template match="text()" mode="validate">
+        <!-- You could do some extended text matching here to remove any text seen as undesirable -->
+        <xsl:value-of select="."/>
+    </xsl:template>
+    <xsl:template match="@*" mode="safe">
+        <xsl:param name="node"/>
+        <xsl:element name="{.}">
+            <xsl:apply-templates select="$node/*|$node/text()" mode="validate"/>
+        </xsl:element>
+    </xsl:template>
+</xsl:stylesheet>
+
