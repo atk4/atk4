@@ -233,7 +233,7 @@ class Grid extends CompleteLister {
 		//
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?:'id'].'"
-			rel="'.$this->api->getDestinationURL($this->api->page.'/'.$field,
+			rel="'.$this->api->getDestinationURL($column['page']?:'./'.$field,
 						array('expander'=>$field,
 							'cut_page'=>1,
 							'expanded'=>$this->name,

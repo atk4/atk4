@@ -62,6 +62,10 @@ class BasicAuth extends AbstractController {
 			$this->logout();
 		}
 	}
+	function destroy(){
+		unset($this->api->auth);
+		parent::destroy();
+	}
 	function get($property=null,$default=null){
 		if(is_null($property))return $this->info;
 		if(!isset($this->info[$property]))return $default;
