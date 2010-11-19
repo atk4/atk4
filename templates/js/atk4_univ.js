@@ -31,7 +31,7 @@ $.each({
 		}
 	},
 	location: function(url){
-		if(!url)return;
+		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
 	page: function(page,fn){
@@ -278,12 +278,12 @@ dialogBox: function(options){
 			}
 		},
 		buttons: {
-			'Cancel': function(){
-				$(this).dialog('close');
-			},
 			'Ok': function(){
 				var f=$(this).find('form');
 				if(f.length)f.eq(0).submit(); else $(this).dialog('close');
+			},
+			'Cancel': function(){
+				$(this).dialog('close');
 			}
 		},
 		close: function(){
@@ -322,12 +322,12 @@ dialogConfirm: function(title,text,fn,options){
 	 */
 	var dlg=this.dialogBox($.extend({title: title, width: 450, height: 200,
 	buttons: {
-		'Cancel': function(){
-			$(this).dialog('close');
-		},
 		'Ok': function(){
 			$(this).dialog('close');
 			if(fn)fn();
+		},
+		'Cancel': function(){
+			$(this).dialog('close');
 		}
 	}},options));
 
