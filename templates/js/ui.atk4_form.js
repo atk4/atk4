@@ -47,8 +47,9 @@ $.widget("ui.atk4_form", {
 		// If we are not being bound to form directly, then find form inside ourselves
 		if(!this.form.is('form')){
 			this.form=this.form.find('form');
-			this.element.bind('submit',function(){
-				if(!self.loading)self.submitForm();
+			this.element.bind('submit',function(ev){
+				ev.preventDefault();
+				self.submitForm();
 			});
 		}
 
@@ -103,6 +104,7 @@ $.widget("ui.atk4_form", {
 				return;// executes default action
 			}
 
+			e.stopPropagation();
 			e.preventDefault();
 			self.submitForm();
 		});
@@ -143,10 +145,7 @@ $.widget("ui.atk4_form", {
 		}
 
 		if(f.hasClass('field_reference')){
-			console.log('Field ',field_name,' is a reference, see if we can find value');
-
 			var opt=f.find('option[value='+value+']');
-			console.log('Found: ',opt.length);
 
 			if(opt.length){
 				// If it was found - then set value, should change dropdown
@@ -270,13 +269,10 @@ $.widget("ui.atk4_form", {
 	},
 	submitForm: function(btn){
 		var params={}, form=this;
-		console.log('submitform called');
-	//	$.univ.printStackTrace();
 		if(form.loading){
 			$.univ().loadingInProgress();
 			return false;
 		}
-		console.log('started loading');
 		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], option[selected], textarea")
 		.each(function() {
 			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
@@ -296,10 +292,8 @@ $.widget("ui.atk4_form", {
 		};
 
 		form.loading=true;
-		console.log('about to send');
 		$.atk4.get(properties,params,function(res){
 			var c=form._getChanged();form._setChanged(false);
-			console.log('result is back,',res);
 
 			if(!$.atk4._checkSession(res))return;
 			/*
@@ -321,7 +315,6 @@ $.widget("ui.atk4_form", {
 					alert("Error in AJAX response: "+e+"\n"+res);
 				}
 			}
-			console.log('eval complete');
 			form.loading=false;
 			form._setChanged(c);
 		},function(){
