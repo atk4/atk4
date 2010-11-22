@@ -10,8 +10,8 @@ class AgileProject extends ApiFrontend {
 		$this->dbConnect();
 
 		// Keep this if you are going to use plug-ins
-		$this->addLocation('addons',array(
-					'php'=>array('camper',
+		$this->addLocation('atk4-addons',array(
+					'php'=>array('mvc',
 						'billing/lib',
 						'misc/lib',
 						)
