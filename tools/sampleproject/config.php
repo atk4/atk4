@@ -7,7 +7,7 @@
 # [ ] - keep both files synced up in your project
 
 # atk/base_path is a root location of a toolkit. Defaults to 'amodules3'
-$config['atk']['base_path']='/atk/';
+$config['atk']['base_path']='/atk4/';
 
 # your database access, if you use $api->dbConnect();
 $config['dsn']='mysql://root:root@localhost/project';

@@ -12,7 +12,7 @@ RewriteRule	^[^\.]*$			main.php	[L]
 RewriteRule .html$				main.php	[L]
 
 # You might need this for some webserver configurations
-RewriteBase /
+#RewriteBase /
 
 # Add other paterns which needs to be handled by Agile Toolkit. 
 # RewriteRule .xml$				main.php	[L]
