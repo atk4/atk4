@@ -273,11 +273,11 @@ $.widget("ui.atk4_form", {
 			$.univ().loadingInProgress();
 			return false;
 		}
-		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], option[selected], textarea")
+		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], select, textarea")
 		.each(function() {
 			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
 
-			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = this.value;
+			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = $(this).val();
 		});
 
 
