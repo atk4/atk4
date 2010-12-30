@@ -24,7 +24,11 @@ class ApiWeb extends ApiCLI {
 	protected $sticky_get_arguments = array();
 	protected $ajax_class='Ajax';
 
+	public $start_time=null;
+
 	function __construct($realm=null,$skin='kt2'){
+		$this->start_time=microtime();
+
 		$this->skin=$skin;
 		try {
 			parent::__construct($realm);
@@ -36,6 +40,15 @@ class ApiWeb extends ApiCLI {
 
 			$this->caughtException($e);
 		}
+	}
+	function showExecutionTime(){
+		$self=$this;
+		$this->addHook('post-render-output',function() use ($self){
+			echo 'Took '.(microtime()-$self->start_time).'s';
+		});
+		$this->addHook('post-js-execute',function() use ($self){
+			echo "\n\n/* Took ".(microtime()-$self->start_time).'s */';
+		});
 	}
 	function initDefaults(){
 		parent::initDefaults();
@@ -154,6 +167,7 @@ class ApiWeb extends ApiCLI {
 
 		$this->hook('pre-render-output');
 		echo $this->template->render();
+		$this->hook('post-render-output');
 	}
 	function setTags($t){
 		// absolute path to base location
@@ -188,6 +202,7 @@ class ApiWeb extends ApiCLI {
 			if($e instanceof RenderObjectSuccess){
 				$this->hook('cut-output');
 				echo $e->result;
+				$this->hook('post-render-output');
 				return;
 			}
 			throw $e;

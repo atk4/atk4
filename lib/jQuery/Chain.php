@@ -53,6 +53,7 @@ class jQuery_Chain extends AbstractModel {
 
 			//echo $x.';';
 			echo $this->_render();
+			$this->api->hook('post-js-execute');
 			exit;
 		}else return $this;
 	}
