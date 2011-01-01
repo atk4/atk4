@@ -49,6 +49,7 @@ class Menu extends AbstractView {
 	}
 	function isCurrent($href){
 		// returns true if item being added is current
+		$href=str_replace('/','_',$href);
 		return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
 	}
 	/*function insertMenuItem($index,$label,$href=null){
