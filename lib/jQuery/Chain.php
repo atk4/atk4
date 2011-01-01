@@ -38,6 +38,9 @@ class jQuery_Chain extends AbstractModel {
 		return $this;
 	}
 	function _prepend($code){
+		if(is_array($code)){
+			$code=join(';',$code);
+		}
 		$this->prepend=$code.';'.$this->prepend;
 		return $this;
 	}

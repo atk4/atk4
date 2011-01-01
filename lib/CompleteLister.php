@@ -45,7 +45,7 @@ class CompleteLister extends Lister {
 		}
 		if($this->totals!==false && $this->totals_t){
 			$t = $this->totals_t;
-			$this->current_row = $this->totals;
+			$this->current_row = &$this->totals;
 			$this->formatTotalsRow();
 			$t->set($this->current_row);
 			$this->template->append('rows',$t->render());
