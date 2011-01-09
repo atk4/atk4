@@ -67,20 +67,25 @@ $.widget("ui.atk4_form", {
 				}
 		});
 		this.form.find(':input').each(function(){
-			if($(this).attr('type')=='checkbox')
+			var onevent='change';
+			if($(this).attr('type')=='checkbox'){
 				$(this).attr('data-initvalue',$(this).attr('checked'))
-			else
+				onevent='click';	// IE fix
+
+			} else {
 				$(this).attr('data-initvalue',$(this).val())
-		})
-		.bind('change',function(ev){
-			//if($(this).attr('type')=='checkbox')
-			if($(this).attr('data-initvalue')==$(this).val()){
-				ev.preventDefault();
-				return;
-			}else {
-				$(this).attr('data-initvalue',$(this).val());
 			}
-			self._setChanged(true);
+
+			$(this).bind(onevent,function(ev){
+				//if($(this).attr('type')=='checkbox')
+				if($(this).attr('data-initvalue')==$(this).val()){
+					ev.preventDefault();
+					return;
+				}else {
+					$(this).attr('data-initvalue',$(this).val());
+				}
+				self._setChanged(true);
+			});
 		});
 
 		this.form.find('input[type=radio]').click(function(){
