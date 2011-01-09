@@ -9,12 +9,12 @@ $.widget("ui.atk4_expander", {
     _create: function() {
         var self=this;
         this.element.bind("click.atk4_expander", function(event) { self.click(); });
-        //this.element.click(function(){ alert($(this).expanded); $(this).expanded?$(this).collapse():$(this).expand(); });
     },
     click: function() {
         if(this.expanded) this.collapse(); else this.expand();
 
     },
+	transition: false,
     expanded: false,
     expander_id: null,
     expander_url: null,
@@ -24,10 +24,10 @@ $.widget("ui.atk4_expander", {
     
     id: null,
     expand: function() {
-        if(this.expanded)return false;
+        if(this.expanded || this.transition)return false;
 
         // Collapse if any others are expanded
-        this.element.closest('table').find('.expander').atk4_expander('collapse');
+        this.element.closest('table').find('.expander').atk4_expander('collapseFast');
 
         // Make button look like it's bein pushed
         this.element.removeClass("ui-state-default");
@@ -46,15 +46,17 @@ $.widget("ui.atk4_expander", {
         this.div=$('#'+this.expander_id+'_cell');
         var div=this.div;
         // expander loands contents of <tr><td><div>
-        div.animate({height: "200px"},1500);
+		this.transition=true;
+		var self=this;
         div.atk4_load(this.element.attr('rel'),function(){
                 div.stop();
                 div.attr('style','display: block'); // clear overflow, height, etc
+				self.transition=false;
         });
         this.expanded=true;
     },
     collapse: function() {
-        if(!this.expanded)return false;
+        if(!this.expanded || this.transition)return false;
 
         this.element.removeClass("ui-state-active").removeClass('expander');
         this.element.addClass("ui-state-default");
@@ -64,13 +66,41 @@ $.widget("ui.atk4_expander", {
         var remove_this=this.expander_id;
 
         // expander contracts div
+		this.transition=true;
+		var self=this;
         this.div.slideUp("fast",function(){
 				ttr.removeClass("lister_expander_parent");
                 $('#'+remove_this).remove();
+				self.transition=false;
         });
 
+		this.div.empty();
+		this.div.triggerHandler('remove');
 
 
+
+
+        this.expanded=false;
+    },
+    collapseFast: function() {
+        if(!this.expanded || this.transition)return false;
+
+        this.element.removeClass("ui-state-active").removeClass('expander');
+        this.element.addClass("ui-state-default");
+		var ttr=this.this_tr;
+
+
+        var remove_this=this.expander_id;
+
+        // expander contracts div
+		this.transition=true;
+		var self=this;
+		ttr.removeClass("lister_expander_parent");
+        $('#'+remove_this).remove();
+		self.transition=false;
+
+		this.div.empty();
+		this.div.triggerHandler('remove');
 
         this.expanded=false;
     }
