@@ -345,9 +345,6 @@ class Form extends AbstractView {
 		$this->bail_out=true;
 		return $result;
 	}
-	function onSubmit($fn){
-		$this->addHook('on-submit',$fn);
-	}
 	function setLayout($template){
 		// Instead of building our own form_body we will take it from
 		// pre-defined template and insert fields into there

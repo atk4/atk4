@@ -289,7 +289,7 @@ $.widget("ui.atk4_form", {
 		});
 		console.log('old=',params);
 		*/
-		params=this.element.serializeArray()
+		params=this.element.find(":input").serializeArray()
 
 		//	console.log(params);
 
