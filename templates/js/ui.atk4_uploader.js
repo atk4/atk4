@@ -18,7 +18,7 @@ $.widget("ui.atk4_uploader", {
 	},
 
 
-    _init: function(){
+    _create: function(){
 		var self=this;
 		if(!this.options.form)this.options.form="#"+closest('form').parent().attr('id');
 		this.name=this.element.attr('id');
