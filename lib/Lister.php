@@ -33,14 +33,15 @@ class Lister extends View {
 			// we were requseted to only show one row through AJAX request
 			if(is_array($this->data)){
 				$idsarr=explode(',',$ids);
-				$this->data=array_filter($this->data,function($var){
-					return in_array($var['id'],$idsarr);
-				});
+				$this->data=array_filter($this->data,array($this,'handlePartialRender_'));
 			}
 			if(isset($this->dq)){
 				$this->dq->where($this->dq->args['table'].'.id in',$ids);
 			}
 		}
+	}
+	function handlePartialRender_($var){
+		return in_array($var['id'],$idsarr);
 	}
 	function execQuery(){
 		$this->handlePartialRender();

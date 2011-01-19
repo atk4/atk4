@@ -53,9 +53,14 @@ class ApiFrontend extends ApiWeb{
 						}
 						// WorkAround for PHP5.2.12+ PHP bug #51425
 						$tmp=new $in;
-						if(!method_exists($tmp,$fn))continue;
+						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
+
 						$this->pageObject=$this->add($in,$this->page);
-						$this->pageObject->$fn();
+						if(method_exists($tmp,$fn)){
+							$this->pageObject->$fn();
+						}elseif(method_exists($tmp,'subPageHandler')){
+							if($this->pageObject->subPageHandler(join('_',$funct_parts))===false)break;
+						}
 						return;
 				}
 

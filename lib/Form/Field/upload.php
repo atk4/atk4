@@ -69,6 +69,7 @@ class Form_Field_Upload extends Form_Field {
 	public $max_file_size=null;
 	public $mode='iframe';
 	public $multiple=false;
+	public $debug=false;
 
 
 	function allowMultiple($multiple=50){
@@ -112,9 +113,15 @@ class Form_Field_Upload extends Form_Field {
 		exit;
 	}
 	function uploadFailed($message){
+
+		$d='';
+		if($this->debug)$d=','.json_encode($_FILES[$this->name]);
+
 		echo "<html><head><script>window.top.$('#".
 			$_GET[$this->name.'_upload_action']."').atk4_uploader('uploadFailed',".
-			json_encode($message).");</script></head></html>";
+			json_encode($message).
+			$d.
+			");</script></head></html>";
 		exit;
 	}
 
@@ -305,5 +312,9 @@ class Form_Field_Upload extends Form_Field {
 		$this->owner->info('Filename: '.$this->getFilePath());
 		$this->owner->info('Size: '.$this->getFileSize());
 		$this->owner->info('Original Name: '.$this->getOriginalName());
+	}
+	function debug(){
+		$this->debug=true;
+		return $this;
 	}
 }

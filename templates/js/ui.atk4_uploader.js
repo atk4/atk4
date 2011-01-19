@@ -9,7 +9,7 @@ $.widget("ui.atk4_uploader", {
     options: {
 		'flash': false,
 		'iframe': false,
-		'multiple': 1
+		'multiple': 1,
     },
 	shown: true,
 
@@ -174,7 +174,10 @@ $.widget("ui.atk4_uploader", {
 		this._setChanged();
 		//$('#'+this.name+'_token').val(data.id);
 	},
-	uploadFailed: function(message){
+	uploadFailed: function(message,debug){
+		if(debug){
+			$.univ().successMessage('Debug: '+$.univ().toJSON(debug));
+		}
 		$(this.options.form).atk4_form('fieldError',this.element,message);
 		$('#'+this.name+'_progress').remove();
 		this.element.next().show()

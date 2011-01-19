@@ -13,6 +13,7 @@ class Page_EntityManager extends Page {
 	public $read_only=false;
 
 	public $grid;
+	public $form;
 
 	function init(){
 		parent::init();
@@ -51,7 +52,7 @@ class Page_EntityManager extends Page {
 	}
 	function page_edit(){
 		if(!$this->allow_edit)exit;
-		$f=$this->add('MVCForm','form');
+		$this->form=$f=$this->add('MVCForm','form');
 		$c=$this->c;
 
 		if($_GET['id']){

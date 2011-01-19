@@ -155,6 +155,11 @@ class Grid extends CompleteLister {
 	function format_html($field){
 		$this->current_row[$field] = htmlentities($this->current_row[$field]);
 	}
+	function format_boolean($field){
+		if($this->current_row[$field]=='Y'){
+			$this->current_row[$field]='<div align=center><i class="atk-icon atk-icons-nobg atk-icon-basic-check"></i></div>';
+		}else $this->current_row[$field]='';
+	}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
 		$this->current_row[$field]=number_format($m,2);
@@ -232,12 +237,12 @@ class Grid extends CompleteLister {
 		//  ->
 		//
 		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
-			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?:'id'].'"
-			rel="'.$this->api->getDestinationURL($column['page']?:'./'.$field,
+			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
+			rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
 						array('expander'=>$field,
 							'cut_page'=>1,
 							'expanded'=>$this->name,
-							'id'=>$this->current_row[$column['idfield']?:'id']
+							'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
 							)
 						).'"
 			>'.$this->current_row[$field].'</button>';
