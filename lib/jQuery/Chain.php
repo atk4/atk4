@@ -29,6 +29,14 @@ class jQuery_Chain extends AbstractModel {
 		$this->selector=$selector;
 		return $this;
 	}
+	function _selectorDocument(){
+		$this->selector='__atk_selector_document';
+		return $this;
+	}
+	function _selectorWindow(){
+		$this->selector='__atk_selector_window';
+		return $this;
+	}
 	function _selectorThis(){
 		$this->selector='__atk_selector_this';
 		return $this;
@@ -178,6 +186,10 @@ class jQuery_Chain extends AbstractModel {
 			$ret.="$";
 		}elseif($this->selector==='__atk_selector_this'){
 			$ret.="$(this)";
+		}elseif($this->selector==='__atk_selector_document'){
+			$ret.="$(document)";
+		}elseif($this->selector==='__atk_selector_window'){
+			$ret.="$(window)";
 		}elseif($this->selector==='__atk_selector_region'){
 			$ret.="$(region)";
 		}else{
