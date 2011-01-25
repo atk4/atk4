@@ -64,6 +64,7 @@ $.widget('ui.atk4_loader', {
 		this.options.debug=true;
 		this.options.anchoring=true;
 		*/
+		console.log(this.element[0]);
 
 		this.element.addClass('atk4_loader');
 
@@ -176,6 +177,7 @@ $.widget('ui.atk4_loader', {
 				// with existing element. In this case we will be copying contents of
 				// provided element
 				n=n.contents();
+				el.triggerHandler('remove');
 			}else{
 				// otherwise we will be copying all the elements (including text)
 				if(reload){
@@ -183,7 +185,11 @@ $.widget('ui.atk4_loader', {
 				}
 				n=source.contents();
 			}
+		   	// http://forum.jquery.com/topic/jquery-empty-does-not-destroy-ui-widgets-whereas-jquery-remove-does-using-ui-1-8-4
+
 			el.empty();
+
+			el.atk4_loader({'base_url':url});
 
 			n.each(function(){
 				$(this).remove().appendTo(el);

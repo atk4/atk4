@@ -43,12 +43,14 @@ class ApiWeb extends ApiCLI {
 	}
 	function showExecutionTime(){
 		$self=$this;
-		$this->addHook('post-render-output',function() use ($self){
-			echo 'Took '.(microtime()-$self->start_time).'s';
-		});
-		$this->addHook('post-js-execute',function() use ($self){
-			echo "\n\n/* Took ".(microtime()-$self->start_time).'s */';
-		});
+		$this->addHook('post-render-output',array($this,'_showExecutionTime'));
+		$this->addHook('post-js-execute',array($this,'_showExecutionTimeJS'));
+	}
+	function _showExecutionTime(){
+		echo 'Took '.(microtime()-$this->start_time).'s';
+	}
+	function _showExecutionTimeJS(){
+		echo "\n\n/* Took ".(microtime()-$this->start_time).'s */';
 	}
 	function initDefaults(){
 		parent::initDefaults();

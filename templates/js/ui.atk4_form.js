@@ -53,6 +53,7 @@ $.widget("ui.atk4_form", {
 			});
 		}
 
+		console.log('created with url=',this.form.attr('action'));
 
 		this.form.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
 		this.form.addClass('atk4_form');
@@ -66,22 +67,31 @@ $.widget("ui.atk4_form", {
 				return false;
 				}
 		});
+
+		if($.browser.msie){
+			this.form.find('input:radio,input:checkbox').click(function(){
+				this.blur();	// this will call onchange event, like it should
+				this.focus();
+			});
+		}
+
 		this.form.find(':input').each(function(){
 			if($(this).attr('type')=='checkbox')
 				$(this).attr('data-initvalue',$(this).attr('checked'))
 			else
 				$(this).attr('data-initvalue',$(this).val())
-		})
+			})
 		.bind('change',function(ev){
-			//if($(this).attr('type')=='checkbox')
-			if($(this).attr('data-initvalue')==$(this).val()){
-				ev.preventDefault();
-				return;
-			}else {
-				$(this).attr('data-initvalue',$(this).val());
-			}
-			self._setChanged(true);
-		});
+				//if($(this).attr('type')=='checkbox')
+            if($(this).attr('data-initvalue')==$(this).val()){
+                ev.preventDefault();
+                return;
+            }else {
+                $(this).attr('data-initvalue',$(this).val());
+            }
+            self._setChanged(true);
+        });
+		
 
 		this.form.find('input[type=radio]').click(function(){
 			self._setChanged(true);
@@ -132,9 +142,6 @@ $.widget("ui.atk4_form", {
 		// This function is used by file upload
 		this.plain_submit=true;
 		this.form.trigger('submit');
-	},
-	destroy: function(){
-		// TODO: need to unbind things
 	},
 	setFieldValue: function(field_name,value){
 		var f=$('#'+this.id+'_'+field_name);
@@ -273,18 +280,25 @@ $.widget("ui.atk4_form", {
 			$.univ().loadingInProgress();
 			return false;
 		}
-		this.element.find("input[checked], input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], select, textarea")
+		/*
+		this.element.find("input:checked, input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], select, textarea")
 		.each(function() {
 			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
 
 			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = $(this).val();
 		});
+		console.log('old=',params);
+		*/
+		params=this.element.find(":input").serializeArray()
+
+		//	console.log(params);
 
 
 		// btn is clicked
 		if(btn){
 			params['ajax_submit']=btn;
 		}
+		console.log(this.form[0]);
 
 		var properties={
 			type: "POST",

@@ -171,6 +171,7 @@ $.extend($.atk4,{
         this.loading++;
         return $.ajax($.extend({
             type: "GET",
+			dataType: 'html',
             data: data,
 			// We tell the backend that we will verify output for "TIMEOUT" output
 			beforeSend: function(xhr){xhr.setRequestHeader('X-ATK4-Timeout', 'true');},
