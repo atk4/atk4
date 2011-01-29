@@ -1,4 +1,4 @@
-<?
+<?php
 class ClassDoc extends Namespace {
 	function initNamespace(){
 		$r=$this->api->frame('RightSidebar','Class Doc',null,'width="200"')

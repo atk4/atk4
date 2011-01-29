@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 * ApiPortal Abstract Object
 * Every ApiPortal Object class should be parent (direct or indirect) of this class to have full featured

@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Tabs extends View {
 	function setController($c){
 		parent::setController($c);

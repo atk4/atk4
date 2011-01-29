@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Alternative version of authorization class. This works very similar to regular Auth class,
  *

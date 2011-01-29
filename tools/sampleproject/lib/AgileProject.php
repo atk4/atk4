@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    Commonly you would want to re-define ApiFrontend for your own application.
  */

@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This class implements a object to be used by getDestitanionURL(). Instead of returning string,
  * it will return this object. Not only object can be used AS string, but it will also be handled

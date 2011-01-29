@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // TODO: why this class is here and how can it be used?
 //

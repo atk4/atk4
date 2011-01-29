@@ -1,4 +1,4 @@
-<?
+<?php
 class Form_Field_Slider extends Form_Field {
 	public $left='Min',$right='Max';
 	public $min=0,$max=10;

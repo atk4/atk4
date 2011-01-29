@@ -1,4 +1,4 @@
-<?
+<?php
 abstract class page_DefaultAbout extends Page {
 	var $about_this;
 	function init(){

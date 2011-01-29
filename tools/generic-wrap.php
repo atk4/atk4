@@ -1,4 +1,4 @@
-<?
+<?php
 $safe_extensions=array(
 		'gif','jpg','css','js','png'
 		);

@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * jQuery is an compatibility layer if jQuery UI is not used.
 

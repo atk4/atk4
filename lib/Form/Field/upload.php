@@ -1,4 +1,4 @@
-<?
+<?php
 /**
   *
   * This class is for uploading files. It supports 3 types of upload:

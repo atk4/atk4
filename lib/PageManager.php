@@ -1,4 +1,4 @@
-<?
+<?php
 class PageManager extends AbstractController {
     /*
      * This is a generic page manager. For web applications it calculates

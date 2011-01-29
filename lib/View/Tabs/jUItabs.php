@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Tabs_jUItabs extends View_Tabs {
 	public $tab_template=null;
 	public $tab_count=0;

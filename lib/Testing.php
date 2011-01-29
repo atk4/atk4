@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    This class adds some extra tests to your application
 */

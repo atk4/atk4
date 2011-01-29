@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Icon extends View_HtmlElement {
 	public $color=null;
 	function init(){

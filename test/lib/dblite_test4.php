@@ -1,4 +1,4 @@
-<?
+<?php
 include '../lib/DBlite.php';
 
 $db = DBlite::connect('mysql://root@localhost/ml_01');

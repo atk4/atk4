@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    After looking at many HTML sanitization classes, I believe they are still missing the point
    and trying to duplicate functionality. The HTML we receive is almost as good as XML. In fact

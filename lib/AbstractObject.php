@@ -1,4 +1,4 @@
-<?
+<?php
 abstract class AbstractObject {
 	/*
 	 * This class is a parent of ANY class of those in AModules.

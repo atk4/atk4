@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    Typically controller classes are empty. MVC system is due to be rewritten in
    Agile Toolkit 4, and classes will be implemented differently.

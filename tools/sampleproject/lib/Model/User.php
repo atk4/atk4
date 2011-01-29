@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    Model class defines structure and behavor of your model. You can re-define number of existing
    functions and add your own functions. 

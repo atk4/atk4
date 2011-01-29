@@ -1,4 +1,4 @@
-<?
+<?php
 // Testing form displaying capability
 require_once '../lib/ApiBase.php';
 

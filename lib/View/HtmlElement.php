@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * This object add one simple element on the page such as div or tag. However it's extremely useful
  * for adding different properties, events or setting crlass

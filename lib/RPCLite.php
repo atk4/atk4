@@ -1,4 +1,4 @@
-<?
+<?php
 
 class RPCLite {
 	/* enlighted version of RPC, amodules 3 */

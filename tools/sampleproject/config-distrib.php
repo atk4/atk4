@@ -1,4 +1,4 @@
-<?
+<?php
 
 # This is your default configuration file
 

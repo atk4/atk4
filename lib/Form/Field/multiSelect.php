@@ -1,4 +1,4 @@
-<?
+<?php
 class Form_Field_multiSelect extends Form_Field_dropdown {
 	public $value_array=array();
 	function init(){

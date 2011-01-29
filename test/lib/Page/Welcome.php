@@ -1,4 +1,4 @@
-<?
+<?php
 class Page_Welcome extends Page {
 	function call_render(){
 		$this->owner->rendered['sub-elements'][]= "

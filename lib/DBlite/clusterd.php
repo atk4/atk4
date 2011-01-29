@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+<?php
 <?php
 // define paths
 define('STATUS','/home/daru/public_html/nsfw/amodules3/lib/DBlite/mysql_cluster_status');

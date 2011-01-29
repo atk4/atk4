@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Box extends View {
 	public $class=null;
 	function set($text){

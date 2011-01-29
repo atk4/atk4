@@ -1,4 +1,4 @@
-<?
+<?php
 class PathFinder extends AbstractController {
 	/*
 	 PathFinder will help you to maintain consistent structure of files. This

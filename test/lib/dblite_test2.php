@@ -1,4 +1,4 @@
-<?
+<?php
 include '../lib/DBlite.php';
 
 $db = new DBlite;

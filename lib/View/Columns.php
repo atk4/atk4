@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Columns extends View {
 	public $cnt=0;
 	function init(){

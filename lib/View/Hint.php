@@ -1,4 +1,4 @@
-<?
+<?php
 class View_Hint extends View_Box {
 	function defaultTemplate(){
 		return array('view/hint','_top');
