@@ -1,9 +1,6 @@
 <?php
 /***********************************************************
-   ..
-
-   Reference:
-     http://atk4.com/doc/ref
+   File: Blah
 
  **ATK4*****************************************************
    This file is part of Agile Toolkit 4 
@@ -22,13 +19,3 @@
     http://www.atk4.com/commercial/ 
 
  *****************************************************ATK4**/
-/*
- * Created on 21.03.2006 by *Camper*
- */
-class page_Projects extends Page{
-	function init(){
-		parent::init();
-		$this->add('ListProjects', null, 'Content');
-	}
-}
-?>
