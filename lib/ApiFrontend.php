@@ -93,7 +93,7 @@ class ApiFrontend extends ApiWeb{
 					$this->loadStaticPage($this->page);
 				}catch(PathFinder_Exception $e2){
 					// throw original error
-					throw $e;
+					$this->pageNotFound($e);
 				}
 				return;
 			}
@@ -101,6 +101,9 @@ class ApiFrontend extends ApiWeb{
 			$this->page_object=$this->add($class,$this->page,'Content');
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
+	}
+	function pageNotFound($e){
+		throw $e;
 	}
 	protected function loadStaticPage($page){
 		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page),'_top'));
