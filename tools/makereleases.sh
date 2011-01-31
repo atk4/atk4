@@ -2,7 +2,6 @@
 
 # This file creates necessary packages for the ZIP files
 
-[ -d .git ] || exit
 
 v="3.0.1"
 
@@ -11,6 +10,7 @@ b=`basename $p`
 v="-$v"
 
 if [ "$b" != "distfiles" ]; then
+  [ -d .git ] || exit
   mkdir -p distfiles
   cd distfiles
 fi
@@ -55,17 +55,16 @@ cp -aR atk4-source/tools/sampleproject atk4-sample-project
 (cd atk4-addons-source; git checkout-index -a -f --prefix=../atk4-sample-project/atk4-addons/)
 zip -r atk4-sample-project$v.zip atk4-sample-project/ >/dev/null
 tar -czf atk4-sample-project$v.tgz atk4-sample-project
-#rm -rf atk4-sample-project
+rm -rf atk4-sample-project
 
 # create atk4-sample-website build
 
-#echo "Creating atk4-sample-website distrib files"
-#cp -aR atk4-source/tools/samplewebsite atk4-sample-project
-#(cd atk4-source; git checkout-index -a -f --prefix=../atk4-sample-project/atk4/)
-#(cd atk4-addons-source; git checkout-index -a -f --prefix=../atk4-sample-project/atk4-addons/)
-#zip -r atk4-sample-project.zip atk4-sample-project/ >/dev/null
-#tar -czf atk4-asample-project.tgz atk4-sample-project
-#rm -rf atk4-sample-project
+echo "Creating atk4-sample-website distrib files"
+cp -aR atk4-source/tools/samplewebsite atk4-sample-website
+(cd atk4-source; git checkout-index -a -f --prefix=../atk4-sample-website/atk4/)
+zip -r atk4-sample-website.zip atk4-sample-website/ >/dev/null
+tar -czf atk4-sample-website.tgz atk4-sample-website
+rm -rf atk4-sample-website
 
 #(cd atk4-source; git checkout-index -a -f --prefix=../atk4)
 #(cd atk4-addons-source; git checkout-index -a -f --prefix=../atk4-addons)
