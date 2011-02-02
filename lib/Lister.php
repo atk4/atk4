@@ -45,6 +45,7 @@ class Lister extends View {
 		return $this;
 	}
 	function setStaticSource($data){
+		if(!is_array($data))throw new BaseException('Please specify array of hashes to setStaticSource()');
 		$this->data=$data;
 		return $this;
 	}
