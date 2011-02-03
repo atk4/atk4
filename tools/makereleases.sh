@@ -62,9 +62,6 @@ rm -rf atk4-sample-project
 echo "Creating atk4-sample-website distrib files"
 cp -aR atk4-source/tools/samplewebsite atk4-sample-website
 (cd atk4-source; git checkout-index -a -f --prefix=../atk4-sample-website/atk4/)
-zip -r atk4-sample-website.zip atk4-sample-website/ >/dev/null
-tar -czf atk4-sample-website.tgz atk4-sample-website
+zip -r atk4-sample-website$v.zip atk4-sample-website/ >/dev/null
+tar -czf atk4-sample-website$v.tgz atk4-sample-website
 rm -rf atk4-sample-website
-
-#(cd atk4-source; git checkout-index -a -f --prefix=../atk4)
-#(cd atk4-addons-source; git checkout-index -a -f --prefix=../atk4-addons)
