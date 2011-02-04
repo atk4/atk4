@@ -524,7 +524,7 @@ bindConditionalShow: function(conditions,tag){
 		}
 		if(f.is(':checkbox'))v=f[0].checked?v:'';
 		if(f.is('select')){
-			v=f.find('option[selected]').val();
+			v=f.find('option:selected').val();
 		}
 
 		// first, lets hide everything we can
