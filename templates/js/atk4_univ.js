@@ -483,6 +483,19 @@ autoChange: function(interval){
 	f.keyup(onkeyup);
 	f.bind('autochange_manual',onkeyup);
 },
+numericField: function(){
+	this.jquery.bind('keyup change',function () {
+	var t= this.value.replace(/[^0-9\.-]/g,'');
+		if(t != this.value)this.value=t;
+	});
+},
+disableEnter: function(){
+	this.jquery.bind('keydown keypress',function (e) {
+		if(e.which==13){
+			return false;
+		}
+	});
+},
 bindConditionalShow: function(conditions,tag){
 	// Warning
 	//   this function does not handle recursive cases,
