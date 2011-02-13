@@ -85,7 +85,7 @@ class LoremIpsum extends ReloadableView {
 	}
 	function render(){
 		for($x=0;$x<$this->paragraphs;$x++){
-			$this->output('<p>');
+			$this->output('<p id="'.$this->name.'">');
 			$this->output($this->create_greeking($this->words));
 			$this->output('</p>');
 		}
