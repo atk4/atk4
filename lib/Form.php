@@ -130,6 +130,7 @@ class Form extends AbstractView {
 	 */
 	function showAjaxError($field,$msg){
 		//$this->ajax()->displayAlert(strip_tags($msg))->execute();
+		if(!is_object($field))$field=$this->getElement($field);
 		$this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
 	}
 
