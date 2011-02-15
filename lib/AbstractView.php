@@ -66,6 +66,14 @@ abstract class AbstractView extends AbstractObject {
 		if($this->template)$this->template=clone $this->template;
 		if($this->controller)$this->controller=clone $this->controller;
 	}
+	function setModel($model,$actual_fields=null){
+		// TEMPORARY - create intermediate controller
+		$c=$this->add('Controller');
+		$c->setModel('Model_'.$model);
+		if($actual_fields)$c->setActualFields($actual_fields);
+		$this->setController($c);
+		return $c;
+	}
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;
