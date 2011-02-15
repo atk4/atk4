@@ -44,8 +44,14 @@ abstract class Form_Field extends AbstractView {
 	}
 	function _cutField(){
 		// this method is used by ui.atk4_form, when doing reloadField();
+		unset($_GET['cut_object']);
+		$this->recursiveRender();
 		if($this->api->jquery)$this->api->jquery->getJS($this);
-		$e=new RenderObjectSuccess($this->getInput());
+		$e=new RenderObjectSuccess(
+				$this->template->renderRegion($this->template->tags['before_field']).
+				$this->getInput().
+				$this->template->renderRegion($this->template->tags['after_field'])
+				);
 		throw $e;
 	}
 	function setMandatory($mandatory=true){
