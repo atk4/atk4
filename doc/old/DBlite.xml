@@ -770,7 +770,7 @@ $q-&gt;do_update();</screen>
       encaurages on using sequence emulation on MySQL, DBlite suggests using
       nextId().</para>
 
-      <para>This does makes library much lighter, but application loose
+      <para>This does makes library much lighter, but application lose
       compatibility. Therefore we designed a way to acheive compatibility
       across different database engines. Actually there are 2 ways - first way
       is to use Dynamic SQL wich is portable and will use database features to

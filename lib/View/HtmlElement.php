@@ -47,13 +47,16 @@ class View_HtmlElement extends View {
 		$this->template->append('class'," ".$class);
 		return $this;
 	}
-	function addStyle($property,$style=null){
+	function setStyle($property,$style=null){
 		if(is_null($style)&&is_array($property)){
 			foreach($property as $k=>$v)$this->setStyle($k,$v);
 			return $this;
 		}
 		$this->template->append('style',";".$property.':'.$style);
 		return $this;
+	}
+	function addstyle($property,$style=null){
+		return $this->setStyle($property,$style);
 	}
 	function setText($text){
 		$this->template->trySet('Content',$text);
