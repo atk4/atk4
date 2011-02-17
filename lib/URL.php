@@ -37,6 +37,8 @@ class URL extends AbstractModel {
 	protected $extension='.html';
 
 	protected $absolute=false;	// if true then will return full URL (for external documents)
+    
+    public $base_url=null;
 
 
 	function init(){
@@ -136,7 +138,12 @@ class URL extends AbstractModel {
 	function __toString(){
 		return $this->getURL();
 	}
+    function setBaseURL($base){
+        $this->base_url=$base;
+        return $this;
+    }
 	function getBaseURL(){
+        // Oherwise - calculate from detected values
 		$url='';
 
 		// add absolute if necessary
@@ -154,20 +161,27 @@ class URL extends AbstractModel {
 		return $this->extension;
 	}
 	function getURL(){
+        // baseURL can be set for sites with other URL
+        if($this->base_url)return $this->base_url.$this->getArguments();
+
 		$url=$this->getBaseURL();
 		$url.=$this->page;
 		$url.=$this->getExtension();
+        $url.=$this->getArguments();
 
+
+		return $url;
+	}
+    function getArguments(){
 		$tmp=array();
 		foreach($this->arguments as $key=>$value){
 			if($value===false)continue;
 			$tmp[]=$key.'='.urlencode($value);
 		}
 
-		if($tmp)$url.='?'.join('&',$tmp);
-
-		return $url;
-	}
+		if($tmp)return '?'.join('&',$tmp);
+        return '';
+    }
 	function getHTMLURL(){
 		return htmlentities($this->getURL());
 	}
