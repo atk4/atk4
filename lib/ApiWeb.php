@@ -50,7 +50,7 @@ class ApiWeb extends ApiCLI {
 	public $start_time=null;
 
 	function __construct($realm=null,$skin='kt2'){
-		$this->start_time=microtime();
+		$this->start_time=time()+microtime();
 
 		$this->skin=$skin;
 		try {
@@ -70,10 +70,10 @@ class ApiWeb extends ApiCLI {
 		$this->addHook('post-js-execute',array($this,'_showExecutionTimeJS'));
 	}
 	function _showExecutionTime(){
-		echo 'Took '.(microtime()-$this->start_time).'s';
+		echo 'Took '.(time()+microtime()-$this->start_time).'s';
 	}
 	function _showExecutionTimeJS(){
-		echo "\n\n/* Took ".(microtime()-$this->start_time).'s */';
+		echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
 	}
 	function initDefaults(){
 		parent::initDefaults();
