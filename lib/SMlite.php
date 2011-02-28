@@ -369,6 +369,7 @@ class SMlite extends AbstractModel {
 		/*
 		 * Find template location inside search directory path
 		 */
+		if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
         $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
 		return join('',file($f));
 	}
