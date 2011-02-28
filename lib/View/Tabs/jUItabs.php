@@ -24,7 +24,6 @@
  *****************************************************ATK4**/
 class View_Tabs_jUItabs extends View_Tabs {
 	public $tab_template=null;
-	public $tab_count=0;
 
 	function init(){
 		parent::init();
@@ -55,10 +54,6 @@ class View_Tabs_jUItabs extends View_Tabs {
 							  'tab_id'=>basename($page),
 							  ));
 		$this->template->append('tabs',$this->tab_template->render());
-
-
-
-		$this->tab_count++;
 		return $this;
 	}
 	function defaultTemplate(){
