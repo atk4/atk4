@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    This is your custom page. Defining your own page classes have several benefits.
 

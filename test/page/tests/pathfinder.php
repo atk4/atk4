@@ -1,4 +1,4 @@
-<?
+<?php
 /*
    This is a sample mockup page illustrating some UI design components.
    Please leave inact

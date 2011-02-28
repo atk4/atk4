@@ -1,4 +1,27 @@
 <?php
+/***********************************************************
+   ..
+
+   Reference:
+     http://atk4.com/doc/ref
+
+ **ATK4*****************************************************
+   This file is part of Agile Toolkit 4 
+    http://www.atk4.com/
+  
+   (c) 2008-2011 Agile Technologies Ireland Limited
+   Distributed under Affero General Public License v3
+   
+   If you are using this file in YOUR web software, you
+   must make your make source code for YOUR web software
+   public.
+
+   See LICENSE.txt for more information
+
+   You can obtain non-public copy of Agile Toolkit 4 at
+    http://www.atk4.com/commercial/ 
+
+ *****************************************************ATK4**/
 /**
  * Class represents a simple CMS API containing common entities:
  * - news
@@ -55,11 +78,11 @@ class ApiFrontend extends ApiWeb{
 						$tmp=new $in;
 						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
 
-						$this->pageObject=$this->add($in,$this->page);
+						$this->page_object=$this->add($in,$this->page);
 						if(method_exists($tmp,$fn)){
-							$this->pageObject->$fn();
+							$this->page_object->$fn();
 						}elseif(method_exists($tmp,'subPageHandler')){
-							if($this->pageObject->subPageHandler(join('_',$funct_parts))===false)break;
+							if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
 						}
 						return;
 				}
@@ -70,7 +93,7 @@ class ApiFrontend extends ApiWeb{
 					$this->loadStaticPage($this->page);
 				}catch(PathFinder_Exception $e2){
 					// throw original error
-					throw $e;
+					$this->pageNotFound($e);
 				}
 				return;
 			}
@@ -78,6 +101,9 @@ class ApiFrontend extends ApiWeb{
 			$this->page_object=$this->add($class,$this->page,'Content');
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
+	}
+	function pageNotFound($e){
+		throw $e;
 	}
 	protected function loadStaticPage($page){
 		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page),'_top'));

@@ -18,7 +18,7 @@ $.widget("ui.atk4_uploader", {
 	},
 
 
-    _init: function(){
+    _create: function(){
 		var self=this;
 		if(!this.options.form)this.options.form="#"+closest('form').parent().attr('id');
 		this.name=this.element.attr('id');
@@ -165,6 +165,10 @@ $.widget("ui.atk4_uploader", {
 	},
 	uploadComplete: function(data){
 		// This method is called when iFrame upload is complete
+		if(!data){
+			console.error('File upload was completed but no action was defined.'); 
+			return;
+		}
 		$('#'+this.name+'_progress').remove();
 		this.element.trigger('upload');
 		this.element.attr('disabled',false);

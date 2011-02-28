@@ -1,4 +1,27 @@
 <?php
+/***********************************************************
+   ..
+
+   Reference:
+     http://atk4.com/doc/ref
+
+ **ATK4*****************************************************
+   This file is part of Agile Toolkit 4 
+    http://www.atk4.com/
+  
+   (c) 2008-2011 Agile Technologies Ireland Limited
+   Distributed under Affero General Public License v3
+   
+   If you are using this file in YOUR web software, you
+   must make your make source code for YOUR web software
+   public.
+
+   See LICENSE.txt for more information
+
+   You can obtain non-public copy of Agile Toolkit 4 at
+    http://www.atk4.com/commercial/ 
+
+ *****************************************************ATK4**/
 /*
    This class represents sequentall calls to one jQuery object
    */
@@ -27,6 +50,14 @@ class jQuery_Chain extends AbstractModel {
 	}
 	function _selector($selector=null){
 		$this->selector=$selector;
+		return $this;
+	}
+	function _selectorDocument(){
+		$this->selector='__atk_selector_document';
+		return $this;
+	}
+	function _selectorWindow(){
+		$this->selector='__atk_selector_window';
 		return $this;
 	}
 	function _selectorThis(){
@@ -178,6 +209,10 @@ class jQuery_Chain extends AbstractModel {
 			$ret.="$";
 		}elseif($this->selector==='__atk_selector_this'){
 			$ret.="$(this)";
+		}elseif($this->selector==='__atk_selector_document'){
+			$ret.="$(document)";
+		}elseif($this->selector==='__atk_selector_window'){
+			$ret.="$(window)";
 		}elseif($this->selector==='__atk_selector_region'){
 			$ret.="$(region)";
 		}else{

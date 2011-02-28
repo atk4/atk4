@@ -1,4 +1,4 @@
-<?
+<?php
 class page_projects_edit extends Page {
 	function init(){
 		parent::init();

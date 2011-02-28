@@ -1,0 +1,23 @@
+# This is your local .htaccess file.
+# 
+# TODO: 
+# [ ] - configure this file to match your preferred URL format
+# [ ] - create a copy of this file into .htaccess-distrib
+# [ ] - add .htaccess-distrib to version control
+# [ ] - add .htaccess to ignore list
+
+RewriteEngine on
+RewriteRule ^(main.php.*)$		$1			[L]
+RewriteRule	^[^\.]*$			main.php	[L]
+RewriteRule .html$				main.php	[L]
+
+# You might need this for some webserver configurations
+#RewriteBase /
+
+# Add other paterns which needs to be handled by Agile Toolkit. 
+# RewriteRule .xml$				main.php	[L]
+
+# If you want to have custom URL routing, use the following format
+#RewriteRule ^project/(.+)(/|)?$	main.php?page=project&project=$1				[L]
+#RewriteRule ^project/(.+)/(.+)(/|)$	main.php?page=project&project=$1&action=$2	[L]
+

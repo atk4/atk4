@@ -352,15 +352,19 @@ class SMlite extends AbstractModel {
 	}
 	function eachTag($tag,$callable){
 		/*
-		 * This function will execute $callable($text) for each
+		 * This function will execute $callable($text,$tag) for each
 		 * occurance of $tag. This is handy if one tag appears several times on the page,
-		 * but needs custom processing. $text will be rendered part of the template
+		 * but needs custom processing. $text will be rendered part of the template. $tag
+		 * will be unique reference to a tag, containing #<num> allowing you to add objects
+		 * from the functions
 		 */
 		if(!isset($this->tags[$tag]))return;
-		$t=$this->tags[$tag];
-		foreach($t as $key=>$text){
-			$this->tags[$tag][$key][0]=call_user_func($callable,$this->renderRegion($text));
 
+		foreach($this->tags as $tagx=>$arr){
+			list($t,$n)=explode('#',$tagx);
+			if(is_null($n) || $t!=$tag)continue;
+			$text=$this->tags[$tagx][0][0];
+			$x=$this->tags[$tagx][0][0]=call_user_func($callable,$this->renderRegion($text),$tagx);
 		}
 	}
 

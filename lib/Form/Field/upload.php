@@ -1,4 +1,4 @@
-<?
+<?php
 /**
   *
   * This class is for uploading files. It supports 3 types of upload:
@@ -103,7 +103,7 @@ class Form_Field_Upload extends Form_Field {
 				$this->uploadComplete($c->get());
 			}
 		}
-		if(isset($_POST[$this->name.'_token']))$this->set($_POST[$this->name.'_token']);
+		if($_POST[$this->name.'_token'])$this->set($_POST[$this->name.'_token']);
 		else $this->set($this->default_value);
 	}
 	function uploadComplete($data=null){

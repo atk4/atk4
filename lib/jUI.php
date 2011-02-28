@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * jQuery UI is an interface to jQueryUI widgets.
 

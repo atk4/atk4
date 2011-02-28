@@ -13,33 +13,51 @@
 
 $.widget("ui.atk4_menu", {
 
-    _init: function(){
+	options: {
+		target: '#Content',
+		submenus: false,
+		cut_object: false
+	},
+
+    _create: function(){
         var self=this;
+
+		self.element.addClass('atk4_menu');
+
 		this.element.find('a').click(function(e){
 			e.preventDefault();
 			
-			$(this).closest('ul,.menu,.header_subnav').
-				find('.submenu-active').
-				removeClass('submenu-active').
-				addClass('submenu').hide();
-				
-			var url=$(this).attr('href');
-			if(url.indexOf('#')>=0){
-				url=url.substr(url.indexOf('#'));
-				self.element.find(url).removeClass('submenu').addClass('submenu-active').show();
-				$(this).parent().parent().children('.current').removeClass('current');
-				$(this).parent().addClass('current');
-			}else{
-				if(self.options.onClick){
-					self.options.onClick(this);
+			if(self.options.submenus){
+				if(self.options.submenu_aciton){
+					self.options.submenu_aciton();
 				}else{
-					var t=this;
-					$('#Content').atk4_loader().atk4_loader('loadURL',$(this).attr('href'),function(){
-						self.element.find('.header_subnav').find('.current').removeClass('current');
-						$(t).parent().addClass('current');
-					});
+					$(this).closest('ul,.menu,.header_subnav').
+					    find('.submenu-active').
+						removeClass('submenu-active').
+						addClass('submenu').hide();
 				}
 			}
+				
+			var url=$(this).attr('href');
+
+			if($(this).attr('data-hash')){
+				// TODO: implement hash adding / functionality / clicking.
+			}
+
+
+			/*
+			*/
+
+
+			// Cutting object as we show content
+			if(self.options.cut_object)
+				url={ 0: url, cut_object: self.options.cut_object, cut_page: null };
+
+			var t=this;
+			$(self.options.target).atk4_load(url,function(){
+				self.element.find('.current').removeClass('current');
+				$(t).addClass('current');
+			});
         });
 
 		// check anchor and load proper page..
