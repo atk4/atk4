@@ -180,5 +180,23 @@ class ApiCLI extends AbstractView {
 	function setConfig($config=array()){
 		$this->config=safe_array_merge($this->config,$config);
 	}
+	private $version_cache=null;
+	function versionRequirement($v,$return_only=false){
+		if(!$this->version_cache){
+			$f=dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'VERSION';
+			if(file_exists($f)){
+				$this->version_cache=trim(file_get_contents($f));
+			}else{
+				$this->version_cache='4.0.1';
+			}
+		}
+
+		if(($vc=version_compare($this->version_cache,$v))<0){
+			if($soft)return false;
+			throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->version_cache);
+		}
+		return true;
+
+	}
 }
 ?>
