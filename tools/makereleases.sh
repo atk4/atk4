@@ -3,7 +3,7 @@
 # This file creates necessary packages for the ZIP files
 
 
-v="3.0.1"
+v="4.0.2"
 
 p=`pwd`
 b=`basename $p`

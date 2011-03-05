@@ -8,6 +8,6 @@
 // jui - this is theme. Keep it jui unless you want to make your own theme
 
 include 'atk4/loader.php';
-$api=new AgileProject('agile_project','jui');
+$api=new Frontend('sample_project','jui');
 $api->main();
 ?>
