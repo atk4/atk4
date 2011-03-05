@@ -46,6 +46,7 @@ function error_handler($errno, $errstr, $errfile, $errline){
 				if(substr($errstr,0,15)=='Undefined index')break;
 			case 2048:
 				if(substr($errstr,0,15)=='var: Deprecated')break;
+				if(substr($errstr,0,15)=='Declaration of ')break;
 				if(substr($errstr,0,17)=='Non-static method')break;
 			case 8192:
 				if(substr($errstr,-13)=='is deprecated')break;

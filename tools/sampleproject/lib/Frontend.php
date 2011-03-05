@@ -2,12 +2,14 @@
 /*
    Commonly you would want to re-define ApiFrontend for your own application.
  */
-class AgileProject extends ApiFrontend {
+class Frontend extends ApiFrontend {
 	function init(){
 		parent::init();
 
+		$this->template->trySet('version',file_get_contents('atk4/VERSION'));
+
 		// Keep this if you are going to use database
-		$this->dbConnect();
+		//$this->dbConnect();
 
 		// Keep this if you are going to use plug-ins
 		$this->addLocation('atk4-addons',array(
@@ -37,7 +39,8 @@ class AgileProject extends ApiFrontend {
 			->allow('demo','demo')
 			// alternatively:
 			// setSource('user')  or
-			->check();
+			//->check()
+			;
 
 		// Alternatively 
 		// $this->add('MVCAuth')->setController('Controller_User')->check();
@@ -50,8 +53,8 @@ class AgileProject extends ApiFrontend {
 
 		// If you are using a complex menu, you can re-define
 		// it and place in a separate class
-		$m=$this->add('Menu','Menu','Menu');
-		$m->addMenuItem('DashBoard','index');
+		$m=$this->add('Menu',null,'Menu');
+		$m->addMenuItem('Welcome','index');
 		$m->addMenuItem('My Projects','projects');
 		$m->addMenuItem('Preferences','pref');
 		$m->addMenuItem('about');
