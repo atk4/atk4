@@ -187,6 +187,7 @@ $.widget('ui.atk4_loader', {
 				if(reload){
 					console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
 				}
+				el.empty();
 				n=source.contents();
 				n.each(function(){
 					$(this).remove().appendTo(el);
