@@ -172,32 +172,32 @@ $.widget('ui.atk4_loader', {
 			var source=$('<div/>').append(source);
 			var n=source.children();
 
+			el.removeAttr('id');
 			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==el.attr('id')))){
 				// Only one child have been returned to us. We also checked ID's and they match
 				// with existing element. In this case we will be copying contents of
 				// provided element
 				//n=n.contents();
 				el.triggerHandler('remove');
+				n.insertAfter(el);
+				el.remove();
+		   		// http://forum.jquery.com/topic/jquery-empty-does-not-destroy-ui-widgets-whereas-jquery-remove-does-using-ui-1-8-4
 			}else{
 				// otherwise we will be copying all the elements (including text)
 				if(reload){
 					console.error('Cannot reload content: ',reload,n[0],n[1],n[2]);
 				}
-				n=source;//.contents();
+				n=source.contents();
+				n.each(function(){
+					$(this).remove().appendTo(el);
+				});
 			}
-		   	// http://forum.jquery.com/topic/jquery-empty-does-not-destroy-ui-widgets-whereas-jquery-remove-does-using-ui-1-8-4
 
-			el.removeAttr('id');
 
 			el.atk4_loader({'base_url':url});
 
 			/*
-			n.each(function(){
-				$(this).remove().appendTo(el);
-			});
 			*/
-			n.insertAfter(el);
-			el.remove();
 
             for(var i in scripts){
 				try{
