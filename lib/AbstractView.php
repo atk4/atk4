@@ -69,7 +69,11 @@ abstract class AbstractView extends AbstractObject {
 	function setModel($model,$actual_fields=null){
 		// TEMPORARY - create intermediate controller
 		$c=$this->add('Controller');
-		$c->setModel('Model_'.$model);
+		if(is_string($model)){
+			$c->setModel('Model_'.$model);
+		}else{
+			$c->setModel($model);
+		}
 		if($actual_fields)$c->setActualFields($actual_fields);
 		$this->setController($c);
 		return $c;

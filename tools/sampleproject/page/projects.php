@@ -9,6 +9,13 @@
 class page_projects extends Page {
 	function init(){
 		parent::init();
+
+		if(!$this->api->db){
+			$this->add('View_Hint',null,'Hint')
+				->set('For this page you will need to configure MySQL database access');
+			return;
+		}
+
 		$this->add('View_Hint',null,'Hint')->set('This is a sample hint. It is a good practice<br/>'.
 				'if you leave a couple of hints for your users');
 

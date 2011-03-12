@@ -59,7 +59,10 @@ class ApiCLI extends AbstractView {
 			return $page->setArguments($arguments);
 		}
 		$url=$this->add('URL','url_'.$this->url_object_count++);
-		return $url->setPage($page)->setArguments($arguments);
+        if(substr($page,0,7)=='http://')$url->setURL($page);elseif
+            (substr($page,0,8)=='https://')$url->setURL($page);else
+            $url->setPage($page);
+		return $url->setArguments($arguments);
 	}
 	function getLogger($class_name='Logger'){
 		if(is_null($this->logger)){

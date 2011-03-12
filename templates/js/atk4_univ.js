@@ -297,6 +297,12 @@ dialogURL: function(title,url,options,callback){
 	dlg.atk4_load(url,callback);
 	dlg.dialog('open');
 },
+frameURL: function(title,url,options,callback){
+	options=$.extend({
+		buttons:{}
+	},options);
+	return this.dialogURL(title,url,options,callback);
+},
 dialogOK: function(title,text,fn,options){
 	var dlg=this.dialogBox($.extend({
 		title: title,

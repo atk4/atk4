@@ -98,7 +98,7 @@ class ApiFrontend extends ApiWeb{
 				return;
 			}
 			// i wish they implemented "finally"
-			$this->page_object=$this->add($class,$this->page,'Content');
+			$this->page_object=$this->add($class,$this->page);
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
 	}
