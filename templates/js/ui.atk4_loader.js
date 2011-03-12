@@ -57,7 +57,7 @@ $.widget('ui.atk4_loader', {
 	*/
 	helper: undefined,
 
-	_init: function(){
+	_create: function(){
 
 		var self=this;
 		/*
