@@ -19,11 +19,13 @@ $(function(){
 	<ul>
 		<li><a href="#tabs-1">atk-form-basic</a></li>
 		<li><a href="#tabs-2">atk-form-inline</a></li>
-		<li><a href="#tabs-3">atk-form-horizontal</a></li>
-		<li><a href="#tabs-4">atk-form-vertical</a></li>
+		<li><a href="#tabs-3">atk-form-vertical</a></li>
+		<li><a href="#tabs-4">atk-form-horizontal</a></li>
+		<li><a href="#tabs-5">atk-form-basic-2col</a></li>
 	</ul>
 	<div id="tabs-1">
 		<h3>.atk-form-basic</h3>
+		
 		<form class="atk-form atk-form-basic">
 		
 			<fieldset>
@@ -326,6 +328,97 @@ $(function(){
 			
 		</form>
 	
+	</div>
+	<div id="tabs-5">
+		<h3>.atk-form-basic</h3>
+		
+		<form class="atk-form atk-form-basic atk-form-basic-2col">
+		
+			<fieldset>
+				
+				<dl>
+					<dt><label>First Name</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl>
+					<dt><label>Last Name</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="has-error">
+					<dt><label>Password</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+						<ins>16 characters maximum</ins>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Password too short
+					</dd>
+				</dl>
+				<dl>
+					<dt><label>Confirm Password</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl>
+					<dt><label>City</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="has-error">
+					<dt><label>Country</label></dt>
+					<dd class="atk-form-field">
+						<select>
+							<option>United States of America</option>
+							<option>France</option>
+							<option>Zimbabwe</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+					</dd>
+				</dl>
+			
+			</fieldset>
+			
+			<fieldset>
+				<dl class="has-error">
+					<dt><label>Company</label></dt>
+					<dd class="atk-form-field">
+						<input type="text" />
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+					</dd>
+				</dl>
+				<dl class="has-error">
+					<dt><label>Occupation</label></dt>
+					<dd class="atk-form-field">
+						<select>
+							<option>Web designer</option>
+							<option>Web developer</option>
+							<option>Marketing</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+					</dd>
+				</dl>
+			</fieldset>
+			
+			<dl class="atk-form-buttons">
+			
+				<dd><button>Submit</button></dd>
+			
+			</dl>
+			
+		</form>
+
 	</div>
 </div>
 

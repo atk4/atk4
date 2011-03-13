@@ -50,6 +50,7 @@ div#footer-guard {height:4em;clear:both;}
 .gs-12 .g-11 {width:860px;}
 .gs-12 .g-12 {width:940px;}
 
+.gs-12 #header,
 .gs-12 #Content {padding-left:10px;padding-right:10px;}
 
 
@@ -259,6 +260,11 @@ h3+.atk-form {margin-top:1em;}
 /* Form Basic */
 
 .gs-12 .atk-form-basic dd {margin-left:160px;}
+.gs-12 .atk-form-basic-2col fieldset {width:380px;padding-top:0;margin-top:0;border-top:0;}
+.gs-12 .atk-form-basic-2col fieldset:first-child {float:left;}
+.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:460px;}
+.gs-12 .atk-form-basic-2col .atk-form-buttons {clear:both;}
+.gs-12 .atk-form-basic-2col .atk-form-buttons dd {margin-left:0;text-align:right;}
 
 /* Form Inline */
 
