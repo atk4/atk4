@@ -596,8 +596,57 @@ bindConditionalShow: function(conditions,tag){
 	}
 	ch();
 	//console.log(conditions);
-}
+},
 
+bindFillInFields: function(fields){
+	/*
+	 * This is universal function for autocomplete / dropdown fields. Whenever original field changes,
+	 *  we will use information in "rel" attribute of orignial field to fill other fields
+	 *  with appropriate values
+	 */
+	var f=this.jquery;
+
+
+	$.each(fields,function(key,val){
+		$(val).change(function(){ $(this).addClass('manually_changed'); });
+	});
+
+
+	function onchange_fn(){
+		var data=eval('('+f.attr('rel')+')');
+		var myid=$(this).val();
+		data=data[myid];
+
+		function auto_fill(){
+			$.each(fields,function(key,val){
+				if(data && data[key]){
+					$(val).val(data[key]).change().removeClass('manually_changed');
+				}
+			});
+		};
+
+		// Make sure none of those fields were changed manually.
+		var need_to_warn = false;
+		$.each(fields,function(key,val){
+			if(data && data[key] && $(val).hasClass('manually_changed') && $(val).val()){
+				need_to_warn=true;
+			}
+		});
+
+		if(need_to_warn)
+			$(this).univ().dialogConfirm('Warning','Some fields you have edited are about to be auto filled. Would you like to proceed?',auto_fill);
+		else
+			auto_fill();
+	};
+
+	f.bind('change_ref change',onchange_fn);
+},
+    
+
+
+
+
+nullFunction:function(){}
 },$.univ._import
 );
 
