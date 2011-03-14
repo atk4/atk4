@@ -38,7 +38,8 @@ class SampleForm extends Form {
       ;
 
     $f->addField('password','password')->validateNotNull()
-      ->setProperty('max-length',30);
+      ->setProperty('max-length',30)
+      ->add('Text',null,'after_field')->set('<ins>30 char max</ins>');
 
     $f->addField('password','password2')
        ->validateField('$this->get()==$this->owner->getElement("password")->get()',

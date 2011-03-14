@@ -97,7 +97,7 @@ $.widget("ui.atk4_form", {
 			self._setChanged(true);
 		}).change(function(){
 			self._setChanged(true);
-		});;
+		});
 
 		// This class defines field error template
 		// <div class="field-error-template"> .. <span class="field-error-text">..</span></div>
@@ -229,7 +229,7 @@ $.widget("ui.atk4_form", {
 		var field_highlight=field.closest('.atk-field').addClass('field_has_error');
 
 		// Clear previous errors
-		while(field_highlight.next().is('.atk-error'))field_highlight.next().remove();
+		field_highlight.find('.atk-form-error').remove();
 
 		if(!this.template['field_error'].length){
 			// no template, use alert;
@@ -238,7 +238,7 @@ $.widget("ui.atk4_form", {
 		}
 		var error_bl=this.template['field_error'].clone();
 		error_bl.find('.field-error-text').text(error);
-		error_bl.insertAfter(field_highlight).fadeIn();
+		error_bl.appendTo(field_highlight).fadeIn();
 
 		this.form.addClass('form_has_error');
 

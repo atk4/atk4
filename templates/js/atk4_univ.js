@@ -350,24 +350,24 @@ dialogAttention: function(text,options,fn){
 					   $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
 },
 message: function(msg,icon){
-	if($.ui.atk4_notify && $('#float-messages').length){
-		$('#float-messages').atk4_notify().atk4_notify('message',msg,icon);
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('message',msg,icon);
 		return;
 	}
 },
 successMessage: function(msg){
 	var html="";
 
-	if($.ui.atk4_notify && $('#float-messages').length){
-		$('#float-messages').atk4_notify().atk4_notify('successMessage',msg);
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
 		return;
 	}
 
-	if(!$('#float-messages').length)return alert(msg);
+	if(!$('#atk-growl-holder').length)return alert(msg);
 	html = '<p class="growl">'+msg
 		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
 
-	var growl=$(html).prependTo('#float-messages');
+	var growl=$(html).prependTo('#atk-growl-holder');
 	growl.find('.growl_close').click(function(){
 			growl.fadeOut(500,function(){ growl.remove(); });
 	});

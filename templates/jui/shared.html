@@ -14,8 +14,12 @@
 		<link rel="stylesheet" type="text/css" href="<?template?>css/agile.css<?/?>" />
 		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-icons.css<?/?>" />
 		<link rel="stylesheet" type="text/css" href="<?template?>css/general.css<?/?>" />
-
+		<!--[if lt IE 9]>
+		<script src=<?template?>css/ie.js<?/?>"></script>
+		<![endif]-->
 		<?$js_include?>
+		
+		
 		<script type="text/javascript">
 			$(function(){
 				<?$document_ready?>
@@ -23,7 +27,7 @@
 		</script>
 
 	</head>
-	<body>
+	<body class="atk-fullscreen">
 		<div id="layout" class="gs-12">
 
 			<div id="header">
@@ -38,7 +42,6 @@
 						</ul>
 					<?/?>
 					<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
-					<div style="display: block" id="float-messages"></div>
 				</div>
 			</div>
 
@@ -50,6 +53,8 @@
 		</div>
 		<div id="footer" class="gs-12">
 			This system is built on <a href="http://agiletoolkit.org/" target="_blank">Agile Toolkit™</a>. Download for free at
-			<a href="http://agiletoolkit.org/" target="_blank">www.agiletolokit.org</a></div>
+			<a href="http://agiletoolkit.org/" target="_blank">www.agiletolokit.org</a>
+		</div>
+		<div id="atk-growl-holder"></div>
 	</body>
 </html>

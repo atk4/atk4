@@ -5,9 +5,9 @@
 		<fieldset>
 			<?form_body?>
 				<?form_line?>
-				<dl>
+				<dl class="atk-field atk-field-<?$field_type?>">
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
-					<dd class="atk-field"><div class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div><?$field_hint?></dd>
+					<dd class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?><?$field_hint?></dd>
 					<?field_error?>
 					<dd class="atk-error">
 						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
@@ -19,7 +19,7 @@
 				<?form_separator?>
 				</fieldset>
 				<fieldset>
-					<?separator?><h3 class="atk-form-title"><?$separator_text?></h3><?/?><?/form_separator?>
+					<?separator?><?$separator_text?><?/?><?/form_separator?>
 					<?form_comment?><?$comment?><?/?>
 
 
@@ -27,10 +27,8 @@
 
 			<?/form_body?>
 
-			<dd style="display: none" class="field-error-template atk-error">
-				<div class="ui-state-error ui-corner-all"><span 
-				class="ui-icon"></span><span 
-				class="field-error-text">Sample Error</span></div>
+			<dd style="display:none" class="field-error-template atk-form-error field-error-text">
+				<i class="ui-icon ui-icon-alert"></i>Sample Error
 			</dd>
 		</fieldset>
 		<dl class="atk-form-buttons">

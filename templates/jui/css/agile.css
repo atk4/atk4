@@ -94,9 +94,12 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 .ui-widget {margin-bottom:0;}
 .ui-widget.ui-button {margin-bottom:0;}
 
+#ui-datepicker-div {display:none;}
+
 
 /* ------------ Features */
 
+.atk-fullscreen .gs-12 {width:inherit;padding:0 50px;}
 #atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
 .float-left {float:left;}
 .float-right {float:right;}
@@ -182,6 +185,21 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 .atk-lister.ui-widget-content>ul>li {padding:0.4em 0.8em;}
 .atk-lister-row.odd {background:#f5f5f5;}
 
+/* Tabs */
+
+.atk-tabs.ui-widget-content.ui-tabs {padding:0;border:none;}
+ .atk-tabs.ui-tabs .ui-tabs-panel {padding:1.5em 0 0 0}
+.atk-tabs>.ui-widget-header {background:none;border-width:0px 0px 1px 0px;padding:0;border-radius:0;-moz-border-radius:0;}
+
+
+/* Growl */
+
+#atk-growl-holder {position:fixed;top:50px;right:50px;}
+#atk-growl-holder>div {width:180px;padding:20px;margin-top:1em;position:relative;box-shadow:0 5px 10px rgba(0,0,0,0.3);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.3);-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.3);}
+#atk-growl-holder>div:first-child {margin-top:0;}
+#atk-growl-holder>div>.ui-icon {position:absolute;top:3px;right:3px;display:none;cursor:pointer;}
+#atk-growl-holder>div:hover>.ui-icon {display:block;}
+
 
 /* ------------ Menu */
 
@@ -223,15 +241,16 @@ ul.sidebar>li.ui-state-active>a {background: #999;}
 h3+.atk-form {margin-top:1em;}
 .atk-form fieldset,
 .atk-form-buttons {margin-top:1.5em;padding-top:1.5em;border-top:1px dashed #ccc;}
+.atk-form-buttons {text-align:right;}
 .atk-form fieldset:first-child {margin-top:0;padding-top:0;border-top:none;}
-.has-error label {color:#dd2a2a;}
-.has-error input[type=text],
-.has-error input[type=password],
-.has-error textarea {background:#ffeaea;}
-.gs-12 .atk-form dd.atk-form-field input[type=text],
-.gs-12 .atk-form dd.atk-form-field input[type=password],
-.gs-12 .atk-form dd.atk-form-field textarea {width:214px;}
-.gs-12 .atk-form dd.atk-form-field select {width:220px;}
+.field_has_error label {color:#dd2a2a;}
+.field_has_error input[type=text],
+.field_has_error input[type=password],
+.field_has_error textarea {background:#ffeaea;}
+.gs-12 .atk-form dd.form_field input[type=text],
+.gs-12 .atk-form dd.form_field input[type=password],
+.gs-12 .atk-form dd.form_field textarea {width:214px;}
+.gs-12 .atk-form dd.form_field select {width:220px;}
 
 /* Form Common Settings */
 
@@ -256,25 +275,29 @@ h3+.atk-form {margin-top:1em;}
 .atk-form-horizontal dl {.zoom:1;.display:block;}
 .atk-form-vertical dt,
 .atk-form-horizontal dt {margin-bottom:0.4em;}
+.gs-12 .atk-form-basic-2col .atk-form-buttons,
+.gs-12 .atk-form-vertical-3col .atk-form-buttons {clear:both;margin-top:0;}
+.gs-12 .atk-form-basic-2col fieldset,
+.gs-12 .atk-form-vertical-3col fieldset {padding-top:0;margin:0 0 1.5em 0;border-top:0;}
 
 /* Form Basic */
 
 .gs-12 .atk-form-basic dd {margin-left:160px;}
-.gs-12 .atk-form-basic-2col fieldset {width:380px;padding-top:0;margin-top:0;border-top:0;}
+.gs-12 .atk-form-basic-2col fieldset {width:380px;}
 .gs-12 .atk-form-basic-2col fieldset:first-child {float:left;}
-.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:460px;}
-.gs-12 .atk-form-basic-2col .atk-form-buttons {clear:both;}
-.gs-12 .atk-form-basic-2col .atk-form-buttons dd {margin-left:0;text-align:right;}
+.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:480px;}
 
 /* Form Inline */
 
-.gs-12 .atk-form-inline dl>dd.atk-form-field {margin-left:20px;}
-.gs-12 .atk-form-inline dd.atk-form-field {width:220px;float:left;}
+.gs-12 .atk-form-inline dl>dd.form_field {margin-left:20px;}
+.gs-12 .atk-form-inline dd.form_field {width:220px;float:left;}
 .gs-12 .atk-form-inline dd.atk-form-error {margin-left:400px;}
 .gs-12 .atk-form-inline dl.atk-form-buttons dd {margin-left:160px;}
 
 /* Form Vertical */
 
+.gs-12 .atk-form-vertical-3col fieldset {float:left;width:220px;margin-left:100px;}
+.gs-12 .atk-form-vertical-3col fieldset:first-child {margin-left:0;}
 
 
 /* Form Horizontal */
