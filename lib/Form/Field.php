@@ -108,6 +108,9 @@ abstract class Form_Field extends AbstractView {
 		$this->attr[$property]=$value;
 		return $this;
 	}
+    function setAttr($property,$value='true'){
+        return $this->setProperty($property,$value);
+    }
 	function setFieldHint($var_args=null){
 		/* Adds a hint after this field. Thes will call Field_Hint->set()
 		   with same arguments you called this funciton.
