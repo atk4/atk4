@@ -313,12 +313,12 @@ class BasicAuth extends AbstractController {
 		$this->debug("initializating authentication page");
 		//if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
-		$p=$this->add('Page');
+		$p=$this->add('Page',null,null,array('empty'));
 		try{
 			$p->template->loadTemplate('login');
 			$this->form=$this->createForm($p,'Login');
 		}catch(PathFinder_Exception $e){
-			$p->template->loadTemplate('empty');
+			//$p->template->loadTemplate('empty');
 			/*
 			$p->template->trySet('atk_path',$q=
 								$this->api->pathfinder->atk_location->getURL().'/');
