@@ -106,7 +106,7 @@ class ApiFrontend extends ApiWeb{
 		throw $e;
 	}
 	protected function loadStaticPage($page){
-		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page),'_top'));
+		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page)));
 		return $this->page_object;
 	}
 	function execute(){
