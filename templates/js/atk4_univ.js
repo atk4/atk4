@@ -245,6 +245,9 @@ dialogPrepare: function(options){
 	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
+	if(options.customClass){
+        dialog.parent().addClass(options.customClass);
+    }
 	$.data(dialog.get(0),'opener',this.jquery);
 	$.data(dialog.get(0),'options',options);
 
