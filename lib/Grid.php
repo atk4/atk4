@@ -602,19 +602,8 @@ class Grid extends CompleteLister {
 	function addPaginator($ipp=25,$name=null){
 		// adding ajax paginator
 		$this->paginator=$this->add('Paginator', $name, 'paginator', array('paginator', 'ajax_paginator'));
-		// depending on where this grid is rendered...
-		if($_GET['expanded']){
-			// in expanded region
-			$this->paginator->region($this->getExpanderId());
-			$this->paginator->cutObject($this->owner->name);
-			$this->api->stickyGET('expanded');
-			$this->api->stickyGET('expander');
-			$this->api->stickyGET('id');
-		}else{
-			// on the page directly
-			$this->paginator->region($this->name);//$_GET['expanded'].'_expandedcontent_'.$_GET['id']);
-			$this->paginator->cutObject($this->name);
-		}
+		$this->paginator->region($this->name);
+		$this->paginator->cutObject($this->name);
 		$this->paginator->ipp($ipp);
 		$this->current_row_index=$this->paginator->skip-1;
 		return $this;
