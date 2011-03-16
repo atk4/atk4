@@ -35,9 +35,9 @@
  * Created on 23.09.2008 by *Camper* (cmd@adevel.com)
  */
 class ApiFrontend extends ApiWeb{
-	protected $page_object=null;
-	protected $content_type='page';	// content type: rss/page/etc
-	protected $page_class='Page';
+	public $page_object=null;
+	public $content_type='page';	// content type: rss/page/etc
+	public $page_class='Page';
 
 	function init(){
 		parent::init();
@@ -106,7 +106,7 @@ class ApiFrontend extends ApiWeb{
 		throw $e;
 	}
 	protected function loadStaticPage($page){
-		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page),'_top'));
+		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page)));
 		return $this->page_object;
 	}
 	function execute(){
