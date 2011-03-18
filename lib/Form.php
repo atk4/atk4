@@ -60,7 +60,6 @@ class Form extends AbstractView {
 	public $js_widget='ui.atk4_form';
 	public $js_widget_arguments=array();
 
-
 	public $dq = null;
 	function init(){
 		/**
@@ -378,6 +377,10 @@ class Form extends AbstractView {
 		$this->template->trySet('form_class_layout',$c='form_'.basename($template));
 		return $this;
 	}
+    function setFormClass($class){
+        $this->template->trySet('form_class',$class);
+        return $this;
+    }
 	function render(){
 		// Assuming, that child fields already inserted their HTML code into 'form'/form_body using 'form_line'
 		// Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons

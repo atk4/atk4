@@ -272,10 +272,15 @@ class DBlite_dsql  {
 						$where.=" '".$this->db->escape($equals)."'";
 					}elseif(substr($where,-3,3)==' in'){
 						if($escape){
-							if(strtolower(substr($equals,0,6))=='select'){
+							if(is_string($equals) && strtolower(substr($equals,0,6))=='select'){
 								throw new BaseException("use 3rd argument if you pass sub-queries to where()");
 							}
-							$eq=explode(',',$equals);$eq2=array();
+							if(is_array($equals)){
+                                $eq=$equals;
+                            }else{
+                                $eq=explode(',',$equals);
+                            }
+                            $eq2=array();
 							foreach($eq as $eq3){
 								$eq2[]="'".$this->db->escape($eq3)."'";
 							}
