@@ -97,7 +97,7 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 
 /* ------------ Features */
 
-.gs-12.atk-fullscreen .gs {width:inherit;padding:0 50px;}
+.gs-12.atk-fullscreen .gs-wrap {width:inherit;padding:0 50px;}
 #atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
 .float-left {float:left;}
 .float-right {float:right;}
