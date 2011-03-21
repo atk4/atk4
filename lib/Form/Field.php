@@ -120,11 +120,12 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setFieldTitle($text){
+        /* OBSOLETE 4.1 */
 		$this->template->trySet('field_title',$text);
 		return $this;
 	}
-
 	function clearFieldValue(){
+        /* OBSOLETE 4.1, use set(null) */
 		$this->value=null;
 	}
 	function loadPOST(){
@@ -160,10 +161,12 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setDefault($default=null){
+        /* OBSOLETE 4.1, use set() */
 		$this->default_value=$default;
 		return $this;
 	}
 	function getDefault(){
+        /* OBSOLETE 4.1, use set() */
 		return $this->default_value;
 	}
 

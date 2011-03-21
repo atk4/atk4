@@ -77,6 +77,7 @@ class Form extends AbstractView {
 		// you want to have default values such as loaded from the table, then intialize $this->data array
 		// to default values of those fields.
 		$this->api->addHook('pre-exec',array($this,'loadData'));
+		$this->api->addHook('pre-render-output',array($this,'lateSubmit'));
 
 	}
 	protected function getChunks(){
@@ -150,12 +151,6 @@ class Form extends AbstractView {
 	function disable(){
 		// disables last field
 		$this->last_field->disable();
-		return $this;
-	}
-	function denyEnter(){
-		// prevents the submit on Enter for the last field
-		// apply it when there is only one field on the form
-		$this->last_field->denyEnter();
 		return $this;
 	}
 
@@ -313,6 +308,8 @@ class Form extends AbstractView {
 		*/
 		if($this->bail_out)return;
 		if($this->dq){
+            // TODO: move into Controller / hook
+
 			// if no condition set, use id is null condition
 			if(empty($this->conditions))$this->setCondition('id',null);
 			// we actually initialize data from database
@@ -360,6 +357,13 @@ class Form extends AbstractView {
 
 		return empty($this->errors);
 	}
+    function lateSubmit(){
+		if($_GET['submit']!=$this->name)return;
+
+        if($this->bail_out || $this->isSubmitted()){
+            $this->js()->univ()->consoleError('Form '.$this->name.' submission is not handled. See: http://agiletoolkit.org/doc/form/submit')->execute();
+        }
+    }
 	function isSubmitted(){
 		// This is alternative way for form submission. After  form is initialized you can call this method. It will
 		// hurry up all the steps, but you will have ready-to-use form right away and can make submission handlers

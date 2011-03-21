@@ -298,7 +298,6 @@ $.widget("ui.atk4_form", {
 		if(btn){
 			params['ajax_submit']=btn;
 		}
-		console.log(this.form[0]);
 
 		var properties={
 			type: "POST",

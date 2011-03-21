@@ -38,18 +38,13 @@ $.each({
 		$('#Content').atk4_load(page,fn);
 	},
 	log: function(arg1){
-			 /*
-		if(log){
-			log.info(arg1);
-			var s=$('#header_widgets').children('a:last').children('span');
-			var i=parseInt(s.text());
-			if(i>0)i++;else i='1';
-			s.text(i);
-			var s=$('#header_widgets').children('a:last').children('img').stop().effect('bounce');
-		}else{
-		*/
-			console.log(arg1);
-		//}
+		if(console)console.log(arg1);
+   	},
+	consoleError: function(arg1){
+		if(console){
+            if(console.error)console.error(arg1);
+            else console.log('Error: '+arg1);
+        }
    	},
 	confirm: function(msg){
 		if(!msg)msg='Are you sure?';
