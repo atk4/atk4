@@ -240,7 +240,6 @@ ul.sidebar>li.ui-state-active>a {background: #999;}
 h3+.atk-form {margin-top:1em;}
 .atk-form fieldset,
 .atk-form-buttons {margin-top:1.5em;padding-top:1.5em;border-top:1px dashed #ccc;}
-.atk-form-buttons {text-align:right;}
 .atk-form fieldset:first-child {margin-top:0;padding-top:0;border-top:none;}
 .field_has_error label {color:#dd2a2a;}
 .field_has_error input[type=text],
@@ -275,7 +274,7 @@ h3+.atk-form {margin-top:1em;}
 .atk-form-vertical dt,
 .atk-form-horizontal dt {margin-bottom:0.4em;}
 .gs-12 .atk-form-basic-2col .atk-form-buttons,
-.gs-12 .atk-form-vertical-3col .atk-form-buttons {clear:both;margin-top:0;}
+.gs-12 .atk-form-vertical-3col .atk-form-buttons {clear:both;margin-top:0;text-align:right;}
 .gs-12 .atk-form-basic-2col fieldset,
 .gs-12 .atk-form-vertical-3col fieldset {padding-top:0;margin:0 0 1.5em 0;border-top:0;}
 
