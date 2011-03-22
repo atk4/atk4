@@ -43,7 +43,7 @@ class Form_Field_Slider extends Form_Field {
 				'value'=>$this->js()->val(),
 				'change'=>$this->js()->_enclose()->val(
 					$this->js()->_selector('#'.$s)->slider('value')
-				)
+				)->change()
 			));
 		
 		$this->setProperty('style','display: none');
