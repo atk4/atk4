@@ -249,6 +249,8 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 .atk-form dd.form_field input[type=password],
 .gs-12 .atk-form dd.form_field textarea {width:214px;}
 .gs-12 .atk-form dd.form_field select {width:220px;}
+.atk-radio input {margin:0 5px 0 20px;}
+.atk-radio input:first-child {margin-left:0;}
 
 /* Form Common Settings */
 
@@ -287,6 +289,7 @@ h3+.atk-form {margin-top:1em;}
 
 /* Form Inline */
 
+.gs-12 .atk-form-inline dt {min-height:1px;}
 .gs-12 .atk-form-inline dl>dd.form_field {margin-left:20px;}
 .gs-12 .atk-form-inline dd.form_field {width:220px;float:left;}
 .gs-12 .atk-form-inline dd.atk-form-error {margin-left:400px;}
