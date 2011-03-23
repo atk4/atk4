@@ -245,6 +245,7 @@ h3+.atk-form {margin-top:1em;}
 .field_has_error input[type=text],
 .field_has_error input[type=password],
 .field_has_error textarea {background:#ffeaea;}
+.gs-12 .atk-form {max-width:940px;}
 .gs-12 .atk-form dd.form_field input[type=text],
 .gs-12 .atk-form dd.form_field input[type=password],
 .gs-12 .atk-form dd.form_field textarea {width:214px;}
@@ -276,9 +277,20 @@ h3+.atk-form {margin-top:1em;}
 .atk-form-vertical dt,
 .atk-form-horizontal dt {margin-bottom:0.4em;}
 .gs-12 .atk-form-basic-2col .atk-form-buttons,
-.gs-12 .atk-form-vertical-3col .atk-form-buttons {clear:both;margin-top:0;text-align:right;}
+.gs-12 .atk-form-vertical-2col .atk-form-buttons,
+.gs-12 .atk-form-vertical-2col+.atk-form-buttons,
+.gs-12 .atk-form-vertical-3col .atk-form-buttons,
+.gs-12 .atk-form-vertical-3col+.atk-form-buttons {clear:both;margin-top:0;text-align:right;}
 .gs-12 .atk-form-basic-2col fieldset,
-.gs-12 .atk-form-vertical-3col fieldset {padding-top:0;margin:0 0 1.5em 0;border-top:0;}
+.gs-12 .atk-form-vertical-2col fieldset,
+.gs-12 .atk-form-vertical-3col fieldset {padding-top:0;margin-bottom:1.5em;margin-top:0;border-top:0;}
+.gs-12 fieldset.atk-form-vertical-3col,
+.gs-12 fieldset.atk-form-vertical-2col {padding-top:1.5em;margin-bottom:1.5em;}
+.gs-12 fieldset.atk-form-vertical-2col:first-child,
+.gs-12 fieldset.atk-form-vertical-2col:first-child+fieldset,
+.gs-12 fieldset.atk-form-vertical-3col:first-child,
+.gs-12 fieldset.atk-form-vertical-3col:first-child+fieldset,
+.gs-12 fieldset.atk-form-vertical-3col:first-child+fieldset+fieldset {padding-top:0;margin-top:0;border-top:none;}
 
 /* Form Basic */
 
@@ -297,8 +309,25 @@ h3+.atk-form {margin-top:1em;}
 
 /* Form Vertical */
 
-.gs-12 .atk-form-vertical-3col fieldset {float:left;width:220px;margin-left:100px;}
+ .atk-form-vertical-2col fieldset,
+.gs-12 fieldset.atk-form-vertical-2col {float:left;width:460px;margin-left:20px;}
+.gs-12 fieldset.atk-form-vertical-2col {margin-left:0px;}
+.gs-12 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:20px;}
+.gs-12 .atk-form-vertical-2col dd.form_field input[type=text],
+.gs-12 .atk-form-vertical-2col dd.form_field input[type=password],
+.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:454px;}
+.gs-12 .atk-form-vertical-2col dd.form_field select {width:460px;}
+
+.gs-12 fieldset.atk-form-vertical-3col,
+.gs-12 .atk-form-vertical-3col fieldset {float:left;width:300px;margin-left:20px;}
+.gs-12 .atk-form-vertical-2col fieldset:first-child,
 .gs-12 .atk-form-vertical-3col fieldset:first-child {margin-left:0;}
+.gs-12 fieldset.atk-form-vertical-3col {margin-left:0px;}
+.gs-12 fieldset.atk-form-vertical-3col+fieldset.atk-form-vertical-3col {margin-left:20px;}
+.gs-12 .atk-form-vertical-3col dd.form_field input[type=text],
+.gs-12 .atk-form-vertical-3col dd.form_field input[type=password],
+.gs-12 .atk-form-vertical-3col dd.form_field textarea {width:294px;}
+.gs-12 .atk-form-vertical-3col dd.form_field select {width:300px;}
 
 
 /* Form Horizontal */
