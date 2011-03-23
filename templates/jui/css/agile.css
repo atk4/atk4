@@ -258,7 +258,7 @@ h3+.atk-form {margin-top:1em;}
 
 .atk-form-basic dl,
 .atk-form-inline dl,
-.atk-form-vertical dl {margin-top:1.5em;clear:both;}
+.atk-form-vertical dl {margin-top:1.5em;}
 .atk-form-basic dl:first-child,
 .atk-form-inline dl:first-child,
 .atk-form-vertical dl:first-child {margin-top:0;}
@@ -272,9 +272,13 @@ h3+.atk-form {margin-top:1em;}
 .atk-form-basic dd.atk-form-error,
 .atk-form-vertical dd.atk-form-error {margin-top:0.2em;}
 .atk-form-inline dl:after,
-.atk-form-horizontal dl:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.atk-form-horizontal dl:after,
+.atk-form-basic dl:after,
+.atk-form-vertical dl:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
 .atk-form-inline dl,
-.atk-form-horizontal dl {.zoom:1;.display:block;}
+.atk-form-horizontal dl,
+.atk-form-basic dl,
+.atk-form-vertical dl, {.zoom:1;.display:block;}
 .atk-form-vertical dt,
 .atk-form-horizontal dt {margin-bottom:0.4em;}
 .gs-12 .atk-form-basic-2col .atk-form-buttons,
