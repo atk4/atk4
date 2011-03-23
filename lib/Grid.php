@@ -265,7 +265,10 @@ class Grid extends CompleteLister {
 						array('expander'=>$field,
 							'cut_page'=>1,
 							'expanded'=>$this->name,
-							'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
+
+                            // TODO: id is obsolete
+							'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id'],
+							$this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
 							)
 						).'"
 			>'.$this->current_row[$field].'</button>';
@@ -274,6 +277,27 @@ class Grid extends CompleteLister {
 		return $this->init_expander($field);
 	}
 	function init_expander($field){
+
+        if(!isset($this->columns[$field]['refid'])){
+            // TODO: test
+        
+            $refid=$this->getController();
+            if($refid)$refid=$refid->getModel();
+            if($refid)$refid=$refid->entity_code;
+            if($refid){
+                $this->columns[$field]['refid']=$refid;
+            }else{
+
+                if($this->dq)
+                    $refid=$this->dq->args['table'];
+
+                if(!$refid)$refid=preg_replace('/.*_/','',$this->api->page);
+
+                $this->columns[$field]['refid']=$refid;
+            }
+        }
+
+
 		$class=$this->name.'_'.$field.'_expander';
 		$this->js(true)->_selector('.'.$class)->_load('ui.atk4_expander')->atk4_expander();
 	}

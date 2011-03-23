@@ -237,7 +237,12 @@ $.widget("ui.atk4_form", {
 			return;
 		}
 		var error_bl=this.template['field_error'].clone();
-		error_bl.find('.field-error-text').text(error);
+        
+        // One of the below would find the text. This is faster appreach than
+        // doing find('*').andSelf().filter('.field-error-text');
+		error_bl.find('.field-error-text').
+            add(error_bl.filter('.field-error-text')).text(error);
+
 		error_bl.appendTo(field_highlight).fadeIn();
 
 		this.form.addClass('form_has_error');
