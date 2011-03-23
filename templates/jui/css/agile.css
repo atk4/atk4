@@ -257,7 +257,7 @@ h3+.atk-form {margin-top:1em;}
 
 .atk-form-basic dl,
 .atk-form-inline dl,
-.atk-form-vertical dl {margin-top:1.5em;}
+.atk-form-vertical dl {margin-top:1.5em;clear:both;}
 .atk-form-basic dl:first-child,
 .atk-form-inline dl:first-child,
 .atk-form-vertical dl:first-child {margin-top:0;}
