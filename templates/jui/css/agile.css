@@ -313,14 +313,18 @@ h3+.atk-form {margin-top:1em;}
 
 /* Form Vertical */
 
+.gs-12 .atk-form-vertical dd.form_field input[type=text],
+.gs-12 .atk-form-vertical dd.form_field input[type=password],
+.gs-12 .atk-form-vertical dd.form_field textarea {width:294px;}
+.gs-12 .atk-form-vertical dd.form_field select {width:300px;}
  .atk-form-vertical-2col fieldset,
-.gs-12 fieldset.atk-form-vertical-2col {float:left;width:460px;margin-left:20px;}
+.gs-12 fieldset.atk-form-vertical-2col {float:left;width:380px;margin-left:100px;}
 .gs-12 fieldset.atk-form-vertical-2col {margin-left:0px;}
-.gs-12 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:20px;}
+.gs-12 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:100px;}
 .gs-12 .atk-form-vertical-2col dd.form_field input[type=text],
 .gs-12 .atk-form-vertical-2col dd.form_field input[type=password],
-.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:454px;}
-.gs-12 .atk-form-vertical-2col dd.form_field select {width:460px;}
+.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:374px;}
+.gs-12 .atk-form-vertical-2col dd.form_field select {width:380px;}
 
 .gs-12 fieldset.atk-form-vertical-3col,
 .gs-12 .atk-form-vertical-3col fieldset {float:left;width:300px;margin-left:20px;}
