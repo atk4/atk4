@@ -13,6 +13,9 @@ $.each({
 	alert: function(a){
 		alert(a);
 	},
+	setTimeout: function(code,delay){
+		setTimeout(code,delay);
+	},
 	displayAlert: function(a){
 		alert(a);
 	},

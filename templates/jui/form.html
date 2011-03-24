@@ -9,8 +9,8 @@
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
 					<dd class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?><?$field_hint?></dd>
 					<?field_error?>
-					<dd class="atk-error">
-						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
+					<dd class="field-error-template atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i><span class="field-error-text"><?$field_error_str?></span>
 					</dd>
 					<?/?>
 				</dl>
@@ -27,8 +27,8 @@
 
 			<?/form_body?>
 
-			<dd style="display:none" class="field-error-template atk-form-error field-error-text">
-				<i class="ui-icon ui-icon-alert"></i>Sample Error
+			<dd style="display:none" class="field-error-template atk-form-error">
+				<i class="ui-icon ui-icon-alert"></i><span class="field-error-text">Sample Error</span>
 			</dd>
 		</fieldset>
 		<dl class="atk-form-buttons">
