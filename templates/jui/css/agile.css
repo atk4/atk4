@@ -1,5 +1,5 @@
 /* Agile Toolkit // www.agiletoolkit.org */
-/* Updated on 18/03/11 */
+/* Updated on 24/03/11 */
 
 
 /* ------------ Resetting elements */
@@ -116,18 +116,6 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 
 .atk-button {padding:0;margin:0;background:#eee;border:none;background:none;}
 .atk-button::-moz-focus-inner{padding:0;border:none}
-
-.atk-layout>div {float:left;margin-left:40px;}
-.atk-layout.fluid>div {margin-left:4%;}
-.atk-layout>div:first-child {margin-left:0!important;}
-.atk-layout.c2>div {width:470px;}
-.atk-layout.c3>div {width:300px;}
-.atk-layout.c4>div {width:215px;}
-.atk-layout.fluid.c2>div {width:48%}
-.atk-layout.fluid.c3>div {width:30.6%}
-.atk-layout.fluid.c4>div {width:22%}
-.atk-layout:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
-.atk-layout {.zoom:1;.display:block;}
 
 .atk-hint {padding:.5em;}
 .atk-hint>div {margin-bottom:.5em;}

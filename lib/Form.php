@@ -178,8 +178,7 @@ class Form extends AbstractView {
 
 		$c=clone $this->template_chunks['form_separator'];
 		if(!$separator_text)$c->tryDel('separator');else $c->trySet('separator_text',$separator_text);
-		return  $this->add('Text','c'.count($this->elements),'form_body')->set(
-			$c->render());
+		return $this->add('Text',null,'form_body')->set($c->render());
 	}
 
 	// Operating with field values
