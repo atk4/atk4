@@ -27,7 +27,7 @@
  * It draws date in locale format (taken from $config['locale']['date'] setting) and stores it in
  * MySQL acceptable date format (YYYY-MM-DD)
  */
-class Form_Field_DatePicker extends Form_Field {
+class Form_Field_DatePicker extends Form_Field_Line {
 	public $options=array();
 	function getInput($attr=array()){
 		// $this->value contains date in MySQL format
