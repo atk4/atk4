@@ -361,7 +361,7 @@ class Form_Field_Checkbox extends Form_Field {
 						'value'=>'Y',
 						'checked'=>$this->value=='Y'
 						),$attr
-					)).' - '.$this->caption;
+					)).' &ndash; '.$this->caption;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
