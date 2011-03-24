@@ -301,10 +301,9 @@ h3+.atk-form {margin-top:1em;}
 
 /* Form Vertical */
 
-.gs-12 .atk-form-vertical dd.form_field input[type=text],
-.gs-12 .atk-form-vertical dd.form_field input[type=password],
-.gs-12 .atk-form-vertical dd.form_field textarea {width:294px;}
-.gs-12 .atk-form-vertical dd.form_field select {width:300px;}
+
+.gs-12 .atk-form-vertical dd.form_field textarea {width:434px;}
+
  .atk-form-vertical-2col fieldset,
 .gs-12 fieldset.atk-form-vertical-2col {float:left;width:380px;margin-left:100px;}
 .gs-12 fieldset.atk-form-vertical-2col {margin-left:0px;}
