@@ -106,7 +106,15 @@ class ApiFrontend extends ApiWeb{
 		throw $e;
 	}
 	protected function loadStaticPage($page){
-		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page)));
+		try{
+			$t='page/'.str_replace('_','/',strtolower($page));
+			$this->template->findTemplate($t);
+
+			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
+		}catch(PathFinder_Exception $e2){
+			$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page)));
+		}
+
 		return $this->page_object;
 	}
 	function execute(){
