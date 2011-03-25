@@ -104,7 +104,7 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 .float-right {float:right;}
 .wrapper {width:980px;margin:auto;}
 .clear {clear:both;font-size:0;line-height:0;}
-.clearwrap {overflow:hidden;width:100%;}
+.clearwrap {overflow:hidden;}
 .clearafter:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
 .clearafter {.zoom:1;.display:block;}
 .atk-button-panel>button {margin:0 .5em 1em 0 !important;}
@@ -332,3 +332,17 @@ h3+.atk-form {margin-top:1em;}
 .atk-form-horizontal dl:first-child {margin-left:0;}
 .atk-form-horizontal dl.atk-form-buttons {float:none;width:100%;margin-left:0;}
 
+
+/* Credit Card form */
+
+.atk-form-creditcard.atk-form fieldset {width:380px;}
+.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry dt {display:none;}
+.atk-form-creditcard dl.atk-form-expiry {float:left;margin-bottom:0;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry select {width:140px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry {margin-left:20px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry select {width:60px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry dd {margin-left:0;}
+/* .gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry select {width:inherit;} */
+.atk-form-creditcard dl.atk-form-cvn {clear:both;padding-top:1.5em;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-cvn input[type=text] {width:inherit;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-cvn a {font-size:0.75em;margin-left:1em;}

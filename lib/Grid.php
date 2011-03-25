@@ -23,7 +23,7 @@
 
  *****************************************************ATK4**/
 class Grid extends CompleteLister {
-	protected $columns;
+	public $columns;
 	protected $no_records_message="No matching records to display";
 	private $table;
 	private $id;
