@@ -141,7 +141,7 @@ abstract class AbstractView extends AbstractObject {
         $this->initTemplateTags();
 	}
     function initTemplateTags(){
-        if($this->api && method_exists($this->api, 'setTags')){
+        if($this->template && $this->api && method_exists($this->api, 'setTags')){
             $this->api->setTags($this->template);
         }
     }
