@@ -240,6 +240,7 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 .atk-form dd.form_field select {width:220px;}
 .atk-radio input {margin:0 5px 0 20px;}
 .atk-radio input:first-child {margin-left:0;}
+.atk-form label.mandatory:after {content:'*';color:#e51e1e;margin-left:0.2em;}
 
 /* Form Common Settings */
 
