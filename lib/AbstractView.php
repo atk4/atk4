@@ -138,7 +138,13 @@ abstract class AbstractView extends AbstractObject {
 		// Cool, now let's set _name of this template
 		if($this->template)$this->template->trySet('_name',$this->name);
 
+        $this->initTemplateTags();
 	}
+    function initTemplateTags(){
+        if($this->api && method_exists($this->api, 'setTags')){
+            $this->api->setTags($this->template);
+        }
+    }
 	function defaultTemplate(){
 		return null;//"_top";
 	}
