@@ -199,13 +199,15 @@ class ApiWeb extends ApiCLI {
 		$t->trySet('base_path',$q=$this->api->pm->base_path);
 		
 		// We are using new capability of SMlite to process tags individually
-		$t->eachTag('template',array($this,'locateTemplate'));
-		
+		$t->eachTag('template',array($this,'_locateTemplate'));
+		$t->eachTag('page',array($this,'_locatePage'));
 	}
-	function locateTemplate($path){
+	function _locateTemplate($path){
 		return $this->locateURL('template',$path);
 	}
-
+	function _locatePage($path){
+		return $this->getDestinationURL($path);
+	}
 	function execute(){
 		$this->rendered['sub-elements']=array();
 
