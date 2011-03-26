@@ -118,6 +118,7 @@ class ApiCLI extends AbstractView {
 		 * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
 		 */
 		if(is_null($this->config)){
+			$this->readConfig('config-default.php');
 			$this->readConfig();
 		}
 		$parts = explode('/',$path);
