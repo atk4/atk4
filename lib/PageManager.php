@@ -144,7 +144,7 @@ class PageManager extends AbstractController {
 				"periods (.) page=".$page);
 
 		// We have now arrived at the page as per specification.
-		$this->page=$page;
+		$this->page=str_replace('/','_',$page);
 
         $this->template_filename=$this->page;
 	   	if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
