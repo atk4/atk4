@@ -167,19 +167,21 @@ class URL extends AbstractModel {
 		$url=$this->getBaseURL();
 		$url.=$this->page;
 		$url.=$this->getExtension();
-        $url.=$this->getArguments();
+
+
+        $url.=$this->getArguments(strpos($url,'?')!==null);
 
 
 		return $url;
 	}
-    function getArguments(){
+    function getArguments($ampersand=false){
 		$tmp=array();
 		foreach($this->arguments as $key=>$value){
 			if($value===false)continue;
 			$tmp[]=$key.'='.urlencode($value);
 		}
 
-		if($tmp)return '?'.join('&',$tmp);
+		if($tmp)return ($ampersand?'&':'?').join('&',$tmp);
         return '';
     }
 	function getHTMLURL(){
