@@ -326,7 +326,7 @@ class BasicAuth extends AbstractController {
 								$q=$this->api->pm->base_url.'/'
 								);
 								*/
-			$this->api->setTags($p->template);
+			//$this->api->setTags($p->template);
 			$frame=$p->frame('Authentication');
 			$this->form=$this->createForm($frame);
 		}

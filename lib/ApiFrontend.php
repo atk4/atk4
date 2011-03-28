@@ -63,39 +63,41 @@ class ApiFrontend extends ApiWeb{
 				loadClass($class);
 			}catch(PathFinder_Exception $e){
 
-				$class_parts=explode('_',$page);
-				$funct_parts=array();
-				while($class_parts){
-						array_unshift($funct_parts,array_pop($class_parts));
-						$fn='page_'.join('_',$funct_parts);
-						$in='page_'.join('_',$class_parts);
-						try {
-							loadClass($in);
-						}catch(PathFinder_Exception $e2){
-							continue;
-						}
-						// WorkAround for PHP5.2.12+ PHP bug #51425
-						$tmp=new $in;
-						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
-
-						$this->page_object=$this->add($in,$this->page);
-						if(method_exists($tmp,$fn)){
-							$this->page_object->$fn();
-						}elseif(method_exists($tmp,'subPageHandler')){
-							if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
-						}
-						return;
-				}
-
 
 				// page not found, trying to load static content
 				try{
 					$this->loadStaticPage($this->page);
 				}catch(PathFinder_Exception $e2){
+
+                    $class_parts=explode('_',$page);
+                    $funct_parts=array();
+                    while($class_parts){
+                        array_unshift($funct_parts,array_pop($class_parts));
+                        $fn='page_'.join('_',$funct_parts);
+                        $in='page_'.join('_',$class_parts);
+                        try {
+                            loadClass($in);
+                        }catch(PathFinder_Exception $e2){
+                            continue;
+                        }
+                        // WorkAround for PHP5.2.12+ PHP bug #51425
+                        $tmp=new $in;
+                        if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
+
+                        $this->page_object=$this->add($in,$this->page);
+                        if(method_exists($tmp,$fn)){
+                            $this->page_object->$fn();
+                        }elseif(method_exists($tmp,'subPageHandler')){
+                            if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
+                        }
+                        return;
+                    }
+
+
 					// throw original error
 					$this->pageNotFound($e);
-				}
-				return;
+                }
+                return;
 			}
 			// i wish they implemented "finally"
 			$this->page_object=$this->add($class,$this->page);

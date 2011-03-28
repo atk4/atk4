@@ -262,6 +262,7 @@ class TMail extends AbstractController{
 		return $this->boundary;
 	}
 	function get($tag,$plain=true){
+        $value=null;
 		if(isset($this->attrs[$tag]))$value=$this->attrs[$tag];
 		else
 		// some tags can be replaced be others
