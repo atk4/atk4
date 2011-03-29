@@ -169,7 +169,7 @@ class URL extends AbstractModel {
 		$url.=$this->getExtension();
 
 
-        $url.=$this->getArguments(strpos($url,'?')!==null);
+        $url.=$this->getArguments(strpos($url,'?')!==false);
 
 
 		return $url;
