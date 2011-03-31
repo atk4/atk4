@@ -114,7 +114,10 @@ class ApiFrontend extends ApiWeb{
 
 			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
 		}catch(PathFinder_Exception $e2){
-			$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page)));
+
+            $t='page/'.strtolower($page);
+			$this->template->findTemplate($t);
+			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
 		}
 
 		return $this->page_object;
