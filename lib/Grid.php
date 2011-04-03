@@ -183,6 +183,9 @@ class Grid extends CompleteLister {
 			$this->current_row[$field]='<div align=center><i class="atk-icon atk-icons-nobg atk-icon-basic-check"></i></div>';
 		}else $this->current_row[$field]='';
 	}
+	function init_money($field){
+		$this->thparam[$field].=' align="right"';
+	}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
 		$this->current_row[$field]=number_format($m,2);
@@ -191,6 +194,7 @@ class Grid extends CompleteLister {
 		}else{
 			$this->setTDParam($field,'style/color',null);
 		}
+		$this->setTDParam($field,'align','right');
 	}
 	function format_totals_number($field){
 		return $this->format_number($field);
