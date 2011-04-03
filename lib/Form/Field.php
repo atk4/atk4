@@ -71,14 +71,12 @@ abstract class Form_Field extends AbstractView {
 	}
 	function displayFieldError($msg=null){
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
-		if($this->api->isAjaxOutput()){
-			$this->error_message=$msg;
-			$this->showAjaxError($msg);
-		}
+
+        $this->owner->js(true)
+            ->atk4_form('fieldError',$this->short_name,$msg)
+            ->execute();
+
 		$this->owner->errors[$this->short_name]=$msg;
-	}
-	function showAjaxError($msg){
-		$this->owner->showAjaxError($this,$msg);
 	}
 	function setNoSave(){
 		// Field value will not be saved into defined source (such as database)
@@ -391,7 +389,7 @@ class Form_Field_Hidden extends Form_Field {
 	function render(){
 		$this->template = $this->owner->template_chunks['hidden_form_line'];
 		$this->template->set('hidden_field_input',$this->getInput());
-		$this->owner->template_chunks['form']->append('form_body',$this->template->render());
+		$this->owner->template_chunks['form']->append('Content',$this->template->render());
 	}
 
 }

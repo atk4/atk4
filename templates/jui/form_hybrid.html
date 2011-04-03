@@ -3,7 +3,7 @@
 	<?$hint?>
 	<form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 		<fieldset class="atk-form-<?form_class?>basic<?/?> ">
-			<?form_body?>
+			<?Content?>
 				<?form_line?>
 				<dl class="atk-field atk-field-<?$field_type?>">
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
@@ -21,7 +21,7 @@
 				<fieldset class="atk-form-<?separator_text?>basic<?/?> ">
 			    <?/form_separator?>
 
-			<?/form_body?>
+			<?/Content?>
 
 			<dd style="display:none" class="field-error-template atk-form-error field-error-text">
 				<i class="ui-icon ui-icon-alert"></i>Sample Error

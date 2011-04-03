@@ -22,6 +22,7 @@
     http://www.atk4.com/commercial/ 
 
  *****************************************************ATK4**/
+// Field bundle
 include_once'Form/Field.php';
 /**
 * This class implements generic form, which you can actually use without
@@ -31,7 +32,7 @@ include_once'Form/Field.php';
 * @copyright	See file COPYING
 * @version		$Id$
 */
-class Form extends AbstractView {
+class Form_Basic extends AbstractView {
 	protected $form_template = null;
 	protected $form_tag = null;
 	public $errors=array();
@@ -87,7 +88,7 @@ class Form extends AbstractView {
 		if($this->template->is_set('hidden_form_line'))
 			$this->grabTemplateChunk('hidden_form_line');
 		$this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
-		//$this->grabTemplateChunk('form');           // template for whole form, must contain form_body, form_buttons, form_action,
+		//$this->grabTemplateChunk('form');           // template for whole form, must contain Content, form_buttons, form_action,
 													//  and form_name
 		$this->grabTemplateChunk('field_mandatory'); // template for marking mandatory fields
 
@@ -95,7 +96,7 @@ class Form extends AbstractView {
 		// They will try to look into this template, and if you don't have apropriate templates
 		// for them, they will use default ones.
 		$this->template_chunks['form']=$this->template;
-		$this->template_chunks['form']->del('form_body');
+		$this->template_chunks['form']->del('Content');
 		$this->template_chunks['form']->del('form_buttons');
 		$this->template_chunks['form']->set('form_name',$this->name);
 		return $this;
@@ -129,15 +130,23 @@ class Form extends AbstractView {
 	 * @param string $msg message to show
 	 */
 	function showAjaxError($field,$msg){
-		//$this->ajax()->displayAlert(strip_tags($msg))->execute();
+        // Depreciated
+        return $this->displayFieldError();
+    }
+
+    function displayError($field=null,$msg=null){
+        if(!$field){
+            // Field is not defined
+            // TODO: add support for error in template
+            $this->js()->univ()->alert($msg?$msg:'Error in form')->execute();
+        }
 		if(!is_object($field))$field=$this->getElement($field);
 		$this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
 	}
-
 	function addField($type,$name,$caption=null,$attr=null){
 		if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
-		$last_field=$this->add('Form_Field_'.$type,$name,'form_body','form_line')
+		$last_field=$this->add('Form_Field_'.$type,$name,null,'form_line')
 			->setCaption($caption);
 		$last_field->template->trySet('field_type',$type);
 		if (is_array($attr)){
@@ -169,7 +178,7 @@ class Form extends AbstractView {
 	*/
 	function addComment($comment){
 		if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
-		return $this->add('Text','c'.count($this->elements),'form_body')->set(
+		return $this->add('Text')->set(
 			$this->template_chunks['form_comment']->set('comment',$comment)->render()
 		);
 	}
@@ -178,7 +187,7 @@ class Form extends AbstractView {
 
 		$c=clone $this->template_chunks['form_separator'];
 		if(!$separator_text)$c->tryDel('separator');else $c->trySet('separator_text',$separator_text);
-		return $this->add('Text',null,'form_body')->set($c->render());
+		return $this->add('Text')->set($c->render());
 	}
 
 	// Operating with field values
@@ -373,7 +382,7 @@ class Form extends AbstractView {
 		return $result;
 	}
 	function setLayout($template){
-		// Instead of building our own form_body we will take it from
+		// Instead of building our own Content we will take it from
 		// pre-defined template and insert fields into there
 		$this->template_chunks['custom_layout']=$this->add('SMLite')->loadTemplate($template);
 		$this->template_chunks['custom_layout']->trySet('_name',$this->name);
@@ -385,7 +394,7 @@ class Form extends AbstractView {
         return $this;
     }
 	function render(){
-		// Assuming, that child fields already inserted their HTML code into 'form'/form_body using 'form_line'
+		// Assuming, that child fields already inserted their HTML code into 'form'/Content using 'form_line'
 		// Assuming, that child buttons already inserted their HTML code into 'form'/form_buttons
 
 		if($this->js_widget){
@@ -412,7 +421,7 @@ class Form extends AbstractView {
 					}
 				}
 			}
-			$this->template->set('form_body',$this->template_chunks['custom_layout']->render());
+			$this->template->set('Content',$this->template_chunks['custom_layout']->render());
 		}
 		$this->template_chunks['form']
 			->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
