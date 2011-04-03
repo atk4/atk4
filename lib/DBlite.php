@@ -80,7 +80,7 @@ class DBlite extends DBlite_Abstract {
 	var $calc_found_rows=false;
 	var $found_rows=false;        // will be initialized to value of found_rows(), see mysql manual (mysql 4.0+)
 	var $echo_errors = true;        // TODO: kill this?
-	var $last_query;
+	var $last_query='';
 
 
 	var $owner=null;         // link to your API class. Mainly for fatal()
