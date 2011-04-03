@@ -1,5 +1,5 @@
 <?php
-$p=@ini_get('include_path');if(!$p)$p='.';
-ini_set('include_path',$p.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.dirname(__FILE__).'/lib');
+// This sets initial path for the include. Further includes will be initialized through PathFinder
+ini_set('include_path','.'.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.dirname(__FILE__).'/lib');
 include 'static.php';
 ?>
