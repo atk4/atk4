@@ -353,6 +353,7 @@ class Form_Field_Checkbox extends Form_Field {
 	}
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
+		$this->template->tryDel('label_container');
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
