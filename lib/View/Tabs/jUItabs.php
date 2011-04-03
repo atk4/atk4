@@ -27,7 +27,9 @@ class View_Tabs_jUItabs extends View_Tabs {
 
 	function init(){
 		parent::init();
-		$this->js(true)->_load('ui.atk4_tabs')->tabs(array('cache'=>false));
+		$this->js(true)
+		//	_load('ui.atk4_tabs')
+			->tabs(array('cache'=>false));
 		$this->tab_template=$this->template->cloneRegion('tabs');
 		//$this->js(true)->_selector('#'.$this->name.'_tabs')->univ()->bwtabs('#'.$this->name.'_content');
 		$this->template->del('tabs');
