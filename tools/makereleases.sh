@@ -62,4 +62,4 @@ rm -rf atk4-example
 (cd atk4-example; find -name .gitignore | xargs rm; find -name .gitmodules | xargs rm)
 zip -r atk4-example$v.zip atk4-example/ >/dev/null
 tar -czf atk4-example$v.tgz atk4-example
-#rm -rf atk4-example
+rm -rf atk4-example
