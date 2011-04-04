@@ -350,7 +350,7 @@ class DBlite extends DBlite_Abstract {
 
 	///////////////////// Misc functions ///////////////////////
 	function fatal($str,$static_call=false){
-		throw new SQLException($this->last_query,$str);
+		throw new SQLException(@$this->last_query,$str);
 	}
 
 	function dsql($class='dsql') {
