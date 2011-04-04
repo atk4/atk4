@@ -164,7 +164,7 @@ class URL extends AbstractModel {
 			$tmp[]=$key.'='.urlencode($value);
 		}
 
-		if($tmp)$url.='?'.join('&',$tmp);
+		if($tmp)$url.=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
 
 		return $url;
 	}
