@@ -26,17 +26,26 @@ abstract class page_DefaultAbout extends Page {
 	var $about_this;
 	function init(){
 		parent::init();
-		$this->api->addHook('post-init',array($this,'aboutAModules3'));
+		$this->api->addHook('post-init',array($this,'aboutFramework'));
 	}
-	function aboutAModules3(){
-		$msg=$this->frame('About AModules3');
+	function aboutframework(){
+		$msg=$this->frame('About Agile Toolkit');
 		$t=$msg->add('Text');
-		$text="This web application was developed using <a href=\"_blank\" href=\"http://adevel.com/amodules3/\">AModules3 framework</a>. AModules3 is a free software. It is licensed under LGPL and goes together with your application. Please, feel free to use it in your applications and give it some popularity.</p><p><h3>AModules3 developers</h3>";
-		if(file_exists($f=dirname(__FILE__).'/../../CREDITS')){
-			$tmp=nl2br(htmlspecialchars(file_get_contents($f)));
-			$tmp=preg_replace("/^(.*):/m",'<b>\1:</b>',$tmp);
-			$text.=$tmp;
-		}
+		$text="<p>This web application was developed using <a href=\"http://agiletoolkit.org/\">Agile Toolkit
+            framework</a>. Agile Toolkit is licensed under Affero Gnu Public License. You may use it for free, but you
+            must release software you have built on Agile Toolkit under AGPL license. Sharing your code gives a warm,
+                 fuzzy feeling, but we ALL must share to make a world better.
+            </p><p>
+            If you are willing to use Agile Toolkit for commercial project, please visit 
+            <a href=\"http://agiletoolkit.org/commercial\">http://agiletoolkit.org/commercial</a> where you can obtain
+            commercial license, commercial support, training and consulting services. 
+            </p>
+            <h3>Agile Toolkit Authors</h3>
+            <p><a href=\"http://agiletech.ie\">Agile Technologies Limited</a> is a developer and copyright holder of
+            Agile Toolkit.
+            <a href=\"http://agiletoolkit.org/contact\">Contact us for more information</a>.
+            </p>
+            ";
 		$t->set($text);
 	}
 }

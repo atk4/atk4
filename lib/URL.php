@@ -181,9 +181,10 @@ class URL extends AbstractModel {
 			$tmp[]=$key.'='.urlencode($value);
 		}
 
-		if($tmp)return ($ampersand?'&':'?').join('&',$tmp);
-        return '';
-    }
+		if($tmp)$url.=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
+
+		return $url;
+	}
 	function getHTMLURL(){
 		return htmlentities($this->getURL());
 	}
