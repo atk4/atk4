@@ -78,7 +78,7 @@ class ApiFrontend extends ApiWeb{
 						$tmp=new $in;
 						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
 
-						$this->page_object=$this->add($in,$this->page);
+						$this->page_object=$this->add($in,$page);
 						if(method_exists($tmp,$fn)){
 							$this->page_object->$fn();
 						}elseif(method_exists($tmp,'subPageHandler')){
@@ -98,7 +98,7 @@ class ApiFrontend extends ApiWeb{
 				return;
 			}
 			// i wish they implemented "finally"
-			$this->page_object=$this->add($class,$this->page,'Content');
+			$this->page_object=$this->add($class,$page,'Content');
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
 	}
