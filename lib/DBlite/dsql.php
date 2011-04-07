@@ -397,7 +397,7 @@ class DBlite_dsql  {
 			// comma separated fields, such as for select
 			$fields=array();
 			if(!is_array($this->args['fields'])){
-				$this->fatal('Before generating query you should call $dq->field() several times, otherwise I do not know what fields you need',2);
+				$this->fatal('Before generating query you should call $dq->field() at least once, otherwise I do not know what fields you need',2);
 			}
 			foreach($this->args['fields'] as $field) {
 				$fields[]=$field;
@@ -500,17 +500,35 @@ class DBlite_dsql  {
 		// now parts array contains strings and array of string, let's request
 		// for required arguments
 
+        $dd='';
 		$args = $this->getArgs($required);
+        $dd.='<ul class="atk-sqldump">';
 
 		// now when we know all data, let's assemble resulting string
 		foreach($result as $key => $part) {
 			if(is_array($part)) {
 				$result[$key]=$args[$part[0]];
-			}
+
+                $p=$part[0];
+                if($p=='field')$p='fields';
+
+                $a=$this->args[$p];
+                if($a){
+                    if(is_array($a)){
+                        $dd.="<li><b>".$part[0]."</b> <ul><li>"
+                            .join('</li><li>',$a).'</li></ul>';
+                    }else{
+                        $dd.="<li><b>".$part[0]."</b> $a </li>";
+                    }
+                }
+			//}else{
+                //if(trim($part))echo "<font color=blue>$part</font> "; // statement
+            }
 		}
+        $dd.="</ul>";
 		if($this->debug){
 			//$this->db->owner->logVar($result);
-			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>';
+			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>'.$dd;
 		}
 		return join('', $result);
 	}
