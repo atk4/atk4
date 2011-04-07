@@ -22,7 +22,7 @@
 
 [ -f tools/header1 ] || { echo "Run from main atk4 directory"; exit; }
 
-find . -name '*.php' | while read f; do 
+find lib -name '*.php' | while read f; do 
 
 echo -n "$f.. "
 

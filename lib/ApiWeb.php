@@ -80,7 +80,13 @@ class ApiWeb extends ApiCLI {
 	}
 	function initLayout(){
 		$this->addLayout('Content');
+        $this->upgradeChecker();
 	}
+    function upgradeChecker(){
+        // Checks for ATK upgrades and shows current version
+        if($this->template->is_set('version'))
+            $this->add('UpgradeChecker',null,'version');
+    }
 	/////////////// C o r e   f u n c t i o n s ///////////////////
 	function caughtException($e){
 		$this->hook('caught-exception',array($e));

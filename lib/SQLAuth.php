@@ -91,6 +91,7 @@ class SQLAuth extends BasicAuth {
 		$data=$this->dq->do_getHash();
 		// If passwords are matched we will record some information
 		if($data && $data[$this->password_field]==$password){
+            unset($data[$this->password_field]);    // do not store password in session
 			$this->addInfo($data);
 			return true;
 		}

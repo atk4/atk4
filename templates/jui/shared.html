@@ -1,9 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- Agile Toolkit (c) Agile Technologies // http://www.agiletech.ie/ -->
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-	<head>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
 		<title><?page_title?>Agile Toolkit<?/?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -36,12 +33,11 @@
 				<?logo?><a href="http://agiletoolkit.org/" target="_blank"><div id="atk-logo" class="ui-widget-header float-left"><img src="<?template?>images/atk-logo.png<?/?>" alt="Agile Toolkit" /></div></a><?/logo?>
 				<div id="header-right">
 					<?Menu?>
-						<ul class="ui-state-default ui-corner-all">
-							<li><a href="javascript:void(0)">Dashboard</a></li>
-							<li><a href="javascript:void(0)">Pipeline</a></li>
-							<li><a href="javascript:void(0)">Engagements</a></li>
-							<li><a href="javascript:void(0)">Settings</a></li>
-						</ul>
+                            <div class="atk-menu atk-menu-horizontal ui-widget">
+                                <ul>
+								    <li class="ui-state-default"><a href="javascript:void(0)">Menu is not defined</a></li>
+                                </ul>
+							</div>
 					<?/?>
 					<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
 				</div>
@@ -54,8 +50,9 @@
 			<div id="footer-guard"></div>
 		</div>
 		<div id="footer" class="gs-wrap">
-			This system is built on <a href="http://agiletoolkit.org/" target="_blank">Agile Toolkit™</a>. Download for free at
-			<a href="http://agiletoolkit.org/" target="_blank">www.agiletolokit.org</a>
+			This system is implemented using 
+            <a href="http://agiletoolkit.org/license">AGPL</a> version of <a href="http://agiletoolkit.org/">Agile Toolkit</a>. &copy; 1999-2011
+			| <?theme?>jui<?/?> Theme
 		</div>
 		<div id="atk-growl-holder"></div>
 	</body>
