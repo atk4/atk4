@@ -181,7 +181,7 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 
 /* Growl */
 
-#atk-growl-holder {position:fixed;top:50px;right:50px;}
+#atk-growl-holder {position:fixed;top:50px;right:50px;z-index:9999;}
 #atk-growl-holder>div {width:180px;padding:20px;margin-top:1em;position:relative;box-shadow:0 5px 10px rgba(0,0,0,0.3);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.3);-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.3);}
 #atk-growl-holder>div:first-child {margin-top:0;}
 #atk-growl-holder>div>.ui-icon {position:absolute;top:3px;right:3px;display:none;cursor:pointer;}
