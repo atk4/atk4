@@ -222,7 +222,7 @@ class TMail extends AbstractController{
 					$att['content']=rtrim(wordwrap($att['content']));
 					break;
 			}
-			if($att['attachment']){
+			if(isset($att['attachment'])){
 				$att['content']=rtrim(chunk_split($att['content']));
 				$result.="name=$name\n" .
 				"Content-transfer-encoding: base64\nContent-Disposition: attachment;";

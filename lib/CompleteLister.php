@@ -39,9 +39,9 @@ class CompleteLister extends Lister {
 	}
 	function updateTotals(){
 		foreach($this->current_row as $key=>$val){
-			$this->totals[$key]+=strip_tags($val);
+			@$this->totals[$key]+=strip_tags($val);
 		}
-		$this->totals['row_count']++;
+		@$this->totals['row_count']++;
 	}
 	function formatTotalsRow(){
 		$this->formatRow();
@@ -75,7 +75,7 @@ class CompleteLister extends Lister {
 		}
 
 		// If partial reload is requested, then we only return rows, not the complete template
-		if($_GET[$this->name.'_reload_row']){
+		if(@$_GET[$this->name.'_reload_row']){
 			$r=$this->template->cloneRegion('rows')->render();
 			if($this->api->jquery)$this->api->jquery->getJS($this);
 			$e=new RenderObjectSuccess($r);

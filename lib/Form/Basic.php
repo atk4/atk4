@@ -366,7 +366,7 @@ class Form_Basic extends AbstractView {
 		return empty($this->errors);
 	}
     function lateSubmit(){
-		if($_GET['submit']!=$this->name)return;
+		if(@$_GET['submit']!=$this->name)return;
 
         if($this->bail_out || $this->isSubmitted()){
             $this->js()->univ()->consoleError('Form '.$this->name.' submission is not handled. See: http://agiletoolkit.org/doc/form/submit')->execute();

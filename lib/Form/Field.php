@@ -38,7 +38,7 @@ abstract class Form_Field extends AbstractView {
 
 	function init(){
 		parent::init();
-		if($_GET[$this->owner->name.'_cut_field']==$this->name){
+		if(@$_GET[$this->owner->name.'_cut_field']==$this->name){
 			$this->api->addHook('pre-render',array($this,'_cutField'));
 		}
 	}

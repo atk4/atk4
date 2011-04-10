@@ -115,7 +115,7 @@ abstract class AbstractView extends AbstractObject {
 						->loadTemplate($template_branch[0]);    // we'll use it as a file
 				}
 				// Now that we loaded it, let's see which tag we need to cut out
-				$this->template=$this->template->cloneRegion($template_branch[1]?$template_branch[1]:'_top');
+				$this->template=$this->template->cloneRegion(isset($template_branch[1])?$template_branch[1]:'_top');
 			}else{  // brach could be just a string - a region to clone off parent
 				if(isset($this->owner->template)){
 					$this->template=$this->owner->template->cloneRegion($template_branch);

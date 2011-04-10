@@ -22,7 +22,7 @@
     http://www.atk4.com/commercial/ 
 
  *****************************************************ATK4**/
-class LoremIpsum extends ReloadableView {
+class LoremIpsum extends AbstractView {
 	private $message;
 	private $paragraphs=3;
 	private $words=200;

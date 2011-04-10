@@ -361,8 +361,9 @@ class SMlite extends AbstractModel {
 		if(!isset($this->tags[$tag]))return;
 
 		foreach($this->tags as $tagx=>$arr){
-			list($t,$n)=explode('#',$tagx);
-			if(is_null($n) || $t!=$tag)continue;
+            $tag_split=explode('#',$tagx);
+			$t=$tag_split[0];
+			if(!isset($tag_split[1]) || $t!=$tag)continue;
 			$text=$this->tags[$tagx][0][0];
 			$x=$this->tags[$tagx][0][0]=call_user_func($callable,$this->renderRegion($text),$tagx);
 		}

@@ -85,7 +85,7 @@ class Grid extends CompleteLister {
 		//$this->add('Reloadable');
 		$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
-		$this->sortby=$this->learn('sortby',$_GET[$this->name.'_sort']);
+		$this->sortby=$this->learn('sortby',@$_GET[$this->name.'_sort']);
 	}
 	function defaultTemplate(){
 		return array('grid','grid');
@@ -184,7 +184,7 @@ class Grid extends CompleteLister {
 		}else $this->current_row[$field]='';
 	}
 	function init_money($field){
-		$this->thparam[$field].=' style="text-align:right;"';
+		@$this->thparam[$field].=' style="text-align:right;"';
 	}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
@@ -223,6 +223,13 @@ class Grid extends CompleteLister {
 		$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
 			strtotime($this->current_row[$field]));
 	}
+	function format_timestamp($field){
+		if(!$this->current_row[$field])$this->current_row[$field]='-';
+		else{
+			$format=$this->api->getConfig('locale/timestamp',$this->api->getConfig('locale/datetime','d/m/Y H:i:s'));
+			$this->current_row[$field]=date($format,strtotime($this->current_row[$field]));
+		}
+	}
 	function format_nowrap($field){
 		$this->tdparam[$this->getCurrentIndex()][$field]['style']='nwhite-space: nowrap';
 	}
@@ -254,7 +261,7 @@ class Grid extends CompleteLister {
 	}
 	function format_expander($field, $column){
 		$class=$this->name.'_'.$field.'_expander';
-		if(!$this->current_row[$field]){
+		if(!@$this->current_row[$field]){
 			$this->current_row[$field]=$column['descr'];
 		}
 		// TODO: 
@@ -263,7 +270,7 @@ class Grid extends CompleteLister {
 		// $this->current_row[$field]=$this->add('Button',null,false)
 		//  ->
 		//
-		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
+		@$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
 			rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
 						array('expander'=>$field,
@@ -369,7 +376,7 @@ class Grid extends CompleteLister {
 	}
 	function format_delete($field){
 		if(!$this->dq)throw new BaseException('delete column requires $dq to be set');
-		if($id=$_GET[$this->name.'_'.$field]){
+		if($id=@$_GET[$this->name.'_'.$field]){
 			// this was clicked
 			$this->_performDelete($id);
 			$this->js()->univ()->successMessage('Deleted Successfully')->getjQuery()->reload()->execute();
@@ -561,7 +568,7 @@ class Grid extends CompleteLister {
 		if(!is_array($this->current_row))$this->current_row=(array)$this->current_row;
 		if(!$this->columns)throw new BaseException('No column defined for grid');
 		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
-			$this->current_row[$tmp.'_original']=$this->current_row[$tmp];
+			$this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
 			$formatters = explode(',',$column['type']);
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_".$formatter)){
@@ -576,7 +583,7 @@ class Grid extends CompleteLister {
 	}
 	function applyTDParams($field,$totals=false){
 		// setting cell parameters (tdparam)
-		$tdparam=$this->tdparam[$this->getCurrentIndex()][$field];
+		$tdparam=@$this->tdparam[$this->getCurrentIndex()][$field];
 		$tdparam_str='';
 		if(is_array($tdparam)){
 			// wrap is replaced by style property

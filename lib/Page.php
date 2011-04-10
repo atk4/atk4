@@ -32,13 +32,13 @@
 class Page extends AbstractView {
 	protected $title='Page';
 	function init(){
-		if($_GET['cut_page'] && !$_GET['cut_object'] && !$_GET['cut_region'])
+		if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
 			$_GET['cut_object']=$this->short_name;
         $this->template->trySet('_page',$this->short_name);
 		parent::init();
 	}
 	function defaultTemplate(){
-		if($_GET['cut_page'])return array('page');
+		if(isset($_GET['cut_page']))return array('page');
 		$page_name='page/'.strtolower($this->short_name);
 	 	// See if we can locate the page
 		try{

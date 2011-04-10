@@ -241,7 +241,8 @@ class BasicAuth extends AbstractController {
 		unset($_GET['page']);
 	}
 	function login($username,$memorize=false){
-		$this->loggedIn($username,$this->allowed_credintals[$username],$memorize);
+		$this->loggedIn($username,isset($this->allowed_credintals[$username])?
+                $this->allowed_credintals[$username]:null,$memorize);
 	}
 	function loginRedirect(){
 
