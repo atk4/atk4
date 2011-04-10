@@ -1,5 +1,5 @@
 /* Agile Toolkit // www.agiletoolkit.org */
-/* Updated on 24/03/11 */
+/* Updated on 06/04/11 */
 
 
 /* ------------ Resetting elements */
@@ -181,7 +181,7 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {marg
 
 /* Growl */
 
-#atk-growl-holder {position:fixed;top:50px;right:50px;}
+#atk-growl-holder {position:fixed;top:50px;right:50px;z-index:9999;}
 #atk-growl-holder>div {width:180px;padding:20px;margin-top:1em;position:relative;box-shadow:0 5px 10px rgba(0,0,0,0.3);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.3);-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.3);}
 #atk-growl-holder>div:first-child {margin-top:0;}
 #atk-growl-holder>div>.ui-icon {position:absolute;top:3px;right:3px;display:none;cursor:pointer;}
@@ -236,11 +236,14 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 .atk-form {max-width:940px;}
 .gs-12 .atk-form dd.form_field input[type=text],
 .gs-12 .atk-form dd.form_field input[type=password],
-.gs-12 .atk-form dd.form_field textarea {width:214px;}
+.gs-12 .atk-form dd.form_field textarea {width:210px;padding:4px;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text] {width:7em;}
 .gs-12 .atk-form dd.form_field select {width:220px;}
 .atk-radio input {margin:0 5px 0 20px;}
 .atk-radio input:first-child {margin-left:0;}
 .atk-form label.mandatory:after {content:'*';color:#e51e1e;margin-left:0.2em;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text] {margin-right:5px;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text]+img {top:2px;.top:0;position:relative;}
 
 /* Form Common Settings */
 
@@ -256,9 +259,11 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 .atk-form-inline dt {width:140px;}
 .atk-form-basic ins,
 .atk-form-inline ins,
-.atk-form-vertical ins {display:block;margin-top:0.3em;}
+.atk-form-vertical ins,
+.atk-form-horizontal ins {display:block;margin-top:0.4em;}
 .atk-form-basic dd.atk-form-error,
-.atk-form-vertical dd.atk-form-error {margin-top:0.2em;}
+.atk-form-vertical dd.atk-form-error,
+.atk-form-horizontal dd.atk-form-error {margin-top:0.4em;}
 .atk-form-inline dl:after,
 .atk-form-horizontal dl:after,
 .atk-form-basic dl:after,
@@ -288,17 +293,20 @@ h3+.atk-form {margin-top:1em;}
 /* Form Basic */
 
 .gs-12 .atk-form-basic dd {margin-left:160px;}
-.gs-12 .atk-form-basic-2col fieldset {width:380px;}
-.gs-12 .atk-form-basic-2col fieldset:first-child {float:left;}
-.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:480px;}
+.gs-12 .atk-form-basic-2col fieldset {width:380px;float:left;}
+/* .gs-12 .atk-form-basic-2col fieldset:first-child {} */
+.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:100px;float:left;}
+.gs-12 .atk-form-basic .atk-field-text dd.form_field textarea {width:370px;}
 
 /* Form Inline */
 
 .gs-12 .atk-form-inline dt {min-height:1px;}
-.gs-12 .atk-form-inline dl>dd.form_field {margin-left:20px;}
-.gs-12 .atk-form-inline dd.form_field {width:220px;float:left;}
+.gs-12 .atk-form-inline dd.form_field {width:220px;float:left;padding-left:20px;}
 .gs-12 .atk-form-inline dd.atk-form-error {margin-left:400px;}
 .gs-12 .atk-form-inline dl.atk-form-buttons dd {margin-left:160px;}
+.gs-12 .atk-form-inline .atk-field-text dd.form_field {width:380px;}
+.gs-12 .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:560px;}
+.gs-12 .atk-form-inline .atk-field-text dd.form_field textarea {width:370px;}
 
 /* Form Vertical */
 
@@ -311,8 +319,9 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:100px;}
 .gs-12 .atk-form-vertical-2col dd.form_field input[type=text],
 .gs-12 .atk-form-vertical-2col dd.form_field input[type=password],
-.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:374px;}
+.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:370px;}
 .gs-12 .atk-form-vertical-2col dd.form_field select {width:380px;}
+/* .gs-12 .atk-form-vertical-2col .atk-field-datepicker dd.form_field input[type=text] {width:348px;} */
 
 .gs-12 fieldset.atk-form-vertical-3col,
 .gs-12 .atk-form-vertical-3col fieldset {float:left;width:300px;margin-left:20px;}
@@ -322,13 +331,15 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 fieldset.atk-form-vertical-3col+fieldset.atk-form-vertical-3col {margin-left:20px;}
 .gs-12 .atk-form-vertical-3col dd.form_field input[type=text],
 .gs-12 .atk-form-vertical-3col dd.form_field input[type=password],
-.gs-12 .atk-form-vertical-3col dd.form_field textarea {width:294px;}
+.gs-12 .atk-form-vertical-3col dd.form_field textarea {width:290px;}
 .gs-12 .atk-form-vertical-3col dd.form_field select {width:300px;}
+/* .gs-12 .atk-form-vertical-3col .atk-field-datepicker dd.form_field input[type=text] {width:268px;} */
 
 
 /* Form Horizontal */
 
 .atk-form-horizontal dl {float:left;width:220px;margin-left:20px;}
+.atk-form-horizontal dl.atk-field-datepicker {width:auto;}
 .atk-form-horizontal dl:first-child {margin-left:0;}
 .atk-form-horizontal dl.atk-form-buttons {float:none;width:100%;margin-left:0;}
 
