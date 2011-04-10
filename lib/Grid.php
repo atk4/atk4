@@ -176,15 +176,15 @@ class Grid extends CompleteLister {
 		$this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
 	}
 	function format_html($field){
-		$this->current_row[$field] = htmlentities($this->current_row[$field]);
+		$this->current_row[$field] = htmlspecialchars_decode($this->current_row[$field]);
 	}
 	function format_boolean($field){
-		if($this->current_row[$field]=='Y'){
+		if($this->current_row[$field] && $this->current_row[$field]!='N'){
 			$this->current_row[$field]='<div align=center><i class="atk-icon atk-icons-nobg atk-icon-basic-check"></i></div>';
 		}else $this->current_row[$field]='';
 	}
 	function init_money($field){
-		@$this->thparam[$field].=' style="text-align:right;"';
+		@$this->columns[$field]['thparam'].=' align="right"';
 	}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
@@ -211,7 +211,8 @@ class Grid extends CompleteLister {
 		else $this->current_row[$field]='-';
 	}
 	function format_time($field){
-		$this->current_row[$field]=format_time($this->current_row[$field]);
+		$this->current_row[$field]=date($this->api->getConfig('locale/time','H:i:s'),
+                strtotime($this->current_row[$field]));
 	}
 	function format_date($field){
 		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
@@ -237,7 +238,10 @@ class Grid extends CompleteLister {
 		$this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: wrap';
 	}
 	function format_template($field){
-		$this->current_row[$field]=$this->columns[$field]['template']
+        if(!($t=$this->columns[$field]['template'])){
+            throw new BaseException('use setTemplate() for field '.$field);
+        }
+		$this->current_row[$field]=$t
 			->set($this->current_row)
 			->trySet('_value_',$this->current_row[$field])
 			->render();
@@ -569,6 +573,10 @@ class Grid extends CompleteLister {
 		if(!$this->columns)throw new BaseException('No column defined for grid');
 		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
 			$this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
+
+            if($this->safe_html_output)
+                $this->current_row[$tmp]=htmlspecialchars($this->current_row[$tmp]);
+
 			$formatters = explode(',',$column['type']);
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_".$formatter)){
@@ -701,7 +709,15 @@ class Grid extends CompleteLister {
 						$header_col->del('sort');
 						$header_col->tryDel('sort_del');
 					}
+
+					if($column['thparam']){
+						$header_col->trySet('thparam',$column['thparam']);
+					}else{
+						$header_col->tryDel('thparam');
+					}
+
 					$header->append('cols',$header_col->render());
+                    
 				}
 			}
 		}

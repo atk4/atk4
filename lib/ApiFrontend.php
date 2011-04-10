@@ -84,7 +84,7 @@ class ApiFrontend extends ApiWeb{
                         $tmp=new $in;
                         if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
 
-                        $this->page_object=$this->add($in,$this->page);
+                        $this->page_object=$this->add($in,$page);
                         if(method_exists($tmp,$fn)){
                             $this->page_object->$fn();
                         }elseif(method_exists($tmp,'subPageHandler')){
