@@ -84,7 +84,9 @@ class ApiWeb extends ApiCLI {
 	}
     function upgradeChecker(){
         // Checks for ATK upgrades and shows current version
-        $this->add('UpgradeChecker',null,'version');
+		if($this->template && $this->is_set('version')){
+			$this->add('UpgradeChecker',null,'version');
+		}
     }
 	/////////////// C o r e   f u n c t i o n s ///////////////////
 	function caughtException($e){
