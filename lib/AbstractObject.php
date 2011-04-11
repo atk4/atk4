@@ -220,9 +220,6 @@ abstract class AbstractObject {
 		if(isset($this->elements[$short_name]))$this->elements[$short_name]=null;
 		return $this;
 	}
-	function getName(){
-		return $this->name;
-	}
 
 	/////////////// M e s s a g e   h a n d l i n g //////////////
 	function fatal($error, $shift = 0) {
