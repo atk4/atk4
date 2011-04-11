@@ -184,7 +184,7 @@ class Grid extends CompleteLister {
 		}else $this->current_row[$field]='';
 	}
 	function init_money($field){
-		@$this->columns[$field]['thparam'].=' align="right"';
+		@$this->columns[$field]['thparam'].=' style="text-align: right"';
 	}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
