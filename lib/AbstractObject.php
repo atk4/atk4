@@ -21,6 +21,8 @@ abstract class AbstractObject {
 	 */
 	public $elements = array ();
 
+	public $default_exception='BaseException';
+
 	/////////////// I n i t i a l i z e  o b j e c t /////////////
 	function init() {
 		/**
@@ -222,6 +224,16 @@ abstract class AbstractObject {
 	}
 
 	/////////////// M e s s a g e   h a n d l i n g //////////////
+	function exception($message,$type=null){
+		if(!$type){
+			$type=$this->default_exception;
+		}else{
+			$type='Exception_'.$type;
+		}
+
+		$e=new $type($message);
+		return $e;
+	}
 	function fatal($error, $shift = 0) {
 		/**
 		 * If you have fatal error in your object use the following code:
