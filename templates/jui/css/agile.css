@@ -100,8 +100,8 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 .gs-12.atk-fullscreen .gs-wrap {width:inherit;padding:0 50px;}
 .gs-12.atk-fullscreen .gs {width:inherit;padding:0 50px;}
 #atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
-.float-left {float:left;}
-.float-right {float:right;}
+.float-left {float:left !important;}
+.float-right {float:right !important;}
 .wrapper {width:980px;margin:auto;}
 .clear {clear:both;font-size:0;line-height:0;}
 .clearwrap {overflow:hidden;}
@@ -110,7 +110,7 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 .atk-button-panel>button {margin:0 .5em 1em 0 !important;}
 
 
-/* ------------ Styling */
+/* ------------ Various Objects */
 
 .atk-sep {margin:0 0.2em;color:#999;}
 
@@ -128,6 +128,12 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 .files-container {overflow:hidden;}
 .files-container .atk-sep {margin:0 .7em;}
 
+.form-quicksearch {position:relative;}
+.form-quicksearch input[type=text] {padding-right:16px;width:200px;}
+.form-quicksearch input[type=text]:focus {outline:none;}
+.form-quicksearch i.atk-icon-basic-ex {position:absolute;margin:4px 0 0 -18px;top:auto;z-index:5;cursor:pointer;}
+.form-quicksearch i.atk-icon-basic-search {cursor:pointer;}
+
 
 /* ------------ Elements */
 
@@ -141,6 +147,7 @@ hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
 
 /* Grid */
 
+.atk-grid>.form-quicksearch {float:right;}
 .atk-grid>table {width:100%;border-spacing:0px;}
 .atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;vertical-align:top;}
 .atk-grid>table>thead>tr>th {font-weight:bold;}
@@ -309,7 +316,6 @@ h3+.atk-form {margin-top:1em;}
 .gs-12 .atk-form-inline .atk-field-text dd.form_field textarea {width:370px;}
 
 /* Form Vertical */
-
 
 .gs-12 .atk-form-vertical dd.form_field textarea {width:434px;}
 

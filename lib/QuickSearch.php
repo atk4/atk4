@@ -30,6 +30,7 @@ class QuickSearch extends Filter {
 	public $js_widget='ui.atk4_form';
 	var $region=null;
 	var $region_url=null;
+	public $search_cross=null;
 
 	function defaultTemplate(){
 		return array('form/quicksearch','form');
@@ -39,14 +40,42 @@ class QuickSearch extends Filter {
 		$this->js(true)->_load('ui.atk4_form')->atk4_form();
 		$this->useDQ($this->owner->dq);
 		//on field change we should change a name of a button also: 'clear' in the name will clear fields
-		$this->addField('Search','q','Find');//->onChange()->ajaxFunc($this->setGoFunc());
+
 		/*
-		$this->getElement('q')
-			->js('autochange',$this->owner->js()->atk4_grid('reloadData',
-					array('q'=>$this->last_field->js()->val())
+		$ff->js('focus',array(
+					$x->js()->show(),
+					$s->js()->hide()
+					));
+		$ff->js('blur',array(
+					$x->js()->hide(),
+					$s->js()->show()
 					));
 					*/
-		$this->addSubmit('Go');
+		//$this->addSubmit('Go');
+	}
+	function recallAll(){
+		$ff=$this->addField('line','q','');//->onChange()->ajaxFunc($this->setGoFunc());
+		parent::recallAll();
+		//$ff->js(true)->univ()->autoChange(1);
+		//$ff->js('change',$this->js()->submit());
+		$search_cross=$ff->add('HtmlElement',null,'after_field')
+			->setElement('i')
+			->addClass('atk-icon')
+			->addClass('atk-icons-nobg')
+			->addClass('atk-icon-basic-ex')
+			->set('')
+			;
+
+		if(!$this->get('q')){
+			$search_cross->js(true)->hide();
+		}
+		$search_cross->js('click',array($ff->js()->val(''),$this->js()->submit()));
+		$s=$this->add('Icon',null,'form_buttons')->set('basic-search')
+			->setColor('gray');
+
+		$s->js('click',array(
+					$this->js()->submit()
+					));
 	}
 	function setGoFunc(){
 		return "btn=document.getElementById('".$this->name.'_Clear'."'); if(btn){btn.value='Go'; btn.name='".
