@@ -28,14 +28,19 @@ $.widget("ui.atk4_reference", {
 	},
 	initAutocomplete: function(ac_options){
 		// Add new field after ourselves for auto-complete
-		var t=$('<span class="input_autocomplete wo_button"><span><i></i><input class="input_style1" id="'+this.name+'_autocomplete"/></span></span>');
-		this.element.before(t);
+		//var t=$('<span class="input_autocomplete wo_button"><span><i></i><input class="input_style1" id="'+this.name+'_autocomplete"/></span></span>');
+		this.element.combobox();
 
 
 
 		var dropdown=this.element.prev();
 
 		this.autocomplete=$('#'+this.name+'_autocomplete');
+
+        this.autocomplete.autocomplete();
+        return;
+
+
 		this.autocomplete.attr('style',this.element.attr('style'));
 		this.autocomplete.attr('tabindex',this.element.attr('tabindex'));
 		this.element.attr('tabindex',null);
