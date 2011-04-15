@@ -62,8 +62,6 @@ class ApiFrontend extends ApiWeb{
 			try{
 				loadClass($class);
 			}catch(PathFinder_Exception $e){
-
-
 				// page not found, trying to load static content
 				try{
 					$this->loadStaticPage($this->page);
@@ -100,7 +98,6 @@ class ApiFrontend extends ApiWeb{
                 return;
 			}
 			// i wish they implemented "finally"
-			$this->page_object=$this->add($class,$this->page);
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
 	}
