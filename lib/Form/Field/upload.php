@@ -89,7 +89,6 @@ class Form_Field_Upload extends Form_Field {
 		}
 		if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
 			if($c=$this->getController()){
-
 				try{
 					$c->set('filestore_volume_id',1);
 					$c->set('original_filename',$this->getOriginalName());
@@ -97,6 +96,7 @@ class Form_Field_Upload extends Form_Field {
 					$c->import($this->getFilePath());
 					$c->update();
 				}catch(Exception $e){
+                    $this->api->logger->logException($e);
 					$this->uploadFailed($e->getMessage());
 				}
 
