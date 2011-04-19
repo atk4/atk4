@@ -214,6 +214,9 @@ class Grid extends CompleteLister {
 		$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
 			strtotime($this->current_row[$field]));
 	}
+	function format_timestamp($field){
+		return $this->format_datetime($field);
+	}
 	function format_datetime($field){
 		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
 		$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
