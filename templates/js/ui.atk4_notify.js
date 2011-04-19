@@ -83,11 +83,15 @@ $.widget('ui.atk4_notify', {
 		 */
 		var html=$('<div class="atk-growl ui-widget-content ui-corner-all"><i class="atk-icon"></i>'
 				+text+'<i class="ui-icon ui-icon-closethick"></i></div>');
-		if(!icon)icon='basic-check';
-		html.find('.atk-icon').addClass('atk-icons-green');
-		html.find('.atk-icon').addClass('atk-icon-'+icon);
-		html.find('span').text(text);
-		html.find('.ui-icon').addClass('close');
+		if(icon){
+            var icon=html.find('.atk-icon:first');
+            html.find('.atk-icon').addClass('atk-icons-green');
+            html.find('.atk-icon').addClass('atk-icon-'+icon);
+        }else{
+            html.find('.atk-icon:first').remove();
+        }
+        html.find('span').text(text);
+        html.find('.ui-icon').addClass('close');
 
 		this.messageHTML(html);
 	},

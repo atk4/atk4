@@ -31,6 +31,7 @@ class QuickSearch extends Filter {
 	var $region=null;
 	var $region_url=null;
 	public $search_cross=null;
+    public $grid;
 
 	function defaultTemplate(){
 		return array('form/quicksearch','form');
@@ -38,7 +39,7 @@ class QuickSearch extends Filter {
 	function init(){
 		parent::init();
 		$this->js(true)->_load('ui.atk4_form')->atk4_form();
-		$this->useDQ($this->owner->dq);
+
 		//on field change we should change a name of a button also: 'clear' in the name will clear fields
 
 		/*
@@ -53,6 +54,11 @@ class QuickSearch extends Filter {
 					*/
 		//$this->addSubmit('Go');
 	}
+    function useGrid($grid){
+        $this->grid=$grid;
+		$this->useDQ($this->grid->dq);
+        return $this;
+    }
 	function recallAll(){
 		$ff=$this->addField('line','q','');//->onChange()->ajaxFunc($this->setGoFunc());
 		parent::recallAll();
@@ -100,7 +106,7 @@ class QuickSearch extends Filter {
 	}
 	function submitted(){
 		if(parent::submitted()){
-			$this->owner->js()->reload()->execute();
+			$this->grid->js()->reload()->execute();
 		}
 	}
 }

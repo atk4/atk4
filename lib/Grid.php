@@ -132,6 +132,7 @@ class Grid extends CompleteLister {
 	}
 	function addQuickSearch($fields,$class='QuickSearch'){
 		return $this->add($class,null,'quick_search')
+            ->useGrid($this)
 			->useFields($fields);
 	}
 	function makeSortable($db_sort=null){
@@ -442,7 +443,7 @@ class Grid extends CompleteLister {
 		$this->dq->calc_found_rows();
 		return $this;
 	}
-	function execQuery(){
+    function processSorting(){
 		if($this->sortby){
 			$desc=false;
 			$order=$this->sortby_db;
@@ -452,6 +453,9 @@ class Grid extends CompleteLister {
 			}
 			if($order)$this->dq->order($order,$desc);
 		}
+    }
+	function execQuery(){
+		$this->processSorting();
 		return parent::execQuery();
 	}
 	function setTemplate($template){
@@ -580,6 +584,7 @@ class Grid extends CompleteLister {
 
 			$formatters = explode(',',$column['type']);
 			foreach($formatters as $formatter){
+                if(!$formatter)continue;
 				if(method_exists($this,$m="format_".$formatter)){
 					$this->$m($tmp,$column);
 				}else throw new BaseException("Grid does not know how to format type: ".$formatter);
@@ -837,5 +842,17 @@ class Grid extends CompleteLister {
 		}
 		$this->columns[$field]['type'].=','.$formatter;
 		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        return $this;
+	}
+	function setFormatter($field,$formatter){
+		/*
+		   * replace current formatter for field
+		   */
+		if(!isset($this->columns[$field])){
+			throw new BaseException('Cannot format nonexistant field '.$field);
+		}
+		$this->columns[$field]['type']=$formatter;
+		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        return $this;
 	}
 }
