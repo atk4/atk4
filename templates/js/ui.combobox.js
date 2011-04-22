@@ -30,6 +30,7 @@
 						},
 						select: function( event, ui ) {
 							ui.item.option.selected = true;
+							select.change();
 							self._trigger( "selected", event, {
 								item: ui.item.option
 							});
