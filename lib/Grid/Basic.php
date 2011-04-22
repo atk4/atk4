@@ -22,7 +22,7 @@
     http://www.atk4.com/commercial/ 
 
  *****************************************************ATK4**/
-class Grid extends CompleteLister {
+class Grid_Basic extends CompleteLister {
 	public $columns;
 	protected $no_records_message="No matching records to display";
 	private $table;
