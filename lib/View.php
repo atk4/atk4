@@ -24,6 +24,6 @@
  *****************************************************ATK4**/
 class View extends AbstractView {
 	function defaultTemplate(){
-		return '';
+		return array('view/empty');
 	}
 }

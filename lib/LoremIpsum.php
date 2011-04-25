@@ -22,7 +22,7 @@
     http://www.atk4.com/commercial/ 
 
  *****************************************************ATK4**/
-class LoremIpsum extends ReloadableView {
+class LoremIpsum extends AbstractView {
 	private $message;
 	private $paragraphs=3;
 	private $words=200;
@@ -85,7 +85,7 @@ class LoremIpsum extends ReloadableView {
 	}
 	function render(){
 		for($x=0;$x<$this->paragraphs;$x++){
-			$this->output('<p>');
+			$this->output('<p id="'.$this->name.'">');
 			$this->output($this->create_greeking($this->words));
 			$this->output('</p>');
 		}

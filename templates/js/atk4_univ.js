@@ -13,6 +13,9 @@ $.each({
 	alert: function(a){
 		alert(a);
 	},
+	setTimeout: function(code,delay){
+		setTimeout(code,delay);
+	},
 	displayAlert: function(a){
 		alert(a);
 	},
@@ -38,18 +41,13 @@ $.each({
 		$('#Content').atk4_load(page,fn);
 	},
 	log: function(arg1){
-			 /*
-		if(log){
-			log.info(arg1);
-			var s=$('#header_widgets').children('a:last').children('span');
-			var i=parseInt(s.text());
-			if(i>0)i++;else i='1';
-			s.text(i);
-			var s=$('#header_widgets').children('a:last').children('img').stop().effect('bounce');
-		}else{
-		*/
-			console.log(arg1);
-		//}
+		if(console)console.log(arg1);
+   	},
+	consoleError: function(arg1){
+		if(console){
+            if(console.error)console.error(arg1);
+            else console.log('Error: '+arg1);
+        }
    	},
 	confirm: function(msg){
 		if(!msg)msg='Are you sure?';
@@ -245,6 +243,9 @@ dialogPrepare: function(options){
 	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
+	if(options.customClass){
+        dialog.parent().addClass(options.customClass);
+    }
 	$.data(dialog.get(0),'opener',this.jquery);
 	$.data(dialog.get(0),'options',options);
 
@@ -297,6 +298,12 @@ dialogURL: function(title,url,options,callback){
 	dlg.atk4_load(url,callback);
 	dlg.dialog('open');
 },
+frameURL: function(title,url,options,callback){
+	options=$.extend({
+		buttons:{}
+	},options);
+	return this.dialogURL(title,url,options,callback);
+},
 dialogOK: function(title,text,fn,options){
 	var dlg=this.dialogBox($.extend({
 		title: title,
@@ -344,24 +351,24 @@ dialogAttention: function(text,options,fn){
 					   $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
 },
 message: function(msg,icon){
-	if($.ui.atk4_notify && $('#float-messages').length){
-		$('#float-messages').atk4_notify().atk4_notify('message',msg,icon);
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('message',msg,icon);
 		return;
 	}
 },
 successMessage: function(msg){
 	var html="";
 
-	if($.ui.atk4_notify && $('#float-messages').length){
-		$('#float-messages').atk4_notify().atk4_notify('successMessage',msg);
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
 		return;
 	}
 
-	if(!$('#float-messages').length)return alert(msg);
+	if(!$('#atk-growl-holder').length)return alert(msg);
 	html = '<p class="growl">'+msg
 		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
 
-	var growl=$(html).prependTo('#float-messages');
+	var growl=$(html).prependTo('#atk-growl-holder');
 	growl.find('.growl_close').click(function(){
 			growl.fadeOut(500,function(){ growl.remove(); });
 	});
@@ -483,6 +490,19 @@ autoChange: function(interval){
 	f.keyup(onkeyup);
 	f.bind('autochange_manual',onkeyup);
 },
+numericField: function(){
+	this.jquery.bind('keyup change',function () {
+	var t= this.value.replace(/[^0-9\.-]/g,'');
+		if(t != this.value)this.value=t;
+	});
+},
+disableEnter: function(){
+	this.jquery.bind('keydown keypress',function (e) {
+		if(e.which==13){
+			return false;
+		}
+	});
+},
 bindConditionalShow: function(conditions,tag){
 	// Warning
 	//   this function does not handle recursive cases,
@@ -524,7 +544,7 @@ bindConditionalShow: function(conditions,tag){
 		}
 		if(f.is(':checkbox'))v=f[0].checked?v:'';
 		if(f.is('select')){
-			v=f.find('option[selected]').val();
+			v=f.find('option:selected').val();
 		}
 
 		// first, lets hide everything we can
@@ -577,8 +597,57 @@ bindConditionalShow: function(conditions,tag){
 	}
 	ch();
 	//console.log(conditions);
-}
+},
 
+bindFillInFields: function(fields){
+	/*
+	 * This is universal function for autocomplete / dropdown fields. Whenever original field changes,
+	 *  we will use information in "rel" attribute of orignial field to fill other fields
+	 *  with appropriate values
+	 */
+	var f=this.jquery;
+
+
+	$.each(fields,function(key,val){
+		$(val).change(function(){ $(this).addClass('manually_changed'); });
+	});
+
+
+	function onchange_fn(){
+		var data=eval('('+f.attr('rel')+')');
+		var myid=$(this).val();
+		data=data[myid];
+
+		function auto_fill(){
+			$.each(fields,function(key,val){
+				if(data && data[key]){
+					$(val).val(data[key]).change().removeClass('manually_changed');
+				}
+			});
+		};
+
+		// Make sure none of those fields were changed manually.
+		var need_to_warn = false;
+		$.each(fields,function(key,val){
+			if(data && data[key] && $(val).hasClass('manually_changed') && $(val).val()){
+				need_to_warn=true;
+			}
+		});
+
+		if(need_to_warn)
+			$(this).univ().dialogConfirm('Warning','Some fields you have edited are about to be auto filled. Would you like to proceed?',auto_fill);
+		else
+			auto_fill();
+	};
+
+	f.bind('change_ref change',onchange_fn);
+},
+    
+
+
+
+
+nullFunction:function(){}
 },$.univ._import
 );
 

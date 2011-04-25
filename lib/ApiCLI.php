@@ -59,7 +59,10 @@ class ApiCLI extends AbstractView {
 			return $page->setArguments($arguments);
 		}
 		$url=$this->add('URL','url_'.$this->url_object_count++);
-		return $url->setPage($page)->setArguments($arguments);
+        if(substr($page,0,7)=='http://')$url->setURL($page);elseif
+            (substr($page,0,8)=='https://')$url->setURL($page);else
+            $url->setPage($page);
+		return $url->setArguments($arguments);
 	}
 	function getLogger($class_name='Logger'){
 		if(is_null($this->logger)){
@@ -115,6 +118,7 @@ class ApiCLI extends AbstractView {
 		 * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
 		 */
 		if(is_null($this->config)){
+			$this->readConfig('config-default.php');
 			$this->readConfig();
 		}
 		$parts = explode('/',$path);
@@ -179,6 +183,27 @@ class ApiCLI extends AbstractView {
 	}
 	function setConfig($config=array()){
 		$this->config=safe_array_merge($this->config,$config);
+	}
+	private $version_cache=null;
+    function getVersion($of='atk'){
+		if(!$this->version_cache){
+            $f=$this->api->pathfinder->atk_location->base_path.DIRECTORY_SEPARATOR.'VERSION';
+			if(file_exists($f)){
+				$this->version_cache=trim(file_get_contents($f));
+			}else{
+				$this->version_cache='4.0.1';
+			}
+		}
+        return $this->version_cache;
+    }
+	function versionRequirement($v,$return_only=false){
+
+		if(($vc=version_compare($this->getVersion(),$v))<0){
+			if($soft)return false;
+			throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->getVersion());
+		}
+		return true;
+
 	}
 }
 ?>

@@ -35,9 +35,9 @@
  * Created on 23.09.2008 by *Camper* (cmd@adevel.com)
  */
 class ApiFrontend extends ApiWeb{
-	protected $page_object=null;
-	protected $content_type='page';	// content type: rss/page/etc
-	protected $page_class='Page';
+	public $page_object=null;
+	public $content_type='page';	// content type: rss/page/etc
+	public $page_class='Page';
 
 	function init(){
 		parent::init();
@@ -63,42 +63,44 @@ class ApiFrontend extends ApiWeb{
 				loadClass($class);
 			}catch(PathFinder_Exception $e){
 
-				$class_parts=explode('_',$page);
-				$funct_parts=array();
-				while($class_parts){
-						array_unshift($funct_parts,array_pop($class_parts));
-						$fn='page_'.join('_',$funct_parts);
-						$in='page_'.join('_',$class_parts);
-						try {
-							loadClass($in);
-						}catch(PathFinder_Exception $e2){
-							continue;
-						}
-						// WorkAround for PHP5.2.12+ PHP bug #51425
-						$tmp=new $in;
-						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
-
-						$this->page_object=$this->add($in,$this->page);
-						if(method_exists($tmp,$fn)){
-							$this->page_object->$fn();
-						}elseif(method_exists($tmp,'subPageHandler')){
-							if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
-						}
-						return;
-				}
-
 
 				// page not found, trying to load static content
 				try{
 					$this->loadStaticPage($this->page);
 				}catch(PathFinder_Exception $e2){
+
+                    $class_parts=explode('_',$page);
+                    $funct_parts=array();
+                    while($class_parts){
+                        array_unshift($funct_parts,array_pop($class_parts));
+                        $fn='page_'.join('_',$funct_parts);
+                        $in='page_'.join('_',$class_parts);
+                        try {
+                            loadClass($in);
+                        }catch(PathFinder_Exception $e2){
+                            continue;
+                        }
+                        // WorkAround for PHP5.2.12+ PHP bug #51425
+                        $tmp=new $in;
+                        if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
+
+                        $this->page_object=$this->add($in,$page);
+                        if(method_exists($tmp,$fn)){
+                            $this->page_object->$fn();
+                        }elseif(method_exists($tmp,'subPageHandler')){
+                            if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
+                        }
+                        return;
+                    }
+
+
 					// throw original error
 					$this->pageNotFound($e);
-				}
-				return;
+                }
+                return;
 			}
 			// i wish they implemented "finally"
-			$this->page_object=$this->add($class,$this->page,'Content');
+			$this->page_object=$this->add($class,$page,'Content');
 			if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
 		}
 	}
@@ -106,7 +108,18 @@ class ApiFrontend extends ApiWeb{
 		throw $e;
 	}
 	protected function loadStaticPage($page){
-		$this->page_object=$this->add($this->page_class,$page,'Content',array('page/'.strtolower($page),'_top'));
+		try{
+			$t='page/'.str_replace('_','/',strtolower($page));
+			$this->template->findTemplate($t);
+
+			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
+		}catch(PathFinder_Exception $e2){
+
+            $t='page/'.strtolower($page);
+			$this->template->findTemplate($t);
+			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
+		}
+
 		return $this->page_object;
 	}
 	function execute(){

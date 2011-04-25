@@ -66,6 +66,18 @@ abstract class AbstractView extends AbstractObject {
 		if($this->template)$this->template=clone $this->template;
 		if($this->controller)$this->controller=clone $this->controller;
 	}
+	function setModel($model,$actual_fields=null){
+		// TEMPORARY - create intermediate controller
+		$c=$this->add('Controller');
+		if(is_string($model)){
+			$c->setModel('Model_'.$model);
+		}else{
+			$c->setModel($model);
+		}
+		if($actual_fields)$c->setActualFields($actual_fields);
+		$this->setController($c);
+		return $c;
+	}
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;
@@ -103,7 +115,7 @@ abstract class AbstractView extends AbstractObject {
 						->loadTemplate($template_branch[0]);    // we'll use it as a file
 				}
 				// Now that we loaded it, let's see which tag we need to cut out
-				$this->template=$this->template->cloneRegion($template_branch[1]?$template_branch[1]:'_top');
+				$this->template=$this->template->cloneRegion(isset($template_branch[1])?$template_branch[1]:'_top');
 			}else{  // brach could be just a string - a region to clone off parent
 				if(isset($this->owner->template)){
 					$this->template=$this->owner->template->cloneRegion($template_branch);
@@ -126,7 +138,13 @@ abstract class AbstractView extends AbstractObject {
 		// Cool, now let's set _name of this template
 		if($this->template)$this->template->trySet('_name',$this->name);
 
+        $this->initTemplateTags();
 	}
+    function initTemplateTags(){
+        if($this->template && $this->api && method_exists($this->api, 'setTags')){
+            $this->api->setTags($this->template);
+        }
+    }
 	function defaultTemplate(){
 		return null;//"_top";
 	}

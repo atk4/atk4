@@ -50,7 +50,7 @@ class ApiWeb extends ApiCLI {
 	public $start_time=null;
 
 	function __construct($realm=null,$skin='kt2'){
-		$this->start_time=microtime();
+		$this->start_time=time()+microtime();
 
 		$this->skin=$skin;
 		try {
@@ -70,17 +70,24 @@ class ApiWeb extends ApiCLI {
 		$this->addHook('post-js-execute',array($this,'_showExecutionTimeJS'));
 	}
 	function _showExecutionTime(){
-		echo 'Took '.(microtime()-$this->start_time).'s';
+		echo 'Took '.(time()+microtime()-$this->start_time).'s';
 	}
 	function _showExecutionTimeJS(){
-		echo "\n\n/* Took ".(microtime()-$this->start_time).'s */';
+		echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
 	}
 	function initDefaults(){
 		parent::initDefaults();
 	}
 	function initLayout(){
 		$this->addLayout('Content');
+        $this->upgradeChecker();
 	}
+    function upgradeChecker(){
+        // Checks for ATK upgrades and shows current version
+		if($this->template && $this->template->is_set('version')){
+			$this->add('UpgradeChecker',null,'version');
+		}
+    }
 	/////////////// C o r e   f u n c t i o n s ///////////////////
 	function caughtException($e){
 		$this->hook('caught-exception',array($e));
@@ -127,13 +134,13 @@ class ApiWeb extends ApiCLI {
 		if($this->name && session_id()==""){
 			// If name is given, initialize session. If not, initialize
 			// later when loading config file.
-			if($_GET['SESSION_ID'])session_id($_GET['SESSION_ID']);
+			if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
 			session_name($this->name);
 			session_start();
 		}
 	}
 	function stickyGET($name){
-		$this->sticky_get_arguments[$name]=$_GET[$name];
+		$this->sticky_get_arguments[$name]=@$_GET[$name];
 	}
 	function stickyForget($name){
 		unset($this->sticky_get_arguments[$name]);
@@ -184,8 +191,6 @@ class ApiWeb extends ApiCLI {
 	function render(){
 		if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
-		$this->setTags($this->template);
-
 		if(!($this->template)){
 			throw new BaseException("You should specify template for API object");
 		}
@@ -201,13 +206,15 @@ class ApiWeb extends ApiCLI {
 		$t->trySet('base_path',$q=$this->api->pm->base_path);
 		
 		// We are using new capability of SMlite to process tags individually
-		$t->eachTag('template',array($this,'locateTemplate'));
-		
+		$t->eachTag('template',array($this,'_locateTemplate'));
+		$t->eachTag('page',array($this,'_locatePage'));
 	}
-	function locateTemplate($path){
+	function _locateTemplate($path){
 		return $this->locateURL('template',$path);
 	}
-
+	function _locatePage($path){
+		return $this->getDestinationURL($path);
+	}
 	function execute(){
 		$this->rendered['sub-elements']=array();
 

@@ -28,6 +28,7 @@ class Lister extends View {
 	public $data=null;
 
 	public $safe_html_output=true;  // do htmlspecialchars by default when formatting rows
+	public $nl2br_output=false;  // do htmlspecialchars by default when formatting rows
 
 	public $current_row=array();    // this is data of a current row
 	function setSource($table,$db_fields=null,$db = null){
@@ -45,6 +46,7 @@ class Lister extends View {
 		return $this;
 	}
 	function setStaticSource($data){
+		if(!is_array($data))throw new BaseException('Please specify array of hashes to setStaticSource()');
 		$this->data=$data;
 		return $this;
 	}
@@ -73,7 +75,9 @@ class Lister extends View {
 	function formatRow(){
 		if($this->safe_html_output){
 			foreach($this->current_row as $x=>$y){
-				$this->current_row[$x]=htmlspecialchars(stripslashes($y));
+				$o=htmlspecialchars(stripslashes($y));
+				if($this->nl2br_output)$o=nl2br($o);
+				$this->current_row[$x]=$o;
 				if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
 			}
 		}

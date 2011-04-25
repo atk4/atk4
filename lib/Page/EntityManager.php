@@ -23,7 +23,8 @@
 
  *****************************************************ATK4**/
 class Page_EntityManager extends Page {
-	public $controller='Controller_Coupon';
+	public $controller=null;
+	public $model=null;
 	public $c;
 
 	public $allow_add=true;
@@ -40,10 +41,17 @@ class Page_EntityManager extends Page {
 
 	function init(){
 		parent::init();
-		if(!$_GET['entitymanager'])$_GET['entitymanager']=$this->name;
+		if(!@$_GET['entitymanager'])$_GET['entitymanager']=$this->name;
 		$this->api->stickyGET('entitymanager');
 		if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
-		if(!$this->c)$this->c=$this->add($this->controller);
+		if(!$this->c){
+			if($this->controller){
+				$this->c=$this->add($this->controller);
+			}elseif($this->model){
+				$this->c=$this->add('Controller');
+				$this->c->setModel('Model_'.$this->model);
+			}
+		}
 	}
 	function reloadJS(){
 		return $this->js()->_selector('#'.$_GET['entitymanager'].'_grid')->atk4_loader('reload');
@@ -66,7 +74,7 @@ class Page_EntityManager extends Page {
 		}
 		if($this->allow_delete){
 			$g->addColumnPlain('confirm','delete');
-			if($_GET['delete']){
+			if(@$_GET['delete']){
 				$c->loadData($_GET['delete']);
 				$c->delete();
 				$g->js(null,$g->js()->univ()->successMessage('Record deleted'))->reload()->execute();

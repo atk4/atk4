@@ -32,20 +32,26 @@ abstract class Form_Field extends AbstractView {
 	public $default_value=null;
 
 	// Field customization
-	private $separator=':';
+	private $separator='';
 
 	public $show_input_only;
 
 	function init(){
 		parent::init();
-		if($_GET[$this->owner->name.'_cut_field']==$this->name){
+		if(@$_GET[$this->owner->name.'_cut_field']==$this->name){
 			$this->api->addHook('pre-render',array($this,'_cutField'));
 		}
 	}
 	function _cutField(){
 		// this method is used by ui.atk4_form, when doing reloadField();
+		unset($_GET['cut_object']);
+		$this->recursiveRender();
 		if($this->api->jquery)$this->api->jquery->getJS($this);
-		$e=new RenderObjectSuccess($this->getInput());
+		$e=new RenderObjectSuccess(
+				$this->template->renderRegion($this->template->tags['before_field']).
+				$this->getInput().
+				$this->template->renderRegion($this->template->tags['after_field'])
+				);
 		throw $e;
 	}
 	function setMandatory($mandatory=true){
@@ -65,14 +71,12 @@ abstract class Form_Field extends AbstractView {
 	}
 	function displayFieldError($msg=null){
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
-		if($this->api->isAjaxOutput()){
-			$this->error_message=$msg;
-			$this->showAjaxError($msg);
-		}
+
+        $this->owner->js(true)
+            ->atk4_form('fieldError',$this->short_name,$msg)
+            ->execute();
+
 		$this->owner->errors[$this->short_name]=$msg;
-	}
-	function showAjaxError($msg){
-		$this->owner->showAjaxError($this,$msg);
 	}
 	function setNoSave(){
 		// Field value will not be saved into defined source (such as database)
@@ -102,6 +106,9 @@ abstract class Form_Field extends AbstractView {
 		$this->attr[$property]=$value;
 		return $this;
 	}
+    function setAttr($property,$value='true'){
+        return $this->setProperty($property,$value);
+    }
 	function setFieldHint($var_args=null){
 		/* Adds a hint after this field. Thes will call Field_Hint->set()
 		   with same arguments you called this funciton.
@@ -111,11 +118,12 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setFieldTitle($text){
+        /* OBSOLETE 4.1 */
 		$this->template->trySet('field_title',$text);
 		return $this;
 	}
-
 	function clearFieldValue(){
+        /* OBSOLETE 4.1, use set(null) */
 		$this->value=null;
 	}
 	function loadPOST(){
@@ -151,10 +159,12 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setDefault($default=null){
+        /* OBSOLETE 4.1, use set() */
 		$this->default_value=$default;
 		return $this;
 	}
 	function getDefault(){
+        /* OBSOLETE 4.1, use set() */
 		return $this->default_value;
 	}
 
@@ -343,13 +353,14 @@ class Form_Field_Checkbox extends Form_Field {
 	}
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
+		$this->template->tryDel('label_container');
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
 						'value'=>'Y',
 						'checked'=>$this->value=='Y'
 						),$attr
-					)).' - '.$this->caption;
+					)).' &ndash; '.$this->caption;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
@@ -379,7 +390,7 @@ class Form_Field_Hidden extends Form_Field {
 	function render(){
 		$this->template = $this->owner->template_chunks['hidden_form_line'];
 		$this->template->set('hidden_field_input',$this->getInput());
-		$this->owner->template_chunks['form']->append('form_body',$this->template->render());
+		$this->owner->template_chunks['form']->append('Content',$this->template->render());
 	}
 
 }

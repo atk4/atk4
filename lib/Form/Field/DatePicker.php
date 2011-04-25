@@ -27,7 +27,7 @@
  * It draws date in locale format (taken from $config['locale']['date'] setting) and stores it in
  * MySQL acceptable date format (YYYY-MM-DD)
  */
-class Form_Field_DatePicker extends Form_Field {
+class Form_Field_DatePicker extends Form_Field_Line {
 	public $options=array();
 	function getInput($attr=array()){
 		// $this->value contains date in MySQL format
@@ -52,7 +52,7 @@ class Form_Field_DatePicker extends Form_Field {
 	function set($value){
 		// value can be valid date format, as in config['locale']['date']
 		if(!$value)return parent::set($value);
-		list($d,$m,$y)=explode('/',$value);
+		@list($d,$m,$y)=explode('/',$value);
 		if($y)$value=join('/',array($m,$d,$y));
 		elseif($m)$value=join('/',array($m,$d));
 		$value=date('Y-m-d',strtotime($value));

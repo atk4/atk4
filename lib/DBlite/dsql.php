@@ -28,8 +28,8 @@ if (!defined('DTP')) define('DTP','');
 class DBlite_dsql  {
 	var $db;
 
-	var $my=array(null,null);
-	var $saved=array(null,null);
+	var $my=array(null,null,null);
+	var $saved=array(null,null,null);
 	/*
 	* Array containing arguments
 	*/
@@ -85,7 +85,12 @@ class DBlite_dsql  {
 	}
 	function do_getHash($f=null){
 		$this->s();
-		return $this->l($this->db->getHash($this->select(),$f));
+        try {
+            return $this->l($this->db->getHash($this->select(),$f));
+        }catch (SQLException $e){
+            $this->debug()->select();
+            throw $e;
+        }
 	}
 	function do_getAll($f=null){
 		$this->s();
@@ -166,8 +171,9 @@ class DBlite_dsql  {
 		if(isset($table)){
 			$field=DTP.$table.'.'.$field;
 		}
+        if(!isset($this->args['fields']))$this->args['fields']=array();
 		if(is_array($field)){
-			$this->args['fields']=safe_array_merge($this->args['fields'],$field);
+			$this->args['fields']=array_merge($this->args['fields'],$field);
 		}else{
 			$this->args['fields'][]=$field;
 		}
@@ -272,10 +278,15 @@ class DBlite_dsql  {
 						$where.=" '".$this->db->escape($equals)."'";
 					}elseif(substr($where,-3,3)==' in'){
 						if($escape){
-							if(strtolower(substr($equals,0,6))=='select'){
+							if(is_string($equals) && strtolower(substr($equals,0,6))=='select'){
 								throw new BaseException("use 3rd argument if you pass sub-queries to where()");
 							}
-							$eq=explode(',',$equals);$eq2=array();
+							if(is_array($equals)){
+                                $eq=$equals;
+                            }else{
+                                $eq=explode(',',$equals);
+                            }
+                            $eq2=array();
 							foreach($eq as $eq3){
 								$eq2[]="'".$this->db->escape($eq3)."'";
 							}
@@ -297,7 +308,8 @@ class DBlite_dsql  {
 			}
 			$where = array($where);
 		}
-		$this->args[$cond] = safe_array_merge($this->args[$cond], $where);
+        if(!isset($this->args[$cond]))$this->args[$cond]=array();
+		$this->args[$cond] = array_merge($this->args[$cond], $where);
 		return $this;
 	}
 	function clear_args($arg_name){
@@ -365,7 +377,7 @@ class DBlite_dsql  {
 		return array_search($value,$this->args[$param])!==false;
 	}
 	function select(){
-		return $this->parseTemplate("select [options] [field] from [table] [join] [where] [group] [having] [order] [limit]");
+		return $this->parseTemplate("select [options] [fields] from [table] [join] [where] [group] [having] [order] [limit]");
 	}
 	function update(){
 		return $this->parseTemplate("update [table] set [set] [where]");
@@ -374,10 +386,10 @@ class DBlite_dsql  {
 		if(isset($this->args['options']))foreach($this->args['options'] as $index=>$option){
 			if($option=="SQL_CALC_FOUND_ROWS")$this->args['options'][$index]='';
 		}
-		return $this->parseTemplate("insert [options] into [table] ([set_field]) values ([set_value])");
+		return $this->parseTemplate("insert [options] into [table] ([set_fields]) values ([set_value])");
 	}
 	function replace(){
-		return $this->parseTemplate("replace [options] into [table] ([set_field]) values ([set_value])");
+		return $this->parseTemplate("replace [options] into [table] ([set_fields]) values ([set_value])");
 	}
 	function delete(){
 		return $this->parseTemplate("delete from [table] [where]");
@@ -388,18 +400,18 @@ class DBlite_dsql  {
 		* will be placed into template
 		*/
 		$args=array();
-		if(isset($required['field'])) {
+		if(isset($required['fields'])) {
 			// comma separated fields, such as for select
 			$fields=array();
 			if(!is_array($this->args['fields'])){
-				$this->fatal('Before generating query you should call $dq->field() several times, otherwise I do not know what fields you need',2);
+				$this->fatal('Before generating query you should call $dq->field() at least once, otherwise I do not know what fields you need',2);
 			}
 			foreach($this->args['fields'] as $field) {
 				$fields[]=$field;
 			}
-			$args['field']=join(', ', $fields);
+			$args['fields']=join(', ', $fields);
 		}
-		if(isset($required['options'])&&$this->args['options']){
+		if(isset($required['options'])&&isset($this->args['options'])){
 			$args['options']=join(' ',$this->args['options']);
 		}
 
@@ -418,7 +430,7 @@ class DBlite_dsql  {
 			$args['set']=join(', ', $set);
 		}
 
-		if(isset($required['set_field']) || isset($required['set_value'])) {
+		if(isset($required['set_fields']) || isset($required['set_value'])) {
 			$sf = $sv = array();
 			if(!$this->args['set']) {
 				return $this->fatal('You should call $dq->set() before requesting update',2);
@@ -431,7 +443,7 @@ class DBlite_dsql  {
 				$sf[]="`$key`";
 				$sv[]=$val;
 			}
-			$args['set_field']=join(', ', $sf);
+			$args['set_fields']=join(', ', $sf);
 			$args['set_value']=join(', ', $sv);
 		}
 
@@ -439,40 +451,28 @@ class DBlite_dsql  {
 			$args['table']=$this->args['table'];
 		}
 
-		if(isset($required['join'])) {
-			if(isset($this->args['join'])) {
-				$args['join']=join(' ', $this->args['join']);
-			}
+		if(isset($required['join'])&&isset($this->args['join'])) {
+            $args['join']=join(' ', $this->args['join']);
 		}
 
-		if(isset($required['where'])) {
-			if($this->args['where']) {
-				$args['where'] = "where (".join(') and (', $this->args['where']).")";
-			}
+		if(isset($required['where'])&&isset($this->args['where'])) {
+            $args['where'] = "where (".join(') and (', $this->args['where']).")";
 		}
 
-		if(isset($required['having'])) {
-			if($this->args['having']) {
-				$args['having'] = "having (".join(') and (', $this->args['having']).")";
-			}
+		if(isset($required['having'])&&isset($this->args['having'])) {
+            $args['having'] = "having (".join(') and (', $this->args['having']).")";
 		}
 
-		if(isset($required['order'])) {
-			if($this->args['order']) {
-				$args['order'] = "order by ".join(', ', $this->args['order']);
-			}
+		if(isset($required['order'])&&isset($this->args['order'])) {
+            $args['order'] = "order by ".join(', ', $this->args['order']);
 		}
 
-		if(isset($required['group'])) {
-			if($this->args['group']) {
-				$args['group'] = "group by ".join(', ',$this->args['group']);
-			}
+		if(isset($required['group'])&&isset($this->args['group'])) {
+            $args['group'] = "group by ".join(', ',$this->args['group']);
 		}
 
-		if(isset($required['limit'])) {
-			if($this->args['limit']) {
-				$args['limit'] = "limit ".$this->args['limit']['shift'].", ".$this->args['limit']['cnt'];
-			}
+		if(isset($required['limit'])&&isset($this->args['limit'])) {
+            $args['limit'] = "limit ".$this->args['limit']['shift'].", ".$this->args['limit']['cnt'];
 		}
 
 		return $args;
@@ -495,17 +495,39 @@ class DBlite_dsql  {
 		// now parts array contains strings and array of string, let's request
 		// for required arguments
 
+        $dd='';
 		$args = $this->getArgs($required);
+        $dd.='<ul class="atk-sqldump">';
 
 		// now when we know all data, let's assemble resulting string
 		foreach($result as $key => $part) {
 			if(is_array($part)) {
-				$result[$key]=$args[$part[0]];
-			}
+                $p=$part[0];
+                if(isset($args[$p])){
+                    $result[$key]=$args[$p];
+
+                    if(isset($this->args[$p]) && $a=$this->args[$p]){
+                        if($p=='set'){
+                            foreach($a as $key=>&$val){
+                                $val=$key.'='.$val;
+                            }
+                        }
+                        if(is_array($a)){
+                            sort($a);
+                            $dd.="<li><b>".$part[0]."</b> <ul><li>"
+                                .join('</li><li>',$a).'</li></ul>';
+                        }else{
+                            $dd.="<li><b>".$part[0]."</b> $a </li>";
+                        }
+                    }else $dd.="<li>".$args[$p]."</li>";
+                }else{
+                    $result[$key]=null;
+                }
+            }elseif($part=trim($part,' ()'))$dd.='<li><b>'.$part.'</b></li>';
 		}
+        $dd.="</ul>";
 		if($this->debug){
-			//$this->db->owner->logVar($result);
-			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>';
+			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>'.$dd;
 		}
 		return join('', $result);
 	}
@@ -516,19 +538,8 @@ class DBlite_dsql  {
 	}
 	function option($option){
 		if(!is_array($option))$option=array($option);
-		$this->args['options']=safe_array_merge($this->args['options'],$option);
+        if(!isset($this->args['options']))$this->args['options']=array();
+		$this->args['options']=array_merge($this->args['options'],$option);
 		return $this;
-	}
-}
-if(!function_exists('safe_array_merge')){
-	// array_merge gives us an error when one of arguments is null. This function
-	// acts the same as array_merge, but without warnings
-	function safe_array_merge($a,$b=null){
-		if(is_null($a)){
-			$a=$b;
-			$b=null;
-		}
-		if(is_null($b))return $a;
-		return array_merge($a,$b);
 	}
 }

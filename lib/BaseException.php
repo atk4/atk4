@@ -35,7 +35,10 @@ class BaseException extends Exception {
 	public $more_info;
 	function __construct($msg,$func=null,$shift=1,$code=0){
 		parent::__construct($msg,$code);
-	$this->name=get_class($this);
+		$this->collectBasicData($func,$shift,$code);
+	}
+    function collectBasicData($func,$shift,$code){
+        $this->name=get_class($this);
 		$this->frame_stop=$func;
 		$this->shift=$shift;
 
@@ -57,8 +60,7 @@ class BaseException extends Exception {
 			return;
 		}
 		$this->my_backtrace = debug_backtrace();
-		return;
-	}
+    }
 	function addMoreInfo($key,$value){
 		$this->more_info[$key]=$value;
 		return $this;

@@ -23,7 +23,7 @@
 
  *****************************************************ATK4**/
 class Filter extends Form {
-	private $limiters=array();
+	public $limiters=array();
 	function init(){
 		parent::init();
 		$this->js_widget=null;

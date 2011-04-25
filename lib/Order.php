@@ -40,6 +40,7 @@ class Order extends AbstractController {
 		return $this;
 	}
 	function move($name,$where,$relative=null){
+		if(is_object($name))$name=$name->short_name;
 		$this->rules[]=array($name,$where,$relative);
 		return $this;
 	}

@@ -1,0 +1,1145 @@
+<script>
+$(function(){
+
+	$('.atk-form-buttons button').button();
+	$( "#tabs" ).tabs();
+
+});
+</script>
+<style type="text/css">
+.atk-form+h3 {margin-top:3em}
+.ui-tabs-panel, .ui-tabs {border:none !important;padding:0 !important;}
+.ui-tabs-nav {background:none !important;border:none;}
+.ui-tabs-panel {padding-top:2em !important;}
+</style>
+<h1>CSS Reference</h1>
+
+<h2>Forms</h2>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">atk-form-basic</a></li>
+		<li><a href="#tabs-2">atk-form-inline</a></li>
+		<li><a href="#tabs-3">atk-form-vertical</a></li>
+		<li><a href="#tabs-4">atk-form-horizontal</a></li>
+		<li><a href="#tabs-5">atk-form-basic-2col</a></li>
+		<li><a href="#tabs-6">atk-form-vertical-2col</a></li>
+		<li><a href="#tabs-7">atk-form-vertical-3col</a></li>
+		<li><a href="#tabs-8">hybrid form</a></li>
+	</ul>
+	<div id="tabs-1">
+		<h3>.atk-form-basic</h3>
+		
+		<div class="atk-form atk-form-basic">
+			<form>
+			
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Password too short
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+
+	</div>
+	<div id="tabs-2">
+		<h3>.atk-form-inline</h3>
+		<div class="atk-form atk-form-inline">
+			<form>
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Password too short
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Error message
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Error message
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	</div>
+	<div id="tabs-3">
+		<h3>.atk-form-vertical</h3>
+		<form class="atk-form atk-form-vertical">
+		
+			<fieldset>
+				
+				<dl class="atk-field">
+					<dt><label>First Name</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>Last Name</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>Password</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+						<ins>16 characters maximum</ins>
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>Confirm Password</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>City</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field field_has_error">
+					<dt><label>Country</label></dt>
+					<dd class="form_field">
+						<select>
+							<option>United States of America</option>
+							<option>France</option>
+							<option>Zimbabwe</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+					</dd>
+				</dl>
+			
+			</fieldset>
+			
+			<fieldset>
+				<dl class="atk-field field_has_error">
+					<dt><label>Company</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+					</dd>
+				</dl>
+				<dl class="atk-field field_has_error">
+					<dt><label>Occupation</label></dt>
+					<dd class="form_field">
+						<select>
+							<option>Web designer</option>
+							<option>Web developer</option>
+							<option>Marketing</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+					</dd>
+				</dl>
+			</fieldset>
+			
+			<dl class="atk-form-buttons">
+			
+				<dd><button>Submit</button></dd>
+			
+			</dl>
+			
+		</form>
+	</div>
+	<div id="tabs-4">
+		<h3>.atk-form-horizontal</h3>
+		<div class="atk-form atk-form-horizontal">
+			<form>
+			
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>Username</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="password" />
+							<ins>16 characters maximum</ins>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Password too short
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>State</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>New York</option>
+								<option>California</option>
+								<option>Ohio</option>
+							</select>
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	
+	</div>
+	<div id="tabs-5">
+		<h3>.atk-form-basic</h3>
+		<div class="atk-form atk-form-basic atk-form-basic-2col">
+			<form>
+			
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Password too short
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	</div>
+	<div id="tabs-6">
+		<h3>.atk-form-vertical-2col</h3>
+		<div class="atk-form atk-form-vertical atk-form-vertical-2col">
+			<form>
+			
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	</div>
+	<div id="tabs-7">
+		<h3>.atk-form-vertical-3col</h3>
+		<div class="atk-form atk-form-vertical atk-form-vertical-3col">
+			<form>
+			
+				<fieldset>
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	</div>
+	<div id="tabs-8">
+		<h3>hybrid form</h3>
+		<p><b>atk-form-basic</b> mixed with <b>atk-form-vertical-2col</b>, <b>atk-form-vertical-3col</b>, <b>atk-form-inline</b></p>
+		<div class="atk-form">
+			<form>
+				<fieldset class="atk-form-vertical atk-form-vertical-2col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-2col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-inline">
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</dd>
+					</dl>
+				
+				</fieldset>
+				<fieldset class="atk-form-basic">
+					
+					<dl class="atk-field">
+						<dt><label>First Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Last Name</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+							<ins>16 characters maximum</ins>
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>Confirm Password</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field">
+						<dt><label>City</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Country</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>United States of America</option>
+								<option>France</option>
+								<option>Zimbabwe</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</dd>
+					</dl>
+				
+				</fieldset>
+				
+				<fieldset class="atk-form-vertical atk-form-vertical-2col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-2col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset class="atk-form-vertical atk-form-vertical-3col">
+					<dl class="atk-field field_has_error">
+						<dt><label>Company</label></dt>
+						<dd class="form_field">
+							<input type="text" />
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+						</dd>
+					</dl>
+					<dl class="atk-field field_has_error">
+						<dt><label>Occupation</label></dt>
+						<dd class="form_field">
+							<select>
+								<option>Web designer</option>
+								<option>Web developer</option>
+								<option>Marketing</option>
+							</select>
+						</dd>
+						<dd class="atk-form-error">
+							<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+						</dd>
+					</dl>
+				</fieldset>
+				<dl class="atk-form-buttons">
+				
+					<dd><button>Submit</button></dd>
+				
+				</dl>
+				
+			</form>
+		</div>
+	</div>
+</div>
+<h2>Form in dialog</h2>
+<script>
+	$(function() {
+		$( "#dialog-on" ).click(function(){
+			
+			$('#dialog').dialog({
+			
+			width: '980'
+			
+			});
+		
+		});
+	});
+</script>
+
+<button id="dialog-on">Show dialog</button>
+<div id="dialog" style="display:none">
+	<div class="atk-form atk-form-basic atk-form-basic-2col">
+		<form>
+			<fieldset>
+				
+				<dl class="atk-field">
+					<dt><label>First Name</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>Last Name</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field field_has_error">
+					<dt><label>Password</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+						<ins>16 characters maximum</ins>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Password too short
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>Confirm Password</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field">
+					<dt><label>City</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+				</dl>
+				<dl class="atk-field field_has_error">
+					<dt><label>Country</label></dt>
+					<dd class="form_field">
+						<select>
+							<option>United States of America</option>
+							<option>France</option>
+							<option>Zimbabwe</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+					</dd>
+				</dl>
+			
+			</fieldset>
+			
+			<fieldset>
+				<dl class="atk-field field_has_error">
+					<dt><label>Company</label></dt>
+					<dd class="form_field">
+						<input type="text" />
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>Company doesn't exist
+					</dd>
+				</dl>
+				<dl class="atk-field field_has_error">
+					<dt><label>Occupation</label></dt>
+					<dd class="form_field">
+						<select>
+							<option>Web designer</option>
+							<option>Web developer</option>
+							<option>Marketing</option>
+						</select>
+					</dd>
+					<dd class="atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i>You haven't chosen anything
+					</dd>
+				</dl>
+			</fieldset>
+			
+			<dl class="atk-form-buttons">
+			
+				<dd><button>Submit</button></dd>
+			
+			</dl>
+			
+		</form>
+	</div>
+</div>
+<h2>960GS layout</h2>
+
+<div class="g-row">
+	<div class="g-3" style="height:10em;background:orange"></div>
+	<div class="g-7" style="height:10em;background:green"></div>
+	<div class="g-2" style="height:10em;background:blue"></div>
+</div>
+
+<hr/>
+
+<div class="g-row">
+	<div class="g-5" style="height:10em;background:orange"></div>
+	<div class="g-4" style="height:10em;background:green"></div>
+	<div class="g-3" style="height:10em;background:blue"></div>
+</div>
+
+<h2>Growl</h2>
+<script>
+
+$(function(){
+
+	$('#start-growl').click(function(){
+	
+		$('.atk-growl').show();
+	
+	});
+
+	$('.atk-growl>div>i').click(function(){
+	
+		$(this).parent().remove();
+	});
+
+});
+
+</script>
+<p>Click the button to see the growl.</p>
+<button id="start-growl">Show Growl</button>
+
+<h2>Lister</h2>
+<div class="atk-lister ui-widget-content ui-corner-all">
+	<ul>
+		<li>Cras non nibh mi, id vestibulum dolor.</li>
+		<li class="even">Sed eu dui in enim sagittis vehicula.</li>
+		<li>Nam venenatis augue sed sem molestie commodo.</li>
+		<li class="even">Sed ultrices scelerisque tellus, eget rutrum leo bibendum ac.</li>
+	</ul>
+</div>

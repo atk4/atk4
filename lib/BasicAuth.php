@@ -241,7 +241,8 @@ class BasicAuth extends AbstractController {
 		unset($_GET['page']);
 	}
 	function login($username,$memorize=false){
-		$this->loggedIn($username,$this->allowed_credintals[$username],$memorize);
+		$this->loggedIn($username,isset($this->allowed_credintals[$username])?
+                $this->allowed_credintals[$username]:null,$memorize);
 	}
 	function loginRedirect(){
 
@@ -313,12 +314,12 @@ class BasicAuth extends AbstractController {
 		$this->debug("initializating authentication page");
 		//if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
-		$p=$this->add('Page');
+		$p=$this->add('Page',null,null,array('empty'));
 		try{
 			$p->template->loadTemplate('login');
 			$this->form=$this->createForm($p,'Login');
 		}catch(PathFinder_Exception $e){
-			$p->template->loadTemplate('empty');
+			//$p->template->loadTemplate('empty');
 			/*
 			$p->template->trySet('atk_path',$q=
 								$this->api->pathfinder->atk_location->getURL().'/');
@@ -326,7 +327,7 @@ class BasicAuth extends AbstractController {
 								$q=$this->api->pm->base_url.'/'
 								);
 								*/
-			$this->api->setTags($p->template);
+			//$this->api->setTags($p->template);
 			$frame=$p->frame('Authentication');
 			$this->form=$this->createForm($frame);
 		}

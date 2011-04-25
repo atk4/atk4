@@ -96,7 +96,7 @@ class PageManager extends AbstractController {
 		// This is the re-constructions of teh proper URL.
 		// 1. Schema
 		$url = 'http';
-		if($_SERVER["HTTPS"] == "on")$url.="s";
+		if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')$url.='s';
 
 		// 2. Continue building. We are adding hostname next and port.
 		$url .= "://".$_SERVER["SERVER_NAME"];
@@ -144,7 +144,7 @@ class PageManager extends AbstractController {
 				"periods (.) page=".$page);
 
 		// We have now arrived at the page as per specification.
-		$this->page=$page;
+		$this->page=str_replace('/','_',$page);
 
         $this->template_filename=$this->page;
 	   	if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
@@ -170,8 +170,8 @@ class PageManager extends AbstractController {
 		} else {
 			throw new BaseException('Unable to determine RequestURI. This shouldnt be called at all in CLI');
 		}
-		list($request_uri,$junk)=explode('?',$request_uri,2);
-		return $request_uri;
+		$request_uri=explode('?',$request_uri,2);
+        return $request_uri[0];
 	}
 
 	function getUrlRoot(){

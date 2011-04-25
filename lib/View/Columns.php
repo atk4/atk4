@@ -32,7 +32,7 @@ class View_Columns extends View {
 		++$this->cnt;
 		$c=$this->add('View',$name,'Columns',array('view/columns','Columns'));
 		$c->template->trySet('width',$width);
-		$this->template->set('cnt',$this->cnt);
+		$this->template->trySet('cnt',$this->cnt);
 		return $c;
 	}
 	function defaultTemplate(){

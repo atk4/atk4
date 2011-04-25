@@ -53,3 +53,9 @@ div#header {
 .tree li a:focus,.tree li a.tree-parent:focus,.tree li a.tree-item-active {border:2px solid #5F5964;;background-color:#f2fafd;}
 .tree ul.tree-group-collapsed {display:none;}
 
+table.zebra {margin:4px 0;border:1px solid #cfd9e5;}
+table.zebra:first-child, h1+table.zebra, h2+table.zebra, h3+table.zebra, h4+table.zebra {margin-top:0;}
+table.zebra thead tr th {font-weight:bold;}
+table.zebra thead tr th, table tr.even td {background:#edf4fc;}
+table.zebra th, table.zebra td {padding:0.5em 0.5em;}
+

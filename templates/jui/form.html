@@ -1,16 +1,16 @@
 <?form?>
-<div id="<?$_name?>" class="atk-form atk-form-<?form_class?>simple<?/?> <?$form_class_layout?>">
+<div id="<?$_name?>" class="atk-form atk-form-<?form_class?>basic<?/?> <?$form_class_layout?>">
 	<?$hint?>
 	<form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 		<fieldset>
-			<?form_body?>
+			<?Content?>
 				<?form_line?>
-				<dl>
+				<dl class="atk-field atk-field-<?$field_type?> <?$field_container_class?>">
 					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
-					<dd class="atk-field"><div class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div><?$field_hint?></dd>
+					<dd class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?><?$field_hint?></dd>
 					<?field_error?>
-					<dd class="atk-error">
-						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
+					<dd class="field-error-template atk-form-error">
+						<i class="ui-icon ui-icon-alert"></i><span class="field-error-text"><?$field_error_str?></span>
 					</dd>
 					<?/?>
 				</dl>
@@ -19,18 +19,16 @@
 				<?form_separator?>
 				</fieldset>
 				<fieldset>
-					<?separator?><h3 class="atk-form-title"><?$separator_text?></h3><?/?><?/form_separator?>
+					<?separator?><?$separator_text?><?/?><?/form_separator?>
 					<?form_comment?><?$comment?><?/?>
 
 
 
 
-			<?/form_body?>
+			<?/Content?>
 
-			<dd style="display: none" class="field-error-template atk-error">
-				<div class="ui-state-error ui-corner-all"><span 
-				class="ui-icon"></span><span 
-				class="field-error-text">Sample Error</span></div>
+			<dd style="display:none" class="field-error-template atk-form-error">
+				<i class="ui-icon ui-icon-alert"></i><span class="field-error-text">Sample Error</span>
 			</dd>
 		</fieldset>
 		<dl class="atk-form-buttons">
@@ -45,3 +43,4 @@
 	</form>
 </div>
 <?/form?>
+<?$Content?>

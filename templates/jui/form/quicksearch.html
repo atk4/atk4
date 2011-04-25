@@ -1,38 +1,26 @@
 <?form?>
-<div class="atk-form atk-form-simple ui-widget">
-	<form id="<?$_name?>" class="atk4" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
+<div id="<?$form_name?>" class="<?$form_class?> form-quicksearch">
+<form name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 
-		<fieldset>
-			<?form_body?>			
-				<?form_line?>
-				<dl>
-					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
-					<dd class="atk-field"><div><?field_input?><input/><?/?><?$after_field?></div></dd>
-					<?field_error?>
-					<dd class="atk-error"> 
-						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
-					</dd>
-					<?/?>
-				</dl>	
-				<?/form_line?>
-	
-				<?form_separator?>
-				</fieldset>
-				<fieldset>
-					<?separator?>Personal information<?/?><?/form_separator?>
-					<?form_comment?><?$comment?><?/?>
-			<?/form_body?>
-		</fieldset>
+<?$Hint?>
 
-		<dl class="atk-form-buttons">
-			<dd class="atk-field">
+<!--
+	<?form_error?><dl><dd><span style="color:red; font-size: 200%"><?form_error_str?>Error on form!!<?/?></span></dd></dl><?/?>
+	-->
+		<?Content?>			
+			<?form_line?>
+				<!-- <?$field_caption?> -->
+				<label><?$field_caption?></label><?$before_field?><?field_input?><span class="form_field"><input type="text" 
+				name="loginemail" class="logintext" value="" /></span><?/?><?$after_field?><?field_error?><span class="form_error"><?field_error_str?>Error<?/?></span><?/?>
+				<!--<?field_comment?><span class="form_comment">Password must be 6&ndash;16 characters long</span><?/?>-->
+			<?/form_line?>
+			<?form_separator?>
+			
+			<?separator?>Personal information<?/?><?/form_separator?>
+		<?/Content?>
 			<?form_buttons?>
-				<input type="button" value="Save" class="no" />
+			<input type="button" value="Save" class="gbutton button_style1" />
 			<?/form_buttons?>
-			</dd>
-		</dl>
-	
-
 	</form>
 </div>
 <?/form?>

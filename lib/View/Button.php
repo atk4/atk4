@@ -34,19 +34,14 @@ class View_Button extends View_HtmlElement {
 		return $this;
 	}
 	function setLabel($label){
-		list($label,$icon)=explode(',',$label);
-		$this->setText($label);
-
-		if($icon)$this->setIcon($icon);
-
-		return $this;
+		return $this->setText($label);
 	}
 	function setButtonStyle($n){
 		$this->template->set('button_style',$n);
 		return $this;
 	}
 	function setStyle($key,$value=null){
-		return $this->addStyle($key,$value);
+		return parent::setStyle($key,$value);
 		//$this->style[]="$key: $value";
 		//return $this;
 	}
@@ -78,7 +73,7 @@ class View_Button extends View_HtmlElement {
 	}
 	function setAction($js=null,$page=null){
 		if(strpos($page,'.')===false && strpos($page,':')===false && $page){
-			$page=$this->api->getDestinationUrl($page);
+			$page=$this->api->getDestinationURL($page);
 		}
 		// Set no-js compatibility link
 		if($page)$this->setLink($page);

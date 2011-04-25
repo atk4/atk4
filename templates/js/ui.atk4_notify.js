@@ -81,17 +81,22 @@ $.widget('ui.atk4_notify', {
 		/*
 		 * This display a message which you would commonly use on successful operation completion.
 		 */
-		var html=$('<div class="growl"><i class="atk-icon"></i><span>Sample Text</span><b></b></div>');
-		if(!icon)icon='success';
-		html.find('i').addClass('atk-icon-red');
-		html.find('i').addClass('atk-icon-'+icon);
-		html.find('span').text(text);
-		html.find('b').addClass('close');
+		var html=$('<div class="atk-growl ui-widget-content ui-corner-all"><i class="atk-icon"></i>'
+				+text+'<i class="ui-icon ui-icon-closethick"></i></div>');
+		if(icon){
+            var icon=html.find('.atk-icon:first');
+            html.find('.atk-icon').addClass('atk-icons-green');
+            html.find('.atk-icon').addClass('atk-icon-'+icon);
+        }else{
+            html.find('.atk-icon:first').remove();
+        }
+        html.find('span').text(text);
+        html.find('.ui-icon').addClass('close');
 
 		this.messageHTML(html);
 	},
 	successMessage: function(text){
-		this.message(text,'success');
+		this.message(text,'basic-check');
 	}
 	
 });

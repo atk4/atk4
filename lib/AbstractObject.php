@@ -21,6 +21,8 @@ abstract class AbstractObject {
 	 */
 	public $elements = array ();
 
+	public $default_exception='BaseException';
+
 	/////////////// I n i t i a l i z e  o b j e c t /////////////
 	function init() {
 		/**
@@ -81,7 +83,7 @@ abstract class AbstractObject {
 			if (!$class->short_name) {
 				throw new BaseException('Cannot add existing object, without short_name');
 			}
-			if ($this->elements[$class->short_name])
+			if (isset($this->elements[$class->short_name]))
 				return $this->elements[$class->short_name];
 			$this->elements[$class->short_name] = $class;
 			$class->owner = $this;
@@ -133,7 +135,6 @@ abstract class AbstractObject {
 			$element
 		));
 		$element->init();
-		$GLOBALS["lh"][$element->short_name]++;
 		return $element;
 	}
 
@@ -218,14 +219,24 @@ abstract class AbstractObject {
 		return isset($this->elements[$name])?$this->elements[$name]:false;
 	}
 	function removeElement($short_name){
-		if(isset($this->elements[$short_name]))$this->elements[$short_name]=null;
+		if(isset($this->elements[$short_name])){
+			$this->elements[$short_name]=null;
+			unset($this->elements[$short_name]);
+		}
 		return $this;
-	}
-	function getName(){
-		return $this->name;
 	}
 
 	/////////////// M e s s a g e   h a n d l i n g //////////////
+	function exception($message,$type=null){
+		if(!$type){
+			$type=$this->default_exception;
+		}else{
+			$type='Exception_'.$type;
+		}
+
+		$e=new $type($message);
+		return $e;
+	}
 	function fatal($error, $shift = 0) {
 		/**
 		 * If you have fatal error in your object use the following code:

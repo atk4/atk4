@@ -361,8 +361,9 @@ class SMlite extends AbstractModel {
 		if(!isset($this->tags[$tag]))return;
 
 		foreach($this->tags as $tagx=>$arr){
-			list($t,$n)=explode('#',$tagx);
-			if(is_null($n) || $t!=$tag)continue;
+            $tag_split=explode('#',$tagx);
+			$t=$tag_split[0];
+			if(!isset($tag_split[1]) || $t!=$tag)continue;
 			$text=$this->tags[$tagx][0][0];
 			$x=$this->tags[$tagx][0][0]=call_user_func($callable,$this->renderRegion($text),$tagx);
 		}
@@ -373,6 +374,7 @@ class SMlite extends AbstractModel {
 		/*
 		 * Find template location inside search directory path
 		 */
+		if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
         $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
 		return join('',file($f));
 	}

@@ -24,11 +24,12 @@
  *****************************************************ATK4**/
 class View_Tabs_jUItabs extends View_Tabs {
 	public $tab_template=null;
-	public $tab_count=0;
 
 	function init(){
 		parent::init();
-		$this->js(true)->_load('ui.atk4_tabs')->tabs(array('cache'=>false));
+		$this->js(true)
+		//	_load('ui.atk4_tabs')
+			->tabs(array('cache'=>false));
 		$this->tab_template=$this->template->cloneRegion('tabs');
 		//$this->js(true)->_selector('#'.$this->name.'_tabs')->univ()->bwtabs('#'.$this->name.'_content');
 		$this->template->del('tabs');
@@ -55,10 +56,6 @@ class View_Tabs_jUItabs extends View_Tabs {
 							  'tab_id'=>basename($page),
 							  ));
 		$this->template->append('tabs',$this->tab_template->render());
-
-
-
-		$this->tab_count++;
 		return $this;
 	}
 	function defaultTemplate(){
