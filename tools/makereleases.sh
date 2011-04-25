@@ -3,7 +3,8 @@
 # This file creates necessary packages for the ZIP files
 
 
-branch="master"
+v="4.1b1"
+br="devel"
 
 p=`pwd`
 b=`basename $p`
@@ -16,19 +17,27 @@ fi
 
 # Check out files
 if [ -d atk4-source ]; then
-  ( cd atk4-source; git pull origin devel )
+  ( cd atk4-source; git pull origin $br )
 else
   git clone git://github.com/atk4/atk4.git atk4-source
 fi
 
 if [ -d atk4-addons-source ]; then
-  ( cd atk4-addons-source; git pull origin devel )
+  ( cd atk4-addons-source; git pull origin $br )
 else
   git clone git://github.com/atk4/atk4-addons.git atk4-addons-source
 fi
 
+if [ -d atk4-example-source ]; then
+  ( cd atk4-example-source; git pull origin $br )
+else
+  git clone git://github.com/atk4/atk4-example.git atk4-example-source
+fi
+
+
 v=`cat atk4-source/VERSION`
 v="-$v"
+
 ln -sf atk4-source/tools/makereleases.sh .
 
 # create atk4 standalone build
