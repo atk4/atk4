@@ -98,6 +98,7 @@ abstract class AbstractView extends AbstractObject {
 		 * for us to use
 		 */
 		if(!$template_spot)$template_spot=$this->defaultSpot();
+		$this->spot=$template_spot;
 		if(!isset($template_branch))$template_branch=$this->defaultTemplate();
 		if(isset($template_branch)){
 			$this->template_branch=$template_branch;
@@ -127,11 +128,8 @@ abstract class AbstractView extends AbstractObject {
 		}
 
 		// Now that the template is loaded, let's take care of parent's template
-		if(isset($template_spot)){
-			$this->spot=$template_spot;
-			if($this->owner && (isset($this->owner->template)) && (!empty($this->owner->template))){
-				$this->owner->template->del($template_spot);
-			}
+		if($this->owner && (isset($this->owner->template)) && (!empty($this->owner->template))){
+			$this->owner->template->del($this->spot);
 		}
 
 
@@ -146,7 +144,7 @@ abstract class AbstractView extends AbstractObject {
         }
     }
 	function defaultTemplate(){
-		return null;//"_top";
+		return $this->spot;
 	}
 	function defaultSpot(){
 		return 'Content';
@@ -242,10 +240,6 @@ abstract class AbstractView extends AbstractObject {
 			return false;
 		}
 	}
-	final function getDefaultTemplate(){
-		throw new ObsoleteException("getDefaultTemplate is");
-	}
-
 
 	// Helper functions
 	function frame($spot=null,$title=null,$p=null,$opt=''){
