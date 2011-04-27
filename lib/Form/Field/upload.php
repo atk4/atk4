@@ -71,7 +71,6 @@ class Form_Field_Upload extends Form_Field {
 	public $multiple=false;
 	public $debug=false;
 
-
 	function allowMultiple($multiple=50){
 		// Allow no more than $multiple files to be present in the table
 		$this->multiple=$multiple;
@@ -126,7 +125,6 @@ class Form_Field_Upload extends Form_Field {
 	}
 
 	function init(){
-
 
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
 		$this->attr['type']='file';
@@ -232,9 +230,6 @@ class Form_Field_Upload extends Form_Field {
 				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
 			}
 		}
-
-
-
 		if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
 		$o='';
 

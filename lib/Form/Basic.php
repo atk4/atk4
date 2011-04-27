@@ -350,16 +350,15 @@ class Form_Basic extends AbstractView {
 		}
 	}
 	function submitted(){
+        /* downcall from ApiWeb */
 		/**
 		* Default down-call submitted will automatically call this method if form was submitted
 		*/
 		// We want to give flexibility to our controls and grant them a chance to
 		// hook to those spots here.
 		// On Windows platform mod_rewrite is lowercasing all the urls.
-
 		if($_GET['submit']!=$this->name)return;
 		if($this->bail_out)return;
-
 		$this->downCall('loadPOST');
 		$this->downCall('validate');
 
