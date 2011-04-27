@@ -29,7 +29,7 @@
  * @copyright	See file COPYING
  * @version		$Id$
  */
-class Menu extends AbstractView {
+class Menu_Basic extends AbstractView {
 	protected $items=array();
 	protected $last_item=null;
 	public $current_menu_class="ui-state-active";
