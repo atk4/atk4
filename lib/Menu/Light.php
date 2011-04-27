@@ -1,37 +1,48 @@
 <?php
 class Menu_Light extends AbstractView {
 	/*
-	   Light menu which will inherit paret's template
-	   or use the template you specify. It allows you to add tags such as
+	   Sometimes you want to have a HTML-based menu, and all you need PHP to do is to highlight current page.
+	   It's not that simply always, sometimes there are sub-pages also. This class solves the problem.
 
-	   <?current?>highlight<?/?>
+	   Lets build a structure which adds asterik next to page. First we need to specify that the object to be
+	   coppied around is an asterik. (in your case it might be a class name)
 
-	   <?$current_index?>
-	   <?$current_team?>
-	   <?$current_contact_us?>
+	   <?current?>*<?/?>
 
-	   The tag <?current?> contents will be immediatelly deleted. It's contents will
-	   however be inserted into one of the appropriate tags.
+	   Next put self closing tags in form "current_" + page exactly where you want the current to appear
 
-	   For example if you are on the page   team/test then the contents of current_team_test tag will be set
-	   to "highlight". If current_team_test is not found, then current_team is used instead. If that tag
-	   is also not found, thend <?current?> tag is set back to it's original value.
+	   services <?$current_services?>
+	   	 consulting <?$current_services_consulting?>
+	   	 mentoring <?$current_services_consulting?>
+	   products <?$current_products?>
+	   about <?$current_about?><?$current_contact?>
+	   
+	   If you go to page servcies, the asterisk will be placed next to "services". If you are on the page services/mentoring
+	   then asterik will appear next to services AND consulting lines. 
 
+	   Line with "about" will have asterik if you are either on 'about' or 'contact' page. That's all you need to know to use
+	   this.
+
+	   To add thhis to your application use $this->add('Menu_Light',null,'Menu');
 	   */
 	function render(){
 		$c=$this->template->get('current');
 		$this->template->del('current');
 
-		$toppage=explode('_',$this->api->page);
-		$toppage=$toppage[0];
+		$parts=explode('_',$this->api->page);
 
 
-		// direct page match
-		if($this->template->is_set($tag='current_'.$this->api->page)){
-			$this->template->set($tag,$c);
-		}elseif($this->template->is_set($tag='current_'.$toppage)){
-			$this->template->set($tag,$c);
-		}else{
+		$matched=false;
+		while($parts){
+			$tag=implode('_',$parts);
+			if($this->template->is_set('current_'.$tag)){
+				$this->template->trySet('current_'.$tag,$c);
+				$matched=true;
+			}
+			array_pop($parts);
+		}
+
+		if(!$matched){
 			$this->template->set('current',$c);
 		}
 		parent::render();
