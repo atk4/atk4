@@ -611,7 +611,7 @@ class Grid_Basic extends CompleteLister {
 			//walking and combining string
 			foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
 			if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
-			else $this->row_t->set("tdparam_$field",trim($tdparam_str));
+			else $this->row_t->trySet("tdparam_$field",trim($tdparam_str));
 		}
 	}
 	function setTotalsTitle($field,$title="Total:"){
@@ -855,4 +855,8 @@ class Grid_Basic extends CompleteLister {
 		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
         return $this;
 	}
+    /* to reuse td params */
+    function getAllTDParams(){
+        return $this->tdparam;
+    }
 }
