@@ -87,8 +87,10 @@ class SQLAuth extends BasicAuth {
 	}
 	function verifyCredintials($login,$password){
 		$this->debug("Verifying credintals for $login / $password");
-		$this->dq->where($this->login_field,$login);
-		$data=$this->dq->do_getHash();
+
+        $q=clone $this->dq; // in case we are called several times
+		$q->where($this->login_field,$login);
+		$data=$q->do_getHash();
 		// If passwords are matched we will record some information
 		if($data && $data[$this->password_field]==$password){
             unset($data[$this->password_field]);    // do not store password in session
