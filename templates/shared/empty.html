@@ -1,18 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!-- Agile Toolkit (c) Agile Technologies // http://www.agiletech.ie/ -->
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
 		<title><?page_title?>Agile Toolkit<?/?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<link rel="shortcut icon" href="<?$template?>templates/jui/images/favicon.ico" type="image/x-icon"  />
-		<link rel="shortcut icon" href="<?$template?>templates/jui/images/favicon.ico" />
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" type="image/x-icon"  />
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" />
 
 		<link rel="stylesheet" type="text/css" href="<?template?>css/themes/agile/jquery-ui.css<?/?>" />
 		<link rel="stylesheet" type="text/css" href="<?template?>css/agile.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/default.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-icons.css<?/?>" />
 		<link rel="stylesheet" type="text/css" href="<?template?>css/general.css<?/?>" />
-
+		<link rel="stylesheet" type="text/css" href="<?template?>css/custom.css<?/?>" />
+		<!--[if lt IE 9]>
+		<script src=<?template?>css/ie.js<?/?>"></script>
+		<![endif]-->
 		<?$js_include?>
+
+
 		<script type="text/javascript">
 			$(function(){
 				<?$document_ready?>
@@ -20,28 +26,27 @@
 		</script>
 
 	</head>
-	<body>
-		<div id="layout">
-			<div class="wrapper">
-				<div id="header">
-					<?logo?><div id="atk-logo" class="ui-widget-header float-left"><img src="<?$atk_path?><?logo_url?>templates/jui/images/atk-logo.png<?/?>" /></div><?/logo?>
-					<div id="header-right">
-						<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
-					</div>
-					<div class="clear"></div>
-				</div>
+	<body class="<?fullscreen?>atk-fullscreen<?/?> gs-12">
+		<div id="layout" class="gs-wrap">
 
-				<div id="Content">
-					<?Content?>
-					<?/?>
+			<div id="header">
+				<?logo?><a href="http://agiletoolkit.org/" target="_blank"><div id="atk-logo" class="ui-widget-header float-left"><img src="<?template?>images/atk-logo.png<?/?>" alt="Agile Toolkit" /></div></a><?/logo?>
+				<div id="header-right">
+					<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
 				</div>
-				<div class="clear"></div>
+			</div>
+
+			<div id="Content">
+				<?Content?>
+				<?/?>
 			</div>
 			<div id="footer-guard"></div>
 		</div>
-		<div id="footer" class="wrapper">
-			This system is implemented using <a href="http://agiletech.ie/work/agile_toolkit/">Agile Toolkit™ / AModules</a>. &copy; 1999-2010
+		<div id="footer" class="gs-wrap">
+			This system is implemented using 
+            <a href="http://agiletoolkit.org/license">AGPL</a> version of <a href="http://agiletoolkit.org/">Agile Toolkit</a>. &copy; 1999-2011
 			| <?theme?>jui<?/?> Theme
 		</div>
+		<div id="atk-growl-holder"></div>
 	</body>
 </html>
