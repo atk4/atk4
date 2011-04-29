@@ -296,7 +296,7 @@ dialogBox: function(options){
 dialogURL: function(title,url,options,callback){
 	var dlg=this.dialogBox($.extend(options,{title: title,autoOpen: true}));
 	dlg.atk4_load(url,callback);
-	dlg.dialog('open');
+	return dlg.dialog('open');
 },
 frameURL: function(title,url,options,callback){
 	options=$.extend({
