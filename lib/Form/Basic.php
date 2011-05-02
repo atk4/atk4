@@ -365,7 +365,16 @@ class Form_Basic extends AbstractView {
 		$this->downCall('loadPOST');
 		$this->downCall('validate');
 
-		return empty($this->errors);
+        if(!empty($this->errors))return false;
+        try{
+            $this->hook('submit',array($this));
+        }catch (Exception_ValidityCheck $e){
+            $f=$e->getField();
+            if($f && is_string($f) && $fld=$this->hasElement($f)){
+                $fld->displayFieldError($e->getMessage());
+            } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+        }
+        return true;
 	}
     function lateSubmit(){
 		if(@$_GET['submit']!=$this->name)return;
@@ -383,6 +392,9 @@ class Form_Basic extends AbstractView {
 		$this->bail_out=true;
 		return $result;
 	}
+    function onSubmit($callback){
+        $this->addHook('submit',$callback);
+    }
 	function setLayout($template){
 		// Instead of building our own Content we will take it from
 		// pre-defined template and insert fields into there
