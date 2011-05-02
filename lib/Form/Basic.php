@@ -367,7 +367,10 @@ class Form_Basic extends AbstractView {
 
         if(!empty($this->errors))return false;
         try{
-            $this->hook('submit',array($this));
+            if(($output=$this->hook('submit',array($this)))){
+                if(!is_array($output))$output=array($output);
+                $this->js(null,$output)->execute();
+            }
         }catch (Exception_ValidityCheck $e){
             $f=$e->getField();
             if($f && is_string($f) && $fld=$this->hasElement($f)){
