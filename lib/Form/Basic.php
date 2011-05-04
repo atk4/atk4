@@ -61,6 +61,8 @@ class Form_Basic extends AbstractView {
 	public $js_widget='ui.atk4_form';
 	public $js_widget_arguments=array();
 
+	public $default_exception='Exception_ValidityCheck';
+
 	public $dq = null;
 	function init(){
 		/**
