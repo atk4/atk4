@@ -69,8 +69,19 @@ class View_Button extends View_HtmlElement {
 		return parent::render();
 	}
 	function onClick(){
+        // Obsolete. Use js('click') directly
+        $this->exception('Use generic form of js("click")->univ() instead of onClick()','Obsolete');
 		return $this->js('click')->univ();
 	}
+    function isClicked($confirm=null){
+
+        $cl=$this->js('click')->univ();
+        if($confirm)$cl->confirm($confirm);
+
+        $cl->ajaxec($this->api->getDestinationURL(null,array($this->name=>'clicked')));
+
+        return isset($_GET[$this->name]);
+    }
 	function setAction($js=null,$page=null){
 		if(strpos($page,'.')===false && strpos($page,':')===false && $page){
 			$page=$this->api->getDestinationURL($page);
