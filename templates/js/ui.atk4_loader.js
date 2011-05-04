@@ -214,8 +214,8 @@ $.widget('ui.atk4_loader', {
 			if(callback)$.atk4(callback,true);
 			$.atk4(function(){ 
 				m.show(); 
-				m.find('form:first').find('input:visible,select:visible').eq(0).focus();
-				//trigger('setfocus');
+				var f=m.find('form:first').find('input:visible,select:visible').eq(0);
+                if(!f.hasClass('nofocus'))f.focus();
 			});
 		},function(){	// second callback, which is always called, when loading is completed
 			self.loading=false;

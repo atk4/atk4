@@ -372,10 +372,17 @@ class Grid_Basic extends CompleteLister {
 		);
 		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
 	}
+    function init_link($field){
+        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
+    }
 	function format_link($field){
+        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));
+        return $this->format_template($field);
+        /*
 		$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
 			array('id'=>$this->current_row['id'])).'">'.
 			$this->columns[$field]['descr'].'</a>';
+            */
 	}
 	function _performDelete($id){
 		$this->dq->where($this->dq->args['table'].'.id',$id)->do_delete();
@@ -611,7 +618,7 @@ class Grid_Basic extends CompleteLister {
 			//walking and combining string
 			foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
 			if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
-			else $this->row_t->set("tdparam_$field",trim($tdparam_str));
+			else $this->row_t->trySet("tdparam_$field",trim($tdparam_str));
 		}
 	}
 	function setTotalsTitle($field,$title="Total:"){
@@ -853,6 +860,11 @@ class Grid_Basic extends CompleteLister {
 		}
 		$this->columns[$field]['type']=$formatter;
 		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        $this->last_column=$field;
         return $this;
 	}
+    /* to reuse td params */
+    function getAllTDParams(){
+        return $this->tdparam;
+    }
 }

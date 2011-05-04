@@ -96,6 +96,9 @@ class Form_Basic extends AbstractView {
 		// They will try to look into this template, and if you don't have apropriate templates
 		// for them, they will use default ones.
 		$this->template_chunks['form']=$this->template;
+		if(!$this->template_chunks['form']->is_set('Content')){
+			throw new BaseException('Your form template needs to be upgraded for use with 4.1 version. Rename "form_body" tag into "Content". See http://agiletoolkit.org/upgrade_4_1 for more information');
+		}
 		$this->template_chunks['form']->del('Content');
 		$this->template_chunks['form']->del('form_buttons');
 		$this->template_chunks['form']->set('form_name',$this->name);
@@ -362,7 +365,19 @@ class Form_Basic extends AbstractView {
 		$this->downCall('loadPOST');
 		$this->downCall('validate');
 
-		return empty($this->errors);
+        if(!empty($this->errors))return false;
+        try{
+            if(($output=$this->hook('submit',array($this)))){
+                if(!is_array($output))$output=array($output);
+                $this->js(null,$output)->execute();
+            }
+        }catch (Exception_ValidityCheck $e){
+            $f=$e->getField();
+            if($f && is_string($f) && $fld=$this->hasElement($f)){
+                $fld->displayFieldError($e->getMessage());
+            } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+        }
+        return true;
 	}
     function lateSubmit(){
 		if(@$_GET['submit']!=$this->name)return;
@@ -380,6 +395,9 @@ class Form_Basic extends AbstractView {
 		$this->bail_out=true;
 		return $result;
 	}
+    function onSubmit($callback){
+        $this->addHook('submit',$callback);
+    }
 	function setLayout($template){
 		// Instead of building our own Content we will take it from
 		// pre-defined template and insert fields into there

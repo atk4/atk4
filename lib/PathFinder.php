@@ -130,6 +130,47 @@ class PathFinder extends AbstractController {
 
 		throw new PathFinder_Exception($type,$filename,$attempted_locations);
 	}
+    function search($type,$filename='',$return='relative'){
+        /*
+           Similar to locate but returns array with all matches for the specified file
+           in array
+           */
+		$matches=array();
+		foreach($this->elements as $location){
+			if(!($location instanceof PathFinder_Location))continue;
+
+			$path=$location->locate($type,$filename,$return);
+
+			if(is_string($path)){
+				// file found!
+				$matches[]=$path;
+			}
+		}
+        return $matches;
+    }
+    function _searchDirFiles($dir,&$files,$prefix=''){
+        $d=dir($dir);
+        while(false !== ($file=$d->read())){
+            if($file[0]=='.')continue;
+            if(is_dir($dir.'/'.$file)){
+                $this->_searchDirFiles($dir.'/'.$file,$files,$prefix.$file.'/');
+            }else{
+                $files[]=$prefix.$file;
+            }
+        }
+        $d->close();
+    }
+    function searchDir($type,$directory){
+        /*
+           List all files inside particular directory
+           */
+        $dirs=$this->search($type,$directory,'path');
+        $files=array();
+        foreach($dirs as $dir){
+            $this->_searchDirFiles($dir,$files);
+        }
+        return $files;
+    }
 }
 
 class PathFinder_Exception extends BaseException {

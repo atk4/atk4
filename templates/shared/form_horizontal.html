@@ -1,5 +1,5 @@
 <?form?>
-<div id="<?$_name?>" class="atk-form atk-form-<?form_class?>basic<?/?> <?$form_class_layout?>">
+<div id="<?$_name?>" class="atk-form atk-form-<?form_class?>horizontal<?/?> <?$form_class_layout?>">
 	<?$hint?>
 	<form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
 		<fieldset>
@@ -31,6 +31,7 @@
 				<i class="ui-icon ui-icon-alert"></i><span class="field-error-text">Sample Error</span>
 			</dd>
 		</fieldset>
+        <!--
 		<dl class="atk-form-buttons">
 			<dd class="atk-field">
 			<?form_buttons?>
@@ -38,9 +39,9 @@
 			<?/form_buttons?>
 			</dd>
 		</dl>
+        -->
 
 
 	</form>
 </div>
 <?/form?>
-<?$Content?>
