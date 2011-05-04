@@ -291,10 +291,10 @@ $.extend($.atk4,{
     _includes: {},
 
 	// Loads javascript file and evals it
-    includeJS: function(url){
+    includeJS: function(url,nocache){
 
 		// Perhaps file is already included. We do not to load it twice
-        if(this._isIncluded(url))return;
+        if(this._isIncluded(url) && !nocache)return;
 
 		// Continue with loading
         this.get(url,function(code){
