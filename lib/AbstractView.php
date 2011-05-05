@@ -85,6 +85,7 @@ abstract class AbstractView extends AbstractObject {
 		}else{
 			$this->controller=$this->add($controller);
 		}
+        if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
 		return $this;
 	}
 	function getController(){
