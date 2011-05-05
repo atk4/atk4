@@ -31,6 +31,7 @@
  */
 class Page extends AbstractView {
 	protected $title='Page';
+	public $default_exception='Exception_ForUser';
 	function init(){
 		if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
 			$_GET['cut_object']=$this->short_name;
