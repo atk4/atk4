@@ -360,7 +360,7 @@ class Form_Field_Checkbox extends Form_Field {
 						'value'=>'Y',
 						'checked'=>$this->value=='Y'
 						),$attr
-					)).' &ndash; '.$this->caption;
+					)).' &ndash; <label for="'.$this->name.'">'.$this->caption.'</label>';
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){

@@ -275,7 +275,7 @@ class Grid_Basic extends CompleteLister {
 		// $this->current_row[$field]=$this->add('Button',null,false)
 		//  ->
 		//
-		@$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all '.$class.'"
+		@$this->current_row[$field]='<input type="checkbox" class="buttonx_'.$field.' '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
 			rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
 						array('expander'=>$field,
@@ -287,12 +287,14 @@ class Grid_Basic extends CompleteLister {
 							$this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
 							)
 						).'"
-			>'.$this->current_row[$field].'</button>';
+			/><label for="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'">'.
+			$this->current_row[$field].'</label>';
 	}
 	function init_expander_widget($field){
 		return $this->init_expander($field);
 	}
 	function init_expander($field){
+				$this->js(true)->find('.buttonx_'.$field)->button();
 
         if(!isset($this->columns[$field]['refid'])){
             // TODO: test
@@ -396,20 +398,29 @@ class Grid_Basic extends CompleteLister {
 		}
 		return $this->format_confirm($field);
 	}
+	function init_button($field){
+		$this->js(true)->find('.button_'.$field)->button();
+	}
+	function init_confirm($field){
+		$this->js(true)->find('.button_'.$field)->button();
+	}
+	function init_prompt($field){
+		$this->js(true)->find('.button_'.$field)->button();
+	}
 	function format_button($field){
-		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
+		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
 		'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_confirm($field){
-		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
+		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
 		'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_prompt($field){
-		$this->current_row[$field]='<button type="button" class="ui-state-default ui-corner-all" '.
+		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
 		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'&value=\'+value)">'.
 			$this->columns[$field]['descr'].'</button>';
