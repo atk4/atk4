@@ -119,6 +119,10 @@ class Grid_Basic extends CompleteLister {
 
 		return $this;
 	}
+    function getColumn($column){
+        $this->last_column=$column;
+        return $this;
+    }
 	function removeColumn($name){
 		unset($this->columns[$name]);
 		if($this->last_column==$name)$this->last_column=null;
