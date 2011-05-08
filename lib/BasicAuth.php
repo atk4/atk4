@@ -299,9 +299,9 @@ class BasicAuth extends AbstractController {
 		$form->addField('Password','password','Password');
 
 		$form->addField('Checkbox','memorize','Remember me');
-		$form->addComment('<div align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
+		$form->addComment('<dl align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
 					'will no longer have to use a password to enter this site,<br>until you explicitly ' .
-					'log out.</b></div>');
+					'log out.</b></dl>');
 
 		$form->addSubmit('Login');
 		return $form;
