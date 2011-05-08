@@ -388,9 +388,7 @@ class Form_Field_Hidden extends Form_Field {
 					));
 	}
 	function render(){
-		$this->template = $this->owner->template_chunks['hidden_form_line'];
-		$this->template->set('hidden_field_input',$this->getInput());
-		$this->owner->template_chunks['form']->append('Content',$this->template->render());
+		$this->owner->template_chunks['form']->append('Content',$this->getInput());
 	}
 
 }
