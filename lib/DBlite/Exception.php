@@ -35,7 +35,7 @@ class DBlite_exception extends BaseException {
 	}
 	function getDetailedHTML(){
 		// first, perhaps we can highlight error in a query
-		$cause = ereg_replace('.*near \'(.*)\' at line .*','\1',$this->info['mysql_error']);
+		$cause = preg_replace('/.*near \'(.*)\' at line .*/','\1',$this->info['mysql_error']);
 		if($cause!=$this->info['mysql_error']){
 			$this->info['last_query']=str_replace($cause,"<font color=red><b>".$cause."</b></font>",$this->info['last_query']);
 		}
