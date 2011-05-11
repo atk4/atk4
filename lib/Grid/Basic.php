@@ -408,6 +408,7 @@ class Grid_Basic extends CompleteLister {
     }
     function init_delete($field){
         $this->columns[$field]['button_class']='red';
+        $this->addOrder()->move($field,'last')->onHook($this->api,'post-init');
         return $this->init_confirm($field);
     }
 	function init_confirm($field){
