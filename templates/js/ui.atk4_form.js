@@ -294,15 +294,20 @@ $.widget("ui.atk4_form", {
 		});
 		console.log('old=',params);
 		*/
-		params=this.element.find(":input").serializeArray()
 
 		//	console.log(params);
 
 
 		// btn is clicked
+		params=this.element.find(":input").serializeArray()
 		if(btn){
-			params['ajax_submit']=btn;
-		}
+            for (var el in params){
+                if (params[el].name == 'ajax_submit'){
+                    params[el].value=btn;
+                    break;
+                }
+            }
+        }
 
 		var properties={
 			type: "POST",
