@@ -171,7 +171,7 @@ hr {background:#ddd;color:#ddd;}
 .lister_expander_parent>td:last-child {border-right:1px solid #aaa;}
 td.lister_expander {background:#f5f5f5;border:1px solid #bbb;}
 td.lister_expander>div {border-top:1px solid #fff;}
-
+.atk-grid td>.ui-button {font-size:11px;}
 
 /* --------------------------------------------------------------------
 	Forms
