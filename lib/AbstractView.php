@@ -78,6 +78,9 @@ abstract class AbstractView extends AbstractObject {
 		$this->setController($c);
 		return $c;
 	}
+    function getModel(){
+        return $this->getController()->getModel();
+    }
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;

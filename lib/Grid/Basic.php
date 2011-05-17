@@ -25,8 +25,6 @@
 class Grid_Basic extends CompleteLister {
 	public $columns;
 	protected $no_records_message="No matching records to display";
-	private $table;
-	private $id;
 
 	public $last_column;
 	public $sortby='0';
@@ -119,6 +117,10 @@ class Grid_Basic extends CompleteLister {
 
 		return $this;
 	}
+    function getColumn($column){
+        $this->last_column=$column;
+        return $this;
+    }
 	function removeColumn($name){
 		unset($this->columns[$name]);
 		if($this->last_column==$name)$this->last_column=null;
@@ -275,7 +277,7 @@ class Grid_Basic extends CompleteLister {
 		// $this->current_row[$field]=$this->add('Button',null,false)
 		//  ->
 		//
-		@$this->current_row[$field]='<input type="checkbox" class="buttonx_'.$field.' '.$class.'"
+		@$this->current_row[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
 			rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
 						array('expander'=>$field,
@@ -294,7 +296,7 @@ class Grid_Basic extends CompleteLister {
 		return $this->init_expander($field);
 	}
 	function init_expander($field){
-				$this->js(true)->find('.buttonx_'.$field)->button();
+				$this->js(true)->find('.button_'.$field)->button();
 
         if(!isset($this->columns[$field]['refid'])){
             // TODO: test
@@ -401,6 +403,17 @@ class Grid_Basic extends CompleteLister {
 	function init_button($field){
 		$this->js(true)->find('.button_'.$field)->button();
 	}
+    function setButtonClass($class){
+        $this->columns[$this->last_field]['button_class']=$class;
+    }
+    function init_delete($field){
+        $this->columns[$field]['button_class']='red';
+        $g=$this;
+        $this->api->addHook('post-init',function() use($g,$field){
+            if($g->hasColumn($field))$g->addOrder()->move($field,'last')->now();
+        });
+        return $this->init_confirm($field);
+    }
 	function init_confirm($field){
 		$this->js(true)->find('.button_'.$field)->button();
 	}
@@ -408,21 +421,24 @@ class Grid_Basic extends CompleteLister {
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function format_button($field){
-		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
+		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
 		'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
+                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_confirm($field){
-		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
+		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
 		'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
+                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_prompt($field){
-		$this->current_row[$field]='<button type="button" class="button_'.$field.'" '.
+		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
 		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'&value=\'+value)">'.
+                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
 			$this->columns[$field]['descr'].'</button>';
 	}
 	function format_checkbox($field){

@@ -354,13 +354,19 @@ class Form_Field_Checkbox extends Form_Field {
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
 		$this->template->tryDel('label_container');
+        if(strpos('<',$this->caption)!==null){
+            // HTML in label
+            $label=$this->caption;
+        }else{
+            $label='<label for="'.$this->name.'">'.$this->caption.'</label>';
+        }
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
 						'value'=>'Y',
 						'checked'=>$this->value=='Y'
 						),$attr
-					)).' &ndash; <label for="'.$this->name.'">'.$this->caption.'</label>';
+					)).' &ndash; '.$label;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
@@ -388,9 +394,7 @@ class Form_Field_Hidden extends Form_Field {
 					));
 	}
 	function render(){
-		$this->template = $this->owner->template_chunks['hidden_form_line'];
-		$this->template->set('hidden_field_input',$this->getInput());
-		$this->owner->template_chunks['form']->append('Content',$this->template->render());
+		$this->owner->template_chunks['form']->append('Content',$this->getInput());
 	}
 
 }
@@ -455,7 +459,7 @@ class Form_Field_Date extends Form_Field {
 		if(substr_count($this->value, $this->sep) != 2){
 			$this->invalid();
 		}else{
-			$c = split($this->sep, $this->value);
+			$c = explode($this->sep, $this->value);
 			//day must go first, month should be second and a year should be last
 			if(strlen($c[0]) != 4 ||
 				$c[1] <= 0 || $c[1] > 12 ||

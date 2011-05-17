@@ -30,8 +30,7 @@ $.widget("ui.atk4_expander", {
         this.element.closest('table').find('.expander').atk4_expander('collapseFast');
 
         // Make button look like it's bein pushed
-        this.element.removeClass("ui-state-default");
-        this.element.addClass("ui-state-active").addClass('expander');
+        this.element.addClass('expander');
 
         // add additional row after ours
         this.this_tr=this.element.closest('tr');
@@ -58,8 +57,7 @@ $.widget("ui.atk4_expander", {
     collapse: function() {
         if(!this.expanded || this.transition)return false;
 
-        this.element.removeClass("ui-state-active").removeClass('expander');
-        this.element.addClass("ui-state-default");
+        this.element.removeClass('expander');
 		var ttr=this.this_tr;
 
 
@@ -85,10 +83,14 @@ $.widget("ui.atk4_expander", {
     collapseFast: function() {
         if(!this.expanded || this.transition)return false;
 
-        this.element.removeClass("ui-state-active").removeClass('expander');
-        this.element.addClass("ui-state-default");
-		var ttr=this.this_tr;
+        console.log(this.element[0]);
+        this.element.filter('input').each(function(junk,cb){
+            cb.checked=false;
+            $(cb).change();
+        });
 
+        this.element.removeClass('expander');
+		var ttr=this.this_tr;
 
         var remove_this=this.expander_id;
 

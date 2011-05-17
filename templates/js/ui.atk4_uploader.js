@@ -138,7 +138,7 @@ $.widget("ui.atk4_uploader", {
 					self.element.attr('name')+'_save_action='+
 					$(this).closest('div').attr('rel') 
 				);
-			})
+			});
 			tpl.appendTo(tb);
 		});
 		self.updateToken();
