@@ -114,7 +114,7 @@ hr.hr-small {margin:1.5em 0;}
 .atk-grid .atk-grid-panel .atk-button-holder:first-child {margin:0 0 1em 0;}
 .atk-grid .atk-grid-panel .atk-form-quicksearch {float:right;}
 .atk-grid>table {width:100%;border-spacing:0px;}
-.atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;vertical-align:top;}
+.atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;}
 .atk-grid>table>thead>tr>th {font-weight:bold;}
 html>/**/body .atk-grid>table>thead>tr>th {background:none;}
 .atk-grid>table>tbody>tr:first-child>td {border-top:none;}
