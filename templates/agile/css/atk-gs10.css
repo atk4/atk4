@@ -1,0 +1,91 @@
+/* --------------------------------------------------------------------
+	960GS Ñ 10 Column
+-------------------------------------------------------------------- */
+body.gs-10 .gs-wrap {width:1000px;}
+
+.gs-10 .g-1, .gs-10 .g-2, .gs-10 .g-3, .gs-10 .g-4, .gs-10 .g-4, .gs-10 .g-5, .gs-10 .g-6, .gs-10 .g-7, .gs-10 .g-8, .gs-10 .g-9, .gs-10 .g-10, .gs-10 .g-max {margin-left:20px;margin-right:20px;} 
+
+.gs-10 .g-1 {width:60px;}
+.gs-10 .g-2 {width:160px;}
+.gs-10 .g-3 {width:260px;}
+.gs-10 .g-4 {width:360px;}
+.gs-10 .g-5 {width:460px;}
+.gs-10 .g-6 {width:560px;}
+.gs-10 .g-7 {width:660px;}
+.gs-10 .g-8 {width:760px;}
+.gs-10 .g-9 {width:860px;}
+.gs-10 .g-10, .gs-10 .g-max {width:960px;}
+
+
+/* --------------------------------------------------------------------
+	Forms
+-------------------------------------------------------------------- */
+.gs-10 .atk-form {max-width:960px;}
+.gs-10 .atk-form dd.form_field input[type=text],
+.gs-10 .atk-form dd.form_field input[type=password],
+.gs-10 .atk-form dd.form_field textarea {width:220px;}
+.gs-10 .atk-form dd.form_field select {width:230px;}
+.gs-10 .atk-form .atk-field-datepicker dd.form_field input[type=text] {width:7em;}
+
+/* Form Common Settings
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-basic dt,
+.gs-10 .atk-form-inline dt {width:110px;}
+
+/* Form Basic
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-basic dd {margin-left:130px;}
+.gs-10 .atk-form-basic .atk-field-text dd.form_field textarea {width:320px;}
+.gs-10 .atk-form-basic-2col fieldset {width:460px;}
+.gs-10 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:40px;}
+
+/* Form Inline
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-inline dd.form_field {width:260px;padding-left:20px;}
+.gs-10 .atk-form-inline dd.atk-form-error {margin-left:400px;}
+.gs-10 .atk-form-inline dl.atk-button-holder dd {margin-left:180px;}
+.gs-10 .atk-form-inline .atk-field-text dd.form_field {width:330px;}
+.gs-10 .atk-form-inline .atk-field-text dd.form_field textarea {width:320px;}
+.gs-10 .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:500px;}
+
+/* Form Vertical
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-vertical dd.form_field input[type=text],
+.gs-10 .atk-form-vertical dd.form_field input[type=password],
+.gs-10 .atk-form-vertical dd.form_field textarea {width:250px;}
+.gs-10 .atk-form-vertical dd.form_field select {width:260px;}
+.gs-10 .atk-form-vertical dd.form_field textarea {width:450px;}
+
+.atk-form-vertical-2col fieldset,
+.gs-10 fieldset.atk-form-vertical-2col {width:360px;margin-left:40px;}
+.gs-10 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:40px !important;}
+.gs-10 .atk-form-vertical-2col dd.form_field input[type=text],
+.gs-10 .atk-form-vertical-2col dd.form_field input[type=password],
+.gs-10 .atk-form-vertical-2col dd.form_field textarea {width:350px;}
+.gs-10 .atk-form-vertical-2col dd.form_field select {width:360px;}
+
+.gs-10 fieldset.atk-form-vertical-3col,
+.gs-10 .atk-form-vertical-3col fieldset {width:260px;margin-left:40px;}
+.gs-10 fieldset.atk-form-vertical-3col+fieldset.atk-form-vertical-3col {margin-left:40px !important;}
+.gs-10 .atk-form-vertical-3col dd.form_field input[type=text],
+.gs-10 .atk-form-vertical-3col dd.form_field input[type=password],
+.gs-10 .atk-form-vertical-3col dd.form_field textarea {width:250px;}
+.gs-10 .atk-form-vertical-3col dd.form_field select {width:260px;}
+
+/* Form Horizontal
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-horizontal fieldset dl {width:160px;margin-left:40px;}
+.gs-10 .atk-form-horizontal dd.form_field input[type=text],
+.gs-10 .atk-form-horizontal dd.form_field input[type=password],
+.gs-10 .atk-form-horizontal dd.form_field textarea {width:150px;}
+.gs-10 .atk-form-horizontal dd.form_field select {width:160px;}
+
+/* Form Credit Card
+-------------------------------------------------------------------- */
+.gs-10 .atk-form.atk-form-creditcard dl.atk-form-expiry select {width:140px;}
+.gs-10 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry {margin-left:20px;}
+.gs-10 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry select {width:60px;}
+
+/* Form Quicksearch
+-------------------------------------------------------------------- */
+.gs-10 .atk-form-quicksearch input[type=text] {width:230px;}
