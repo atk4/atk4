@@ -172,8 +172,9 @@ $.widget('ui.atk4_loader', {
 			var source=$('<div/>').append(source);
 			var n=source.children();
 
+			var oldid=el.attr('id');
 			el.removeAttr('id');
-			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==el.attr('id')))){
+			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==oldid))){
 				// Only one child have been returned to us. We also checked ID's and they match
 				// with existing element. In this case we will be copying contents of
 				// provided element
