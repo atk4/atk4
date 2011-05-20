@@ -1,17 +1,11 @@
 <script>
 $(function(){
 
-	$('.atk-form-buttons button').button();
+	$('.atk-button-holder button').button();
 	$( "#tabs" ).tabs();
 
 });
 </script>
-<style type="text/css">
-.atk-form+h3 {margin-top:3em}
-.ui-tabs-panel, .ui-tabs {border:none !important;padding:0 !important;}
-.ui-tabs-nav {background:none !important;border:none;}
-.ui-tabs-panel {padding-top:2em !important;}
-</style>
 <h1>CSS Reference</h1>
 
 <h2>Forms</h2>
@@ -109,10 +103,10 @@ $(function(){
 					</dl>
 				</fieldset>
 				
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -200,10 +194,10 @@ $(function(){
 					</dl>
 				</fieldset>
 				
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">				
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -287,10 +281,11 @@ $(function(){
 				</dl>
 			</fieldset>
 			
-			<dl class="atk-form-buttons">
-			
-				<dd><button>Submit</button></dd>
-			
+			<dl class="atk-button-holder">
+				<dd>
+					<button>Submit</button>
+					<button>Cancel</button>
+				</dd>
 			</dl>
 			
 		</form>
@@ -340,10 +335,10 @@ $(function(){
 					</dl>
 				</fieldset>
 				
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -432,10 +427,10 @@ $(function(){
 					</dl>
 				</fieldset>
 				
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -519,12 +514,11 @@ $(function(){
 						</dd>
 					</dl>
 				</fieldset>
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
-				
 			</form>
 		</div>
 	</div>
@@ -630,10 +624,10 @@ $(function(){
 						</dd>
 					</dl>
 				</fieldset>
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -981,10 +975,10 @@ $(function(){
 						</dd>
 					</dl>
 				</fieldset>
-				<dl class="atk-form-buttons">
-				
-					<dd><button>Submit</button></dd>
-				
+				<dl class="atk-button-holder">			
+					<dd>
+						<button>Submit</button><button>Cancel</button>
+					</dd>
 				</dl>
 				
 			</form>
@@ -1087,10 +1081,11 @@ $(function(){
 				</dl>
 			</fieldset>
 			
-			<dl class="atk-form-buttons">
-			
-				<dd><button>Submit</button></dd>
-			
+			<dl class="atk-button-holder">			
+				<dd>
+					<button>Submit</button>
+					<button>Cancel</button>
+				</dd>
 			</dl>
 			
 		</form>
@@ -1100,7 +1095,7 @@ $(function(){
 
 <div class="g-row">
 	<div class="g-3" style="height:10em;background:orange"></div>
-	<div class="g-7" style="height:10em;background:green"></div>
+	<div class="g-5" style="height:10em;background:green"></div>
 	<div class="g-2" style="height:10em;background:blue"></div>
 </div>
 
@@ -1108,7 +1103,7 @@ $(function(){
 
 <div class="g-row">
 	<div class="g-5" style="height:10em;background:orange"></div>
-	<div class="g-4" style="height:10em;background:green"></div>
+	<div class="g-2" style="height:10em;background:green"></div>
 	<div class="g-3" style="height:10em;background:blue"></div>
 </div>
 
@@ -1135,11 +1130,62 @@ $(function(){
 <button id="start-growl">Show Growl</button>
 
 <h2>Lister</h2>
-<div class="atk-lister ui-widget-content ui-corner-all">
+<div class="atk-lister ui-widget-content ui-corner-all atk-block">
+	<div class="ui-widget-header">The Lister</div>
 	<ul>
 		<li>Cras non nibh mi, id vestibulum dolor.</li>
 		<li class="even">Sed eu dui in enim sagittis vehicula.</li>
 		<li>Nam venenatis augue sed sem molestie commodo.</li>
 		<li class="even">Sed ultrices scelerisque tellus, eget rutrum leo bibendum ac.</li>
 	</ul>
+</div>
+
+
+<div class="atk-grid ui-widget atk4_grid">
+	<div class="atk-grid-panel clearafter">
+		<div class="atk-button-holder">
+			<button>Add</button>
+			<button>Edit</button>
+		</div>
+		<div class="atk-form-quicksearch">
+			<form>
+				<input type="text" /><i class="atk-icon-basic-search atk-icons-nobg atk-icon"></i>
+			</form>
+		</div>
+	</div>
+	<table>
+		
+		  <thead class="ui-widget-header">
+		  	<tr>   
+				<th class="ui-widget-header">Name</th>
+				<th class="ui-widget-header">Surname</th>
+				<th class="ui-widget-header">Age</th>
+				<th class="ui-widget-header">City</th>
+				<th class="ui-widget-header">Country</th>
+			  </tr>
+		  </thead>
+		  <tbody>
+		  	<tr>
+			 	<td>Sebastian</td>
+			  	<td>Vettel</td>
+			   	<td>19</td>
+			   	<td>Oslo</td>
+		    	<td>Norway</td>
+		    </tr>
+		  	<tr>
+			 	<td>Sebastian</td>
+			  	<td>Vettel</td>
+			   	<td>19</td>
+			   	<td>Oslo</td>
+		    	<td>Norway</td>
+		    </tr>
+		  	<tr>
+			 	<td>Sebastian</td>
+			  	<td>Vettel</td>
+			   	<td>19</td>
+			   	<td>Oslo</td>
+		    	<td>Norway</td>
+		    </tr>
+	    </tbody>
+	</table>
 </div>

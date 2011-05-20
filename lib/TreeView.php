@@ -167,7 +167,7 @@ class TreeView extends Lister{
 	function formatItem(){
 	   	$this->current_row['caption']="";
 		foreach($this->display_field as $tmp=>$field){
-			$formatters = split(',',$field['format']);
+			$formatters = explode(',',$field['format']);
 			$this->current_row['caption'].=$field['prefix'];
 			foreach($formatters as $formatter){
 				if(method_exists($this,$m="format_".$formatter)){
