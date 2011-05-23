@@ -31,8 +31,12 @@ class BaseException extends Exception {
 	public $my_backtrace;
 	public $shift=0;
 	public $name;
+    public $owner=null;
+    public $api=null;
 
 	public $more_info;
+    function init(){
+    }
 	function __construct($msg,$func=null,$shift=1,$code=0){
 		parent::__construct($msg,$code);
 		$this->collectBasicData($func,$shift,$code);
