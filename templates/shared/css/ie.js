@@ -1,5 +1,5 @@
 $(function(){
 
-	$('.g-row>*:last-child').css("marginRight","0");
-	
+	$('.mandatory').append('<span class="mandatory-star">*</span>');
+
 });

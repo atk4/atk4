@@ -49,7 +49,7 @@ class ApiWeb extends ApiCLI {
 
 	public $start_time=null;
 
-	function __construct($realm=null,$skin='kt2'){
+	function __construct($realm=null,$skin='default'){
 		$this->start_time=time()+microtime();
 
 		$this->skin=$skin;

@@ -189,6 +189,10 @@ class Grid_Basic extends CompleteLister {
 	function init_money($field){
 		@$this->columns[$field]['thparam'].=' style="text-align: right"';
 	}
+	function init_fullwidth($field){
+		@$this->columns[$field]['thparam'].=' style="width: 100%"';
+	}
+	function format_fullwidth($field){}
 	function format_money($field){
 		$m=(float)$this->current_row[$field];
 		$this->current_row[$field]=number_format($m,2);
@@ -293,6 +297,7 @@ class Grid_Basic extends CompleteLister {
 			$this->current_row[$field].'</label>';
 	}
 	function init_expander_widget($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		return $this->init_expander($field);
 	}
 	function init_expander($field){
@@ -401,12 +406,14 @@ class Grid_Basic extends CompleteLister {
 		return $this->format_confirm($field);
 	}
 	function init_button($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
     function setButtonClass($class){
         $this->columns[$this->last_field]['button_class']=$class;
     }
     function init_delete($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
         $this->columns[$field]['button_class']='red';
         $g=$this;
         $this->api->addHook('post-init',function() use($g,$field){
