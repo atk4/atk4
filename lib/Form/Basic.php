@@ -153,7 +153,7 @@ class Form_Basic extends AbstractView {
 
 		$last_field=$this->add('Form_Field_'.$type,$name,null,'form_line')
 			->setCaption($caption);
-		$last_field->template->trySet('field_type',$type);
+		$last_field->template->trySet('field_type',strtolower($type));
 		if (is_array($attr)){
 			foreach ($attr as $key => $value){
 				$this->last_field->setProperty($key, $value);
