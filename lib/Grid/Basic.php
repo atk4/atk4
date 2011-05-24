@@ -301,6 +301,7 @@ class Grid_Basic extends CompleteLister {
 		return $this->init_expander($field);
 	}
 	function init_expander($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 				$this->js(true)->find('.button_'.$field)->button();
 
         if(!isset($this->columns[$field]['refid'])){
