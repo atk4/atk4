@@ -287,7 +287,8 @@ $.widget("ui.atk4_form", {
 		}
 
 		// btn is clicked
-		this.element.find('.atk4_richtext').atk4_richtext('changeHTML');
+		var richtext=this.element.find('.atk4_richtext');
+		if(richtext.length)richtext.atk4_richtext('changeHTML');
 		params=this.element.find(":input").serializeArray()
 		if(btn){
             for (var el in params){
