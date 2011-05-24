@@ -25,6 +25,7 @@ body.gs-10-fluid .gs-wrap {min-width:960px;width:92%;padding:0 4%;}
 .gs-10-fluid .atk-form dd.form_field input[type=text],
 .gs-10-fluid .atk-form dd.form_field input[type=password],
 .gs-10-fluid .atk-form dd.form_field textarea {width:97%;}
+.gs-10-fluid .atk-form dd.form_field .richtext {width:97%;}
 .gs-10-fluid .atk-form dd.form_field select {width:100%;}
 .gs-10-fluid .atk-form .atk-field-datepicker dd.form_field input[type=text] {width:7em;}
 
@@ -32,7 +33,7 @@ body.gs-10-fluid .gs-wrap {min-width:960px;width:92%;padding:0 4%;}
 -------------------------------------------------------------------- */
 .gs-10-fluid .atk-form-basic dt,
 .gs-10-fluid .atk-form-inline dt {width:13%;}
-.gs-10-fluid .atk-form dd {width:24%;}
+.gs-10-fluid .atk-form dd {width:84%;}
 
 /* Form Basic
 -------------------------------------------------------------------- */

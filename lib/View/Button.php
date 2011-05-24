@@ -54,7 +54,7 @@ class View_Button extends View_HtmlElement {
 		return $this;
 	}
 	function jsButton(){
-		$this->js(true)->button();
+		if(!($this->owner instanceof ButtonSet))$this->js(true)->button();
 	}
 	function render(){
 		$this->jsButton();
