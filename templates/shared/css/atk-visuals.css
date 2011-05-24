@@ -53,6 +53,7 @@ hr {background:#ddd;color:#ddd;}
 	jQuery UI Style Tweaks
 -------------------------------------------------------------------- */
 .ui-state-default {text-shadow:0 1px 0 #fff;}
+.ui-state-active.ui-state-default {text-shadow:none;}
 .ui-button .ui-button-text {font-weight:bold;}
 .ui-tabs.ui-widget-content {border:none;padding:0;}
 .ui-tabs .ui-tabs-nav.ui-widget-header {background:none;border-width:0px 0px 1px 0;padding:0 5px;-webkit-border-radius:0px;-moz-border-radius:0px;border-radius:0px;}
@@ -76,6 +77,11 @@ td.lister_expander>div {border-top:1px solid #fff;}
 /* --------------------------------------------------------------------
 	Forms
 -------------------------------------------------------------------- */
+.atk-form fieldset,
+.atk-form .atk-button-holder {border-top:1px solid #ccc;padding-top:1.5em;}
+.atk-form-hybrid .atk-form-vertical-2col,
+.atk-form-hybrid .atk-form-vertical-3col,
+.atk-form-hybrid .atk-form-basic-2col {border-top:none;}
 .field_has_error label {color:#dd2a2a;}
 .field_has_error input[type=text],
 .field_has_error input[type=password],

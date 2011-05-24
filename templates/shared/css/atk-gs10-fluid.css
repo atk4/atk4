@@ -47,16 +47,16 @@ body.gs-10-fluid .gs-wrap {min-width:960px;width:92%;padding:0 4%;}
 /* Form Inline
 -------------------------------------------------------------------- */
 .gs-10-fluid .atk-form-inline {width:100%;}
-.gs-10-fluid .atk-form-inline dd.form_field {width:24%;padding-left:1%;}
-.gs-10-fluid .atk-form-inline dd.atk-form-error {margin-left:40%;width:auto;}
+.gs-10-fluid .atk-form-inline dd.form_field {width:54%;padding-left:1%;}
+.gs-10-fluid .atk-form-inline dd.atk-form-error {margin-left:70%;width:auto;}
 .gs-10-fluid .atk-form-inline dl.atk-button-holder dd {margin-left:14%;}
-.gs-10-fluid .atk-form-inline .atk-field-text dd.form_field {width:34%;}
-.gs-10-fluid .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:50%;}
+.gs-10-fluid .atk-form-inline .atk-field-text dd.form_field {width:64%;}
+.gs-10-fluid .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:80%;}
 
 /* Form Vertical
 -------------------------------------------------------------------- */
-.gs-10-fluid .atk-form-vertical dd {width:38%;}
-.gs-10-fluid .atk-form-vertical .atk-field-text dd.form_field {width:48%;}
+.gs-10-fluid .atk-form-vertical dd {width:100%;}
+.gs-10-fluid .atk-form-vertical .atk-field-text dd.form_field {width:100%;}
 
 .atk-form-vertical-2col fieldset,
 .gs-10-fluid fieldset.atk-form-vertical-2col {width:38%;margin-left:12%;}
