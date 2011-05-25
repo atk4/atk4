@@ -220,10 +220,16 @@ class Form_Field_Upload extends Form_Field {
 				$len = $f->get("filesize");
 				header("Content-type: $mime");
 				header("Content-legnth: $len");
-				if(!$_GET['view']){
-					header("Content-disposition: attachment; filename=\"$name\"");
-				}
-				print(file_get_contents($path));
+                if($_GET["redirect"]){
+                    /* it should be possible to use redirect method as well */
+                    header("HTTP/1.1 301 Moved Permanently"); 
+                    header("Location: $path");
+                } else {
+                    if(!$_GET['view']){
+                        header("Content-disposition: attachment; filename=\"$name\"");
+                    }
+                    print(file_get_contents($path));
+                }
 				exit;
 				
 				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
