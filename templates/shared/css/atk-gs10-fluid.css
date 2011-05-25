@@ -59,8 +59,8 @@ body.gs-10-fluid .gs-wrap {min-width:960px;width:92%;padding:0 4%;}
 .gs-10-fluid .atk-form-vertical .atk-field-text dd.form_field {width:100%;}
 
 .atk-form-vertical-2col fieldset,
-.gs-10-fluid fieldset.atk-form-vertical-2col {width:38%;margin-left:12%;}
-.gs-10-fluid fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:12% !important;}
+.gs-10-fluid fieldset.atk-form-vertical-2col {width:48%;margin-left:2%;}
+.gs-10-fluid fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:2% !important;}
 .gs-10-fluid .atk-form-vertical-2col .atk-field-text dd.form_field,
 .gs-10-fluid .atk-form-vertical-2col dd {width:100%;}
 

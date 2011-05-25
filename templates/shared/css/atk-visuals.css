@@ -79,9 +79,7 @@ td.lister_expander>div {border-top:1px solid #fff;}
 -------------------------------------------------------------------- */
 .atk-form fieldset,
 .atk-form .atk-button-holder {border-top:1px solid #ccc;padding-top:1.5em;}
-.atk-form-hybrid .atk-form-vertical-2col,
-.atk-form-hybrid .atk-form-vertical-3col,
-.atk-form-hybrid .atk-form-basic-2col {border-top:none;}
+.atk-form-hybrid fieldset {border-top:none;padding-top:0;}
 .field_has_error label {color:#dd2a2a;}
 .field_has_error input[type=text],
 .field_has_error input[type=password],
