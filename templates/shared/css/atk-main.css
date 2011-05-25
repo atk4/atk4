@@ -65,6 +65,9 @@ body.gs-12 .gs-wrap {width:960px;}
 /* --------------------------------------------------------------------
 	Various Objects
 -------------------------------------------------------------------- */
+.atk-frame>.ui-widget-header {padding:9px;}
+.atk-frame>.ui-widget-content {padding:19px;}
+
 .atk-button-holder {margin:1.5em 0 0 0;}
 .atk-button-holder:first-child {margin:0 0 1.5em 0;}
 .atk-button-holder input,
@@ -94,6 +97,8 @@ body.gs-12 .gs-wrap {width:960px;}
 
 hr {margin:3em 0;padding:0;height:1px;outline:none;border:none;}
 hr.hr-small {margin:1.5em 0;}
+
+.ui-widget-overlay {position:fixed !important;top:0;left:0;}
 
 
 /* --------------------------------------------------------------------
