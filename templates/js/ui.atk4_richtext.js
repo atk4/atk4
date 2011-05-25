@@ -11,15 +11,21 @@ $.widget("ui.atk4_richtext", {
 	_create: function(){
       	this.elementHTML = $('<div/>').addClass('ui-widget ui-widget-content');
 		this.element.wrap($('<div/>').addClass('atk4_richtext_html')).after(this.elementHTML).addClass('atk4_richtext').hide();
-		this.elementHTML.attr('contenteditable',true).html(this.element.val());
+		this.elementHTML.attr('contenteditable',true).html(this._getSource());
        // this.elementHTML.css('height', '400px').css('overflow', 'scroll');
 
 		var self=this;
 		this.element.change(function(){
+
 			self.elementHTML.html(self.element.val());
 		});
 
 		this.elementHTML.bind('paste',function(){ self._paste(); });
+	},
+	_getSource: function(){
+		var s=this.element.val();
+		if(!s)s='<p>Type text here...</p>';
+		return s;
 	},
 	append: function(text){
 		this.elementHTML.append(text);
@@ -43,7 +49,9 @@ $.widget("ui.atk4_richtext", {
 	   // todo - unbind change event
     },
 	changeHTML: function(){
-		this.element.val(this.elementHTML.html());
+		var s=this.elementHTML.html();
+		if(!s)s='<p>Type text here...</p>';
+		this.element.val(s);
 	},
 	command: function(cmd,args){
 		this.elementHTML.focus();
