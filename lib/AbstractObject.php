@@ -23,14 +23,13 @@ abstract class AbstractObject {
 
 	public $default_exception='BaseException';
 
+    /* Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
+    public $di_config = array();
+
 	/////////////// I n i t i a l i z e  o b j e c t /////////////
 	function init() {
 		/**
-		 * This method have a little new meaning now. When objects are created,
-		 * API sends 'init' call into it's tree to initialize all stuff. If you
-		 * don't catch that call, it will execute this function. Just place
-		 * your initialization stuff here such as loading data from database.
-		 * Don't forget to call parent::init();
+		 * This method is called for initialization
 		 */
 	}
 	function __clone(){
@@ -41,16 +40,6 @@ abstract class AbstractObject {
 	function __toString() {
 		return "Object " . get_class($this) . "(" . $this->name . ")";
 	}
-	/*function __get($var){
-	if($this instanceof DummyObject){
-		return $this;
-	}else{
-		// usually this causes error, but I guess we should get rid of it
-		$this->api->logger->logLine("Property $var is not defined",null,"error");
-		// ...and make further call to be secure
-		return new DummyObject();
-	}
-	}*/
 	function destroy(){
 		foreach($this->elements as $el){
 			$el->destroy();
@@ -58,13 +47,27 @@ abstract class AbstractObject {
 		unset($this->elements);
 		$this->owner->removeElement($this->short_name);
 	}
-	function add($class, $short_name = null, $template_spot = null, $template_branch = null, $debug = null) {
+	function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
 		/**
 		 * When you want to add element to your container, always use this
 		 * function. It will initialize class, create object and make it a
 		 * child of this object. Use is really simple:
 		 */
 		/* pre-add hook returns either empty object, or null */
+
+
+        /* Second argument can be used to values for dependency injection. They will be available
+           through $obj->di_config array from init() method. Try not to use this feature unless
+           you know what you are doing */
+
+        if(is_array($short_name)){
+            $di_config=$short_name;
+            $short_name=@$di_config['name'];
+        }else $di_config=array();
+
+        /*
+           // this is not used anyway.
+
 		if (!is_null($hook_object = $this->hook('pre-add', array (
 				$this,
 				$class,
@@ -73,8 +76,10 @@ abstract class AbstractObject {
 			// some properties are required for the dummy
 			$hook_object->owner = $this;
 			$hook_object->api = $this->api;
+            $hook_object->di_config = array_merge($hook_object->di_config,$di_config);
 			return $hook_object;
 		}
+        */
 		if (is_object($class)) {
 			// Object specified, just add the object, do not create anything
 			if (!($class instanceof AbstractObject)) {
@@ -87,6 +92,7 @@ abstract class AbstractObject {
 				return $this->elements[$class->short_name];
 			$this->elements[$class->short_name] = $class;
 			$class->owner = $this;
+            $class->di_config = array_merge($class->di_config,$di_config);
 			return $class;
 		}
 		if (!$short_name)
@@ -107,12 +113,8 @@ abstract class AbstractObject {
 			// Model classes may be created several times and we are actually don't care about those.
 		}
 
-		if ($debug) {
-			$element = new Debug($class);
-		} else {
-			if(!is_string($class) || !$class)throw new BaseException("Class is not valid");
-			$element = new $class ();
-		}
+        if(!is_string($class) || !$class)throw new BaseException("Class is not valid");
+        $element = new $class ();
 
 		if (!($element instanceof AbstractObject)) {
 			throw new BaseException("You can add only classes based on AbstractObject (called from " . caller_lookup(1, true) . ")");
@@ -124,16 +126,19 @@ abstract class AbstractObject {
 
 		$element->name = $this->name . '_' . $short_name;
 		$element->short_name = $short_name;
+        $element->di_config=$di_config;
 
 		if ($element instanceof AbstractView) {
 			$element->initializeTemplate($template_spot, $template_branch);
 		}
 
 		/* this hook is called after object is added, we are not interested in its results */
+        /*
 		$this->hook('post-add', array (
 			$this,
 			$element
 		));
+        */
 		$element->init();
 		return $element;
 	}
@@ -377,21 +382,6 @@ abstract class AbstractObject {
 		$this->hook($hook_spot . '-post');
 		return $result;
 	}
-	/* destruction to free up memory */
-	function selfDestruct() {
-		if ($this->elements) {
-			foreach ($this->elements as $element_id => $element) {
-				$element->selfDestruct();
-				if (!isset ($GLOBALS["lh"][$element->short_name])) {
-					$GLOBALS["lh"][$element->short_name] = "was not properly initialized!";
-				} else {
-					$GLOBALS["lh"][$element->short_name]--;
-				}
-				unset ($this->elements[$element_id]);
-				unset ($element);
-			}
-		}
-	}
 	/////// LOGGER ////////
 	function logVar($var,$msg=""){
 		$this->api->getLogger()->logVar($var,$msg);
@@ -405,15 +395,6 @@ abstract class AbstractObject {
 			$error=$error->getMessage();
 		}
 		$this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
-	}
-	// AJAX
-	/**
-	 * Returns the AJAX instance
-	 * @param $instance - if false, returns new instance, similar to call ->add('Ajax')
-	 * 	- if set to any string - create/returns corresponding AJAX instance from the object's elements
-	 */
-	function ajax($instance=false){
-		throw new BaseException("You can call js() or ajax() only for Views (derived from AbstractView)");
 	}
 	/*
 	   DO NOT USE THIS FUNCTION, it might relocate
