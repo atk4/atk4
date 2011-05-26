@@ -295,7 +295,9 @@ class Form_Field_Upload extends Form_Field {
 		return $_FILES[$this->name]['name'];
 	}
 	function getOriginalType(){
-		return $_FILES[$this->name]['type'];
+        // detect filetype instead of relying on uploaded type
+        return mime_content_type($this->getFilePath());
+		//return $_FILES[$this->name]['type'];
 	}
 	function getFilePath(){
 		return $_FILES[$this->name]['tmp_name'];
