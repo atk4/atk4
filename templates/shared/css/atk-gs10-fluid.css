@@ -32,24 +32,24 @@ body.gs-10-fluid .gs-wrap {min-width:960px;width:92%;padding:0 4%;}
 /* Form Common Settings
 -------------------------------------------------------------------- */
 .gs-10-fluid .atk-form-basic dt,
-.gs-10-fluid .atk-form-inline dt {width:13%;}
-.gs-10-fluid .atk-form dd {width:84%;}
+.gs-10-fluid .atk-form-inline dt {width:23%;}
+.gs-10-fluid .atk-form dd {width:74%;}
 
 /* Form Basic
 -------------------------------------------------------------------- */
 .gs-10-fluid .atk-form-basic {width:100%;}
-.gs-10-fluid .atk-form-basic dd {margin-left:14%;}
+.gs-10-fluid .atk-form-basic dd {margin-left:24%;.margin-left:0;}
 .gs-10-fluid .atk-form-basic-2col fieldset {width:38%;}
 .gs-10-fluid .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:12%;}
 .gs-10-fluid .atk-form-basic-2col dt {width:25%;}
-.gs-10-fluid .atk-form-basic-2col dd {margin-left:30%;width:auto;}
+.gs-10-fluid .atk-form-basic-2col dd {margin-left:30%;.margin-left:0;width:auto;}
 
 /* Form Inline
 -------------------------------------------------------------------- */
 .gs-10-fluid .atk-form-inline {width:100%;}
 .gs-10-fluid .atk-form-inline dd.form_field {width:54%;padding-left:1%;}
-.gs-10-fluid .atk-form-inline dd.atk-form-error {margin-left:70%;width:auto;}
-.gs-10-fluid .atk-form-inline dl.atk-button-holder dd {margin-left:14%;}
+.gs-10-fluid .atk-form-inline dd.atk-form-error {margin-left:80%;width:auto;}
+.gs-10-fluid .atk-form-inline dl.atk-button-holder dd {margin-left:24%;}
 .gs-10-fluid .atk-form-inline .atk-field-text dd.form_field {width:64%;}
 .gs-10-fluid .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:80%;}
 

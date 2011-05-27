@@ -293,14 +293,14 @@ class BasicAuth extends AbstractController {
 	}
 	function createForm($frame,$login_tag='Content'){
 		$form=$frame->add('Form',null,$login_tag);
-		$form->setFormClass('basic atk-form-basic-2col');
+		$form->setFormClass('basic');
 		$form->js_widget=false;
 
 
-		$form->addField('Line','username','Login');
+		$form->addField('Line','username','Login')->js(true)->focus();
 		$form->addField('Password','password','Password');
 
-		$form->addField('Checkbox','memorize','Remember me on this computer');
+		$form->addField('Checkbox','memorize','Remember me on this computer')->set(true);
 		$form->addSeparator();
 		$form->add('Hint')->set('<font color="red">Security warning</font>: by ticking \'Remember me on this computer\' you ' .
 					'will no longer have to use a password to enter this site, until you explicitly ' .
@@ -331,8 +331,11 @@ class BasicAuth extends AbstractController {
 								);
 								*/
 			//$this->api->setTags($p->template);
-			$frame=$p->frame('Authentication');
+			$c=$p->add('Columns');
+			$c->addColumn(3);
+			$frame=$c->addColumn(4)->frame('Authentication');
 			$this->form=$this->createForm($frame);
+			$c->addColumn(3);
 		}
 		// adding token for session exiration detection
 		//$p->add('Text','session_token')
