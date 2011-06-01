@@ -61,6 +61,8 @@ class Form_Basic extends AbstractView {
 	public $js_widget='ui.atk4_form';
 	public $js_widget_arguments=array();
 
+	public $default_exception='Exception_ValidityCheck';
+
 	public $dq = null;
 	function init(){
 		/**
@@ -151,7 +153,7 @@ class Form_Basic extends AbstractView {
 
 		$last_field=$this->add('Form_Field_'.$type,$name,null,'form_line')
 			->setCaption($caption);
-		$last_field->template->trySet('field_type',$type);
+		$last_field->template->trySet('field_type',strtolower($type));
 		if (is_array($attr)){
 			foreach ($attr as $key => $value){
 				$this->last_field->setProperty($key, $value);
@@ -166,19 +168,6 @@ class Form_Basic extends AbstractView {
 		return $this;
 	}
 
-	/*
-	 OBSOLETE - fields can have their own comments
-
-	function setFieldComment($comment){
-		$this->last_field->comment=$comment;
-		return $this;
-	}
-	function setFormat($format,$separator='-'){
-		if($this->last_field instanceof Form_Field_Grouped)$this->last_field->setFormat($format,$separator);
-		else throw new BaseException("This field type does not support formats");
-		return $this;
-	}
-	*/
 	function addComment($comment){
 		if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
 		return $this->add('Text')->set(
@@ -252,27 +241,6 @@ class Form_Basic extends AbstractView {
 		}
 		return $data;
 	}
-
-	/*
-	// Modifying existing field properties and behavior
-	function setProperty($property,$value=null){
-		// Add property to field TAG
-		$this->last_field->setProperty($property,$value);
-		return $this;
-	}
-
-	*/
-
-
-
-
-/*    function validateNotNULL($msg=''){
-		$this->last_field->addHook('validate','if(!$this->get())$this->displayFieldError("'.
-					($msg?$msg:'$this->caption." is a mandatory field!').'");');
-		return $this;
-	}*/
-
-
 	function addSubmit($label='Save',$name=null,$color=null){
 		if(!$name)$name=str_replace(' ','_',$label);
 

@@ -40,7 +40,7 @@ class Form_Field_Grouped extends Form_Field{
 	protected $separator='-';
 
 	function getInput($attr=array()){
-		$input=split($this->separator,$this->format);
+		$input=explode($this->separator,$this->format);
 		$count=count($input);
 		//$onChange=($this->onchange)?$this->onchange->getString():'';
 		$output=$this->getTag('span', array('style'=>'white-space: nowrap;'));
@@ -88,7 +88,7 @@ class Form_Field_Grouped extends Form_Field{
 	function loadPOST(){
 		if(empty($_POST))return;
 		// value consists of several parts that are in separate POST items
-		$input=split($this->separator,$this->format);
+		$input=explode($this->separator,$this->format);
 		$this->value='';
 		for($i=0;$i<count($input);$i++)$this->value.=$_POST[$this->name."_$i"];
 	}

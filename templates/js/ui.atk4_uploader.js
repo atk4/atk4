@@ -125,6 +125,17 @@ $.widget("ui.atk4_uploader", {
 					$(this).closest('div').attr('rel') 
 				);
 			})
+			tpl.find('.add_image').click(function(ev){
+				ev.preventDefault();
+				var url=act+'&view=true&'+self.element.attr('name')+'_save_action='+ $(this).closest('div').attr('rel');
+				$('.atk4_richtext').atk4_richtext('append','<img src="'+url+'"/>');
+			})
+			tpl.find('.image_preview').each(function(){
+				$(this).attr('src',act+'&view=true&'+
+					self.element.attr('name')+'_save_action='+
+					$(this).closest('div').attr('rel') 
+				);
+			})
 			tpl.find('.view_doc').click(function(ev){
 				ev.preventDefault();
 				$(this).univ().newWindow(act+'&view=true&'+
@@ -138,7 +149,7 @@ $.widget("ui.atk4_uploader", {
 					self.element.attr('name')+'_save_action='+
 					$(this).closest('div').attr('rel') 
 				);
-			})
+			});
 			tpl.appendTo(tb);
 		});
 		self.updateToken();

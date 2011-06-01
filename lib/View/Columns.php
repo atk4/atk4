@@ -27,12 +27,13 @@ class View_Columns extends View {
 	function init(){
 		parent::init();
 	}
-	function addColumn($width='*',$name='column'){
+	function addColumn($columns='5'){
+		if($columns=='50%')$columns=5;
 		// TODO: implement  width
-		++$this->cnt;
-		$c=$this->add('View',$name,'Columns',array('view/columns','Columns'));
-		$c->template->trySet('width',$width);
-		$this->template->trySet('cnt',$this->cnt);
+		//++$this->cnt;
+		$c=$this->add('View',null,'Columns',array('view/columns','Columns'));
+		$c->template->trySet('columns',$columns);
+		//$this->template->trySet('cnt',$this->cnt);
 		return $c;
 	}
 	function defaultTemplate(){

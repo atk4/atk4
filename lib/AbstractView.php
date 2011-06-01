@@ -78,6 +78,9 @@ abstract class AbstractView extends AbstractObject {
 		$this->setController($c);
 		return $c;
 	}
+    function getModel(){
+        return $this->getController()->getModel();
+    }
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;
@@ -85,6 +88,7 @@ abstract class AbstractView extends AbstractObject {
 		}else{
 			$this->controller=$this->add($controller);
 		}
+        if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
 		return $this;
 	}
 	function getController(){

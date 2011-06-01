@@ -50,7 +50,10 @@ class Order extends AbstractController {
 
 			// check if element exists
 			if(!isset($this->array[$name]))
-				throw new Exception_InitError('Element '.$name.' does not exist when trying to move it '.$where.' '.$relative);
+				throw $this->exception('Element does not exist when trying to move it')
+                    ->addMoreInfo('element',$name)
+                    ->addMoreInfo('move',$where)
+                    ->addMoreInfo('relative',$relative);
 
 			$v=$this->array[$name];
 			unset($this->array[$name]);
@@ -75,9 +78,12 @@ class Order extends AbstractController {
 						$tmp[$key]=$value;
 					}
 					$this->array=$tmp;
-					if($name)throw new Exception_InitError('Unable to perform move, relative key does not exist');
+                    if($name)throw $this->exception('Relative element not found while moving')
+                        ->addMoreInfo('element',$name)
+                        ->addMoreInfo('move',$where)
+                        ->addMoreInfo('relative',$relative);
 
-					if($where=='after')$this->array=array_reverse($this->array);
+                    if($where=='after')$this->array=array_reverse($this->array);
 					break;
 
 					

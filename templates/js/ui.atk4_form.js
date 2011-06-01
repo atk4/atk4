@@ -285,24 +285,19 @@ $.widget("ui.atk4_form", {
 			$.univ().loadingInProgress();
 			return false;
 		}
-		/*
-		this.element.find("input:checked, input[type='text'], input[type='hidden'], input[type='password'], input[type='submit'], select, textarea")
-		.each(function() {
-			if(this.disabled || this.parentNode.disabled)if(!$(this).hasClass('submit_disabled'))return;
-
-			params[ this.name || this.id || this.parentNode.name || this.parentNode.id ] = $(this).val();
-		});
-		console.log('old=',params);
-		*/
-		params=this.element.find(":input").serializeArray()
-
-		//	console.log(params);
-
 
 		// btn is clicked
+		var richtext=this.element.find('.atk4_richtext');
+		if(richtext.length)richtext.atk4_richtext('changeHTML');
+		params=this.element.find(":input").serializeArray()
 		if(btn){
-			params['ajax_submit']=btn;
-		}
+            for (var el in params){
+                if (params[el].name == 'ajax_submit'){
+                    params[el].value=btn;
+                    break;
+                }
+            }
+        }
 
 		var properties={
 			type: "POST",

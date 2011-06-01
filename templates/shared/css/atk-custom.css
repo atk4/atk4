@@ -1,0 +1,22 @@
+/* AgileToolkit 4.0.3 // http://www.agiletoolkit.org */
+/* Default Agiletoolkit's Theme */
+/* This stylesheet contains selectors for the default UI layout */
+
+
+/* --------------------------------------------------------------------
+	Default Layout
+-------------------------------------------------------------------- */
+#header:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+#header {padding:2em 0;margin-bottom:1em;.zoom:1;.display:block;}
+#header-right {float:right;}
+#header-right .atk-menu {float:right;}
+#header-right #atk-version {clear: both;float:right;margin-top:1em;}
+#navigation ul {overflow:hidden;}
+#navigation ul li {float:left;padding: 0.5em 1em;}
+#footer {text-align:center;}
+
+
+/* --------------------------------------------------------------------
+	Default Layout
+-------------------------------------------------------------------- */
+#atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}

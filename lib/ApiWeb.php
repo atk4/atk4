@@ -49,7 +49,7 @@ class ApiWeb extends ApiCLI {
 
 	public $start_time=null;
 
-	function __construct($realm=null,$skin='kt2'){
+	function __construct($realm=null,$skin='default'){
 		$this->start_time=time()+microtime();
 
 		$this->skin=$skin;
@@ -196,6 +196,10 @@ class ApiWeb extends ApiCLI {
 		}
 
 		$this->hook('pre-render-output');
+        if(headers_sent($file,$line)){
+            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
+                ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
+        }
 		echo $this->template->render();
 		$this->hook('post-render-output');
 	}

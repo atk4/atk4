@@ -102,7 +102,11 @@ class Form_Field_Upload extends Form_Field {
 				$this->uploadComplete($c->get());
 			}
 		}
-		if($_POST[$this->name.'_token'])$this->set($_POST[$this->name.'_token']);
+		if($_POST[$this->name.'_token']){
+			$a=explode(',',$_POST[$this->name.'_token']);$b=array();
+			foreach($a as $val)if($val)$b[]=$val;
+			$this->set(join(',',filter_var_array($b,FILTER_VALIDATE_INT)));
+		}
 		else $this->set($this->default_value);
 	}
 	function uploadComplete($data=null){
@@ -174,7 +178,9 @@ class Form_Field_Upload extends Form_Field {
 	function getUploadedFiles(){
 		if($c=$this->getController()){
 
-			$files=join(',',filter_var_array(explode(",", $this->value),FILTER_VALIDATE_INT));
+			$a=explode(',',$this->value);$b=array();
+			foreach($a as $val)if($val)$b[]=$val;
+			$files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
 			$c->addCondition('id in',($files?$files:0));
 
 			$data=$c->getRows(array('id','original_filename','filesize'));
@@ -220,10 +226,16 @@ class Form_Field_Upload extends Form_Field {
 				$len = $f->get("filesize");
 				header("Content-type: $mime");
 				header("Content-legnth: $len");
-				if(!$_GET['view']){
-					header("Content-disposition: attachment; filename=\"$name\"");
-				}
-				print(file_get_contents($path));
+                if($_GET["redirect"]){
+                    /* it should be possible to use redirect method as well */
+                    header("HTTP/1.1 301 Moved Permanently"); 
+                    header("Location: $path");
+                } else {
+                    if(!$_GET['view']){
+                        header("Content-disposition: attachment; filename=\"$name\"");
+                    }
+                    print(file_get_contents($path));
+                }
 				exit;
 				
 				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
@@ -283,7 +295,9 @@ class Form_Field_Upload extends Form_Field {
 		return $_FILES[$this->name]['name'];
 	}
 	function getOriginalType(){
-		return $_FILES[$this->name]['type'];
+        // detect filetype instead of relying on uploaded type
+        return mime_content_type($this->getFilePath());
+		//return $_FILES[$this->name]['type'];
 	}
 	function getFilePath(){
 		return $_FILES[$this->name]['tmp_name'];
