@@ -59,6 +59,7 @@ hr {background:#ddd;color:#ddd;}
 .ui-tabs .ui-tabs-panel {padding-left:0;padding-right:0;}
 .ui-dialog {-webkit-box-shadow:0 10px 50px rgba(0,0,0,0.5);-moz-box-shadow:0 10px 50px rgba(0,0,0,0.5);box-shadow:0 10px 50px rgba(0,0,0,0.5);padding:0;}
 .ui-dialog .ui-dialog-content {padding:19px;}
+.ui-selected {background:#2e8ae5;color:#fff;}
 
 
 /* --------------------------------------------------------------------

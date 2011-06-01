@@ -47,6 +47,7 @@ body.gs-12 .gs-wrap {width:960px;}
 .g-1, .g-2, .g-3, .g-4, .g-5, .g-6, .g-7, .g-8, .g-9, .g-10, .g-11, .g-12, .g-max {margin-left:10px;margin-right:10px;float:left;}
 .g-row:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
 .g-row {.zoom:1;.display:block;}
+.g-row>* {min-height:1px;}
 
 .g-1 {width:60px;}
 .g-2 {width:140px;}
@@ -65,11 +66,14 @@ body.gs-12 .gs-wrap {width:960px;}
 /* --------------------------------------------------------------------
 	Various Objects
 -------------------------------------------------------------------- */
-.atk-button-holder {margin:1.5em 0 0 0;}
-.atk-button-holder:first-child {margin:0 0 1.5em 0;}
+.atk-frame>.ui-widget-header {padding:9px;}
+.atk-frame>.ui-widget-content {padding:19px;}
+
+.atk-button-holder {margin:1.5em 0 0 0;.border:solid transparent;.border-width:1.5em 0 0 0;}
+.atk-button-holder:first-child {margin:0 0 1.5em 0;border-width:0 0 1.5em 0;}
 .atk-button-holder input,
 .atk-button-holder button,
-.atk-button-holder .ui-button {margin:0 0 0 0.5em;}
+.atk-button-holder .ui-button {margin:0 0 0 0.5em;.margin:0 0 0 0.3em !important;}
 .atk-button-holder input:first-child,
 .atk-button-holder button:first-child,
 .atk-button-holder .ui-button:first-child {margin:0em;}
@@ -92,8 +96,10 @@ body.gs-12 .gs-wrap {width:960px;}
 .files-container {overflow:hidden;}
 .files-container .atk-sep {margin:0 .7em;}
 
-hr {margin:3em 0;padding:0;height:1px;outline:none;border:none;}
-hr.hr-small {margin:1.5em 0;}
+.hr {margin:3em 0;padding:0;height:1px;outline:none;border:none;line-height:0;} /* in IE7 <hr/> tag can't be properly styled */
+.hr.hr-small {margin:1.5em 0;}
+
+.ui-widget-overlay {position:fixed !important;top:0;left:0;}
 
 
 /* --------------------------------------------------------------------
@@ -173,7 +179,7 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-button-holder {mar
 	.atk-form textarea {padding:2px;} /* Firefox Fix */
 }
 .atk-form fieldset,
-.atk-form .atk-button-holder {border-top:1px solid #ccc;padding-top:1.5em;margin-top:1.5em;}
+.atk-form .atk-button-holder {margin-top:1.5em;}
 .atk-form .atk-button-holder {clear:both;}
 .atk-form fieldset:first-child {margin-top:0;padding-top:0;border-top:none;}
 .atk-radio input {margin:0 0.5em 0 2em;}
@@ -225,9 +231,9 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-button-holder {mar
 .atk-form-vertical-2col+.atk-button-holder,
 .atk-form-vertical-3col .atk-button-holder,
 .atk-form-vertical-3col+.atk-button-holder {margin-top:0;}
-.atk-form-basic-2col fieldset,
-.atk-form-vertical-2col fieldset,
-.atk-form-vertical-3col fieldset {padding-top:0;margin-bottom:1.5em;margin-top:0;border-top:0;}
+.atk-form-basic.atk-form-basic-2col fieldset,
+.atk-form-vertical.atk-form-vertical-2col fieldset,
+.atk-form-vertical.atk-form-vertical-3col fieldset {padding-top:0;margin-bottom:1.5em;margin-top:0;border-top:none;}
 fieldset.atk-form-vertical-3col,
 fieldset.atk-form-vertical-2col {padding-top:1.5em;margin-bottom:1.5em;}
 fieldset.atk-form-vertical-2col:first-child,
@@ -283,6 +289,15 @@ fieldset.atk-form-vertical-3col+fieldset.atk-form-vertical-3col {margin-left:20p
 .atk-form-horizontal dl.atk-field-datepicker {width:auto;}
 .atk-form-horizontal dl:first-child {margin-left:0 !important;}
 .atk-form-horizontal .atk-button-holder dd {text-align:right;width:100% !important;}
+
+
+/* Credit Card Form
+-------------------------------------------------------------------- */
+.atk-form-hybrid .atk-form-basic,
+.atk-form-hybrid .atk-form-inline,
+.atk-form-hybrid .atk-form-horizontal,
+.atk-form-hybrid .atk-form-vertical {width:100%;}
+
 
 /* Credit Card Form
 -------------------------------------------------------------------- */

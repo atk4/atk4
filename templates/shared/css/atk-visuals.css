@@ -1,0 +1,90 @@
+/* AgileToolkit 4.0.3 // http://www.agiletoolkit.org */
+/* Default Agiletoolkit's Theme */
+/* This stylesheet contains visual related selectors */
+
+
+/* --------------------------------------------------------------------
+	General
+-------------------------------------------------------------------- */
+#footer {height:3em;margin-top:-3em;} /* Defining concrete height for footer and footer's guard needed only when #atk-sticky is being used */
+#footer-guard {height:6em;} /* Margin between footer and content = #footer-guard height - #footer height (1em by default)
+
+
+/* --------------------------------------------------------------------
+	Elements
+-------------------------------------------------------------------- */
+.even {background:#f1f0f7;}
+.atk-lister.ui-widget-content>ul>li {border-top:1px solid #eee;}
+.atk-sep {color:#999;}
+.atk-paginator {border-top:1px solid #ccc;}
+.atk-loader {background:#eee;border:1px solid #ccc;text-transform:uppercase;text-shadow:0 1px 0 #fff;font-size:80%;color:#333;}
+.atk-loader>i {background:url(../images/loader.gif);}
+
+
+/* --------------------------------------------------------------------
+	Typography
+-------------------------------------------------------------------- */
+body {font:12px/1.6 "Helvetica Neue", "Helvetica", sans-serif;}
+
+h1, h2, h3, h4, h5, h6 {line-height:1.3;margin:1.4em 0 .7em 0;font-weight:bold;}
+h1 {font-size:2em;margin:0.67em 0 0.5em 0;}
+h2 {font-size:1.75em;}
+h3 {font-size:1.5em;}
+h4 {font-size:1.25em;}
+h5 {font-size:1.125em;}
+h6 {font-size:1em;}
+
+p,blockquote, ul, ol, dir, menu {margin:0 0 1.12em 0;}
+
+ol, ul {margin-left:20px;}
+ol {list-style-type:decimal}
+ul {list-style-type:disc;}
+ol ul, ul ol, ul ul, ol ol {margin-top:0;margin-bottom:0}
+ul li, ol li {margin-bottom:0.8em;}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {margin-top:0;}
+strong {font-weight:bold;}
+
+hr {background:#ddd;color:#ddd;}
+.hr+h1, .hr+h2, .hr+h3, .hr+h4, .hr+h5 {margin-top:0;}
+
+
+/* --------------------------------------------------------------------
+	jQuery UI Style Tweaks
+-------------------------------------------------------------------- */
+.ui-state-default {text-shadow:0 1px 0 #fff;}
+.ui-state-active.ui-state-default {text-shadow:none;}
+.ui-button .ui-button-text {font-weight:bold;}
+.ui-tabs.ui-widget-content {border:none;padding:0;}
+.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;border-width:0px 0px 1px 0;padding:0 5px;-webkit-border-radius:0px;-moz-border-radius:0px;border-radius:0px;}
+.ui-tabs .ui-tabs-panel {padding-left:0;padding-right:0;}
+.ui-dialog {-webkit-box-shadow:0 10px 50px rgba(0,0,0,0.5);-moz-box-shadow:0 10px 50px rgba(0,0,0,0.5);box-shadow:0 10px 50px rgba(0,0,0,0.5);padding:0;}
+.ui-dialog .ui-dialog-content {padding:19px;}
+
+
+/* --------------------------------------------------------------------
+	Grid
+-------------------------------------------------------------------- */
+.atk-grid>table>tbody>tr>td {border-top:1px solid #eee;}
+.lister_expander_parent>td {background:#f5f5f5;border-top:1px solid #aaa !important;border-bottom:1px solid #ddd;}
+.lister_expander_parent>td:first-child {border-left:1px solid #aaa;}
+.lister_expander_parent>td:last-child {border-right:1px solid #aaa;}
+td.lister_expander {background:#f5f5f5;border:1px solid #bbb;}
+td.lister_expander>div {border-top:1px solid #fff;}
+.atk-grid td>.ui-button {font-size:11px;}
+
+
+/* --------------------------------------------------------------------
+	Forms
+-------------------------------------------------------------------- */
+.atk-form fieldset,
+.atk-form .atk-button-holder {border-top:1px solid #ccc;padding-top:1.5em;}
+.atk-form-hybrid fieldset {border-top:none;padding-top:0;}
+.field_has_error label {color:#dd2a2a;}
+.field_has_error input[type=text],
+.field_has_error input[type=password],
+.field_has_error textarea {background-color:#ffeaea;}
+.atk-form-error {color:#dd2a2a;}
+.atk-form-error .ui-icon {background-image:url(../images/ui-icons-red.png);}
+.atk-form label.mandatory:after, .atk-form label.mandatory .mandatory-star {color:#e51e1e;}
+.atk-form ins {color:#777;font-size:90%;}
