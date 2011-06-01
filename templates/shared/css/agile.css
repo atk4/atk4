@@ -67,7 +67,7 @@ dir, menu {margin-left:40px}
 ol, ul {margin-left:20px;}
 ol {list-style-type:decimal}
 ul {list-style-type:disc;}
-ol ul, ul ol, ul ul, ol ol {margin-top:0; margin-bottom:0}
+ol ul, ul ol, ul ul, ol ol {margin-top:0.6em;}
 ul li, ol li {margin-bottom:0.8em;}
 
 h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {margin-top:0;}
