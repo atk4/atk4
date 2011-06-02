@@ -150,7 +150,7 @@ abstract class Form_Field extends AbstractView {
 	}
 	function validateNotNULL($msg=''){
 		$this->setMandatory();
-		$this->validateField('$this->get()',(($msg && (is_string($msg)))?$msg:'".$this->caption."'.
+		$this->validateField('$this->get()!==""',(($msg && (is_string($msg)))?$msg:'".$this->caption."'.
 					__(' is a mandatory field!')));
 		return $this;
 	}
@@ -417,7 +417,7 @@ class Form_Field_Readonly extends Form_Field {
 	}
 
 }
-class Form_Field_File extends Form_Field {
+class Form_Field_File extends Form_Field_upload {
 	function init(){
 		parent::init();
 		$this->attr['type'] = 'file';
