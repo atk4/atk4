@@ -123,6 +123,10 @@ class URL extends AbstractModel {
 		$this->page=$destination;
 		return $this;
 	}
+    function set($argument,$value=null){
+        if(!is_array($argument))$argument=array($argument=>$value);
+        return $this->setArguments($argument);
+    }
 	function setArguments($arguments=array()){
 		// add additional arguments
 		if(is_null($arguments))$arguments=array();
