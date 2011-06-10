@@ -358,12 +358,12 @@ message: function(msg,icon){
 successMessage: function(msg){
 	var html="";
 
-	if($.ui.atk4_notify && $('#atk-growl-holder').length){
-		$('#atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
+	if($.ui.atk4_notify && $('.atk-growl-holder').length){
+		$('.atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
 		return;
 	}
 
-	if(!$('#atk-growl-holder').length)return alert(msg);
+	if(!$('.atk-growl-holder').length)return alert(msg);
 	html = '<p class="growl">'+msg
 		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
 
