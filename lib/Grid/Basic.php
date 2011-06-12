@@ -189,6 +189,9 @@ class Grid_Basic extends CompleteLister {
 	function init_money($field){
 		@$this->columns[$field]['thparam'].=' style="text-align: right"';
 	}
+	function init_real($field){
+		@$this->columns[$field]['thparam'].=' style="text-align: right"';
+	}
 	function init_fullwidth($field){
 		@$this->columns[$field]['thparam'].=' style="width: 100%"';
 	}
@@ -208,6 +211,9 @@ class Grid_Basic extends CompleteLister {
 	}
 	function format_totals_money($field){
 		return $this->format_money($field);
+	}
+	function format_totals_real($field){
+		return $this->format_real($field);
 	}
 	function format_totals_text($field){
 		// This method is mainly for totals title displaying
