@@ -115,7 +115,7 @@ class ApiWeb extends ApiCLI {
 		 */
 
         // Do not initialize unless requsetd
-		$this->initializeSession();
+		//$this->initializeSession();
 
 		// find out which page is to display
 		//$this->calculatePageName();
@@ -140,7 +140,6 @@ class ApiWeb extends ApiCLI {
            Call to memorize() / recall() will automatically create session */
 
         if($this->_is_session_initialized)return;
-        $this->_is_session_initialized=true;
 
         if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
 
@@ -155,6 +154,7 @@ class ApiWeb extends ApiCLI {
         }
 
         if($create==false && !isset($_COOKIE[$this->name]))return;
+        $this->_is_session_initialized=true;
         session_set_cookie_params(
                 $params['lifetime'],
                 $params['path'],
