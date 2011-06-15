@@ -135,7 +135,13 @@ abstract class Form_Field extends AbstractView {
 			if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
 			else $this->set($this->default_value);
 		}
+        $this->normalize();
 	}
+    function normalize(){
+        /* Normalization will make sure that entry conforms to the field type. 
+           Possible trimming, roudning or length enforcements may happen */
+        $this->hook('normalize');
+    }
 	function validate(){
 		// NoSave fields should not be validated, disabled as well
 		if($this->disabled || $this->no_save)return true;
@@ -302,44 +308,15 @@ abstract class Form_Field extends AbstractView {
 	}
 }
 
-
-class Form_Field_Free extends Form_Field{
-	function init(){
-		parent::init();
-		if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-	}
-	function render(){
-		// we don't know the field type, so we set all possible properties
-		// value
-		$this->template->trySet('value',$this->get());
-		$this->template->trySet('name',$this->name);
-		// selected item (dropdowns)
-		$this->template->trySet($this->get().'_selected','selected="selected"');
-		// checked item (checkboxes, radiobuttons)
-		$this->template->trySet($this->get().'_checked','checked="1"');
-		// field properties
-		$attr='';
-		if(!empty($this->attr)){
-			foreach($this->attr as $k=>$v)$attr.=$k.'="'.$v.'" ';
-		}
-		$this->template->trySet($this->short_name.'_attrs',$attr);
-		$this->template->trySet('field_error',
-			 isset($this->owner->errors[$this->short_name])?
-			 $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
-			 :''
-			 );
-		$this->output($this->template->render());
-	}
-}
-
+///////// Because many fields are really simple extenions of the base-line field, they are
+///////// defined here.
 
 class Form_Field_Line extends Form_Field {
 	function getInput($attr=array()){
 		return parent::getInput(array_merge(array('type'=>'text'),$attr));
 	}
 }
-class Form_Field_URL extends Form_Field_Line {
-}
+// Visually different fields
 class Form_Field_Search extends Form_Field {
 	// WARNING: <input type=search> is safari extention and is will not validate as valid HTML
 	function getInput($attr=array()){
@@ -377,6 +354,12 @@ class Form_Field_Checkbox extends Form_Field {
 	}
 }
 class Form_Field_Password extends Form_Field {
+    function normalize(){
+        // user may have entered spaces accidentally in the password field.
+        // Clean them up.
+        $this->set(trim($this->get()));
+        parent::normalize();
+    }
 	function getInput($attr=array()){
 		return parent::getInput(array_merge(
 					array(
@@ -494,6 +477,16 @@ class Form_Field_Text extends Form_Field {
 			htmlspecialchars(stripslashes($this->value),ENT_COMPAT,'ISO-8859-1',false).
 			$this->getTag('/textarea');
 	}
+}
+
+class Form_Field_Number extends Form_Field_Line {
+    function normalize(){
+        $v=$this->get();
+
+        // get rid of  TODO
+
+        $this->set($v);
+    }
 }
 class Form_Field_Money extends Form_Field_Line {
 	function getInput($attr=array()){
