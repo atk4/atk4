@@ -285,7 +285,7 @@ class BasicAuth extends AbstractController {
 		if($this->api->isAjaxOutput())$this->ajax()->redirect($this->api->getIndexPage())->execute();
 		$this->api->redirect($this->api->getIndexPage());
 	}
-	function logout(){
+	function logout($redirect=true){
 		// Forces logout. This also cleans cookies
 		$this->forget('info');
 		setcookie($this->name."_username",null);
@@ -294,7 +294,7 @@ class BasicAuth extends AbstractController {
 		session_destroy();
 
 		$this->info=false;
-		$this->api->redirect($this->api->getIndexPage());
+		if($redirect)$this->api->redirect($this->api->getIndexPage());
 	}
 	function createForm($frame,$login_tag='Content'){
 		$form=$frame->add('Form',null,$login_tag);
