@@ -153,6 +153,7 @@ abstract class AbstractObject {
 		 * If all arguments are null, you'll get recalled version of a variable.
 		 */
 
+
 		if (isset ($value1))
 			return $this->memorize($name, $value1);
 		if (isset ($value2))
@@ -169,6 +170,7 @@ abstract class AbstractObject {
 		 */
 		if (!isset ($value))
 			return $this->recall($name);
+        $this->api->initializeSession();
 		return $_SESSION['o'][$this->name][$name] = $value;
 	}
 	function forget($name = null) {
@@ -178,6 +180,7 @@ abstract class AbstractObject {
 		 * $this->forget(); without arguments.
 		 */
 
+        $this->api->initializeSession();
 		if (isset ($name)) {
 			unset ($_SESSION['o'][$this->name][$name]);
 		} else {
@@ -191,6 +194,7 @@ abstract class AbstractObject {
 		 *
 		 * If you want $default value to be memorized as well, see learn()
 		 */
+        $this->api->initializeSession(false);
 		if (!isset ($_SESSION['o'][$this->name][$name])||is_null($_SESSION['o'][$this->name][$name])) {
 			return $default;
 		} else {
