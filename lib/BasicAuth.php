@@ -133,10 +133,15 @@ class BasicAuth extends AbstractController {
 	function setTitle($title){
 		$this->title=$title;
 	}
-	function encryptPassword($password){
+	function encryptPassword($password,$salt=null){
 		if($this->password_encryption)$this->debug("Encrypting password: '$password'");
 		switch($this->password_encryption){
 			case null: return $password;
+            case'sha256/salt':
+                       if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
+                       return hash_hmac('sha256',
+                                 $password.$salt,
+                                 $this->api->getConfig('auth/key',$this->api->name));
 			case'sha1':return sha1($password);
 			case'md5':return md5($password);
 			case'rot13':return str_rot13($password);
@@ -350,7 +355,7 @@ class BasicAuth extends AbstractController {
 		if($this->form->isSubmitted()){
 			if($this->verifyCredintials(
 						$this->form->get('username'),
-						$this->encryptPassword($this->form->get('password'))
+						$this->encryptPassword($this->form->get('password'),$this->form->get('username'))
 						)){
 				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
 				$this->memorize('info',$this->info);
