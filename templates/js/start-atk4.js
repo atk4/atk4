@@ -154,7 +154,7 @@ $.extend($.atk4,{
 	// If url is an object {..} then it's passed to ajax as 1st argument
 
 
-	get: function(url, data, callback, load_end_callback){
+	get: function(url, data, callback, load_end_callback, post){
         var self=this;
 		if($.isFunction(data)){
 			// data argument may be ommitted
@@ -170,7 +170,7 @@ $.extend($.atk4,{
 		// Another file is being loaded.
         this.loading++;
         return $.ajax($.extend({
-            type: "GET",
+            type: post?"POST":"GET",
 			dataType: 'html',
             data: data,
 			// We tell the backend that we will verify output for "TIMEOUT" output
