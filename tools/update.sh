@@ -42,7 +42,7 @@ if [ -d 'storedfx' ]; then
 	echo "* Re-Importing stored procedures"
 	
 	cnt=0
-	for x in storedfx/*manual ; do 
+	for x in storedfx/*.sql ; do 
 		if $mysql -B < $x 2> $x.fail ; then
 			rm $x.fail
 			cnt=$(( $cnt + 1 ))
