@@ -269,7 +269,7 @@ dialogBox: function(options){
 	return this.dialogPrepare($.extend({
 		bgiframe: true,
 		modal: true,
-		width: 900,
+		width: 1000,
 		position: 'top',
 		autoOpen:false,
 		beforeclose: function(){
