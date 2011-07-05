@@ -18,7 +18,6 @@ class ApiCLI extends AbstractView {
 			$this->add($this->pathfinder_class);
 			$this->init();
 
-			$this->hook('api-defaults');
 			$this->hook('post-init');
 
 		}catch(Exception $e){
@@ -44,10 +43,6 @@ class ApiCLI extends AbstractView {
 	}
 	function init(){
 		parent::init();
-		$this->addHook('api-defaults',array($this,'initDefaults'));
-	}
-	function initDefaults(){
-		if(!defined('DTP'))define('DTP','');
 	}
 	function getBaseURL(){
 		return $this->pm->base_path;
@@ -169,9 +164,6 @@ class ApiCLI extends AbstractView {
 		}
 
 		$this->config = array_merge($this->config,$config);
-		if(isset($this->config['table_prefix'])){
-			if(!defined('DTP'))define('DTP',$this->config['table_prefix']);
-		}
 
 		$tz = $this->getConfig('timezone',null);
 		if(!is_null($tz) && function_exists('date_default_timezone_set')){
@@ -197,13 +189,10 @@ class ApiCLI extends AbstractView {
         return $this->version_cache;
     }
 	function versionRequirement($v,$return_only=false){
-
 		if(($vc=version_compare($this->getVersion(),$v))<0){
 			if($soft)return false;
 			throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->getVersion());
 		}
 		return true;
-
 	}
 }
-?>
