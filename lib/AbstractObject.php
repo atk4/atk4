@@ -22,6 +22,7 @@ abstract class AbstractObject {
 	public $elements = array ();
 
 	public $default_exception='BaseException';
+    public $settings=array('extension'=>'.html');
 
     /* Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
     public $di_config = array();
@@ -240,6 +241,9 @@ abstract class AbstractObject {
 		}
 
 		$e=new $type($message);
+        $e->owner=$this;
+        $e->api=$this->api;
+        $e->init();
 		return $e;
 	}
 	function fatal($error, $shift = 0) {
