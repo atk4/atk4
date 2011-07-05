@@ -113,7 +113,9 @@ class ApiWeb extends ApiCLI {
 		 * Redifine this function instead of default constructor. Do not forget
 		 * to set $this->db to instance of DBlite.
 		 */
-		$this->initializeSession();
+
+        // Do not initialize unless requsetd
+		//$this->initializeSession();
 
 		// find out which page is to display
 		//$this->calculatePageName();
@@ -129,16 +131,45 @@ class ApiWeb extends ApiCLI {
 	 * This function is called on AJAX request.
 	 * @return corresponding
 	 */
-	function initializeSession(){
-		// initialize session for this realm
-		if($this->name && session_id()==""){
-			// If name is given, initialize session. If not, initialize
-			// later when loading config file.
-			if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
-			session_name($this->name);
-			session_start();
-		}
+
+    public $_is_session_initialized=false;
+	function initializeSession($create=true){
+        /* Attempts to re-initialize session. If session is not found,
+           new one will be created, unless $create is set to false. Avoiding
+           session creation and placing cookies is to enhance user privacy. 
+           Call to memorize() / recall() will automatically create session */
+
+        if($this->_is_session_initialized)return;
+
+        if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
+
+
+        // Change settings if defined in settings file
+        $params=session_get_cookie_params();
+
+        $params['httponly']=true;   // true by default
+
+        foreach($params as $key=>$default){
+            $params[$key]=$this->api->getConfig('session/'.$key,$default);
+        }
+
+        if($create==false && !isset($_COOKIE[$this->name]))return;
+        $this->_is_session_initialized=true;
+        session_set_cookie_params(
+                $params['lifetime'],
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+                );
+        session_name($this->name);
+        session_start();
 	}
+    function setHardTimeout($minutes=null){
+        /* Sets a log-out period for the application */
+
+
+    }
 	function stickyGET($name){
 		$this->sticky_get_arguments[$name]=@$_GET[$name];
 	}

@@ -41,10 +41,11 @@
  *
  * $auth->usePasswordEncryption('md5');
  * $auth->usePasswordEncryption('sha1');
+ * $auth->usePasswordEncryption('sha256/salt');
  *
  * To use your own encrpytion redefine this function:
  *
- *   function encryptPassword($password){
+ *   function encryptPassword($password,$salt){
  *       return str_rot13($password);
  *   }
  *
@@ -92,6 +93,7 @@ class SQLAuth extends BasicAuth {
 		$q->where($this->login_field,$login);
 		$data=$q->do_getHash();
 		// If passwords are matched we will record some information
+		$this->debug("comparing with ".$data[$this->password_field]);
 		if($data && $data[$this->password_field]==$password){
             unset($data[$this->password_field]);    // do not store password in session
 			$this->addInfo($data);

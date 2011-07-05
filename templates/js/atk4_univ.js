@@ -441,7 +441,7 @@ ajaxec: function(url,data){
 			}
 		}
 
-	});
+	},null,true);
 },
 newWindow: function(url,name,options){
 	window.open(url,name,options);
