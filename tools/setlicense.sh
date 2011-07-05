@@ -43,7 +43,8 @@ vim -e $f <<EOF
 H
 /\*\*ATK4\*\*\*/,/\*\*\*ATK4\*\*\//-1d
 /\*\*\*ATK4\*\*\//-1r tools/header2
-w
+%s/atk4\.com/agiletoolkit.org/g
+w!
 EOF
 
 echo "updated"

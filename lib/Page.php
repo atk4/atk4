@@ -3,7 +3,7 @@
    ..
 
    Reference:
-     http://atk4.com/doc/ref
+     http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
    This file is part of Agile Toolkit 4 

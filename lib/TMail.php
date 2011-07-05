@@ -3,7 +3,7 @@
    ..
 
    Reference:
-     http://atk4.com/doc/ref
+     http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
    This file is part of Agile Toolkit 4 
@@ -366,7 +366,7 @@ class TMail extends AbstractController{
 	*/
 	function send($address,$add_params=null){
 		// checking if from is set
-		if(!$this->get('from'))$this->set('from',$this->api->getConfig('mail/from','nobody@atk4.com'));
+		if(!$this->get('from'))$this->set('from',$this->api->getConfig('mail/from','nobody@agiletoolkit.org'));
 		// send an email with defined parameters
 		$this->headers['X-B64']=base64_encode($address);
 		mail($address, $this->get('subject',false),
