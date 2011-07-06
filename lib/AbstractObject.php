@@ -318,6 +318,10 @@ abstract class AbstractObject {
         $this->hooks[$hook_spot][$priority][] = $callable;
         return $this;
     }
+    function removeHook($hook_spot) {
+        unset($this->hooks[$hook_spot]);
+        return $this;
+    }
     function hook($hook_spot, $arg = array ()) {
         $return=array();
         try{
@@ -361,23 +365,31 @@ abstract class AbstractObject {
 
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
     function __call($method,$arguments){
-        if($ret=$this->tryCall($method,$arguments))return $ret;
+        if($ret=$this->tryCall($method,$arguments))return $ret[0];
         throw $this->exception("Method is not defined for this object")
             ->addMoreInfo("method",$method)
             ->addMoreInfo("arguments",$arguments);
     }
+    /* [private] attempts to call method, returns array containing result or false */
     function tryCall($method,$arguments){
-        if($ret=$this->hook('method-'.$method,array($this,$arguments)))return $ret;
-        if($ret=$this->api->hook('global-method-'.$method,array($this,$arguments)))return $ret;
+        array_unshift($arguments,$this);
+        if($ret=$this->hook('method-'.$method,$arguments))return $ret;
+        if($ret=$this->api->hook('global-method-'.$method,$arguments))return $ret;
     }
+    /* Add new method for this object */
     function addMethod($name,$callable){
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('method-'.$name,$callable);
     }
+    /* Return if this object have specified method */
     function hasMethod($name){
-        return isset($this->hooks['method-'.$name])
-        ||     isset($this->api->hooks['global-method-'.$name]);
+        return method_exists($this,$name)
+            || isset($this->hooks['method-'.$name])
+            || isset($this->api->hooks['global-method-'.$name]);
+    }
+    function removeMethod($name){
+        $this->removeHook('method-'.$name);
     }
     
     // }}}
