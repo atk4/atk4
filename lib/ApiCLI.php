@@ -1,198 +1,237 @@
-<?php
+<?php // vim:ts=4:sw=4:et
+/***********************************************************
+  Base class for Command-Line Applications
+
+  Learn:
+  http://agiletoolkit.org/learn/understand/api
+
+ **ATK4*****************************************************
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
+
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
+
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
+
+ *****************************************************ATK4**/
 class ApiCLI extends AbstractView {
-	public $db=null;
-	protected $config = null;     // use getConfig method to access this variable
-	public $logger=null;	// TODO: protect this
-	protected $pathfinder_class='PathFinder';
-	public $skin='jui';	// for PathFinder not to produce warnings
+    public $db=null;
+    protected $config = null;     // use getConfig method to access this variable
+    public $logger=null;	// TODO: protect this
+    protected $pathfinder_class='PathFinder';
+    public $skin='jui';	// for PathFinder not to produce warnings
 
 
-	function __construct($realm=null){
-		$this->owner = null;
-		$this->name  = $realm;
-		$this->api   = $this;
+    function __construct($realm=null){
+        $this->owner = null;
+        $this->name  = $realm;
+        $this->api   = $this;
 
-		set_error_handler("error_handler");
+        set_error_handler("error_handler");
 
-		try {
-			$this->add($this->pathfinder_class);
-			$this->init();
+        try {
+            $this->add($this->pathfinder_class);
+            $this->init();
 
-			$this->hook('post-init');
+            $this->hook('post-init');
 
-		}catch(Exception $e){
+        }catch(Exception $e){
 
-			// This exception is used to abort initialisation of the objects but when
-			// normal rendering is still required
-			if($e instanceof Exception_StopInit)return;
+            // This exception is used to abort initialisation of the objects but when
+            // normal rendering is still required
+            if($e instanceof Exception_StopInit)return;
 
-			$this->caughtException($e);
-		}
-	}
-	function locate($type,$filename='',$return='relative'){
-		return $this->pathfinder->locate($type,$filename,$return);
-	}
-	function locateURL($type,$filename=''){
-		return $this->pathfinder->locate($type,$filename,'url');
-	}
-	function locatePath($type,$filename=''){
-		return $this->pathfinder->locate($type,$filename,'path');
-	}
-	function addLocation($location,$contents){
-		return $this->pathfinder->addLocation($location,$contents);
-	}
-	function init(){
-		parent::init();
-	}
-	function getBaseURL(){
-		return $this->pm->base_path;
-	}
-	function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
-		if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
-		if(is_object($page) && $page instanceof URL){
-			// we receive URL
-			return $page->setArguments($arguments);
-		}
-		$url=$this->add('URL','url_'.$this->url_object_count++);
+            $this->caughtException($e);
+        }
+    }
+    function addGlobalMethod($name,$callable){
+        if($this->hasMethod($name))
+            throw $this->exception('Registering method twice');
+        $this->addHook('global-method-'.$name,$callable);
+    }
+    function hasGlobalMethod($name){
+        return isset($this->hooks['global-method-'.$name]);
+    }
+    function removeGlobalMethod($name){
+        $this->removeHook('global-method-'.$name);
+    }
+    /* Localization function */
+    function _($str){
+        return $str;
+    }
+
+    function locate($type,$filename='',$return='relative'){
+        return $this->pathfinder->locate($type,$filename,$return);
+    }
+    function locateURL($type,$filename=''){
+        return $this->pathfinder->locate($type,$filename,'url');
+    }
+    function locatePath($type,$filename=''){
+        return $this->pathfinder->locate($type,$filename,'path');
+    }
+    function addLocation($location,$contents){
+        return $this->pathfinder->addLocation($location,$contents);
+    }
+    function init(){
+        parent::init();
+    }
+    function getBaseURL(){
+        return $this->pm->base_path;
+    }
+    function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
+        if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
+        if(is_object($page) && $page instanceof URL){
+            // we receive URL
+            return $page->setArguments($arguments);
+        }
+        $url=$this->add('URL','url_'.$this->url_object_count++);
         if(substr($page,0,7)=='http://')$url->setURL($page);elseif
             (substr($page,0,8)=='https://')$url->setURL($page);else
-            $url->setPage($page);
-		return $url->setArguments($arguments);
-	}
-	function getLogger($class_name='Logger'){
-		if(is_null($this->logger)){
-			$this->logger=$this->add($class_name);
-		}
-		return $this->logger;
-	}
-	function caughtException($e){
-		$this->hook('caught-exception',array($e));
-		echo get_class($e),": ".$e->getMessage();
-		exit;
-	}
-	function outputFatal($msg,$shift){
-		$this->hook('output-fatal',array($msg,$shift+1));
-		echo "Fatal: $msg\n";exit;
-	}
-	function outputWarning($msg,$shift=0){
-		if($this->hook('output-warning',array($msg,$shift)))return true;
-		echo "warning: $msg\n";
-	}
-	function outputDebug($msg,$shift=0){
-		if($this->hook('output-debug',array($msg,$shift)))return true;
-		echo "debug: $msg\n";
-	}
-	function outputInfo($msg,$shift=0){
-		if($this->hook('output-info',array($msg,$shift)))return true;
-		echo "info: $msg\n";
-	}
-	function upCall($type,$args=array()){
-		/**
-		 * Uncaught call default handler.
-		 *
-		 * In your application you should handle your own calls. If you do not,
-		 * the call will be forwarded to API and finaly this method will be
-		 * executed displaying error message about uncaught call
-		 */
-		if(($x=parent::upCall($type,$args))===false){
-			throw new BaseException("Uncaught upCall");
-		}
-	}
-	function configExceptionOrDefault($default,$exceptiontext){
-		if($default!='_config_get_false')return $default;
-		throw new BaseException($exceptiontext);
-	}
-	function getConfig($path, $default_value = '**undefined_value**'){
-		/**
-		 * For given path such as 'dsn' or 'logger/log_dir' returns
-		 * corresponding config value. Throws ExceptionNotConfigured if not set.
-		 *
-		 * To find out if config is set, do this:
-		 *
-		 * $var_is_set=true;
-		 * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
-		 */
-		if(is_null($this->config)){
-			$this->readConfig('config-default.php');
-			$this->readConfig();
-		}
-		$parts = explode('/',$path);
-		$current_position = $this->config;
-		foreach($parts as $part){
-			if(!array_key_exists($part,$current_position)){
-				if($default_value!=='**undefined_value**')return $default_value;
-				throw new ExceptionNotConfigured("You must specify \$config['".
-						join("']['",explode('/',$path)).
-						"'] in your config.php");
-			}else{
-				$current_position = $current_position[$part];
-			}
-		}
-		return $current_position;
-	}
-	function dbConnect($dsn=null){
-		if (is_null($dsn)) $dsn=$this->getConfig('dsn');
-		$result=$this->db=DBlite::connect($dsn);
-		if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
-		$this->db->owner=$this;
-		$this->db->api=$this;
-		return $this;
-	}
-	function tryConnect($dsn){
-		$this->db=DBlite::tryConnect($dsn);
-	}
-	function readConfig($file='config.php'){
-		$orig_file = $file;
-		if(is_null($this->config))$this->config=array();
-		$config=array();
-		if(strpos($file,'/')===false){
-			$file=getcwd().'/'.$file;
-		}
-		if (!file_exists($file)){
-			foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
-				$fullpath = $path . DIRECTORY_SEPARATOR . $orig_file;
-				if (file_exists($fullpath)){
-					$file = $fullpath;
-					break;
-				}
-			}
-		}
-		if (file_exists($file)) {
-			// some tricky thing to make config be read in some cases it could not in simple way
-			if(!$config)global $config;
-			include_once $file;
-		}
+                $url->setPage($page);
+        return $url->setArguments($arguments);
+    }
+    function getLogger($class_name='Logger'){
+        if(is_null($this->logger)){
+            $this->logger=$this->add($class_name);
+        }
+        return $this->logger;
+    }
+    function caughtException($e){
+        $this->hook('caught-exception',array($e));
+        echo get_class($e),": ".$e->getMessage();
+        exit;
+    }
+    function outputFatal($msg,$shift){
+        $this->hook('output-fatal',array($msg,$shift+1));
+        echo "Fatal: $msg\n";exit;
+    }
+    function outputWarning($msg,$shift=0){
+        if($this->hook('output-warning',array($msg,$shift)))return true;
+        echo "warning: $msg\n";
+    }
+    function outputDebug($msg,$shift=0){
+        if($this->hook('output-debug',array($msg,$shift)))return true;
+        echo "debug: $msg\n";
+    }
+    function outputInfo($msg,$shift=0){
+        if($this->hook('output-info',array($msg,$shift)))return true;
+        echo "info: $msg\n";
+    }
+    function upCall($type,$args=array()){
+        /**
+         * Uncaught call default handler.
+         *
+         * In your application you should handle your own calls. If you do not,
+         * the call will be forwarded to API and finaly this method will be
+         * executed displaying error message about uncaught call
+         */
+        if(($x=parent::upCall($type,$args))===false){
+            throw new BaseException("Uncaught upCall");
+        }
+    }
+    function configExceptionOrDefault($default,$exceptiontext){
+        if($default!='_config_get_false')return $default;
+        throw new BaseException($exceptiontext);
+    }
+    function getConfig($path, $default_value = '**undefined_value**'){
+        /**
+         * For given path such as 'dsn' or 'logger/log_dir' returns
+         * corresponding config value. Throws ExceptionNotConfigured if not set.
+         *
+         * To find out if config is set, do this:
+         *
+         * $var_is_set=true;
+         * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
+         */
+        if(is_null($this->config)){
+            $this->readConfig('config-default.php');
+            $this->readConfig();
+        }
+        $parts = explode('/',$path);
+        $current_position = $this->config;
+        foreach($parts as $part){
+            if(!array_key_exists($part,$current_position)){
+                if($default_value!=='**undefined_value**')return $default_value;
+                throw new ExceptionNotConfigured("You must specify \$config['".
+                        join("']['",explode('/',$path)).
+                        "'] in your config.php");
+            }else{
+                $current_position = $current_position[$part];
+            }
+        }
+        return $current_position;
+    }
+    function dbConnect($dsn=null){
+        if (is_null($dsn)) $dsn=$this->getConfig('dsn');
+        $result=$this->db=DBlite::connect($dsn);
+        if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
+        $this->db->owner=$this;
+        $this->db->api=$this;
+        return $this;
+    }
+    function tryConnect($dsn){
+        $this->db=DBlite::tryConnect($dsn);
+    }
+    function readConfig($file='config.php'){
+        $orig_file = $file;
+        if(is_null($this->config))$this->config=array();
+        $config=array();
+        if(strpos($file,'/')===false){
+            $file=getcwd().'/'.$file;
+        }
+        if (!file_exists($file)){
+            foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
+                $fullpath = $path . DIRECTORY_SEPARATOR . $orig_file;
+                if (file_exists($fullpath)){
+                    $file = $fullpath;
+                    break;
+                }
+            }
+        }
+        if (file_exists($file)) {
+            // some tricky thing to make config be read in some cases it could not in simple way
+            if(!$config)global $config;
+            include_once $file;
+        }
 
-		$this->config = array_merge($this->config,$config);
+        $this->config = array_merge($this->config,$config);
 
-		$tz = $this->getConfig('timezone',null);
-		if(!is_null($tz) && function_exists('date_default_timezone_set')){
-			// with seting default timezone
-			date_default_timezone_set($tz);
-		}
+        $tz = $this->getConfig('timezone',null);
+        if(!is_null($tz) && function_exists('date_default_timezone_set')){
+            // with seting default timezone
+            date_default_timezone_set($tz);
+        }
 
 
-	}
-	function setConfig($config=array()){
-		$this->config=safe_array_merge($this->config,$config);
-	}
-	private $version_cache=null;
+    }
+    function setConfig($config=array()){
+        $this->config=safe_array_merge($this->config,$config);
+    }
+    private $version_cache=null;
     function getVersion($of='atk'){
-		if(!$this->version_cache){
+        if(!$this->version_cache){
             $f=$this->api->pathfinder->atk_location->base_path.DIRECTORY_SEPARATOR.'VERSION';
-			if(file_exists($f)){
-				$this->version_cache=trim(file_get_contents($f));
-			}else{
-				$this->version_cache='4.0.1';
-			}
-		}
+            if(file_exists($f)){
+                $this->version_cache=trim(file_get_contents($f));
+            }else{
+                $this->version_cache='4.0.1';
+            }
+        }
         return $this->version_cache;
     }
-	function versionRequirement($v,$return_only=false){
-		if(($vc=version_compare($this->getVersion(),$v))<0){
-			if($soft)return false;
-			throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->getVersion());
-		}
-		return true;
-	}
+    function versionRequirement($v,$return_only=false){
+        if(($vc=version_compare($this->getVersion(),$v))<0){
+            if($soft)return false;
+            throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->getVersion());
+        }
+        return true;
+    }
 }
