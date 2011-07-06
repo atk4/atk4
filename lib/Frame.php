@@ -1,6 +1,6 @@
 <?php
 class Frame extends AbstractView {
-    function title($title){
+    function setTitle($title){
         $this->trySet('title',$title);
         return $this;
     }
