@@ -21,6 +21,7 @@
 #  
 
 [ -f tools/header1 ] || { echo "Run from main atk4 directory"; exit; }
+d=`dirname $0`
 
 find lib -name '*.php' | while read f; do 
 
@@ -46,6 +47,10 @@ H
 %s/atk4\.com/agiletoolkit.org/g
 w!
 EOF
+
+
+#indent
+#vim -esc "normal gg=G" -c "wq" $f
 
 echo "updated"
 
