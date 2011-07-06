@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 abstract class AbstractView extends AbstractObject {
@@ -49,8 +49,8 @@ abstract class AbstractView extends AbstractObject {
 	public $spot;
 
 	/**
-	  * Support for output buffering
-	  */
+	 * Support for output buffering
+	 */
 	public $output_buffer=null;
 
 	/**
@@ -78,9 +78,9 @@ abstract class AbstractView extends AbstractObject {
 		$this->setController($c);
 		return $c;
 	}
-    function getModel(){
-        return $this->getController()->getModel();
-    }
+	function getModel(){
+		return $this->getController()->getModel();
+	}
 	function setController($controller){
 		if(is_object($controller)){
 			$this->controller=$controller;
@@ -88,7 +88,7 @@ abstract class AbstractView extends AbstractObject {
 		}else{
 			$this->controller=$this->add($controller);
 		}
-        if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
+		if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
 		return $this;
 	}
 	function getController(){
@@ -140,13 +140,13 @@ abstract class AbstractView extends AbstractObject {
 		// Cool, now let's set _name of this template
 		if($this->template)$this->template->trySet('_name',$this->name);
 
-        $this->initTemplateTags();
+		$this->initTemplateTags();
 	}
-    function initTemplateTags(){
-        if($this->template && $this->api && method_exists($this->api, 'setTags')){
-            $this->api->setTags($this->template);
-        }
-    }
+	function initTemplateTags(){
+		if($this->template && $this->api && method_exists($this->api, 'setTags')){
+			$this->api->setTags($this->template);
+		}
+	}
 	function defaultTemplate(){
 		return $this->spot;
 	}
@@ -265,49 +265,49 @@ abstract class AbstractView extends AbstractObject {
 	public $js=array();
 	function js($when=null,$code=null,$instance=null){
 		/*
-			This function is designed for particular object interaction with javascript. We are assuming
-			that any View object have HTML presence. We are also assuming that it at least adds
-			one dag to the render tree with ID=$this->name.
+		   This function is designed for particular object interaction with javascript. We are assuming
+		   that any View object have HTML presence. We are also assuming that it at least adds
+		   one dag to the render tree with ID=$this->name.
 
-			First argument $when represents when code must be executed.
-			 * true -> code will be executed immediatelly
-			 * 'click' -> code will be executed if HTML is clicked
-			 * null, false -> code will not be executed, only returned
+		   First argument $when represents when code must be executed.
+		 * true -> code will be executed immediatelly
+		 * 'click' -> code will be executed if HTML is clicked
+		 * null, false -> code will not be executed, only returned
 
-			No matter $when you specify code to execute, function will return JS object, which
-			can be either chained, but if used as a string, it will return a proper JS code.
+		 No matter $when you specify code to execute, function will return JS object, which
+		 can be either chained, but if used as a string, it will return a proper JS code.
 
-			1. Calling with arguments:
+		 1. Calling with arguments:
 
-			$this->js();					// does nothing
-			$this->js(true,'alert(123)');	// does alert(123) after DOM is ready
+		 $this->js();					// does nothing
+		 $this->js(true,'alert(123)');	// does alert(123) after DOM is ready
 
-			2. When events are used, generated code will use different format
-			$this->js('click','alert(123)');	// $('#name').click(function(){ alert(123); });
+		 2. When events are used, generated code will use different format
+		 $this->js('click','alert(123)');	// $('#name').click(function(){ alert(123); });
 
-			This is very useful when you are trying to make multiple objects interract
+		 This is very useful when you are trying to make multiple objects interract
 
-			$this->js('click',$form->js()->submit());
-			// $('#name').click(function(){ $('#form').submit(); });
+		 $this->js('click',$form->js()->submit());
+		// $('#name').click(function(){ $('#form').submit(); });
 
-			3. calling js() will return jQuery_Chain object, which you can subsequentally call
-			to perform multiple actions.
+		3. calling js() will return jQuery_Chain object, which you can subsequentally call
+		to perform multiple actions.
 
-			$this->js(true)->parent()->find('.current')->removeClass('current');
-			//    $('#name').parent().find('.current').removeClass('current');
+		$this->js(true)->parent()->find('.current')->removeClass('current');
+		//    $('#name').parent().find('.current').removeClass('current');
 
-			4. 3rd argument - instance
+		4. 3rd argument - instance
 
-			Sometimes you wish to get back and continue same chain.
-			$grid->js(null,$this->js()->hide(),'refresh');
+		Sometimes you wish to get back and continue same chain.
+		$grid->js(null,$this->js()->hide(),'refresh');
 
-			In this case - grid might be pre-set non-executable chains for several actions. Example
-			above will add additional code to that chain which will hide $this element.
+		In this case - grid might be pre-set non-executable chains for several actions. Example
+		above will add additional code to that chain which will hide $this element.
 
-			See individual component documentation for more information
+		See individual component documentation for more information
 
 
-			*/
+		 */
 		// Create new jQuery_Chain object
 		if(!isset($this->api->jquery))throw new BaseException("requires jQuery or jUI support");
 
