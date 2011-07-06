@@ -1,58 +1,52 @@
 <?php
 /***********************************************************
-   ..
+  When $api->getDestinationURL() is called, this object is used
+  to avoid double-encoding. Return URL when converting to string
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
-/*
- * This class implements a object to be used by getDestitanionURL(). Instead of returning string,
- * it will return this object. Not only object can be used AS string, but it will also be handled
- * properly if you will try supply it to getDestinationURL several timess
- */
 class URL extends AbstractModel {
 
-	// Page is a location of destination page. It have to be absolute and relative to project root
-	protected $page=null;
+    // Page is a location of destination page. It have to be absolute and relative to project root
+    protected $page=null;
 
-	protected $arguments=array();
+    protected $arguments=array();
 
-	protected $extension='.html';
+    protected $extension='.html';
 
-	protected $absolute=false;	// if true then will return full URL (for external documents)
-    
+    protected $absolute=false;	// if true then will return full URL (for external documents)
+
     public $base_url=null;
 
 
-	function init(){
-		parent::init();
-		$this->setPage(null);
-
-		// add sticky arguments
-		$this->addStickyArguments();
-
-		$this->extension=$this->api->getConfig('url_postfix',$this->extension);
-	}
-	function addStickyArguments(){
-		$sticky=$this->api->getStickyArguments();
-		$args=array();
+    function init(){
+        parent::init();
+        $this->setPage(null);
+        $this->addStickyArguments();
+        $this->extension=$this->api->getConfig('url_postfix',$this->extension);
+    }
+    /* [private] add arguments set as sticky through API */
+    function addStickyArguments(){
+        $sticky=$this->api->getStickyArguments();
+        $args=array();
 
         if($sticky && is_array($sticky)){
             foreach($sticky as $key=>$val){
@@ -68,123 +62,128 @@ class URL extends AbstractModel {
                 }
             }
         }
-		$this->setArguments($args);
-	}
-	function useAbsoluteURL(){
-		/*
-		   Produced URL will contain absolute, rather than relative address:
-			http://mysite:123/install/dir/my/page.html
-		*/
-		$this->absolute=true;
-		return $this;
-	}
-	function setPage($page=null){
-		// The following argument formats are supported:
-		//
-		// null = set current page
-		// '.' = set current page
-		// 'page' = sets webroot/page.html
-		// './page' = set page relatively to current page
-		// '..' = parent page
-		// '../page' = page besides our own (foo/bar -> foo/page)
-		// 'index' = properly points to the index page defined in API
+        $this->setArguments($args);
+    }
+    /* Call this if you want full URL, not relative */
+    function useAbsoluteURL(){
+        /*
+           Produced URL will contain absolute, rather than relative address:
+http://mysite:123/install/dir/my/page.html
+         */
+        $this->absolute=true;
+        return $this;
+    }
+    /* [private] automatically called with 1st argument of getDestinationURL() */
+    function setPage($page=null){
+        // The following argument formats are supported:
+        //
+        // null = set current page
+        // '.' = set current page
+        // 'page' = sets webroot/page.html
+        // './page' = set page relatively to current page
+        // '..' = parent page
+        // '../page' = page besides our own (foo/bar -> foo/page)
+        // 'index' = properly points to the index page defined in API
 
-		$destination='';
-		if(is_null($page))$page='.';
-		$path=explode('/',$page);
+        $destination='';
+        if(is_null($page))$page='.';
+        $path=explode('/',$page);
 
-		foreach($path as $component){
-			if($component=='')continue;
-			if($component=='.' && $destination==''){
-				if($this->api->page=='index')continue;
-				$destination=str_replace('_','/',$this->api->page);
-				continue;
-			}
+        foreach($path as $component){
+            if($component=='')continue;
+            if($component=='.' && $destination==''){
+                if($this->api->page=='index')continue;
+                $destination=str_replace('_','/',$this->api->page);
+                continue;
+            }
 
-			if($component=='..'){
-				if(!$destination)$destination=str_replace('_','/',$this->api->page);
-				$tmp=explode('/',$destination);
-				array_pop($tmp);
-				$destination=join('/',$tmp);
-				continue;
-			}
+            if($component=='..'){
+                if(!$destination)$destination=str_replace('_','/',$this->api->page);
+                $tmp=explode('/',$destination);
+                array_pop($tmp);
+                $destination=join('/',$tmp);
+                continue;
+            }
 
-			if($component=='index' && $destination=''){
-				$destination=$this->api->index_page;
-				continue;
-			}
+            if($component=='index' && $destination=''){
+                $destination=$this->api->index_page;
+                continue;
+            }
 
 
-			$destination=$destination?$destination.'/'.$component:$component;
+            $destination=$destination?$destination.'/'.$component:$component;
 
-		}
-		if($destination==='')$destination=$this->api->index_page;
+        }
+        if($destination==='')$destination=$this->api->index_page;
 
-		$this->page=$destination;
-		return $this;
-	}
+        $this->page=$destination;
+        return $this;
+    }
+    /* Set additional arguments */
     function set($argument,$value=null){
         if(!is_array($argument))$argument=array($argument=>$value);
         return $this->setArguments($argument);
     }
-	function setArguments($arguments=array()){
-		// add additional arguments
-		if(is_null($arguments))$arguments=array();
-		if(!is_array($arguments)){
-			throw new BaseException('Arguments must be always an array');
-		}
-		$this->arguments=$args=array_merge($this->arguments,$arguments);
-		foreach($args as $arg=>$val){
-			if(is_null($val))unset($this->arguments[$arg]);
-		}
-		return $this;
-	}
-	function __toString(){
-		return $this->getURL();
-	}
+    /* Set arguments to specified array */
+    function setArguments($arguments=array()){
+        // add additional arguments
+        if(is_null($arguments))$arguments=array();
+        if(!is_array($arguments)){
+            throw new BaseException('Arguments must be always an array');
+        }
+        $this->arguments=$args=array_merge($this->arguments,$arguments);
+        foreach($args as $arg=>$val){
+            if(is_null($val))unset($this->arguments[$arg]);
+        }
+        return $this;
+    }
+    function __toString(){
+        return $this->getURL();
+    }
+    /* By default uses detected base_url, but you can use this to redefine */
     function setBaseURL($base){
         $this->base_url=$base;
         return $this;
     }
-	function getBaseURL(){
+    function getBaseURL(){
         // Oherwise - calculate from detected values
-		$url='';
+        $url='';
 
-		// add absolute if necessary
-		if($this->absolute)$url.=$this->api->pm->base_url;
+        // add absolute if necessary
+        if($this->absolute)$url.=$this->api->pm->base_url;
 
-		// add base path
-		$url.=$this->api->pm->base_path;
+        // add base path
+        $url.=$this->api->pm->base_path;
 
-		// add prefix if defined in config
-		$url.=$this->api->getConfig('url_prefix','');
+        // add prefix if defined in config
+        $url.=$this->api->getConfig('url_prefix','');
 
-		return $url;
-	}
-	function getExtension(){
-		return $this->extension;
-	}
-	function getURL(){
-        // baseURL can be set for sites with other URL
+        return $url;
+    }
+    function getExtension(){
+        return $this->extension;
+    }
+    function getURL(){
         if($this->base_url)return $this->base_url.$this->getArguments();
 
-		$url=$this->getBaseURL();
-		$url.=$this->page;
-		$url.=$this->getExtension();
+        $url=$this->getBaseURL();
+        $url.=$this->page;
+        $url.=$this->getExtension();
 
 
-		$tmp=array();
-		foreach($this->arguments as $key=>$value){
-			if($value===false)continue;
-			$tmp[]=$key.'='.urlencode($value);
-		}
+        $tmp=array();
+        foreach($this->arguments as $key=>$value){
+            if($value===false)continue;
+            $tmp[]=$key.'='.urlencode($value);
+        }
 
-		if($tmp)$url.=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
+        if($tmp)$url.=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
 
-		return $url;
-	}
-	function getHTMLURL(){
-		return htmlentities($this->getURL());
-	}
+        return $url;
+    }
+    /* Returns html-encoded URL */
+    function getHTMLURL(){
+        return htmlentities($this->getURL());
+    }
 
 }
