@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 
@@ -31,15 +31,15 @@ class DBlite_dsql  {
 	var $my=array(null,null,null);
 	var $saved=array(null,null,null);
 	/*
-	* Array containing arguments
-	*/
+	 * Array containing arguments
+	 */
 	var $args;
 	var $debug;
 
 	function __call($function,$args){
 		/*
-		* This call wrapper implements the following function:
-		*/
+		 * This call wrapper implements the following function:
+		 */
 		if(substr($function,0,3)=='do_'){
 			// do_select, do_insert combine functionality of generating insert/select and executing it
 			$fnname = substr($function,3);
@@ -71,10 +71,10 @@ class DBlite_dsql  {
 	////// Speed-access functions
 	function s(){
 		/*
-		* We are willing to preserve existing state of associated database.
-		* That's why we save some of it's data in a local valiable, and
-		* restore those after execution.
-		*/
+		 * We are willing to preserve existing state of associated database.
+		 * That's why we save some of it's data in a local valiable, and
+		 * restore those after execution.
+		 */
 		$this->saved=array($this->db->cursor,$this->db->found_rows,$this->db->calc_found_rows);
 		list($this->db->cursor,$this->db->found_rows,$this->db->calc_found_rows) = $this->my;
 	}
@@ -85,12 +85,12 @@ class DBlite_dsql  {
 	}
 	function do_getHash($f=null){
 		$this->s();
-        try {
-            return $this->l($this->db->getHash($this->select(),$f));
-        }catch (SQLException $e){
-            $this->debug()->select();
-            throw $e;
-        }
+		try {
+			return $this->l($this->db->getHash($this->select(),$f));
+		}catch (SQLException $e){
+			$this->debug()->select();
+			throw $e;
+		}
 	}
 	function do_getAll($f=null){
 		$this->s();
@@ -118,10 +118,10 @@ class DBlite_dsql  {
 		return $this->l($this);
 	}
 	/*
-	* temporary disabled, those do not work as they should
-	function do_select(){ return $this->query($this->select()); }
-	function do_delete(){ return $this->query($this->select()); }
-	*/
+	 * temporary disabled, those do not work as they should
+	 function do_select(){ return $this->query($this->select()); }
+	 function do_delete(){ return $this->query($this->select()); }
+	 */
 
 	function do_delete(){
 		return $this->db->query($this->delete());
@@ -149,29 +149,29 @@ class DBlite_dsql  {
 		return $this;
 	}
 	/*
-	function query($q,$param1=null){
-		$this->db->query($q,$param1);
-		$this->cursor=$this->db->cursor;
-		$this->found_rows=$this->db->found_rows;
-	}
-	*/
+	   function query($q,$param1=null){
+	   $this->db->query($q,$param1);
+	   $this->cursor=$this->db->cursor;
+	   $this->found_rows=$this->db->found_rows;
+	   }
+	 */
 
 	///////////////////// Dynamic SQL functions ////////////////
 	function table($table){
 		/*
-		* Specify table for a query
-		*/
+		 * Specify table for a query
+		 */
 		$this->args['table']=DTP.$table;
 		return $this;
 	}
 	function field($field,$table=null) {
 		/*
-		* Add new field to a query
-		*/
+		 * Add new field to a query
+		 */
 		if(isset($table)){
 			$field=DTP.$table.'.'.$field;
 		}
-        if(!isset($this->args['fields']))$this->args['fields']=array();
+		if(!isset($this->args['fields']))$this->args['fields']=array();
 		if(is_array($field)){
 			$this->args['fields']=array_merge($this->args['fields'],$field);
 		}else{
@@ -181,23 +181,23 @@ class DBlite_dsql  {
 	}
 	function set($set,$val=array()) {
 		/*
-		* Set value for update. You can use this function in a several ways. First
-		* of all you can just simply call:
-		*  $this->set($field, $value);
-		* which will result update of the field in a next query. 2nd form is
-		* when you call
-		*  $this->set($hash);
-		* in which case all keys of hash will be set to apropritate values.
-		*
-		* Value will be quoted, if you want to avoid that - use one-argument form.
-		*
-		* You can use this with array too like:
-		*  set(array(
-		*   'a'=>'213',
-		*   'b'=>'foobar',
-		*   'password=password("foo")'     // one-argument way
-		*   ));
-		*/
+		 * Set value for update. You can use this function in a several ways. First
+		 * of all you can just simply call:
+		 *  $this->set($field, $value);
+		 * which will result update of the field in a next query. 2nd form is
+		 * when you call
+		 *  $this->set($hash);
+		 * in which case all keys of hash will be set to apropritate values.
+		 *
+		 * Value will be quoted, if you want to avoid that - use one-argument form.
+		 *
+		 * You can use this with array too like:
+		 *  set(array(
+		 *   'a'=>'213',
+		 *   'b'=>'foobar',
+		 *   'password=password("foo")'     // one-argument way
+		 *   ));
+		 */
 		if(is_array($set)){
 			foreach($set as $_key=>$_val){
 				if(is_numeric($_key)){
@@ -230,16 +230,16 @@ class DBlite_dsql  {
 	}
 
 	/**
-	* Escape value for protect SQL injection and support complex strings
-	* @param mixed $val
-	* @return string
-	*/
+	 * Escape value for protect SQL injection and support complex strings
+	 * @param mixed $val
+	 * @return string
+	 */
 	protected function escapeValue($val) {
 		if(is_null($val)){
 			$res = 'NULL';
 		}else{
 			// numeric values MUST be without quotas for the correct rounding
-			if(is_decimal_number($val))
+            if( (string)(float)$val === (string)$val)
 				$res = $val;
 			else
 				$res = "'".$this->db->escape($val)."'";
@@ -254,8 +254,8 @@ class DBlite_dsql  {
 
 	function setDate($field='ts',$value=null){
 		/**
-		* Accepts any date format
-		*/
+		 * Accepts any date format
+		 */
 		if(is_null($value))$value=time();
 		elseif(is_string($value))$value=strtotime($value);
 		return $this->set($field,date('Y-m-d H:i:s',$value));
@@ -282,11 +282,11 @@ class DBlite_dsql  {
 								throw new BaseException("use 3rd argument if you pass sub-queries to where()");
 							}
 							if(is_array($equals)){
-                                $eq=$equals;
-                            }else{
-                                $eq=explode(',',$equals);
-                            }
-                            $eq2=array();
+								$eq=$equals;
+							}else{
+								$eq=explode(',',$equals);
+							}
+							$eq2=array();
 							foreach($eq as $eq3){
 								$eq2[]="'".$this->db->escape($eq3)."'";
 							}
@@ -308,7 +308,7 @@ class DBlite_dsql  {
 			}
 			$where = array($where);
 		}
-        if(!isset($this->args[$cond]))$this->args[$cond]=array();
+		if(!isset($this->args[$cond]))$this->args[$cond]=array();
 		$this->args[$cond] = array_merge($this->args[$cond], $where);
 		return $this;
 	}
@@ -357,8 +357,8 @@ class DBlite_dsql  {
 	}
 	function group($group,$prepend=null) {
 		/*
-		* Set group
-		*/
+		 * Set group
+		 */
 		if($prepend){
 			array_unshift($this->args['group'], $group);
 		}else{
@@ -396,9 +396,9 @@ class DBlite_dsql  {
 	}
 	function getArgs($required){
 		/*
-		* This function generates actual value for the arguments, which
-		* will be placed into template
-		*/
+		 * This function generates actual value for the arguments, which
+		 * will be placed into template
+		 */
 		$args=array();
 		if(isset($required['fields'])) {
 			// comma separated fields, such as for select
@@ -452,36 +452,36 @@ class DBlite_dsql  {
 		}
 
 		if(isset($required['join'])&&isset($this->args['join'])) {
-            $args['join']=join(' ', $this->args['join']);
+			$args['join']=join(' ', $this->args['join']);
 		}
 
 		if(isset($required['where'])&&isset($this->args['where'])) {
-            $args['where'] = "where (".join(') and (', $this->args['where']).")";
+			$args['where'] = "where (".join(') and (', $this->args['where']).")";
 		}
 
 		if(isset($required['having'])&&isset($this->args['having'])) {
-            $args['having'] = "having (".join(') and (', $this->args['having']).")";
+			$args['having'] = "having (".join(') and (', $this->args['having']).")";
 		}
 
 		if(isset($required['order'])&&isset($this->args['order'])) {
-            $args['order'] = "order by ".join(', ', $this->args['order']);
+			$args['order'] = "order by ".join(', ', $this->args['order']);
 		}
 
 		if(isset($required['group'])&&isset($this->args['group'])) {
-            $args['group'] = "group by ".join(', ',$this->args['group']);
+			$args['group'] = "group by ".join(', ',$this->args['group']);
 		}
 
 		if(isset($required['limit'])&&isset($this->args['limit'])) {
-            $args['limit'] = "limit ".$this->args['limit']['shift'].", ".$this->args['limit']['cnt'];
+			$args['limit'] = "limit ".$this->args['limit']['shift'].", ".$this->args['limit']['cnt'];
 		}
 
 		return $args;
 	}
 	function parseTemplate($template) {
 		/*
-		* When given query template, this method will get required arguments
-		* for it and place them inside returning ready to use query.
-		*/
+		 * When given query template, this method will get required arguments
+		 * for it and place them inside returning ready to use query.
+		 */
 		$parts = explode('[', $template);
 		$required = array();
 
@@ -495,37 +495,37 @@ class DBlite_dsql  {
 		// now parts array contains strings and array of string, let's request
 		// for required arguments
 
-        $dd='';
+		$dd='';
 		$args = $this->getArgs($required);
-        $dd.='<ul class="atk-sqldump">';
+		$dd.='<ul class="atk-sqldump">';
 
 		// now when we know all data, let's assemble resulting string
 		foreach($result as $key => $part) {
 			if(is_array($part)) {
-                $p=$part[0];
-                if(isset($args[$p])){
-                    $result[$key]=$args[$p];
+				$p=$part[0];
+				if(isset($args[$p])){
+					$result[$key]=$args[$p];
 
-                    if(isset($this->args[$p]) && $a=$this->args[$p]){
-                        if($p=='set'){
-                            foreach($a as $key=>&$val){
-                                $val=$key.'='.$val;
-                            }
-                        }
-                        if(is_array($a)){
-                            sort($a);
-                            $dd.="<li><b>".$part[0]."</b> <ul><li>"
-                                .join('</li><li>',$a).'</li></ul>';
-                        }else{
-                            $dd.="<li><b>".$part[0]."</b> $a </li>";
-                        }
-                    }else $dd.="<li>".$args[$p]."</li>";
-                }else{
-                    $result[$key]=null;
-                }
-            }elseif($part=trim($part,' ()'))$dd.='<li><b>'.$part.'</b></li>';
+					if(isset($this->args[$p]) && $a=$this->args[$p]){
+						if($p=='set'){
+							foreach($a as $key=>&$val){
+								$val=$key.'='.$val;
+							}
+						}
+						if(is_array($a)){
+							sort($a);
+							$dd.="<li><b>".$part[0]."</b> <ul><li>"
+								.join('</li><li>',$a).'</li></ul>';
+						}else{
+							$dd.="<li><b>".$part[0]."</b> $a </li>";
+						}
+					}else $dd.="<li>".$args[$p]."</li>";
+				}else{
+					$result[$key]=null;
+				}
+			}elseif($part=trim($part,' ()'))$dd.='<li><b>'.$part.'</b></li>';
 		}
-        $dd.="</ul>";
+		$dd.="</ul>";
 		if($this->debug){
 			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>'.$dd;
 		}
@@ -538,7 +538,7 @@ class DBlite_dsql  {
 	}
 	function option($option){
 		if(!is_array($option))$option=array($option);
-        if(!isset($this->args['options']))$this->args['options']=array();
+		if(!isset($this->args['options']))$this->args['options']=array();
 		$this->args['options']=array_merge($this->args['options'],$option);
 		return $this;
 	}
