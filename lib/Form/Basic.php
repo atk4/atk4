@@ -336,8 +336,23 @@ class Form_Basic extends AbstractView {
         if(!empty($this->errors))return false;
         try{
             if(($output=$this->hook('submit',array($this)))){
-                if(!is_array($output))$output=array($output);
-                $this->js(null,$output)->execute();
+                /* checking if anything usefull in output */
+                if(is_array($output)){
+                    $has_output = false;
+                    foreach ($output as $row){
+                        if ($row){
+                            $has_output = true;
+                            break;
+                        }
+                    }
+                    if (!$has_output){
+                        return true;
+                    }
+                }
+                /* TODO: need logic re-check here + test scirpts */
+                //if(!is_array($output))$output=array($output);
+                // already array
+                if($has_output)$this->js(null,$output)->execute();
             }
         }catch (Exception_ValidityCheck $e){
             $f=$e->getField();
