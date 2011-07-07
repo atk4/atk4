@@ -46,7 +46,7 @@ class View_Tabs_jUItabs extends View_Tabs {
         return $container;
     }
     /* Add tab which loads dynamically. Returns $this for chaining */
-    function addTabURL($title,$page,$args=array()){
+    function addTabURL($page,$title,$args=array()){
         $this->tab_template->set(array(
                     'url'=>$this->api->getDestinationURL($page,array('cut_page'=>1)),
                     'tab_name'=>$title,
