@@ -363,7 +363,7 @@ class BasicAuth extends AbstractController {
 						$this->form->get('username'),
 						$this->encryptPassword($this->form->get('password'),$this->form->get('username'))
 						)){
-				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
+				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password'),$this->form->get('username')));
 				$this->memorize('info',$this->info);
 				$this->loginRedirect();
 			}
