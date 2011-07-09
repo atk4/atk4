@@ -71,63 +71,63 @@ class Logger extends AbstractController {
 	 *
 	 *
 	 * ==[ Configuring logger ]======================================================
-	 * Logger uses 2 output destinations, and 3 ways to restrict output information.
-	 *
-	 * Output destination: stdout (webpage), logs
-	 * Restrict options: 'full', 'light', null
-	 *
-	 * stdout is different for ApiCLI and ApiWeb classes. Web output might contact
-	 * tags or even some AJAX elements. Logs and ApiCLI uses the same output
-	 * format.
-	 *
-	 * Web output for info, warning and debug messages relies on templates
-	 * but fatal messages are template independent.
-	 *
-	 * ==[ Output restriction ]======================================================
-	 * null: this option will surpress all output. When used with logs, you won't
-	 * even need an empty directory. Web output will be clean of any messages.
-	 *
-	 * If fatal error occurs, if 'null' is used with web output, you will see
-	 * message (public_error_message), instead of the actual error.
-	 *
-	 *
-	 * light: only message is outputed. Even if debug mode is on, backtraces and
-	 * additional information is stripped off. This method is best if you are using
-	 * application for intranet and know uses or if you are doing beta testing.
-	 * This output won't contain any sensitive information such as table names, field
-	 * names, actual data)
-	 *
-	 * when used with logs, each message takes one line.
-	 *
-	 * full: this will output all the information available including:
-	 *  error message
-	 *  line/file/function where error message occured (guessed)
-	 *  additional information (such as last_query and error_message from DBlite)
-	 *  complete backtrace.
-	 *
-	 * when used with logs, each message takes several lines.
-	 *
-	 * ==[ Activation ]==================================================================
-	 * To start using this class in your applicaion you should:
-	 *
-	 *  $api->add('Logger');
-	 *
-	 * If you do not activate Logger, output will be similar to:
-	 * web_output='full';
-	 * log_output=null;
-	 *
-	 * ==[ Extending ]====================================================================
-	 *
-	 * You can extend this class to add additional features. Please notify me if you think
-	 * something essential is missing out
-	 *
-	 * romans@adevel.com
-	 *
-	 * Debug functions were contributed my mvs@adevel.com
-	 */
+	* Logger uses 2 output destinations, and 3 ways to restrict output information.
+		*
+		* Output destination: stdout (webpage), logs
+		* Restrict options: 'full', 'light', null
+		*
+		* stdout is different for ApiCLI and ApiWeb classes. Web output might contact
+		* tags or even some AJAX elements. Logs and ApiCLI uses the same output
+		* format.
+		*
+		* Web output for info, warning and debug messages relies on templates
+		* but fatal messages are template independent.
+		*
+		* ==[ Output restriction ]======================================================
+		* null: this option will surpress all output. When used with logs, you won't
+		* even need an empty directory. Web output will be clean of any messages.
+		*
+		* If fatal error occurs, if 'null' is used with web output, you will see
+		* message (public_error_message), instead of the actual error.
+		*
+		*
+		* light: only message is outputed. Even if debug mode is on, backtraces and
+		* additional information is stripped off. This method is best if you are using
+		* application for intranet and know uses or if you are doing beta testing.
+		* This output won't contain any sensitive information such as table names, field
+		* names, actual data)
+		*
+		* when used with logs, each message takes one line.
+		*
+		* full: this will output all the information available including:
+		*  error message
+		*  line/file/function where error message occured (guessed)
+		*  additional information (such as last_query and error_message from DBlite)
+		*  complete backtrace.
+		*
+		* when used with logs, each message takes several lines.
+		*
+		* ==[ Activation ]==================================================================
+		* To start using this class in your applicaion you should:
+			*
+				*  $api->add('Logger');
+	*
+		* If you do not activate Logger, output will be similar to:
+		* web_output='full';
+	* log_output=null;
+	*
+		* ==[ Extending ]====================================================================
+		*
+		* You can extend this class to add additional features. Please notify me if you think
+		* something essential is missing out
+		*
+		* romans@adevel.com
+		*
+		* Debug functions were contributed my mvs@adevel.com
+		*/
 
-	// AModules3 compatibility
-	public $owner;
+		// AModules3 compatibility
+		public $owner;
 	public $api;
 
 	// Configuration;
@@ -135,16 +135,16 @@ class Logger extends AbstractController {
 	public $log_output=null;        // $config['logger']['log_output']
 
 	public $public_error_message=null;
-									// This message will be outputed to user in case of
-									// fatal error. When running in production mode, you
-									// shouldn't show any debug info to user, but log them
-									// instead
+	// This message will be outputed to user in case of
+	// fatal error. When running in production mode, you
+	// shouldn't show any debug info to user, but log them
+	// instead
 
 	public $log_dir;                // Directory where logs are created. It should be
-									// used solely by AModules3. If not set, then
-									// /var/log/atk4/<realm> will be used.
-									//
-									// You can change in $config['logger']['log_dir']
+	// used solely by AModules3. If not set, then
+	// /var/log/atk4/<realm> will be used.
+	//
+	// You can change in $config['logger']['log_dir']
 
 	protected $log_error_file;        // File we are currently logging errors to
 	protected $log_debug_file;        // File we are currently logging errors to
@@ -269,12 +269,12 @@ class Logger extends AbstractController {
 		echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
 		if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
 		if($e->more_info){
-		   echo '<p>Additional information: <ul>';
-		   foreach($e->more_info as $key=>$info){
-			   if(is_array($info))$info=print_r($info,true);
-			   echo '<li>'.$key.': '.$info.'</li>';
-		   }
-		   echo '</ul></p>';
+			echo '<p>Additional information: <ul>';
+			foreach($e->more_info as $key=>$info){
+				if(is_array($info))$info=print_r($info,true);
+				echo '<li>'.$key.': '.$info.'</li>';
+			}
+			echo '</ul></p>';
 		}
 		if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
@@ -364,7 +364,7 @@ class Logger extends AbstractController {
 			return "$prefix: $msg\n";
 		}else{
 			return basename($frame['file'])." on line ".$frame['line'].', path: '.dirname($frame['file'])."\n\n".
-					($prefix?"$prefix: ":"")."$msg\n\n";
+				($prefix?"$prefix: ":"")."$msg\n\n";
 		}
 	}
 	function logLine($msg,$shiftfunc=null,$severity='info',$trace=null){
@@ -384,7 +384,7 @@ class Logger extends AbstractController {
 						" Stack trace\n".
 						$this->txtBacktrace($shiftfunc,$trace).
 						"\n"
-					 );
+				     );
 			}else{
 				fputs($this->$log_file,$msg);
 			}
@@ -537,15 +537,15 @@ class Logger extends AbstractController {
 			}
 
 			if($sh){
-			   if(is_int($sh)){
-				   if($sh>0){
-					   $sh--;
-					   continue;
-				   }
-			   }elseif($bt['function']!=$sh){
-				   $sh=null;
-				   continue;
-			   }
+				if(is_int($sh)){
+					if($sh>0){
+						$sh--;
+						continue;
+					}
+				}elseif($bt['function']!=$sh){
+					$sh=null;
+					continue;
+				}
 			}
 
 			$output .= $bt['file'].":".$bt['line']." ";
@@ -563,7 +563,7 @@ class Logger extends AbstractController {
 	var $_current_ip;
 
 	var $_prev_exec_time;
-	*/
+	 */
 
 	function Debug($filename) {
 		if (is_null($filename))
@@ -606,8 +606,8 @@ class Logger extends AbstractController {
 	}
 
 	function _microtime_float() {
-	   list($usec, $sec) = explode(" ", microtime());
-	   return ((float)$usec + (float)$sec);
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
 	}
 
 	// print
@@ -621,12 +621,12 @@ class Logger extends AbstractController {
 		}
 
 		$details = ((empty($this->_current_ip))?'':$this->_current_ip.' - ').
-				   ((!empty($file))?basename($file).' (line '.$line.')':'');
+			((!empty($file))?basename($file).' (line '.$line.')':'');
 
 		if (!empty($details)) $details = ' ***** '.$details.' *****';
 
 		$message = '['.date('d-M-Y H:i:s') . '] '.$time_diff_str.$details.
-							  "\n\n". $message . "\n\n";
+			"\n\n". $message . "\n\n";
 
 		$new_file = (file_exists($this->filename))?false:true;
 		$fh = @fopen($this->filename,'a');
@@ -645,10 +645,10 @@ class Logger extends AbstractController {
 			if ($new_file) chmod($this->filename,0777);
 		}
 		else {
-			 $this->err_message = 'Cannot open file ('.$this->filename.')'.
+			$this->err_message = 'Cannot open file ('.$this->filename.')'.
 				' in '.__FILE__.' on line '.__LINE__.' for save message: '."\n".$message;
-			 error_log($this->err_message,0);
-			 $res = false;
+			error_log($this->err_message,0);
+			$res = false;
 		}
 
 		$this->_prev_exec_time = $this->_microtime_float();

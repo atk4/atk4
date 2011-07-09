@@ -1,32 +1,32 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /*
  * This is class for ordering elements. 
  *
  */
-	
+
 class Order extends AbstractController {
 	public $rules=array();
 	public $array=null;
@@ -51,9 +51,9 @@ class Order extends AbstractController {
 			// check if element exists
 			if(!isset($this->array[$name]))
 				throw $this->exception('Element does not exist when trying to move it')
-                    ->addMoreInfo('element',$name)
-                    ->addMoreInfo('move',$where)
-                    ->addMoreInfo('relative',$relative);
+					->addMoreInfo('element',$name)
+					->addMoreInfo('move',$where)
+					->addMoreInfo('relative',$relative);
 
 			$v=$this->array[$name];
 			unset($this->array[$name]);
@@ -78,15 +78,15 @@ class Order extends AbstractController {
 						$tmp[$key]=$value;
 					}
 					$this->array=$tmp;
-                    if($name)throw $this->exception('Relative element not found while moving')
-                        ->addMoreInfo('element',$name)
-                        ->addMoreInfo('move',$where)
-                        ->addMoreInfo('relative',$relative);
+					if($name)throw $this->exception('Relative element not found while moving')
+						->addMoreInfo('element',$name)
+							->addMoreInfo('move',$where)
+							->addMoreInfo('relative',$relative);
 
-                    if($where=='after')$this->array=array_reverse($this->array);
+					if($where=='after')$this->array=array_reverse($this->array);
 					break;
 
-					
+
 			}
 		}
 	}

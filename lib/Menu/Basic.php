@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /**
@@ -54,11 +54,11 @@ class Menu_Basic extends AbstractView {
 		}
 		$this->items[]=$this->last_item=$this->add('MenuItem',$this->short_name."_$href",'Item')
 			->setProperty(array(
-				'page'=>$href,
-				'href'=>$this->api->getDestinationURL($href),
-				'label'=>$label,
-				'class'=>$this->isCurrent($href)?$this->current_menu_class:$this->inactive_menu_class,
-			));
+						'page'=>$href,
+						'href'=>$this->api->getDestinationURL($href),
+						'label'=>$label,
+						'class'=>$this->isCurrent($href)?$this->current_menu_class:$this->inactive_menu_class,
+					   ));
 
 		return $this;
 	}
@@ -76,12 +76,12 @@ class Menu_Basic extends AbstractView {
 		return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
 	}
 	/*function insertMenuItem($index,$label,$href=null){
-		$tail=array_slice($this->data,$index);
-		$this->data=array_slice($this->data,0,$index);
-		$this->addMenuItem($label,$href);
-		$this->data=array_merge($this->data,$tail);
-		return $this;
-	}*/
+	  $tail=array_slice($this->data,$index);
+	  $this->data=array_slice($this->data,0,$index);
+	  $this->addMenuItem($label,$href);
+	  $this->data=array_merge($this->data,$tail);
+	  return $this;
+	  }*/
 	function addSeparator($template=null){
 		$this->items[]=$this->add('MenuSeparator',$this->short_name.'_separator'.count($this->items),'Item',$template);
 		return $this;
