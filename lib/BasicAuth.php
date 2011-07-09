@@ -338,7 +338,7 @@ class BasicAuth extends AbstractController {
 			//$this->api->setTags($p->template);
 			$c=$p->add('Columns');
 			$c->addColumn(3);
-			$frame=$c->addColumn(4)->frame('Authentication');
+			$frame=$c->addColumn(4)->add('Frame')->setTitle('Authentication');
 			$this->form=$this->createForm($frame);
 			$c->addColumn(3);
 		}
