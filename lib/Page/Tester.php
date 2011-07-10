@@ -1,6 +1,7 @@
 <?php
 class Page_Tester extends Page {
     public $variances=array();
+    public $input;
     function setVariance($arr){
         $this->variances=$arr;
         foreach($arr as $key=>$item){
@@ -49,6 +50,8 @@ class Page_Tester extends Page {
                     $input=$test_obj->prepare($vari,$method);
                 }
 
+                $this->input=$input;
+
                 $test_func=method_exists($test_obj,'test_'.$m)?
                     'test_'.$m:'test';
 
@@ -70,14 +73,17 @@ class Page_Tester extends Page {
                 //}
                 $ms=microtime(true)-$ms;
                 $me=($mend=memory_get_peak_usage())-$me;
-                $x=$row[$key.'_inf']='Speed: '.round($ms,3).'<br/>Memory: '.$me;
+                $row[$key.'_inf']='Speed: '.round($ms,3).'<br/>Memory: '.$me;
 
-                $x=$row[$key.'_res']=$result;
+                $this->formatResult($row,$key,$result);
             }
 
             $data[]=$row;
         }
         $this->grid->setStaticSource($data);
+    }
+    function formatResult(&$row,$key,$result){
+        $row[$key.'_res']=$result;
     }
     function expect($value,$expectation){
         return $value==$expectation?'OK':'ERR';
