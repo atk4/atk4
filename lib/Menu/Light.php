@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 class Menu_Light extends AbstractView {
@@ -35,11 +35,11 @@ class Menu_Light extends AbstractView {
 	   Next put self closing tags in form "current_" + page exactly where you want the current to appear
 
 	   services <?$current_services?>
-	   	 consulting <?$current_services_consulting?>
-	   	 mentoring <?$current_services_consulting?>
+	   consulting <?$current_services_consulting?>
+	   mentoring <?$current_services_consulting?>
 	   products <?$current_products?>
 	   about <?$current_about?><?$current_contact?>
-	   
+
 	   If you go to page servcies, the asterisk will be placed next to "services". If you are on the page services/mentoring
 	   then asterik will appear next to services AND consulting lines. 
 
@@ -47,7 +47,7 @@ class Menu_Light extends AbstractView {
 	   this.
 
 	   To add thhis to your application use $this->add('Menu_Light',null,'Menu');
-	   */
+	 */
 	function render(){
 		$c=$this->template->get('current');
 		$this->template->del('current');

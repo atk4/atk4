@@ -33,30 +33,30 @@ class DBlite_mysql extends DBlite {
 
 		// Then let's do real connect
 		$this->handle=mysql_connect(
-									 $this->settings['hostspec'],
-									 $this->settings['username'],
-									 $this->settings['password'],
-									 true // MVS: fix issue with DB connect replacing in case same host/username/pass
-									);
+				$this->settings['hostspec'],
+				$this->settings['username'],
+				$this->settings['password'],
+				true // MVS: fix issue with DB connect replacing in case same host/username/pass
+				);
 
 		if(!$this->handle) {
 			sleep(1);
 			// try connect again
 			$this->handle=mysql_connect(
-										 $this->settings['hostspec'],
-										 $this->settings['username'],
-										 $this->settings['password'],
-										 true
-										);
+					$this->settings['hostspec'],
+					$this->settings['username'],
+					$this->settings['password'],
+					true
+					);
 			if(!$this->handle) {
 				sleep(2);
 				// last attempt
 				$this->handle=mysql_connect(
-											 $this->settings['hostspec'],
-											 $this->settings['username'],
-											 $this->settings['password'],
-											 true
-											);
+						$this->settings['hostspec'],
+						$this->settings['username'],
+						$this->settings['password'],
+						true
+						);
 			}
 
 		}
@@ -100,11 +100,11 @@ class DBlite_mysql extends DBlite {
 				case 2055: // Lost connection to MySQL server at '%s', system error: %d
 					if (!mysql_ping($this->handle)){
 						if (!$this->realConnect()) {
-							 $this->fatal('Could not reconnect to server!');
+							$this->fatal('Could not reconnect to server!');
 						}
 					}
 					if(!$this->cursor = mysql_query($query,$this->handle)){
-						 $this->fatal('Could not execute query: '."\n".$query."\n");
+						$this->fatal('Could not execute query: '."\n".$query."\n");
 					}
 					break;
 				default:

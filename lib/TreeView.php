@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /**
@@ -165,7 +165,7 @@ class TreeView extends Lister{
 		return false;
 	}
 	function formatItem(){
-	   	$this->current_row['caption']="";
+		$this->current_row['caption']="";
 		foreach($this->display_field as $tmp=>$field){
 			$formatters = explode(',',$field['format']);
 			$this->current_row['caption'].=$field['prefix'];
@@ -188,7 +188,7 @@ class TreeView extends Lister{
 		$caption=$this->current_row[$field['name']];
 		$this->current_row['caption'].="<a href=".
 			$this->api->getDestinationURL($this->api->page.'_'.$field['name'],
-				array('id'=>$this->current_row[$this->id_field])).">" .
+					array('id'=>$this->current_row[$this->id_field])).">" .
 			$caption."</a>";
 	}
 
@@ -204,8 +204,8 @@ class TreeView extends Lister{
 		$this->template->del('rows');
 		while($this->fetchRow()){
 			$this->formatItem();
-		   	$this->template->del('level_off');
-		   	$this->template->del('level_on');
+			$this->template->del('level_off');
+			$this->template->del('level_on');
 
 			if($this->current_row[$this->level_field]>$prev_level){
 				$this->row_t->set('level_on', $level_on);
@@ -219,13 +219,13 @@ class TreeView extends Lister{
 					$off.=$level_off;
 					$diff--;
 				}
-		   		$this->row_t->set('level_off', $off);
+				$this->row_t->set('level_off', $off);
 			}
 
 			//adding a branch expand button
 			$this->row_t->set('button_id', 'ec_'.$this->current_row[$this->id_field]);
 			$this->row_t->set('ec', $this->getButton($this->current_row['collapsed'],
-					$this->current_row[$this->id_field]));
+						$this->current_row[$this->id_field]));
 
 			$span='<span id="p_'.$this->current_row[$this->id_field].'">';
 			if($this->current_row['collapsed']==1)$span.='</span>';
@@ -246,13 +246,13 @@ class TreeView extends Lister{
 			if(!$this->isNodeHasChildren($id))return $button;
 			$onclick=
 				"treenode_flip($expand, $id, '".$this->api->getDestinationURL(null, array(
-					'ec'=>$id,
-					'cut_object'=>$this->name,
-					'ec_action'=>$expand?'expand':'collapse'
-				))."')";
+								'ec'=>$id,
+								'cut_object'=>$this->name,
+								'ec_action'=>$expand?'expand':'collapse'
+								))."')";
 			;
 			$button='<i class="atk-icon atk-icons-red atk-icon-arrows-'.($extend?'right':'bottomright').'"></i>';
-				<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
+			<img src="amodules3/templates/kt2/'.($expand?'plus.gif':'minus.gif').'" ' .
 				'id="button_'.$id.'"'.
 				' onclick="'.$onclick.'">';
 		}else return '';

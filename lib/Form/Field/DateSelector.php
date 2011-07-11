@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /**
@@ -75,8 +75,8 @@ class Form_Field_DateSelector extends Form_Field {
 	function set($value){
 		/*if(is_null($value)){
 
-			return;
-		}*/
+		  return;
+		  }*/
 		if (is_null($value) || ($value=='') || ($value == '0000-00-00') || (false === $tm = strtotime($value))){
 			$this->disable();
 		}
@@ -104,8 +104,8 @@ class Form_Field_DateSelector extends Form_Field {
 	function enable(){
 		$this->enabled = true;
 		$this->value = str_pad($this->c_year, 4, '0', STR_PAD_LEFT).
-				'-'.str_pad($this->c_month, 2, '0', STR_PAD_LEFT).
-				'-'.str_pad($this->c_day, 2, '0', STR_PAD_LEFT);
+			'-'.str_pad($this->c_month, 2, '0', STR_PAD_LEFT).
+			'-'.str_pad($this->c_day, 2, '0', STR_PAD_LEFT);
 	}
 
 	function disable(){
@@ -198,14 +198,14 @@ class Form_Field_DateSelector extends Form_Field {
 
 		if($this->required)
 			$output.=$this->getTag('input',
-				array('type'=>'hidden', 'name'=>$this->name.'_enabled', 'id'=>$this->name.'_enabled', 'value'=>'Y'));
+					array('type'=>'hidden', 'name'=>$this->name.'_enabled', 'id'=>$this->name.'_enabled', 'value'=>'Y'));
 		else{
 			$attrs =array('type'=>'checkbox',
 					'name'=>$this->name.'_enabled',
 					'id'=>$this->name.'_enabled',
 					'onclick'=>'switchDateSelector(this,\''.$this->name.'\');'.$onChange,
 					'onchange'=>$onChange."refreshDateSelector('{$this->name}')"
-					);
+				     );
 
 			if($this->enabled){
 				$attrs['checked'] = 'checked';
@@ -228,9 +228,9 @@ class Form_Field_DateSelector extends Form_Field {
 		foreach($this->days as $value=>$descr){
 			$d.=
 				$this->getTag('option',array(
-						'value'=>$value,
-						'selected'=>$value == $this->c_day,
-					))
+							'value'=>$value,
+							'selected'=>$value == $this->c_day,
+							))
 				.htmlspecialchars($descr)
 				.$this->getTag('/option');
 		}
@@ -246,9 +246,9 @@ class Form_Field_DateSelector extends Form_Field {
 		foreach($this->months as $value=>$descr){
 			$m.=
 				$this->getTag('option',array(
-						'value'=>$value,
-						'selected'=>$value == $this->c_month
-					))
+							'value'=>$value,
+							'selected'=>$value == $this->c_month
+							))
 				.htmlspecialchars($descr)
 				.$this->getTag('/option');
 		}
@@ -264,9 +264,9 @@ class Form_Field_DateSelector extends Form_Field {
 		foreach($this->years as $value=>$descr){
 			$y.=
 				$this->getTag('option',array(
-						'value'=>$value,
-						'selected'=>$value == $this->c_year
-					))
+							'value'=>$value,
+							'selected'=>$value == $this->c_year
+							))
 				.htmlspecialchars($descr)
 				.$this->getTag('/option');
 		}

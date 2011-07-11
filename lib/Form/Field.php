@@ -72,9 +72,9 @@ abstract class Form_Field extends AbstractView {
 	function displayFieldError($msg=null){
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
-        $this->owner->js(true)
-            ->atk4_form('fieldError',$this->short_name,$msg)
-            ->execute();
+		$this->owner->js(true)
+			->atk4_form('fieldError',$this->short_name,$msg)
+			->execute();
 
 		$this->owner->errors[$this->short_name]=$msg;
 	}
@@ -106,24 +106,24 @@ abstract class Form_Field extends AbstractView {
 		$this->attr[$property]=$value;
 		return $this;
 	}
-    function setAttr($property,$value='true'){
-        return $this->setProperty($property,$value);
-    }
+	function setAttr($property,$value='true'){
+		return $this->setProperty($property,$value);
+	}
 	function setFieldHint($var_args=null){
 		/* Adds a hint after this field. Thes will call Field_Hint->set()
 		   with same arguments you called this funciton.
-		   */
+		 */
 		$hint=$this->add('Form_Hint',null,'after_field');
 		call_user_func_array(array($hint,'set'), func_get_args());
 		return $this;
 	}
 	function setFieldTitle($text){
-        /* OBSOLETE 4.1 */
+		/* OBSOLETE 4.1 */
 		$this->template->trySet('field_title',$text);
 		return $this;
 	}
 	function clearFieldValue(){
-        /* OBSOLETE 4.1, use set(null) */
+		/* OBSOLETE 4.1, use set(null) */
 		$this->value=null;
 	}
 	function loadPOST(){
@@ -135,13 +135,13 @@ abstract class Form_Field extends AbstractView {
 			if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
 			else $this->set($this->default_value);
 		}
-        $this->normalize();
+		$this->normalize();
 	}
-    function normalize(){
-        /* Normalization will make sure that entry conforms to the field type. 
-           Possible trimming, roudning or length enforcements may happen */
-        $this->hook('normalize');
-    }
+	function normalize(){
+		/* Normalization will make sure that entry conforms to the field type. 
+		   Possible trimming, roudning or length enforcements may happen */
+		$this->hook('normalize');
+	}
 	function validate(){
 		// NoSave fields should not be validated, disabled as well
 		if($this->disabled || $this->no_save)return true;
@@ -156,8 +156,12 @@ abstract class Form_Field extends AbstractView {
 	}
 	function validateNotNULL($msg=''){
 		$this->setMandatory();
-		$this->validateField('$this->get()!==""',(($msg && (is_string($msg)))?$msg:'".$this->caption."'.
-					__(' is a mandatory field!')));
+        if($msg){
+            $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
+        }else{
+            $msg=$this->api->_($msg);
+        }
+		$this->validateField('$this->get()!==""',$msg);
 		return $this;
 	}
 	function setNotNull($msg=''){
@@ -165,12 +169,12 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function setDefault($default=null){
-        /* OBSOLETE 4.1, use set() */
+		/* OBSOLETE 4.1, use set() */
 		$this->default_value=$default;
 		return $this;
 	}
 	function getDefault(){
-        /* OBSOLETE 4.1, use set() */
+		/* OBSOLETE 4.1, use set() */
 		return $this->default_value;
 	}
 
@@ -178,12 +182,12 @@ abstract class Form_Field extends AbstractView {
 		// This function returns HTML tag for the input field. Derived classes should inherit this and add
 		// new properties if needed
 		return $this->getTag('input',
-			array_merge(array(
-				'name'=>$this->name,
-				'id'=>$this->name,
-				'value'=>$this->value,
-			),$attr,$this->attr)
-		);
+				array_merge(array(
+						'name'=>$this->name,
+						'id'=>$this->name,
+						'value'=>$this->value,
+						),$attr,$this->attr)
+				);
 	}
 	function setSeparator($separator){
 		$this->separator = $separator;
@@ -202,10 +206,10 @@ abstract class Form_Field extends AbstractView {
 		// some fields may not have field_imput tag at all...
 		$this->template->trySet('field_input',$this->field_prepend.$this->getInput().$this->field_append);
 		$this->template->trySet('field_error',
-							 isset($this->owner->errors[$this->short_name])?
-							 $this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
-							 :''
-							 );
+				isset($this->owner->errors[$this->short_name])?
+				$this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
+				:''
+				);
 		if (is_object($this->mandatory_template)) {
 			$this->template->trySet('field_mandatory',$this->isMandatory()?$this->mandatory_template->render():'');
 		}
@@ -331,18 +335,18 @@ class Form_Field_Checkbox extends Form_Field {
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
 		$this->template->tryDel('label_container');
-        if(strpos('<',$this->caption)!==false){
-            // HTML in label
-            $label=$this->caption;
-        }else{
-            $label='<label for="'.$this->name.'">'.$this->caption.'</label>';
-        }
+		if(strpos('<',$this->caption)!==false){
+			// HTML in label
+			$label=$this->caption;
+		}else{
+			$label='<label for="'.$this->name.'">'.$this->caption.'</label>';
+		}
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
 						'value'=>'Y',
 						'checked'=>$this->value=='Y'
-						),$attr
+					     ),$attr
 					)).' &ndash; '.$label;
 	}
 	function loadPOST(){
@@ -354,17 +358,17 @@ class Form_Field_Checkbox extends Form_Field {
 	}
 }
 class Form_Field_Password extends Form_Field {
-    function normalize(){
-        // user may have entered spaces accidentally in the password field.
-        // Clean them up.
-        $this->set(trim($this->get()));
-        parent::normalize();
-    }
+	function normalize(){
+		// user may have entered spaces accidentally in the password field.
+		// Clean them up.
+		$this->set(trim($this->get()));
+		parent::normalize();
+	}
 	function getInput($attr=array()){
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'password',
-						),$attr
+					     ),$attr
 					));
 	}
 }
@@ -373,7 +377,7 @@ class Form_Field_Hidden extends Form_Field {
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'hidden',
-						),$attr
+					     ),$attr
 					));
 	}
 	function render(){
@@ -418,7 +422,7 @@ class Form_Field_FileSize extends Form_Field_Hidden{
 class Form_Field_Time extends Form_Field {
 	function getInput($attr=array()){
 		return parent::getInput(array_merge(array('type'=>'text',
-			'value'=>format_time($this->value)),$attr));
+						'value'=>format_time($this->value)),$attr));
 	}
 }
 class Form_Field_Date extends Form_Field {
@@ -426,9 +430,9 @@ class Form_Field_Date extends Form_Field {
 	private $is_valid = false;
 
 	/*function getInput($attr=array()){
-		return parent::getInput(array_merge(array('type'=>'text',
-			'value'=>($this->is_valid ? date('Y-m-d', $this->value) : $this->value)),$attr));
-	}*/
+	  return parent::getInput(array_merge(array('type'=>'text',
+	  'value'=>($this->is_valid ? date('Y-m-d', $this->value) : $this->value)),$attr));
+	  }*/
 	private function invalid(){
 		return $this->displayFieldError('Not a valid date');
 	}
@@ -445,8 +449,8 @@ class Form_Field_Date extends Form_Field {
 			$c = explode($this->sep, $this->value);
 			//day must go first, month should be second and a year should be last
 			if(strlen($c[0]) != 4 ||
-				$c[1] <= 0 || $c[1] > 12 ||
-				$c[2] <= 0 || $c[2] > 31)
+					$c[1] <= 0 || $c[1] > 12 ||
+					$c[2] <= 0 || $c[2] > 31)
 			{
 				$this->invalid();
 			}
@@ -480,13 +484,13 @@ class Form_Field_Text extends Form_Field {
 }
 
 class Form_Field_Number extends Form_Field_Line {
-    function normalize(){
-        $v=$this->get();
+	function normalize(){
+		$v=$this->get();
 
-        // get rid of  TODO
+		// get rid of  TODO
 
-        $this->set($v);
-    }
+		$this->set($v);
+	}
 }
 class Form_Field_Money extends Form_Field_Line {
 	function getInput($attr=array()){
@@ -540,11 +544,11 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 		if(!$this->value)return parent::validate();
 		if(!isset($this->value_list[$this->value])){
 			/*
-			if($this->api->isAjaxOutput()){
-				$this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
-					->execute();
-			}
-			*/
+			   if($this->api->isAjaxOutput()){
+			   $this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
+			   ->execute();
+			   }
+			 */
 			$this->owner->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
@@ -565,8 +569,8 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 			if ($value === '_separator') {
 				$output.=
 					$this->getTag('option',array(
-							'disabled'=>'disabled',
-						))
+								'disabled'=>'disabled',
+								))
 					.htmlspecialchars($descr)
 					.$this->getTag('/option');
 			} else {
@@ -592,17 +596,17 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 	 * list. You may check as many as you like and when you save their ID
 	 * values will be stored coma-separated in varchar type field.
 	 *
-		$f->addField('CheckboxList','producers','Producers')->setValueList(array(
-					1=>'Mr John',
-					2=>'Piter ',
-					3=>'Michail Gershwin',
-					4=>'Bread and butter',
-					5=>'Alex',
-					6=>'Benjamin',
-					7=>'Rhino',
-					));
+	 $f->addField('CheckboxList','producers','Producers')->setValueList(array(
+	 1=>'Mr John',
+	 2=>'Piter ',
+	 3=>'Michail Gershwin',
+	 4=>'Bread and butter',
+	 5=>'Alex',
+	 6=>'Benjamin',
+	 7=>'Rhino',
+	 ));
 
-					*/
+	 */
 
 	var $columns=2;
 	function validate(){
@@ -640,9 +644,9 @@ class Form_Field_CheckboxList extends Form_Field_ValueList {
 	function loadPOST(){
 		$data=$_POST[$this->name];
 		if(is_array($data))
-		   $data=join(',',$data);
+			$data=join(',',$data);
 		else
-		   $data='';
+			$data='';
 
 		$gpc = get_magic_quotes_gpc();
 		if ($gpc){
@@ -657,30 +661,30 @@ class Form_Field_Radio extends Form_Field_ValueList {
 	function validate(){
 		if(!isset($this->value_list[$this->value])){
 			/*
-			if($this->api->isAjaxOutput()){
-				echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
-			}
-			*/
+			   if($this->api->isAjaxOutput()){
+			   echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
+			   }
+			 */
 			$this->displayFieldError("This is not one of offered values");
 		}
 		return parent::validate();
 	}
-    function getInput($attr=array()){
+	function getInput($attr=array()){
 		$output = '<div id="'.$this->name.'" class="atk-radio">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
 				$this->getTag('input',
-				array_merge(
-					array(
-						'id'=>$this->name.'_'.$value,
-						'name'=>$this->name,
-						'type'=>'radio',
-						'value'=>$value,
-						'checked'=>$value == $this->value
-					),
-					$this->attr,
-					$attr
-				))
+						array_merge(
+							array(
+								'id'=>$this->name.'_'.$value,
+								'name'=>$this->name,
+								'type'=>'radio',
+								'value'=>$value,
+								'checked'=>$value == $this->value
+							     ),
+							$this->attr,
+							$attr
+							))
 				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
 		}
 		$output .= '</div>';

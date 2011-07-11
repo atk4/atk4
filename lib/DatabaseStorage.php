@@ -52,10 +52,10 @@ class DatabaseStorage extends AbstractStorage{
 	function getFilespaceId($filesize=false) {
 		if($filesize===false)return $this->filespace_id;
 		if (($res = $this->api->db->getHash("select id, dirname " .
-				"from ".DTP.'filespace'.
-				" where enabled = '1' and (used_space + $filesize) <= total_space " .
-				" and stored_files_cnt < 4096*256*256 " .
-				" limit 1"))===false) {
+						"from ".DTP.'filespace'.
+						" where enabled = '1' and (used_space + $filesize) <= total_space " .
+						" and stored_files_cnt < 4096*256*256 " .
+						" limit 1"))===false) {
 			throw new FileException("Error getting filespace");}
 		if (empty($res) or (disk_free_space($res['dirname'])<$filesize)) {
 			throw new FileException('Unavailable filespace for file!');
@@ -83,13 +83,13 @@ class DatabaseStorage extends AbstractStorage{
 				->set('stored_files_cnt = stored_files_cnt - 1')
 				->where('id',$filespace_id)
 				->do_update();
-/*
+			/*
 			// enabled filespace if used space less than total space
 			if ($db->query('update '.tbn('filespace').
-						   '   set enabled = \'1\' '.
-						   ' where enabled = \'0\' and used_space < total_space and id = :id',
-						   array('int id'=>$this->_filespace_id))===false) db_error(__FILE__,__LINE__);
-*/
+			'   set enabled = \'1\' '.
+			' where enabled = \'0\' and used_space < total_space and id = :id',
+			array('int id'=>$this->_filespace_id))===false) db_error(__FILE__,__LINE__);
+			 */
 			// delete record desctibe currect file
 			$this->files->clear_args('where')
 				->where('id',$file_id)
@@ -101,7 +101,7 @@ class DatabaseStorage extends AbstractStorage{
 				->do_insert();
 		}else{
 			throw new FileNotFoundException("Could not delete file ID=".$file_id."; path: ".
-				$this->realFilePath($file_id));
+					$this->realFilePath($file_id));
 		}
 
 		return $res;
@@ -196,7 +196,7 @@ class DatabaseStorage extends AbstractStorage{
 			$_id=$this->api->db->lastId();
 			// release lock
 			if (($res_op=$this->api->db->getOne("/* hack */select release_lock('fs_fnum_lock')"))===false)
-					   throw new FileException("Error releasing lock");
+				throw new FileException("Error releasing lock");
 
 			// moving file to its actual destination
 			$file['real_filename']=$this->realFilePath($_id);
@@ -205,13 +205,13 @@ class DatabaseStorage extends AbstractStorage{
 				$_id=null;
 				@unlink($file['temp_filename']);
 				throw new FileException('Error moving file '.$this->file['temp_filename'].' into filespace ('.
-					$this->realFilePath($_id).')!');
+							$this->realFilePath($_id).')!');
 			}else{
 				// increase used space
 				if ($this->filespaces->where('id',$file['filespace_id'])
-					->set('used_space = used_space + '.$file['filesize'])
-					->set('stored_files_cnt = stored_files_cnt + 1')
-					->do_update()===false) throw new FileException("Error updating filespace");
+						->set('used_space = used_space + '.$file['filesize'])
+						->set('stored_files_cnt = stored_files_cnt + 1')
+						->do_update()===false) throw new FileException("Error updating filespace");
 				// erasing temp name as it is no more
 				$file['temp_filename']='';
 			}
@@ -265,15 +265,15 @@ class DatabaseStorage extends AbstractStorage{
 	}
 	function realFilePath($file_id){
 		/*$file=$this->api->db->dsql()->table('file')
-			->where('id',$file_id)->field('filespace_id,filenum')->do_getHash();
-		$this->filespace_id=$file['filespace_id'];*/
+		  ->where('id',$file_id)->field('filespace_id,filenum')->do_getHash();
+		  $this->filespace_id=$file['filespace_id'];*/
 		$filename=$this->api->db->dsql()->table('file b')
 			->join('filespace c','c.id=b.filespace_id')
 			->field("concat(c.dirname,'/',substring(lpad(hex(b.filenum),7,'0'),1,3),'/',substring(lpad(hex(b.filenum),7,'0'),4,2),'/',substring(lpad(hex(b.filenum),7,'0'),6,2)) filename")
 			->where('b.id',$file_id)
 			->do_getOne();
 		return $filename;
-			//$this->_real_filename($file_id,$file['filenum'],false);
+		//$this->_real_filename($file_id,$file['filenum'],false);
 	}
 }
 class FileNotFoundException extends FileException{}

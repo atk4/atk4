@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 class Grid_Basic extends CompleteLister {
@@ -38,41 +38,41 @@ class Grid_Basic extends CompleteLister {
 	public $totals_t=null;
 
 	/**
-	* Inline related property
-	* If true - TAB key submits row and activates next row
-	*/
+	 * Inline related property
+	 * If true - TAB key submits row and activates next row
+	 */
 	protected $tab_moves_down=false;
 	/**
-	* Inline related property
-	* Wether or not to show submit line
-	*/
+	 * Inline related property
+	 * Wether or not to show submit line
+	 */
 	protected $show_submit=true;
 	private $record_order=null;
 
 	public $title_col=array();
 
 	/**
-	* $tdparam property is an array with cell parameters specified in td tag.
-	* This should be a hash: 'param_name'=>'param_value'
-	* Following parameters treated and processed in a special way:
-	* 1) 'style': nested array, style parameter. items of this nested array converted to a form of
-	* 		 style: style="param_name: param_value; param_name: param_value"
-	* 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
-	* 		use style/white-space property or simply format_wrap()
-	*
-	* All the rest are not checked and converted to a form of param_name="param_value"
-	*
-	* This is a tree-like array with the following structure:
-	* array(
-	* 		[level1]=>dataset_row=array(
-	* 			[level2]=>field=array(
-	* 				[level3]=>tdparam_elements=array(
-	* 					param_name=>param_value
-	* 				)
-	* 			)
-	* 		)
-	* )
-	*/
+	 * $tdparam property is an array with cell parameters specified in td tag.
+	 * This should be a hash: 'param_name'=>'param_value'
+	 * Following parameters treated and processed in a special way:
+	 * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
+	 * 		 style: style="param_name: param_value; param_name: param_value"
+	 * 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
+	 * 		use style/white-space property or simply format_wrap()
+	 *
+	 * All the rest are not checked and converted to a form of param_name="param_value"
+	 *
+	 * This is a tree-like array with the following structure:
+	 * array(
+	 * 		[level1]=>dataset_row=array(
+	 * 			[level2]=>field=array(
+	 * 				[level3]=>tdparam_elements=array(
+	 * 					param_name=>param_value
+	 * 				)
+	 * 			)
+	 * 		)
+	 * )
+	 */
 	protected $tdparam=array();
 
 	public $js_widget='ui.atk4_grid';
@@ -117,10 +117,10 @@ class Grid_Basic extends CompleteLister {
 
 		return $this;
 	}
-    function getColumn($column){
-        $this->last_column=$column;
-        return $this;
-    }
+	function getColumn($column){
+		$this->last_column=$column;
+		return $this;
+	}
 	function removeColumn($name){
 		unset($this->columns[$name]);
 		if($this->last_column==$name)$this->last_column=null;
@@ -134,7 +134,7 @@ class Grid_Basic extends CompleteLister {
 	}
 	function addQuickSearch($fields,$class='QuickSearch'){
 		return $this->add($class,null,'quick_search')
-            ->useGrid($this)
+			->useGrid($this)
 			->useFields($fields);
 	}
 	function makeSortable($db_sort=null){
@@ -225,17 +225,17 @@ class Grid_Basic extends CompleteLister {
 	}
 	function format_time($field){
 		$this->current_row[$field]=date($this->api->getConfig('locale/time','H:i:s'),
-                strtotime($this->current_row[$field]));
+				strtotime($this->current_row[$field]));
 	}
 	function format_date($field){
 		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-		$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
-			strtotime($this->current_row[$field]));
+			$this->current_row[$field]=date($this->api->getConfig('locale/date','d/m/Y'),
+					strtotime($this->current_row[$field]));
 	}
 	function format_datetime($field){
 		if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-		$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
-			strtotime($this->current_row[$field]));
+			$this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+					strtotime($this->current_row[$field]));
 	}
 	function format_timestamp($field){
 		if(!$this->current_row[$field])$this->current_row[$field]='-';
@@ -251,9 +251,9 @@ class Grid_Basic extends CompleteLister {
 		$this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: wrap';
 	}
 	function format_template($field){
-        if(!($t=$this->columns[$field]['template'])){
-            throw new BaseException('use setTemplate() for field '.$field);
-        }
+		if(!($t=$this->columns[$field]['template'])){
+			throw new BaseException('use setTemplate() for field '.$field);
+		}
 		$this->current_row[$field]=$t
 			->set($this->current_row)
 			->trySet('_value_',$this->current_row[$field])
@@ -263,11 +263,11 @@ class Grid_Basic extends CompleteLister {
 		$class=$this->name.'_'.$field.'_expander';
 		$params=array(
 				'class'=>$class."_".$field." $widget lister_cell"
-				)+$params;
+			     )+$params;
 		$this->js(true)->_tag('.'.$class.'_'.$field)->_load($widget)->activate($widget_json);
 		/*
-		$this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
-		*/
+		   $this->api->add('jUI')->addWidget($widget)->activate('.'.$class.'_'.$field,$widget_json);
+		 */
 		$this->tdparam[$this->getCurrentIndex()][$field]=$params;
 		if(!$this->current_row[$field]){
 			$this->current_row[$field]=$this->columns[$field]['descr'];
@@ -290,17 +290,17 @@ class Grid_Basic extends CompleteLister {
 		@$this->current_row[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
 			id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
 			rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
-						array('expander'=>$field,
-							'cut_page'=>1,
-							'expanded'=>$this->name,
+			array('expander'=>$field,
+					'cut_page'=>1,
+					'expanded'=>$this->name,
 
-                            // TODO: id is obsolete
-							'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id'],
-							$this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
-							)
-						).'"
-			/><label for="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'">'.
-			$this->current_row[$field].'</label>';
+					// TODO: id is obsolete
+					'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id'],
+					$this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
+			     )
+				).'"
+				/><label for="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'">'.
+				$this->current_row[$field].'</label>';
 	}
 	function init_expander_widget($field){
 		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
@@ -308,27 +308,27 @@ class Grid_Basic extends CompleteLister {
 	}
 	function init_expander($field){
 		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
-				$this->js(true)->find('.button_'.$field)->button();
+		$this->js(true)->find('.button_'.$field)->button();
 
-        if(!isset($this->columns[$field]['refid'])){
-            // TODO: test
-        
-            $refid=$this->getController();
-            if($refid)$refid=$refid->getModel();
-            //if($refid)$refid=$refid->entity_code;
-            if($refid)$refid=$refid->getEntityCode();//Get Protected property Model::entity_code
-            if($refid){
-                $this->columns[$field]['refid']=$refid;
-            }else{
+		if(!isset($this->columns[$field]['refid'])){
+			// TODO: test
 
-                if($this->dq)
-                    $refid=$this->dq->args['table'];
+			$refid=$this->getController();
+			if($refid)$refid=$refid->getModel();
+			//if($refid)$refid=$refid->entity_code;
+			if($refid)$refid=$refid->getEntityCode();//Get Protected property Model::entity_code
+			if($refid){
+				$this->columns[$field]['refid']=$refid;
+			}else{
 
-                if(!$refid)$refid=preg_replace('/.*_/','',$this->api->page);
+				if($this->dq)
+					$refid=$this->dq->args['table'];
 
-                $this->columns[$field]['refid']=$refid;
-            }
-        }
+				if(!$refid)$refid=preg_replace('/.*_/','',$this->api->page);
+
+				$this->columns[$field]['refid']=$refid;
+			}
+		}
 
 
 		$class=$this->name.'_'.$field.'_expander';
@@ -342,12 +342,12 @@ class Grid_Basic extends CompleteLister {
 	}
 	function format_inline($field, $idfield='id'){
 		/**
-		* Formats the InlineEdit: field that on click should substitute the text
-		* in the columns of the row by the edit controls
-		*
-		* The point is to set an Id for each column of the row. To do this, we should
-		* set a property showing that id should be added in prerender
-		*/
+		 * Formats the InlineEdit: field that on click should substitute the text
+		 * in the columns of the row by the edit controls
+		 *
+		 * The point is to set an Id for each column of the row. To do this, we should
+		 * set a property showing that id should be added in prerender
+		 */
 		$val=$this->current_row[$field];
 		$this->current_row[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
 			$this->current_row['id']).'" >'.
@@ -381,24 +381,24 @@ class Grid_Basic extends CompleteLister {
 	function format_order($field, $idfield='id'){
 		$n=$this->name.'_'.$field.'_'.$this->current_row[$idfield];
 		$this->tdparam[$this->getCurrentIndex()][$field]=array(
-			'id'=>$n,
-			'style'=>array(
-				'cursor'=>'hand'
-			)
-		);
+				'id'=>$n,
+				'style'=>array(
+					'cursor'=>'hand'
+					)
+				);
 		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
 	}
-    function init_link($field){
-        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
-    }
+	function init_link($field){
+		$this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
+	}
 	function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));
-        return $this->format_template($field);
-        /*
-		$this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
-			array('id'=>$this->current_row['id'])).'">'.
-			$this->columns[$field]['descr'].'</a>';
-            */
+		$this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));
+		return $this->format_template($field);
+		/*
+		   $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
+		   array('id'=>$this->current_row['id'])).'">'.
+		   $this->columns[$field]['descr'].'</a>';
+		 */
 	}
 	function _performDelete($id){
 		$this->dq->where($this->dq->args['table'].'.id',$id)->do_delete();
@@ -416,18 +416,18 @@ class Grid_Basic extends CompleteLister {
 		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
-    function setButtonClass($class){
-        $this->columns[$this->last_field]['button_class']=$class;
-    }
-    function init_delete($field){
+	function setButtonClass($class){
+		$this->columns[$this->last_field]['button_class']=$class;
+	}
+	function init_delete($field){
 		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
-        $this->columns[$field]['button_class']='red';
-        $g=$this;
-        $this->api->addHook('post-init',function() use($g,$field){
-            if($g->hasColumn($field))$g->addOrder()->move($field,'last')->now();
-        });
-        return $this->init_confirm($field);
-    }
+		$this->columns[$field]['button_class']='red';
+		$g=$this;
+		$this->api->addHook('post-init',function() use($g,$field){
+				if($g->hasColumn($field))$g->addOrder()->move($field,'last')->now();
+				});
+		return $this->init_confirm($field);
+	}
 	function init_confirm($field){
 		$this->js(true)->find('.button_'.$field)->button();
 	}
@@ -436,24 +436,24 @@ class Grid_Basic extends CompleteLister {
 	}
 	function format_button($field){
 		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-		'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+			'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
-                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
-			$this->columns[$field]['descr'].'</button>';
+				(isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
+				$this->columns[$field]['descr'].'</button>';
 	}
 	function format_confirm($field){
 		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
-		'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
+			'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
-                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
-			$this->columns[$field]['descr'].'</button>';
+				(isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
+				$this->columns[$field]['descr'].'</button>';
 	}
 	function format_prompt($field){
 		$this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-		'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+			'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
 			array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'&value=\'+value)">'.
-                (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
-			$this->columns[$field]['descr'].'</button>';
+				(isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
+				$this->columns[$field]['descr'].'</button>';
 	}
 	function format_checkbox($field){
 		$this->current_row[$field] = '<input type="checkbox" id="cb_'.
@@ -491,7 +491,7 @@ class Grid_Basic extends CompleteLister {
 		$this->dq->calc_found_rows();
 		return $this;
 	}
-    function processSorting(){
+	function processSorting(){
 		if($this->sortby){
 			$desc=false;
 			$order=$this->sortby_db;
@@ -501,7 +501,7 @@ class Grid_Basic extends CompleteLister {
 			}
 			if($order)$this->dq->order($order,$desc);
 		}
-    }
+	}
 	function execQuery(){
 		$this->processSorting();
 		return parent::execQuery();
@@ -514,134 +514,134 @@ class Grid_Basic extends CompleteLister {
 	}
 
 	/**
-	* Returns the properly formatted row content.
-	* Used firstly with Ajax::reloadExpandedRow() and in inline edit
-	* @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
-	*/
+	 * Returns the properly formatted row content.
+	 * Used firstly with Ajax::reloadExpandedRow() and in inline edit
+	 * @param $datatype can be 'ajax' or 'jquery'. Regulates result contents
+	 */
 	/* Temporary not working, untill ui.atk4_grid will regain functionality to reload one cell
-	function getRowContent($id,$datatype='jquery'){
+	   function getRowContent($id,$datatype='jquery'){
 
-		// if DB source set
-		if(isset($this->dq)){
-			// *** Getting required record from DB ***
-			$idfield=$this->dq->args['fields'][0];
-			if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-			$this->dq->where($idfield,$id);
-			//we should switch off the limit or we won't get any value
-			$this->dq->limit(1);
-			#zak: This fix is if grid is not using the $this->api->db database but some else it hsould be depending only on $this->dq
-			$row_data=$this->dq->do_getHash(); //$this->api->db->getHash($this->dq->select());
-		}
-		// if static source set
-		elseif(isset($this->data)){
-			$found=false;
-			foreach($this->data as $index=>$row){
-				if($row['id']==$id){
-					$row_data=$row;
-					$found=true;
+	// if DB source set
+	if(isset($this->dq)){
+	// *** Getting required record from DB ***
+	$idfield=$this->dq->args['fields'][0];
+	if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
+	$this->dq->where($idfield,$id);
+	//we should switch off the limit or we won't get any value
+	$this->dq->limit(1);
+#zak: This fix is if grid is not using the $this->api->db database but some else it hsould be depending only on $this->dq
+$row_data=$this->dq->do_getHash(); //$this->api->db->getHash($this->dq->select());
+}
+// if static source set
+elseif(isset($this->data)){
+$found=false;
+foreach($this->data as $index=>$row){
+if($row['id']==$id){
+$row_data=$row;
+$found=true;
+break;
+}
+}
+// no data found, returning empty string
+if(!$found)return "";
+}
+else return "";
+
+// *** Initializing template ***
+$this->precacheTemplate(false);
+
+// *** Rendering row ***
+$this->current_row=$row_data;
+$this->formatRow();
+
+// *** Combining result string ***
+$func='formatRowContent_'.$datatype;
+return $this->$func($id);
+}
+	 */
+function getFieldStyle($field,$id){
+	/**
+	 * Returns the structured string with row styles. Used along with getRowContent()
+	 * in row redrawing
+	 */
+	$style=$this->tdparam[$this->getCurrentIndex()][$field];
+	$tdparam=null;
+	if(is_array($style)){
+		// now we should convert style elements' names to JS compatible
+		$tdparam=array();
+		foreach($style as $key=>$value){
+			switch($key){
+				//case 'background-color':$tdparam[]="$key:$value";break;
+				case 'style': case 'css':
+					// style is a nested array
+					foreach($value as $k=>$v){
+						$tdparam[]="$k::$v";
+					}
 					break;
-				}
-			}
-			// no data found, returning empty string
-			if(!$found)return "";
-		}
-		else return "";
 
-		// *** Initializing template ***
-		$this->precacheTemplate(false);
-
-		// *** Rendering row ***
-		$this->current_row=$row_data;
-		$this->formatRow();
-
-		// *** Combining result string ***
-		$func='formatRowContent_'.$datatype;
-		return $this->$func($id);
-	}
-	*/
-	function getFieldStyle($field,$id){
-		/**
-		* Returns the structured string with row styles. Used along with getRowContent()
-		* in row redrawing
-		*/
-		$style=$this->tdparam[$this->getCurrentIndex()][$field];
-		$tdparam=null;
-		if(is_array($style)){
-			// now we should convert style elements' names to JS compatible
-			$tdparam=array();
-			foreach($style as $key=>$value){
-				switch($key){
-					//case 'background-color':$tdparam[]="$key:$value";break;
-					case 'style': case 'css':
-						// style is a nested array
-						foreach($value as $k=>$v){
-							$tdparam[]="$k::$v";
-						}
-						break;
-
-					default:
-						$tdparam[]="$key::$value";
-				}
+				default:
+					$tdparam[]="$key::$value";
 			}
 		}
-		return (is_array($tdparam)?join($tdparam,'<s>'):'');
 	}
-	function getRowTitle(){
-		$title=' ';
-		foreach($this->title_col as $col){
-			$title.=$this->current_row[$col];
-		}
-		if($title==' '){
-			return "Row #".$this->current_row['id'];
-		}
-		return substr($title,1);
+	return (is_array($tdparam)?join($tdparam,'<s>'):'');
+}
+function getRowTitle(){
+	$title=' ';
+	foreach($this->title_col as $col){
+		$title.=$this->current_row[$col];
 	}
-	function getFieldContent($field,$id){
-		/**
-		* Returns the properly formatted field content.
-		* Used firstly with Ajax::reloadExpandedField()
-		*/
-
-		// *** Getting required record from DB ***
-		$idfield=$this->dq->args['fields'][0];
-		if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-		$this->dq->where($idfield,$id);
-		//we should switch off the limit or we won't get any value
-		$this->dq->limit(1);
-		$row_data=$this->api->db->getHash($this->dq->select());
-
-		// *** Initializing template ***
-		$this->precacheTemplate(false);
-
-		// *** Rendering row ***
-		$this->current_row=(array)$row_data;
-		$row=$this->formatRow();
-
-		// *** Returning required field value ***
-		return $row[$field];
+	if($title==' '){
+		return "Row #".$this->current_row['id'];
 	}
-	function formatRow(){
-		// Support for StdObject grids
-		if(!is_array($this->current_row))$this->current_row=(array)$this->current_row;
-		if(!$this->columns)throw new BaseException('No column defined for grid');
-		foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
-			$this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
+	return substr($title,1);
+}
+function getFieldContent($field,$id){
+	/**
+	 * Returns the properly formatted field content.
+	 * Used firstly with Ajax::reloadExpandedField()
+	 */
 
-            if($this->safe_html_output)
-                $this->current_row[$tmp]=htmlspecialchars($this->current_row[$tmp]);
+	// *** Getting required record from DB ***
+	$idfield=$this->dq->args['fields'][0];
+	if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
+	$this->dq->where($idfield,$id);
+	//we should switch off the limit or we won't get any value
+	$this->dq->limit(1);
+	$row_data=$this->api->db->getHash($this->dq->select());
 
-			$formatters = explode(',',$column['type']);
-			foreach($formatters as $formatter){
-                if(!$formatter)continue;
-				if(method_exists($this,$m="format_".$formatter)){
-					$this->$m($tmp,$column);
-				}else throw new BaseException("Grid does not know how to format type: ".$formatter);
-			}
-			// setting cell parameters (tdparam)
-			$this->applyTDParams($tmp);
-			if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
+	// *** Initializing template ***
+	$this->precacheTemplate(false);
+
+	// *** Rendering row ***
+	$this->current_row=(array)$row_data;
+	$row=$this->formatRow();
+
+	// *** Returning required field value ***
+	return $row[$field];
+}
+function formatRow(){
+	// Support for StdObject grids
+	if(!is_array($this->current_row))$this->current_row=(array)$this->current_row;
+	if(!$this->columns)throw new BaseException('No column defined for grid');
+	foreach($this->columns as $tmp=>$column){ // $this->cur_column=>$column){
+		$this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
+
+		if($this->safe_html_output)
+			$this->current_row[$tmp]=htmlspecialchars($this->current_row[$tmp]);
+
+		$formatters = explode(',',$column['type']);
+		foreach($formatters as $formatter){
+			if(!$formatter)continue;
+			if(method_exists($this,$m="format_".$formatter)){
+				$this->$m($tmp,$column);
+			}else throw new BaseException("Grid does not know how to format type: ".$formatter);
 		}
-		return $this->current_row;
+		// setting cell parameters (tdparam)
+		$this->applyTDParams($tmp);
+		if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
+	}
+	return $this->current_row;
 	}
 	function applyTDParams($field,$totals=false){
 		// setting cell parameters (tdparam)
@@ -771,7 +771,7 @@ class Grid_Basic extends CompleteLister {
 					}
 
 					$header->append('cols',$header_col->render());
-                    
+
 				}
 			}
 		}
@@ -804,7 +804,7 @@ class Grid_Basic extends CompleteLister {
 			//$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
 			$this->totals=false;
 			$this->template->del('full_table');
-//    		return true;
+			//    		return true;
 		}else{
 			$this->template->del('not_found');
 		}
@@ -850,10 +850,10 @@ class Grid_Basic extends CompleteLister {
 		return $this;
 	}
 	/**
-	* Sets inline properties.
-	* @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
-	* 	hash keys should replicate local properties names
-	*/
+	 * Sets inline properties.
+	 * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
+	 * 	hash keys should replicate local properties names
+	 */
 	public function setInlineProperties($props){
 		foreach($props as $key=>$val){
 			$this->$key=$val;
@@ -883,29 +883,29 @@ class Grid_Basic extends CompleteLister {
 	}
 	function addFormatter($field,$formatter){
 		/*
-		   * add extra formatter to existing field
-		   */
+		 * add extra formatter to existing field
+		 */
 		if(!isset($this->columns[$field])){
 			throw new BaseException('Cannot format nonexistant field '.$field);
 		}
 		$this->columns[$field]['type'].=','.$formatter;
 		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
-        return $this;
+		return $this;
 	}
 	function setFormatter($field,$formatter){
 		/*
-		   * replace current formatter for field
-		   */
+		 * replace current formatter for field
+		 */
 		if(!isset($this->columns[$field])){
 			throw new BaseException('Cannot format nonexistant field '.$field);
 		}
 		$this->columns[$field]['type']=$formatter;
 		if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
-        $this->last_column=$field;
-        return $this;
+		$this->last_column=$field;
+		return $this;
 	}
-    /* to reuse td params */
-    function getAllTDParams(){
-        return $this->tdparam;
-    }
+	/* to reuse td params */
+	function getAllTDParams(){
+		return $this->tdparam;
+	}
 }

@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 class Paginator extends AbstractView {
@@ -179,22 +179,22 @@ class Paginator extends AbstractView {
 			$this->output($this->linkNoTemplate($n,array($this->name.'_skip'=>($n-1)*$this->ipp)));
 		}
 	}
-    function linkUrl($url_args = array()){
-        return $this->api->getDestinationURL(null, $url_args);
-    }
+	function linkUrl($url_args = array()){
+		return $this->api->getDestinationURL(null, $url_args);
+	}
 	function link($chunk,$url_args,$tpl_args=array()){
 		$this->template_chunks['link']->set(array(
-											'link_url'=>$this->linkUrl($url_args),
-											'link_text'=>$this->template_chunks[$chunk]->set($tpl_args)->render()
-										   ));
+					'link_url'=>$this->linkUrl($url_args),
+					'link_text'=>$this->template_chunks[$chunk]->set($tpl_args)->render()
+					));
 		return $this->template_chunks['link']->render();
 	}
 	function linkNoTemplate($text,$url_args,$tpl_args=array()){
 		$this->template_chunks['link']->set(array(
-											'link_url'=>$this->linkUrl($url_args),
-											//'region'=>$this->region,
-											'link_text'=>$text
-										   ));
+					'link_url'=>$this->linkUrl($url_args),
+					//'region'=>$this->region,
+					'link_text'=>$text
+					));
 		return $this->template_chunks['link']->render();
 	}
 }

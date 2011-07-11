@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /**
@@ -69,35 +69,35 @@ class ApiFrontend extends ApiWeb{
 					$this->loadStaticPage($this->page);
 				}catch(PathFinder_Exception $e2){
 
-                    $class_parts=explode('_',$page);
-                    $funct_parts=array();
-                    while($class_parts){
-                        array_unshift($funct_parts,array_pop($class_parts));
-                        $fn='page_'.join('_',$funct_parts);
-                        $in='page_'.join('_',$class_parts);
-                        try {
-                            loadClass($in);
-                        }catch(PathFinder_Exception $e2){
-                            continue;
-                        }
-                        // WorkAround for PHP5.2.12+ PHP bug #51425
-                        $tmp=new $in;
-                        if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
+					$class_parts=explode('_',$page);
+					$funct_parts=array();
+					while($class_parts){
+						array_unshift($funct_parts,array_pop($class_parts));
+						$fn='page_'.join('_',$funct_parts);
+						$in='page_'.join('_',$class_parts);
+						try {
+							loadClass($in);
+						}catch(PathFinder_Exception $e2){
+							continue;
+						}
+						// WorkAround for PHP5.2.12+ PHP bug #51425
+						$tmp=new $in;
+						if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
 
-                        $this->page_object=$this->add($in,$page);
-                        if(method_exists($tmp,$fn)){
-                            $this->page_object->$fn();
-                        }elseif(method_exists($tmp,'subPageHandler')){
-                            if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
-                        }
-                        return;
-                    }
+						$this->page_object=$this->add($in,$page);
+						if(method_exists($tmp,$fn)){
+							$this->page_object->$fn();
+						}elseif(method_exists($tmp,'subPageHandler')){
+							if($this->page_object->subPageHandler(join('_',$funct_parts))===false)break;
+						}
+						return;
+					}
 
 
 					// throw original error
 					$this->pageNotFound($e);
-                }
-                return;
+				}
+				return;
 			}
 			// i wish they implemented "finally"
 			$this->page_object=$this->add($class,$page,'Content');
@@ -115,7 +115,7 @@ class ApiFrontend extends ApiWeb{
 			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
 		}catch(PathFinder_Exception $e2){
 
-            $t='page/'.strtolower($page);
+			$t='page/'.strtolower($page);
 			$this->template->findTemplate($t);
 			$this->page_object=$this->add($this->page_class,$page,'Content',array($t));
 		}

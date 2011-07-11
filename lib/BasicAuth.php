@@ -1,25 +1,25 @@
 <?php
 /***********************************************************
-   ..
+  ..
 
-   Reference:
-     http://agiletoolkit.org/doc/ref
+  Reference:
+  http://agiletoolkit.org/doc/ref
 
  **ATK4*****************************************************
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org
-  
-   (c) 2008-2011 Agile Technologies Ireland Limited
-   Distributed under Affero General Public License v3
-   
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
+ This file is part of Agile Toolkit 4 
+ http://agiletoolkit.org
 
-   See LICENSE.txt for more information
+ (c) 2008-2011 Agile Technologies Ireland Limited
+ Distributed under Affero General Public License v3
 
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://agiletoolkit.org/commercial
+ If you are using this file in YOUR web software, you
+ must make your make source code for YOUR web software
+ public.
+
+ See LICENSE.txt for more information
+
+ You can obtain non-public copy of Agile Toolkit 4 at
+ http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
 /*
@@ -53,16 +53,16 @@
 class BasicAuth extends AbstractController {
 
 	public $info=false;		// info will contain data loaded about authenticated user. This
-							// property can be accessed through $this->get(); and should not
-							// be changed after authentication.
+	// property can be accessed through $this->get(); and should not
+	// be changed after authentication.
 
 	protected $allowed_credintals=array();	// contains pairs with allowed credintals. Use function allow()
-							// to permit different user/password pairs to login
+	// to permit different user/password pairs to login
 
 	protected $form=null;	// This form is created when user is being asked about authentication.
-							// If you are willing to change the way form looks, create it
-							// prior to calling check(). Your form must have compatible field
-							// names: "username" and "password"
+	// If you are willing to change the way form looks, create it
+	// prior to calling check(). Your form must have compatible field
+	// names: "username" and "password"
 
 	protected $password_encryption=null;         // Which encryption to use. Few are built-in
 
@@ -137,11 +137,11 @@ class BasicAuth extends AbstractController {
 		if($this->password_encryption)$this->debug("Encrypting password: '$password'");
 		switch($this->password_encryption){
 			case null: return $password;
-            case'sha256/salt':
-                       if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
-                       return hash_hmac('sha256',
-                                 $password.$salt,
-                                 $this->api->getConfig('auth/key',$this->api->name));
+			case'sha256/salt':
+				   if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
+				   return hash_hmac('sha256',
+						   $password.$salt,
+						   $this->api->getConfig('auth/key',$this->api->name));
 			case'sha1':return sha1($password);
 			case'md5':return md5($password);
 			case'rot13':return str_rot13($password);
@@ -164,11 +164,11 @@ class BasicAuth extends AbstractController {
 			$this->debug('User is not authenticated yet');
 
 			// Redirect to index page if its ajax action <
-/*            if (isset($_REQUEST['ajax_submit']) || isset($_REQUEST['cut_object']) || isset($_REQUEST['expanded'])) {
-				echo "window.location = 'Index'; <!--endjs-->";
-				exit;
-			}
-*/
+			/*            if (isset($_REQUEST['ajax_submit']) || isset($_REQUEST['cut_object']) || isset($_REQUEST['expanded'])) {
+				      echo "window.location = 'Index'; <!--endjs-->";
+				      exit;
+				      }
+			 */
 			// No information is present. Let's see if cookie is set
 			if(isset($_COOKIE[$this->name."_username"]) && isset($_COOKIE[$this->name."_password"])){
 
@@ -178,7 +178,7 @@ class BasicAuth extends AbstractController {
 				if($this->verifyCredintials(
 							$_COOKIE[$this->name."_username"],
 							$_COOKIE[$this->name."_password"]
-						   )){
+							)){
 					// Cookie login was successful. No redirect will be performed
 					$this->loggedIn($_COOKIE[$this->name."_username"],$_COOKIE[$this->name."_password"]);
 					$this->memorize('info',$this->info);
@@ -247,38 +247,38 @@ class BasicAuth extends AbstractController {
 	}
 	function login($username,$memorize=false){
 		$this->loggedIn($username,isset($this->allowed_credintals[$username])?
-                $this->allowed_credintals[$username]:null,$memorize);
+				$this->allowed_credintals[$username]:null,$memorize);
 	}
 	function loginRedirect(){
 
 		/*
-		$this->debug("Redirecting to original page");
+		   $this->debug("Redirecting to original page");
 		// Redirect to the page which was originally requested
 		if($original_request=$this->recall('original_request',false)){
-			$p=$original_request['page'];
-			if(!$p)$p=null;
-			unset($original_request['page']);
-			// the following parameters should not remain as thay break the page
-			unset($original_request['submit']);
-			// expanders should not be displayed, going to parent page instead
-			if(isset($original_request['expander'])){
-				$parts=split('_',$p);
-				if(count($parts)>0){
-					unset($parts[count($parts)-1]);
-					$p=join('_',$parts);
-				}
-				unset($original_request['expander']);
-				unset($original_request['expanded']);
-				unset($original_request['id']);
-			}
-			unset($original_request['cut_object']);
-			$this->debug("to $p");
-			// erasing stored URL
-			$this->forget('original_request');
-			if($this->api->isAjaxOutput())$this->ajax()->redirect($p,$original_request)->execute();
-			else $this->api->redirect($p,$original_request);
+		$p=$original_request['page'];
+		if(!$p)$p=null;
+		unset($original_request['page']);
+		// the following parameters should not remain as thay break the page
+		unset($original_request['submit']);
+		// expanders should not be displayed, going to parent page instead
+		if(isset($original_request['expander'])){
+		$parts=split('_',$p);
+		if(count($parts)>0){
+		unset($parts[count($parts)-1]);
+		$p=join('_',$parts);
 		}
-		*/
+		unset($original_request['expander']);
+		unset($original_request['expanded']);
+		unset($original_request['id']);
+		}
+		unset($original_request['cut_object']);
+		$this->debug("to $p");
+		// erasing stored URL
+		$this->forget('original_request');
+		if($this->api->isAjaxOutput())$this->ajax()->redirect($p,$original_request)->execute();
+		else $this->api->redirect($p,$original_request);
+		}
+		 */
 
 		// Rederect to index page
 		$this->debug("to Index");
@@ -290,7 +290,7 @@ class BasicAuth extends AbstractController {
 		$this->forget('info');
 		setcookie($this->name."_username",null);
 		setcookie($this->name."_password",null);
-   	 	setcookie(session_name(), '', time()-42000, '/');
+		setcookie(session_name(), '', time()-42000, '/');
 		session_destroy();
 
 		$this->info=false;
@@ -308,8 +308,8 @@ class BasicAuth extends AbstractController {
 		$form->addField('Checkbox','memorize','Remember me on this computer')->set(true);
 		$form->addSeparator();
 		$form->add('Hint')->set('<font color="red">Security warning</font>: by ticking \'Remember me on this computer\' you ' .
-					'will no longer have to use a password to enter this site, until you explicitly ' .
-					'log out.');
+				'will no longer have to use a password to enter this site, until you explicitly ' .
+				'log out.');
 
 		$form->addSubmit('Login');
 		return $form;
@@ -329,16 +329,16 @@ class BasicAuth extends AbstractController {
 		}catch(PathFinder_Exception $e){
 			//$p->template->loadTemplate('empty');
 			/*
-			$p->template->trySet('atk_path',$q=
-								$this->api->pathfinder->atk_location->getURL().'/');
-			$p->template->trySet('base_href',
-								$q=$this->api->pm->base_url.'/'
-								);
-								*/
+			   $p->template->trySet('atk_path',$q=
+			   $this->api->pathfinder->atk_location->getURL().'/');
+			   $p->template->trySet('base_href',
+			   $q=$this->api->pm->base_url.'/'
+			   );
+			 */
 			//$this->api->setTags($p->template);
 			$c=$p->add('Columns');
 			$c->addColumn(3);
-			$frame=$c->addColumn(4)->frame('Authentication');
+			$frame=$c->addColumn(4)->add('Frame')->setTitle('Authentication');
 			$this->form=$this->createForm($frame);
 			$c->addColumn(3);
 		}

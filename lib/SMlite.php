@@ -70,17 +70,17 @@
  * cut out the code from templates (smarty promotes idea about integrating
  * logic inside templates and I decided not to use it for that reason)
  *
- * Inside AModules3, each object have it's own template or may have even several
- * templates. When object is created, it's assigned to region inside template.
- * Later object operates with assigned template.
- *
- * Each object is also assigned to a spot on their parent's template. When
- * object is rendered, it's HTML is inserted into parent's template.
- *
- * ==[ Non-AModules3 integration ]=============================================
- * SMlite have no strict bindings or requirements for AModules3. You are free
- * to use it inside any other library as long as you follow license agreements.
- */
+* Inside AModules3, each object have it's own template or may have even several
+* templates. When object is created, it's assigned to region inside template.
+* Later object operates with assigned template.
+*
+* Each object is also assigned to a spot on their parent's template. When
+* object is rendered, it's HTML is inserted into parent's template.
+*
+* ==[ Non-AModules3 integration ]=============================================
+* SMlite have no strict bindings or requirements for AModules3. You are free
+* to use it inside any other library as long as you follow license agreements.
+*/
 
 class SMlite extends AbstractModel {
 
@@ -128,11 +128,11 @@ class SMlite extends AbstractModel {
 		 * editor or will be properly treated with wysiwyg html editors.
 		 */
 		return array(
-													// by separating them with ':'
-					 'ldelim'=>'<?',                // tag delimiter
-					 'rdelim'=>'?>',
-					 'extension'=>'.html',          // template file extension
-					);
+				// by separating them with ':'
+				'ldelim'=>'<?',                // tag delimiter
+				'rdelim'=>'?>',
+				'extension'=>'.html',          // template file extension
+			    );
 	}
 
 	// Template creation, interface functions
@@ -155,7 +155,7 @@ class SMlite extends AbstractModel {
 		if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
 	}
 	function __clone(){
-        if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
+		if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
 		// may be some of the following lines are unneeded...
 		$this->template=unserialize(serialize($this->template));
 		$this->tags=unserialize(serialize($this->tags));
@@ -177,8 +177,8 @@ class SMlite extends AbstractModel {
 			$new->api=$this->api;
 			$new->top_tag=$tag;
 			$new->settings=$this->settings;
-		  $new->rebuildTags();
-		  return $new;
+			$new->rebuildTags();
+			return $new;
 		}
 
 		if(!$this->is_set($tag)){
@@ -361,7 +361,7 @@ class SMlite extends AbstractModel {
 		if(!isset($this->tags[$tag]))return;
 
 		foreach($this->tags as $tagx=>$arr){
-            $tag_split=explode('#',$tagx);
+			$tag_split=explode('#',$tagx);
 			$t=$tag_split[0];
 			if(!isset($tag_split[1]) || $t!=$tag)continue;
 			$text=$this->tags[$tagx][0][0];
@@ -375,7 +375,7 @@ class SMlite extends AbstractModel {
 		 * Find template location inside search directory path
 		 */
 		if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
-        $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
+		$f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
 		return join('',file($f));
 	}
 	function loadTemplateFromString($template_string){
