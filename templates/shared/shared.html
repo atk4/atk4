@@ -28,7 +28,7 @@
 		<div class="gs-wrap atk-layout">
 			<div id="header" class="g-row">
 					<div class="g-max">
-					<?logo?><a href="<?page?>index<?/?>"><div id="atk-logo" class="ui-widget-header float-left"><img src="<?template?>images/logo.png<?/?>" alt="Agile Toolkit" /></div></a><?/logo?>
+					<?logo?><a href="<?page?>index<?/?>"><img src="<?template?>images/logo.png<?/?>" /></a><?/logo?>
 					<div id="header-right">
 						<?Menu?>
 	                            <div class="atk-menu atk-menu-horizontal ui-widget">
@@ -44,14 +44,18 @@
 			<?$Content?>
 			<div id="footer-guard"></div>
 		</div>
+		<?Footer?>
 		<div id="footer" class="gs-wrap">
 			<div class="g-row">
 				<div class="g-max">
+					<?footer_text?>
 					This system is implemented using <a href="http://agiletoolkit.org/">Agile Toolkit</a>. &copy; 1999–2011
 					Agile Technologies. <a href="http://agiletoolkit.org/about/license">See License</a>
+					<?/?>
 				</div>
 			</div>
 		</div>
+		<?/?>
 		<div id="atk-growl-holder" class="atk-growl-holder"></div>
 	</body>
 </html>
