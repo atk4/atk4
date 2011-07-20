@@ -116,8 +116,8 @@ body.gs-12 .gs-wrap {width:960px;}
 
 /* Grid
 -------------------------------------------------------------------- */
-.atk-grid .atk-grid-panel .atk-button-holder {margin:1em 0 0 0;float:left;}
-.atk-grid .atk-grid-panel .atk-button-holder:first-child {margin:0 0 1em 0;}
+.atk-grid .atk-grid-panel>.atk-button-holder {margin:1em 0 0 0;float:left;}
+.atk-grid .atk-grid-panel>.atk-button-holder:first-child {margin:0 0 1em 0;}
 .atk-grid .atk-grid-panel .atk-form-quicksearch {float:right;}
 .atk-grid>table {width:100%;border-spacing:0px;}
 .atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;}
@@ -128,7 +128,6 @@ html>/**/body .atk-grid>table>thead>tr>th {background:none;}
 .atk-grid-notfound {width:14em;margin:1em auto;text-align:center;padding:0.3em 0.3em 0.3em 0.5em;white-space:nowrap;}
 .atk-grid-notfound .ui-icon {margin-right:0.2em;}
 .atk-grid>table>tbody>tr.atk-grid-totals>td {font-weight:bold;border-color:#000;}
-
 .lister_expander,
 td.lister_expander {padding:0 !important;}
 td.lister_expander>div {padding:2em;}
@@ -194,8 +193,8 @@ td.lister_expander>div .atk-form, td.lister_expander>div .atk-button-holder {mar
 .atk-form-error i {display:inline-block;position:relative;top:0.3em;margin-right:0.3em;}
 .atk-form ins {text-decoration:none;}
 
-.atk-form .atk-field-datepicker dd.form_field input[type=text] {margin-right:5px;}
-.atk-form .atk-field-datepicker dd.form_field input[type=text]+img {top:2px;.top:0;position:relative;}
+.atk-form .atk-field-datepicker .form_field input[type=text] {margin-right:5px;}
+.atk-form .atk-field-datepicker .form_field input[type=text]+img {top:2px;.top:0;position:relative;}
 
 /* Form Common Settings
 -------------------------------------------------------------------- */

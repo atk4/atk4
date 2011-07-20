@@ -28,6 +28,7 @@ class QuickSearch extends Filter {
 	 */
 
 	public $js_widget='ui.atk4_form';
+    public $icon;// to configure icon
 	var $region=null;
 	var $region_url=null;
 	public $search_cross=null;
@@ -76,7 +77,8 @@ class QuickSearch extends Filter {
 			$search_cross->js(true)->hide();
 		}
 		$search_cross->js('click',array($ff->js()->val(''),$this->js()->submit()));
-		$s=$this->add('Icon',null,'form_buttons')->set('basic-search')
+		$this->icon=$s=$this->add('Icon',null,'form_buttons');
+        $s->set('basic-search')
 			->setColor('gray');
 
 		$s->js('click',array(
