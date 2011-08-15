@@ -49,8 +49,14 @@ class jQuery extends AbstractController {
         $this->api->addHook('cut-output',array($this,'cutRender'));
     }
     /* Locate javascript file and add it to HTML's head section */
-    function addInclude($file,$ext){
-        $url=$this->api->locateURL('js',$file.$ext);
+    function addInclude($file,$ext='.js'){
+        return $this->addStaticInclude($file,$ext);
+    }
+    function addStaticInclude($file,$ext='.js'){
+        if(substr($file,0,4)!='http'){
+            $url=$this->api->locateURL('js',$file.$ext);
+        }else $url=file;
+
         $this->api->template->append('js_include',
                 '<script type="text/javascript" src="'.$url.'"></script>'."\n");
         return $this;
