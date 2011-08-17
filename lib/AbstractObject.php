@@ -1,13 +1,13 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/***********************************************************
-  A base class for all objects/classes in Agile Toolkit. Do
-  not directly inherit from this class, instead use one of
-  AbstractModel, AbstractController or AbstractView
-
-  Learn:
-  http://agiletoolkit.org/learn/intro
-
- **ATK4*****************************************************
+/**
+  * A base class for all objects/classes in Agile Toolkit.
+  * Do not directly inherit from this class, instead use one of
+  * AbstractModel, AbstractController or AbstractView
+  *
+  * Learn More: http://agiletoolkit.org/learn/intro
+  */ 
+/*
+==ATK4===================================================
  This file is part of Agile Toolkit 4 
  http://agiletoolkit.org
 
@@ -23,31 +23,31 @@
  You can obtain non-public copy of Agile Toolkit 4 at
  http://agiletoolkit.org/commercial
 
- *****************************************************ATK4**/
+ =====================================================ATK4=*/
 abstract class AbstractObject {
 
 
     public $settings=array('extension'=>'.html');
 
-    /* Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
+    /** Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
     public $di_config = array();
 
     // {{{ Object hierarchy management: http://agiletoolkit.org/learn/understand/base/adding
 
-    /* Unique object name */
+    /** Unique object name */
     public $name;
-    /* Name of the object in owner's element array */
+    /** Name of the object in owner's element array */
     public $short_name;
 
-    /* short_name => object hash of children objects */ 
+    /** short_name => object hash of children objects */ 
     public $elements = array ();
 
-    /* Link to object into which we added this object */
+    /** Link to object into which we added this object */
     public $owner;
-    /* Always points to current API */
+    /** Always points to current API */
     public $api;
 
-    /* Initialize object. Always call parent */
+    /** Initialize object. Always call parent */
     function init() {
         /**
          * This method is called for initialization
@@ -61,7 +61,7 @@ abstract class AbstractObject {
     function __toString() {
         return "Object " . get_class($this) . "(" . $this->name . ")";
     }
-    /* Removes object from parent and prevents it from renedring */
+    /** Removes object from parent and prevents it from renedring */
     function destroy(){
         foreach($this->elements as $el){
             $el->destroy();
@@ -69,12 +69,12 @@ abstract class AbstractObject {
         unset($this->elements);
         $this->owner->_removeElement($this->short_name);
     }
-    /* Remove child element if it exists */
+    /** Remove child element if it exists */
     function _removeElement($short_name){
         unset($this->elements[$short_name]);
         return $this;
     }
-    /* Creates new object and adds it as a child. Returns new object
+    /** Creates new object and adds it as a child. Returns new object
      * http://agiletoolkit.org/learn/understand/base/adding */
     function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
 
@@ -138,7 +138,7 @@ abstract class AbstractObject {
         $element->init();
         return $element;
     }
-    /* Find child element by their short name. Use in chaining. Exception if not found. */
+    /** Find child element by their short name. Use in chaining. Exception if not found. */
     function getElement($short_name, $obligatory = true) {
         if (!isset ($this->elements[$short_name]))
             if ($obligatory)
@@ -148,7 +148,7 @@ abstract class AbstractObject {
                 return null;
         return $this->elements[$short_name];
     }
-    /* Find child element. Use in condition. */ 
+    /** Find child element. Use in condition. */ 
     function hasElement($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
@@ -156,14 +156,14 @@ abstract class AbstractObject {
     // }}} 
 
     // {{{ Session management: http://agiletoolkit.org/doc/session
-    /* Remember object-relevant session data */
+    /** Remember object-relevant session data */
     function memorize($name, $value) {
         if (!isset ($value))
             return $this->recall($name);
         $this->api->initializeSession();
         return $_SESSION['o'][$this->name][$name] = $value;
     }
-    /* Remember one of the supplied arguments, which is not-null */
+    /** Remember one of the supplied arguments, which is not-null */
     function learn($name, $value1 = null, $value2 = null, $value3 = null) {
         if (isset ($value1))
             return $this->memorize($name, $value1);
@@ -171,7 +171,7 @@ abstract class AbstractObject {
             return $this->memorize($name, $value2);
         return $this->memorize($name, $value3);
     }
-    /* Forget session data for arg $name. Null forgets all data relevant to this object */
+    /** Forget session data for arg $name. Null forgets all data relevant to this object */
     function forget($name = null) {
         $this->api->initializeSession();
         if (isset ($name)) {
@@ -180,7 +180,7 @@ abstract class AbstractObject {
             unset ($_SESSION['o'][$this->name]);
         }
     }
-    /* Returns session data for this object. If not set, $default is returned */
+    /** Returns session data for this object. If not set, $default is returned */
     function recall($name, $default = null) {
         $this->api->initializeSession(false);
         if (!isset ($_SESSION['o'][$this->name][$name])||is_null($_SESSION['o'][$this->name][$name])) {
@@ -370,19 +370,19 @@ abstract class AbstractObject {
             ->addMoreInfo("method",$method)
             ->addMoreInfo("arguments",$arguments);
     }
-    /* [private] attempts to call method, returns array containing result or false */
+    /** [private] attempts to call method, returns array containing result or false */
     function tryCall($method,$arguments){
         array_unshift($arguments,$this);
         if($ret=$this->hook('method-'.$method,$arguments))return $ret;
         if($ret=$this->api->hook('global-method-'.$method,$arguments))return $ret;
     }
-    /* Add new method for this object */
+    /** Add new method for this object */
     function addMethod($name,$callable){
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('method-'.$name,$callable);
     }
-    /* Return if this object have specified method */
+    /** Return if this object have specified method */
     function hasMethod($name){
         return method_exists($this,$name)
             || isset($this->hooks['method-'.$name])
