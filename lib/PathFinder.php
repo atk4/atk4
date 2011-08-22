@@ -22,14 +22,14 @@
  http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
-class PathFinder extends AbstractController {
-    /*
-       PathFinder will help you to maintain consistent structure of files. This
-       controller is used by many other parts of Agile Toolkit
 
-       PathFinder concerns itself only with relative paths. It relies on PageManager
-       ($api->pm) to convert relative paths into absolute.
-     */
+/** PathFinder will help you to maintain consistent structure of files. This
+    controller is used by many other parts of Agile Toolkit to load resources.
+
+    PathFinder concerns itself only with relative paths. It relies on PageManager
+    ($api->pm) to convert relative paths into absolute.
+ */
+class PathFinder extends AbstractController {
 
     public $base_location=null;
     // Object referencing base location. You might want to add more content here
@@ -42,27 +42,17 @@ class PathFinder extends AbstractController {
         $this->api->pathfinder=$this;
         $GLOBALS['atk_pathfinder']=$this;   // used by autoload
 
-
-        // getting ready for atk
-        //$this->api->proxyFunctions($this,array('addLocation','locate'));
-
         $this->addDefaultLocations();
     }
-
-
-
+    /** Aglie Toolkit has a default structure (see http://agiletoolkit.org/learn/install/dir) which is initialized here */
     function addDefaultLocations(){
-        // Typically base directory is good for includes,
-        // but atk4/ can also contain some data
-
-        // Primary search point is the webroot directory. We are defining
-        // those so you don't have to
         $base_directory=dirname(@$_SERVER['SCRIPT_FILENAME']);
 
         // Compatibility with command-line
         if(!$base_directory)$base_directory=realpath($GLOBALS['argv'][0]);
 
-        if(method_exists($this->api,'addDefaultLocations'))$this->api->addDefaultLocations($base_directory);
+        if($this->api->hasMethod('addDefaultLocations'))
+            $this->api->addDefaultLocations($base_directory);
 
         $this->base_location=$this->addLocation('/',array(
                     'php'=>'lib',
