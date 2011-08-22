@@ -24,10 +24,10 @@
  *****************************************************ATK4**/
 class ApiCLI extends AbstractView {
     public $db=null;
-    protected $config = null;     // use getConfig method to access this variable
-    public $logger=null;	// TODO: protect this
+    protected $config = null;       // use getConfig method to access this variable
+    public $logger=null;            // TODO: protect this
     protected $pathfinder_class='PathFinder';
-    public $skin='jui';	// for PathFinder not to produce warnings
+    public $skin;                   // for PathFinder not to produce warnings
 
 
     function __construct($realm=null){
