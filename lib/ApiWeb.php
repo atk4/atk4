@@ -28,27 +28,16 @@
  * creating pagest etc. Use this class directly only if you re-use form methods
  * from other libriaries and you have your own implementation of request
  * handling.
- *
- * @author		Romans <romans@adevel.com>
- * @copyright	See file COPYING
  */
 
 class ApiWeb extends ApiCLI {
-
-    /**
-     * DB handle
-     */
+    /** Cleaned up name of the currently requested page */
     public $page=null;
-    private $page_title = null;	// TODO remove this property
-    public $apinfo=array();
-
     protected $page_base=null;
     public $index_page='index';
-    protected $sticky_get_arguments = array();
-    protected $ajax_class='Ajax';
 
+    /** recorded time when execution has started */
     public $start_time=null;
-
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
 
@@ -64,6 +53,7 @@ class ApiWeb extends ApiCLI {
             $this->caughtException($e);
         }
     }
+    /** Call this method if you want to see execution time on the bottom of your pages */
     function showExecutionTime(){
         $self=$this;
         $this->addHook('post-render-output',array($this,'_showExecutionTime'));
@@ -75,10 +65,10 @@ class ApiWeb extends ApiCLI {
     function _showExecutionTimeJS(){
         echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
     }
-    function initDefaults(){
-        parent::initDefaults();
-    }
+    private $layout_initialized=false;
     function initLayout(){
+        if($this->layout_initialized)$this->exception('Please do not call initLayout() directly from init()','Obsolete');
+        $this->layout_initialized=true;
         $this->addLayout('Content');
         $this->upgradeChecker();
     }
@@ -165,11 +155,8 @@ class ApiWeb extends ApiCLI {
         session_name($this->name);
         session_start();
     }
-    function setHardTimeout($minutes=null){
-        /* Sets a log-out period for the application */
 
-
-    }
+    protected $sticky_get_arguments = array();
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
     }
@@ -204,6 +191,10 @@ class ApiWeb extends ApiCLI {
          */
 
         try{
+
+            // Initialize page and all elements from here
+            $this->initLayout();
+
             $this->hook('pre-exec');
 
             if(isset($_GET['submit']) && $_POST){
@@ -214,6 +205,9 @@ class ApiWeb extends ApiCLI {
 
             $this->execute();
         }catch(Exception $e){
+
+            if($e instanceof Exception_StopInit)return;
+
             $this->caughtException($e);
         }
     }
@@ -252,8 +246,6 @@ class ApiWeb extends ApiCLI {
     }
     function execute(){
         $this->rendered['sub-elements']=array();
-
-
         try {
             $this->hook('pre-render');
             $this->recursiveRender();
@@ -319,6 +311,6 @@ class ApiWeb extends ApiCLI {
         return $this->index_page;
     }
     function defaultTemplate(){
-        return array('shared','_top');
+        return array('shared');
     }
 }
