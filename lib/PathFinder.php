@@ -62,7 +62,7 @@ class PathFinder extends AbstractController {
 		// Compatibility with command-line
 		if(!$base_directory)$base_directory=realpath($GLOBALS['argv'][0]);
 
-		if(method_exists($this->api,'addDefaultLocations'))$this->api->addDefaultLocations($base_directory);
+		if(method_exists($this->api,'addDefaultLocations'))$this->api->addDefaultLocations($this,$base_directory);
 
 		$this->base_location=$this->addLocation('/',array(
 					'php'=>'lib',
