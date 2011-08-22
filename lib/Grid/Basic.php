@@ -121,6 +121,9 @@ class Grid_Basic extends CompleteLister {
 		$this->last_column=$column;
 		return $this;
 	}
+	function hasColumn($column){
+		return isset($this->columns[$column]);
+	}
 	function removeColumn($name){
 		unset($this->columns[$name]);
 		if($this->last_column==$name)$this->last_column=null;
@@ -417,17 +420,21 @@ class Grid_Basic extends CompleteLister {
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function setButtonClass($class){
-		$this->columns[$this->last_field]['button_class']=$class;
+		$this->columns[$this->last_column]['button_class']=$class;
 	}
 	function init_delete($field){
 		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->columns[$field]['button_class']='red';
 		$g=$this;
-		$this->api->addHook('post-init',function() use($g,$field){
-				if($g->hasColumn($field))$g->addOrder()->move($field,'last')->now();
+		$this->api->addHook('post-init',array($this,'_move_delete'),array($field));
+        /*function() use($g,$field){
 				});
+                */
 		return $this->init_confirm($field);
 	}
+    function _move_delete($field){
+        if($this->hasColumn($field))$this->addOrder()->move($field,'last')->now();
+    }
 	function init_confirm($field){
 		$this->js(true)->find('.button_'.$field)->button();
 	}
