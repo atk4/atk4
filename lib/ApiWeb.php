@@ -67,7 +67,7 @@ class ApiWeb extends ApiCLI {
     }
     private $layout_initialized=false;
     function initLayout(){
-        if($this->layout_initialized)$this->exception('Please do not call initLayout() directly from init()','Obsolete');
+        if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
         $this->layout_initialized=true;
         $this->addLayout('Content');
         $this->upgradeChecker();
