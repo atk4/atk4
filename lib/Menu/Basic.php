@@ -37,7 +37,6 @@ class Menu_Basic extends AbstractView {
 
 	function init(){
 		parent::init();
-		$this->template->trySet($this->api->apinfo);
 		// if controller was set - initializing menu now
 	}
 	function setController($controller){
