@@ -314,8 +314,13 @@ abstract class AbstractObject {
     // {{{ Hooks: http://agiletoolkit.org/doc/hooks
     public $hooks = array ();
 
-    function addHook($hook_spot, $callable, $priority = 5) {
-        $this->hooks[$hook_spot][$priority][] = $callable;
+    function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
+        if(!is_array($arguments)){
+            // Backwards compatibility
+            $priority=$arguments;
+            $arguments=array();
+        }
+        $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
         return $this;
     }
     function removeHook($hook_spot) {
@@ -331,20 +336,20 @@ abstract class AbstractObject {
                         foreach ($_data as $data) {
 
                             // Our extentsion.
-                            if (is_string($data) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data)) {
-                                $result = eval ($data);
-                            } elseif (is_callable($data)) {
-                                $result = call_user_func_array($data, $arg);
+                            if (is_string($data[0]) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data)) {
+                                $result = eval ($data[0]);
+                            } elseif (is_callable($data[0])) {
+                                $result = call_user_func_array($data[0], array_merge($arg,$data[1]));
                             } else {
-                                if (!is_array($data))
-                                    $data = array (
+                                if (!is_array($data[0]))
+                                    $data[0] = array (
                                             'STATIC',
-                                            $data
+                                            $data[0]
                                             );
-                                $this->exception("Cannot call hook. Function might not exist")
+                                throw $this->exception("Cannot call hook. Function might not exist")
                                     ->addMoreInfo('hook',$hook_spot)
-                                    ->addMoreInfo('arg1',$data[0])
-                                    ->addMoreInfo('arg2',$data[1]);
+                                    ->addMoreInfo('arg1',$data[0][0])
+                                    ->addMoreInfo('arg2',$data[0][1]);
                             }
                             $return[]=$result;
                         }
