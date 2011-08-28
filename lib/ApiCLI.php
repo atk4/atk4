@@ -1,35 +1,41 @@
-<?php // vim:ts=4:sw=4:et
-/***********************************************************
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
   Base class for Command-Line Applications
 
   Learn:
-  http://agiletoolkit.org/learn/understand/api
+  http://agiletoolkit.org/learn/****
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+  Reference:
+  http://agiletoolkit.org/doc/apicli
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 class ApiCLI extends AbstractView {
+
+    /** Default database connection */
     public $db=null;
-    protected $config = null;       // use getConfig method to access this variable
-    public $logger=null;            // TODO: protect this
+    
+    /** Configuration loaded from config.php and config-defaults.php files. Use getConfig() to access */
+    protected $config = null;
+
+    /** Points to the instance of system logger (lib/Logger.php) for enriching error logging */
+    public $logger=null;
+
+    /** Points to the instance of PathFinder class, which is used to locate resource files */
     protected $pathfinder_class='PathFinder';
-    public $skin;                   // for PathFinder not to produce warnings
 
+    /** Skin for web application templates */
+    public $skin;
 
+    // {{{ Start-up of application
+    /** Initialize application. Redefine in your application but always call parent */
     function __construct($realm=null){
         $this->owner = null;
         $this->name  = $realm;
@@ -52,40 +58,57 @@ class ApiCLI extends AbstractView {
             $this->caughtException($e);
         }
     }
+    function init(){
+        parent::init();
+    }
+    // }}}
+
+    // {{{ Management of Global Methods 
+    /** Register method with all objects in Agile Toolkit. Use only in controllers. */
     function addGlobalMethod($name,$callable){
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('global-method-'.$name,$callable);
     }
+    /** Use only in Controllers */
     function hasGlobalMethod($name){
         return isset($this->hooks['global-method-'.$name]);
     }
+    /** Use only in Controllers */
     function removeGlobalMethod($name){
         $this->removeHook('global-method-'.$name);
     }
-    /* Localization function */
+    // }}}
+
+    // {{{ Localization
+    /** Redefine this function to introduce your localization. Agile Toolkit will call it with some system strings */
     function _($str){
         return $str;
     }
+    // }}}
 
+    // {{{ PathFinder and PageManager bindings
+    /** Find relative path to the resource respective to the current directory. */
     function locate($type,$filename='',$return='relative'){
         return $this->pathfinder->locate($type,$filename,$return);
     }
+    /** Calculate URL pointing to specified resource */
     function locateURL($type,$filename=''){
         return $this->pathfinder->locate($type,$filename,'url');
     }
+    /** Return full system path to specified resource */
     function locatePath($type,$filename=''){
         return $this->pathfinder->locate($type,$filename,'path');
     }
+    /** Add new location with additional resources */
     function addLocation($location,$contents){
         return $this->pathfinder->addLocation($location,$contents);
     }
-    function init(){
-        parent::init();
-    }
+    /** Returns base URL of this Web application installation */
     function getBaseURL(){
         return $this->pm->base_path;
     }
+    /** Generates URL for specified page. Useful for building links on pages or emails. Returns URL object. */
     function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
         if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
         if(is_object($page) && $page instanceof URL){
@@ -98,33 +121,43 @@ class ApiCLI extends AbstractView {
                 $url->setPage($page);
         return $url->setArguments($arguments);
     }
+    // }}}
+
+    // {{{ Error handling
+    /** Initialize logger or return existing one */
     function getLogger($class_name='Logger'){
         if(is_null($this->logger)){
             $this->logger=$this->add($class_name);
         }
         return $this->logger;
     }
+    /** Is executed if exception is raised during execution. Re-define to have custom handling of exceptions system-wide */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
         echo get_class($e),": ".$e->getMessage();
         exit;
     }
+    /** @obsolete */
     function outputFatal($msg,$shift){
         $this->hook('output-fatal',array($msg,$shift+1));
         echo "Fatal: $msg\n";exit;
     }
+    /** @obsolete */
     function outputWarning($msg,$shift=0){
         if($this->hook('output-warning',array($msg,$shift)))return true;
         echo "warning: $msg\n";
     }
+    /** @obsolete */
     function outputDebug($msg,$shift=0){
         if($this->hook('output-debug',array($msg,$shift)))return true;
         echo "debug: $msg\n";
     }
+    /** @obsolete */
     function outputInfo($msg,$shift=0){
         if($this->hook('output-info',array($msg,$shift)))return true;
         echo "info: $msg\n";
     }
+    /** @obsolete */
     function upCall($type,$args=array()){
         /**
          * Uncaught call default handler.
@@ -137,49 +170,15 @@ class ApiCLI extends AbstractView {
             throw new BaseException("Uncaught upCall");
         }
     }
+    // }}}
+
+    // {{{ Configuration File Handling 
+    /** Executed when trying to access config parameter which is not find in the file */
     function configExceptionOrDefault($default,$exceptiontext){
         if($default!='_config_get_false')return $default;
         throw new BaseException($exceptiontext);
     }
-    function getConfig($path, $default_value = '**undefined_value**'){
-        /**
-         * For given path such as 'dsn' or 'logger/log_dir' returns
-         * corresponding config value. Throws ExceptionNotConfigured if not set.
-         *
-         * To find out if config is set, do this:
-         *
-         * $var_is_set=true;
-         * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
-         */
-        if(is_null($this->config)){
-            $this->readConfig('config-default.php');
-            $this->readConfig();
-        }
-        $parts = explode('/',$path);
-        $current_position = $this->config;
-        foreach($parts as $part){
-            if(!array_key_exists($part,$current_position)){
-                if($default_value!=='**undefined_value**')return $default_value;
-                throw new ExceptionNotConfigured("You must specify \$config['".
-                        join("']['",explode('/',$path)).
-                        "'] in your config.php");
-            }else{
-                $current_position = $current_position[$part];
-            }
-        }
-        return $current_position;
-    }
-    function dbConnect($dsn=null){
-        if (is_null($dsn)) $dsn=$this->getConfig('dsn');
-        $result=$this->db=DBlite::connect($dsn);
-        if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
-        $this->db->owner=$this;
-        $this->db->api=$this;
-        return $this;
-    }
-    function tryConnect($dsn){
-        $this->db=DBlite::tryConnect($dsn);
-    }
+    /** Read config file and store it in memory */
     function readConfig($file='config.php'){
         $orig_file = $file;
         if(is_null($this->config))$this->config=array();
@@ -212,9 +211,43 @@ class ApiCLI extends AbstractView {
 
 
     }
+    /** Manually set configuration option */
     function setConfig($config=array()){
         $this->config=safe_array_merge($this->config,$config);
     }
+    /** Load config if necessary and look up corresponding setting */
+    function getConfig($path, $default_value = '**undefined_value**'){
+        /**
+         * For given path such as 'dsn' or 'logger/log_dir' returns
+         * corresponding config value. Throws ExceptionNotConfigured if not set.
+         *
+         * To find out if config is set, do this:
+         *
+         * $var_is_set=true;
+         * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
+         */
+        if(is_null($this->config)){
+            $this->readConfig('config-default.php');
+            $this->readConfig();
+        }
+        $parts = explode('/',$path);
+        $current_position = $this->config;
+        foreach($parts as $part){
+            if(!array_key_exists($part,$current_position)){
+                if($default_value!=='**undefined_value**')return $default_value;
+                throw new ExceptionNotConfigured("You must specify \$config['".
+                        join("']['",explode('/',$path)).
+                        "'] in your config.php");
+            }else{
+                $current_position = $current_position[$part];
+            }
+        }
+        return $current_position;
+    }
+    // }}}
+
+    // {{{ Version handling
+    /** Determine version of Agile Toolkit */
     private $version_cache=null;
     function getVersion($of='atk'){
         if(!$this->version_cache){
@@ -227,6 +260,7 @@ class ApiCLI extends AbstractView {
         }
         return $this->version_cache;
     }
+    /** Verifies version. Should be used by addons */
     function versionRequirement($v,$return_only=false){
         if(($vc=version_compare($this->getVersion(),$v))<0){
             if($soft)return false;
@@ -234,4 +268,21 @@ class ApiCLI extends AbstractView {
         }
         return true;
     }
+    // }}}
+
+    // {{{ Database connection handling
+    /** Use database configuration settings from config file to establish default connection */
+    function dbConnect($dsn=null){
+        if (is_null($dsn)) $dsn=$this->getConfig('dsn');
+        $result=$this->db=DBlite::connect($dsn);
+        if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
+        $this->db->owner=$this;
+        $this->db->api=$this;
+        return $this;
+    }
+    /** Attempts to connect, but does not raise exception on failure */
+    function tryConnect($dsn){
+        $this->db=DBlite::tryConnect($dsn);
+    }
+    // }}}
 }

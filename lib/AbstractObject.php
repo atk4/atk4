@@ -1,28 +1,19 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  * A base class for all objects/classes in Agile Toolkit.
-  * Do not directly inherit from this class, instead use one of
-  * AbstractModel, AbstractController or AbstractView
-  *
-  * Learn More: http://agiletoolkit.org/learn/intro
-  */ 
-/*
+  A base class for all objects/classes in Agile Toolkit.
+  Do not directly inherit from this class, instead use one of
+  AbstractModel, AbstractController or AbstractView
+ 
+  Learn More: http://agiletoolkit.org/learn/intro
+*//*
 ==ATK4===================================================
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 abstract class AbstractObject {
 
@@ -214,6 +205,7 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Code which can be potentially obsoleted
+    /** @obsolete */
     function fatal($error, $shift = 0) {
         /**
          * If you have fatal error in your object use the following code:
@@ -236,6 +228,7 @@ abstract class AbstractObject {
                     $shift
                     ));
     }
+    /** @obsolete */
     function info($msg) {
         /**
          * Call this function to send some information to API. Example:
@@ -246,6 +239,7 @@ abstract class AbstractObject {
         if(!$this->api->hook('outputInfo',array($msg,$this)))
             $this->upCall('outputInfo', $msg);
     }
+    /** @obsolete */
     function debug($msg, $file = null, $line = null) {
         /**
          * Use this function to send debug information. Information will only
@@ -265,6 +259,7 @@ abstract class AbstractObject {
                         ));
         }
     }
+    /** @obsolete */
     function warning($msg, $shift = 0) {
         $this->upCall('outputWarning', array (
                     $msg,

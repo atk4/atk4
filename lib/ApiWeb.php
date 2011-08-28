@@ -1,43 +1,39 @@
-<?php
-/***********************************************************
-  ..
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+  ApiWeb extends an api of CommandLine applications with knowlnedge of HTML
+  templates, understanding of pages and routing.
+
+  Learn:
+  http://agiletoolkit.org/learn/understand/api
+  http://agiletoolkit.org/learn/template
 
   Reference:
-  http://agiletoolkit.org/doc/ref
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
-/**
- * This is core API class for AModules3. It implements abstract base for API
- * class. ApiBase does not contain support for HTTP/PHP request handling,
- * creating pagest etc. Use this class directly only if you re-use form methods
- * from other libriaries and you have your own implementation of request
- * handling.
- */
-
+  http://agiletoolkit.org/doc/apiweb
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 class ApiWeb extends ApiCLI {
+
     /** Cleaned up name of the currently requested page */
     public $page=null;
+    
+    /** ?? */
     protected $page_base=null;
+
+    /* @obsolete - page where user is redirected after log-in */
     public $index_page='index';
 
     /** recorded time when execution has started */
     public $start_time=null;
+
+    // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
 
@@ -53,57 +49,8 @@ class ApiWeb extends ApiCLI {
             $this->caughtException($e);
         }
     }
-    /** Call this method if you want to see execution time on the bottom of your pages */
-    function showExecutionTime(){
-        $self=$this;
-        $this->addHook('post-render-output',array($this,'_showExecutionTime'));
-        $this->addHook('post-js-execute',array($this,'_showExecutionTimeJS'));
-    }
-    function _showExecutionTime(){
-        echo 'Took '.(time()+microtime()-$this->start_time).'s';
-    }
-    function _showExecutionTimeJS(){
-        echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
-    }
-    private $layout_initialized=false;
-    function initLayout(){
-        if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
-        $this->layout_initialized=true;
-        $this->addLayout('Content');
-        $this->upgradeChecker();
-    }
-    function upgradeChecker(){
-        // Checks for ATK upgrades and shows current version
-        if($this->template && $this->template->is_set('version')){
-            $this->add('UpgradeChecker',null,'version');
-        }
-    }
-    /////////////// C o r e   f u n c t i o n s ///////////////////
-    function caughtException($e){
-        $this->hook('caught-exception',array($e));
-        echo "<font color=red>",$e,"</font>";
-        echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
-        exit;
-    }
-
-    function outputWarning($msg,$shift=0){
-        if($this->hook('output-warning',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font>";
-    }
-    function outputDebug($msg,$shift=0){
-        if($this->hook('output-debug',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font><br>";
-    }
-    function outputInfo($msg,$shift=0){
-        if($this->hook('output-info',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font>";
-    }
+    /** Redifine this function instead of default constructor */
     function init(){
-        /**
-         * Redifine this function instead of default constructor. Do not forget
-         * to set $this->db to instance of DBlite.
-         */
-
         // Do not initialize unless requsetd
         //$this->initializeSession();
 
@@ -117,11 +64,66 @@ class ApiWeb extends ApiCLI {
         parent::init();
 
     }
-    /**
-     * This function is called on AJAX request.
-     * @return corresponding
-     */
+    /** Sends default headers. Re-define to send your own headers */
+    function sendHeaders(){
+        header("Content-Type: text/html; charset=utf-8");
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");               // Date in the past
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");  // always modified
+        header("Cache-Control: no-store, no-cache, must-revalidate");   // HTTP/1.1
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");                                     // HTTP/1.0
+    }
+    /** Call this method if you want to see execution time on the bottom of your pages */
+    function showExecutionTime(){
+        $self=$this;
+        $this->addHook('post-render-output',array($this,'_showExecutionTime'));
+        $this->addHook('post-js-execute',array($this,'_showExecutionTimeJS'));
+    }
+    /** @ignore */
+    function _showExecutionTime(){
+        echo 'Took '.(time()+microtime()-$this->start_time).'s';
+    }
+    /** @ignore */
+    function _showExecutionTimeJS(){
+        echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
+    }
+    /** If version tag is defined in template, inserts current version of Agile Toolkit there. If newer verison is available, it will be reflected */
+    function upgradeChecker(){
+        // Checks for ATK upgrades and shows current version
+        if($this->template && $this->template->is_set('version')){
+            $this->add('UpgradeChecker',null,'version');
+        }
+    }
+    // }}}
 
+    // {{{ Obsolete
+    /** @obsolete */
+    function caughtException($e){
+        $this->hook('caught-exception',array($e));
+        echo "<font color=red>",$e,"</font>";
+        echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
+        exit;
+    }
+
+    /** @obsolete */
+    function outputWarning($msg,$shift=0){
+        if($this->hook('output-warning',array($msg,$shift)))return true;
+        echo "<font color=red>",$msg,"</font>";
+    }
+    /** @obsolete */
+    function outputDebug($msg,$shift=0){
+        if($this->hook('output-debug',array($msg,$shift)))return true;
+        echo "<font color=red>",$msg,"</font><br>";
+    }
+    /** @obsolete */
+    function outputInfo($msg,$shift=0){
+        if($this->hook('output-info',array($msg,$shift)))return true;
+        echo "<font color=red>",$msg,"</font>";
+    }
+    // }}}
+
+    // {{{ Session Initialization
+    /** Initializes existing or new session */
     public $_is_session_initialized=false;
     function initializeSession($create=true){
         /* Attempts to re-initialize session. If session is not found,
@@ -155,41 +157,29 @@ class ApiWeb extends ApiCLI {
         session_name($this->name);
         session_start();
     }
+    // }}}
 
+    // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
     protected $sticky_get_arguments = array();
+    /** Make current get argument with specified name automatically appended to all generated URLs */
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
     }
+    /** Remove sticky GET which was set by stickyGET */
     function stickyForget($name){
         unset($this->sticky_get_arguments[$name]);
     }
+    /** @ignore - used by URL class */
     function getStickyArguments(){
         return $this->sticky_get_arguments;
     }
 
-    function sendHeaders(){
-        /**
-         * Send headers to browser
-         *
-         */
+    // }}}
 
-        header("Content-Type: text/html; charset=utf-8");
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");               // Date in the past
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");  // always modified
-        header("Cache-Control: no-store, no-cache, must-revalidate");   // HTTP/1.1
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");                                     // HTTP/1.0
-    }
 
-    /////////////// This is what you should call //////////////////
+    // {{{ Very Important Methods
+    /** Call this method from your index file. It is the main method of Agile Toolkit */
     function main(){
-        /**
-         * Call this function to do everything.
-         *
-         * This is main API function, which would do all initializing,
-         * input analysis, auth checking, the displaying
-         */
-
         try{
 
             // Initialize page and all elements from here
@@ -211,39 +201,7 @@ class ApiWeb extends ApiCLI {
             $this->caughtException($e);
         }
     }
-
-    /////////////// Application execution /////////////////////////
-    function render(){
-        if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
-
-        if(!($this->template)){
-            throw new BaseException("You should specify template for API object");
-        }
-
-        $this->hook('pre-render-output');
-        if(headers_sent($file,$line)){
-            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
-                ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
-        }
-        echo $this->template->render();
-        $this->hook('post-render-output');
-    }
-    function setTags($t){
-        // absolute path to base location
-        $t->trySet('atk_path',$q=
-                $this->api->pathfinder->atk_location->getURL().'/');
-        $t->trySet('base_path',$q=$this->api->pm->base_path);
-
-        // We are using new capability of SMlite to process tags individually
-        $t->eachTag('template',array($this,'_locateTemplate'));
-        $t->eachTag('page',array($this,'_locatePage'));
-    }
-    function _locateTemplate($path){
-        return $this->locateURL('template',$path);
-    }
-    function _locatePage($path){
-        return $this->getDestinationURL($path);
-    }
+    /** Main execution loop */ 
     function execute(){
         $this->rendered['sub-elements']=array();
         try {
@@ -268,8 +226,83 @@ class ApiWeb extends ApiCLI {
 
         }
     }
+    /** Renders all objects inside applications and echo all output to the browser */
+    function render(){
+        if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
+        if(!($this->template)){
+            throw new BaseException("You should specify template for API object");
+        }
+
+        $this->hook('pre-render-output');
+        if(headers_sent($file,$line)){
+            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
+                ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
+        }
+        echo $this->template->render();
+        $this->hook('post-render-output');
+    }
+    // }}}
+    
+    // {{{ Miscelanious Functions
+    /** Perform instant redirect to another page */
+    function redirect($page=null,$args=array()){
+        /**
+         * Redirect to specified page. $args are $_GET arguments.
+         * Use this function instead of issuing header("Location") stuff
+         */
+        header("Location: ".$this->getDestinationURL($page,$args));
+        exit;
+    }
+    /** Called on all templates in the system, populates some system-wide tags */
+    function setTags($t){
+        // absolute path to base location
+        $t->trySet('atk_path',$q=
+                $this->api->pathfinder->atk_location->getURL().'/');
+        $t->trySet('base_path',$q=$this->api->pm->base_path);
+
+        // We are using new capability of SMlite to process tags individually
+        $t->eachTag('template',array($this,'_locateTemplate'));
+        $t->eachTag('page',array($this,'_locatePage'));
+
+        $this->hook('set-tags',array($t));
+    }
+    /** Returns true if browser is going to EVAL output. */
+    function isAjaxOutput(){
+        // TODO: rename into isJSOutput();
+        return isset($_POST['ajax_submit']);
+    }
+    /** @obsolete Change index page, typically used after login */
+    function setIndexPage($page){
+        $this->index_page=$page;
+        return $this;
+    }
+    /** @obsolete */
+    function getIndexPage(){
+        return $this->index_page;
+    }
+    /** @private */
+    function _locateTemplate($path){
+        return $this->locateURL('template',$path);
+    }
+    /** @private */
+    function _locatePage($path){
+        return $this->getDestinationURL($path);
+    }
+    // }}}
+
+    // {{{ Layout implementation
+    /** Implements Layouts. Layout is region in shared template which may be replaced by object */
+    private $layout_initialized=false;
+    function initLayout(){
+        if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
+        $this->layout_initialized=true;
+        $this->addLayout('Content');
+        $this->upgradeChecker();
+    }
+    /** Register new layout, which, if has method and tag in the template, will be rendered */
     function addLayout($name){
+        // TODO: change to functionExists()
         if(method_exists($this,$lfunc='layout_'.$name)){
             if($this->template->is_set($name)){
                 $this->$lfunc();
@@ -277,6 +310,7 @@ class ApiWeb extends ApiCLI {
         }
         return $this;
     }
+    /** Default handling of Content page. To be replaced by ApiFrontend */
     function layout_Content(){
         // This function initializes content. Content is page-dependant
 
@@ -291,25 +325,7 @@ class ApiWeb extends ApiCLI {
             //throw new BaseException("No such page: ".$this->page);
         }
     }
-    function isAjaxOutput(){
-        // TODO: rename into isJSOutput();
-        return isset($_POST['ajax_submit']);
-    }
-    function redirect($page=null,$args=array()){
-        /**
-         * Redirect to specified page. $args are $_GET arguments.
-         * Use this function instead of issuing header("Location") stuff
-         */
-        header("Location: ".$this->getDestinationURL($page,$args));
-        exit;
-    }
-    function setIndexPage($page){
-        $this->index_page=$page;
-        return $this;
-    }
-    function getIndexPage(){
-        return $this->index_page;
-    }
+    /** Default template for the application. Redefine to add your own rules. */
     function defaultTemplate(){
         return array('shared');
     }

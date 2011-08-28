@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/***********************************************************
+/**
   A base class for all Visual objects in Agile Toolkit. The
   important distinctive property of all Views is abiltiy
   to render themselves (produce HTML)
@@ -7,23 +7,18 @@
   Learn:
   http://agiletoolkit.org/learn/understand/view
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+  Reference:
+  http://agiletoolkit.org/doc/view
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 abstract class AbstractView extends AbstractObject {
     /**
      * $template describes how this object is rendered. Template
@@ -53,13 +48,13 @@ abstract class AbstractView extends AbstractObject {
     protected $controller=null; // View should initialize itself with the help of Controller instance
 
     // {{{ Basic Operations
-    /* Duplicate view and it's template. Will not duplicate children */
+    /** Duplicate view and it's template. Will not duplicate children */
     function __clone(){
         parent::__clone();
         if($this->template)$this->template=clone $this->template;
         if($this->controller)$this->controller=clone $this->controller;
     }
-    /* Uses appropriate controller for this view to bind it with model */
+    /** Uses appropriate controller for this view to bind it with model */
     function setModel($model,$actual_fields=null){
         $c=$this->add('Controller');
         if(is_string($model)){
@@ -71,11 +66,11 @@ abstract class AbstractView extends AbstractObject {
         $this->setController($c);
         return $c;
     }
-    /* Get associated model */
+    /** Get associated model */
     function getModel(){
         return $this->getController()->getModel();
     }
-    /* Manually specify controller for view */
+    /** Manually specify controller for view */
     function setController($controller){
         if(is_object($controller)){
             $this->controller=$controller;
@@ -94,7 +89,7 @@ abstract class AbstractView extends AbstractObject {
     function _tsBuffer($data){
         $this->_tsBuffer.=$data;
     }
-    /* Converting View into string will render recursively and produce HTML. Avoid using this. */
+    /** Converting View into string will render recursively and produce HTML. Avoid using this. */
     function __toString(){
         $this->addHook('output',array($this,'_tsBuffer'));
         $this->recursiveRender();
@@ -108,7 +103,7 @@ abstract class AbstractView extends AbstractObject {
 
     // {{{ Template Setup
 
-    /* [private] Called automatically during init */
+    /** [private] Called automatically during init */
     function initializeTemplate($template_spot=null,$template_branch=null){
         if(!$template_spot)$template_spot=$this->defaultSpot();
         $this->spot=$template_spot;
@@ -150,29 +145,29 @@ abstract class AbstractView extends AbstractObject {
 
         $this->initTemplateTags();
     }
-    /* [private] Lets API auto-fill some tags in all views (such as tempalte tag) */
+    /** [private] Lets API auto-fill some tags in all views (such as tempalte tag) */
     function initTemplateTags(){
         if($this->template && $this->api && method_exists($this->api, 'setTags')){
             $this->api->setTags($this->template);
         }
     }
 
-    /* Redefine to return default template, when 3rd argument of add() is omitted */
+    /** Redefine to return default template, when 3rd argument of add() is omitted */
     function defaultTemplate(){
         return $this->spot;
     }
-    /* Redefine if object needs to output elsewhere, not into Content */
+    /** Redefine if object needs to output elsewhere, not into Content */
     function defaultSpot(){
         return 'Content';
     }
-    /* [private] returns actual template branch in same format as defaultTemplate() */
+    /** [private] returns actual template branch in same format as defaultTemplate() */
     function templateBranch(){
         return $this->template_branch;
     }
     // }}}
 
     // {{{ Rendering, see http://agiletoolkit.org/learn/understand/api/exec
-    /* [private] Recursively renders all views. Calls render() for all or for the one being cut */
+    /** [private] Recursively renders all views. Calls render() for all or for the one being cut */
     function recursiveRender(){
         $cutting_here=false;
 
@@ -205,11 +200,11 @@ abstract class AbstractView extends AbstractObject {
         // if template wasn't cut, we move all JS chains to parent
 
     }
-    /* [private] Append our chains to owner's chains. JS chains bubble up to API or object being cut */
+    /** [private] Append our chains to owner's chains. JS chains bubble up to API or object being cut */
     function moveJStoParent(){
         $this->owner->js=array_merge_recursive($this->owner->js,$this->js);
     }
-    /* Default render. Redefine if your object needs to dynamically generate data through heavy computation */
+    /** Default render. Redefine if your object needs to dynamically generate data through heavy computation */
     function render(){
         /**
          * For visual objects, their default action while rendering is rely on SMlite engine.
@@ -220,14 +215,14 @@ abstract class AbstractView extends AbstractObject {
         }
         $this->output($this->template->render());
     }
-    /* Call from render where you would use echo. Bypasses template, hence $this->template->set is better */
+    /** Call from render where you would use echo. Bypasses template, hence $this->template->set is better */
     function output($txt){
         if(!$this->hook('output',array($txt))){
             if((isset($this->owner->template)) && (!empty($this->owner->template)))
                 $this->owner->template->append($this->spot,$txt);
         }
     }
-    /* When cutting, perform selective render for a region */
+    /** When cutting, perform selective render for a region */
     function region_render(){
         /**
          * if GET['ajax'] is set, we need only one chunk of a page
@@ -241,7 +236,7 @@ abstract class AbstractView extends AbstractObject {
             $this->owner->template_flush=$_GET['cut_region'];
         }
     }
-    /* When cutting, perform selective render for an object */
+    /** When cutting, perform selective render for an object */
     function object_render(){
         /**
          * if GET['cut'] is set, then only particular object will be rendered
@@ -257,7 +252,7 @@ abstract class AbstractView extends AbstractObject {
 
     // {{{ Object JavaScript Interface
     public $js=array();
-    /* Creates and binds (if $when) JavaScript chain to object */
+    /** Creates and binds (if $when) JavaScript chain to object */
     function js($when=null,$code=null,$instance=null){
         /*
            This function is designed for particular object interaction with javascript. We are assuming

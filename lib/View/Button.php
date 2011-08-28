@@ -1,33 +1,29 @@
-<?php
-/***********************************************************
-  Implements a regular button
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+  Implements a simple button 
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 class View_Button extends View_HtmlElement {
-    private $icon=null;
+
+    /** @obsolete */
     private $link=null;
+
+    /** use setIcon() to change icon displayed on the button */
+    private $icon=null;
     function defaultTemplate(){
         return array('button','button');
     }
+
+    // {{ Management of button 
+    /** Button management */
     function setIcon($icon){
         // TODO: implment thorugh Icon
         $this->icon=$icon;
@@ -37,6 +33,7 @@ class View_Button extends View_HtmlElement {
     function setLabel($label){
         return $this->setText($label);
     }
+    /** Adds CSS of the news  */
     function setButtonStyle($n){
         $this->template->set('button_style',$n);
         return $this;
@@ -50,7 +47,7 @@ class View_Button extends View_HtmlElement {
         $this->class=$class;
         return $this;
     }
-    /* redefine this method with empty one if you DONT want buttons to use jQuery UI */
+    /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
         if(!($this->owner instanceof ButtonSet))$this->js(true)->button();
     }
@@ -66,7 +63,10 @@ class View_Button extends View_HtmlElement {
 
         return parent::render();
     }
-    /* Add click handler on button and returns true if button was clicked */
+    // }}}
+
+    // {{{ Click handlers
+    /** Add click handler on button and returns true if button was clicked */
     function isClicked($confirm=null){
 
         $cl=$this->js('click')->univ();
@@ -76,7 +76,7 @@ class View_Button extends View_HtmlElement {
 
         return isset($_GET[$this->name]);
     }
-    /* Add click handler on button and executes $callback if butotn was clicked */
+    /** Add click handler on button and executes $callback if butotn was clicked */
     function onClick($callback,$confirm=null){
         if($this->isClicked($confirm)){
 
@@ -85,20 +85,27 @@ class View_Button extends View_HtmlElement {
 
             if($ret instanceof jQuery_Chain)$ret->execute();
 
-            // blank chain
+            // blank chain otherwise
             $this->js()->execute();
         }
     }
+    // }}}
+
+    // {{{ Obsolete
+    /** @obsolete */
     function setAction($js=null,$page=null){
         throw $this->exception('setAction is not obsolete. use onClick or redirect method');
 
         return $this;
     }
+    /** @obsolete */
     function redirect($page){
         return $this->js('click')->univ()->redirect($this->api->getDestinationURL($page));
     }
+    /** @obsolete */
     function submitForm($form){
         throw $this->exception('submitForm() is obsolete, use button->js("click",$form->js()->submit());');
         return $this->js('click',$form->js()->submit());
     }
+    // }}}
 }

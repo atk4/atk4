@@ -1,21 +1,15 @@
-<?php
-/***********************************************************
-   File: Blah
-
- **ATK4*****************************************************
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+  * File: Blah
+  *
+*/
+/*
+==ATK4===================================================
    This file is part of Agile Toolkit 4 
-    http://www.atk4.com/
+    http://agiletoolkit.org/
   
-   (c) 2008-2011 Agile Technologies Ireland Limited
+   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
    Distributed under Affero General Public License v3
    
-   If you are using this file in YOUR web software, you
-   must make your make source code for YOUR web software
-   public.
-
-   See LICENSE.txt for more information
-
-   You can obtain non-public copy of Agile Toolkit 4 at
-    http://www.atk4.com/commercial/ 
-
- *****************************************************ATK4**/
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
