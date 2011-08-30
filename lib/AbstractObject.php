@@ -331,7 +331,7 @@ abstract class AbstractObject {
                         foreach ($_data as $data) {
 
                             // Our extentsion.
-                            if (is_string($data[0]) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data)) {
+                            if (is_string($data[0]) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data[0])) {
                                 $result = eval ($data[0]);
                             } elseif (is_callable($data[0])) {
                                 $result = call_user_func_array($data[0], array_merge($arg,$data[1]));
