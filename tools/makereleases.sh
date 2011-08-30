@@ -3,8 +3,8 @@
 # This file creates necessary packages for the ZIP files
 
 
-v="4.1b1"
-br="devel"
+v="4.1.1"
+br="master"
 
 p=`pwd`
 b=`basename $p`
