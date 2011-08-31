@@ -2,16 +2,16 @@
 
 ## Creates Bundle from many PHP class files
 cd `dirname $0`
-cd ../libx
+cd ..
 
-echo '<?php' > ../atk-bundle.php
-echo '// Agile Toolkit Bundle: http://agiletoolkit.org/' >> ../atk-bundle.php
-echo "set_include_path('.'.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.dirname(__FILE__).'/lib');" >> ../atk-bundle.php
+echo '<?php' > atk4-bundle.php
+echo '// Agile Toolkit Bundle: http://agiletoolkit.org/' >> atk4-bundle.php
+echo "set_include_path('.'.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEPARATOR.dirname(__FILE__).'/lib');" >> atk4-bundle.php
 
  while read cl; do
     echo "?><?php // File: $cl"
-    cat $cl | sed 1d 
-done >> ../atk-bundle.php <<EOF
+    cat lib/$cl | sed 1d 
+done >> atk4-bundle.php <<EOF
 static.php
 AbstractObject.php
 AbstractController.php
@@ -111,5 +111,9 @@ TMail.php
 UpgradeChecker.php
 URL.php
 EOF
+patch atk4-bundle.php < tools/bundle.patch
 
-patch ../atk-bundle.php < ../tools/bundle.patch
+php -r 'echo php_strip_whitespace("atk4-bundle.php");' > atk4-bundle.min.php
+
+echo "Created `pwd`/atk4-bundle.php"
+echo "Created `pwd`/atk4-bundle.min.php"
