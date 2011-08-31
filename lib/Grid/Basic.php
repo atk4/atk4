@@ -392,7 +392,7 @@ class Grid_Basic extends CompleteLister {
 		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
 	}
 	function init_link($field){
-		$this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
+		$this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
 	}
 	function format_link($field){
 		$this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));

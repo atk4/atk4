@@ -1,0 +1,20 @@
+--- bundle.php	2011-08-31 13:34:38.000000000 +0100
++++ bundlex.php	2011-08-31 13:34:24.000000000 +0100
+@@ -10378,7 +10378,7 @@
+ 
+ 		// Files not found in webroot - will be looked for in library dir
+ 		// We are assuming that we are located as atk4/lib/PathFinder.php
+-		$atk_directory=dirname(dirname(__FILE__));
++		$atk_directory=dirname(__FILE__);
+ 		$atk_url=basename($atk_directory);
+ 
+ 		$this->atk_location=$this->addLocation('atk4',array(
+@@ -10394,7 +10394,7 @@
+ 					'images'=>'img',
+ 					'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
+ 					))
+-			->setBasePath(dirname(dirname(__FILE__)))
++			->setBasePath(dirname(__FILE__))
+ 			->setBaseURL($this->api->getConfig('atk/base_path','/atk4/'))
+ 			;
+ 	}
