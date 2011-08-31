@@ -183,7 +183,8 @@ class ApiWeb extends ApiCLI {
         try{
 
             // Initialize page and all elements from here
-            $this->initLayout();
+            $this->initLayout41();
+            $this->hook('post-init');
 
             $this->hook('pre-exec');
 
@@ -292,11 +293,9 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Layout implementation
+    function initLayout(){}
     /** Implements Layouts. Layout is region in shared template which may be replaced by object */
-    private $layout_initialized=false;
-    function initLayout(){
-        if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
-        $this->layout_initialized=true;
+    function initLayout41(){
         $this->addLayout('Content');
         $this->upgradeChecker();
     }

@@ -47,7 +47,6 @@ class ApiCLI extends AbstractView {
             $this->add($this->pathfinder_class);
             $this->init();
 
-            $this->hook('post-init');
 
         }catch(Exception $e){
 
