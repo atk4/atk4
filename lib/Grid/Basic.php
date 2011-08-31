@@ -36,6 +36,7 @@ class Grid_Basic extends CompleteLister {
 	private $totals_title_field=null;
 	private $totals_title="";
 	public $totals_t=null;
+	public $data=null;
 
 	/**
 	 * Inline related property
@@ -471,6 +472,9 @@ class Grid_Basic extends CompleteLister {
 			'/>';
 		$this->setTDParam($field,'width','10');
 		$this->setTDParam($field,'align','center');
+	}
+	function format_image($field){
+		$this->current_row[$field]='<img src="'.$this->current_row[$field].'"/>';
 	}
 	function addRecordOrder($field,$table=''){
 		if(!$this->record_order){
