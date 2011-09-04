@@ -1,10 +1,10 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  A base class for all objects/classes in Agile Toolkit.
-  Do not directly inherit from this class, instead use one of
-  AbstractModel, AbstractController or AbstractView
- 
-  Learn More: http://agiletoolkit.org/learn/intro
+ * A base class for all objects/classes in Agile Toolkit.
+ * Do not directly inherit from this class, instead use one of
+ * AbstractModel, AbstractController or AbstractView
+ * 
+ * @link http://agiletoolkit.org/learn/intro
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
@@ -16,8 +16,6 @@
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 abstract class AbstractObject {
-
-
     public $settings=array('extension'=>'.html');
 
     /** Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
@@ -409,13 +407,14 @@ abstract class AbstractObject {
         $this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
     }
     // }}}
-    /*
-       DO NOT USE THIS FUNCTION, it might relocate
-
-       This funcion given the associative $array and desired new key will return
-       the best matching key which is not yet in the arary. For example if you have
-       array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'. If 
-       'foo_2' key also exists in that array, then 'foo_3' is returned and so on.
+    /**
+     *  @private
+     *  DO NOT USE THIS FUNCTION, it might relocate
+     *
+     * This funcion given the associative $array and desired new key will return
+     * the best matching key which is not yet in the arary. For example if you have
+     * array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'. If 
+     * 'foo_2' key also exists in that array, then 'foo_3' is returned and so on.
      */
     function _unique(&$array,$desired=null){
         $postfix=1;$attempted_key=$desired;
@@ -425,5 +424,4 @@ abstract class AbstractObject {
         }       
         return $attempted_key;
     }
-
 }

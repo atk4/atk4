@@ -1,13 +1,12 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  Base class for Command-Line Applications
-
-  Learn:
-  http://agiletoolkit.org/learn/****
-
-  Reference:
-  http://agiletoolkit.org/doc/apicli
-*//*
+ * Base class for Command-Line Applications
+ *
+ * More Info
+ *  @link http://agiletoolkit.org/learn/learn/understand/api
+ *  @link http://agiletoolkit.org/doc/apicli
+ */
+/*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
