@@ -1,14 +1,10 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  ApiWeb extends an api of CommandLine applications with knowlnedge of HTML
-  templates, understanding of pages and routing.
-
-  Learn:
-  http://agiletoolkit.org/learn/understand/api
-  http://agiletoolkit.org/learn/template
-
-  Reference:
-  http://agiletoolkit.org/doc/apiweb
+ * ApiWeb extends an api of CommandLine applications with knowlnedge of HTML
+ * templates, understanding of pages and routing.
+ * 
+ * @link http://agiletoolkit.org/learn/understand/api
+ * @link http://agiletoolkit.org/learn/template
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
@@ -183,7 +179,7 @@ class ApiWeb extends ApiCLI {
         try{
 
             // Initialize page and all elements from here
-            $this->initLayout41();
+            $this->initLayout();
             $this->hook('post-init');
 
             $this->hook('pre-exec');
@@ -293,9 +289,11 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Layout implementation
-    function initLayout(){}
+    private $layout_initialized=false;
     /** Implements Layouts. Layout is region in shared template which may be replaced by object */
-    function initLayout41(){
+    function initLayout(){
+        if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
+        $this->layout_initialized=true;
         $this->addLayout('Content');
         $this->upgradeChecker();
     }
