@@ -1,14 +1,10 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  A base class for all Visual objects in Agile Toolkit. The
-  important distinctive property of all Views is abiltiy
-  to render themselves (produce HTML)
-
-  Learn:
-  http://agiletoolkit.org/learn/understand/view
-
-  Reference:
-  http://agiletoolkit.org/doc/view
+ * A base class for all Visual objects in Agile Toolkit. The
+ * important distinctive property of all Views is abiltiy
+ * to render themselves (produce HTML)
+ *
+ * @link http://agiletoolkit.org/learn/understand/view
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 

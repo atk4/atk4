@@ -1,14 +1,10 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  This is the most appropriate API file for your web application. It builds on top of ApiWeb
-  and introduces concept of "Pages" on top of "Layout" concept defined in ApiWeb.
-
-  Learn:
-  http://agiletoolkit.org/learn/understand/api
-  http://agiletoolkit.org/learn/template
-
-  Reference:
-  http://agiletoolkit.org/doc/apifrontend
+ * This is the most appropriate API file for your web application. It builds on top of ApiWeb
+ * and introduces concept of "Pages" on top of "Layout" concept defined in ApiWeb.
+ *
+ * @link http://agiletoolkit.org/learn/understand/api
+ * @link http://agiletoolkit.org/learn/template
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
@@ -24,7 +20,7 @@ class ApiFrontend extends ApiWeb{
     /** When page is determined, it's class instance is created and stored in here */
     public $page_object=null;
 
-    /** @obsolete(might be refactored) - type of returned content */
+    /** @depreciated (might be refactored) - type of returned content */
     public $content_type='page';    // content type: rss/page/etc
 
     /** Class which is used for static pages */
