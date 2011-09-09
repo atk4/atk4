@@ -206,6 +206,7 @@ abstract class AbstractView extends AbstractObject {
          * For visual objects, their default action while rendering is rely on SMlite engine.
          * For sake of simplicity and speed you can redefine this method with a simple call
          */
+        if(!$this->_initialized)throw $this->exception('You should call parent::init() when overriding initializator');
         if(!($this->template)){
             throw $this->exception("You should specify template for this object");
         }
