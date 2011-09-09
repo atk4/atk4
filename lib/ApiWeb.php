@@ -251,7 +251,7 @@ class ApiWeb extends ApiCLI {
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */
-        header("Location: ".$this->getDestinationURL($page,$args));
+        header("Location: ".$this->getDestinationURL($page,$args)->__toString());
         exit;
     }
     /** Called on all templates in the system, populates some system-wide tags */

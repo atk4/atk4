@@ -140,6 +140,9 @@ http://mysite:123/install/dir/my/page.html
     function __toString(){
         return $this->getURL();
     }
+	function setURL($url){
+		return $this->setBaseURL($url);
+	}
     /* By default uses detected base_url, but you can use this to redefine */
     function setBaseURL($base){
         $this->base_url=$base;
@@ -163,21 +166,27 @@ http://mysite:123/install/dir/my/page.html
     function getExtension(){
         return $this->extension;
     }
-    function getURL(){
-        if($this->base_url)return $this->base_url.$this->getArguments();
-
-        $url=$this->getBaseURL();
-        $url.=$this->page;
-        $url.=$this->getExtension();
-
-
+	function getArguments($url=null){
         $tmp=array();
         foreach($this->arguments as $key=>$value){
             if($value===false)continue;
             $tmp[]=$key.'='.urlencode($value);
         }
 
-        if($tmp)$url.=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
+		$arguments='';
+        if($tmp)$arguments=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
+
+		return $arguments;
+	}
+    function getURL(){
+        if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
+
+        $url=$this->getBaseURL();
+        $url.=$this->page;
+        $url.=$this->getExtension();
+
+
+		$url.=$this->getArguments($url);
 
         return $url;
     }
