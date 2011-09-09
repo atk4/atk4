@@ -38,11 +38,13 @@ abstract class AbstractObject {
     /** Always points to current API */
     public $api;
 
+    public $_initialized=false;
     /** Initialize object. Always call parent */
     function init() {
         /**
          * This method is called for initialization
          */
+        $this->_initialized=true;
     }
     function __clone(){
         // fix short name and add ourselves to the parent
