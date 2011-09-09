@@ -93,6 +93,7 @@ class ApiFrontend extends ApiWeb{
             // i wish they implemented "finally"
             $this->page_object=$this->add($class,$page,'Content');
             if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
+            if(method_exists($this->page_object,'page_index'))$this->page_object->page_index();
         }
     }
     /** This method is called as a last resort, when page is not found. It receives the exception with the actual error */
