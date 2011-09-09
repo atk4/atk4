@@ -33,6 +33,9 @@ class Page extends AbstractView {
 	protected $title='Page';
 	public $default_exception='Exception_ForUser';
 	function init(){
+		if($this->owner!=$this->api){
+			throw $this->exception('Do not add page manually. Page is automatically initialized by the Application class');
+		}
 		if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
 			$_GET['cut_object']=$this->short_name;
 		$this->template->trySet('_page',$this->short_name);
