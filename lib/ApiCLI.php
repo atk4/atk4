@@ -36,6 +36,7 @@ class ApiCLI extends AbstractView {
     // {{{ Start-up of application
     /** Initialize application. Redefine in your application but always call parent */
     function __construct($realm=null){
+        if(!$realm)$realm=get_class($this);
         $this->owner = null;
         $this->name  = $realm;
         $this->api   = $this;
