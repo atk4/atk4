@@ -276,7 +276,7 @@ class BasicAuth extends AbstractController {
         $this->debug("initializating authentication page");
         //if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
-        $p=$this->add('Page',null,null,array('empty'));
+        $p=$this->add('View',null,null,array('empty'));
         try{
             $p->template->loadTemplate('login');
             $this->form=$this->createForm($p,'Login');
