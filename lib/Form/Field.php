@@ -149,21 +149,44 @@ abstract class Form_Field extends AbstractView {
 		// and perform their checks
 		if(is_bool($result = $this->hook('validate')))return $result;
 	}
-	function validateField($condition,$msg=''){
-		$this->addHook('validate','if(!('.$condition.'))$this->displayFieldError("'.
-					($msg?$msg:'Error in ".$this->caption."').'");');
+	/** @private - handles field validation callback output */
+	function _validateField($condition,$msg){
+		$ret=call_user_func($condition,$this);
+
+		if($ret===false){
+			if(is_null($msg))$msg='Error in '.$this->caption;
+			$this->displayFieldError($msg);
+		}elseif(is_string($ret)){
+			$this->displayFieldError($ret);
+		}
 		return $this;
 	}
-	function validateNotNULL($msg=''){
+	/** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
+	  * $msg or a standard error message about field being incorrect */
+	function validateField($condition,$msg=null){
+		if(is_callable($condition)){
+			$this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
+		}else{
+			$this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
+						($msg?$msg:'Error in ".$this->caption."').'");');
+		}
+		return $this;
+	}
+	function _validateNotNull($field){
+		if($field->get()==="")return false;
+	}
+	/** Adds asterisk to the field and validation */
+	function validateNotNULL($msg=null){
 		$this->setMandatory();
         if($msg){
-            $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
-        }else{
             $msg=$this->api->_($msg);
+        }else{
+            $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
         }
-		$this->validateField('$this->get()!==""',$msg);
+		$this->validateField(array($this,'_validateNotNull'),$msg);
 		return $this;
 	}
+	/** obsolete version of validateNotNULL */
 	function setNotNull($msg=''){
 		$this->validateNotNULL($msg);
 		return $this;

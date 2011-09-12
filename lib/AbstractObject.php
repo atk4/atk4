@@ -36,11 +36,13 @@ abstract class AbstractObject {
     /** Always points to current API */
     public $api;
 
+    public $_initialized=false;
     /** Initialize object. Always call parent */
     function init() {
         /**
          * This method is called for initialization
          */
+        $this->_initialized=true;
     }
     function __clone(){
         // fix short name and add ourselves to the parent
@@ -125,6 +127,9 @@ abstract class AbstractObject {
         }
 
         $element->init();
+        if(!$element->_initialized)throw $element->exception('You should call parent::init() when you override it')
+            ->addMoreInfo('object_name',$element->name)
+            ->addMoreInfo('class',get_class($element));
         return $element;
     }
     /** Find child element by their short name. Use in chaining. Exception if not found. */

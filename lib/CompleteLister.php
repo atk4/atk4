@@ -28,6 +28,7 @@ class CompleteLister extends Lister {
 	protected $totals_t=false;
 	function init(){
 		parent::init();
+        if(!$this->template->is_set('row'))throw $this->exception('Template must have "row" tag');
 		$this->row_t=$this->template->cloneRegion('row');
 		if($this->template->is_set('totals')){
 			$this->totals_t=$this->template->cloneRegion('totals');
