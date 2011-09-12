@@ -424,7 +424,6 @@ class Grid_Basic extends CompleteLister {
 		$this->columns[$this->last_column]['button_class']=$class;
 	}
 	function init_delete($field){
-		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->columns[$field]['button_class']='red';
 		$g=$this;
 		$this->api->addHook('post-init',array($this,'_move_delete'),array($field));
@@ -437,9 +436,11 @@ class Grid_Basic extends CompleteLister {
         if($this->hasColumn($field))$this->addOrder()->move($field,'last')->now();
     }
 	function init_confirm($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function init_prompt($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function format_button($field){
