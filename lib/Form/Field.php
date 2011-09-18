@@ -543,7 +543,7 @@ class Form_Field_ValueList extends Form_Field {
 			foreach($data as $row){
 				$res[$row['id']]=$row['name'];
 			}
-			return $res;
+			return $this->value_list=$res;
 		}
 		return $this->value_list;
 	}
@@ -565,6 +565,7 @@ class Form_Field_ValueList extends Form_Field {
 class Form_Field_Dropdown extends Form_Field_ValueList {
 	function validate(){
 		if(!$this->value)return parent::validate();
+        $this->getValueList(); //otherwise not preloaded?
 		if(!isset($this->value_list[$this->value])){
 			/*
 			   if($this->api->isAjaxOutput()){
@@ -572,6 +573,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 			   ->execute();
 			   }
 			 */
+            var_duMp($this->value_list);
 			$this->owner->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
