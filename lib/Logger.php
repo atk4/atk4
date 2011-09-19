@@ -209,7 +209,7 @@ class Logger extends AbstractController {
 	}
 	function showDebugInfo(){
 		if(!$this->debug_added)return;
-		if($this->api->not_html){
+		if(@$this->api->not_html){
 			// We may not output anything, because this will screw up. Save debug output to session
 			if(session_id())$this->memorize('debug_log',$this->debug_log);
 		}else{
