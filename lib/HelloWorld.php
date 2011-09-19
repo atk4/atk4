@@ -17,6 +17,7 @@
 class HelloWorld extends AbstractView {
 	private $message;
 	function init(){
+        parent::init();
 		$this->message = 'Hello world';
 	}
 	function setMessage($msg){
