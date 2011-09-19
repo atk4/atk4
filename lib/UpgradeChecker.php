@@ -28,12 +28,13 @@ class UpgradeChecker extends HtmlElement {
         parent::init();
         if(!$this->api->template->is_set('js_include'))return;  // no support in templtae
         $this->set($v=$this->api->getVersion());
+        if($v[0]!=4)return;     // probably not ATK version
 
         if(isset($_COOKIE[$this->name.'_'.str_replace('.','_',$v)]))return;
 
         $this->api->template->append('js_include',
-                '<script aync="true" onload="atk4_version_check(\''.$this->name.
-            '\')" type="text/javascript" src="http://agiletoolkit.org/upgrade_check/'.
+                '<script aync="true" onload="try{ atk4_version_check(\''.$this->name.
+            '\'); } catch(e){ }" type="text/javascript" src="http://agiletoolkit.org/upgrade_check/'.
                 $this->api->getVersion().'.js"></script>'."\n");
     }
 }
