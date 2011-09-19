@@ -40,4 +40,3 @@ class View_Columns extends View {
         return array('view/columns');
     }
 }
-?>

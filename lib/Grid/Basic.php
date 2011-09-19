@@ -36,6 +36,7 @@ class Grid_Basic extends CompleteLister {
 	private $totals_title_field=null;
 	private $totals_title="";
 	public $totals_t=null;
+	public $data=null;
 
 	/**
 	 * Inline related property
@@ -392,7 +393,7 @@ class Grid_Basic extends CompleteLister {
 		$this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
 	}
 	function init_link($field){
-		$this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
+		$this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
 	}
 	function format_link($field){
 		$this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));
@@ -423,7 +424,6 @@ class Grid_Basic extends CompleteLister {
 		$this->columns[$this->last_column]['button_class']=$class;
 	}
 	function init_delete($field){
-		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->columns[$field]['button_class']='red';
 		$g=$this;
 		$this->api->addHook('post-init',array($this,'_move_delete'),array($field));
@@ -436,9 +436,11 @@ class Grid_Basic extends CompleteLister {
         if($this->hasColumn($field))$this->addOrder()->move($field,'last')->now();
     }
 	function init_confirm($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function init_prompt($field){
+		@$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
 		$this->js(true)->find('.button_'.$field)->button();
 	}
 	function format_button($field){
@@ -471,6 +473,9 @@ class Grid_Basic extends CompleteLister {
 			'/>';
 		$this->setTDParam($field,'width','10');
 		$this->setTDParam($field,'align','center');
+	}
+	function format_image($field){
+		$this->current_row[$field]='<img src="'.$this->current_row[$field].'"/>';
 	}
 	function addRecordOrder($field,$table=''){
 		if(!$this->record_order){

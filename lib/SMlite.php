@@ -137,6 +137,7 @@ class SMlite extends AbstractModel {
 
 	// Template creation, interface functions
 	function init(){
+        parent::init();
 		$path=array();
 
 		$this->settings=$this->getDefaultSettings();

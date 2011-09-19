@@ -129,7 +129,7 @@ class Form_Field_Upload extends Form_Field {
 	}
 
 	function init(){
-
+        parent::init();
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
 		$this->attr['type']='file';
 

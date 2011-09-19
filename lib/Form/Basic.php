@@ -23,7 +23,7 @@
 
  *****************************************************ATK4**/
 // Field bundle
-include_once'Form/Field.php';
+if(!class_exists('Form_Field',false))include_once'Form/Field.php';
 /**
  * This class implements generic form, which you can actually use without
  * redeclaring it. Just add fields, buttons and use execute method.
@@ -446,4 +446,3 @@ class Form_Basic extends AbstractView {
      * Makes field's value set to null if empty value has been specified
      */
 }
-?>

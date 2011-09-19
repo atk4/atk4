@@ -1,14 +1,10 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  A base class for all Visual objects in Agile Toolkit. The
-  important distinctive property of all Views is abiltiy
-  to render themselves (produce HTML)
-
-  Learn:
-  http://agiletoolkit.org/learn/understand/view
-
-  Reference:
-  http://agiletoolkit.org/doc/view
+ * A base class for all Visual objects in Agile Toolkit. The
+ * important distinctive property of all Views is abiltiy
+ * to render themselves (produce HTML)
+ *
+ * @link http://agiletoolkit.org/learn/understand/view
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
@@ -210,7 +206,6 @@ abstract class AbstractView extends AbstractObject {
          * For visual objects, their default action while rendering is rely on SMlite engine.
          * For sake of simplicity and speed you can redefine this method with a simple call
          */
-        if(!$this->_initialized)throw $this->exception('You should call parent::init() when overriding initializator');
         if(!($this->template)){
             throw $this->exception("You should specify template for this object");
         }
