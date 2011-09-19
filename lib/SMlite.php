@@ -112,6 +112,8 @@ class SMlite extends AbstractModel {
 	 */
 	public $updated_tag_list = array();
 
+    private $cache;
+
 	function getTagVal($tag) {
 		return (isset($this->updated_tag_list[$tag]))?$this->updated_tag_list[$tag]:null;
 	}
@@ -139,6 +141,7 @@ class SMlite extends AbstractModel {
 	function init(){
         parent::init();
 		$path=array();
+        $this->cache=&$this->api->smlite_cache;
 
 		$this->settings=$this->getDefaultSettings();
 		$this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
@@ -392,6 +395,12 @@ class SMlite extends AbstractModel {
 		/*
 		 * Load template from file
 		 */
+        if($this->cache[$template_name.$ext]){
+            $this->template=unserialize($this->cache[$template_name.$ext]);
+            $this->rebuildTags();
+            return $this;
+        }
+
 		if($ext){
 			$tempext=$this->settings['extension'];
 			$this->settings['extension']=$ext;
@@ -403,6 +412,8 @@ class SMlite extends AbstractModel {
 
 		$this->parseTemplate($this->template);
 		if($ext){ $this->settings['extension']=$tempext; }
+
+        $this->cache[$template_name.$ext]=serialize($this->template);
 
 		return $this;
 	}
