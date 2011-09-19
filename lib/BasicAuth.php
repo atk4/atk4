@@ -173,14 +173,15 @@ class BasicAuth extends AbstractController {
     // {{{ Password encryption ciphers
     /** Perform password encryption with selected cypher */
     function encryptPassword($password,$salt=null){
-        if($this->password_encryption)$this->debug("Encrypting password: '$password'");
+        if($this->password_encryption)$this->debug("Encrypting password: '$password' with salt '$salt'");
         switch($this->password_encryption){
             case null: return $password;
             case'sha256/salt':
                    if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
+                   if($this->password_encryption)$this->debug("Using password key: '".$this->api->getConfig('auth/key')."'");
                    return hash_hmac('sha256',
                            $password.$salt,
-                           $this->api->getConfig('auth/key',$this->api->name));
+                           $this->api->getConfig('auth/key'));
             case'sha1':return sha1($password);
             case'md5':return md5($password);
             case'rot13':return str_rot13($password);
