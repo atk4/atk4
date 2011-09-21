@@ -9,6 +9,10 @@ class Controller_Compat extends AbstractController {
         parent::init();
         $this->api->addGlobalMethod('frame',array($this,'frame'));
         $this->api->addGlobalMethod('ajax',array($this,'ajax'));
+        $this->api->addHook('compat-addModelSave',array($this,'addModelSave'));
+    }
+    function addModelSave($obj,$other=null){
+        $obj->addSubmit('Save');
     }
 	function frame($obj,$spot=null,$title=null,$p=null,$opt=''){
 		/*
