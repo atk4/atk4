@@ -29,11 +29,11 @@
    This class represents sequentall calls to one jQuery object
  */
 class jQuery_Chain extends AbstractModel {
-    private $str='';
-    private $prepend='';
-    private $selector=null;
-    private $enclose=false;
-    private $preventDefault=false;
+    public $str='';
+    public $prepend='';
+    public $selector=null;
+    public $enclose=false;
+    public $preventDefault=false;
     public $base='';
     function __call($name,$arguments){
         if($arguments){
