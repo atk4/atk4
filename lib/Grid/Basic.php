@@ -35,8 +35,8 @@ class Grid_Basic extends CompleteLister {
 
 	private $totals_title_field=null;
 	private $totals_title="";
-	public $totals_t=null;
-
+    public $totals_t=null;
+    public $totals_value_na = '-';
 	/**
 	 * Inline related property
 	 * If true - TAB key submits row and activates next row
@@ -224,7 +224,7 @@ class Grid_Basic extends CompleteLister {
 			$this->setTDParam($field,'style/font-weight','bold');
 			//$this->current_row[$field]=$this->totals_title.':';
 		}
-		else $this->current_row[$field]='-';
+		else $this->current_row[$field]=$this->totals_value_na;
 	}
 	function format_time($field){
 		$this->current_row[$field]=date($this->api->getConfig('locale/time','H:i:s'),
@@ -686,7 +686,7 @@ function formatRow(){
 			}
 			// setting cell parameters (tdparam)
 			$this->applyTDParams($tmp,true);
-			if($all_failed)$this->current_row[$tmp]='-';
+            if($all_failed)$this->current_row[$tmp]=$this->totals_value_na;
 		}
 	}
 	function updateTotals(){
