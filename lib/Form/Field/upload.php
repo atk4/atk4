@@ -129,7 +129,7 @@ class Form_Field_Upload extends Form_Field {
 	}
 
 	function init(){
-
+        parent::init();
 		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
 		$this->attr['type']='file';
 
@@ -296,8 +296,8 @@ class Form_Field_Upload extends Form_Field {
 	}
 	function getOriginalType(){
 		// detect filetype instead of relying on uploaded type
-		return mime_content_type($this->getFilePath());
-		//return $_FILES[$this->name]['type'];
+		if(function_exists('mime_content_type'))return mime_content_type($this->getFilePath());
+		return $_FILES[$this->name]['type'];
 	}
 	function getFilePath(){
 		return $_FILES[$this->name]['tmp_name'];

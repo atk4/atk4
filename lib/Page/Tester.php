@@ -38,7 +38,7 @@ class Page_Tester extends Page {
             if($tested[$m])continue;$tested[$m]=true;
 
             // Row contains test result data
-            $row=array('name'=>$m);
+            $row=array('name'=>$m,'id'=>$m);
 
             foreach($this->variances as $key=>$vari){
                 if(is_numeric($key))$key=$vari;

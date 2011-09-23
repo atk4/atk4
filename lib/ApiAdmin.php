@@ -1,7 +1,8 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  Used to be more lightweight class, although now it's not used
-  anymore. Please AVOID usind this class
+ * @ignore
+ *  Used to be more lightweight class, although now it's not used
+ *  anymore. Please AVOID usind this class
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 

@@ -1,13 +1,12 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  Base class for Command-Line Applications
-
-  Learn:
-  http://agiletoolkit.org/learn/****
-
-  Reference:
-  http://agiletoolkit.org/doc/apicli
-*//*
+ * Base class for Command-Line Applications
+ *
+ * More Info
+ *  @link http://agiletoolkit.org/learn/learn/understand/api
+ *  @link http://agiletoolkit.org/doc/apicli
+ */
+/*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
@@ -37,6 +36,7 @@ class ApiCLI extends AbstractView {
     // {{{ Start-up of application
     /** Initialize application. Redefine in your application but always call parent */
     function __construct($realm=null){
+        if(!$realm)$realm=get_class($this);
         $this->owner = null;
         $this->name  = $realm;
         $this->api   = $this;
@@ -47,7 +47,6 @@ class ApiCLI extends AbstractView {
             $this->add($this->pathfinder_class);
             $this->init();
 
-            $this->hook('post-init');
 
         }catch(Exception $e){
 

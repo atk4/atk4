@@ -365,6 +365,12 @@ class TMail extends AbstractController{
      * Does the actual send by calling mail() function
      */
     function send($address,$add_params=null){
+        if (is_array($address)){
+            foreach ($address as $a){
+                $this->send($a, $add_params);
+            }
+            return;
+        }
         // checking if from is set
         if(!$this->get('from'))$this->set('from',$this->api->getConfig('mail/from','nobody@agiletoolkit.org'));
         // send an email with defined parameters
