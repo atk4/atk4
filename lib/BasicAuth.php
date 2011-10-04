@@ -279,30 +279,11 @@ class BasicAuth extends AbstractController {
         //if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
 
         $p=$this->add('View',null,null,array('empty'));
-        try{
-            $p->template->loadTemplate('login');
-            $this->form=$this->createForm($p,'Login');
-        }catch(PathFinder_Exception $e){
-            //$p->template->loadTemplate('empty');
-            /*
-               $p->template->trySet('atk_path',$q=
-               $this->api->pathfinder->atk_location->getURL().'/');
-               $p->template->trySet('base_href',
-               $q=$this->api->pm->base_url.'/'
-               );
-             */
-            //$this->api->setTags($p->template);
-            $c=$p->add('Columns');
-            $c->addColumn(3);
-            $frame=$c->addColumn(4)->add('Frame')->setTitle('Authentication');
-            $this->form=$this->createForm($frame);
-            $c->addColumn(3);
-        }
-        // adding token for session exiration detection
-        //$p->add('Text','session_token')
-        //  ->set('<div id="session_token" style="display: none;">session is expired, relogin</div>');
-        //$p->template->set('page_title', $this->title_form);
-
+        $c=$p->add('Columns');
+        $c->addColumn(3);
+        $frame=$c->addColumn(4)->add('Frame')->setTitle('Authentication');
+        $this->form=$this->createForm($frame);
+        $c->addColumn(3);
         return $p;
     }
     function memorizeOriginalURL(){
