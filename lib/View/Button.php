@@ -24,10 +24,11 @@ class View_Button extends View_HtmlElement {
 
     // {{ Management of button 
     /** Button management */
-    function setIcon($icon){
+    function setIcon($icon, $colour='blue'){
         // TODO: implment thorugh Icon
         $this->icon=$icon;
         $this->template->set('icon',$icon);
+        $this->template->set('colour',$colour);
         return $this;
     }
     function setLabel($label){
