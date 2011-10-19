@@ -207,7 +207,8 @@ abstract class AbstractView extends AbstractObject {
          * For sake of simplicity and speed you can redefine this method with a simple call
          */
         if(!($this->template)){
-            throw $this->exception("You should specify template for this object");
+            throw $this->exception("You should specify template for this object")
+                ->addMoreInfo('object',$this->name);
         }
         $this->output($this->template->render());
     }

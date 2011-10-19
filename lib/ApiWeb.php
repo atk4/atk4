@@ -177,9 +177,14 @@ class ApiWeb extends ApiCLI {
     /** Call this method from your index file. It is the main method of Agile Toolkit */
     function main(){
         try{
-
             // Initialize page and all elements from here
             $this->initLayout();
+        }catch(Exception $e){
+            if(!($e instanceof Exception_StopInit))
+                return $this->caughtException($e);
+        }
+
+        try{
             $this->hook('post-init');
 
             $this->hook('pre-exec');
@@ -192,9 +197,6 @@ class ApiWeb extends ApiCLI {
 
             $this->execute();
         }catch(Exception $e){
-
-            if($e instanceof Exception_StopInit)return;
-
             $this->caughtException($e);
         }
     }
