@@ -33,6 +33,7 @@ class Page extends AbstractView {
 	protected $title='Page';
 	public $default_exception='Exception_ForUser';
 	function init(){
+        $this->api->page_object=$this;
 		if($this->owner!=$this->api && !($this->owner instanceof BasicAuth)){
 			throw $this->exception('Do not add page manually. Page is automatically initialized by the Application class')
                 ->addMoreInfo('owner',$this->owner->name)
