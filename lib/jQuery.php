@@ -55,7 +55,7 @@ class jQuery extends AbstractController {
     function addStaticInclude($file,$ext='.js'){
         if(substr($file,0,4)!='http'){
             $url=$this->api->locateURL('js',$file.$ext);
-        }else $url=file;
+        }else $url=$file;
 
         $this->api->template->append('js_include',
                 '<script type="text/javascript" src="'.$url.'"></script>'."\n");
