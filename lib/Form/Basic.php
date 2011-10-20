@@ -431,7 +431,7 @@ class Form_Basic extends AbstractView {
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
     function isClicked($name){
-        return $_POST['ajax_submit']==$name;
+        return ($_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]));
     }
     /* external error management */
     function setFieldError($field, $name){
