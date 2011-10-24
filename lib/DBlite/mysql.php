@@ -32,7 +32,10 @@ class DBlite_mysql extends DBlite {
 			$this->settings=$this->parseDSN($dsn);
 
 		// Then let's do real connect
-		$this->handle=mysql_pconnect(
+        if($this->settings['port'])
+            $this->settings['hostspec'].=':'.$this->settings['port'];
+
+		$this->handle=mysql_connect(
 				$this->settings['hostspec'],
 				$this->settings['username'],
 				$this->settings['password'],
@@ -40,7 +43,7 @@ class DBlite_mysql extends DBlite {
 				);
 
 		if(!$this->handle) {
-			sleep(1);
+			sleep(0.1);
 			// try connect again
 			$this->handle=mysql_connect(
 					$this->settings['hostspec'],
@@ -49,7 +52,7 @@ class DBlite_mysql extends DBlite {
 					true
 					);
 			if(!$this->handle) {
-				sleep(2);
+				sleep(0.5);
 				// last attempt
 				$this->handle=mysql_connect(
 						$this->settings['hostspec'],
