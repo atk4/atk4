@@ -94,10 +94,7 @@ echo $e->getMessage()."<br>\n";
     // array_merge gives us an error when one of arguments is null. This function
     // acts the same as array_merge, but without warnings
     function safe_array_merge($a,$b=null){
-        if(is_null($a)){
-            $a=$b;
-            $b=null;
-        }
+        if(is_null($a))return $b;
         if(is_null($b))return $a;
         return array_merge($a,$b);
     }
