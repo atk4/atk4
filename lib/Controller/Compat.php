@@ -4,6 +4,9 @@
    $this->api->add('Controller_Compat_Frame');
 
  */
+include'TMail_Compat';
+class TMail extends TMail_Compat{};
+
 class Controller_Compat extends AbstractController {
     function init(){
         parent::init();
