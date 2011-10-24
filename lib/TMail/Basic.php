@@ -109,10 +109,10 @@ class TMail_Basic extends AbstractModel {
         $subject = $this->args['subject'];
 
         // TODO: should we use mb_encode_mimeheader ?
-
-        if(!$this->hook('send',array($to,$from,$subject,$body,$headers))){
-            mail($to,$subject,$body,$headers,'-f '.$from);
+        if(!($res=$this->hook('send',array($to,$from,$subject,$body,$headers)))){
+            return mail($to,$subject,$body,$headers,'-f '.$from);
         }
+        return $res;
     }
 }
 
