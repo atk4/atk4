@@ -573,7 +573,6 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 			   ->execute();
 			   }
 			 */
-            var_duMp($this->value_list);
 			$this->owner->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
