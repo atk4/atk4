@@ -88,7 +88,7 @@ class PathFinder extends AbstractController {
 					'docs'=>'',	// files like README, COPYING etc
 					'template'=>array('templates/'.$this->api->skin,'templates'=>'templates/shared'),
 					'xslt'=>'templates/xslt',
-					// mail templates are not provided
+					'mail'=>'templates/mail',
 					'js'=>'templates/js',
 
 					// TODO: check that the folowing two are actually being used
