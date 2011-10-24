@@ -4,7 +4,8 @@
    $this->api->add('Controller_Compat_Frame');
 
  */
-include'TMail_Compat';
+
+if(class_exists('TMail',false))die("Include Controller_Compat before you use TMail");
 class TMail extends TMail_Compat{};
 
 class Controller_Compat extends AbstractController {

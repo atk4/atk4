@@ -54,6 +54,8 @@ class TMail_Basic extends AbstractModel {
         if($t->is_set('html')){
             $this->setText($t->cloneRegion('text'));
             $this->setHtml($t->cloneRegion('html'));
+        }elseif($t->is_set('body')){
+            $this->set($t->cloneRegion('body'));
         }else{
             $this->set($t);
         }
