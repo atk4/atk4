@@ -3,7 +3,7 @@
 # This file creates necessary packages for the ZIP files
 
 
-v="4.1.2"
+v="4.1.3"
 br="master"
 
 p=`pwd`
@@ -39,6 +39,12 @@ else
   git clone git@github.com:atk4/dvdrental.git dvdrental-source
 fi
 
+if [ -d sitesample-source ]; then
+  ( cd sitesample-source; git pull origin 'master' )
+else
+  git clone git@github.com:romaninsh/atk4-sitesample.git sitesample-source
+fi
+
 v=`cat atk4-source/VERSION`
 v="-$v"
 echo -- $v
@@ -69,8 +75,10 @@ rm -rf agiletoolkit
 (cd atk4-example-source; git checkout-index -a -f --prefix=../agiletoolkit/)
 (cd atk4-source; git checkout-index -a -f --prefix=../agiletoolkit/atk4/)
 (cd atk4-addons-source; git checkout-index -a -f --prefix=../agiletoolkit/atk4-addons/)
-(cd dvdrental-source; git checkout-index -a -f --prefix=../agiletoolkit/examples/dvdrental)
+(cd dvdrental-source; git checkout-index -a -f --prefix=../agiletoolkit/examples/dvdrental/)
+(cd sitesample-source; git checkout-index -a -f --prefix=../agiletoolkit/examples/website/)
 (cd agiletoolkit; find -name .gitignore | xargs rm; find -name .gitmodules | xargs rm)
+rm agiletoolkit$v.zip
 zip -r agiletoolkit$v.zip agiletoolkit/ >/dev/null
 #tar -czf agiletoolkit$v.tgz agiletoolkit
 rm -rf agiletoolkit
