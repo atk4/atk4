@@ -47,12 +47,11 @@ abstract class Form_Field extends AbstractView {
 		unset($_GET['cut_object']);
 		$this->recursiveRender();
 		if($this->api->jquery)$this->api->jquery->getJS($this);
-		$e=new RenderObjectSuccess(
+        throw new Exception_StopRender(
 				$this->template->renderRegion($this->template->tags['before_field']).
 				$this->getInput().
 				$this->template->renderRegion($this->template->tags['after_field'])
 				);
-		throw $e;
 	}
 	function setMandatory($mandatory=true){
 		$this->mandatory=$mandatory;
