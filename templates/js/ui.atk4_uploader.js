@@ -119,11 +119,14 @@ $.widget("ui.atk4_uploader", {
 				tpl.find('[data-template='+key+']').text(val);
 			});
 			tpl.find('.delete_doc').click(function(ev){
-				ev.preventDefault();
-				$(this).univ().ajaxec(act+'&'+
-					self.element.attr('name')+'_delete_action='+
-					$(this).closest('div').attr('rel') 
-				);
+                var tmp = this;
+                $(this).univ().dialogConfirm('Confirmation required', 'Do you want to delete this file?', function(){
+                    ev.preventDefault();
+                    $(tmp).univ().ajaxec(act+'&'+
+                        self.element.attr('name')+'_delete_action='+
+                        $(tmp).closest('div').attr('rel') 
+                    );
+                });
 			})
 			tpl.find('.add_image').click(function(ev){
 				ev.preventDefault();

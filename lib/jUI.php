@@ -35,11 +35,17 @@ class jUI extends jQuery {
 
         parent::init();
         $this->api->jui=$this;
+
+        $this->addDefaultIncludes();
+
+        $this->atk4_initialised=true;
+    }
+    function addDefaultIncludes(){
         $this->addInclude('start-atk4');
         $this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.8.11.min'));
         $this->addInclude('ui.atk4_loader');
-
-        $this->atk4_initialised=true;
+        $this->addInclude('ui.atk4_notify');
+        $this->addInclude('atk4_univ');
     }
     function addInclude($file,$ext='.js'){
         if(substr($file,0,4)=='http'){

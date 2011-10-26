@@ -27,12 +27,6 @@ class ApiFrontend extends ApiWeb{
     public $page_class='Page';
 
     // {{{ Layout Implementation
-    /** In addition to default initialization, set up logger and template */
-    function init(){
-        parent::init();
-        $this->getLogger();
-        $this->initializeTemplate();
-    }
     /** Content in the global (shared.html) template is rendered by page object. This method loads either class or static file */
     function layout_Content(){
         // required class prefix depends on the content_type

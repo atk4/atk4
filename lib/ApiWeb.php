@@ -59,6 +59,14 @@ class ApiWeb extends ApiCLI {
 
         parent::init();
 
+        /** In addition to default initialization, set up logger and template */
+        $this->getLogger();
+        $this->initializeTemplate();
+
+
+        if(get_class($this)=='ApiWeb'){
+            $this->setConfig(array('url_postfix'=>'.php','url_prefix'=>''));
+        }
     }
     /** Sends default headers. Re-define to send your own headers */
     function sendHeaders(){
@@ -177,9 +185,14 @@ class ApiWeb extends ApiCLI {
     /** Call this method from your index file. It is the main method of Agile Toolkit */
     function main(){
         try{
-
             // Initialize page and all elements from here
             $this->initLayout();
+        }catch(Exception $e){
+            if(!($e instanceof Exception_StopInit))
+                return $this->caughtException($e);
+        }
+
+        try{
             $this->hook('post-init');
 
             $this->hook('pre-exec');
@@ -192,9 +205,6 @@ class ApiWeb extends ApiCLI {
 
             $this->execute();
         }catch(Exception $e){
-
-            if($e instanceof Exception_StopInit)return;
-
             $this->caughtException($e);
         }
     }
@@ -299,6 +309,7 @@ class ApiWeb extends ApiCLI {
     }
     /** Register new layout, which, if has method and tag in the template, will be rendered */
     function addLayout($name){
+        if(!$this->template)return;
         // TODO: change to functionExists()
         if(method_exists($this,$lfunc='layout_'.$name)){
             if($this->template->is_set($name)){
