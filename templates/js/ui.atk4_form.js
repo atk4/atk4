@@ -139,6 +139,7 @@ $.widget("ui.atk4_form", {
 		});
 		*/
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
+        if(!this.base_url)this.base_url=window.location.href;
 		if(this.options.base_url)this.base_url=this.options.base_url;
     },
 	submitPlain: function(){
@@ -149,6 +150,7 @@ $.widget("ui.atk4_form", {
 	},
 	setFieldValue: function(field_name,value){
 		var f=$('#'+this.id+'_'+field_name);
+
 
 		if(!f.length){
 			console.log('Unable to find field ',field_name,' and fill in ',value);
@@ -166,7 +168,7 @@ $.widget("ui.atk4_form", {
 
 			var self=this;
 
-			this.reloadField(field_name,function(){
+			this.reloadField(field_name,null,function(){
 				var f=$('#'+self.id+'_'+field_name);
 				var opt=f.find('option[value='+value+']');
 				if(opt.length){
