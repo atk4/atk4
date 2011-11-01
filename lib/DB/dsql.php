@@ -232,6 +232,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->where($field,$cond,$value,'having');
     }
     function where($field,$cond=undefined,$value=undefined,$type='where'){
+        var_dump($this->name);
         /*
            1. where('id',2);                    // equals
            2. where('id','>',2);                // explicit condition
