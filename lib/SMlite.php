@@ -191,7 +191,13 @@ class SMlite extends AbstractModel {
         }
         $class_name=get_class($this);
         $new=new $class_name();
-        $new->template=unserialize(serialize($this->tags[$tag][0]));
+        try {
+            $new->template=unserialize(serialize($this->tags[$tag][0]));
+        }catch(PDOException $e){
+            var_Dump($this->tags);
+            throw $this->exception('PDO got stuck in template')
+                ->addMoreInfo('tag',$tag);
+        }
         $new->owner=$this->owner;
         $new->top_tag=$tag;
         $new->settings=$this->settings;
@@ -240,6 +246,7 @@ class SMlite extends AbstractModel {
          * If tag is used for several regions inide template, they all will be
          * appended with new data.
          */
+        if($value instanceof URL)$value=$value->__toString();
         if($this->isTopTag($tag)){
             if ($this->template){
                 $this->template[]=$delim;
@@ -299,6 +306,7 @@ class SMlite extends AbstractModel {
             }
             $this->fatal("Incorrect argument types when calling SMlite::set(). Check documentation.");
         }
+        if($value instanceof URL)$value=$value->__toString();
         if($this->isTopTag($tag)){
             $this->template=$value;
             return $this;
@@ -369,7 +377,9 @@ class SMlite extends AbstractModel {
             $t=$tag_split[0];
             if(!isset($tag_split[1]) || $t!=$tag)continue;
             $text=$this->tags[$tagx][0][0];
-            $x=$this->tags[$tagx][0][0]=call_user_func($callable,$this->renderRegion($text),$tagx);
+            $ret=call_user_func($callable,$this->renderRegion($text),$tagx);
+            if($ret instanceof URL)$ret=$ret->__toString();
+            $x=$this->tags[$tagx][0][0]=$ret;
         }
     }
 
