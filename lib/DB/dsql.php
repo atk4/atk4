@@ -66,7 +66,8 @@ class DB_dsql extends AbstractModel implements Iterator {
             return $out;
         }
         $name=':'.$this->param_base;
-        $name=$this->_unique($this->params,$name);
+        $name=$this->_unique($this->used_params,$name);
+        $this->used_params[$name]=$val;
         $this->params[$name]=$val;
         return $name;
     }
@@ -77,7 +78,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     /* Creates subquery */
     function dsql(){
         $d=$this->owner->dsql();
-        $d->params = &$this->params;
+        $d->used_params = &$this->used_params;
+        $d->params = $this->params;
+
         $d->main_query=$this->main_query?$this->main_query:$this;
         return $d;
     }
@@ -99,8 +102,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                     ->addMoreInfo('their_expr',$dsql->expr)
                     ;
             }
-            $this->params=array_merge($this->params,$dsql->params);
         }
+        $this->params=array_merge($this->params,$dsql->params);
         $ret='('.$dsql->__toString().')';
         return $ret;
     }
