@@ -79,7 +79,6 @@ class DB_dsql extends AbstractModel implements Iterator {
     function dsql(){
         $d=$this->owner->dsql();
         $d->used_params = &$this->used_params;
-        $d->params = $this->params;
 
         $d->main_query=$this->main_query?$this->main_query:$this;
         return $d;
