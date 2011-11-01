@@ -21,11 +21,6 @@ abstract class Form_Field extends AbstractView {
 	public $field_prepend='';
 	public $field_append='';
 
-	protected $onchange=null;
-	protected $onkeypress=null;
-	protected $onfocus=null;
-	protected $onblur=null;
-	protected $onclick=null;
 	public $comment='&nbsp;';
 	protected $disabled=false;
 	protected $mandatory=false;
@@ -533,17 +528,24 @@ class Form_Field_ValueList extends Form_Field {
 			1=>'No available options #2',
 			2=>'No available options #3'
 			);
+    function setModel($m){
+        $ret=parent::setModel($m);
+
+        $this->setValueList(array('foo','bar'));
+        return $ret;
+    }
 	function getValueList(){
 
-		if($this->getController()){
-			// Rely on controller to get our data
-			$data=$this->getController()->getRows($this->getController()->getListFields());
-			$res=array();
+        if($this->model){
+            $title=$this->model->getTitleField();
+			$data=$this->model->getRows(array($this->model->id_field,$title));
+			$res=array('');
 			foreach($data as $row){
-				$res[$row['id']]=$row['name'];
+				$res[$row[$this->model->id_field]]=$row[$title];
 			}
 			return $this->value_list=$res;
 		}
+
 		return $this->value_list;
 	}
 	function setValueList($list){
@@ -580,8 +582,6 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 		$output=$this->getTag('select',array_merge(array(
 						'name'=>$this->name,
 						'id'=>$this->name,
-						'onchange'=>
-						($this->onchange)?$this->onchange->getString():''
 						),
 					$attr,
 					$this->attr)

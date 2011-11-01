@@ -191,14 +191,18 @@ abstract class AbstractObject {
     function exception($message,$type=null){
         if(!$type){
             $type=$this->default_exception;
+        }elseif($type[0]=='_'){
+            $type=$this->default_exception.'_'.substr($type,1);
         }else{
             $type='Exception_'.$type;
         }
+
 
         // Localization support
         if($this->api->hasMethod('_'))
             $message=$this->api->_($message);
 
+        if($type=='Exception')$type='BaseException';
         $e=new $type($message);
         $e->owner=$this;
         $e->api=$this->api;
@@ -337,7 +341,7 @@ abstract class AbstractObject {
                             if (is_string($data[0]) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data[0])) {
                                 $result = eval ($data[0]);
                             } elseif (is_callable($data[0])) {
-                                $result = call_user_func_array($data[0], array_merge($arg,$data[1]));
+                                $result = call_user_func_array($data[0], array_merge(array($this),$arg,$data[1]));
                             } else {
                                 if (!is_array($data[0]))
                                     $data[0] = array (
@@ -369,7 +373,8 @@ abstract class AbstractObject {
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
     function __call($method,$arguments){
         if($ret=$this->tryCall($method,$arguments))return $ret[0];
-        throw $this->exception("Method is not defined for this object")
+        throw $this->exception("Method is not defined for this object",'Logic')
+            ->addMoreInfo('class',get_class($this))
             ->addMoreInfo("method",$method)
             ->addMoreInfo("arguments",$arguments);
     }
@@ -413,9 +418,6 @@ abstract class AbstractObject {
     }
     // }}}
     /**
-     *  @private
-     *  DO NOT USE THIS FUNCTION, it might relocate
-     *
      * This funcion given the associative $array and desired new key will return
      * the best matching key which is not yet in the arary. For example if you have
      * array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'. If 

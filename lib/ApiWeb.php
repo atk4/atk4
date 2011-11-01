@@ -190,6 +190,7 @@ class ApiWeb extends ApiCLI {
         }catch(Exception $e){
             if(!($e instanceof Exception_StopInit))
                 return $this->caughtException($e);
+            $this->caughtException($e);
         }
 
         try{

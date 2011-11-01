@@ -250,7 +250,28 @@ class Logger extends AbstractController {
 		}
 		return array();
 	}
-	function caughtException($e){
+    public $recskip=array();
+    function showRenderTree($e,$obj){
+        if(in_array($obj,$this->recskip)){
+            echo '..recursion('.$obj.')';
+            return;
+        };
+        $this->recskip[]=$obj;
+        if($e->owner==$obj){
+            echo '<font color="red">'.$obj."</font>";
+        }else echo $obj;
+        if($obj->elements){
+            echo '<ul>';
+            foreach($obj->elements as $name=>$object){
+                echo '<li>'.$name.': ';
+                $this->showRenderTree($e,$object);
+                echo '</li>';
+            }
+            echo '</ul>';
+        }
+    }
+	function caughtException($api,$e){
+        $e->addAction('Show Object Tree',array($this->name.'_debug'=>'rendertree'));
 		$e->shift-=1;
 		if($this->log_output){
 			//$frame=$this->findFrame('warning',$shift);
@@ -265,6 +286,12 @@ class Logger extends AbstractController {
 			echo $this->public_error_message;
 			exit;
 		}
+        if($_GET[$this->name.'_debug']=='rendertree'){
+            echo '<h2>Object Tree</h2>';
+            $this->showRenderTree($e,$this->api);
+        }
+
+
 		echo "<h2>".get_class($e)."</h2>\n";
 		echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
 		if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
@@ -276,6 +303,13 @@ class Logger extends AbstractController {
 			}
 			echo '</ul></p>';
 		}
+		if($e->actions){
+			echo '<p>Possible Actions: <ul>';
+			foreach($e->actions as $key=>$val){
+				echo '<li><a href="'.$this->api->getDestinationURL(null,$val).'">'.$key.'</a></li>';
+			}
+			echo '</ul></p>';
+        }
 		if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
 		if(method_exists($e,'getMyTrace'))echo $this->backtrace($e->shift,$e->getMyTrace());

@@ -16,7 +16,7 @@
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 class Grid_Basic extends CompleteLister {
-    public $columns;
+    public $columns=array();
     protected $no_records_message="No matching records to display";
 
     public $last_column;
@@ -80,6 +80,9 @@ class Grid_Basic extends CompleteLister {
 
         $this->sortby=$this->learn('sortby',@$_GET[$this->name.'_sort']);
     }
+    function importFields($model,$fields=undefined){
+        $this->add('Controller_MVCGrid')->importFields($model,$fields);
+    }
     function defaultTemplate(){
         return array('grid','grid');
     }
@@ -117,6 +120,7 @@ class Grid_Basic extends CompleteLister {
         return $this;
     }
     function hasColumn($column){
+        if(!is_string($column))throw $this->exception('WRong');
         return isset($this->columns[$column]);
     }
     function removeColumn($name){
@@ -399,7 +403,10 @@ class Grid_Basic extends CompleteLister {
          */
     }
     function _performDelete($id){
-        $this->dq->where($this->dq->args['table'].'.id',$id)->do_delete();
+        if($this->model){
+            return $this->model->delete($id);
+        }
+        $this->dq->where('id',$id)->do_delete();
     }
     function format_delete($field){
         if(!$this->dq)throw new BaseException('delete column requires $dq to be set');
@@ -426,7 +433,7 @@ class Grid_Basic extends CompleteLister {
          */
         return $this->init_confirm($field);
     }
-    function _move_delete($field){
+    function _move_delete($grid,$field){
         if($this->hasColumn($field))$this->addOrder()->move($field,'last')->now();
     }
     function init_confirm($field){

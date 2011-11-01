@@ -93,7 +93,7 @@ class DB extends AbstractController {
         return $res[0];
     }
     /* Returns last ID after insert. Driver-dependant. Redefine if needed. */
-    function lastID($statement,$table){
+    function lastID($statement=undefined,$table=undefined){
         // TODO: add support for postgreSQL and other databases
         return $this->dbh->lastInsertId();
     }

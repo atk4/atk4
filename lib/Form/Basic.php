@@ -168,6 +168,10 @@ class Form_Basic extends AbstractView {
         return $this;
     }
 
+    function importFields($model,$fields=undefined){
+        $this->add('Controller_MVCForm')->importFields($model,$fields);
+    }
+
     function addComment($comment){
         if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
         return $this->add('Text')->set(
@@ -305,6 +309,9 @@ class Form_Basic extends AbstractView {
         return $this->loaded_from_db;
     }
     function update(){
+        // TODO: start transaction here
+        if($this->hook('update'))return $this;
+
         if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
         if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
         foreach($this->elements as $short_name => $element)

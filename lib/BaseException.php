@@ -30,6 +30,7 @@ class BaseException extends Exception {
     public $api=null;
 
     public $more_info;
+    public $actions;
     function init(){
     }
     function __construct($msg,$func=null,$shift=1,$code=0){
@@ -62,6 +63,10 @@ class BaseException extends Exception {
     }
     function addMoreInfo($key,$value){
         $this->more_info[$key]=$value;
+        return $this;
+    }
+    function addAction($key,$descr){
+        $this->actions[$key]=$descr;
         return $this;
     }
     function getMyTrace(){

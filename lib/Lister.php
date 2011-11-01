@@ -88,12 +88,11 @@ class Lister extends View {
 			return (bool)($this->current_row=array_shift($this->data));
 		}
 		if(!isset($this->dq))throw new BaseException($this->name.": dq must be set here");
-		return (bool)($this->current_row=$this->dq->do_fetchHash());
+        return (bool)($this->current_row=$this->dq->next());
 	}
 
 
 	function render(){
-
 		while($this->fetchRow()){
 			$this->formatRow();
 			$this->template->set($this->current_row);

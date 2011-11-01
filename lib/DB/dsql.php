@@ -22,7 +22,7 @@
  http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
-class DB_dsql extends AbstractModel {
+class DB_dsql extends AbstractModel implements Iterator {
     /* Array with different type of data */
     public $args=array();
 
@@ -42,6 +42,9 @@ class DB_dsql extends AbstractModel {
 
 
     public $default_exception='Exception_DB';
+
+    public $debug=false;
+
 
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
@@ -120,6 +123,14 @@ class DB_dsql extends AbstractModel {
         $this->expr=$expr;
         return $this;
     }
+    function getField($fld){
+        return $this->expr(
+            $this->owner->bt($this->main_table).
+            '.'.
+            $this->owner->bt($fld)
+        );
+
+    }
     /* Specifies table to use for this dynamic query */
 	function table($table){
         if(is_array($table)){
@@ -142,6 +153,10 @@ class DB_dsql extends AbstractModel {
 		$this->args['options']=array_merge($this->args['options'],$option);
 		return $this;
 	}
+    function ignore(){
+        $this->args['options_insert'][]='ignore';
+        return $this;
+    }
     /* Check if option was defined */
     function hasOption($option){
         return in_array($option,$this->args['options']);
@@ -277,6 +292,23 @@ class DB_dsql extends AbstractModel {
 		$this->args['join'][$table]="$type join ".DTP.$table." on $on";
 		return $this;
 	}
+    function set($field,$value=undefined){
+        if(is_array($field)){
+            foreach($field as $key=>$value){
+                $this->set($key,$value);
+            }
+            return $this;
+        }
+
+        if($value===undefined)throw $this->exception('Specify value when calling set()');
+
+        $value=$this->escape($value);
+
+        $this->args['set_fields'][]=$field;
+        $this->args['set_values'][]=$value;
+        $this->args['set'][]=$field.'='.$value;
+        return $this;
+    }
 
     // }}}
 
@@ -286,6 +318,18 @@ class DB_dsql extends AbstractModel {
 	function select(){
 		return $this->parseTemplate("select [options] [fields] [from] [table] [join] [where] [group] [having] [order] [limit]");
 	}
+	function insert(){
+        return $this->parseTemplate("insert [options_insert] into [table] ([set_fields]) values ([set_values])");
+	}
+    function update(){
+        return $this->parseTemplate("update [table] set [set] [where]");
+    }
+    function replace(){
+        return $this->parseTemplate("replace [options_replace] into [table] ([set_fields]) values ([set_value])");
+    }
+    function delete(){
+        return $this->parseTemplate("delete from [table] [where]");
+    }
 
     // }}}
 
@@ -296,6 +340,50 @@ class DB_dsql extends AbstractModel {
             return $this->stmt=$this->owner->query($q=$this->select(),$this->params);
         }catch(PDOException $e){
             throw $this->exception('SELECT statement failed')
+                ->addPDOException($e)
+                ->addMoreInfo('params',$this->params)
+                ->addMoreInfo('query',$q);
+        }
+    }
+    function do_insert(){
+        try {
+            $this->owner->query($q=$this->insert(),$this->params);
+            return $this->owner->lastID();
+        }catch(PDOException $e){
+            throw $this->exception('INSERT statement failed')
+                ->addPDOException($e)
+                ->addMoreInfo('params',$this->params)
+                ->addMoreInfo('query',$q);
+        }
+    }
+    function do_update(){
+        try {
+            $this->owner->query($q=$this->update(),$this->params);
+            return $this;
+        }catch(PDOException $e){
+            throw $this->exception('UPDATE statement failed')
+                ->addPDOException($e)
+                ->addMoreInfo('params',$this->params)
+                ->addMoreInfo('query',$q);
+        }
+    }
+    function do_replace(){
+        try {
+            $this->owner->query($q=$this->replace(),$this->params);
+            return $this;
+        }catch(PDOException $e){
+            throw $this->exception('REPLACE statement failed')
+                ->addPDOException($e)
+                ->addMoreInfo('params',$this->params)
+                ->addMoreInfo('query',$q);
+        }
+    }
+    function do_delete(){
+        try {
+            $this->owner->query($q=$this->delete(),$this->params);
+            return $this;
+        }catch(PDOException $e){
+            throw $this->exception('DELETE statement failed')
                 ->addPDOException($e)
                 ->addMoreInfo('params',$this->params)
                 ->addMoreInfo('query',$q);
@@ -357,6 +445,30 @@ class DB_dsql extends AbstractModel {
     }
     // }}}
 
+    // {{{ Iterator support 
+    public $data=false;
+    function rewind(){
+        $this->do_select();
+        return $this->next();
+    }
+    function next(){
+        if(!$this->stmt)$this->do_select();
+        $this->data = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        $this->hook('formatData');
+        return $this->data;
+    }
+    function current(){
+        return $this->data;
+    }
+    function key(){
+        return $this->data['id'];
+    }
+    function valid(){
+        return $this->data!==false;
+    }
+    // }}}
+
+
     // {{{ Query Generation heavy-duty generation code
 
     /* [private] Generates values for different tokens in the template */
@@ -387,42 +499,27 @@ class DB_dsql extends AbstractModel {
         // {{{ options (MySQL)
 		if(isset($required['options'])&&isset($this->args['options'])){
 			$args['options']=join(' ',$this->args['options']);
-		} // }}}
+        } 
+		if(isset($required['options_insert'])&&isset($this->args['options_insert'])){
+			$args['options_insert']=join(' ',$this->args['options_insert']);
+        } 
+        // }}}
 
         // {{{ set (for updates)
 		if(isset($required['set'])) {
 			$set = array();
 			if(!$this->args['set']) {
-				return $this->fatal('You should call $dq->set() before requesting update');
+				throw $this->exception('You should call $dq->set() before requesting update');
 			}
-            /*
-			foreach($this->args['set'] as $key=>$val) {
-				if(is_int($key)) {
-					$set[]="$val";
-				}else{
-					$set[]="`$key`=$val";
-				}
-			}
-            */
-			$args['set']=join(', ', $args['set']);
+			$args['set']=join(', ', $this->args['set']);
 		} // }}}
 
-        // {{{ set (for instert)
-		if(isset($required['set_fields']) || isset($required['set_value'])) {
-			$sf = $sv = array();
-			if(!$this->args['set']) {
-				return $this->fatal('You should call $dq->set() before requesting update',2);
-			}
-			foreach($this->args['set'] as $key=>$val) {
-				if(is_numeric($key)){
-					list($sf[],$sv[])=explode('=',$val,2);
-					continue;
-				}
-				$sf[]="`$key`";
-				$sv[]=$val;
-			}
-			$args['set_fields']=join(', ', $sf);
-			$args['set_value']=join(', ', $sv);
+        // {{{ set (for insert)
+        if(isset($required['set_fields'])){
+            $args['set_fields']=join(', ',$this->args['set_fields']);
+        }
+        if(isset($required['set_values'])) {
+            $args['set_values']=join(', ',$this->args['set_values']);
 		} // }}}
 
         // {{{ joins to other tables
@@ -462,6 +559,14 @@ class DB_dsql extends AbstractModel {
 		return $args;
 	}
     /* Generic query builder funciton. Provided with template it will fill-in the data */
+
+
+    function debug(){
+        $this->debug=1;
+        return $this;
+    }
+
+
 	function parseTemplate($template) {
 		$parts = explode('[', $template);
 		$required = array();
@@ -507,11 +612,9 @@ class DB_dsql extends AbstractModel {
 			}elseif($part=trim($part,' ()'))$dd.='<li><b>'.$part.'</b></li>';
 		}
 		$dd.="</ul>";
-        /*
 		if($this->debug){
 			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>'.$dd;
 		}
-        */
 		return join('', $result);
 	}
     // }}}
