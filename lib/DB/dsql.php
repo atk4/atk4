@@ -90,11 +90,18 @@ class DB_dsql extends AbstractModel implements Iterator {
                     && $dsql->param_base == $this->param_base){
                 // ought to have param clash!
                 throw $this->exception('Subquery is not cloned from us, is using same param_base for parametrical variables,
-                        therefore unable to consume');
+                    therefore unable to consume')
+                    ->addMoreInfo('our_parambase',$this->param_base)
+                    ->addMoreInfo('their_parambase',$dsql->param_base)
+                    ->addMoreInfo('our_params',$this->params)
+                    ->addMoreInfo('their_params',$dsql->params)
+                    ->addMoreInfo('our_expr',$this->expr)
+                    ->addMoreInfo('their_expr',$dsql->expr)
+                    ;
             }
             $this->params=array_merge($this->params,$dsql->params);
         }
-        $ret='('.$dsql.')';
+        $ret='('.$dsql->__toString().')';
         return $ret;
     }
     /* Removes definition for argument type */
@@ -121,6 +128,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function useExpr($expr){
         $this->expr=$expr;
+        $this->params=array();
         return $this;
     }
     function getField($fld){
@@ -132,17 +140,20 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     }
     /* Specifies table to use for this dynamic query */
-	function table($table){
+	function table($table,$alias=undefined){
         if(is_array($table)){
             foreach($table as $t){
                 $this->table($t);
             }
             return $this;
         }
-		$this->args['table'][]=
-            $this->owner->bt($this->owner->table_prefix.$table);
 
-        if(!$this->main_table)$this->main_table=$this->owner->table_prefix.$table;
+        $bt=$this->owner->bt($this->owner->table_prefix.$table);
+        if($alias!==undefined && $alias)$bt.=' '.$this->owner->bt($alias);
+
+		$this->args['table'][]=$bt;
+
+        if(!$this->main_table)$this->main_table=$alias?$alias:$this->owner->table_prefix.$table;
 
 		return $this;
 	}
@@ -194,6 +205,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
 
         if(is_object($field)){
+            if(!$table)throw $this->exception('Specified expression without alias');
             $field=$this->consume($field);
             if($table)$field.=' as '.$this->owner->bt($table);
         }elseif(isset($table)){
@@ -213,7 +225,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function having($field,$cond=null,$value=null){
         return $this->where($field,$cond,$value,'having');
     }
-    function where($field,$cond=null,$value=null,$type='where'){
+    function where($field,$cond=undefined,$value=undefined,$type='where'){
         /*
            1. where('id',2);                    // equals
            2. where('id','>',2);                // explicit condition
@@ -233,33 +245,36 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->args[$type][]=implode(' or ',$ors);
         return $this;
     }
-    function _where($field,$cond=null,$value=null){
+    function _where($field,$cond=undefined,$value=undefined){
         if(is_object($field)){
-            if(is_null($cond) && is_null($value)){
+            if($cond===undefined && $value===undefined){
                 $this->args[$cond][]=$field;
                 return $this;
             }
         }else{
-            if(is_null($cond) && is_null($value)){
+            if($cond===undefined && $value===undefined){
+                return $this->expr($field);
+            /*
                 throw $this->exception('Use expression syntax with one-argument calls')
                     ->addMoreInfo('arg',$field);
+             */
             }
         }
 
 
-        if($value===null){
-            $value=$cond;$cond=null;
+        if($value===undefined){
+            $value=$cond;$cond=undefined;
         }
 
         /* guess condition as it might be in $field */
-        if($cond===null && !is_object($field)){
+        if($cond===undefined && !is_object($field)){
 
             preg_match('/^([^ <>!=]*)([><!=]*|( *(not|in|like))*) *$/',$field,$matches);
             $field=$matches[1];
             $cond=$matches[2];
         }
 
-        if(!$cond){
+        if(!$cond || $cond===undefined){
             if(is_array($value)){
                 $cond='in';
             }else{
@@ -289,7 +304,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
                 
         }
-		$this->args['join'][$table]="$type join ".DTP.$table." on $on";
+		$this->args['join'][$table]="$type join ".$table." on $on";
 		return $this;
 	}
     function set($field,$value=undefined){

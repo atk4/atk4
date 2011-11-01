@@ -6,6 +6,7 @@
 class Model extends AbstractModel implements ArrayAccess {
 
     public $default_exception='Exception';
+    public $entity_code;
 
     public $field_class='Model_Field';
 
@@ -16,6 +17,10 @@ class Model extends AbstractModel implements ArrayAccess {
 
     function init(){
         parent::init();
+
+        if(method_exists($this,'defineFields'))
+            throw $this->exception('model->defineField() is obsolete. Change to init()','Obsolete')
+            ->addMoreInfo('class',get_class($this));
     }
     function addField($name){
         return $this
@@ -67,4 +72,14 @@ class Model extends AbstractModel implements ArrayAccess {
 
 
     // TODO: worry about cloning!
+    function newField($name){
+        return $this->addField($name); 
+    }
+    function getEntityCode(){
+        return $this->entity_code;
+    }
+    function getField($f){
+        return $this->getElement($f);
+    }
+
 }

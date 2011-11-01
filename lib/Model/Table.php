@@ -2,8 +2,7 @@
 class Model_Table extends Model implements Iterator {
     public $dsql;   // Master SQL 
 
-    public $entity_code;
-    public $entity_alias=null;
+    public $table_alias=null;
 
     function init(){
         parent::init();
@@ -21,8 +20,8 @@ class Model_Table extends Model implements Iterator {
     }
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
-        $this->dsql->table($this->entity_code);
-        $this->dsql->paramBase(is_null($this->entity_alias)?$this->entity_code:$this->entity_alias);
+        $this->dsql->table($this->entity_code,$this->table_alias);
+        $this->dsql->paramBase(is_null($this->table_alias)?$this->entity_code:$this->table_alias);
     }
     function debug(){
         $this->dsql->debug();
@@ -57,7 +56,8 @@ class Model_Table extends Model implements Iterator {
 
         // add fields
         foreach($fields as $field){
-            $field=$this->getElement($field);
+            $field=$this->hasElement($field);
+            if(!$field)continue;
 
             $field->updateSelectQuery($select);
         }
@@ -93,6 +93,10 @@ class Model_Table extends Model implements Iterator {
         return $this->addField($name);
     }
 
+    function addCondition($field,$value){
+        $this->dsql->where($field,$value);
+        return $this;
+    }
 
 
     // {{{ Iterator support 

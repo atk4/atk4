@@ -272,11 +272,15 @@ class ApiCLI extends AbstractView {
     // {{{ Database connection handling
     /** Use database configuration settings from config file to establish default connection */
     function dbConnect($dsn=null){
-        if (is_null($dsn)) $dsn=$this->getConfig('dsn');
-        $result=$this->db=DBlite::connect($dsn);
-        if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
-        $this->db->owner=$this;
-        $this->db->api=$this;
+        if(!$dsn && $this->getConfig('pdo',false)){
+            $this->db=$this->add('DB');
+        }else{
+            if (is_null($dsn)) $dsn=$this->getConfig('dsn');
+            $result=$this->db=DBlite::connect($dsn);
+            if(is_string($result))throw new DBlite_Exception($result,"Please edit 'config.php' file, where you can set your database connection properties",2);
+            $this->db->owner=$this;
+            $this->db->api=$this;
+        }
         return $this;
     }
     /** Attempts to connect, but does not raise exception on failure */

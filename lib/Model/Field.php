@@ -30,8 +30,9 @@ class Model_Field extends AbstractModel {
     }
 
     function type($t=undefined){ return $this->setterGetter('type',$t); }
-    function caption($t=undefined){ if(!$this->caption)return ucwords(strtr($this->short_name,'_',' ')); return $this->setterGetter('caption',$t); }
+    function caption($t=undefined){ if($t===undefined && !$this->caption)return ucwords(strtr($this->short_name,'_',' ')); return $this->setterGetter('caption',$t); }
     function readonly($t=undefined){ return $this->setterGetter('readonly',$t); }
+    function mandatory($t=undefined){ return $this->setterGetter('mandatory',$t); }
     function editable($t=undefined){ return $this->setterGetter('editable',$t); }
     function allowHTML($t=undefined){ return $this->setterGetter('allowHTML',$t); }
     function searchable($t=undefined){ return $this->setterGetter('searchable',$t); }
@@ -39,7 +40,6 @@ class Model_Field extends AbstractModel {
     function display($t=undefined){ return $this->setterGetter('display',$t); }
     function system($t=undefined){ return $this->setterGetter('system',$t); }
     function hidden($t=undefined){ return $this->setterGetter('hidden',$t); }
-    function calculated($t=undefined){ return $this->setterGetter('calculated',$t); }
     function length($t=undefined){ return $this->setterGetter('length',$t); }
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
     function visible($t=undefined){ return $this->setterGetter('visible',$t); }
@@ -51,4 +51,30 @@ class Model_Field extends AbstractModel {
         $select->field($this->short_name);
         return $this;
     }
+    // OBSOLETE
+    function refModel($m){
+        $this->destroy();
+        $fld = new Model_Field_Reference();
+
+        foreach((Array)$this as $key=>$val){
+            $fld->$key=$val;
+        }
+        return $this->owner->add($fld)->setModel(str_replace('Model_','',$m));
+    }
+    function datatype($v=undefined){ 
+        return $this->type($v); 
+    }
+    function calculated($v=undefined){
+        if($v===undefined)return false;
+        if($v===false)return $this;
+
+        $this->destroy();
+        $fld = new Model_Field_Expression();
+
+        foreach((Array)$this as $key=>$val){
+            $fld->$key=$val;
+        }
+        return $this->owner->add($fld)->calculated($v);
+    }
+
 }

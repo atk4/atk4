@@ -48,7 +48,8 @@ class Controller_MVCGrid extends AbstractController {
     }
     function importField($field){
 
-        $field=$this->model->getElement($field);
+        $field=$this->model->hasElement($field);
+        if(!$field)return;
 
         $field_name=$field->short_name;
 

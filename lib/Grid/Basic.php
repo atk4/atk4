@@ -315,8 +315,11 @@ class Grid_Basic extends CompleteLister {
         if(!isset($this->columns[$field]['refid'])){
             // TODO: test
 
+            /*
             $refid=$this->getController();
             if($refid)$refid=$refid->getModel();
+             */
+            $refid=$this->model;
             //if($refid)$refid=$refid->entity_code;
             if($refid)$refid=$refid->getEntityCode();//Get Protected property Model::entity_code
             if($refid){
