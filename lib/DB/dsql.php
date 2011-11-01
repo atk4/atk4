@@ -151,6 +151,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
 
         $bt=$this->owner->bt($this->owner->table_prefix.$table);
+
+		$this->args['table_noalias'][]=$bt;
+
         if($alias!==undefined && $alias)$bt.=' '.$this->owner->bt($alias);
 
 		$this->args['table'][]=$bt;
@@ -228,6 +231,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->where($field,$cond,$value,'having');
     }
     function where($field,$cond=undefined,$value=undefined,$type='where'){
+        var_dump($this->name);
         /*
            1. where('id',2);                    // equals
            2. where('id','>',2);                // explicit condition
@@ -326,6 +330,20 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->args['set'][]=$field.'='.$value;
         return $this;
     }
+    function order($order,$desc=null){// ,$prepend=null){
+        if(!$order)throw new SQLException("Empty order provided");
+        $field=$order;
+        if($desc)$order.=" desc";
+        if(!$this->args['order'])$this->args['order']=array();
+        //if($prepend && isset($this->args['order'])){
+            array_unshift($this->args['order'], $order);
+        //}else{
+            //// existing ordering must be overwritten
+            //if(($index=$this->isArgSet('order',$field))!==false)unset($this->args['order'][$index]);
+            //$this->args['order'][]=$order;
+        //}
+        return $this;
+    }
 
     // }}}
 
@@ -336,16 +354,16 @@ class DB_dsql extends AbstractModel implements Iterator {
 		return $this->parseTemplate("select [options] [fields] [from] [table] [join] [where] [group] [having] [order] [limit]");
 	}
 	function insert(){
-        return $this->parseTemplate("insert [options_insert] into [table] ([set_fields]) values ([set_values])");
+        return $this->parseTemplate("insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])");
 	}
     function update(){
-        return $this->parseTemplate("update [table] set [set] [where]");
+        return $this->parseTemplate("update [table_noalias] set [set] [where]");
     }
     function replace(){
-        return $this->parseTemplate("replace [options_replace] into [table] ([set_fields]) values ([set_value])");
+        return $this->parseTemplate("replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
     }
     function delete(){
-        return $this->parseTemplate("delete from [table] [where]");
+        return $this->parseTemplate("delete from [table_noalias] [where]");
     }
 
     // }}}
