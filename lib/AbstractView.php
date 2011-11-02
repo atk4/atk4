@@ -86,6 +86,7 @@ abstract class AbstractView extends AbstractObject {
         $this->_tsBuffer.=$data;
     }
     /** Converting View into string will render recursively and produce HTML. Avoid using this. */
+    /*
     function __toString(){
         $this->addHook('output',array($this,'_tsBuffer'));
         $this->recursiveRender();
@@ -94,6 +95,7 @@ abstract class AbstractView extends AbstractObject {
         $this->_tsBuffer='';
         return $ret;
     }
+    */
 
     // }}}
 

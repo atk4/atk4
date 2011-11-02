@@ -296,6 +296,11 @@ class ApiWeb extends ApiCLI {
     function _locatePage($path){
         return $this->getDestinationURL($path);
     }
+    /** Only show $object in the final rendering */
+    function renderOnly($object){
+        $_GET['cut_object']=$object->name;
+        return $this;
+    }
     // }}}
 
     // {{{ Layout implementation
