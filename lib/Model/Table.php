@@ -97,6 +97,12 @@ class Model_Table extends Model implements Iterator {
         $this->dsql->where($field,$value);
         return $this;
     }
+    function setMasterField($field,$value){
+        $this->dsql
+            ->where($field,$value)
+            ->set($field,$value);
+        return $this;
+    }
 
 
     // {{{ Iterator support 

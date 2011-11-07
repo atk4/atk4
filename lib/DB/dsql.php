@@ -66,7 +66,8 @@ class DB_dsql extends AbstractModel implements Iterator {
             return $out;
         }
         $name=':'.$this->param_base;
-        $name=$this->_unique($this->params,$name);
+        $name=$this->_unique($this->used_params,$name);
+        $this->used_params[$name]=$val;
         $this->params[$name]=$val;
         return $name;
     }
@@ -77,7 +78,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     /* Creates subquery */
     function dsql(){
         $d=$this->owner->dsql();
-        $d->params = &$this->params;
+        $d->used_params = &$this->used_params;
+
         $d->main_query=$this->main_query?$this->main_query:$this;
         return $d;
     }
@@ -99,8 +101,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                     ->addMoreInfo('their_expr',$dsql->expr)
                     ;
             }
-            $this->params=array_merge($this->params,$dsql->params);
         }
+        $this->params=array_merge($this->params,$dsql->params);
         $ret='('.$dsql->__toString().')';
         return $ret;
     }
@@ -149,6 +151,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
 
         $bt=$this->owner->bt($this->owner->table_prefix.$table);
+
+		$this->args['table_noalias'][]=$bt;
+
         if($alias!==undefined && $alias)$bt.=' '.$this->owner->bt($alias);
 
 		$this->args['table'][]=$bt;
@@ -324,6 +329,20 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->args['set'][]=$field.'='.$value;
         return $this;
     }
+    function order($order,$desc=null){// ,$prepend=null){
+        if(!$order)throw new SQLException("Empty order provided");
+        $field=$order;
+        if($desc)$order.=" desc";
+        if(!$this->args['order'])$this->args['order']=array();
+        //if($prepend && isset($this->args['order'])){
+            array_unshift($this->args['order'], $order);
+        //}else{
+            //// existing ordering must be overwritten
+            //if(($index=$this->isArgSet('order',$field))!==false)unset($this->args['order'][$index]);
+            //$this->args['order'][]=$order;
+        //}
+        return $this;
+    }
 
     // }}}
 
@@ -334,16 +353,16 @@ class DB_dsql extends AbstractModel implements Iterator {
 		return $this->parseTemplate("select [options] [fields] [from] [table] [join] [where] [group] [having] [order] [limit]");
 	}
 	function insert(){
-        return $this->parseTemplate("insert [options_insert] into [table] ([set_fields]) values ([set_values])");
+        return $this->parseTemplate("insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])");
 	}
     function update(){
-        return $this->parseTemplate("update [table] set [set] [where]");
+        return $this->parseTemplate("update [table_noalias] set [set] [where]");
     }
     function replace(){
-        return $this->parseTemplate("replace [options_replace] into [table] ([set_fields]) values ([set_value])");
+        return $this->parseTemplate("replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
     }
     function delete(){
-        return $this->parseTemplate("delete from [table] [where]");
+        return $this->parseTemplate("delete from [table_noalias] [where]");
     }
 
     // }}}

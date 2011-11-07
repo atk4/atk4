@@ -41,7 +41,7 @@ class Lister extends View {
 			$this->dq->field($db_fields);
 		}else{
 			$this->dq->field('*');
-			$this->dq->field($table.'.id id');
+			$this->dq->field('id');
 		}
 		return $this;
 	}

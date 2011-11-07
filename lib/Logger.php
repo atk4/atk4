@@ -256,8 +256,13 @@ class Logger extends AbstractController {
             echo '..recursion('.$obj.')';
             return;
         };
+<<<<<<< HEAD
         $this->recskip[]=$obj->name;
         if($e->owner==$obj){
+=======
+        $this->recskip[]=$obj;
+        if($e->owner==$obj || $e->owner->owner == $obj || $e->owner->owner->owner == $obj){
+>>>>>>> 51e095b7862caf2d3811c4f52d5679cb277342d6
             echo '<font color="red">'.$obj."</font>";
         }else echo $obj;
         if($obj->elements){
@@ -271,7 +276,9 @@ class Logger extends AbstractController {
         }
     }
 	function caughtException($api,$e){
-        $e->addAction('Show Object Tree',array($this->name.'_debug'=>'rendertree'));
+        if($e instanceof BaseException)
+            $e->addAction('Show Object Tree',array($this->name.'_debug'=>'rendertree'));
+
 		$e->shift-=1;
 		if($this->log_output){
 			//$frame=$this->findFrame('warning',$shift);

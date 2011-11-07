@@ -59,10 +59,12 @@ class DB extends AbstractController {
     function init(){
         parent::init();
 
-        $this->dbh=new PDO($this->api->getConfig('pdo/dsn'),
-                $this->api->getConfig('pdo/user','root'),
-                $this->api->getConfig('pdo/password','root'),
-                $this->api->getConfig('pdo/options',array(PDO::ATTR_PERSISTENT => true))
+        $cp=$this->di_config['conf_pref']?:'pdo';
+
+        $this->dbh=new PDO($this->api->getConfig($cp.'/dsn'),
+                $this->api->getConfig($cp.'/user','root'),
+                $this->api->getConfig($cp.'/password','root'),
+                $this->api->getConfig($cp.'/options',array(PDO::ATTR_PERSISTENT => true))
                 );
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
