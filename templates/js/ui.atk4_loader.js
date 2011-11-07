@@ -246,6 +246,7 @@ $.widget('ui.atk4_loader', {
 		if(self.element.find('.form_changed').length){
 			if(!confirm('Changes on the form will be lost. Continue?'))return false;
 		}
+		self.element.find('.form_changed').removeClass('form_changed');
 		return true;
 	},
 	successClose: function(){
