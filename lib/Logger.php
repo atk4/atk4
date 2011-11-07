@@ -252,11 +252,11 @@ class Logger extends AbstractController {
 	}
     public $recskip=array();
     function showRenderTree($e,$obj){
-        if(in_array($obj,$this->recskip)){
+        if(in_array($obj->name,$this->recskip)){
             echo '..recursion('.$obj.')';
             return;
         };
-        $this->recskip[]=$obj;
+        $this->recskip[]=$obj->name;
         if($e->owner==$obj){
             echo '<font color="red">'.$obj."</font>";
         }else echo $obj;
