@@ -35,6 +35,10 @@ $.widget("ui.atk4_form", {
 		return this.form.hasClass('form_changed');
 	},
 	_setChanged: function(state){
+        if(this.element.is('.ignore_changes')){
+            this.form.removeClass('form_changed');
+            return;
+        }
 		if(state)this.form.addClass('form_changed');else this.form.removeClass('form_changed');
 	},
 
