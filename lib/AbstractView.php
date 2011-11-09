@@ -23,6 +23,7 @@ abstract class AbstractView extends AbstractObject {
      * using SMlite this should be an object.
      */
     public $template=false;
+    public $model=null;
     protected $template_branch=array();
 
     /**
@@ -54,10 +55,11 @@ abstract class AbstractView extends AbstractObject {
     function setModel($model,$actual_fields=null){
         $c=$this->add('Controller');
         if(is_string($model)){
-            $c->setModel('Model_'.$model);
+            $model=$c->setModel('Model_'.$model);
         }else{
             $c->setModel($model);
         }
+        $this->model=$model;
         if($actual_fields)$c->setActualFields($actual_fields);
         $this->setController($c);
         return $c;
