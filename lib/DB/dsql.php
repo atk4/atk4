@@ -427,12 +427,28 @@ class DB_dsql extends AbstractModel implements Iterator {
         try {
             return $this->stmt=$this->owner->query($q=($this->expr?$this:$this->select()),$this->params);
         }catch(PDOException $e){
-            throw $this->exception('custom statement failed')
+            throw $this->exception('SELECT or expression failed')
                 ->addPDOException($e)
                 ->addMoreInfo('params',$this->params)
                 ->addMoreInfo('query',$q);
         }
     }
+    function _execute($template){
+        try {
+            return $this->stmt=$this->owner->query($this->parseTemplate($template),$this->params);
+        }catch(PDOException $e){
+            throw $this->exception('custom executeon failed')
+                ->addPDOException($e)
+                ->addMoreInfo('params',$this->params)
+                ->addMoreInfo('template',$template);
+        }
+    }
+    function describe($table){
+        return $this->table($table)->_execute('describe [table]');
+    }
+    // }}}
+
+    // {{{ Data fetching modes
     function get($mode){
         return $this->execute()->fetch($mode);
     }
@@ -482,7 +498,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     function rewind(){
-        $this->do_select();
+        $this->execute();
         return $this->next();
     }
     function next(){

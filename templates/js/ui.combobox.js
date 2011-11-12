@@ -8,6 +8,7 @@
 					selected = select.children( ":selected" ),
 					value = selected.val() ? selected.text() : "";
 				var input = this.input = $( "<input>" )
+                    .attr('type','text')
 					.insertAfter( select )
 					.val( value )
 					.autocomplete({
