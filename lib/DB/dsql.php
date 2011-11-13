@@ -435,7 +435,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function _execute($template){
         try {
-            return $this->stmt=$this->owner->query($this->parseTemplate($template),$this->params);
+            $this->stmt=$this->owner->query($this->parseTemplate($template),$this->params);
+            return $this;
         }catch(PDOException $e){
             throw $this->exception('custom executeon failed')
                 ->addPDOException($e)
