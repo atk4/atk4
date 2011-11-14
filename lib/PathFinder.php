@@ -162,7 +162,7 @@ class PathFinder extends AbstractController {
 		}
 		$d->close();
 	}
-	function searchDir($type,$directory){
+	function searchDir($type,$directory=''){
 		/*
 		   List all files inside particular directory
 		 */
