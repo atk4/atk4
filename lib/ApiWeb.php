@@ -243,7 +243,7 @@ class ApiWeb extends ApiCLI {
 
         $this->hook('pre-render-output');
         if(headers_sent($file,$line)){
-            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
+            echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
                 ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
         }
         echo $this->template->render();
