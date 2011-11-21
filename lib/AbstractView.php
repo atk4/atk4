@@ -41,44 +41,27 @@ abstract class AbstractView extends AbstractObject {
      */
     public $spot;
 
-    protected $controller=null; // View should initialize itself with the help of Controller instance
+    public $default_controller='Controller';
 
     // {{{ Basic Operations
     /** Duplicate view and it's template. Will not duplicate children */
     function __clone(){
         parent::__clone();
         if($this->template)$this->template=clone $this->template;
-        if($this->controller)$this->controller=clone $this->controller;
-    }
-    /** Uses appropriate controller for this view to bind it with model */
-    function setModel($model,$actual_fields=null){
-        $c=$this->add('Controller');
-        if(is_string($model)){
-            $c->setModel('Model_'.$model);
-        }else{
-            $c->setModel($model);
-        }
-        if($actual_fields)$c->setActualFields($actual_fields);
-        $this->setController($c);
-        return $c;
     }
     /** Get associated model */
     function getModel(){
         return $this->getController()->getModel();
     }
     /** Manually specify controller for view */
-    function setController($controller){
-        if(is_object($controller)){
-            $this->controller=$controller;
-            $this->controller->owner=$this;
-        }else{
-            $this->controller=$this->add($controller);
-        }
+    function setModel($model,$actual_fields=undefined){
+        $this->setController($this->default_controller);
+
+        $this->controller->setModel($model);
+
+        if(method_exists($this->controller,'setActualFields'))$this->controller->setActualFields($actual_fields);
         if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
         return $this;
-    }
-    function getController(){
-        return $this->controller;
     }
 
     public $_tsBuffer='';
@@ -86,7 +69,7 @@ abstract class AbstractView extends AbstractObject {
         $this->_tsBuffer.=$data;
     }
     /** Converting View into string will render recursively and produce HTML. Avoid using this. */
-    function __toString(){
+    function getHTML(){
         $this->addHook('output',array($this,'_tsBuffer'));
         $this->recursiveRender();
         $this->removeHook('output',array($this,'_tsBuffer'));

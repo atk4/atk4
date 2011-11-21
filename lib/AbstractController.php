@@ -21,15 +21,10 @@
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 class AbstractController extends AbstractObject {
-    protected $model;
-
-    function __clone(){
-        parent::__clone();
-        if($this->model)$this->model=clone $this->model;
-    }
     /** Associate controller with Model */
-    public function setModel($classname) {
-        $this->model = $this->add($classname);
+    public function setModel($model) {
+        if(is_string($model))$model='Model_'.$model;
+        $this->model = $this->add($model);
         return $this;
     }
     /** get associated model */

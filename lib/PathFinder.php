@@ -181,8 +181,6 @@ class PathFinder_Exception extends BaseException {
 		$this->addMoreInfo('type',$type);
 		$this->addMoreInfo('attempted_locations',$attempted_locations);
 	}
-	function collectBasicData(){
-	}
 }
 
 class PathFinder_Location extends AbstractModel {

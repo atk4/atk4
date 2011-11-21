@@ -21,6 +21,12 @@ abstract class AbstractObject {
     /** Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
     public $di_config = array();
 
+    /** Reference to the current model. Read only. Use setModel() */
+    public $model;
+
+    /** Reference to the current controller. Read only. Use setController() */
+    public $controller;
+
     // {{{ Object hierarchy management: http://agiletoolkit.org/learn/understand/base/adding
 
     /** Unique object name */
@@ -48,6 +54,10 @@ abstract class AbstractObject {
         // fix short name and add ourselves to the parent
         $this->short_name=$this->_unique($this->owner->elements,$this->short_name);
         $this->owner->add($this);
+
+        // Clone controller and model
+        if($this->model)$this->model=clone $this->model;
+        if($this->controller)$this->controller=clone $this->controller;
     }
     function __toString() {
         return "Object " . get_class($this) . "(" . $this->name . ")";
@@ -58,6 +68,14 @@ abstract class AbstractObject {
             $el->destroy();
         }
         unset($this->elements);
+        if($this->model){
+            $this->model->destroy();
+            unset($this->model);
+        }
+        if($this->controller){
+            $this->controller->destroy();
+            unset($this->controller);
+        }
         $this->owner->_removeElement($this->short_name);
     }
     /** Remove child element if it exists */
@@ -107,11 +125,25 @@ abstract class AbstractObject {
             // Model classes may be created several times and we are actually don't care about those.
         }
 
-        if(!is_string($class) || !$class)throw new BaseException("Class is not valid");
-        $element = new $class ();
+        if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
+            ->addMoreInfo('class',$class);
+
+        // Include class file directly, do not rely on auto-load functionality
+        if(!class_exists($class,$false) && $this->api->pathfinder){
+            $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+            if(substr($class,0,5)=='page_'){
+                $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
+            }else $path=$this->api->pathfinder->locate('php',$file,'path');
+
+            include_once($path);
+            if(!class_exists($class))throw $this->exception('Class is not defined in file')
+                ->addMoreInfo('file',$path)
+                ->addMoreInfo('class',$class);
+        }
+        $element = new $class();
 
         if (!($element instanceof AbstractObject)) {
-            throw new BaseException("You can add only classes based on AbstractObject (called from " . caller_lookup(1, true) . ")");
+            throw $this->exception("You can add only classes based on AbstractObject");
         }
 
         $element->owner = $this;
@@ -122,32 +154,52 @@ abstract class AbstractObject {
         $element->short_name = $short_name;
         $element->di_config=$di_config;
 
+        // Initialize template before init() starts
         if ($element instanceof AbstractView) {
             $element->initializeTemplate($template_spot, $template_branch);
         }
 
         $element->init();
+
+        // Make sure init()'s parent was called. Popular coder's mistake
         if(!$element->_initialized)throw $element->exception('You should call parent::init() when you override it')
             ->addMoreInfo('object_name',$element->name)
             ->addMoreInfo('class',get_class($element));
+
         return $element;
     }
     /** Find child element by their short name. Use in chaining. Exception if not found. */
-    function getElement($short_name, $obligatory = true) {
+    function getElement($short_name) {
         if (!isset ($this->elements[$short_name]))
-            if ($obligatory)
-                throw $this->exception("Child element not found")
-                    ->addMoreInfo('element',$short_name);
-            else
-                return null;
+            throw $this->exception("Child element not found")
+                ->addMoreInfo('element',$short_name);
+
         return $this->elements[$short_name];
     }
     /** Find child element. Use in condition. */ 
     function hasElement($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
-
     // }}} 
+
+    // {{{ Model and Controller handling
+    function setController($controller){
+        if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
+            $controller='Controller_'.$controller;
+        return $this->controller=$this->add($controller);
+    }
+    function setModel($model){
+        if(is_string($model)&&substr($model,0,strlen('Model'))!='Model')
+            $model='Model_'.$model;
+        return $this->model=$this->add($model);
+    }
+    function getController(){
+        return $this->controller;
+    }
+    function getModel(){
+        return $this->model;
+    }
+    // }}}
 
     // {{{ Session management: http://agiletoolkit.org/doc/session
     /** Remember object-relevant session data */

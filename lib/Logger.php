@@ -258,8 +258,8 @@ class Logger extends AbstractController {
         };
         $this->recskip[]=$obj;
         if($e->owner==$obj || $e->owner->owner == $obj || $e->owner->owner->owner == $obj){
-            echo '<font color="red">'.$obj."</font>";
-        }else echo $obj;
+            echo '<font color="red">'.$obj->__toString()."</font>";
+        }else echo $obj->__toString();
         if($obj->elements){
             echo '<ul>';
             foreach($obj->elements as $name=>$object){
@@ -290,7 +290,13 @@ class Logger extends AbstractController {
 		}
         if($_GET[$this->name.'_debug']=='rendertree'){
             echo '<h2>Object Tree</h2>';
-            $this->showRenderTree($e,$this->api);
+            try{
+                $this->showRenderTree($e,$this->api);
+            }catch(Exception $e){
+                echo '<h1>Exception while trying to render tree:</h1>';
+                //unset($_GET[$htis->name.'_debug']);
+                //$this->api->caughtException($e);
+            }
         }
 
 

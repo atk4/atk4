@@ -62,6 +62,7 @@ class Form_Basic extends AbstractView {
     public $js_widget_arguments=array();
 
     public $default_exception='Exception_ValidityCheck';
+    public $default_controller='MVCForm';
 
     public $dq = null;
     function init(){
