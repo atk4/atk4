@@ -131,6 +131,7 @@ echo $e->getMessage()."<br>\n";
 };if(!function_exists('__autoload')){
     function loadClass($class){
         $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+        $file = str_replace('\\','/',$file);
         if(isset($GLOBALS['atk_pathfinder'])){
             // If PathFinder is loaded, we will rather use that for loading our classes
             if(substr($class,0,5)=='page_'){

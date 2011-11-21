@@ -53,6 +53,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $desired;
     }
     function __toString(){
+        return $this->toString();
+
         if($this->expr)return $this->parseTemplate($this->expr);
         return $this->select();
     }
@@ -128,12 +130,14 @@ class DB_dsql extends AbstractModel implements Iterator {
         $c=clone $this;
         return $c->useExpr($expr);
     }
-    function useExpr($expr){
-        $this->expr=$expr;
-        $this->params=array();
+    function useExpr($expr,$params=array()){
+        $this->template=$expr;
+        $this->params=$params;
         return $this;
     }
+    // TODO: move this function
     function getField($fld){
+        if($this->main_table===false)throw $this->exception('Cannot use getField() when multiple tables are queried');
         return $this->expr(
             $this->owner->bt($this->main_table).
             '.'.
@@ -141,66 +145,72 @@ class DB_dsql extends AbstractModel implements Iterator {
         );
 
     }
-    /* Specifies table to use for this dynamic query */
-	function table($table,$alias=undefined){
+    /** 
+     * Specifies which table to use in this dynamic query. You may specify array to perform operation on multiple tables.
+     *
+     * Examples:
+     *  $q->table('user');
+     *  $q->table('user','u');
+     *  $q->table('user')->table('salary')
+     *  $q->table(array('user','salary'));
+     *  $q->table(array('u'=>'user','s'=>'salary'));
+     *
+     * If you specify multiple tables, you still need to make sure to add proper "where" conditions. All the above examples
+     * return $q (for chaining)
+     *
+     * You can also call table without arguments, which will return current table:
+     *
+     *  echo $q->table();
+     *
+     * If multiple tables are used, "false" is returned. Return is not quoted. Please avoid using table() without arguments 
+     * as more tables may be dynamically added later.
+     **/
+	function table($table=undefined,$alias=undefined){
+        if($table===undefined)return $this->main_table;
+
         if(is_array($table)){
-            foreach($table as $t){
-                $this->table($t);
+            foreach($table as $alias=>$t){
+                if(is_numeric($alias))$alias=undefined;
+                $this->table($t,$alias);
             }
             return $this;
         }
 
-        $bt=$this->owner->bt($this->owner->table_prefix.$table);
+        // main_table tracking allows us to 
+        if($this->main_table===null)$this->main_table=$alias===undefined||!$alias?$table:$alias;
+        elseif($this->main_table)$this->main_table=false;   // query from multiple tables
 
-		$this->args['table_noalias'][]=$bt;
-
-        if($alias!==undefined && $alias)$bt.=' '.$this->owner->bt($alias);
-
-		$this->args['table'][]=$bt;
-
-        if(!$this->main_table)$this->main_table=$alias?$alias:$this->owner->table_prefix.$table;
-
-		return $this;
-	}
-    /* Defines query option */
-	function option($option){
-		if(!is_array($option))$option=array($option);
-		if(!isset($this->args['options']))$this->args['options']=array();
-		$this->args['options']=array_merge($this->args['options'],$option);
-		return $this;
-	}
-    function ignore(){
-        $this->args['options_insert'][]='ignore';
+        $this->args['table'][]=array($table,$alias);
         return $this;
     }
-    /* Check if option was defined */
-    function hasOption($option){
-        return in_array($option,$this->args['options']);
-    }
-    /* Limit row result */
-	function limit($cnt,$shift=0){
-		$this->args['limit']=array(
-				'cnt'=>$cnt,
-				'shift'=>$shift
-				);
-		return $this;
-	}
-    /* Remove result limit */
-    function unLimit(){
-        $this->unset($this->args['limit']);
-        return $this;
-    }
-    function args($args){
-        if(is_array($args)){
-            foreach($args as $arg){
-                $this->args['args'][]=$this->escape($arg);
-            }
-        }else{
-            $this->args['args'][]=$this->escape($args);
-        }
-        return $this;
-    }
-    /* Adds one (string) or several fields (array) to the query. If $field is object, $table is alias */
+    /** 
+     * Adds new column to resulting select by querying $field. 
+     *
+     * Examples:
+     *  $q->field('name');
+     *
+     * Second argument specifies table for regular fields
+     *  $q->field('name','user');
+     *  $q->field('name','user')->field('line1','address');
+     *
+     * Array as a first argument will specify mulitple fields, same as calling field() multiple times
+     *  $q->field(array('name','surname'));
+     *
+     * Associative array will assume that "key" holds the alias. Value may be object.
+     *  $q->field(array('alias'=>'name','alias2'=>surname'));
+     *  $q->field(array('alias'=>$q->expr(..), 'alias2'=>$q->dsql()->.. ));
+     *
+     * You may use array with aliases together with table specifier.
+     *  $q->field(array('alias'=>'name','alias2'=>surname'),'user');
+     *
+     * You can specify $q->expr() for calculated fields. Alias is mandatory.
+     *  $q->field( $q->expr('2+2'),'alias');                // must always use alias
+     *
+     * You can use $q->dsql() for subqueries. Alias is mandatory.
+     *  $q->field( $q->dsql()->table('x')... , 'alias');    // must always use alias
+     *
+     * Use with multiple tables
+     */
 	function field($field,$table=null,$alias=null) {
         if(is_array($field)){
             foreach($field as $f){
@@ -224,6 +234,61 @@ class DB_dsql extends AbstractModel implements Iterator {
 
 
         $this->args['fields'][]=$field;
+		return $this;
+	}
+
+
+
+    /** Returns template component [table] */
+    function get_table(){
+        $ret=array();
+        foreach($this->args['table'] as $row){
+            list($table,$alias)=$row;
+
+            $table=$this->owner->bt($table);
+
+
+            if($alias!==undefined && $alias)$table.=' '.$this->owner->bt($alias);
+
+            $ret[]=$table;
+        }
+        return join(', ',$ret);
+    }
+    /** Returns template component [table_noalias] */
+    function get_table_noalias(){
+        $ret=array();
+        foreach($this->args['table'] as $row){
+            list($table,$alias)=$row;
+
+            $table=$this->owner->bt($table);
+
+
+            $ret[]=$table;
+        }
+        return join(', ',$ret);
+
+	}
+    /* Defines query option */
+	function option($option){
+		if(!is_array($option))$option=array($option);
+		if(!isset($this->args['options']))$this->args['options']=array();
+		$this->args['options']=array_merge($this->args['options'],$option);
+		return $this;
+	}
+    function ignore(){
+        $this->args['options_insert'][]='ignore';
+        return $this;
+    }
+    /* Check if option was defined */
+    function hasOption($option){
+        return in_array($option,$this->args['options']);
+    }
+    /* Limit row result */
+	function limit($cnt,$shift=0){
+		$this->args['limit']=array(
+				'cnt'=>$cnt,
+				'shift'=>$shift
+				);
 		return $this;
 	}
     /* Never pass variable as $field! (esp if user can control it) */
@@ -274,7 +339,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         /* guess condition as it might be in $field */
         if($cond===undefined && !is_object($field)){
 
-            preg_match('/^([^ <>!=]*)([><!=]*|( *(not|in|like))*) *$/',$field,$matches);
+            preg_match('/^([^ <>!=]*)([><!=]*|( *(not|is|in|like))*) *$/',$field,$matches);
             $field=$matches[1];
             $cond=$matches[2];
         }
@@ -450,8 +515,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
 
     // {{{ Data fetching modes
-    function get($mode){
-        return $this->execute()->fetch($mode);
+    function get(){
+        return $this->getAll();
     }
     function do_getOne(){ return $this->getOne(); }
     function getOne(){
@@ -460,13 +525,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_getAll(){ return $this->getAll(); }
     function getAll(){
-        return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
-
-        $data=array();
-        foreach($this->execute() as $row){
-            $data[]=$row;
-        }
-        return $data;
+        return $this->execute()->fetchAll();
     }
 
 
@@ -476,8 +535,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     function getHash(){ return $this->get(PDO::FETCH_ASSOC); }
 
     function fetch(){
-        if($this->stmt)return $this->stmt->fetch();
-        return $this->execute()->fetch();
+        if(!$this->stmt)$this->execute();
+        return $this->fetch();
+    }
+    function fetchAll(){
+        if(!$this->stmt)$this->execute();
+        return $this->fetchAll();
     }
 	function calc_found_rows(){
         // if not mysql return;
@@ -499,14 +562,11 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     function rewind(){
-        $this->execute();
-        return $this->next();
+        unset($this->stmt);
+        return $this;
     }
     function next(){
-        if(!$this->stmt)$this->do_select();
-        $this->data = $this->stmt->fetch(PDO::FETCH_ASSOC);
-        $this->hook('formatData');
-        return $this->data;
+        return $this->data = $this->get();
     }
     function current(){
         return $this->data;

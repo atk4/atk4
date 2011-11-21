@@ -431,4 +431,9 @@ abstract class AbstractObject {
         }       
         return $attempted_key;
     }
+
+
+    function __sleep(){
+        return array('name');
+    }
 }
