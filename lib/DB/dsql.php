@@ -1,50 +1,39 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/***********************************************************
-  Implementation of PDO-compatible dynamic queries
-
-  Reference:
-  http://agiletoolkit.org/doc/dq
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+/**
+ * Implementation of PDO-compatible dynamic queries
+ * 
+ * Use: 
+ *  $this->api->dbConnect();
+ *  $query = $this->api->db->dsql();
+ *
+ * @license See http://agiletoolkit.org/about/license
+ * 
+**/
 class DB_dsql extends AbstractModel implements Iterator {
-    /* Array with different type of data */
+    /** Data accumulated by calling Definition methods, which is then used when rendering */
     public $args=array();
 
-    /* List of PDO parametical arguments for a query */
+    /** List of PDO parametical arguments for a query. Used only during rendering. */
     public $params=array();
 
-    /* Statement, if query is done */
-    public $stmt;
+    /** Manually-specified params */
+    public $extra_params=array();
 
-    /* Expression to use when converting to string */
-    public $expr=null;
+    /** PDO Statement, if query is prepared. Used by iterator */
+    public $stmt=null;
 
+    /** Expression to use when converting to string */
+    public $template=null;
+
+    /** Used to determine main table. */
     public $main_table=null;
-
-    public $main_query=null;  // points to main query for subqueries
-    public $param_base='a';   // for un-linked subqueries, set a different param_base
-
 
     public $default_exception='Exception_DB';
 
+    /** call $q->debug() to turn on debugging. */
     public $debug=false;
 
+    public $param_base='a';
 
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
@@ -53,11 +42,23 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $desired;
     }
     function __toString(){
+        try {
+            return $this->render();
+        }catch(Exception $e){
+            return "Exception: ".$e->getText();
+        }
+
         return $this->toString();
 
         if($this->expr)return $this->parseTemplate($this->expr);
         return $this->select();
     }
+    function template($template){
+        $this->template=$template;
+        return $this;
+    }
+
+
     /* Escapes value by using parameter */
     function escape($val){
         if(is_array($val)){
@@ -79,33 +80,15 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     /* Creates subquery */
     function dsql(){
-        $d=$this->owner->dsql();
-        $d->used_params = &$this->used_params;
-
-        $d->main_query=$this->main_query?$this->main_query:$this;
-        return $d;
+        return $this->owner->dsql(get_class($this));
     }
     /* Inserting one query into another and merging parameters */
     function consume($dsql){
-        if((!$this->main_query && !$dsql->main_query) || ($dsql->main_query != $this && $dsql->main_query !=
-                    $this->main_query)){
-            // are we using any parameters
-            if($dsql->params && $this->params
-                    && $dsql->param_base == $this->param_base){
-                // ought to have param clash!
-                throw $this->exception('Subquery is not cloned from us, is using same param_base for parametrical variables,
-                    therefore unable to consume')
-                    ->addMoreInfo('our_parambase',$this->param_base)
-                    ->addMoreInfo('their_parambase',$dsql->param_base)
-                    ->addMoreInfo('our_params',$this->params)
-                    ->addMoreInfo('their_params',$dsql->params)
-                    ->addMoreInfo('our_expr',$this->expr)
-                    ->addMoreInfo('their_expr',$dsql->expr)
-                    ;
-            }
-        }
-        $this->params=array_merge($this->params,$dsql->params);
-        $ret='('.$dsql->__toString().')';
+        if(!is_object($dsql))return $this->bt($dsql);
+        $dsql->params = &$this->params;
+        $ret = $dsql->_render();
+        if($dsql->is_select())$ret='('.$ret.')';
+        unset($dsql->params);$dsql->params=array();
         return $ret;
     }
     /* Removes definition for argument type */
@@ -126,13 +109,13 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Dynamic Query Definition methods
 
     /* Sets template for toString() function */
-    function expr($expr){
+    function expr($expr,$params=array()){
         $c=clone $this;
-        return $c->useExpr($expr);
+        return $c->useExpr($expr,$params);
     }
     function useExpr($expr,$params=array()){
         $this->template=$expr;
-        $this->params=$params;
+        $this->extra_params=$params;
         return $this;
     }
     // TODO: move this function
@@ -143,7 +126,6 @@ class DB_dsql extends AbstractModel implements Iterator {
             '.'.
             $this->owner->bt($fld)
         );
-
     }
     /** 
      * Specifies which table to use in this dynamic query. You may specify array to perform operation on multiple tables.
@@ -213,34 +195,45 @@ class DB_dsql extends AbstractModel implements Iterator {
      */
 	function field($field,$table=null,$alias=null) {
         if(is_array($field)){
-            foreach($field as $f){
-                $this->field($f,$table);
+            foreach($field as $alias=>$f){
+                if(is_numeric($alias))$alias=null;
+                $this->field($f,$table,$alias);
             }
             return $this;
+        }elseif(is_string($field)){
+            $field=explode(',',$field);
+            if(count($field)>1){
+                foreach($field as $f){
+                    $this->field($f,$table,$alias);
+                }
+                return $this;
+            }
+            $field=$field[0];
         }
 
         if(is_object($field)){
             if(!$table)throw $this->exception('Specified expression without alias');
-            $field=$this->consume($field);
-            if($table)$field.=' as '.$this->owner->bt($table);
-        }elseif(isset($table)){
-			$field=
-                $this->owner->bt($this->owner->table_prefix.$table).
-                '.'.
-                $this->owner->bt($field);
-		}else{
-            $field=$this->owner->bt($field);
+            $alias=$table;$table=null;
         }
-
-
-        $this->args['fields'][]=$field;
+        $this->args['fields'][]=array($field,$table,$alias);
 		return $this;
 	}
-
-
-
+    function render_field(){
+        $result=array();
+        foreach($this->args['fields'] as $row){
+            list($field,$table,$alias)=$row;
+            $field=$this->consume($field);
+            if($table && $table!=undefined)$field.='.'.$this->bt($table);
+            if($alias && $alias!=undefined)$field.=' '.$this->bt($alias);
+            $result[]=$field;
+        }
+        return join(',',$result);
+    }
+    function bt($str){
+        return $this->owner->bt($str);
+    }
     /** Returns template component [table] */
-    function get_table(){
+    function render_table(){
         $ret=array();
         foreach($this->args['table'] as $row){
             list($table,$alias)=$row;
@@ -254,8 +247,13 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         return join(', ',$ret);
     }
+    /** Conditionally returns "from", only if table is specified */
+    function render_from(){
+        if($this->args['table'])return 'from';
+        return '';
+    }
     /** Returns template component [table_noalias] */
-    function get_table_noalias(){
+    function render_table_noalias(){
         $ret=array();
         foreach($this->args['table'] as $row){
             list($table,$alias)=$row;
@@ -414,12 +412,19 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Statement templates and interfaces
 
     /* Generates and returns SELECT statement */
+    public $type='';
 	function select(){
-		return $this->parseTemplate("select [options] [fields] [from] [table] [join] [where] [group] [having] [order] [limit]");
+        $this->type='select';
+        $this->template="select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]";
+        return $this;
 	}
+    function is_select(){ return $this->type=='select'; }
 	function insert(){
-        return $this->parseTemplate("insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])");
+        $this->type='select';
+        $this->template="insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])";
+        return $this;
 	}
+    function is_insert(){ return $this->type=='insert'; }
     function update(){
         return $this->parseTemplate("update [table_noalias] set [set] [where]");
     }
@@ -580,6 +585,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
 
 
+
+
     // {{{ Query Generation heavy-duty generation code
 
     /* [private] Generates values for different tokens in the template */
@@ -677,6 +684,20 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this;
     }
 
+
+    function render(){
+        $this->params=$this->extra_params;
+        return $this->_render();
+    }
+    function _render(){
+        if(!$this->template)$this->select();
+        $self=$this;
+        return preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
+            $fx='render_'.$matches[1];
+            if($self->hasMethod($fx))return $self->$fx();
+            else return $matches[0];
+        },$this->template);
+    }
 
 	function parseTemplate($template) {
 		$parts = explode('[', $template);

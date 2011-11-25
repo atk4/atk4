@@ -129,7 +129,7 @@ abstract class AbstractObject {
             ->addMoreInfo('class',$class);
 
         // Include class file directly, do not rely on auto-load functionality
-        if(!class_exists($class,$false) && $this->api->pathfinder){
+        if(!class_exists($class,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
             if(substr($class,0,5)=='page_'){
                 $path=$this->api->pathfinder->locate('page',substr($file,5),'path');

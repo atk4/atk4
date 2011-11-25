@@ -87,6 +87,16 @@ class BaseException extends Exception {
         $html.= backtrace($this->shift+1,$this->getMyTrace());
         return $html;
     }
+    function getText(){
+        $text='';$args=array();
+        foreach($this->more_info as $key=>$value){
+            $args[]=$key.'='.$value;
+        }
+
+        $text.= get_class($this).': '.$this->getMessage().' ('.join(', ',$args).')';
+        $text.= ' in '.$this->getMyFile() . ':' . $this->getMyLine();
+        return $text;
+    }
     function getDetailedHTML(){
         return '';
     }

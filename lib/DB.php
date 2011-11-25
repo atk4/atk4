@@ -5,26 +5,19 @@
  * Use: 
  *  $this->api->dbConnect();
  *  $query = $this->api->db->dsql();
+ *
+ * @license See http://agiletoolkit.org/about/license
  * 
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org/
-  
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
- =====================================================ATK4=*/
+**/
 class DB extends AbstractController {
 
     /** Link to PDO database handle */
     public $dbh=null;
 
-    public $table_prefix=null;
-
     /** when queries are executed, their statements are cached for later re-use */
     public $query_cache=array();
+
+    public $dsql_class='DB_dsql';
     
     /** Backticks will be added around all fields. Set this to '' if you prefer cleaner queries */
     public $bt='`';
@@ -67,10 +60,14 @@ class DB extends AbstractController {
         $this->table_prefix=$this->api->getConfig('pdo/table_prefix','');
         
     }
-    
+
     /** Returns Dynamic Query object compatible with this database driver (PDO) */
-    function dsql(){
-        return $this->add('DB_dsql');
+    function dsql($class=null){
+        $obj=$this->add($class=$class?:$this->dsql_class);
+        if(!$obj instanceof DB_dsql)
+            throw $this->exception('Specified class must be descendant of DB_dsql')
+            ->addMoreInfo('class',$class);
+        return $obj;
     }
     
     /** Query database with SQL statement */
