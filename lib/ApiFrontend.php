@@ -28,6 +28,11 @@ class ApiFrontend extends ApiWeb{
 
     // {{{ Layout Implementation
     /** Content in the global (shared.html) template is rendered by page object. This method loads either class or static file */
+    function initLayout(){
+        parent::initLayout();
+        $this->addLayout('Content');
+        $this->upgradeChecker();
+    }
     function layout_Content(){
         // required class prefix depends on the content_type
         // This function initializes content. Content is page-dependant

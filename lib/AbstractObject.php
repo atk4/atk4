@@ -107,11 +107,29 @@ abstract class AbstractObject {
             // Model classes may be created several times and we are actually don't care about those.
         }
 
-        if(!is_string($class) || !$class)throw new BaseException("Class is not valid");
-        $element = new $class ();
+        if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
+            ->addMoreInfo('class',$class);
+
+        // Separate out namespace
+        $class_name=str_replace('/','\\',$class);
+        list($namespace,$file)=explode('\\',$class_name);
+
+        // Include class file directly, do not rely on auto-load functionality
+        if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
+            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
+            if(substr($class,0,5)=='page_'){
+                $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
+            }else $path=$this->api->pathfinder->locate('php',$file,'path');
+
+            include_once($path);
+            if(!class_exists($class))throw $this->exception('Class is not defined in file')
+                ->addMoreInfo('file',$path)
+                ->addMoreInfo('class',$class);
+        }
+        $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
-            throw new BaseException("You can add only classes based on AbstractObject (called from " . caller_lookup(1, true) . ")");
+            throw $this->exception("You can add only classes based on AbstractObject");
         }
 
         $element->owner = $this;
