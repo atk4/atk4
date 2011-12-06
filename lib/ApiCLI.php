@@ -108,8 +108,7 @@ class ApiCLI extends AbstractView {
         return $this->pm->base_path;
     }
     /** Generates URL for specified page. Useful for building links on pages or emails. Returns URL object. */
-    function getDestinationURL($page=null,$arguments=array(),$full='depricated'){
-        if($full!='depricated')throw new BaseException('Using 3rd argument for getDestinationURL is depricated');
+    function url($page=null,$arguments=array()){
         if(is_object($page) && $page instanceof URL){
             // we receive URL
             return $page->setArguments($arguments);
@@ -120,6 +119,8 @@ class ApiCLI extends AbstractView {
                 $url->setPage($page);
         return $url->setArguments($arguments);
     }
+    /** See url() */
+    function getDestinationURL($page=null,$arguments=array()){ return $this->url($page,$arguments); }
     // }}}
 
     // {{{ Error handling

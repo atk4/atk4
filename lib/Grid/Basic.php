@@ -5,16 +5,14 @@
  * and using multiple column formatters.
  * 
  * @link http://agiletoolkit.org/doc/grid
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4 
-    http://agiletoolkit.org/
-  
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
- =====================================================ATK4=*/
+ *
+ * Use:
+ *  $grid=$this->add('Grid');
+ *  $grid->setModel('User');
+ *
+ * @license See http://agiletoolkit.org/about/license
+ *
+**/
 class Grid_Basic extends CompleteLister {
     public $columns=array();
     protected $no_records_message="No matching records to display";

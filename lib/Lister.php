@@ -1,104 +1,124 @@
-<?php
-/***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+ * Lister implements a very simple and fast way to output series
+ * of data by applying template formatting
+ * 
+ * @link http://agiletoolkit.org/doc/lister
+ *
+ * Use:
+ *  $list=$this->add('Lister');
+ *  $list->setModel('User');
+ *
+ * Template (view/users.html):
+ *  <h4><?$name?></h4>
+ *  <p><?$desc?></p>
+ *
+ * @license See http://agiletoolkit.org/about/license
+ *
+**/
 class Lister extends View {
+
+    /** If lister data is retrieed from the SQL database, this will contain dynamic query. */
 	public $dq=null;
 
-	public $data=null;
+    /** For other iterators, this variable will be used */
+    public $iter=null;
 
-	public $safe_html_output=true;  // do htmlspecialchars by default when formatting rows
-	public $nl2br_output=false;  // do htmlspecialchars by default when formatting rows
+    /** Points to current row before it's being outputted. Used in formatRow() */
+	public $current_row=array();
 
-	public $current_row=array();    // this is data of a current row
-	function setSource($table,$db_fields=null,$db = null){
-		if((!$this->api->db) && (!$db))throw new BaseException('DB must be initialized if you want to use Lister / setSource');
-		$this->dq = $db ? $db->dsql() : $this->api->db->dsql();
-		$this->api->addHook('pre-render',array($this,'execQuery'));
+    /** 
+     * Sets source data for the lister. If source is a model, use setModel() instead.
+     *
+     * @link http://agiletoolkit.org/doc/lister
+     *
+     * Examples:
+     *  $l=$this->add('Lister');
+     *  $l->setSource( array('a','b','c') );        // associative array
+     *
+     * or   // array of hashes
+     *  $l->setSource( array(
+     *      array('id'=>1,'name'=>'John','surname'=>'Smith'),
+     *      array('id'=>2,'name'=>'Joe','surname'=>'Blogs')
+     *      ));
+     *
+     * or   // dsql
+     *  $l->setSource( $this->api->db->dsql()
+     *      ->table('user')
+     *      ->where('age>',3)
+     *      ->field('*') 
+     *  );
+     *
+     * or   // sql table
+     *  $l->setSource( 'user', array('name','surname'));
+     **/
+	function setSource($source,$fields=null){
 
-		$this->dq->table($table);
-		if(isset($db_fields)){
-			$this->dq->field($db_fields);
-		}else{
-			$this->dq->field('*');
-			$this->dq->field('id');
-		}
+        // Set DSQL
+        if($source instanceof DB_dsql){
+            $this->dq=$source;
+            return $this;
+        }
+
+        // SimpleXML and other objects
+        if(is_object($source)){
+            if($source instanceof Model)throw $this->exception('Use setModel() for Models');
+            if($source instanceof Controller)throw $this->exception('Use setController() for Controllers');
+            if($source instanceof Iterator){
+                $this->iter=$source;
+                return $this;
+            }
+
+            // Cast non-iterable objects into array
+            $source=(array)$source;
+        }
+
+        // Set Array as a data source
+        if(is_array($source)){
+
+            $m=$this->setModel('Array');
+
+            if(is_array(reset($source))){
+                $m->setSource($source);
+            }else{
+                $m->setAssoc($source);
+            }
+            return $this;
+        }
+
+        // Set manually
+        $this->dq=$this->api->db->dsql();
+        $this->dq
+            ->table($source)
+            ->field($fields?:'*');
+
 		return $this;
 	}
+    /** @obsolete set array source */
 	function setStaticSource($data){
-		if(!is_array($data))throw new BaseException('Please specify array of hashes to setStaticSource()');
-		$this->data=$data;
-		return $this;
+        return $this->setSource($data);
 	}
-	function handlePartialRender(){
-
-		// If Partial render was requested though GET, then limit our output to those values only
-
-		if($ids=$_GET[$this->name.'_reload_row']){
-			// we were requseted to only show one row through AJAX request
-			if(is_array($this->data)){
-				$idsarr=explode(',',$ids);
-				$this->data=array_filter($this->data,array($this,'handlePartialRender_'));
-			}
-			if(isset($this->dq)){
-				$this->dq->where($this->dq->args['table'].'.id in',$ids);
-			}
-		}
-	}
-	function handlePartialRender_($var){
-		return in_array($var['id'],$idsarr);
-	}
-	function execQuery(){
-		$this->handlePartialRender();
-		$this->dq->do_select();
-	}
+    /** Redefine and change $this->current_row to format data before it appears */
 	function formatRow(){
-		if($this->safe_html_output){
-			foreach($this->current_row as $x=>$y){
-				$o=htmlspecialchars(stripslashes($y));
-				if($this->nl2br_output)$o=nl2br($o);
-				$this->current_row[$x]=$o;
-				if(!isset($this->current_row[$x]) || is_null($this->current_row[$x]) || $this->current_row[$x]=='')$this->current_row[$x]='&nbsp;';
-			}
-		}
 		$this->hook('formatRow');
 	}
-	function fetchRow(){
-		if(is_array($this->data)){
-			return (bool)($this->current_row=array_shift($this->data));
-		}
-		if(!isset($this->dq))throw new BaseException($this->name.": dq must be set here");
-		return (bool)($this->current_row=$this->dq->do_fetchHash());
-        // incompatible
-        //return (bool)($this->current_row=$this->dq->next());
-	}
-
-
+    /** Renders single row. If you use for formatting then interact with template->set() directly prior to calling parent */
+    function rowRender($template) {
+        $template->set($this->current_row);
+        return $template->render();
+    }
+    function getIterator(){
+        if(!($i=$this->model?:$this->dq?:$this->iter))
+            throw $this->exception('Please specify data source with setSource or setModel');
+        return $i;
+    }
 	function render(){
-		while($this->fetchRow()){
-			$this->formatRow();
-			$this->template->set($this->current_row);
-			$this->output($this->template->render());
-		}
+        foreach($this->getIterator() as $this->current_row){
+            $this->formatRow();
+            $this->output($this->rowRender($this->template));
+        }
 	}
+    function defaultTemplate(){
+        return array('view/lister');
+    }
 }

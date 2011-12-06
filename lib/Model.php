@@ -3,7 +3,7 @@
    * Implementation of the model where you can define fields, conditions, validations
    * but does not related with any storage media
    */
-class Model extends AbstractModel implements ArrayAccess {
+class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $default_exception='Exception';
     public $entity_code;
@@ -31,6 +31,9 @@ class Model extends AbstractModel implements ArrayAccess {
             foreach($name as $key=>$val)$this->set($key,$val);
             return $this;
         }
+        if($name===false || $name===null){
+            return $this->reset();
+        }
 
         // Verify if such a filed exists
         if(!$this->hasElement($name))throw $this->exception('No Such field','Logic')->addMoreInfo('name',$name);
@@ -45,11 +48,16 @@ class Model extends AbstractModel implements ArrayAccess {
         $this->dirty[$name]=true;
     }
 
-    function reset(){
-        $this->data=$this->dirty=array();
+    function loaded(){
+        return (boolean)$this->data;
     }
 
-    // {{{ Iterator support 
+    function reset(){
+        $this->data=$this->dirty=array();
+        return $this;
+    }
+
+    // {{{ ArrayAccess support 
     function offsetExists($name){
         return $this->hasElement($name);
     }
@@ -61,6 +69,23 @@ class Model extends AbstractModel implements ArrayAccess {
     }
     function offsetUnset($name){
         unset($this->dirty[$name]);
+    }
+    // }}}
+
+    // {{{ Iterator support 
+    private $once=false;
+    function rewind(){}
+    function next(){}
+    function current(){
+        return $this->get();
+    }
+    function key(){
+        return $this->get('id');
+    }
+    function valid(){
+        $once=$this->once;
+        $this->once=false;
+        return $once;
     }
     // }}}
 

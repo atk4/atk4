@@ -1,7 +1,8 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
  * Implementation of PDO-compatible dynamic queries
- * 
+ * @link http://agiletoolkit.org/doc/dsql
+ *
  * Use: 
  *  $this->api->dbConnect();
  *  $query = $this->api->db->dsql();
@@ -33,6 +34,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** call $q->debug() to turn on debugging. */
     public $debug=false;
 
+    /** prefix for all parameteric variables: a, a_2, a_3, etc */
     public $param_base='a';
 
     // {{{ Generic stuff
@@ -53,14 +55,15 @@ class DB_dsql extends AbstractModel implements Iterator {
         if($this->expr)return $this->parseTemplate($this->expr);
         return $this->select();
     }
+    /** Explicitly sets template to your query */
     function template($template){
         $this->template=$template;
         return $this;
     }
 
-
-    /* Escapes value by using parameter */
+    /** Converts value into parameter and returns reference. Use only during query rendering. */
     function escape($val){
+        if($val===undefined)return '';
         if(is_array($val)){
             $out=array();
             foreach($val as $v){
@@ -69,29 +72,31 @@ class DB_dsql extends AbstractModel implements Iterator {
             return $out;
         }
         $name=':'.$this->param_base;
-        $name=$this->_unique($this->used_params,$name);
-        $this->used_params[$name]=$val;
+        $name=$this->_unique($this->params,$name);
         $this->params[$name]=$val;
         return $name;
     }
+    /** Change prefix for parametric values. Useful if you are combining multiple queries. */
     function paramBase($param_base){
         $this->param_base=$param_base;
         return $this;
     }
-    /* Creates subquery */
+    /** Create new dsql object which can then be used as sub-query. */
     function dsql(){
         return $this->owner->dsql(get_class($this));
     }
-    /* Inserting one query into another and merging parameters */
-    function consume($dsql){
-        if(!is_object($dsql))return $this->bt($dsql);
+    /** Recursively renders sub-query or expression, combining parameters */
+    function consume($dsql,$tick=true){
+        if($dsql===undefined)return '';
+        if($dsql===null)return '';
+        if(!is_object($dsql))return $tick?$this->bt($dsql):$dsql;
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
         if($dsql->is_select())$ret='('.$ret.')';
         unset($dsql->params);$dsql->params=array();
         return $ret;
     }
-    /* Removes definition for argument type */
+    /** Removes definition for argument type. $q->del('where') */
     function del($param){
         if($param=='limit'){
             unset($this->args['limit']);
@@ -108,17 +113,22 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     // {{{ Dynamic Query Definition methods
 
-    /* Sets template for toString() function */
+    // {{{ Generic methods
+    /** Returns new dynamic query and initializes it to use specific template. */
     function expr($expr,$params=array()){
-        $c=clone $this;
-        return $c->useExpr($expr,$params);
+        return $this->dsql()->useExpr($expr,$params);
     }
+    /** Shortcut to produce expression which concatinates "where" clauses with "OR" operator */
+    function orExpr(){
+        return $this->expr('([orwhere])');
+    }
+    /** @private Change template and bind parameters for existing query */
     function useExpr($expr,$params=array()){
         $this->template=$expr;
         $this->extra_params=$params;
         return $this;
     }
-    // TODO: move this function
+    /** Return expression containing a properly escaped field. Use make subquery condition reference parent query */
     function getField($fld){
         if($this->main_table===false)throw $this->exception('Cannot use getField() when multiple tables are queried');
         return $this->expr(
@@ -127,14 +137,19 @@ class DB_dsql extends AbstractModel implements Iterator {
             $this->owner->bt($fld)
         );
     }
+    // }}}
+    // {{{ table()
     /** 
      * Specifies which table to use in this dynamic query. You may specify array to perform operation on multiple tables.
+     *
+     * @link http://agiletoolkit.org/doc/dsql/where
      *
      * Examples:
      *  $q->table('user');
      *  $q->table('user','u');
      *  $q->table('user')->table('salary')
      *  $q->table(array('user','salary'));
+     *  $q->table(array('user','salary'),'user');
      *  $q->table(array('u'=>'user','s'=>'salary'));
      *
      * If you specify multiple tables, you still need to make sure to add proper "where" conditions. All the above examples
@@ -165,8 +180,44 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->args['table'][]=array($table,$alias);
         return $this;
     }
+    /** Returns template component [table] */
+    function render_table(){
+        $ret=array();
+        foreach($this->args['table'] as $row){
+            list($table,$alias)=$row;
+
+            $table=$this->owner->bt($table);
+
+
+            if($alias!==undefined && $alias)$table.=' '.$this->owner->bt($alias);
+
+            $ret[]=$table;
+        }
+        return join(',',$ret);
+    }
+    /** Conditionally returns "from", only if table is specified */
+    function render_from(){
+        if($this->args['table'])return 'from';
+        return '';
+    }
+    /** Returns template component [table_noalias] */
+    function render_table_noalias(){
+        $ret=array();
+        foreach($this->args['table'] as $row){
+            list($table,$alias)=$row;
+
+            $table=$this->owner->bt($table);
+
+
+            $ret[]=$table;
+        }
+        return join(', ',$ret);
+	}
+    // }}}
+    // {{{ field()
     /** 
      * Adds new column to resulting select by querying $field. 
+     * @link http://agiletoolkit.org/doc/dsql/field
      *
      * Examples:
      *  $q->field('name');
@@ -191,7 +242,6 @@ class DB_dsql extends AbstractModel implements Iterator {
      * You can use $q->dsql() for subqueries. Alias is mandatory.
      *  $q->field( $q->dsql()->table('x')... , 'alias');    // must always use alias
      *
-     * Use with multiple tables
      */
 	function field($field,$table=null,$alias=null) {
         if(is_array($field)){
@@ -220,52 +270,165 @@ class DB_dsql extends AbstractModel implements Iterator {
 	}
     function render_field(){
         $result=array();
+        if(!$this->args['fields']){
+            //if($this->main_table)return '*.'.$this->main_table;
+            return '*';
+        }
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;
             $field=$this->consume($field);
-            if($table && $table!=undefined)$field.='.'.$this->bt($table);
-            if($alias && $alias!=undefined)$field.=' '.$this->bt($alias);
+            if($table && $table!==undefined)$field=$this->bt($table).'.'.$field;
+            if($alias && $alias!==undefined)$field.=' '.$this->bt($alias);
             $result[]=$field;
         }
         return join(',',$result);
     }
+    // }}}
+    // {{{ where() and having()
+    /** 
+     * Adds condition to your query
+     * @link http://agiletoolkit.org/doc/dsql/where
+     *
+     * Examples:
+     *  $q->where('id',1);
+     *
+     * Second argument specifies table for regular fields
+     *  $q->where('id>','1');
+     *  $q->where('id','>',1);
+     *
+     * You may use expressions
+     *  $q->where($q->expr('a=b'));
+     *  $q->where('date>',$q->expr('now()'));
+     *  $q->where($q->expr('length(password)'),'>',5);
+     *
+     * Finally, subqueries can also be used
+     *  $q->where('foo',$q->dsql()->table('foo')->field('name'));
+     *
+     * To specify OR conditions
+     *  $q->where($q->orExpr()->where('a',1)->where('b',1));
+     *
+     * you can also use the shortcut:
+     * 
+     *  $q->where(array('a is null','b is null'));
+     */
+    function where($field,$cond=undefined,$value=undefined,$type='where'){
+
+        if(is_array($field)){
+            // or conditions
+            $or=$this->orExpr();
+            foreach($field as $row){
+                if(is_array($row)){
+                    $or->where($row[0],
+                        isset($row[1])?$row[1]:undefined,
+                        isset($row[2])?$row[2]:undefined);
+                }elseif($is_object($row)){
+                    $or->where($row);
+                }else{
+                    $or->where($or->expr($row));
+                }
+            }
+            $field=$or;
+            $this->api->x=1;
+        }
+
+
+        if(is_string($field) && !preg_match('/^[a-zA-Z0-9_]*$/',$field)){
+            // field contains non-alphanumeric values. Look for condition
+            preg_match('/^([^ <>!=]*)([><!=]*|( *(not|is|in|like))*) *$/',$field,$matches);
+            $value=$cond;
+            $cond=$matches[2];
+            if(!$cond){
+
+                // IF COMPAT
+                $matches[1]=$this->expr($field);
+                $cond=undefined;
+                //throw $this->exception('Field is specified incorrectly or condition is not supported')
+                    //->addMoreInfo('field',$field);
+            }
+            $field=$matches[1];
+        }
+
+        //if($value==undefined && !is_object($field) && !is_object($cond))throw $this->exception('value is not specified');
+
+        $this->args[$type][]=array($field,$cond,$value);
+        return $this;
+    }
+    function having($field,$cond=undefined,$value=undefined){
+        return $this->where($field,$cond,$value,'having');
+    }
+    function _render_where($type){
+        $ret=array();
+        foreach($this->args[$type] as $row){
+            list($field,$cond,$value)=$row;
+
+            if(is_object($field)){
+                // if first argument is object, condition must be explicitly specified
+                $field=$this->consume($field);
+            }else{
+                $field=$this->bt($field);
+            }
+
+            if($value===undefined && $cond===undefined){
+                $r=$field;
+                $ret[]=$r;
+                continue;
+            }
+
+            if($value===undefined){
+                $value=$cond;
+                $cond='=';
+                if(is_array($value))$cond='in';
+                if(is_object($value) && $value->is_select())$cond='in';
+            }else{
+                $cond=trim($cond);
+            }
+
+
+            if($cond=='in' && is_string($value)){
+                $value=explode(',',$value);
+            }
+
+            if(is_array($value)){
+                $v=array();
+                foreach($value as $vv){
+                    $v[]=$this->escape($vv);
+                }
+                $value='('.join(',',$v).')';
+                $cond='in';
+                $r=$this->consume($field).' '.$cond.' '.$value;
+                $ret[]=$r;
+                continue;
+            }
+
+            if(is_object($value))$value=$this->consume($value);else$value=$this->escape($value);
+
+            $r=$field.' '.$cond.' '.$value;
+            $ret[]=$r;
+        }
+        return $ret;
+    }
+    function render_where(){
+        if(!$this->args['where'])return;
+        return 'where '.join(' and ',$this->_render_where('where'));
+    }
+    function render_orwhere(){
+        if(!$this->args['where'])return;
+        return join(' or ',$this->_render_where('where'));
+    }
+    function render_having(){
+        if(!$this->args['having'])return;
+        return 'having '.join(' or ',$this->_render_where('having'));
+    }
+    // }}}
+
+    function render_options(){}
+    function render_join(){}
+    function render_group(){}
+    function render_order(){}
+    function render_limit(){}
     function bt($str){
         return $this->owner->bt($str);
     }
-    /** Returns template component [table] */
-    function render_table(){
-        $ret=array();
-        foreach($this->args['table'] as $row){
-            list($table,$alias)=$row;
-
-            $table=$this->owner->bt($table);
-
-
-            if($alias!==undefined && $alias)$table.=' '.$this->owner->bt($alias);
-
-            $ret[]=$table;
-        }
-        return join(', ',$ret);
-    }
-    /** Conditionally returns "from", only if table is specified */
-    function render_from(){
-        if($this->args['table'])return 'from';
-        return '';
-    }
-    /** Returns template component [table_noalias] */
-    function render_table_noalias(){
-        $ret=array();
-        foreach($this->args['table'] as $row){
-            list($table,$alias)=$row;
-
-            $table=$this->owner->bt($table);
-
-
-            $ret[]=$table;
-        }
-        return join(', ',$ret);
-
-	}
     /* Defines query option */
 	function option($option){
 		if(!is_array($option))$option=array($option);
@@ -289,81 +452,6 @@ class DB_dsql extends AbstractModel implements Iterator {
 				);
 		return $this;
 	}
-    /* Never pass variable as $field! (esp if user can control it) */
-    function having($field,$cond=null,$value=null){
-        return $this->where($field,$cond,$value,'having');
-    }
-    function where($field,$cond=undefined,$value=undefined,$type='where'){
-        /*
-           1. where('id',2);                    // equals
-           2. where('id','>',2);                // explicit condition
-           3. where(array('id',2),('id',3));    // or
-           4. where('id',array(2,3));           // in
-           5. where($dsql,4);                   // subquery
-           6. where('id',$dsql);                // in subquery
-           7. where('id=ord');                  // full statement. avoid
-           */
-        $ors=array();
-        if(is_array($field)) foreach($field as $or){
-            if(!is_array($or))throw $this->exception('OR syntax invalid')->addMoreInfo('arg',$field);
-            $ors[]=$this->_where($or[0],@$or[1],@$or[2]);
-        }else{
-            $ors[]=$this->_where($field,$cond,$value);
-        }
-        $this->args[$type][]=implode(' or ',$ors);
-        return $this;
-    }
-    function _where($field,$cond=undefined,$value=undefined){
-        if(is_object($field)){
-            if($cond===undefined && $value===undefined){
-                $this->args[$cond][]=$field;
-                return $this;
-            }
-        }else{
-            if($cond===undefined && $value===undefined){
-                return $this->expr($field);
-            /*
-                throw $this->exception('Use expression syntax with one-argument calls')
-                    ->addMoreInfo('arg',$field);
-             */
-            }
-        }
-
-
-        if($value===undefined){
-            $value=$cond;$cond=undefined;
-        }
-
-        /* guess condition as it might be in $field */
-        if($cond===undefined && !is_object($field)){
-
-            preg_match('/^([^ <>!=]*)([><!=]*|( *(not|is|in|like))*) *$/',$field,$matches);
-            $field=$matches[1];
-            $cond=$matches[2];
-        }
-
-        if(!$cond || $cond===undefined){
-            if(is_array($value)){
-                $cond='in';
-            }else{
-                $cond='=';
-            }
-        }
-
-        if(is_object($field))$field=$this->consume($field);
-
-        if(is_array($value)){
-            $value='('.implode(',',$this->escape($value)).')';
-        }elseif(is_object($value)){
-            $value='('.$value.')';
-        }else{
-            $value=$this->escape($value);
-        }
-
-        $where=$this->owner->bt($field). ' '.trim($cond).  ' '. $value;
-
-        return $where;
-    }
 	function join($table,$on,$type='inner'){
         if($type=='table'){
             return $this->table($table)
@@ -426,7 +514,9 @@ class DB_dsql extends AbstractModel implements Iterator {
 	}
     function is_insert(){ return $this->type=='insert'; }
     function update(){
-        return $this->parseTemplate("update [table_noalias] set [set] [where]");
+        $this->type='update';
+        $this->template="update [table_noalias] set [set] [where]";
+        return $this;
     }
     function replace(){
         return $this->parseTemplate("replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
@@ -495,7 +585,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function execute(){
         try {
-            return $this->stmt=$this->owner->query($q=($this->expr?$this:$this->select()),$this->params);
+            return $this->stmt=$this->owner->query($q=$this->render(),$this->params);
         }catch(PDOException $e){
             throw $this->exception('SELECT or expression failed')
                 ->addPDOException($e)
@@ -530,7 +620,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_getAll(){ return $this->getAll(); }
     function getAll(){
-        return $this->execute()->fetchAll();
+        return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -541,11 +631,11 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     function fetch(){
         if(!$this->stmt)$this->execute();
-        return $this->fetch();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
     function fetchAll(){
         if(!$this->stmt)$this->execute();
-        return $this->fetchAll();
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 	function calc_found_rows(){
         // if not mysql return;
@@ -583,9 +673,6 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data!==false;
     }
     // }}}
-
-
-
 
     // {{{ Query Generation heavy-duty generation code
 
@@ -643,11 +730,6 @@ class DB_dsql extends AbstractModel implements Iterator {
         // {{{ joins to other tables
 		if(isset($required['join'])&&isset($this->args['join'])) {
 			$args['join']=join(' ', $this->args['join']);
-		} // }}}
-
-        // {{{ where clause
-		if(isset($required['where'])&&isset($this->args['where'])) {
-			$args['where'] = "where (".join(') and (', $this->args['where']).")";
 		} // }}}
 
         // {{{ having clause

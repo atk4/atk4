@@ -57,11 +57,11 @@ abstract class AbstractView extends AbstractObject {
     function setModel($model,$actual_fields=undefined){
         $this->setController($this->default_controller);
 
-        $this->controller->setModel($model);
+        $model=$this->controller->setModel($model);
 
         if(method_exists($this->controller,'setActualFields'))$this->controller->setActualFields($actual_fields);
         if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
-        return $this;
+        return $model;
     }
 
     public $_tsBuffer='';

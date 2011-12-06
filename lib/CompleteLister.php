@@ -1,91 +1,111 @@
-<?php
-/***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+ * CompleteLister is very similar to regular Lister,
+ * but will use <?rows?><?row?>blah<?/?><?/?> structrue
+ * inside template. Also adds support for totals.
+ * 
+ * @link http://agiletoolkit.org/doc/lister
+ *
+ * Use:
+ *  $list=$this->add('CompleteLister');
+ *  $list->setModel('User');
+ *  $list->addTotals();
+ *
+ * Template (view/users.html):
+ *  <h3>Users</h3>
+ *  <?rows?>
+ *   <?row?>
+ *    <h4><?$name?></h4>
+ *    <p><?$desc?></p>
+ *   <?/row?>
+ *   <h4>Joe Blogs</h4>
+ *   <p>Sample template. Will be ignored</p>
+ *  <?/rows?>
+ *  <?totals?>
+ *    <?$row_count?> user<?$plural_s?>.
+ *  <?/?>
+ *
+ * @license See http://agiletoolkit.org/about/license
+ *
+**/
 class CompleteLister extends Lister {
-	public $totals=false;
+
 	protected $row_t;
-	protected $totals_t=false;
+
+    /** Will contain accumulated totals for all fields */
+	public $totals=false;
+
+    /** Will be initialized to "totals" template when addTotals() is called */
+	public $totals_t=false;
+
 	function init(){
 		parent::init();
-        if(!$this->template->is_set('row'))throw $this->exception('Template must have "row" tag');
+        if(!$this->template->is_set('row'))
+            throw $this->exception('Template must have "row" tag');
+
 		$this->row_t=$this->template->cloneRegion('row');
+	}
+
+    /** Enable total calculation for specified array of fields. If not specified, all field totals are calculated */
+	function addTotals($fields=null){
 		if($this->template->is_set('totals')){
 			$this->totals_t=$this->template->cloneRegion('totals');
 		}
-	}
-	function addTotals(){
-		$this->totals=array();
+
+        if($fields){
+            foreach($fields as $field)$this->totals[$field]=0;
+        }elseif($this->totals===false){
+            $this->totals=array();
+        }
 		return $this;
 	}
-	function updateTotals(){
-		foreach($this->current_row as $key=>$val){
-			@$this->totals[$key]+=strip_tags($val);
-		}
-		@$this->totals['row_count']++;
-	}
-	function formatTotalsRow(){
-		$this->formatRow();
-		$this->totals['plural_s']=$this->totals['row_count']>1?'s':'';
-		if($this->totals['row_count']==0){
-			$this->totals['row_count']='no';
-			$this->totals['plural_s']='s';
-		}
-	}
 
-	function rowRender($row) {
-		return $this->row_t->render();
-	}
+    /** Update totals on rows. Called at the start of formatRow() */
+    function updateTotals(){
+        foreach($this->totals as $key=>$val)
+            $this->totals[$key]=$val+$this->current_row[$key];
+        @$this->totals['row_count']++;
+    }
 
-	function render(){
-		$this->tr_class='';
-		$this->template->del('rows');
-		while($this->fetchRow()){
-			if($this->totals!==false)$this->updateTotals();
-			$this->formatRow();
-			$this->row_t->set($this->current_row);
-			$this->setTRClass();
-			$this->template->append('rows',$this->rowRender($this->current_row));
-		}
-		if($this->totals!==false && $this->totals_t){
-			$t = $this->totals_t;
-			$this->current_row = &$this->totals;
-			$this->formatTotalsRow();
-			$t->set($this->current_row);
-			$this->template->append('rows',$t->render());
-		}
+    /** Additional formatting for Totals row */
+    function formatTotalsRow(){
+        $this->formatRow();
+        $this->hook('formatTotalsRow');
 
-		// If partial reload is requested, then we only return rows, not the complete template
-		if(@$_GET[$this->name.'_reload_row']){
-			$r=$this->template->cloneRegion('rows')->render();
-			if($this->api->jquery)$this->api->jquery->getJS($this);
-            throw $this->exception($r,'StopRender');
-		}
+        $this->current_row['plural_s']=$this->current_row['row_count']>1?'s':'';
+        if($this->current_row['row_count']==0){
+            $this->current_row['row_count']='no';
+            $this->current_row['plural_s']='s';
+        }
+    }
 
-		$this->output($this->template->render());
-	}
-	function setTRClass(){
-		$this->tr_class=$this->tr_class=='odd'?'even':'odd';
-		$this->row_t->trySet('odd_even',$this->tr_class);
-	}
+    protected $odd_even=null;
+    function formatRow(){
+        parent::formatRow();
+        $this->odd_even=$this->odd_even=='odd'?'even':'odd';
+        $this->current_row['odd_even']=$this->odd_even;
+    }
+
+    function render(){
+        $this->odd_even='';
+        $this->template->del('rows');
+
+        foreach($this->getIterator() as $this->current_row){
+            if($this->totals!==false)$this->updateTotals();
+            $this->formatRow();
+            $this->template->append('rows',$this->rowRender($this->row_t));
+        }
+
+        if($this->totals!==false && $this->totals_t){
+            $this->current_row = $this->totals;
+            $this->formatTotalsRow();
+            $this->template->append('rows',$this->rowRender($this->totals_t));
+        }
+
+        $this->output($this->template->render());
+    }
+
+    function defaultTemplate(){
+        return array('view/completelister');
+    }
 }

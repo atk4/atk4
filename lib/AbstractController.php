@@ -23,12 +23,12 @@
 class AbstractController extends AbstractObject {
     /** Associate controller with Model */
     public function setModel($model) {
-        if(is_string($model))$model='Model_'.$model;
-        $this->model = $this->add($model);
-        return $this;
+        if(is_string($model))$model=$this->owner->add('Model_'.$model);
+        $this->owner->model = $model;
+        return $model;
     }
     /** get associated model */
     public function getModel() {
-        return $this->model;
+        return $this->owner->model;
     }
 }

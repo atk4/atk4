@@ -37,10 +37,6 @@ class DB extends AbstractController {
         || strpos($s,$this->bt)!==false
         )return $s;
 
-        if(strpos($s,'.')!==false){
-            $s=explode('.',$s);
-            return implode('.',$this->bt($s));
-        }
         return $this->bt.$s.$this->bt;
     }
     
