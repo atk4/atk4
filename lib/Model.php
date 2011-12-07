@@ -36,7 +36,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         }
 
         // Verify if such a filed exists
-        if(!$this->hasElement($name))throw $this->exception('No Such field','Logic')->addMoreInfo('name',$name);
+        //if(!$this->hasElement($name))throw $this->exception('No such field','Logic')->addMoreInfo('name',$name);
 
         if($value!==undefined){
             $this->data[$name]=$value;
@@ -91,7 +91,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     function get($name=undefined){
         if($name===undefined)return $this->data;
-        if(!$this->hasElement($name))throw $this->exception('No Such field','Logic')->addMoreInfo('name',$name);
+        //if(!$this->hasElement($name))throw $this->exception('No such field','Logic')->addMoreInfo('name',$name);
         return $this->data[$name];
     }
 

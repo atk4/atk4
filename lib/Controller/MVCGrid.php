@@ -31,6 +31,10 @@ class Controller_MVCGrid extends AbstractController {
         'file'=>'referenece',
     );
 
+    function setActualFields($fields){
+        $this->importFields($this->owner->model,$fields);
+    }
+
     function importFields($model,$fields=undefined){
 
         $this->model=$model;
@@ -41,8 +45,6 @@ class Controller_MVCGrid extends AbstractController {
         foreach($fields as $field){
             $this->importField($field);
         }
-
-        $this->bindQuery($fields);
 
         return $this;
     }
@@ -65,9 +67,6 @@ class Controller_MVCGrid extends AbstractController {
         $column = $this->owner->addColumn($field_type,$field_name,$field_caption);
 
         return $column;
-    }
-    function bindQuery($fields){
-        $this->grid->dq=$this->model->selectQuery($fields);
     }
     /** Redefine this to add special handling of your own fields */
     function getFieldType($field){

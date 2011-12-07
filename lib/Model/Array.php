@@ -34,4 +34,7 @@ class Model_Array extends Model {
     function valid(){
         return $this->loaded();
     }
+    function getActualFields(){
+        return array();
+    }
 }

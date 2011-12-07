@@ -65,7 +65,7 @@ abstract class AbstractView extends AbstractObject {
     }
 
     public $_tsBuffer='';
-    function _tsBuffer($data){
+    function _tsBuffer($t,$data){
         $this->_tsBuffer.=$data;
     }
     /** Converting View into string will render recursively and produce HTML. Avoid using this. */
