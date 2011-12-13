@@ -70,12 +70,16 @@ class Form_Field_Upload extends Form_Field {
 	public $mode='iframe';
 	public $multiple=false;
 	public $debug=false;
-
+    public $format_files_template="view/uploaded_files";
 	function allowMultiple($multiple=50){
 		// Allow no more than $multiple files to be present in the table
 		$this->multiple=$multiple;
 		return $this;
-	}
+    }
+    function setFormatFilesTemplate($template){
+        $this->format_files_template=$template;
+        return $this;
+    }
 	function setMode($mode){
 		$this->mode=$mode;
 		return $this;
@@ -189,15 +193,7 @@ class Form_Field_Upload extends Form_Field {
 	}
 	function formatFiles($data){
 		$this->js(true)->atk4_uploader('addFiles',$data);
-		$o = $this->add('SMLite')->loadTemplate("view/uploaded_files")->render();
-
-		/*
-		   foreach($data as $row){
-		   $o.='<tr><td>'.$row['original_filename'].
-		   '</td><td><a href="javascript:$(this).univ().ajaxec('.
-		   addslashes($this->api->getDestinationURL(null,)).')">del</a></tr>';
-		   }
-		 */
+		$o = $this->add('SMLite')->loadTemplate($this->format_files_template)->render();
 		return $o;
 	}
 
