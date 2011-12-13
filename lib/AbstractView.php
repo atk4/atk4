@@ -126,7 +126,6 @@ abstract class AbstractView extends AbstractObject {
     /** [private] Lets API auto-fill some tags in all views (such as tempalte tag) */
     function initTemplateTags(){
         if($this->template && $this->api && method_exists($this->api, 'setTags')){
-            var_Dump($this->short_name);
             $this->api->setTags($this->template);
         }
     }
