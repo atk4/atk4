@@ -113,7 +113,9 @@ abstract class AbstractObject {
         // Separate out namespace
         $class_name=str_replace('/','\\',$class);
         list($namespace,$file)=explode('\\',$class_name);
-
+        if (!$file && $namespace){
+            $file = $namespace;
+        }
         // Include class file directly, do not rely on auto-load functionality
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
