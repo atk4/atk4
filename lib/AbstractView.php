@@ -122,11 +122,11 @@ abstract class AbstractView extends AbstractObject {
         // Cool, now let's set _name of this template
         if($this->template)$this->template->trySet('_name',$this->name);
 
-        $this->initTemplateTags();
     }
     /** [private] Lets API auto-fill some tags in all views (such as tempalte tag) */
     function initTemplateTags(){
         if($this->template && $this->api && method_exists($this->api, 'setTags')){
+            var_Dump($this->short_name);
             $this->api->setTags($this->template);
         }
     }
@@ -149,6 +149,7 @@ abstract class AbstractView extends AbstractObject {
     /** [private] Recursively renders all views. Calls render() for all or for the one being cut */
     function recursiveRender(){
         $cutting_here=false;
+        $this->initTemplateTags();
 
         if(isset($_GET['cut_object']) && ($_GET['cut_object']==$this->name || $_GET['cut_object']==$this->short_name)){
             // If we are cutting here, render childs and then we are done
