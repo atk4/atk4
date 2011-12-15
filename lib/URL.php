@@ -182,8 +182,10 @@ http://mysite:123/install/dir/my/page.html
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
 
         $url=$this->getBaseURL();
-        $url.=$this->page;
-        $url.=$this->getExtension();
+        if($this->page && $this->page!='index'){
+            $url.=$this->page;
+            $url.=$this->getExtension();
+        }
 
 
 		$url.=$this->getArguments($url);
