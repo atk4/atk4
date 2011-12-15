@@ -78,7 +78,10 @@ class DB extends AbstractController {
             $statement = $this->dbh->prepare($query);
             $this->query_cache[$query]=$statement;
         }
-        $statement -> execute($params);
+        foreach($params as $key=>$val){
+            $statement->bindValue($key,$val,is_int($val)?PDO::PARAM_INT:PDO::PARAM_STR);
+        }
+        $statement -> execute();
         return $statement;
     }
     

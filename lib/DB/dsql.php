@@ -421,20 +421,43 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     // }}}
 
-    function render_options(){}
+    function render_options(){
+        return implode(' ',$this->args['options']);
+    }
+    function render_args(){
+        $x=array();
+        foreach($this->args['args'] as $arg){
+            $x[]=$this->escape($arg);
+        }
+        return implode(', ',$x);
+    }
     function render_join(){}
     function render_group(){}
     function render_order(){}
-    function render_limit(){}
+    function render_limit(){
+        if($this->args['limit']){
+            return 'limit '.
+                $this->escape((int)$this->args['limit']['shift']).
+                ', '.
+                $this->escape((int)$this->args['limit']['shift']);
+        }
+    }
     function bt($str){
         return $this->owner->bt($str);
     }
     /* Defines query option */
-	function option($option){
-		if(!is_array($option))$option=array($option);
-		if(!isset($this->args['options']))$this->args['options']=array();
-		$this->args['options']=array_merge($this->args['options'],$option);
+	function _setArray($values,$name){
+		if(!is_array($values))$values=array($values);
+		if(!isset($this->args[$name]))$this->args[$name]=array();
+		$this->args[$name]=array_merge($this->args[$name],$values);
 		return $this;
+	}
+    /* Defines query option */
+	function option($option){
+        return $this->_setArray($option,'options');
+	}
+	function args($args){
+        return $this->_setArray($args,'args');
 	}
     function ignore(){
         $this->args['options_insert'][]='ignore';
@@ -473,12 +496,19 @@ class DB_dsql extends AbstractModel implements Iterator {
 
         if($value===undefined)throw $this->exception('Specify value when calling set()');
 
-        $value=$this->escape($value);
-
-        $this->args['set_fields'][]=$field;
-        $this->args['set_values'][]=$value;
-        $this->args['set'][]=$field.'='.$value;
+        $this->args['set'][$field]=$value;
         return $this;
+    }
+    function render_set(){
+        $x=array();
+        foreach($this->args['set'] as $field=>$value){
+
+            if(is_object($field))$field=$this->consume($field);else$field=$this->bt($field);
+            if(is_object($value))$value=$this->consume($value);else$value=$this->escape($value);
+
+            $x[]=$field.'='.$value;
+        }
+        return join(', ',$x);
     }
     function order($order,$desc=null){// ,$prepend=null){
         if(!$order)throw new SQLException("Empty order provided");
@@ -531,7 +561,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     function do_select(){
         try {
-            return $this->stmt=$this->owner->query($q=$this->select(),$this->params);
+            return $this->stmt=$this->owner->query($q=(string)$this->select(),$this->params);
         }catch(PDOException $e){
             throw $this->exception('SELECT statement failed')
                 ->addPDOException($e)
@@ -541,7 +571,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_insert(){
         try {
-            $this->owner->query($q=$this->insert(),$this->params);
+            $this->stmt=$this->owner->query($q=(string)$this->insert(),$this->params);
+            //$this->owner->query($q=$this->insert(),$this->params);
             return $this->owner->lastID();
         }catch(PDOException $e){
             throw $this->exception('INSERT statement failed')
@@ -552,7 +583,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_update(){
         try {
-            $this->owner->query($q=$this->update(),$this->params);
+            $this->stmt=$this->owner->query($q=(string)$this->update(),$this->params);
+            //$this->owner->query($q=$this->update(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('UPDATE statement failed')
@@ -611,23 +643,23 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     // {{{ Data fetching modes
     function get(){
-        return $this->getAll();
+        return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
     function do_getOne(){ return $this->getOne(); }
     function getOne(){
         $res=$this->execute()->fetch();
         return $res[0];
     }
-    function do_getAll(){ return $this->getAll(); }
+    function do_getAll(){ return $this->get(); }
     function getAll(){
-        return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
+        return $this->get();
     }
 
 
     function do_getRow(){ return $this->get(PDO::FETCH_NUM); }
     function getRow(){ return $this->get(PDO::FETCH_NUM); }
-    function do_getHash(){ return $this->get(PDO::FETCH_ASSOC); }
-    function getHash(){ return $this->get(PDO::FETCH_ASSOC); }
+    function do_getHash(){ return $this->getHash(); }
+    function getHash(){ $x=$this->get(PDO::FETCH_ASSOC);return $x[0]; }
 
     function fetch(){
         if(!$this->stmt)$this->execute();
