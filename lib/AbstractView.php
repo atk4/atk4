@@ -55,13 +55,16 @@ abstract class AbstractView extends AbstractObject {
     }
     /** Manually specify controller for view */
     function setModel($model,$actual_fields=undefined){
-        $this->setController($this->default_controller);
+        parent::setModel($model);
 
-        $model=$this->controller->setModel($model);
+        // Some models will want default controller to be associated
+        if($this->model->default_controller){
+            $this->model->setController($this->model->default_controller);
+        }
 
         if(method_exists($this->controller,'setActualFields'))$this->controller->setActualFields($actual_fields);
         if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
-        return $model;
+        return $this->model;
     }
 
     public $_tsBuffer='';

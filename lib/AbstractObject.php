@@ -27,6 +27,13 @@ abstract class AbstractObject {
     /** Reference to the current controller. Read only. Use setController() */
     public $controller;
 
+    /** Exception class to use when $this->exception() is called */
+    public $default_exception='BaseException';
+
+    /** Default controller to initialize when calling setModel() */
+    public $default_controller=null;
+
+
     // {{{ Object hierarchy management: http://agiletoolkit.org/learn/understand/base/adding
 
     /** Unique object name */
@@ -240,8 +247,6 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Exception handling: http://agiletoolkit.org/doc/exception
-    public $default_exception='BaseException';
-
     function exception($message,$type=null){
         if(!$type){
             $type=$this->default_exception;

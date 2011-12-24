@@ -6,14 +6,17 @@
 class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $default_exception='Exception';
-    public $entity_code;
 
     public $field_class='Model_Field';
 
     // Curretly loaded record
     public $data=array();
-
     public $dirty=array();
+
+    // Information about where data came from
+    public $table;
+    public $id;     // currently loaded record
+
 
     function init(){
         parent::init();
@@ -72,10 +75,28 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     // }}}
 
+    /** Associates appropriate controller and loads data */
+    function setSource($controller, $table=null, $id=null){
+        if(is_string($controller))$controller='Data_'.$controller;
+        $this->setController($controller);
+
+        $this->controller->setSource($this,$table);
+
+        if($id)$this->load($id);
+    }
+
+    function load($id){
+        return $this->contoller->load($this,$id);
+    }
+
     // {{{ Iterator support 
-    private $once=false;
-    function rewind(){}
-    function next(){}
+    function rewind(){
+        $this->reset();
+        $this->set($this->controller->rewind($this->table, $this->id));
+    }
+    function next(){
+        return $this->set($this->controller->next($this->table, $this->id));
+    }
     function current(){
         return $this->get();
     }
@@ -83,9 +104,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->get('id');
     }
     function valid(){
-        $once=$this->once;
-        $this->once=false;
-        return $once;
+        return $this->loaded();
     }
     // }}}
 
