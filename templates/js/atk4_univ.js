@@ -38,7 +38,9 @@ $.each({
 		document.location=url;
 	},
 	page: function(page,fn){
-		$('#Content').atk4_load(page,fn);
+        $c=$('#Content');
+        if(!$c.length)$c=this.jquery;
+        $c.atk4_load(page,fn);
 	},
 	log: function(arg1){
 		if(console)console.log(arg1);
