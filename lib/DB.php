@@ -40,21 +40,29 @@ class DB extends AbstractController {
         return $this->bt.$s.$this->bt;
     }
     
-    /** Initialization and connection to the database. Reads config from file. */
-    function init(){
-        parent::init();
+    /** connection to the database. Reads config from file. $dsn may be array */
+    function connect($dsn='pdo'){
 
-        $cp=$this->di_config['conf_pref']?:'pdo';
+        if(is_string($dsn)){
+            $cp=$this->di_config['conf_pref']?:'pdo';
+            $dsn=$this->api->getConfig($cp);
+        }
 
-        $this->dbh=new PDO($this->api->getConfig($cp.'/dsn'),
-                $this->api->getConfig($cp.'/user','root'),
-                $this->api->getConfig($cp.'/password','root'),
-                $this->api->getConfig($cp.'/options',array(PDO::ATTR_PERSISTENT => true))
-                );
+        $this->dbh=new PDO(
+            $dsn['dsn'],
+            $dsn['user'],
+            $dsn['password'],
+            $dsn['options']?:array(PDO::ATTR_PERSISTENT => true));
+
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $this->table_prefix=$this->api->getConfig('pdo/table_prefix','');
-        
+        $this->table_prefix=$dsn['table_prefix'];
+
+        // Based on type, switch dsql class
+        list($type,$junk)=explode(':',$dsn['dsn']);
+        $this->dsql_class='DB_dsql_'.$type;
+
+        return $this;
     }
 
     /** Returns Dynamic Query object compatible with this database driver (PDO) */
@@ -68,6 +76,7 @@ class DB extends AbstractController {
     
     /** Query database with SQL statement */
     function query($query, $params=array()){
+        if(!$this->dbh)$this->connect();
 
         if(is_object($query))$query=(string)$query;
 
@@ -92,7 +101,7 @@ class DB extends AbstractController {
     }
     
     /** Returns last ID after insert. Driver-dependant. Redefine if needed. */
-    function lastID($statement,$table){
+    function lastID($statement=null,$table=null){
         // TODO: add support for postgreSQL and other databases
         return $this->dbh->lastInsertId();
     }

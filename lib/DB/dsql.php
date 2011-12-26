@@ -98,10 +98,6 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     /** Removes definition for argument type. $q->del('where') */
     function del($param){
-        if($param=='limit'){
-            unset($this->args['limit']);
-            return $this;
-        }
 		$this->args[$param]=array();
         return $this;
     }
@@ -420,9 +416,148 @@ class DB_dsql extends AbstractModel implements Iterator {
         return 'having '.join(' or ',$this->_render_where('having'));
     }
     // }}}
+    // {{{ join()
+    /** 
+     * Adds condition to your query
+     * @link http://agiletoolkit.org/doc/dsql/join
+     *
+     * Examples:
+     *  $q->join('address');
+     *  $q->join('address.user_id');
+     *  $q->join(array('a'=>'address'));
+     *
+     * Second argument may specify the field of the master table
+     *  $q->join('address.code','code');
+     *  $q->join('address.code','user.code');
+     *
+     * Third argument may specify join type.
+     *  $q->join('address',null,'left');
+     *  $q->join('address.code','user.code','inner');
+     *
+     * Using array syntax you can join multiple tables too
+     *  $q->join(array('a'=>'address','p'=>'portfolio'));
+     */
+	function join($foreign_table, $master_table=null, $join_type=null, $_foreign_alias=null){
 
+        // If array - add recursively
+        if(is_array($foreign_table)){
+            foreach ($foreign_table as $alias=>$foreign){
+                if(is_numeric($alias))$alias=null;
+
+                $this->join($foreign,$master_table,$join_type,$alias);
+            }
+            return $this;
+        }
+        $j=array();
+
+        // Split and deduce fields
+        list($f1,$f2)=explode('.',$foreign_table,2);
+
+        if(is_object($master_table)){
+            $j['expr']=$master_table;
+        }else{
+            // Split and deduce primary table
+            if(is_null($master_table)){
+                list($m1,$m2)=array(null,null);
+            }else{
+                list($m1,$m2)=explode('.',$master_table,2);
+            }
+            if(is_null($m2)){$m2=$m1; $m1=null;}
+                if(is_null($m1))$m1=$this->main_table;
+
+            // Identify fields we use for joins
+            if(is_null($f2) && is_null($m2))$m2=$f1.'_id';
+            if(is_null($m2))$m2='id';
+            $j['f1']=$f1;
+            $j['m1']=$m1;
+            $j['m2']=$m2;
+        }
+        if(is_null($f2))$f2='id';
+        $j['f2']=$f2;
+
+        $j['t']=$join_type?:'left';
+        $j['fa']=$_foreign_alias;
+
+        $this->args['join'][]=$j;
+        return $this;
+    }
+    function render_join(){
+        if(!$this->args['join'])return '';
+        $joins=array();
+        foreach($this->args['join'] as $j){
+            $jj='';
+
+            $jj.=$j['t'].' join ';
+
+            $jj.=$this->bt($j['f1']);
+
+            if(!is_null($j['fa']))$jj.=' as '.$this->bt($j['fa']);
+
+            $jj.=' on ';
+
+            if($j['expr']){
+                $jj.=$this->consume($j['expr']);
+            }else{
+                $jj.=
+                    $this->bt($j['fa']?:$j['f1']).'.'.
+                    $this->bt($j['f2']).' = '.
+                    $this->bt($j['m1']).'.'.
+                    $this->bt($j['m2']);
+            }
+            $joins[]=$jj;
+        }
+        return implode(' ',$joins);
+    }
+    // }}}
+    // {{{ group()
+    function group($option){
+        return $this->_setArray($option,'group');
+    }
+    function render_group(){
+        if(!$this->args['group'])return'';
+        $x=array();
+        foreach($this->args['group'] as $arg){
+            $x[]=$this->bt($arg);
+        }
+        return 'group by '.implode(', ',$x);
+    }
+    // }}}
+    // {{{ order()
+    function order($order,$desc=null){// ,$prepend=null){
+        if($desc)$order.=' desc';
+        return $this->_setArray($order,'order');
+    }
+
+    function render_order(){
+        if(!$this->args['order'])return'';
+        $x=array();
+        foreach($this->args['order'] as $arg){
+            $x[]=$this->bt($arg);
+        }
+        return 'order by '.implode(', ',$x);
+    }
+
+    // }}}
+    // {{{ option() and args()
+    /** Defines query option */
+    function option($option){
+        return $this->_setArray($option,'options');
+    }
     function render_options(){
         return implode(' ',$this->args['options']);
+    }
+    function option_insert($option){
+        return $this->_setArray($option,'options_insert');
+    }
+    function render_options_insert(){
+        if(!$this->args['options_insert'])return '';
+        return implode(' ',$this->args['options_insert']);
+    }
+    // }}}
+    // {{{  args()
+    /** set arguments for call() */
+    function args($args){
+        return $this->_setArray($args,'args',false);
     }
     function render_args(){
         $x=array();
@@ -431,61 +566,26 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         return implode(', ',$x);
     }
-    function render_join(){}
-    function render_group(){}
-    function render_order(){}
-    function render_limit(){
-        if($this->args['limit']){
-            return 'limit '.
-                $this->escape((int)$this->args['limit']['shift']).
-                ', '.
-                $this->escape((int)$this->args['limit']['shift']);
-        }
-    }
-    function bt($str){
-        return $this->owner->bt($str);
-    }
-    /* Defines query option */
-	function _setArray($values,$name){
-		if(!is_array($values))$values=array($values);
-		if(!isset($this->args[$name]))$this->args[$name]=array();
-		$this->args[$name]=array_merge($this->args[$name],$values);
-		return $this;
-	}
-    /* Defines query option */
-	function option($option){
-        return $this->_setArray($option,'options');
-	}
-	function args($args){
-        return $this->_setArray($args,'args');
-	}
     function ignore(){
         $this->args['options_insert'][]='ignore';
         return $this;
     }
-    /* Check if option was defined */
+    /** Check if option was defined */
     function hasOption($option){
         return in_array($option,$this->args['options']);
     }
-    /* Limit row result */
-	function limit($cnt,$shift=0){
-		$this->args['limit']=array(
-				'cnt'=>$cnt,
-				'shift'=>$shift
-				);
-		return $this;
-	}
-	function join($table,$on,$type='inner'){
-        if($type=='table'){
-            return $this->table($table)
-                ->where($this->expr($on));
-
-
-                
-        }
-		$this->args['join'][$table]="$type join ".$table." on $on";
-		return $this;
-	}
+    // }}}
+    // {{{ limit()
+    /** Limit row result */
+    function limit($cnt,$shift=0){
+        $this->args['limit']=array(
+            'cnt'=>$cnt,
+            'shift'=>$shift
+        );
+        return $this;
+    }
+    // }}}
+    // {{{ set()
     function set($field,$value=undefined){
         if(is_array($field)){
             foreach($field as $key=>$value){
@@ -510,20 +610,40 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         return join(', ',$x);
     }
-    function order($order,$desc=null){// ,$prepend=null){
-        if(!$order)throw new SQLException("Empty order provided");
-        $field=$order;
-        if($desc)$order.=" desc";
-        if(!$this->args['order'])$this->args['order']=array();
-        //if($prepend && isset($this->args['order'])){
-            array_unshift($this->args['order'], $order);
-        //}else{
-            //// existing ordering must be overwritten
-            //if(($index=$this->isArgSet('order',$field))!==false)unset($this->args['order'][$index]);
-            //$this->args['order'][]=$order;
-        //}
+    function render_set_fields(){
+        $x=array();
+        foreach($this->args['set'] as $field=>$value){
+
+            if(is_object($field))$field=$this->consume($field);else$field=$this->bt($field);
+
+            $x[]=$field;
+        }
+        return join(',',$x);
+    }
+    function render_set_values(){
+        $x=array();
+        foreach($this->args['set'] as $field=>$value){
+
+            if(is_object($value))$value=$this->consume($value);else$value=$this->escape($value);
+
+            $x[]=$value;
+        }
+        return join(',',$x);
+    }
+    // }}}
+    // {{{ MISC
+    function bt($str){
+        return $this->owner->bt($str);
+    }
+    /* Defines query option */
+    function _setArray($values,$name,$parse_commas=true){
+        if(is_string($values) && $parse_commas && strpos($values,','))$values=explode(',',$values);
+        if(!is_array($values))$values=array($values);
+        if(!isset($this->args[$name]))$this->args[$name]=array();
+        $this->args[$name]=array_merge($this->args[$name],$values);
         return $this;
     }
+    // }}}
 
     // }}}
 
@@ -531,22 +651,38 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     /* Generates and returns SELECT statement */
     public $type='';
-	function select(){
+    function select(){
         $this->type='select';
         $this->template="select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]";
         return $this;
-	}
-    function is_select(){ return $this->type=='select'; }
-	function insert(){
+    }
+    function is_select(){
+        return $this->type=='select';
+    }
+    function insert(){
         $this->type='select';
         $this->template="insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])";
         return $this;
-	}
-    function is_insert(){ return $this->type=='insert'; }
+    }
+    function is_insert(){
+        return $this->type=='insert';
+    }
     function update(){
         $this->type='update';
         $this->template="update [table_noalias] set [set] [where]";
         return $this;
+    }
+    function call($fx,$args=null){
+        $this->type='call';
+        $this->args['fx']=$fx;
+        if(!is_null($args)){
+            $this->args($args);
+        }
+        $this->template="call [fx]([args])";
+        return $this;
+    }
+    function render_fx(){
+        return $this->args['fx'];
     }
     function replace(){
         return $this->parseTemplate("replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
@@ -554,7 +690,6 @@ class DB_dsql extends AbstractModel implements Iterator {
     function delete(){
         return $this->parseTemplate("delete from [table_noalias] [where]");
     }
-
     // }}}
 
     // {{{ More complex query generations and specific cases
@@ -645,31 +780,43 @@ class DB_dsql extends AbstractModel implements Iterator {
     function get(){
         return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
-    function do_getOne(){ return $this->getOne(); }
-    function getOne(){
-        $res=$this->execute()->fetch();
-        return $res[0];
+    function do_getOne(){
+        return $this->getOne(); 
     }
-    function do_getAll(){ return $this->get(); }
-    function getAll(){
-        return $this->get();
+        function getOne(){
+            $res=$this->execute()->fetch();
+            return $res[0];
+        }
+    function do_getAll(){ 
+        return $this->get(); 
     }
+        function getAll(){
+            return $this->get();
+        }
 
 
-    function do_getRow(){ return $this->get(PDO::FETCH_NUM); }
-    function getRow(){ return $this->get(PDO::FETCH_NUM); }
-    function do_getHash(){ return $this->getHash(); }
-    function getHash(){ $x=$this->get(PDO::FETCH_ASSOC);return $x[0]; }
-
-    function fetch(){
-        if(!$this->stmt)$this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    function do_getRow(){ 
+        return $this->get(PDO::FETCH_NUM); 
     }
+    function getRow(){ 
+        return $this->get(PDO::FETCH_NUM); 
+    }
+    function do_getHash(){ 
+        return $this->getHash(); 
+    }
+    function getHash(){ 
+        $x=$this->get(PDO::FETCH_ASSOC);return $x[0];
+    }
+
+        function fetch(){
+            if(!$this->stmt)$this->execute();
+            return $this->stmt->fetch(PDO::FETCH_ASSOC);
+        }
     function fetchAll(){
         if(!$this->stmt)$this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-	function calc_found_rows(){
+    function calc_found_rows(){
         // if not mysql return;
         return $this->option('SQL_CALC_FOUND_ROWS');
     }
@@ -693,7 +840,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this;
     }
     function next(){
-        return $this->data = $this->get();
+        return $this->data = $this->fetch();
     }
     function current(){
         return $this->data;
@@ -706,102 +853,17 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     // }}}
 
-    // {{{ Query Generation heavy-duty generation code
-
-    /* [private] Generates values for different tokens in the template */
-	function getArgs($required){
-		$args=array();
-
-        // {{{ table name
-		if(isset($required['table'])) {
-            $args['table']=join(',',$this->args['table']);
-        } // }}}
-
-        // {{{ conditional "from"
-		if(isset($required['from'])) {
-            if($args['table']){
-                $args['from']='from';
-            } else {
-                $args['from']='';
-            }
-        } // }}}
-
-        // {{{ fields data
-		if(isset($required['fields'])) {
-			// comma separated fields, such as for select
-			if(!$this->args['fields'])$this->args['fields']=array('*');
-			$args['fields']=join(', ', $this->args['fields']);
-		} // }}}
-
-        // {{{ options (MySQL)
-		if(isset($required['options'])&&isset($this->args['options'])){
-			$args['options']=join(' ',$this->args['options']);
-        } 
-		if(isset($required['options_insert'])&&isset($this->args['options_insert'])){
-			$args['options_insert']=join(' ',$this->args['options_insert']);
-        } 
-        // }}}
-
-        // {{{ set (for updates)
-		if(isset($required['set'])) {
-			$set = array();
-			if(!$this->args['set']) {
-				throw $this->exception('You should call $dq->set() before requesting update');
-			}
-			$args['set']=join(', ', $this->args['set']);
-		} // }}}
-
-        // {{{ set (for insert)
-        if(isset($required['set_fields'])){
-            $args['set_fields']=join(', ',$this->args['set_fields']);
-        }
-        if(isset($required['set_values'])) {
-            $args['set_values']=join(', ',$this->args['set_values']);
-		} // }}}
-
-        // {{{ joins to other tables
-		if(isset($required['join'])&&isset($this->args['join'])) {
-			$args['join']=join(' ', $this->args['join']);
-		} // }}}
-
-        // {{{ having clause
-		if(isset($required['having'])&&isset($this->args['having'])) {
-			$args['having'] = "having (".join(') and (', $this->args['having']).")";
-		} // }}}
-
-        // {{{ order clause
-		if(isset($required['order'])&&isset($this->args['order'])) {
-			$args['order'] = "order by ".join(', ', $this->args['order']);
-		} // }}}
-
-        // {{{ grouping
-		if(isset($required['group'])&&isset($this->args['group'])) {
-			$args['group'] = "group by ".join(', ',$this->args['group']);
-		} // }}}
-
-        // {{{ limit
-		if(isset($required['limit'])&&isset($this->args['limit'])) {
-			$args['limit'] = "limit ".$this->args['limit']['shift'].", ".$this->args['limit']['cnt'];
-		} // }}}
-
-        foreach($required as $key=>$junk){
-            if(!$args[$key] && is_array($this->args[$key]))$args[$key]=join(', ',$this->args[$key]);
-        }
-
-		return $args;
-	}
-    /* Generic query builder funciton. Provided with template it will fill-in the data */
-
-
+    // {{{ Rendering
     function debug(){
         $this->debug=1;
         return $this;
     }
 
-
     function render(){
         $this->params=$this->extra_params;
-        return $this->_render();
+        $r=$this->_render();
+        if($this->debug)echo "<font color='blue'>".htmlspecialchars($r)."</font>";
+        return $r;
     }
     function _render(){
         if(!$this->template)$this->select();
@@ -812,56 +874,5 @@ class DB_dsql extends AbstractModel implements Iterator {
             else return $matches[0];
         },$this->template);
     }
-
-	function parseTemplate($template) {
-		$parts = explode('[', $template);
-		$required = array();
-
-		// 1st part is not a variable
-		$result = array(array_shift($parts));
-		foreach($parts as $part) {
-			list($keyword, $rest)=explode(']', $part);
-			$result[] = array($keyword); $required[$keyword]=true;
-			$result[] = $rest;
-		}
-		// now parts array contains strings and array of string, let's request
-		// for required arguments
-
-		$dd='';
-		$args = $this->getArgs($required);
-		$dd.='<ul class="atk-sqldump">';
-
-		// now when we know all data, let's assemble resulting string
-		foreach($result as $key => $part) {
-			if(is_array($part)) {
-				$p=$part[0];
-				if(isset($args[$p])){
-					$result[$key]=$args[$p];
-
-					if(isset($this->args[$p]) && $a=$this->args[$p]){
-						if($p=='set'){
-							foreach($a as $key=>&$val){
-								$val=$key.'='.$val;
-							}
-						}
-						if(is_array($a)){
-							sort($a);
-							$dd.="<li><b>".$part[0]."</b> <ul><li>"
-								.join('</li><li>',$a).'</li></ul>';
-						}else{
-							$dd.="<li><b>".$part[0]."</b> $a </li>";
-						}
-					}else $dd.="<li>".$args[$p]."</li>";
-				}else{
-					$result[$key]=null;
-				}
-			}elseif($part=trim($part,' ()'))$dd.='<li><b>'.$part.'</b></li>';
-		}
-		$dd.="</ul>";
-		if($this->debug){
-			echo '<font color=blue>'.htmlentities(join('',$result)).'</font>'.$dd;
-		}
-		return join('', $result);
-	}
     // }}}
 }

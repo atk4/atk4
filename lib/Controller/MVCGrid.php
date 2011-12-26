@@ -32,7 +32,8 @@ class Controller_MVCGrid extends AbstractController {
     );
 
     function setActualFields($fields){
-        $this->importFields($this->owner->model,$fields);
+        if($this->owner->model->hasMethod('getActualFields'))
+            $this->importFields($this->owner->model,$fields);
     }
 
     function importFields($model,$fields=undefined){

@@ -1,5 +1,5 @@
 <?php
-class Model_Table extends Model implements Iterator {
+class Model_Table extends Model {
     public $dsql;   // Master SQL 
 
     public $table_alias=null;
@@ -20,8 +20,7 @@ class Model_Table extends Model implements Iterator {
     }
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
-        $this->dsql->table($this->entity_code,$this->table_alias);
-        $this->dsql->paramBase(is_null($this->table_alias)?$this->entity_code:$this->table_alias);
+        $this->dsql->table($this->table?:$this->entity_code,$this->table_alias);
     }
     function debug(){
         $this->dsql->debug();
@@ -111,7 +110,7 @@ class Model_Table extends Model implements Iterator {
         return $this->next();
     }
     function next(){
-        $this->data=$this->dsql->next();
+        $this->set($x=$this->dsql->next());
         $this->id=@$this->data[$this->id_field];
         return $this;
         //return $this->data = $this->stmt->fetch(PDO::FETCH_ASSOC);
@@ -123,6 +122,7 @@ class Model_Table extends Model implements Iterator {
         return $this->get('id');
     }
     function valid(){
+        var_dump($this->loaded());
         return $this->loaded();
     }
     // }}}
@@ -145,6 +145,7 @@ class Model_Table extends Model implements Iterator {
         $load = $this->dsql();
         if(!is_null($id))$load->where($this->id_field,$id);
         $data = $load -> limit(1)->do_getAll();
+        var_dump($load->attr['limit']);
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')
             ->addMoreInfo('model',$this)

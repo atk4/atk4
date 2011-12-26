@@ -158,9 +158,6 @@ http://mysite:123/install/dir/my/page.html
         // add base path
         $url.=$this->api->pm->base_path;
 
-        // add prefix if defined in config
-        $url.=$this->api->getConfig('url_prefix','');
-
         return $url;
     }
     function getExtension(){
@@ -183,6 +180,9 @@ http://mysite:123/install/dir/my/page.html
 
         $url=$this->getBaseURL();
         if($this->page && $this->page!='index'){
+            // add prefix if defined in config
+            $url.=$this->api->getConfig('url_prefix','');
+
             $url.=$this->page;
             $url.=$this->getExtension();
         }

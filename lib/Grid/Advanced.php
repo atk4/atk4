@@ -70,6 +70,8 @@ class Grid_Advanced extends Grid_Basic {
     public $js_widget='ui.atk4_grid';
     public $js_widget_arguments=array();
 
+    public $default_controller='MVCGrid';
+
     function init(){
         parent::init();
         //$this->add('Reloadable');
@@ -386,7 +388,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->dq->where('id',$id)->do_delete();
     }
     function format_delete($field){
-        if(!$this->dq)throw new BaseException('delete column requires $dq to be set');
+        if(!$this->model)throw new BaseException('delete column requires $dq to be set');
         if($id=@$_GET[$this->name.'_'.$field]){
             // this was clicked
             $this->_performDelete($id);

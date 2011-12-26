@@ -51,7 +51,7 @@ abstract class AbstractView extends AbstractObject {
     }
     /** Get associated model */
     function getModel(){
-        return $this->getController()->getModel();
+        return $this->model;
     }
     /** Manually specify controller for view */
     function setModel($model,$actual_fields=undefined){
@@ -61,9 +61,12 @@ abstract class AbstractView extends AbstractObject {
         if($this->model->default_controller){
             $this->model->setController($this->model->default_controller);
         }
+        if($this->default_controller){
+            $this->setController($this->default_controller);
+            if($this->controller->hasMethod('setActualFields'))$this->controller->setActualFields($actual_fields);
+            if($this->controller->hasMethod('_bindView'))$this->controller->_bindView();
+        }
 
-        if(method_exists($this->controller,'setActualFields'))$this->controller->setActualFields($actual_fields);
-        if(method_exists($this->controller,'_bindView'))$this->controller->_bindView();
         return $this->model;
     }
 

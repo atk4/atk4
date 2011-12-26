@@ -46,6 +46,9 @@ class Controller_MVCForm extends AbstractController {
         'image'=>'image',
         'file'=>'upload',
     );
+    function setActualFields($fields){
+        $this->importFields($this->owner->model,$fields);
+    }
 
     function importFields($model,$fields=undefined){
 
