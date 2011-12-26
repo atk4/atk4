@@ -26,6 +26,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Expression to use when converting to string */
     public $template=null;
 
+    /** You can switch mode with select(), insert(), update() commands. Mode is initialized to "select" by default */
+    public $mode=null;
+
     /** Used to determine main table. */
     public $main_table=null;
 
@@ -55,12 +58,20 @@ class DB_dsql extends AbstractModel implements Iterator {
         if($this->expr)return $this->parseTemplate($this->expr);
         return $this->select();
     }
-    /** Explicitly sets template to your query */
+    /** Explicitly sets template to your query. Remember to change $this->mode if you switch this */
     function template($template){
         $this->template=$template;
         return $this;
     }
-
+    /** Change prefix for parametric values. Useful if you are combining multiple queries. */
+    function paramBase($param_base){
+        $this->param_base=$param_base;
+        return $this;
+    }
+    /** Create new dsql object which can then be used as sub-query. */
+    function dsql(){
+        return $this->owner->dsql(get_class($this));
+    }
     /** Converts value into parameter and returns reference. Use only during query rendering. */
     function escape($val){
         if($val===undefined)return '';
@@ -76,15 +87,6 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->params[$name]=$val;
         return $name;
     }
-    /** Change prefix for parametric values. Useful if you are combining multiple queries. */
-    function paramBase($param_base){
-        $this->param_base=$param_base;
-        return $this;
-    }
-    /** Create new dsql object which can then be used as sub-query. */
-    function dsql(){
-        return $this->owner->dsql(get_class($this));
-    }
     /** Recursively renders sub-query or expression, combining parameters */
     function consume($dsql,$tick=true){
         if($dsql===undefined)return '';
@@ -92,18 +94,18 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!is_object($dsql))return $tick?$this->bt($dsql):$dsql;
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
-        if($dsql->is_select())$ret='('.$ret.')';
+        if($dsql->mode=='select')$ret='('.$ret.')';
         unset($dsql->params);$dsql->params=array();
         return $ret;
     }
-    /** Removes definition for argument type. $q->del('where') */
-    function del($param){
-		$this->args[$param]=array();
+    /** Removes definition for argument. $q->del('where') */
+    function del($args){
+		$this->args[$args]=array();
         return $this;
     }
-    function init(){
-        parent::init();
-        $this->del('fields')->del('table')->del('options');
+    /** Removes all definitions. Start from scratch */
+    function reset(){
+        $this->args=array();
     }
     // }}}
 
@@ -307,7 +309,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      * 
      *  $q->where(array('a is null','b is null'));
      */
-    function where($field,$cond=undefined,$value=undefined,$type='where'){
+    function where($field,$cond=undefined,$value=undefined,$kind='where'){
 
         if(is_array($field)){
             // or conditions
@@ -346,15 +348,15 @@ class DB_dsql extends AbstractModel implements Iterator {
 
         //if($value==undefined && !is_object($field) && !is_object($cond))throw $this->exception('value is not specified');
 
-        $this->args[$type][]=array($field,$cond,$value);
+        $this->args[$kind][]=array($field,$cond,$value);
         return $this;
     }
     function having($field,$cond=undefined,$value=undefined){
         return $this->where($field,$cond,$value,'having');
     }
-    function _render_where($type){
+    function _render_where($kind){
         $ret=array();
-        foreach($this->args[$type] as $row){
+        foreach($this->args[$kind] as $row){
             list($field,$cond,$value)=$row;
 
             if(is_object($field)){
@@ -430,21 +432,21 @@ class DB_dsql extends AbstractModel implements Iterator {
      *  $q->join('address.code','code');
      *  $q->join('address.code','user.code');
      *
-     * Third argument may specify join type.
+     * Third argument may specify which kind of join to use.
      *  $q->join('address',null,'left');
      *  $q->join('address.code','user.code','inner');
      *
      * Using array syntax you can join multiple tables too
      *  $q->join(array('a'=>'address','p'=>'portfolio'));
      */
-	function join($foreign_table, $master_table=null, $join_type=null, $_foreign_alias=null){
+	function join($foreign_table, $master_table=null, $join_kind=null, $_foreign_alias=null){
 
         // If array - add recursively
         if(is_array($foreign_table)){
             foreach ($foreign_table as $alias=>$foreign){
                 if(is_numeric($alias))$alias=null;
 
-                $this->join($foreign,$master_table,$join_type,$alias);
+                $this->join($foreign,$master_table,$join_kind,$alias);
             }
             return $this;
         }
@@ -475,7 +477,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(is_null($f2))$f2='id';
         $j['f2']=$f2;
 
-        $j['t']=$join_type?:'left';
+        $j['t']=$join_kind?:'left';
         $j['fa']=$_foreign_alias;
 
         $this->args['join'][]=$j;
@@ -649,31 +651,39 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     // {{{ Statement templates and interfaces
 
-    /* Generates and returns SELECT statement */
-    public $type='';
+    /** Switches to select mode (which is default) for this query */
     function select(){
-        $this->type='select';
+        $this->mode='select';
         $this->template="select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]";
         return $this;
     }
-    function is_select(){
-        return $this->type=='select';
-    }
+    /** Switches to insert mode. Use with set() */
     function insert(){
-        $this->type='select';
+        $this->mode='insert';
         $this->template="insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])";
         return $this;
     }
-    function is_insert(){
-        return $this->type=='insert';
+    /** Replace is similar to insert, but will overwrite existing records with same unique key */
+    function replace(){
+        $this->mode='replace';
+        $this->template="replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
+        return $this;
     }
+    /** Switch to update mode. Use with set() */
     function update(){
-        $this->type='update';
+        $this->mode='update';
         $this->template="update [table_noalias] set [set] [where]";
         return $this;
     }
+    /** Switches to delete mode. */
+    function delete(){
+        $this->mode='delete';
+        $this->template="delete from  [table_noalias] [where]";
+        return $this;
+    }
+    /** Switches to call mode. Use with args() */
     function call($fx,$args=null){
-        $this->type='call';
+        $this->mode='call';
         $this->args['fx']=$fx;
         if(!is_null($args)){
             $this->args($args);
@@ -684,19 +694,15 @@ class DB_dsql extends AbstractModel implements Iterator {
     function render_fx(){
         return $this->args['fx'];
     }
-    function replace(){
-        return $this->parseTemplate("replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
-    }
-    function delete(){
-        return $this->parseTemplate("delete from [table_noalias] [where]");
-    }
     // }}}
 
     // {{{ More complex query generations and specific cases
 
+    /** Shortcut for executing select. */
     function do_select(){
         try {
-            return $this->stmt=$this->owner->query($q=(string)$this->select(),$this->params);
+            $this->stmt=$this->owner->query($q=(string)$this->select(),$this->params);
+            return $this;
         }catch(PDOException $e){
             throw $this->exception('SELECT statement failed')
                 ->addPDOException($e)
@@ -704,10 +710,11 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
+
+    /** Shortcut for executing insert. Returns ID of new record. */
     function do_insert(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->insert(),$this->params);
-            //$this->owner->query($q=$this->insert(),$this->params);
             return $this->owner->lastID();
         }catch(PDOException $e){
             throw $this->exception('INSERT statement failed')
@@ -716,10 +723,11 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
+
+    /** Shortcut for executing update */
     function do_update(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->update(),$this->params);
-            //$this->owner->query($q=$this->update(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('UPDATE statement failed')
@@ -728,9 +736,11 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
+
+    /** Shortcut for executing replace */
     function do_replace(){
         try {
-            $this->owner->query($q=$this->replace(),$this->params);
+            $this->stmt=$this->owner->query($q=$this->replace(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('REPLACE statement failed')
@@ -741,7 +751,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_delete(){
         try {
-            $this->owner->query($q=$this->delete(),$this->params);
+            $this->stmt=$this->owner->query($q=$this->delete(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('DELETE statement failed')
@@ -760,20 +770,6 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
-    function _execute($template){
-        try {
-            $this->stmt=$this->owner->query($this->parseTemplate($template),$this->params);
-            return $this;
-        }catch(PDOException $e){
-            throw $this->exception('custom executeon failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('template',$template);
-        }
-    }
-    function describe($table){
-        return $this->table($table)->_execute('describe [table]');
-    }
     // }}}
 
     // {{{ Data fetching modes
@@ -783,18 +779,16 @@ class DB_dsql extends AbstractModel implements Iterator {
     function do_getOne(){
         return $this->getOne(); 
     }
-        function getOne(){
-            $res=$this->execute()->fetch();
-            return $res[0];
-        }
+    function getOne(){
+        $res=$this->execute()->fetch();
+        return $res[0];
+    }
     function do_getAll(){ 
         return $this->get(); 
     }
-        function getAll(){
-            return $this->get();
-        }
-
-
+    function getAll(){
+        return $this->get();
+    }
     function do_getRow(){ 
         return $this->get(PDO::FETCH_NUM); 
     }
@@ -807,17 +801,15 @@ class DB_dsql extends AbstractModel implements Iterator {
     function getHash(){ 
         $x=$this->get(PDO::FETCH_ASSOC);return $x[0];
     }
-
-        function fetch(){
-            if(!$this->stmt)$this->execute();
-            return $this->stmt->fetch(PDO::FETCH_ASSOC);
-        }
+    function fetch(){
+        if(!$this->stmt)$this->execute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
     function fetchAll(){
         if(!$this->stmt)$this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     function calc_found_rows(){
-        // if not mysql return;
         return $this->option('SQL_CALC_FOUND_ROWS');
     }
     function foundRows(){
@@ -858,7 +850,6 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->debug=1;
         return $this;
     }
-
     function render(){
         $this->params=$this->extra_params;
         $r=$this->_render();
