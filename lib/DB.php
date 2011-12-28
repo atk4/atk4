@@ -39,7 +39,16 @@ class DB extends AbstractController {
 
         return $this->bt.$s.$this->bt;
     }
-    
+    /** we need to move dsn parsing to init, as other wise db->dsql() is 
+     * creating new object of class DB_dsql instead of DB_dsql_$driver, as 
+     * $this->dsql_class was set in connect, which is called after db->dsql()
+     * */
+    function init(){
+        parent::init();
+        $dsn=$this->api->getConfig('pdo');
+        list($type,$junk)=explode(':',$dsn['dsn']);
+        $this->dsql_class='DB_dsql_'.$type;
+    }
     /** connection to the database. Reads config from file. $dsn may be array */
     function connect($dsn='pdo'){
 
@@ -61,7 +70,6 @@ class DB extends AbstractController {
         // Based on type, switch dsql class
         list($type,$junk)=explode(':',$dsn['dsn']);
         $this->dsql_class='DB_dsql_'.$type;
-
         return $this;
     }
 
@@ -88,9 +96,13 @@ class DB extends AbstractController {
             $this->query_cache[$query]=$statement;
         }
         foreach($params as $key=>$val){
-            $statement->bindValue($key,$val,is_int($val)?PDO::PARAM_INT:PDO::PARAM_STR);
+            if (!$statement->bindValue($key,$val,is_int($val)?(PDO::PARAM_INT):(PDO::PARAM_STR))){
+                throw $this->exception('Could not bind parameter ' . $key)
+                    ->addMoreInfo('val',$val)
+                    ->addMoreInfo('query',$query);
+            }
         }
-        $statement -> execute();
+        $statement->execute();
         return $statement;
     }
     
