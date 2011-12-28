@@ -808,10 +808,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         $x=$this->get(PDO::FETCH_ASSOC);return $x[0];
     }
 
-        function fetch(){
-            if(!$this->stmt)$this->execute();
-            return $this->stmt->fetch(PDO::FETCH_ASSOC);
-        }
+    function fetch(){
+        if(!$this->stmt)$this->execute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
     function fetchAll(){
         if(!$this->stmt)$this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
