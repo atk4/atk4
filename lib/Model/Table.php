@@ -116,13 +116,12 @@ class Model_Table extends Model {
         //return $this->data = $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
     function current(){
-        return $this;
+        return $this->get();
     }
     function key(){
         return $this->get('id');
     }
     function valid(){
-        var_dump($this->loaded());
         return $this->loaded();
     }
     // }}}
@@ -144,8 +143,7 @@ class Model_Table extends Model {
     function load($id=null){
         $load = $this->dsql();
         if(!is_null($id))$load->where($this->id_field,$id);
-        $data = $load -> limit(1)->do_getAll();
-        var_dump($load->attr['limit']);
+        $data = $load->limit(1)->do_getAll();
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')
             ->addMoreInfo('model',$this)
