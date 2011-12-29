@@ -10,7 +10,7 @@ class DB_dsql_mysql extends DB_dsql {
             return 'limit '.
                 (int)$this->args['limit']['shift'].
                 ', '.
-                (int)$this->args['limit']['shift'];
+                (int)$this->args['limit']['cnt'];
         }
     }
 }
