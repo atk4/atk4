@@ -5,12 +5,7 @@
  * rendering methods which appear differently on your database.
  */
 class DB_dsql_mysql extends DB_dsql {
-    function render_limit(){
-        if($this->args['limit']){
-            return 'limit '.
-                (int)$this->args['limit']['shift'].
-                ', '.
-                (int)$this->args['limit']['cnt'];
-        }
+    function calc_found_rows(){
+        return $this->option('SQL_CALC_FOUND_ROWS');
     }
 }

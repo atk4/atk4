@@ -17,6 +17,9 @@ class DB extends AbstractController {
     /** when queries are executed, their statements are cached for later re-use */
     public $query_cache=array();
 
+    /** Contains name of the PDO driver used such as "mysql", "sqlite" etc */
+    public $type=null;
+
     public $dsql_class='DB_dsql';
     
     /** Backticks will be added around all fields. Set this to '' if you prefer cleaner queries */
@@ -43,18 +46,11 @@ class DB extends AbstractController {
      * creating new object of class DB_dsql instead of DB_dsql_$driver, as 
      * $this->dsql_class was set in connect, which is called after db->dsql()
      * */
-    function init(){
-        parent::init();
-        $dsn=$this->api->getConfig('pdo');
-        list($type,$junk)=explode(':',$dsn['dsn']);
-        $this->dsql_class='DB_dsql_'.$type;
-    }
     /** connection to the database. Reads config from file. $dsn may be array */
     function connect($dsn='pdo'){
 
         if(is_string($dsn)){
-            $cp=$this->di_config['conf_pref']?:'pdo';
-            $dsn=$this->api->getConfig($cp);
+            $dsn=$this->api->getConfig($dsn);
         }
 
         $this->dbh=new PDO(
@@ -68,8 +64,9 @@ class DB extends AbstractController {
         $this->table_prefix=$dsn['table_prefix'];
 
         // Based on type, switch dsql class
-        list($type,$junk)=explode(':',$dsn['dsn']);
-        $this->dsql_class='DB_dsql_'.$type;
+        list($this->type,$junk)=explode(':',$dsn['dsn']);
+        $this->type=strtolower($this->type);
+        $this->dsql_class='DB_dsql_'.$this->type;
         return $this;
     }
 

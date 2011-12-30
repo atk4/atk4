@@ -181,6 +181,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Returns template component [table] */
     function render_table(){
         $ret=array();
+        if(!is_array($this->args['table']))return;
         foreach($this->args['table'] as $row){
             list($table,$alias)=$row;
 
@@ -376,7 +377,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $value=$cond;
                 $cond='=';
                 if(is_array($value))$cond='in';
-                if(is_object($value) && $value->is_select())$cond='in';
+                if(is_object($value) && $value->mode=='select')$cond='in';
             }else{
                 $cond=trim($cond);
             }
@@ -546,7 +547,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->_setArray($option,'options');
     }
     function render_options(){
-        return implode(' ',$this->args['options']);
+        return @implode(' ',$this->args['options']);
     }
     function option_insert($option){
         return $this->_setArray($option,'options_insert');
@@ -574,7 +575,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     /** Check if option was defined */
     function hasOption($option){
-        return in_array($option,$this->args['options']);
+        return @in_array($option,$this->args['options']);
     }
     // }}}
     // {{{ limit()
@@ -585,6 +586,14 @@ class DB_dsql extends AbstractModel implements Iterator {
             'shift'=>$shift
         );
         return $this;
+    }
+    function render_limit(){
+        if($this->args['limit']){
+            return 'limit '.
+                (int)$this->args['limit']['shift'].
+                ', '.
+                (int)$this->args['limit']['cnt'];
+        }
     }
     // }}}
     // {{{ set()
@@ -666,7 +675,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Replace is similar to insert, but will overwrite existing records with same unique key */
     function replace(){
         $this->mode='replace';
-        $this->template="replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])");
+        $this->template="replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])";
         return $this;
     }
     /** Switch to update mode. Use with set() */
@@ -810,7 +819,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     function calc_found_rows(){
-        return $this->option('SQL_CALC_FOUND_ROWS');
+        // add option for row calculation if supported
+        return $this;
     }
     function foundRows(){
         if($this->hasOption('SQL_CALC_FOUND_ROWS')){
