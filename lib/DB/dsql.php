@@ -130,9 +130,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function getField($fld){
         if($this->main_table===false)throw $this->exception('Cannot use getField() when multiple tables are queried');
         return $this->expr(
-            $this->owner->bt($this->main_table).
+            $this->bt($this->main_table).
             '.'.
-            $this->owner->bt($fld)
+            $this->bt($fld)
         );
     }
     // }}}
@@ -185,10 +185,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         foreach($this->args['table'] as $row){
             list($table,$alias)=$row;
 
-            $table=$this->owner->bt($table);
+            $table=$this->bt($table);
 
 
-            if($alias!==undefined && $alias)$table.=' '.$this->owner->bt($alias);
+            if($alias!==undefined && $alias)$table.=' '.$this->bt($alias);
 
             $ret[]=$table;
         }
@@ -205,7 +205,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         foreach($this->args['table'] as $row){
             list($table,$alias)=$row;
 
-            $table=$this->owner->bt($table);
+            $table=$this->bt($table);
 
 
             $ret[]=$table;
@@ -643,8 +643,25 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     // }}}
     // {{{ MISC
-    function bt($str){
-        return $this->owner->bt($str);
+    /** Backticks will be added around all fields. Set this to '' if you prefer cleaner queries */
+    public $bt='`';
+    function bt($s){
+        if(is_array($s)){
+            $out=array();
+            foreach($s as $ss){
+                $out[]=$this->bt($ss);
+            }
+            return $out;
+        }
+
+        if(!$this->bt
+        || is_object($s)
+        || $s=='*'
+        || strpos($s,'(')!==false
+        || strpos($s,$this->bt)!==false
+        )return $s;
+
+        return $this->bt.$s.$this->bt;
     }
     /* Defines query option */
     function _setArray($values,$name,$parse_commas=true){

@@ -22,26 +22,6 @@ class DB extends AbstractController {
 
     public $dsql_class='DB_dsql';
     
-    /** Backticks will be added around all fields. Set this to '' if you prefer cleaner queries */
-    public $bt='`';
-    function bt($s){
-        if(is_array($s)){
-            $out=array();
-            foreach($s as $ss){
-                $out[]=$this->bt($ss);
-            }
-            return $out;
-        }
-
-        if(!$this->bt
-        || is_object($s)
-        || $s=='*'
-        || strpos($s,'(')!==false
-        || strpos($s,$this->bt)!==false
-        )return $s;
-
-        return $this->bt.$s.$this->bt;
-    }
     /** we need to move dsn parsing to init, as other wise db->dsql() is 
      * creating new object of class DB_dsql instead of DB_dsql_$driver, as 
      * $this->dsql_class was set in connect, which is called after db->dsql()
