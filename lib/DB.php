@@ -30,15 +30,19 @@ class DB extends AbstractController {
     function connect($dsn='pdo'){
 
         if(is_string($dsn)){
-            $orig_dsn=$dsn;
-            $dsn=$this->api->getConfig($dsn, 'no_config');
-            if($dsn=='no_config'){
+            $new_dsn=$this->api->getConfig($dsn, 'no_config');
+            if($new_dsn!='no_config')$dsn=$new_dsn;
+            if(is_string($dsn)){
                 // possibly old DSN, let's parse. PS: this is for compatibility only, so
                 // don't be too worried about properly parsing it
-                preg_match('([a-z])+://([^:]*)(:(.*))?@[A-Za-z0-9\.-]*(/([a-zA-Z_/\.]*))',$dsn,$matches);
+                preg_match('|([a-z]+)://([^:]*)(:(.*))?@([A-Za-z0-9\.-]*)(/([a-zA-Z_/\.]*))|',$dsn,$matches);
 
-                var_Dump($matches);
-                exit;
+
+                $dsn=array(
+                    $matches[1].':host='.$matches[5].';dbname='.$matches[7],
+                    $matches[2],
+                    $matches[4]
+                );
             }
         }
 
