@@ -30,23 +30,32 @@ class DB extends AbstractController {
     function connect($dsn='pdo'){
 
         if(is_string($dsn)){
-            $dsn=$this->api->getConfig($dsn);
+            $orig_dsn=$dsn;
+            $dsn=$this->api->getConfig($dsn, 'no_config');
+            if($dsn=='no_config'){
+                // possibly old DSN, let's parse. PS: this is for compatibility only, so
+                // don't be too worried about properly parsing it
+                preg_match('([a-z])+://([^:]*)(:(.*))?@[A-Za-z0-9\.-]*(/([a-zA-Z_/\.]*))',$dsn,$matches);
+
+                var_Dump($matches);
+                exit;
+            }
         }
 
         $this->dbh=new PDO(
-            $dsn['dsn'],
-            $dsn['user'],
-            $dsn['password'],
-            $dsn['options']?:array(PDO::ATTR_PERSISTENT => true));
+            @$dsn[0],    // DSN
+            @$dsn[1],
+            @$dsn[2],
+            @$dsn[3]?:array(PDO::ATTR_PERSISTENT => true));
 
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->table_prefix=$dsn['table_prefix'];
 
         // Based on type, switch dsql class
-        list($this->type,$junk)=explode(':',$dsn['dsn']);
+        list($this->type,$junk)=explode(':',$dsn[0]);
         $this->type=strtolower($this->type);
-        $this->dsql_class='DB_dsql_'.$this->type;
+        $this->dsql_class=isset($dsn['class'])?$dsn['class']:'DB_dsql_'.$this->type;
         return $this;
     }
 
@@ -56,6 +65,8 @@ class DB extends AbstractController {
         if(!$obj instanceof DB_dsql)
             throw $this->exception('Specified class must be descendant of DB_dsql')
             ->addMoreInfo('class',$class);
+        // Don't keep reference to the object for garbage collector
+        unset($this->elements[$obj->short_name]);
         return $obj;
     }
     
