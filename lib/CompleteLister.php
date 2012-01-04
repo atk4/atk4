@@ -64,7 +64,6 @@ class CompleteLister extends Lister {
     function updateTotals(){
         foreach($this->totals as $key=>$val)
             $this->totals[$key]=$val+$this->current_row[$key];
-        @$this->totals['row_count']++;
     }
 
     /** Additional formatting for Totals row */
@@ -86,11 +85,12 @@ class CompleteLister extends Lister {
         $this->current_row['odd_even']=$this->odd_even;
     }
 
-    function render(){
+    function renderRows(){
         $this->odd_even='';
         $this->template->del('rows');
 
         foreach($this->getIterator() as $this->current_row){
+            @$this->totals['row_count']++;
             if($this->totals!==false)$this->updateTotals();
             $this->formatRow();
             $this->template->append('rows',$this->rowRender($this->row_t));
@@ -101,7 +101,9 @@ class CompleteLister extends Lister {
             $this->formatTotalsRow();
             $this->template->append('rows',$this->rowRender($this->totals_t));
         }
-
+    }
+    function render(){
+        $this->renderRows();
         $this->output($this->template->render());
     }
 

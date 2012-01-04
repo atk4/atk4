@@ -75,6 +75,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Converts value into parameter and returns reference. Use only during query rendering. */
     function escape($val){
         if($val===undefined)return '';
+        if($val===null)return 'NULL';
         if(is_array($val)){
             $out=array();
             foreach($val as $v){
@@ -766,7 +767,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Shortcut for executing replace */
     function do_replace(){
         try {
-            $this->stmt=$this->owner->query($q=$this->replace(),$this->params);
+            $this->stmt=$this->owner->query($q=(string)$this->replace(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('REPLACE statement failed')
@@ -777,7 +778,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function do_delete(){
         try {
-            $this->stmt=$this->owner->query($q=$this->delete(),$this->params);
+            $this->stmt=$this->owner->query($q=(string)$this->delete(),$this->params);
             return $this;
         }catch(PDOException $e){
             throw $this->exception('DELETE statement failed')
@@ -788,7 +789,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function execute(){
         try {
-            return $this->stmt=$this->owner->query($q=$this->render(),$this->params);
+            return $this->stmt=$this->owner->query($q=(string)$this->render(),$this->params);
         }catch(PDOException $e){
             throw $this->exception('SELECT or expression failed')
                 ->addPDOException($e)
@@ -855,7 +856,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     function rewind(){
-        unset($this->stmt);
+        $this->stmt=null;
         return $this;
     }
     function next(){

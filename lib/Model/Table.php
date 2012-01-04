@@ -2,6 +2,8 @@
 class Model_Table extends Model {
     public $dsql;   // Master SQL 
 
+    public $entity_code=null;   // obsolete
+
     public $table_alias=null;
 
     function init(){
@@ -16,11 +18,15 @@ class Model_Table extends Model {
     }
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
+            ->addThis($this)
             ->addAction('Debug this Model',array($this->name.'_debug'=>'query'));
     }
+    /** Initializes base query for this model */
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
-        $this->dsql->table($this->table?:$this->entity_code,$this->table_alias);
+        $table=$this->table?:$this->entity_code;
+        if(!$table)throw $this->exception('$table property must be defined');
+        $this->dsql->table($table,$this->table_alias);
     }
     function debug(){
         $this->dsql->debug();
@@ -45,7 +51,8 @@ class Model_Table extends Model {
     function dsql(){
         return clone $this->dsql;
     }
-    function selectQuery($fields){
+    function selectQuery($fields=null){
+        if($fields===null)$fields=$this->getActualFields();
         $select=$this->dsql();
 
         // add system fields into select
@@ -53,7 +60,7 @@ class Model_Table extends Model {
             if($el->system() && !in_array($el->short_name,$fields))
                 $fields[]=$el->short_name;
 
-        // add fields
+        // add actual fields
         foreach($fields as $field){
             $field=$this->hasElement($field);
             if(!$field)continue;

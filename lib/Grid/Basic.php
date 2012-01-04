@@ -171,24 +171,17 @@ class Grid_Basic extends CompleteLister {
         }
         return $this->current_row;
     }
-    function render(){
+    function renderRows(){
         $this->precacheTemplate();
+        parent::renderRows();
 
-        if(($this->dq&&$this->dq->foundRows()==0)||(!isset($this->dq)&&empty($this->data))){
+        if(!$this->totals['row_count']){
             $def_template = $this->defaultTemplate();
-            //$not_found=$this->add('SMlite')->loadTemplate($def_template[0])->cloneRegion('not_found');
-            //$this->template->set('no_records_message',$this->no_records_message);
-            //$this->template->del('rows');
-            //$this->template->del('totals');
-            //$this->template->set('header','<tr class="header">'.$not_found->render().'</tr>');
             $this->totals=false;
             $this->template->del('full_table');
-            //    		return true;
         }else{
             $this->template->del('not_found');
         }
-        parent::render();
-
     }
 
     function format_shorttext($field){

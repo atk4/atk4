@@ -65,6 +65,9 @@ class BaseException extends Exception {
         $this->more_info[$key]=$value;
         return $this;
     }
+    function addThis($t){
+        return $this->addMoreInfo('Raised by object',$t);
+    }
     function addAction($key,$descr){
         $this->actions[$key]=$descr;
         return $this;
