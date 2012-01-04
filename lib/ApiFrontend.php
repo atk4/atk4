@@ -39,6 +39,9 @@ class ApiFrontend extends ApiWeb{
         $page=str_replace('/','_',$this->page);
         $page=str_replace('-','',$page);
         $class=$this->content_type.'_'.$page;
+
+        if($this->api->page_object)return;   // page is already initialized;
+
         if(method_exists($this,$class)){
             // for page we add Page class, for RSS - RSSchannel
             // TODO - this place is suspicious. Can it call arbitary function from API?

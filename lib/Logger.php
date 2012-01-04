@@ -250,16 +250,20 @@ class Logger extends AbstractController {
 		}
 		return array();
 	}
-	function caughtException($e){
-		$e->shift-=1;
-		if($this->log_output){
-			//$frame=$this->findFrame('warning',$shift);
-
+    function logCaughtException($e){
 			if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
 			else $trace=$e->getTrace();
 
 			$frame=$e->my_backtrace[$e->shift];
 			$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
+            if(method_exists($e,'getAdditionalMessage'))
+                $this->logLine($e->getAdditionalMessage());
+    }
+	function caughtException($e){
+		$e->shift-=1;
+		if($this->log_output){
+			//$frame=$this->findFrame('warning',$shift);
+            $this->logCaughtException($e);
 		}
 		if(!$this->web_output){
 			echo $this->public_error_message;
