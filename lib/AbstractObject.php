@@ -124,12 +124,10 @@ abstract class AbstractObject {
                 // AbstractView classes shouldn't be created with the same name. If someone
                 // would still try to do that, it should generate error. Obviously one of
                 // those wouldn't be displayed or other errors would occur
-                $this->warning("Element with name $short_name already exists in " . ($this->__toString()));
+                throw $this->exception("Element with name already exists")
+                    ->addMoreInfo('name',$short_name)
+                    ->addThis($this);
             }
-            if ($this->elements[$short_name] instanceof AbstractController) {
-                return $this->elements[$short_name];
-            }
-            // Model classes may be created several times and we are actually don't care about those.
         }
 
         if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
@@ -157,7 +155,12 @@ abstract class AbstractObject {
 
         $element->owner = $this;
         $element->api = $this->api;
-        $this->elements[$short_name] = $element;
+        if($element instanceof AbstractView) {
+            $this->elements[$short_name]=$element;
+        }else{
+            $this->elements[$short_name]=true;  // dont store extra reference to models and controlers
+            // for purposes of better garbage collection
+        }
 
         $element->name = $this->name . '_' . $short_name;
         $element->short_name = $short_name;
