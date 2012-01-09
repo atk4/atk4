@@ -1,11 +1,55 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+ * Implementation of a Relational SQL-backed Model
+ * @link http://agiletoolkit.org/doc/model/table
+ *
+ * Model_Table allows you to take advantage of relational SQL database without neglecting
+ * powerful functionality of your RDBMS. On top of basic load/save/delete operations, you can
+ * pefrorm multi-row operations, traverse relations, or use SQL expressions
+ *
+ * The $table property of Model_Table always contains the primary table. The $this->id will
+ * always correspond with ID field of that table and when inserting record will always be
+ * placed inside primary table first.
+ *
+ * Use:
+ * class Model_User extends Model_Table {
+ *     public $table='user';
+ *     function init(){
+ *         parent::init();
+ *         $this->addField('name');
+ *         $this->addField('email');
+ *     }
+ * }
+ *
+ *
+ * // Creates new user, but looks for email duplicates before inserting
+ * $user=$this->add('Model_User');
+ * $user->loadBy('email',$email);
+ *
+ * if(!$user->loaded()){
+ *     $user->unload();
+ *     return $user->set('email',$email)->save();
+ * }else throw $user->exception('User with such email already exists');
+ *
+ * @license See http://agiletoolkit.org/about/license
+ * 
+**/
 class Model_Table extends Model {
-    public $dsql;   // Master SQL 
 
-    public $entity_code=null;   // obsolete
+    /** Master DSQL record which will be cloned by other operations */
+    public $dsql; 
 
+    /** The actual ID field of the table might now always be "id" */
+    public $id_field='id';   // name of ID field
+
+    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+
+    /** If you wish that alias is used for the table when selected, you can define it here.
+     * This will help to keep SQL syntax shorter, but will not impact functionality */
     public $table_alias=null;
 
+    // {{{ Basic Functionality, query initialization and actual field handling
+    /** Initialization of ID field, which must always be defined */
     function init(){
         parent::init();
 
@@ -14,7 +58,7 @@ class Model_Table extends Model {
             if($d=='query')$this->debug();
         }
 
-        $this->addField('id')->system(true);
+        $this->addField($this->id_field)->system(true);
     }
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
@@ -28,6 +72,7 @@ class Model_Table extends Model {
         if(!$table)throw $this->exception('$table property must be defined');
         $this->dsql->table($table,$this->table_alias);
     }
+    /** Turns on debugging mode for this model. All database operations will be outputed */
     function debug(){
         $this->dsql->debug();
         return $this;
@@ -43,14 +88,17 @@ class Model_Table extends Model {
         foreach($this->elements as $el)if($el instanceof Model_Field){
             if($el->system())continue;
             if($el->hidden())continue;
-            $fields[]=$el->short_name;
+            if($group===undefined || $el->group()==$group)
+                $fields[]=$el->short_name;
         }
         return $fields;
     }
-
+    /** Produces Dynamic SQL object configured with table, conditions and joins of this model. Useful for delete or update 
+     * statements */
     function dsql(){
         return clone $this->dsql;
     }
+    /** Produces Dynamic SQL and adds specified fields, referenced fields and expressions. Useful for select statements */
     function selectQuery($fields=null){
         if($fields===null)$fields=$this->getActualFields();
         $select=$this->dsql();
@@ -69,27 +117,32 @@ class Model_Table extends Model {
         }
         return $select;
     }
-    public $title=null;
+    /** Returns field which should be used as a title */
     function getTitleField(){
-        if($this->title)return;
-        if($this->hasElement('name'))return 'name';
-        return 'id';
+        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
+        return $this->id_field;
     }
+    /** Returns query which selects title field */
     function titleQuery(){
-        $title=$this->getTitleField();
-        $select=$this->dsql();
-        if($title==$this->id_field){
-            $select->field($select->expr('concat("Record #",'.$this->bt($this->id_field).')'));
-        }else{
-            $this->getElement($title)->updateSelectQuery($select);
-        }
-        return $select;
+        $query=$this->dsql();
+        if($this->title_field && $this->hasElement($this->title_field)return $query->field($this->title_field);
+        return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
     }
+    // }}}
 
-    function addExpression($name){
-        return $this
-            ->add('Model_Field_Expression',$name);
+    // {{{ Model_Table supports more than just fields. Expressions, References and Relations can be added
+    /** Adds and returns SQL-calculated expression as a read-only field. See Field_Expression class. */
+    function addExpression($name,$expression=null){
+        $expr=$this
+            ->add('Model_Field_Expression',$name)
+            ->set($expression);
     }
+    /** Constructs JOIN between model tables. Creating and deleting records might affect both tables. See manual. */
+	function hasOne($foreign_table, $master_table=null, $join_kind=null, $_foreign_alias=null){
+        return $this
+            ->add('Model_Field_Join',$name);
+    }
+    /** Adds a sub-query and manyToOne reference */
     function addReference($name){
         return $this
             ->add('Model_Field_Reference',$name);
@@ -97,6 +150,13 @@ class Model_Table extends Model {
     function addTitle($name){
         $this->title=$name;
         return $this->addField($name);
+    }
+    /** Defines one to many association */
+    function hasMany($model,$their_field=null,$our_feld=null){
+        $rel=$this
+            ->add('Model_Relation_Many');
+        // TODO;
+        //$this->addMethod('');
     }
 
     function addCondition($field,$value){
@@ -137,10 +197,6 @@ class Model_Table extends Model {
     function getRows($fields){
         return $this->selectQuery($fields)->do_getAll();
     }
-
-
-    public $id=null;
-    public $id_field='id';
 
     function loaded(){
         return(!is_null($this->id));
