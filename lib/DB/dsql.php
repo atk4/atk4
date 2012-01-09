@@ -441,14 +441,14 @@ class DB_dsql extends AbstractModel implements Iterator {
      * Using array syntax you can join multiple tables too
      *  $q->join(array('a'=>'address','p'=>'portfolio'));
      */
-	function join($foreign_table, $master_table=null, $join_kind=null, $_foreign_alias=null){
+	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
 
         // If array - add recursively
         if(is_array($foreign_table)){
             foreach ($foreign_table as $alias=>$foreign){
                 if(is_numeric($alias))$alias=null;
 
-                $this->join($foreign,$master_table,$join_kind,$alias);
+                $this->join($foreign,$master_field,$join_kind,$alias);
             }
             return $this;
         }
@@ -457,14 +457,14 @@ class DB_dsql extends AbstractModel implements Iterator {
         // Split and deduce fields
         list($f1,$f2)=explode('.',$foreign_table,2);
 
-        if(is_object($master_table)){
-            $j['expr']=$master_table;
+        if(is_object($master_field)){
+            $j['expr']=$master_field;
         }else{
             // Split and deduce primary table
-            if(is_null($master_table)){
+            if(is_null($master_field)){
                 list($m1,$m2)=array(null,null);
             }else{
-                list($m1,$m2)=explode('.',$master_table,2);
+                list($m1,$m2)=explode('.',$master_field,2);
             }
             if(is_null($m2)){$m2=$m1; $m1=null;}
                 if(is_null($m1))$m1=$this->main_table;
