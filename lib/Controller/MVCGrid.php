@@ -46,6 +46,7 @@ class Controller_MVCGrid extends AbstractController {
         foreach($fields as $field){
             $this->importField($field);
         }
+        $model->selectQuery($fields);
 
         return $this;
     }
