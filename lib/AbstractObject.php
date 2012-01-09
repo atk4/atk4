@@ -49,6 +49,9 @@ abstract class AbstractObject {
     /** Always points to current API */
     public $api;
 
+    /** When this object is added, owner->elements[$this->short_name] will be == $this; */
+    public $auto_track_element=false;
+
     public $_initialized=false;
     /** Initialize object. Always call parent */
     function init() {
@@ -155,12 +158,10 @@ abstract class AbstractObject {
 
         $element->owner = $this;
         $element->api = $this->api;
-        if($element instanceof AbstractView) {
-            $this->elements[$short_name]=$element;
-        }else{
+        $this->elements[$short_name]=$element;
+        if(!$element->auto_track_element)
             $this->elements[$short_name]=true;  // dont store extra reference to models and controlers
             // for purposes of better garbage collection
-        }
 
         $element->name = $this->name . '_' . $short_name;
         $element->short_name = $short_name;

@@ -43,6 +43,8 @@ abstract class AbstractView extends AbstractObject {
 
     public $default_controller='Controller';
 
+    public $auto_track_element=true;
+
     // {{{ Basic Operations
     /** Duplicate view and it's template. Will not duplicate children */
     function __clone(){

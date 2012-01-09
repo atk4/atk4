@@ -52,7 +52,7 @@ class ApiWeb extends ApiCLI {
 
         // find out which page is to display
         //$this->calculatePageName();
-        $this->add('PageManager');
+        $this->pm=$this->add('PageManager');
 
         // send headers, no caching
         $this->sendHeaders();

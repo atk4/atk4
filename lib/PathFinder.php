@@ -203,6 +203,8 @@ class PathFinder_Location extends AbstractModel {
 	public $base_url=null;
 	public $base_path=null;
 
+    public $auto_track_element=true;
+
 
 	function init(){
 		parent::init();
