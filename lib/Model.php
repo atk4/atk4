@@ -44,7 +44,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     public $default_exception='Exception';
 
     /** The class prefix used by addField */
-    public $field_class='Model_Field';
+    public $field_class='Field';
 
     /** If true, model will now allow to set values for non-existant fields */
     public $strict_fields=false;

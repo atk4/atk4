@@ -125,7 +125,7 @@ class Model_Table extends Model {
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql();
-        if($this->title_field && $this->hasElement($this->title_field)return $query->field($this->title_field);
+        if($this->title_field && $this->hasElement($this->title_field))return $query->field($this->title_field);
         return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
     }
     // }}}
