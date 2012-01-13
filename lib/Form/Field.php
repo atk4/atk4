@@ -490,7 +490,7 @@ class Form_Field_Date extends Form_Field {
 }
 class Form_Field_Text extends Form_Field {
 	function init(){
-		$this->attr=array('cols'=>'30','rows'=>5);
+		$this->attr=array('rows'=>5);
 		parent::init();
 	}
 	function setFieldHint($text){
