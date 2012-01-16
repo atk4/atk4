@@ -203,9 +203,13 @@ class Form_Field_Upload extends Form_Field {
 			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
 			// This is JavaScript upload. We do not want to trigger form submission event
 			if($c=$this->getController()){
-				$c->loadData($id);
-				$c->delete();
-				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
+                try {
+                    $c->loadData($id);
+                    $c->delete();
+                    $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
+                } catch (Exception $e){
+                    $this->js()->univ()->alert("Could not delete image - " . $e->getMessage())->execute();
+                }
 				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
 			}
 		}
