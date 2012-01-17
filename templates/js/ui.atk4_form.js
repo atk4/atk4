@@ -24,6 +24,7 @@ $.widget("ui.atk4_form", {
 	form: undefined,
 	id: undefined,
 
+	old_changed: undefined,
 	submitted: undefined,
 	base_url: undefined,
 	loading: false,
@@ -36,6 +37,21 @@ $.widget("ui.atk4_form", {
 	},
 	_setChanged: function(state){
 		if(state)this.form.addClass('form_changed');else this.form.removeClass('form_changed');
+	},
+
+	_keepChanged: function(){
+		this.old_changed = this._getChanged();
+	},
+	_restoreChanged: function(){
+		if(this.old_changed !== undefined)
+		{
+			this._setChanged(this.old_changed);
+			this.old_changed = undefined;
+		}
+	},
+	//Call this in server submit to let a form open after a submit
+	acceptChanges: function(){
+		this.old_changed = false;
 	},
 
     _create: function(){
@@ -308,7 +324,7 @@ $.widget("ui.atk4_form", {
 
 		form.loading=true;
 		$.atk4.get(properties,params,function(res){
-			var c=form._getChanged();form._setChanged(false);
+			form._keepChanged();form._setChanged(false);
 
 			if(!$.atk4._checkSession(res))return;
 			/*
@@ -331,7 +347,7 @@ $.widget("ui.atk4_form", {
 				}
 			}
 			form.loading=false;
-			form._setChanged(c);
+			form._restoreChanged();
 		},function(){
 			form.loading=false;
 		});
