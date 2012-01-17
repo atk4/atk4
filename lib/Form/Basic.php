@@ -135,8 +135,8 @@ class Form_Basic extends AbstractView {
      * @param string $msg message to show
      */
     function showAjaxError($field,$msg){
-        // Depreciated
-        return $this->displayFieldError();
+        // Avoid depricated function use in reference field, line 246
+        return $this->displayError($field,$msg);
     }
 
     function displayError($field=null,$msg=null){
