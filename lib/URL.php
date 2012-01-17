@@ -105,7 +105,7 @@ http://mysite:123/install/dir/my/page.html
                 continue;
             }
 
-            if($component=='index' && $destination=''){
+            if($component=='index' && $destination==''){
                 $destination=$this->api->index_page;
                 continue;
             }

@@ -37,7 +37,7 @@ class ApiCLI extends AbstractView {
     /** Initialize application. Redefine in your application but always call parent */
     function __construct($realm=null){
         if(!$realm)$realm=get_class($this);
-        $this->owner = null;
+        $this->owner = $this;
         $this->name  = $realm;
         $this->api   = $this;
 
@@ -114,6 +114,7 @@ class ApiCLI extends AbstractView {
             return $page->setArguments($arguments);
         }
         $url=$this->add('URL','url_'.$this->url_object_count++);
+        unset($this->elements[$url->short_name]);   // garbage collect URLs
         if(substr($page,0,7)=='http://')$url->setURL($page);elseif
             (substr($page,0,8)=='https://')$url->setURL($page);else
                 $url->setPage($page);

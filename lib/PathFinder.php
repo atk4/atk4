@@ -96,7 +96,7 @@ class PathFinder extends AbstractController {
 					'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
 					))
 			->setBasePath(dirname(dirname(__FILE__)))
-			->setBaseURL($this->api->getConfig('atk/base_path','/atk4/'))
+			->setBaseURL($this->api->getConfig('atk/base_path','./atk4/'))
 			;
 	}
 

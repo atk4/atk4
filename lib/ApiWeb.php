@@ -244,7 +244,7 @@ class ApiWeb extends ApiCLI {
 
         $this->hook('pre-render-output');
         if(headers_sent($file,$line)){
-            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
+            echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
                 ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
         }
         echo $this->template->render();
@@ -310,8 +310,6 @@ class ApiWeb extends ApiCLI {
     function initLayout(){
         if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
         $this->layout_initialized=true;
-        $this->addLayout('Content');
-        $this->upgradeChecker();
     }
     /** Register new layout, which, if has method and tag in the template, will be rendered */
     function addLayout($name){

@@ -136,11 +136,15 @@ abstract class AbstractObject {
         if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
             ->addMoreInfo('class',$class);
 
+        // Separate out namespace
         $class_name=str_replace('/','\\',$class);
-
+        list($namespace,$file)=explode('\\',$class_name);
+        if (!$file && $namespace){
+            $file = $namespace;
+        }
         // Include class file directly, do not rely on auto-load functionality
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
-            $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
             if(substr($class,0,5)=='page_'){
                 $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
             }else $path=$this->api->pathfinder->locate('php',$file,'path');
@@ -150,7 +154,7 @@ abstract class AbstractObject {
                 ->addMoreInfo('file',$path)
                 ->addMoreInfo('class',$class);
         }
-        $element = new $class();
+        $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception("You can add only classes based on AbstractObject");
@@ -360,7 +364,7 @@ abstract class AbstractObject {
          * one is useful for a "render" or "submitted" calls.
          */
         foreach (array_keys($this->elements) as $key) {
-            if (!($this->elements[$key] instanceof AbstractController)) {
+            if (is_object($this->elements[$key]) && !($this->elements[$key] instanceof AbstractController)) {
                 $this_result = $this->elements[$key]->downCall($type, $args);
                 if ($this_result === false)
                     return false;
