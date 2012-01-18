@@ -279,7 +279,7 @@ class Logger extends AbstractController {
             if(method_exists($e,'getAdditionalMessage'))
                 $this->logLine($e->getAdditionalMessage());
     }
-	function caughtException($e){
+	function caughtException($caller,$e){
 		$e->shift-=1;
 		if($this->log_output){
 			//$frame=$this->findFrame('warning',$shift);
@@ -326,7 +326,7 @@ class Logger extends AbstractController {
 
 		exit;
 	}
-	function outputWarning($msg,$shift=0){
+	function outputWarning($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('warning',$shift);
 		if($this->log_output){
@@ -341,7 +341,7 @@ class Logger extends AbstractController {
 			return true;
 		}
 	}
-	function outputDebug($msg,$shift=0){
+	function outputDebug($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('debug');
 		if($this->log_output){
@@ -357,7 +357,7 @@ class Logger extends AbstractController {
 			return true;
 		}
 	}
-	function outputInfo($msg,$shift=0,$nohtml=false){
+	function outputInfo($caller,$msg,$shift=0,$nohtml=false){
 		if($this->log_output){
 			$this->logLine($this->txtLine("info: $msg"),null,'info');
 		}
@@ -368,7 +368,7 @@ class Logger extends AbstractController {
 		}
 		return true;
 	}
-	function outputFatal($msg,$shift=0){
+	function outputFatal($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('fatal');
 		if($this->log_output){

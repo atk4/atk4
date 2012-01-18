@@ -144,7 +144,7 @@ abstract class Form_Field extends AbstractView {
 		if(is_bool($result = $this->hook('validate')))return $result;
 	}
 	/** @private - handles field validation callback output */
-	function _validateField($condition,$msg){
+	function _validateField($caller,$condition,$msg){
 		$ret=call_user_func($condition,$this);
 
 		if($ret===false){

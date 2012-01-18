@@ -119,6 +119,7 @@ class TMail_Basic extends AbstractModel {
 class TMail_Part extends AbstractModel {
     public $template=null;
     public $content;
+    public $auto_track_element=true;
     function init(){
         parent::init();
 
@@ -188,7 +189,7 @@ class TMail_Transport extends AbstractController {
   * Uses default sending routine
   */
 class TMail_Transport_Fallback extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         $this->breakHook(false);
     }
 }
@@ -196,12 +197,12 @@ class TMail_Transport_Fallback extends TMail_Transport {
   * Discards email as it's being sent out
   */
 class TMail_Transport_Discard extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         $this->breakHook(true);
     }
 }
 class TMail_Transport_Echo extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         echo "to: $to<br/>";
         echo "from: $from<br/>";
         echo "subject: $subject<br/>";
@@ -217,7 +218,7 @@ class TMail_Transport_DBStore extends TMail_Transport {
         $this->model=$this->add($m);
         return $this->model;
     }
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         if(!$this->model)throw $this->exception('Must use setModel() on DBStore Transport');
         $data=array(
                 'to'=>$to,
