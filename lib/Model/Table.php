@@ -85,11 +85,15 @@ class Model_Table extends Model {
      */
     function getActualFields($group=undefined){
         $fields=array();
-        foreach($this->elements as $el)if($el instanceof Model_Field){
+        foreach($this->elements as $el)if($el instanceof Field){
             if($el->system())continue;
             if($el->hidden())continue;
-            if($group===undefined || $el->group()==$group)
+            if($group===undefined || $el->group()==$group ||
+                ($group=='visible' && $el->visible()) ||
+                ($group=='editable' && $el->editable())
+            ){
                 $fields[]=$el->short_name;
+            }
         }
         return $fields;
     }

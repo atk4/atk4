@@ -4,9 +4,12 @@ class Field extends AbstractModel {
     public $system=false;
     public $hidden=false;
     public $editable=true;
+    public $visible=true;
     public $display=null;
     public $caption=null;
+    public $group=null;
     public $defaultValue=null;
+    public $auto_track_element=true;
 
     function setterGetter($type,$value=undefined){
         if($value === undefined){
