@@ -163,24 +163,46 @@ class Model_Table extends Model {
         return $this->addField($name);
     }
     /** Defines one to many association */
-    function hasOne($model){
+    function hasOne($model,$our_field=null,$display_field=null){
+        if(!$our_field){
+            if(!is_object($model)){
+                $tmp='Model_'.$model;
+                $tmp=new $tmp; // avoid recursion
+            }else $tmp=$model;
+            $our_field=($tmp->table?:$tmp->entity_code).'_id';
+        }
+        $r=$this->add('Field_Reference',$our_field);
+        if($display_field)$r->display($display_field);
+        return $this;
     }
+    /** Defines many to one association */
     function hasMany($model,$their_field=null,$our_feld=null){
-        $rel=$this
-            ->add('Model_Relation_Many');
-        // TODO;
-        //$this->addMethod('');
+        if(!$our_field)$our_field=$this->id_field;
+        if(!$their_field)$their_field=($this->table?:$this->entity_code).'_id';
+        $rel=$this->add('SQL_Many')
+            ->set($their_field,$our_field);
     }
-
+    /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$value){
-        $this->dsql->where($field,$value);
+        if(!$field instanceof Field){
+            $field=$this->getElement($field);
+        }
+        if($field->calculated()){
+            // TODO: should we use expression in where?
+            $this->dsql->having($field,$value);
+        }elseif($field->relation){
+            $this->dsql->where($field->relation->m1.'.'.$field,$value);
+        }elseif($this->relations){
+            $this->dsql->where($this->table_alias?:$this->table.'.'.$field,$value);
+        }else{
+            $this->dsql->where($field,$value);
+        }
         return $this;
     }
+    /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
-        $this->dsql
-            ->where($field,$value)
-            ->set($field,$value);
-        return $this;
+        $field->defaultValue($value)->system(true);
+        return $this->adCondition($field,$value);
     }
 
 

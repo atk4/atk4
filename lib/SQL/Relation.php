@@ -21,6 +21,14 @@ class SQL_Relation extends AbstractModel {
     function addField($n){
         return $this->owner->addField($n)->from($this);
     }
+	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+        return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias)
+            ->relation($this);
+    }
+    function relation($relation){
+        $this->relation=$relation;
+        return $this;
+    }
 
     function set($foreign_table,$master_field=null,$join_kind=null){
 

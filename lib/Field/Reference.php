@@ -1,5 +1,5 @@
 <?php
-class Model_Field_Reference extends Model_Field {
+class Field_Reference extends Field {
     public $model;
     public $display_field=null;
     public $dereferenced_field=null;
