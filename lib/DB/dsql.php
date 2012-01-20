@@ -466,8 +466,10 @@ class DB_dsql extends AbstractModel implements Iterator {
             }else{
                 list($m1,$m2)=explode('.',$master_field,2);
             }
-            if(is_null($m2)){$m2=$m1; $m1=null;}
-                if(is_null($m1))$m1=$this->main_table;
+            if(is_null($m2)){
+                $m2=$m1; $m1=null;
+            }
+            if(is_null($m1))$m1=$this->main_table;
 
             // Identify fields we use for joins
             if(is_null($f2) && is_null($m2))$m2=$f1.'_id';

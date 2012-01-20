@@ -11,6 +11,8 @@ class Field extends AbstractModel {
     public $defaultValue=null;
     public $auto_track_element=true;
 
+    public $relation=null;
+
     function setterGetter($type,$value=undefined){
         if($value === undefined){
             return $this->$type;
@@ -51,10 +53,42 @@ class Field extends AbstractModel {
     // what is alias?
     //function alias($t=undefined){ return $this->setterGetter('alias',$t); }
 
+    /** Modifies specified query to include this particular field */
     function updateSelectQuery($select){
-        $select->field($this->short_name);
+        if($this->relation){
+            $select->field($this->relation.'.'.$this->actual_field,$this->short_name);
+        }elseif($this->actual_field != $this->short_name){
+            $select->field($this->actual_field,$this->short_name);
+            return $this;
+        }else{
+            $select->field($this->short_name);
+        }
         return $this;
     }
+
+    /** Modify insert query to set value of this field */
+    function updateInsertQuery($insert){
+        if($this->relation)$insert=$this->relation->dsql;
+
+        $insert->set($this->actual_field?:$this->short_name,
+            $this->getSQL()
+        );
+        return $this;
+    }
+    /** Modify insert query to set value of this field */
+    function updateModifyQuery($modify){
+        if($this->relation)$modify=$this->relation->dsql;
+
+        $modify->set($this->actual_field?:$this->short_name,
+            $this->getSQL()
+        );
+        return $this;
+    }
+    /** Get value of this field formatted for SQL. Redefine if you need to convert */
+    function getSQL(){
+        return $this->owner->get($this->short_name);
+    }
+
     // OBSOLETE
     // TODO: refactor this!
     function refModel($m){

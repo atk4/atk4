@@ -108,9 +108,10 @@ class Model_Table extends Model {
         $select=$this->dsql();
 
         // add system fields into select
-        foreach($this->elements as $el)if($el instanceof Model_Field)
+        foreach($this->elements as $el)if($el instanceof Model_Field){
             if($el->system() && !in_array($el->short_name,$fields))
                 $fields[]=$el->short_name;
+        }
 
         // add actual fields
         foreach($fields as $field){
@@ -141,10 +142,18 @@ class Model_Table extends Model {
             ->add('Model_Field_Expression',$name)
             ->set($expression);
     }
-    /** Constructs JOIN between model tables. Creating and deleting records might affect both tables. See manual. */
-	function hasOne($foreign_table, $master_table=null, $join_kind=null, $_foreign_alias=null){
-        return $this
-            ->add('Model_Field_Join',$name);
+    public $relations=array();
+    /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
+	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+
+        if(!$_foreign_alias)$_foreign_alias='_f';
+        $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
+
+        return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
+            ->set($foreign_table,$master_field, $join_kind);
+
+
+        return $this;
     }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
@@ -156,6 +165,8 @@ class Model_Table extends Model {
         return $this->addField($name);
     }
     /** Defines one to many association */
+    function hasOne($model){
+    }
     function hasMany($model,$their_field=null,$our_feld=null){
         $rel=$this
             ->add('Model_Relation_Many');
@@ -209,15 +220,17 @@ class Model_Table extends Model {
     /** Loads record specified by ID. If omitted will load first matching record */
     function load($id=null){
         $load = $this->dsql();
-        if(!is_null($id))$load->where($this->id_field,$id);
-        $data = $load->limit(1)->do_getAll();
+        if(!is_null($id))$load->where($this->id_field,$id)->limit(1);
+
+        $this->hook('beforeLoad',array($load));
+
+        $data = $load->limit(1)->get();
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')
             ->addMoreInfo('model',$this)
             ->addMoreInfo('id',$id)
             ;
         $this->data=$data[0];  // avoid using set() for speed and to avoid field checks
-
         $this->id=$this->data[$this->id_field];
 
         $this->hook('afterLoad');
@@ -225,9 +238,11 @@ class Model_Table extends Model {
         return $this;
     }
     function loadData($id=null){ return $this->load($id); }
-    function reset(){
+    function unload(){
+        $this->hook('beforeUnload');
         $this->id=null;
-        parent::reset();
+        parent::unload();
+        $this->hook('afterUnload');
     }
     function save(){
         $this->hook('beforeSave');
@@ -247,11 +262,13 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Model_Field){
             if(!$f->editable())continue;
 
-
             $insert->set($name, $this->get($name));
         }
 
+        $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
+        $this->hook('afterInsert',array($id));
+
         $this->load($id);
         return $this;
     }
@@ -267,7 +284,10 @@ class Model_Table extends Model {
             }
         }
 
+        $this->hook('beforeModify',array($modify));
         $modify->do_update();
+        $this->hook('afterModify');
+
         $this->load($this->id);
         return $this;
     }

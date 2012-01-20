@@ -383,13 +383,21 @@ abstract class AbstractObject {
     // {{{ Hooks: http://agiletoolkit.org/doc/hooks
     public $hooks = array ();
 
+    /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
         if(!is_array($arguments)){
             // Backwards compatibility
             $priority=$arguments;
             $arguments=array();
         }
-        $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
+        if(is_object($callable) && !is_callable($callable)){
+            $callable=array($callable,$hook_spot);  // short for addHook('test',$this); to call $this->test();
+        }
+        if($priority>=0){
+            $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
+        }else{
+            array_unshift($this->hooks[$hook_spot][$priority],array($callable,$arguments));
+        }
         return $this;
     }
     function removeHook($hook_spot) {
