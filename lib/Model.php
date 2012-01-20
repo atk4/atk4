@@ -99,7 +99,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($name===null)return $this->data;
         if($this->strict_fields && !$this->hasElement($name))
             throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
-        if(!isset($this->data[$name]))
+        if(!isset($this->data[$name]) && !$this->hasElement($name))
             throw $this->exception('Model field was not loaded')
             ->addMoreInfo('id',$this->id)
             ->addMoreinfo('field',$name);

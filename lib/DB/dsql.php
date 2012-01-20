@@ -75,7 +75,6 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Converts value into parameter and returns reference. Use only during query rendering. */
     function escape($val){
         if($val===undefined)return '';
-        if($val===null)return 'NULL';
         if(is_array($val)){
             $out=array();
             foreach($val as $v){
@@ -277,6 +276,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;
             $field=$this->consume($field);
+            if(!$field){
+                $field=$table;
+                $table=undefined;
+            }
             if($table && $table!==undefined)$field=$this->bt($table).'.'.$field;
             if($alias && $alias!==undefined)$field.=' '.$this->bt($alias);
             $result[]=$field;
@@ -332,7 +335,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
 
 
-        if(is_string($field) && !preg_match('/^[a-zA-Z0-9_]*$/',$field)){
+        if(is_string($field) && !preg_match('/^[.a-zA-Z0-9_]*$/',$field)){
             // field contains non-alphanumeric values. Look for condition
             preg_match('/^([^ <>!=]*)([><!=]*|( *(not|is|in|like))*) *$/',$field,$matches);
             $value=$cond;
@@ -365,7 +368,12 @@ class DB_dsql extends AbstractModel implements Iterator {
                 // if first argument is object, condition must be explicitly specified
                 $field=$this->consume($field);
             }else{
-                $field=$this->bt($field);
+                list($table,$field)=explode('.',$field,2);
+                if($field){
+                    $field=$this->bt($table).'.'.$this->bt($field);
+                }else{
+                    $field=$this->bt($table);
+                }
             }
 
             if($value===undefined && $cond===undefined){
@@ -883,7 +891,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function render(){
         $this->params=$this->extra_params;
         $r=$this->_render();
-        if($this->debug)echo "<font color='blue'>".htmlspecialchars($r)."</font>";
+        if($this->debug)echo "<font color='blue'>".htmlspecialchars($r)."</font><br/>";
         return $r;
     }
     function _render(){

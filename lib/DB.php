@@ -93,6 +93,8 @@ class DB extends AbstractController {
         if(isset($this->query_cache[$query])){
             $statement = $this->query_cache[$query];
         }else{
+            if(count($this->query_cache)>500)$this->query_cache=array(); 
+            // when many different queries happen, memory is important too
             $statement = $this->dbh->prepare($query);
             $this->query_cache[$query]=$statement;
         }

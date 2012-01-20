@@ -41,6 +41,7 @@ class Field_Expression extends Field {
         if($expr instanceof DB_dsql){
             return $select->field($expr,$this->short_name);
         }
-        return $select->field($select->expr($expr $this->short_name);
+        return $select->field($select->expr($expr), $this->short_name);
+        
     }
 }

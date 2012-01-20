@@ -12,6 +12,7 @@ class Field extends AbstractModel {
     public $auto_track_element=true;
 
     public $relation=null;
+    public $actual_field=null;
 
     function setterGetter($type,$value=undefined){
         if($value === undefined){
@@ -50,18 +51,30 @@ class Field extends AbstractModel {
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
     function visible($t=undefined){ return $this->setterGetter('visible',$t); }
     function listData($t=undefined){ return $this->setterGetter('listData',$t); }
+    function from($m){
+        if($m===undefined)return $this->relation;
+        if(is_object($m)){
+            $this->relation=$m;
+        }else{
+            $this->relations=$this->owner->relations[$m];
+        }
+        return $this;
+    }
     // what is alias?
     //function alias($t=undefined){ return $this->setterGetter('alias',$t); }
 
     /** Modifies specified query to include this particular field */
     function updateSelectQuery($select){
+        $p=null;
+        if($this->owner->relations)$p=$this->owner->table_alias?:$this->owner->table;
+
         if($this->relation){
-            $select->field($this->relation.'.'.$this->actual_field,$this->short_name);
-        }elseif($this->actual_field != $this->short_name){
-            $select->field($this->actual_field,$this->short_name);
+            $select->field($this->actual_field?:$this->short_name,$this->relation->short_name,$this->short_name);
+        }elseif(!(is_null($this->actual_field)) && $this->actual_field != $this->short_name){
+            $select->field($this->actual_field,$p,$this->short_name);
             return $this;
         }else{
-            $select->field($this->short_name);
+            $select->field($this->short_name,$p);
         }
         return $this;
     }

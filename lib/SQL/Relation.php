@@ -18,9 +18,10 @@ class SQL_Relation extends AbstractModel {
         parent::init();
     }
 
-    function addField(){
-        $this->addField
+    function addField($n){
+        return $this->owner->addField($n)->from($this);
     }
+
     function set($foreign_table,$master_field=null,$join_kind=null){
 
 
@@ -35,10 +36,6 @@ class SQL_Relation extends AbstractModel {
 
             // Split and deduce primary table
             $m2=$master_field;
-            if(is_null($m2)){
-                $m2=$m1; $m1=null;
-            }
-            if(is_null($m1))$m1=$this->owner->table_alias?:$this->owner->table;
 
             // Identify fields we use for joins
             if(is_null($f2) && is_null($m2))$m2=$f1.'_id';
@@ -51,7 +48,7 @@ class SQL_Relation extends AbstractModel {
         $this->f2=$f2;
 
         $jthis->t=$join_kind?:'left';
-        $this->fa=$_foreign_alias;
+        $this->fa=$this->short_name;
 
         // Use the real ID field as defined by the model as default
         $this->owner->dsql->join($foreign_table,$this->expr?:($m1.'.'.$m2),$join_kind,$this->short_name);
@@ -60,22 +57,25 @@ class SQL_Relation extends AbstractModel {
         if($this->m2 && $this->m2 != $this->owner->id_field){
             // user.contactinfo_id = contactinfo.id
             $this->owner->addHook('beforeInsert',$this,null,-5);
-            $this->owner->addHook('beforeModify',null,-5);
+            $this->owner->addHook('beforeModify',$this,null,-5);
         }elseif($this->m2){
             // author.id = book.author_id
             $this->owner->addHook('afterInsert',$this);
-            $this->owner->addHook('beforeModify');
+            $this->owner->addHook('beforeModify',$this);
         }// else $m2 is not set, expression is used, so don't try to do anything unnecessary
 
-        $this->owner->addHook('beforeSave');
+        $this->owner->addHook('beforeSave',$this);
 
+        return $this;
     }
     function beforeSave($m){
-        $this->dsql=$this->owner->dsql()->table($this->f1);
+        $this->dsql=$this->owner->dsql->dsql()->table($this->f1);
+        if($this->owner->dsql->debug)$this->dsql->debug();
     }
     function beforeInsert($m,$q){
         // Insert related table data and add ID into the main query
         // TODO: handle cases when $this->m1 != $this->owner->table?:$this->owner->table_alias
+        $this->dsql->set($this->f2,null);
         $this->id=$this->dsql->do_insert();
 
         if($this->relation)$q=$this->relation->dsql;
@@ -86,7 +86,7 @@ class SQL_Relation extends AbstractModel {
         $this->id=$this->dsql->set($this->f2,$id)->do_insert();
     }
     function beforeModify($m,$q){
-        $this->dsql->where($this->f2,$this->id)->do_update();
+        if($this->dsql->args['set'])$this->dsql->where($this->f2,$this->id)->do_update();
     }
 
     /** Add query for the relation's ID, but then remove it from results. Remove ID when unloading. */

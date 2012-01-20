@@ -47,6 +47,7 @@ class Model_Table extends Model {
     /** If you wish that alias is used for the table when selected, you can define it here.
      * This will help to keep SQL syntax shorter, but will not impact functionality */
     public $table_alias=null;
+    public $entity_code=null;   // compatibility
 
     // {{{ Basic Functionality, query initialization and actual field handling
     /** Initialization of ID field, which must always be defined */
@@ -108,7 +109,7 @@ class Model_Table extends Model {
         $select=$this->dsql();
 
         // add system fields into select
-        foreach($this->elements as $el)if($el instanceof Model_Field){
+        foreach($this->elements as $el)if($el instanceof Field){
             if($el->system() && !in_array($el->short_name,$fields))
                 $fields[]=$el->short_name;
         }
@@ -146,14 +147,11 @@ class Model_Table extends Model {
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
 	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
 
-        if(!$_foreign_alias)$_foreign_alias='_f';
+        if(!$_foreign_alias)$_foreign_alias='_'.$foreign_table[0];
         $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
 
         return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
             ->set($foreign_table,$master_field, $join_kind);
-
-
-        return $this;
     }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
@@ -209,7 +207,7 @@ class Model_Table extends Model {
     // }}}
 
 
-    function getRows($fields){
+    function getRows($fields=null){
         return $this->selectQuery($fields)->do_getAll();
     }
 
@@ -219,8 +217,9 @@ class Model_Table extends Model {
     function isInstanceLoaded(){ return $this->loaded(); }
     /** Loads record specified by ID. If omitted will load first matching record */
     function load($id=null){
-        $load = $this->dsql();
-        if(!is_null($id))$load->where($this->id_field,$id)->limit(1);
+        $load = $this->selectQuery();
+        $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
+        if(!is_null($id))$load->where($p.$this->id_field,$id)->limit(1);
 
         $this->hook('beforeLoad',array($load));
 
@@ -259,10 +258,10 @@ class Model_Table extends Model {
     }
     function insert(){
         $insert = $this->dsql();
-        foreach($this->elements as $name=>$f)if($f instanceof Model_Field){
+        foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable())continue;
 
-            $insert->set($name, $this->get($name));
+            $f->updateInsertQuery($insert);
         }
 
         $this->hook('beforeInsert',array($insert));
@@ -279,13 +278,13 @@ class Model_Table extends Model {
         if(!$this->dirty)return $this;
 
         foreach($this->dirty as $name=>$junk){
-            if($el=$this->hasElement($name))if($el instanceof Model_Field){
-                $modify->set($name,$this->get($name));
+            if($el=$this->hasElement($name))if($el instanceof Field){
+                $el->updateModifyQuery($modify);
             }
         }
 
         $this->hook('beforeModify',array($modify));
-        $modify->do_update();
+        if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
 
         $this->load($this->id);

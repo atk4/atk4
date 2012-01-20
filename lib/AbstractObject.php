@@ -396,6 +396,8 @@ abstract class AbstractObject {
         if($priority>=0){
             $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
         }else{
+            if(!$this->hooks[$hook_spot][$priority])
+                $this->hooks[$hook_spot][$priority]=array();
             array_unshift($this->hooks[$hook_spot][$priority],array($callable,$arguments));
         }
         return $this;
@@ -500,7 +502,7 @@ abstract class AbstractObject {
      */
     function _unique(&$array,$desired=null){
         $postfix=1;$attempted_key=$desired;
-        while(isset($array[$attempted_key])){
+        while(array_key_exists($attempted_key,$array)){
             // already used, move on
             $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
         }       
