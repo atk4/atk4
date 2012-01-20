@@ -37,7 +37,7 @@ class DB extends AbstractController {
             if(is_string($dsn)){
                 // possibly old DSN, let's parse. PS: this is for compatibility only, so
                 // don't be too worried about properly parsing it
-                preg_match('|([a-z]+)://([^:]*)(:(.*))?@([A-Za-z0-9\.-]*)(/([a-zA-Z_/\.]*))|',$dsn,$matches);
+                preg_match('|([a-z]+)://([^:]*)(:(.*))?@([A-Za-z0-9\.-]*)(/([0-9a-zA-Z_/\.]*))|',$dsn,$matches);
 
 
                 $dsn=array(
