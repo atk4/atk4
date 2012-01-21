@@ -6,6 +6,13 @@ $(document).ready(function(){
 	
 	$('.atk-menu-vertical>ul>li:first-child').addClass("ui-corner-top");
 	$('.atk-menu-vertical>ul>li:last-child').addClass("ui-corner-bottom");	
+	
+	$('.atk-menu .ui-state-default').hover(function() {
+		$(this).addClass("ui-state-hover");
+	}, function() {
+		$(this).removeClass("ui-state-hover");
+	});
+		
 });
 </script>
 <div id="<?$_name?>" class="atk-menu atk-menu-horizontal ui-widget">
