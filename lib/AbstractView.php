@@ -41,7 +41,7 @@ abstract class AbstractView extends AbstractObject {
      */
     public $spot;
 
-    public $default_controller='Controller';
+    public $default_controller=null;
 
     public $auto_track_element=true;
 

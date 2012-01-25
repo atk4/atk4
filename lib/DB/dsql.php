@@ -91,7 +91,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function consume($dsql,$tick=true){
         if($dsql===undefined)return '';
         if($dsql===null)return '';
-        if(!is_object($dsql))return $tick?$this->bt($dsql):$dsql;
+        if(!is_object($dsql) || !$dsql instanceof DB_dsql)return $tick?$this->bt($dsql):$dsql;
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
         if($dsql->mode=='select')$ret='('.$ret.')';
@@ -261,7 +261,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
 
         if(is_object($field)){
-            if(!$table)throw $this->exception('Specified expression without alias');
+            //if(!$table)throw $this->exception('Specified expression without alias')
+            //    ->addMoreInfo('expr',$field);
             $alias=$table;$table=null;
         }
         $this->args['fields'][]=array($field,$table,$alias);

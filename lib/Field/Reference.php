@@ -9,7 +9,9 @@ class Field_Reference extends Field {
         if($display_field)$this->display_field=$display_field;
 
         $this->owner->addExpression($this->getDereferenced())
-            ->calculated(array($this,'calculateSubQuery'));
+            ->set(array($this,'calculateSubQuery'));
+
+        $this->display('dropdown')->visible(false);
 
         return $this;
     }

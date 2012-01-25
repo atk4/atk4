@@ -120,4 +120,24 @@ class DB extends AbstractController {
         // TODO: add support for postgreSQL and other databases
         return $this->dbh->lastInsertId();
     }
+
+    public $transaction_depth=0;
+	public function beginTransaction() {
+		$this->transaction_depth++;
+		// transaction starts only if it was not started before
+		if($this->transaction_depth==1)return $this->dbh->beginTransaction();
+		return false;
+	}
+	public function commit() {
+		$this->transaction_depth--;
+		if($this->transaction_depth==0)return $this->dbh->commit();
+		return false;
+	}
+	public function inTransaction(){
+		return $this->transaction_depth>0;
+	}
+	public function rollBack($option=null) {
+		$this->transaction_depth=0;
+		return $this->dbh->rollBack();
+	}
 }

@@ -103,6 +103,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             throw $this->exception('Model field was not loaded')
             ->addMoreInfo('id',$this->id)
             ->addMoreinfo('field',$name);
+        if(!array_key_exists($name,$this->data)){
+            return $this->getElement($name)->defaultValue();
+        }
         return $this->data[$name];
     }
     /** When fields are changed, they are marked dirty. Only dirty fields are saved when save() is called */

@@ -7,9 +7,12 @@ class Field extends AbstractModel {
     public $visible=true;
     public $display=null;
     public $caption=null;
+    public $type='string';
     public $group=null;
+    public $mandatory=false;
     public $defaultValue=null;
     public $auto_track_element=true;
+    public $listData=null;
 
     public $relation=null;
     public $actual_field=null;
@@ -51,6 +54,8 @@ class Field extends AbstractModel {
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
     function visible($t=undefined){ return $this->setterGetter('visible',$t); }
     function listData($t=undefined){ return $this->setterGetter('listData',$t); }
+    function setValueList($t){ return $this->listData($t); }
+    function enum($t){ return $this->listData(array_combine($t,$t)); }
     function from($m){
         if($m===undefined)return $this->relation;
         if(is_object($m)){

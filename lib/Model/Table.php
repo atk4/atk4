@@ -106,7 +106,7 @@ class Model_Table extends Model {
     /** Produces Dynamic SQL and adds specified fields, referenced fields and expressions. Useful for select statements */
     function selectQuery($fields=null){
         if($fields===null)$fields=$this->getActualFields();
-        $select=$this->dsql();
+        $select=$this->dsql;
 
         // add system fields into select
         foreach($this->elements as $el)if($el instanceof Field){
@@ -139,8 +139,8 @@ class Model_Table extends Model {
     // {{{ Model_Table supports more than just fields. Expressions, References and Relations can be added
     /** Adds and returns SQL-calculated expression as a read-only field. See Field_Expression class. */
     function addExpression($name,$expression=null){
-        $expr=$this
-            ->add('Model_Field_Expression',$name)
+        return $expr=$this
+            ->add('Field_Expression',$name)
             ->set($expression);
     }
     public $relations=array();
@@ -173,14 +173,18 @@ class Model_Table extends Model {
         }
         $r=$this->add('Field_Reference',$our_field);
         if($display_field)$r->display($display_field);
-        return $this;
+        return $r->setModel($model);
     }
     /** Defines many to one association */
-    function hasMany($model,$their_field=null,$our_feld=null){
+    function hasMany($model,$their_field=null,$our_field=null){
         if(!$our_field)$our_field=$this->id_field;
         if(!$their_field)$their_field=($this->table?:$this->entity_code).'_id';
-        $rel=$this->add('SQL_Many')
-            ->set($their_field,$our_field);
+        $rel=$this->add('SQL_Many',$model)
+            ->set($model,$their_field,$our_field);
+    }
+    /** Traverses references */
+    function ref($name){
+        return $this->getElement($name)->ref();
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$value){
@@ -189,20 +193,21 @@ class Model_Table extends Model {
         }
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->dsql->having($field,$value);
+            $this->dsql->having($field->short_name,$value);
         }elseif($field->relation){
-            $this->dsql->where($field->relation->m1.'.'.$field,$value);
+            $this->dsql->where($field->relation->m1.'.'.$field->short_name,$value);
         }elseif($this->relations){
-            $this->dsql->where($this->table_alias?:$this->table.'.'.$field,$value);
+            $this->dsql->where($this->table_alias?:$this->table.'.'.$field->short_name,$value);
         }else{
-            $this->dsql->where($field,$value);
+            $this->dsql->where($field->short_name,$value);
         }
         return $this;
     }
     /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
-        $field->defaultValue($value)->system(true);
-        return $this->adCondition($field,$value);
+        $field=$this->getElement($field);
+        $field->defaultValue($value)->system(true)->editable(false);
+        return $this->addCondition($field,$value);
     }
 
 
@@ -281,14 +286,17 @@ class Model_Table extends Model {
     function insert(){
         $insert = $this->dsql();
         foreach($this->elements as $name=>$f)if($f instanceof Field){
-            if(!$f->editable())continue;
+            if(!$f->editable() && !$f->system())continue;
 
             $f->updateInsertQuery($insert);
         }
 
+        // Performs the actual database changes. Throw exception if problem occurs
+        $insert->owner->beginTransaction();
         $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
+        $insert->owner->commit();
 
         $this->load($id);
         return $this;
@@ -305,9 +313,12 @@ class Model_Table extends Model {
             }
         }
 
+        // Performs the actual database changes. Throw exceptions if problem occurs
+        $modify->owner->beginTransaction();
         $this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
+        $modify->owner->commit();
 
         $this->load($this->id);
         return $this;
@@ -316,10 +327,16 @@ class Model_Table extends Model {
         if($data)$this->set($data);
         return $this->save();
     }
-    function delete($id){
-        if(!$id)throw $this->exception('Specify ID to delete()');
+    function delete($id=null){
+        if(!$id && !$this->id)throw $this->exception('Specify ID to delete()');
+        $delete=$this->dsql()->where($this->id_field,$id?:$this->id)->delete();
 
-        $this->dsql()->where($this->id_field,$id)->do_delete();
+        $delete->owner->beginTransaction();
+        $this->hook('beforeDelete',array($delete));
+        $delete->execute();
+        $this->hook('afterDelete',array());
+        $delete->owner->commit();
+
         if($this->id==$id)$this->reset();
 
         return $this;

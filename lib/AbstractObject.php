@@ -203,12 +203,14 @@ abstract class AbstractObject {
     function setController($controller){
         if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
             $controller='Controller_'.$controller;
-        return $this->controller=$this->add($controller);
+        $this->controller=$this->add($controller);
+        return $this;
     }
     function setModel($model){
         if(is_string($model)&&substr($model,0,strlen('Model'))!='Model')
             $model='Model_'.$model;
-        return $this->model=$this->add($model);
+        $this->model=$this->add($model);
+        return $this;
     }
     function getController(){
         return $this->controller;

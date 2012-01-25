@@ -43,11 +43,14 @@ class View_CRUD extends View {
         $this->initComponents();
     }
     function setModel($model,$fields=null,$grid_fields=null){
+        parent::setModel($model);
+
+
         if($this->form){
-            $m=$this->form->setModel($model,$fields);
+            $m=$this->form->setModel($this->model,$fields);
             $this->form->addSubmit();
         }else{
-            $m=$this->grid->setModel($model,$grid_fields?$grid_fields:$fields);
+            $m=$this->grid->setModel($this->model,$grid_fields?$grid_fields:$fields);
         }
         $this->initComponents();
         return $m;

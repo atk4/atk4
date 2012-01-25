@@ -29,6 +29,8 @@ class SQL_Relation extends AbstractModel {
         $this->relation=$relation;
         return $this;
     }
+    function hasOne(){
+    }
 
     function set($foreign_table,$master_field=null,$join_kind=null){
 
@@ -73,6 +75,8 @@ class SQL_Relation extends AbstractModel {
         }// else $m2 is not set, expression is used, so don't try to do anything unnecessary
 
         $this->owner->addHook('beforeSave',$this);
+        $this->owner->addHook('beforeLoad',$this);
+        $this->owner->addHook('afterLoad',$this);
 
         return $this;
     }
@@ -100,9 +104,9 @@ class SQL_Relation extends AbstractModel {
     /** Add query for the relation's ID, but then remove it from results. Remove ID when unloading. */
     function beforeLoad($m,$q){
         if($this->m2 && $this->m2 != $this->owner->id_field){
-            $q->field($this->m1.'.'.$this->m2,$this->short_name);
+            $q->field($this->m2,$this->m1,$this->short_name);
         }elseif($this->m2){
-            $q->field($this->f1.'.'.$this->f2,$this->short_name);
+            $q->field($this->f2,$this->f1,$this->short_name);
         }
     }
     function afterLoad($m){

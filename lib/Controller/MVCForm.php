@@ -78,10 +78,23 @@ class Controller_MVCForm extends AbstractController {
 
         $this->field_associations[$field_name]=$field;
 
+        if($field->listData()){
+            $field_type='dropdown';
+        }
+
+
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
-        if($field instanceof Model_Field_Reference)$form_field->setModel($field->model);
+        if($field->listData()){
+            $a=$field->listData();
+            if(!$field->mandatory()){
+                $a=array(null=>'')+$a;
+            }
+            $form_field->setValueList($a);
+        }
+
+        if($field instanceof Field_Reference)$form_field->setModel($field->model);
 
         return $form_field;
     }
@@ -100,7 +113,7 @@ class Controller_MVCForm extends AbstractController {
     function getFieldType($field){
         $type='line';
 
-        if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
+        if(isset($this->type_associations[$field->type()]))$type=$this->type_associations[$field->type()];
         if($field instanceof Model_Field_Reference)$type='dropdown';
 
         if($field->display())$type=$field->display();
