@@ -1,7 +1,7 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
  * Implementation of a Relational SQL-backed Model
- * @link http://agiletoolkit.org/doc/model/table
+ * @link http://agiletoolkit.org/doc/modeltable
  *
  * Model_Table allows you to take advantage of relational SQL database without neglecting
  * powerful functionality of your RDBMS. On top of basic load/save/delete operations, you can
@@ -46,8 +46,8 @@ class Model_Table extends Model {
 
     /** If you wish that alias is used for the table when selected, you can define it here.
      * This will help to keep SQL syntax shorter, but will not impact functionality */
-    public $table_alias=null;
-    public $entity_code=null;   // compatibility
+    public $table_alias=null;   // Defines alias for the table, can improve readability of queries
+    public $entity_code=null;   // @osolete. Use $table
 
     // {{{ Basic Functionality, query initialization and actual field handling
     /** Initialization of ID field, which must always be defined */
@@ -61,6 +61,7 @@ class Model_Table extends Model {
 
         $this->addField($this->id_field)->system(true);
     }
+    /** exception() will automatically add information about current model and will allow to turn on "debug" mode */
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
             ->addThis($this)

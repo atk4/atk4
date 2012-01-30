@@ -741,7 +741,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     // {{{ More complex query generations and specific cases
 
-    /** Shortcut for executing select. */
+    /** Executes select query. */
     function do_select(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->select(),$this->params);
@@ -754,7 +754,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
     }
 
-    /** Shortcut for executing insert. Returns ID of new record. */
+    /** Executes insert query. Returns ID of new record. */
     function do_insert(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->insert(),$this->params);
@@ -767,7 +767,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
     }
 
-    /** Shortcut for executing update */
+    /** Executes update query */
     function do_update(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->update(),$this->params);
@@ -780,7 +780,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
     }
 
-    /** Shortcut for executing replace */
+    /** Executes replace query */
     function do_replace(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->replace(),$this->params);
@@ -792,6 +792,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
+    /** Executes delete query */
     function do_delete(){
         try {
             $this->stmt=$this->owner->query($q=(string)$this->delete(),$this->params);
@@ -803,6 +804,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('query',$q);
         }
     }
+    /** Executes user-defined query */
     function execute(){
         try {
             return $this->stmt=$this->owner->query($q=(string)$this->render(),$this->params);
@@ -816,46 +818,63 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
 
     // {{{ Data fetching modes
+    /** Will execute DSQL query and return all results inside array of hashes */
     function get(){
-        return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
-    }
-    function do_getOne(){
-        return $this->getOne(); 
-    }
-    function getOne(){
-        $res=$this->execute()->fetch();
-        return $res[0];
-    }
-    function do_getAll(){ 
-        return $this->get(); 
-    }
-    function getAll(){
-        return $this->get();
-    }
-    function do_getRow(){ 
-        return $this->get(PDO::FETCH_NUM); 
-    }
-    function getRow(){ 
-        return $this->get(PDO::FETCH_NUM); 
-    }
-    function do_getHash(){ 
-        return $this->getHash(); 
-    }
-    function getHash(){ 
-        $x=$this->get(PDO::FETCH_ASSOC);return $x[0];
-    }
-    function fetch(){
-        if(!$this->stmt)$this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    function fetchAll(){
         if(!$this->stmt)$this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    /** Will execute DSQL query and return first column of a first row */
+    function getOne(){
+        $res=$this->getRow();
+        return $res[0];
+    }
+    /** Will execute DSQL query and return first row as array (not hash) */
+    function getRow(){ 
+        return $this->fetch(PDO::FETCH_NUM);
+    }
+    /** Will execute DSQL query and return first row as hash (column=>value) */
+    function getHash(){ 
+        return $this->fetch(PDO::FETCH_ASSOC);
+    }
+    /** Will execute the query (if it's not executed already) and return first row */
+    function fetch($mode=PDO::FETCH_ASSOC){
+        if(!$this->stmt)$this->execute();
+        return $this->stmt->fetch($mode);
+    }
+    // {{{ Obsolete functions 
+    /** @obsolete. Use get() */
+    function fetchAll(){
+        return $this->get();
+    }
+    /** @obsolete. Use getQne() */
+    function do_getOne(){
+        return $this->getOne(); 
+    }
+    /** @obsolete. Use get() */
+    function do_getAll(){ 
+        return $this->get(); 
+    }
+    /** @obsolete. Use get() */
+    function getAll(){
+        return $this->get();
+    }
+    /** @obsolete. Use getRow() */
+    function do_getRow(){ 
+        return $this->getRow();
+    }
+    /** @obsolete. Use getHash() */
+    function do_getHash(){ 
+        return $this->getHash(); 
+    }
+    // }}}
+
+
+    /** Sets flag to hint SQL (if supported) to prepare total number of columns. Use foundRows() to read this afterwards */
     function calc_found_rows(){
         // add option for row calculation if supported
         return $this;
     }
+    /** After fetching data, call this to find out how many rows there were in total. Call calc_found_rows() for better performance */
     function foundRows(){
         if($this->hasOption('SQL_CALC_FOUND_ROWS')){
             return $this->owner->getOne('select found_rows()');
@@ -890,10 +909,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
 
     // {{{ Rendering
+    /** Will set a flag which will output query (echo) as it is being rendered. */
     function debug(){
         $this->debug=1;
         return $this;
     }
+    /** Converts query into string format. This will contain parametric references */
     function render(){
         $this->params=$this->extra_params;
         $r=$this->_render();
