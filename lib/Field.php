@@ -1,13 +1,14 @@
 <?php
 
 class Field extends AbstractModel {
+    public $type='string';
+    public $readonly=false;
     public $system=false;
     public $hidden=false;
     public $editable=true;
     public $visible=true;
     public $display=null;
     public $caption=null;
-    public $type='string';
     public $group=null;
     public $mandatory=false;
     public $defaultValue=null;

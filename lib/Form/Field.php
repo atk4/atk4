@@ -93,6 +93,12 @@ abstract class Form_Field extends AbstractView {
 		$this->value=$value;
 		return $this;
 	}
+    function addButton($label,$position='end'){
+        return $this->add('Button')->set($label);
+    }
+    function addComment($text){
+        return $this->add('HtmlElement',null,'after_field')->setElement('ins')->set($text);
+    }
 	function get(){
 		return $this->value;
 	}

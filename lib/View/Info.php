@@ -23,5 +23,5 @@
 
  *****************************************************ATK4**/
 class View_Info extends View_Box {
-    public $class="info";
+    public $class="ui-state-highlight";
 }

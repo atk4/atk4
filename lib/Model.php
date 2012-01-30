@@ -118,7 +118,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Forget loaded data */
     function unload(){
+        $this->hook('beforeUnload');
         $this->data=$this->dirty=array();
+        $this->hook('afterUnload');
         return $this;
     }
     function reset(){
@@ -138,17 +140,26 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this;
     }
     /** Attempt to load record with specified ID. If this fails, no error is produced */
-    function load($id){
-        return $this->contoller->load($this,$id);
+    function load($id=null){
+        $this->hook('beforeLoad',$id);
+        $res=$this->contoller->load($this,$id);
+        $this->hook('afetrLoad');
+        return $res;
     }
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
      * record with new ID. Returns ID of saved record */
     function save($id=null){
-        return $this->contoller->save($this,$id);
+        $this->hook('beforeSave',$id);
+        $res=$this->contoller->save($this,$id);
+        $this->hook('afterSave');
+        return $res;
     }
     /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
     function delete($id=null){
-        return $this->contoller->delete($this,$id?:$this->id);
+        $this->hook('beforeDelete',$id);
+        $res=$this->contoller->delete($this,$id?:$this->id);
+        $this->hook('afterSave');
+        return $res;
     }
     /// }}}
 
