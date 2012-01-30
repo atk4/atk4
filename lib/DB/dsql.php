@@ -98,6 +98,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         unset($dsql->params);$dsql->params=array();
         return $ret;
     }
+    /** Defines a custom template variable. */
+    function setCutsom($template,$value){
+        $this->args['custom'][$template]=$value;
+    }
     /** Removes definition for argument. $q->del('where') */
     function del($args){
 		$this->args[$args]=array();
@@ -914,6 +918,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             $fx='render_'.$matches[1];
             if($self->hasMethod($fx))return $self->$fx();
+            elseif(isset($this->args['custom'][$matches[1]] return $this->args['custom'][$matches[1]];
             else return $matches[0];
         },$this->template);
     }
