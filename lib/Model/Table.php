@@ -67,7 +67,7 @@ class Model_Table extends Model {
             ->addThis($this)
             ->addAction('Debug this Model',array($this->name.'_debug'=>'query'));
     }
-    /** Initializes base query for this model */
+    /** Initializes base query for this model. Query is then <D-O> */
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
         $table=$this->table?:$this->entity_code;
@@ -108,6 +108,7 @@ class Model_Table extends Model {
     function selectQuery($fields=null){
         if($fields===null)$fields=$this->getActualFields();
         $select=$this->dsql;
+        $select->del('fields');
 
         // add system fields into select
         foreach($this->elements as $el)if($el instanceof Field){
@@ -132,7 +133,9 @@ class Model_Table extends Model {
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql();
-        if($this->title_field && $this->hasElement($this->title_field))return $query->field($this->title_field);
+        if($this->title_field && $this->hasElement($this->title_field)){
+            return $this->getElement($this->title_field)->updateSelectQuery($query);
+        }
         return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
     }
     // }}}
@@ -188,19 +191,24 @@ class Model_Table extends Model {
         return $this->getElement($name)->ref();
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
-    function addCondition($field,$value){
+    function addCondition($field,$cond,$value=undefined){
+        if($value===undefined){
+            $value=$cond;
+            $cond=undefined;
+        }
+
         if(!$field instanceof Field){
             $field=$this->getElement($field);
         }
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->dsql->having($field->short_name,$value);
+            $this->dsql->having($field->short_name,$cond,$value);
         }elseif($field->relation){
-            $this->dsql->where($field->relation->m1.'.'.$field->short_name,$value);
+            $this->dsql->where($field->relation->m1.'.'.$field->short_name,$cond,$value);
         }elseif($this->relations){
-            $this->dsql->where($this->table_alias?:$this->table.'.'.$field->short_name,$value);
+            $this->dsql->where($this->table_alias?:$this->table.'.'.$field->short_name,$cond,$value);
         }else{
-            $this->dsql->where($field->short_name,$value);
+            $this->dsql->where($field->short_name,$cond,$value);
         }
         return $this;
     }
@@ -236,11 +244,7 @@ class Model_Table extends Model {
 
 
     function getRows($fields=null){
-        return $this->selectQuery($fields)->do_getAll();
-    }
-
-    function loaded(){
-        return(!is_null($this->id));
+        return $this->selectQuery($this->getActualFields($fields))->do_getAll();
     }
     function isInstanceLoaded(){ return $this->loaded(); }
     /** Loads record specified by ID. If omitted will load first matching record */
@@ -272,6 +276,7 @@ class Model_Table extends Model {
         $this->hook('afterUnload');
     }
     function save(){
+        $insert->owner->beginTransaction();
         $this->hook('beforeSave');
 
         // decide, insert or modify
@@ -282,6 +287,7 @@ class Model_Table extends Model {
         }
 
         $this->hook('afterSave');
+        $insert->owner->commit();
         return $this;
     }
     function insert(){
@@ -293,11 +299,9 @@ class Model_Table extends Model {
         }
 
         // Performs the actual database changes. Throw exception if problem occurs
-        $insert->owner->beginTransaction();
         $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
-        $insert->owner->commit();
 
         $this->load($id);
         return $this;
@@ -315,11 +319,9 @@ class Model_Table extends Model {
         }
 
         // Performs the actual database changes. Throw exceptions if problem occurs
-        $modify->owner->beginTransaction();
         $this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
-        $modify->owner->commit();
 
         $this->load($this->id);
         return $this;
@@ -335,7 +337,7 @@ class Model_Table extends Model {
         $delete->owner->beginTransaction();
         $this->hook('beforeDelete',array($delete));
         $delete->execute();
-        $this->hook('afterDelete',array());
+        $this->hook('afterDelete');
         $delete->owner->commit();
 
         if($this->id==$id)$this->reset();
