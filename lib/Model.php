@@ -114,12 +114,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Returns if the records has been loaded successfully */
     function loaded(){
-        return (boolean)$this->data;
+        return (boolean)$this->id;
     }
     /** Forget loaded data */
     function unload(){
         $this->hook('beforeUnload');
         $this->data=$this->dirty=array();
+        $this->id=null;
         $this->hook('afterUnload');
         return $this;
     }
@@ -158,7 +159,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function delete($id=null){
         $this->hook('beforeDelete',$id);
         $res=$this->contoller->delete($this,$id?:$this->id);
-        $this->hook('afterSave');
+        $this->hook('afterDelete');
         return $res;
     }
     /// }}}

@@ -392,6 +392,13 @@ abstract class AbstractObject {
             $priority=$arguments;
             $arguments=array();
         }
+        if(strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
+        if(is_array($hook_spot)){
+            foreach($hook_spot as $h){
+                $this->addHook($h,$callable,$arguments, $priority);
+            }
+            return $this;
+        }
         if(is_object($callable) && !is_callable($callable)){
             $callable=array($callable,$hook_spot);  // short for addHook('test',$this); to call $this->test();
         }
