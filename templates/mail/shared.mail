@@ -1,6 +1,4 @@
 <?headers?>
-From: <?$from_formatted?>
-To: <?$to_formatted?>
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="<?$boundary?>"
 <?/?>

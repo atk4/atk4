@@ -110,7 +110,8 @@ class TMail_Basic extends AbstractModel {
 
         // TODO: should we use mb_encode_mimeheader ?
         if(!($res=$this->hook('send',array($to,$from,$subject,$body,$headers)))){
-            return mail($to,$subject,$body,$headers,'-f '.$from);
+        		$headers = 'From: '.$this->args['from_formatted']."\n".$headers;	//php mail NEED from in headers
+            return mail($this->args['to_formatted'],$subject,$body,$headers,'-f '.$from);
         }
         return $res;
     }
