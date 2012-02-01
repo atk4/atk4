@@ -114,7 +114,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Returns if the records has been loaded successfully */
     function loaded(){
-        return (boolean)$this->id;
+        return !is_null($this->id);
     }
     /** Forget loaded data */
     function unload(){
@@ -182,10 +182,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     // {{{ Iterator support 
     function rewind(){
         $this->reset();
-        $this->set($this->controller->rewind($this->table, $this->id));
+        $this->controller->rewind($this);
     }
     function next(){
-        return $this->set($this->controller->next($this->table, $this->id));
+        return $this->controller->next($this);
     }
     function current(){
         return $this->get();

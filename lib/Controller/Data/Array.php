@@ -1,12 +1,14 @@
 <?php
 class Controller_Data_Array extends AbstractController {
 
-    function rewind(&$data, &$id){
-        $id=null;
-        return reset($data);
+    function rewind($model){
+        reset($model->table);
+        list($model->id,$model->data)=each($model->table);
+        return $model->data;
     }
-    function next(&$data, &$id){
-        return $id=next($data);
+    function next($model){
+        list($model->id,$model->data)=each($model->table);
+        return $model->data;
     }
 
     function init(){
