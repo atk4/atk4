@@ -31,6 +31,9 @@ abstract class Form_Field extends AbstractView {
 
 	public $show_input_only;
 
+    public $button_prepend=null;
+    public $button_append=null;
+
 	function init(){
 		parent::init();
 		if(@$_GET[$this->owner->name.'_cut_field']==$this->name){
@@ -94,7 +97,14 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
     function addButton($label,$position='end'){
-        return $this->add('Button')->set($label);
+        if($position=='end'){
+            if(!$this->button_append)$this->button_append=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
+            return $this->button_append->add('Button')->set($label);
+        }else{
+            if(!$this->button_prepend)$this->button_prepend=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
+            return $this->button_prepend->add('Button')->set($label);
+        }
+        return $this;
     }
     function addComment($text){
         return $this->add('HtmlElement',null,'after_field')->setElement('ins')->set($text);
@@ -227,6 +237,12 @@ abstract class Form_Field extends AbstractView {
 		$this->template->trySet('field_name',$this->name);
 		$this->template->trySet('field_comment',$this->comment);
 		// some fields may not have field_imput tag at all...
+        if($this->button_prepend || $this->button_append){
+            $this->field_prepend.='<div class="input-cell expanded">';
+            $this->field_append='</div>'.$this->field_append;
+            $this->template->trySet('input_row_start','<div class="input-row">');
+            $this->template->trySet('input_row_stop','</div>');
+        }
 		$this->template->trySet('field_input',$this->field_prepend.$this->getInput().$this->field_append);
 		$this->template->trySet('field_error',
 				isset($this->owner->errors[$this->short_name])?

@@ -74,7 +74,7 @@ abstract class AbstractObject {
     }
     /** Removes object from parent and prevents it from renedring */
     function destroy(){
-        foreach($this->elements as $el){
+        foreach($this->elements as $el)if($el instanceof AbstractObject){
             $el->destroy();
         }
         unset($this->elements);

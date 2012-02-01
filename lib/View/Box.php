@@ -30,8 +30,9 @@ class View_Box extends View {
         return $this;
     }
     /** View box can be closed by clicking on the cross */
-    function hasClose($state=true){
+    function addClose($state=true){
         $this->has_close=$state;
+        return $this;
     }
     /** By default box uses information Icon. You can use addIcon() to override or $this->del('Icon') to remove. */
     function addIcon($i){

@@ -168,6 +168,10 @@ abstract class AbstractView extends AbstractObject {
             $cutting_here=true;
         }
 
+        if(!isset($this->elements)){
+            var_Dump($this->elements);
+            throw $this->exception('ops');
+        }
         foreach($this->elements as $key=>$obj){
             if($obj instanceof AbstractView){
                 $obj->recursiveRender();
@@ -313,8 +317,4 @@ abstract class AbstractView extends AbstractObject {
         }
         return $js;
     }
-
-
-    /* frame(): Obsolete. ->add('Frame') or Use Controller_Compat_Frame */
-    /* ajax(): Obsolete. ->js()->univ() or Use Controller_Compat_Frame */
 }

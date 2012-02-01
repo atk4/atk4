@@ -81,8 +81,8 @@ $.widget('ui.atk4_notify', {
 		/*
 		 * This display a message which you would commonly use on successful operation completion.
 		 */
-		var html=$('<div class="atk-growl ui-widget-content ui-corner-all"><i class="atk-icon"></i>'
-				+text+'<i class="ui-icon ui-icon-closethick"></i></div>');
+		var html=$('<div class="atk-notification ui-state-highlight ui-corner-all"><div class="atk-notification-text"><i class="atk-icon"></i>'
+				+text+'</div><a href="javascript:void()" title="Hide this message" class="ui-icon ui-icon-closethick"></i></div>');
 		if(icon){
             html.find('.atk-icon').addClass('atk-icons-green');
             html.find('.atk-icon').addClass('atk-icon-'+icon);

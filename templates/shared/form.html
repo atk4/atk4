@@ -7,7 +7,8 @@
       <?form_line?>
       <div class="atk-form-row atk-form-row-<?$field_type?>">
         <label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label>
-        <div class="atk-form-field"><?$before_field?><?field_input?><input/><?/?><?$after_field?></div>
+        <div class="atk-form-field"><?$before_field?><?$before_input?><?$input_row_start?><?field_input?><input/>
+          <?/?><?$after_input?><?$input_row_stop?><?$after_field?></div>
         <?$field_hint?>
         <?field_error?>
         <div class="atk-form-error">
