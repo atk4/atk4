@@ -107,7 +107,7 @@ class Model_Table extends Model {
     /** Produces Dynamic SQL and adds specified fields, referenced fields and expressions. Useful for select statements */
     function selectQuery($fields=null){
         if($fields===null)$fields=$this->getActualFields();
-        $select=$this->dsql();
+        $select=$this->dsql;
         $select->del('fields');
 
         // add system fields into select
@@ -240,7 +240,7 @@ class Model_Table extends Model {
 
 
     function getRows($fields=null){
-        return $this->selectQuery($this->getActualFields($fields))->do_getAll();
+        return $this->selectQuery($fields)->do_getAll();
     }
     function isInstanceLoaded(){ return $this->loaded(); }
     /** Loads record specified by ID. If omitted will load first matching record */

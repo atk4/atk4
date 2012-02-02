@@ -82,7 +82,6 @@ class Controller_MVCForm extends AbstractController {
             $field_type='dropdown';
         }
 
-
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
