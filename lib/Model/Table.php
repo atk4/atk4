@@ -107,7 +107,7 @@ class Model_Table extends Model {
     /** Produces Dynamic SQL and adds specified fields, referenced fields and expressions. Useful for select statements */
     function selectQuery($fields=null){
         if($fields===null)$fields=$this->getActualFields();
-        $select=$this->dsql;
+        $select=$this->dsql();
         $select->del('fields');
 
         // add system fields into select
@@ -134,7 +134,8 @@ class Model_Table extends Model {
     function titleQuery(){
         $query=$this->dsql();
         if($this->title_field && $this->hasElement($this->title_field)){
-            return $this->getElement($this->title_field)->updateSelectQuery($query);
+            $this->getElement($this->title_field)->updateSelectQuery($query);
+            return $query;
         }
         return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
     }
@@ -192,10 +193,6 @@ class Model_Table extends Model {
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond,$value=undefined){
-        if($value===undefined){
-            $value=$cond;
-            $cond=undefined;
-        }
 
         if(!$field instanceof Field){
             $field=$this->getElement($field);
@@ -214,8 +211,7 @@ class Model_Table extends Model {
     }
     /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
-        $field=$this->getElement($field);
-        $field->defaultValue($value)->system(true)->editable(false);
+        $this->getElement($field)->defaultValue($value)->system(true)->editable(false);
         return $this->addCondition($field,$value);
     }
 
@@ -255,6 +251,7 @@ class Model_Table extends Model {
 
         $this->hook('beforeLoad',array($load));
 
+
         $data = $load->limit(1)->get();
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')
@@ -276,7 +273,7 @@ class Model_Table extends Model {
         $this->hook('afterUnload');
     }
     function save(){
-        $insert->owner->beginTransaction();
+        $this->dsql->owner->beginTransaction();
         $this->hook('beforeSave');
 
         // decide, insert or modify
@@ -287,7 +284,7 @@ class Model_Table extends Model {
         }
 
         $this->hook('afterSave');
-        $insert->owner->commit();
+        $this->dsql->owner->commit();
         return $this;
     }
     function insert(){
