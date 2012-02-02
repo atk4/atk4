@@ -150,13 +150,13 @@ class Model_Table extends Model {
     }
     public $relations=array();
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
-	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
 
         if(!$_foreign_alias)$_foreign_alias='_'.$foreign_table[0];
         $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
 
         return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
-            ->set($foreign_table,$master_field, $join_kind);
+            ->set($foreign_table,$master_field, $join_kind,$relation);
     }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
@@ -252,6 +252,7 @@ class Model_Table extends Model {
         $this->hook('beforeLoad',array($load));
 
 
+        $load->stmt=null;
         $data = $load->limit(1)->get();
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')

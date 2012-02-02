@@ -16,24 +16,21 @@ class SQL_Relation extends AbstractModel {
 
     function init(){
         parent::init();
+        $this->table_alias=$this->short_name;
     }
 
     function addField($n){
         return $this->owner->addField($n)->from($this);
     }
 	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
-        return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias)
-            ->relation($this);
-    }
-    function relation($relation){
-        $this->relation=$relation;
-        return $this;
+        return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias,$this);
     }
     function hasOne(){
     }
 
-    function set($foreign_table,$master_field=null,$join_kind=null){
+    function set($foreign_table,$master_field=null,$join_kind=null,$relation=null){
 
+        $this->relation=$relation;
 
         // Split and deduce fields
         list($f1,$f2)=explode('.',$foreign_table,2);
