@@ -25,7 +25,8 @@ class SQL_Relation extends AbstractModel {
 	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
         return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias,$this);
     }
-    function hasOne(){
+    function hasOne($model,$our_field=null,$display_field=null){
+        $this->owner->hasOne($model,$our_field,$display_field)->from($this);
     }
 
     function set($foreign_table,$master_field=null,$join_kind=null,$relation=null){

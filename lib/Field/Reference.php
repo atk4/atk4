@@ -11,11 +11,11 @@ class Field_Reference extends Field {
         $this->owner->addExpression($this->getDereferenced())
             ->set(array($this,'calculateSubQuery'));
 
-        $this->display('dropdown')->visible(false);
+        //$this->display('dropdown')->visible(false);
 
         return $this;
     }
-    function getRef(){
+    function ref(){
         return $this->model->load($this->get());
     }
     function getDereferenced(){
