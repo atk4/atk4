@@ -9,9 +9,9 @@ class Field_Reference extends Field {
         if($display_field)$this->display_field=$display_field;
 
         $this->owner->addExpression($this->getDereferenced())
-            ->set(array($this,'calculateSubQuery'));
+            ->set(array($this,'calculateSubQuery'))->caption($this->caption());
 
-        //$this->display('dropdown')->visible(false);
+        $this->display('dropdown')->visible(false);
 
         return $this;
     }
@@ -26,17 +26,17 @@ class Field_Reference extends Field {
         $f=$this->_unique($this->owner->elements,$f);
         return $f;
     }
+    function destroy(){
+        $this->owner->getElement($this->getDereferenced())->destroy();
+        return parent::destroy();
+    }
     function calculateSubQuery($select){
         if(is_string($this->model))$this->model=$this->add('Model_'.$this->model);
 
+
         $title=$this->model->titleQuery();
-        $title->where($select->getField($this->short_name),
+        $title->where(($this->relation?$this->relation->short_name.'.':'').$this->short_name,
             $title->getField($this->model->id_field));
         return $title;
-
-        /*
-        $select->field($title,$this->getDereferenced());
-        return $this;
-         */
     }
 }

@@ -59,6 +59,10 @@ class Model_Table extends Model {
             if($d=='query')$this->debug();
         }
 
+        if($this->owner instanceof Field_Reference && $this->owner->owner->relations){
+            $this->relations =& $this->owner->owner->relations;
+        }
+
         $this->addField($this->id_field)->system(true);
     }
     /** exception() will automatically add information about current model and will allow to turn on "debug" mode */
@@ -137,7 +141,7 @@ class Model_Table extends Model {
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
         }
-        return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
+        return $query->field($query->expr('concat("Record #",'.$query->bt($this->dsql->getField($this->id_field)).')'));
     }
     // }}}
 
@@ -201,7 +205,7 @@ class Model_Table extends Model {
             // TODO: should we use expression in where?
             $this->dsql->having($field->short_name,$cond,$value);
         }elseif($field->relation){
-            $this->dsql->where($field->relation->m1.'.'.$field->short_name,$cond,$value);
+            $this->dsql->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
         }elseif($this->relations){
             $this->dsql->where($this->table_alias?:$this->table.'.'.$field->short_name,$cond,$value);
         }else{

@@ -31,6 +31,7 @@ class Field_Expression extends Field {
     function editable(){
         return false;
     }
+    /** specify DSQL, String or funciton($master_dsql,$this) */
     function set($expr=null){
         $this->expr=$expr;
         return $this;

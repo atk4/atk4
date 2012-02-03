@@ -77,18 +77,24 @@ abstract class AbstractObject {
         foreach($this->elements as $el)if($el instanceof AbstractObject){
             $el->destroy();
         }
-        unset($this->elements);
-        if($this->model){
+        if($this->model && $this->model instanceof AbstractObject){
             $this->model->destroy();
             unset($this->model);
         }
-        if($this->controller){
+        if($this->controller && $this->controller instanceof AbstractObject){
             $this->controller->destroy();
             unset($this->controller);
         }
         $this->owner->_removeElement($this->short_name);
     }
     /** Remove child element if it exists */
+    function removeElement($short_name){
+        if(is_object($this->elements[$short_name])){
+            $this->elements[$short_name]->destroy();
+        }
+        else unset($this->elements[$short_name]);
+        return $this;
+    }
     function _removeElement($short_name){
         unset($this->elements[$short_name]);
         return $this;
@@ -196,6 +202,16 @@ abstract class AbstractObject {
     /** Find child element. Use in condition. */ 
     function hasElement($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;
+    }
+    /** Names object accordingly. May not work on some objects */
+    function rename($short_name){
+        unset($this->owner->elements[$this->short_name]);
+        $this->name = $this->name . '_' . $short_name;
+        $this->short_name = $short_name;
+        $this->owner->elements[$short_name]=$this;
+        if(!$this->auto_track_element)
+            $this->owner->elements[$short_name]=true; 
+        return $this;
     }
     // }}} 
 
@@ -511,6 +527,7 @@ abstract class AbstractObject {
      */
     function _unique(&$array,$desired=null){
         $postfix=1;$attempted_key=$desired;
+        if(!is_array($array))throw $this->exception('not array');
         while(array_key_exists($attempted_key,$array)){
             // already used, move on
             $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);

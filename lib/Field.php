@@ -40,7 +40,11 @@ class Field extends AbstractModel {
     }
 
     function type($t=undefined){ return $this->setterGetter('type',$t); }
-    function caption($t=undefined){ if($t===undefined && !$this->caption)return ucwords(strtr($this->short_name,'_',' ')); return $this->setterGetter('caption',$t); }
+    function caption($t=undefined){ 
+        if($t===undefined && !$this->caption)
+            return ucwords(strtr(preg_replace('/_id$/','',$this->short_name),'_',' ')); 
+        return $this->setterGetter('caption',$t); 
+    }
     function group($t=undefined){ return $this->setterGetter('group',$t); }
     function readonly($t=undefined){ return $this->setterGetter('readonly',$t); }
     function mandatory($t=undefined){ return $this->setterGetter('mandatory',$t); }
@@ -105,7 +109,11 @@ class Field extends AbstractModel {
     }
     /** Get value of this field formatted for SQL. Redefine if you need to convert */
     function getSQL(){
-        return $this->owner->get($this->short_name);
+        $val=$this->owner->get($this->short_name);
+        if($val=='' && ($this->listData || $this instanceof Field_Reference)){
+            $val=null;
+        }
+        return $val;
     }
 
     // OBSOLETE
