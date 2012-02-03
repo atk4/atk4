@@ -134,7 +134,8 @@ class Model_Table extends Model {
     function titleQuery(){
         $query=$this->dsql();
         if($this->title_field && $this->hasElement($this->title_field)){
-            return $this->getElement($this->title_field)->updateSelectQuery($query);
+            $this->getElement($this->title_field)->updateSelectQuery($query);
+            return $query;
         }
         return $query->field($query->expr('concat("Record #",'.$query->bt($this->id_field).')'));
     }
@@ -149,13 +150,13 @@ class Model_Table extends Model {
     }
     public $relations=array();
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
-	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
 
         if(!$_foreign_alias)$_foreign_alias='_'.$foreign_table[0];
         $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
 
         return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
-            ->set($foreign_table,$master_field, $join_kind);
+            ->set($foreign_table,$master_field, $join_kind,$relation);
     }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
@@ -192,10 +193,6 @@ class Model_Table extends Model {
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond,$value=undefined){
-        if($value===undefined){
-            $value=$cond;
-            $cond=undefined;
-        }
 
         if(!$field instanceof Field){
             $field=$this->getElement($field);
@@ -214,8 +211,7 @@ class Model_Table extends Model {
     }
     /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
-        $field=$this->getElement($field);
-        $field->defaultValue($value)->system(true)->editable(false);
+        $this->getElement($field)->defaultValue($value)->system(true)->editable(false);
         return $this->addCondition($field,$value);
     }
 
@@ -244,7 +240,7 @@ class Model_Table extends Model {
 
 
     function getRows($fields=null){
-        return $this->selectQuery($this->getActualFields($fields))->do_getAll();
+        return $this->selectQuery($fields)->do_getAll();
     }
     function isInstanceLoaded(){ return $this->loaded(); }
     /** Loads record specified by ID. If omitted will load first matching record */
@@ -255,6 +251,8 @@ class Model_Table extends Model {
 
         $this->hook('beforeLoad',array($load));
 
+
+        $load->stmt=null;
         $data = $load->limit(1)->get();
         $this->reset();
         if(!isset($data[0]))throw $this->exception('Record could not be loaded')
@@ -276,7 +274,7 @@ class Model_Table extends Model {
         $this->hook('afterUnload');
     }
     function save(){
-        $insert->owner->beginTransaction();
+        $this->dsql->owner->beginTransaction();
         $this->hook('beforeSave');
 
         // decide, insert or modify
@@ -287,7 +285,7 @@ class Model_Table extends Model {
         }
 
         $this->hook('afterSave');
-        $insert->owner->commit();
+        $this->dsql->owner->commit();
         return $this;
     }
     function insert(){

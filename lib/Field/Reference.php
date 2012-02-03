@@ -11,11 +11,11 @@ class Field_Reference extends Field {
         $this->owner->addExpression($this->getDereferenced())
             ->set(array($this,'calculateSubQuery'));
 
-        $this->display('dropdown')->visible(false);
+        //$this->display('dropdown')->visible(false);
 
         return $this;
     }
-    function getRef(){
+    function ref(){
         return $this->model->load($this->get());
     }
     function getDereferenced(){
@@ -30,7 +30,8 @@ class Field_Reference extends Field {
         if(is_string($this->model))$this->model=$this->add('Model_'.$this->model);
 
         $title=$this->model->titleQuery();
-        $title->where($select->getField($this->short_name),$title->getField($this->model->id_field));
+        $title->where($select->getField($this->short_name),
+            $title->getField($this->model->id_field));
         return $title;
 
         /*
