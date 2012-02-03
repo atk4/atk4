@@ -11,7 +11,7 @@ class Field_Reference extends Field {
         $this->owner->addExpression($this->getDereferenced())
             ->set(array($this,'calculateSubQuery'))->caption($this->caption());
 
-        $this->display('dropdown')->visible(false);
+        //$this->display('dropdown')->visible(false);
 
         return $this;
     }
