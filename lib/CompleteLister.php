@@ -79,7 +79,7 @@ class CompleteLister extends Lister {
 		if(@$_GET[$this->name.'_reload_row']){
 			$r=$this->template->cloneRegion('rows')->render();
 			if($this->api->jquery)$this->api->jquery->getJS($this);
-			$e=new RenderObjectSuccess($r);
+			$e=new StopRender($r);
 			throw $e;
 		}
 
