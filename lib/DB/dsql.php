@@ -350,7 +350,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
                 // IF COMPAT
                 $matches[1]=$this->expr($field);
-                $cond=undefined;
+                if($value)$cond='=';
                 //throw $this->exception('Field is specified incorrectly or condition is not supported')
                     //->addMoreInfo('field',$field);
             }
@@ -552,7 +552,11 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!$this->args['order'])return'';
         $x=array();
         foreach($this->args['order'] as $arg){
-            $x[]=$this->bt($arg);
+            if(substr($arg,-5)==' desc'){
+                $x[]=$this->bt(substr($arg,0,-5)).' desc';
+            }else{
+                $x[]=$this->bt($arg);
+            }
         }
         return 'order by '.implode(', ',$x);
     }
@@ -851,6 +855,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->getOne(); 
     }
     /** @obsolete. Use get() */
+    function do_getAllHash(){ 
+        return $this->get(); 
+    }
     function do_getAll(){ 
         return $this->get(); 
     }
