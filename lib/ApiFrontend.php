@@ -28,12 +28,20 @@ class ApiFrontend extends ApiWeb{
 
     // {{{ Layout Implementation
     /** Content in the global (shared.html) template is rendered by page object. This method loads either class or static file */
+    function initLayout(){
+        parent::initLayout();
+        $this->addLayout('Content');
+        $this->upgradeChecker();
+    }
     function layout_Content(){
         // required class prefix depends on the content_type
         // This function initializes content. Content is page-dependant
         $page=str_replace('/','_',$this->page);
         $page=str_replace('-','',$page);
         $class=$this->content_type.'_'.$page;
+
+        if($this->api->page_object)return;   // page is already initialized;
+
         if(method_exists($this,$class)){
             // for page we add Page class, for RSS - RSSchannel
             // TODO - this place is suspicious. Can it call arbitary function from API?
