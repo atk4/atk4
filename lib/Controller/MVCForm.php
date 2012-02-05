@@ -78,7 +78,7 @@ class Controller_MVCForm extends AbstractController {
 
         $this->field_associations[$field_name]=$field;
 
-        if($field->listData()){
+        if($field->listData() || $field instanceof Field_Reference){
             $field_type='dropdown';
         }
 

@@ -281,6 +281,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;
+            if($alias==$field)$alias=undefined;
             $field=$this->consume($field);
             if(!$field){
                 $field=$table;
@@ -737,6 +738,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         $this->template="call [fx]([args])";
         return $this;
+    }
+    function sum($arg=null){
+        return $this->expr('sum([sum])')->setCustom('sum',$this->bt($arg));
     }
     function render_fx(){
         return $this->args['fx'];

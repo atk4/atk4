@@ -561,7 +561,7 @@ class Form_Field_ValueList extends Form_Field {
         if($this->model){
             $title=$this->model->getTitleField();
 			$data=$this->model->getRows(array($this->model->id_field,$title));
-			$res=array('');
+			$res=array(''=>'');
 			foreach($data as $row){
 				$res[$row[$this->model->id_field]]=$row[$title];
 			}
