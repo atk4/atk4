@@ -18,6 +18,11 @@ class TMail_Basic extends AbstractModel {
         $this->headers=$master_template->cloneRegion('headers');
 
         $this->boundary=str_replace('.','',uniqid('atk4tmail',true));
+
+        // Add default transport as per configuration file
+        if($tr=$this->api->get('tmail/default_transport',false)){
+            $this->addTransport($tr);
+        }
     }
     function extractEmail($fuzzy_email){
         preg_match('/^(?:"?([^@"]+)"?\s)?<?([^>]+@[^>]+)>?$/',$fuzzy_email,$m);
