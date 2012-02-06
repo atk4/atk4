@@ -175,14 +175,15 @@ class Model_Table extends Model {
     function hasOne($model,$our_field=null,$display_field=null){
         if(!$our_field){
             if(!is_object($model)){
-                $tmp='Model_'.$model;
+                $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
             $our_field=($tmp->table?:$tmp->entity_code).'_id';
         }
         $r=$this->add('Field_Reference',$our_field);
         if($display_field)$r->display($display_field);
-        return $r->setModel($model);
+        $r->setModel($model);
+        return $r;
     }
     /** Defines many to one association */
     function hasMany($model,$their_field=null,$our_field=null){
@@ -195,11 +196,26 @@ class Model_Table extends Model {
     function ref($name){
         return $this->getElement($name)->ref();
     }
+    function getRef($name){
+        return $this->ref($name);
+    }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
-    function addCondition($field,$cond,$value=undefined){
+    function addCondition($field,$cond=undefined,$value=undefined){
+
+        if($field instanceof DB_dsql && $cond==undefined && $value==undefined){
+            $this->dsql->where($field);
+            return $this;
+        }
 
         if(!$field instanceof Field){
             $field=$this->getElement($field);
+        }
+        if($field->type() == 'boolean'){
+            if($value===undefined){
+                $cond=$cond===true?'Y':($cond===false?'N':null);
+            }else{
+                $value=$value===true?'Y':($value===false?'N':null);
+            }
         }
         if($field->calculated()){
             // TODO: should we use expression in where?
@@ -269,6 +285,25 @@ class Model_Table extends Model {
         $this->hook('afterLoad');
 
         return $this;
+    }
+    function loadBy($field,$cond=undefined,$value=undefined){
+        $q=clone $this->dsql;
+        $this->addCondition($field,$cond,$value);
+        $this->load();
+        $this->dsql=$q;
+        return $this;
+    }
+    function getBy($field,$cond=undefined,$value=undefined){
+        $q=clone $this->dsql;
+        $data=$this->data;
+        $id=$this->id;
+        $this->addCondition($field,$cond,$value);
+        $this->load();
+        $row=$this->get();
+        $this->dsql=$q;
+        $this->data=$data;
+        $this->id=$id;
+        return $row;
     }
     function loadData($id=null){ return $this->load($id); }
     function unload(){

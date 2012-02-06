@@ -14,6 +14,7 @@ class Field extends AbstractModel {
     public $defaultValue=null;
     public $auto_track_element=true;
     public $listData=null;
+    public $theModel=null;  // 
 
     public $relation=null;
     public $actual_field=null;
@@ -59,6 +60,8 @@ class Field extends AbstractModel {
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
     function visible($t=undefined){ return $this->setterGetter('visible',$t); }
     function listData($t=undefined){ return $this->setterGetter('listData',$t); }
+    function setModel($t=undefined){ return $this->setterGetter('theModel',$t); }
+    function getModel(){ return $this->theModel; }
     function setValueList($t){ return $this->listData($t); }
     function enum($t){ return $this->listData(array_combine($t,$t)); }
     function from($m){
@@ -140,7 +143,7 @@ class Field extends AbstractModel {
         foreach((Array)$this as $key=>$val){
             $fld->$key=$val;
         }
-        return $this->owner->add($fld)->calculated($v);
+        return $this->owner->add($fld)->set($v);
     }
 
 }

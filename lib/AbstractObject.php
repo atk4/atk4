@@ -144,22 +144,7 @@ abstract class AbstractObject {
 
         // Separate out namespace
         $class_name=str_replace('/','\\',$class);
-        list($namespace,$file)=explode('\\',$class_name);
-        if (!$file && $namespace){
-            $file = $namespace;
-        }
-        // Include class file directly, do not rely on auto-load functionality
-        if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
-            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
-            if(substr($class,0,5)=='page_'){
-                $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
-            }else $path=$this->api->pathfinder->locate('php',$file,'path');
-
-            include_once($path);
-            if(!class_exists($class))throw $this->exception('Class is not defined in file')
-                ->addMoreInfo('file',$path)
-                ->addMoreInfo('class',$class);
-        }
+        if(isset($this->api->pathfinder))$this->api->pathfinder->loadClass($class_name);
         $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
@@ -223,8 +208,9 @@ abstract class AbstractObject {
         return $this;
     }
     function setModel($model){
-        if(is_string($model)&&substr($model,0,strlen('Model'))!='Model')
-            $model='Model_'.$model;
+        if(is_string($model)&&substr($model,0,strlen('Model'))!='Model'){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+        }
         $this->model=$this->add($model);
         return $this;
     }

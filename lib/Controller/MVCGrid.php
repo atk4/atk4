@@ -76,7 +76,11 @@ class Controller_MVCGrid extends AbstractController {
 
         if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
 
-        if($field->display())$type=$field->display();
+        if($field->display()){
+            $tmp=$field->display();
+            if(is_array($tmp))$tmp=$tmp['grid'];
+            if($tmp)$type=$tmp;
+        }
 
         return $type;
     }

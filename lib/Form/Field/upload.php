@@ -23,43 +23,44 @@
 
 
 
- * Controller Support.
- *  You can use setController($c); where $c should be Class_Filestore_File. You can set necessary
- *  option for the file through controller, but overal once upload process is complete, file will
- *  be saved properly. Field will contain list of "id" for uploaded files.
+ * Mode Support.
+ *  You can use setModel('filestore/File'); This will use the model for file upload handling. You
+ *  can specify your own model, which derives from either filestore\Model_File or filestore\Model_Image
+ *  Field value will always contain "id" of uploaded file. If multiple file upload is permitted, field
+ *  will contain comma-separated list of IDs.
 
- * If you are not using controllers, then $field->isUploaded() will return true every time file
- *  was uploaded. Note that without controller this field will no longer move any files, so it's
- *  up to you to perform the necessary moves. Also - you should perform this check outside form's
- *  isSubmitted().
- * 
- *  It is now your job to call $field->setReference(); once you have moved file into proper location.
- *
- * Example1: Simple use with controler
+ * Example1: Simple use with model
 
- $upl=$form->addField('upload','myfile')
- ->setController('Controller_Filestore_File')
+ $upl=$form->addField('upload','myfile_id')
+     ->setModel('filestore/File');
 
- * Example2: Custom mode with controller
+ * Example2: Customizing field
 
- $upl=$form->addField('upload','photo','Photo')
- ->setController('Controller_Filestore_Image')
- ->setMode('flash')
- ->allowMultiple(false)
- ;
+ $upl=$form->addField('upload','photo_id','Photo')
+     ->setController('filestore/Image')
+     ->allowMultiple(false)
+       ;
  $upl->template->set('after_field','Max size: 500k');
 
 
- * Example3: Use without controllers
+ * Example3: Specifying inside Model
+ 
+$model=$this->add('Model_Book');
+$model->add('filestore/Field_Image','picture_id');
 
- $upl=$form->addField('upload','photo','Photo')
- ->setMode('plain')
- ->allowMultiple(false)
- ;
- if($upl->isUploaded()){
- $n=sanitize($upl->
- }
+$this->add('Form')->setModel($model);
 
+ * Example4: Use of your custom model
+ 
+$this->api->stickyGET('user_id');
+$myfile=$this->add('filestore/Image');
+$myfile->join('user_images.file_id')->setMasterField('user_id',$_GET['user_id']);
+$form->addField('upload','photo')
+    ->setNoSave()->setModel($myfile);
+
+This last example will implement many-to-many relationship between file object
+and user_id. This is implemented through intermediate table user_images, which
+is joined with an image model.
 
 
  */
@@ -91,16 +92,24 @@ class Form_Field_Upload extends Form_Field {
 			$_POST=array();
 		}
 		if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
-			if($c=$this->getController()){
+            echo "UPL";
+			if($this->model){
 				try{
-					$c->set('filestore_volume_id',1);
-					$c->set('original_filename',$this->getOriginalName());
-					$c->set('filestore_type_id',$c->getFiletypeID($this->getOriginalType()));
-					$c->import($this->getFilePath());
-					$c->update();
+                    $model=$this->model;
+                    echo 1;
+					$model->set('filestore_volume_id',1);
+                    echo 2;
+					$model->set('original_filename',$this->getOriginalName());
+                    echo 3;
+					$model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
+                    echo 4;
+					$model->import($this->getFilePath());
+                    echo 5;
+					$model->update();
+                    echo 6;
 				}catch(Exception $e){
 					$this->api->logger->logException($e);
-					$this->uploadFailed($e->getMessage());
+					$this->uploadFailed($e->getText());
 				}
 
 				$this->uploadComplete($c->get());
@@ -180,14 +189,15 @@ class Form_Field_Upload extends Form_Field {
 	// those can be done in flash thingie as well
 
 	function getUploadedFiles(){
-		if($c=$this->getController()){
+		if($c=$this->model){
 
 			$a=explode(',',$this->value);$b=array();
 			foreach($a as $val)if($val)$b[]=$val;
 			$files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
-			$c->addCondition('id in',($files?$files:0));
-
-			$data=$c->getRows(array('id','original_filename','filesize'));
+            if($files){
+                $c->addCondition('id','in',($files?$files:0));
+                $data=$c->getRows(array('id','original_filename','filesize'));
+            }else $data=array();
 			return $this->formatFiles($data);
 		}
 	}
@@ -202,7 +212,7 @@ class Form_Field_Upload extends Form_Field {
 		if($id=$_GET[$this->name.'_delete_action']){
 			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
 			// This is JavaScript upload. We do not want to trigger form submission event
-			if($c=$this->getController()){
+			if($c=$this->model){
                 try {
                     $c->loadData($id);
                     $c->delete();
@@ -217,7 +227,7 @@ class Form_Field_Upload extends Form_Field {
 		if($id=$_GET[$this->name.'_save_action']){
 			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
 			// This is JavaScript upload. We do not want to trigger form submission event
-			if($c=$this->getController()){
+			if($c=$this->model){
 				$c->loadData($id);
 				$f=$c;
 				$mime = $f->getRef('filestore_type_id')->get('mime_type');

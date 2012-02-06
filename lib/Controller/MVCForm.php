@@ -94,6 +94,10 @@ class Controller_MVCForm extends AbstractController {
         }
 
         if($field instanceof Field_Reference)$form_field->setModel($field->model);
+        if($field->theModel){
+            echo $form_field;
+            $form_field->setModel($field->theModel);
+        }
 
         return $form_field;
     }
@@ -115,7 +119,11 @@ class Controller_MVCForm extends AbstractController {
         if(isset($this->type_associations[$field->type()]))$type=$this->type_associations[$field->type()];
         if($field instanceof Model_Field_Reference)$type='dropdown';
 
-        if($field->display())$type=$field->display();
+        if($field->display()){
+            $tmp=$field->display();
+            if(is_array($tmp))$tmp=$tmp['form'];
+            if($tmp)$type=$tmp;
+        }
 
         return $type;
     }

@@ -11,12 +11,14 @@ class Field_Reference extends Field {
         $this->owner->addExpression($this->getDereferenced())
             ->set(array($this,'calculateSubQuery'))->caption($this->caption());
 
-        //$this->display('dropdown')->visible(false);
+        $this->visible(false);
 
         return $this;
     }
     function ref(){
-        return $this->model->load($this->get());
+        $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+        $model=$this->add($model);
+        return $model->load($this->get());
     }
     function getDereferenced(){
         if($this->dereferenced_field)return $this->dereferenced_field;
