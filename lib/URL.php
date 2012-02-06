@@ -43,7 +43,7 @@ class URL extends AbstractModel {
         $this->addStickyArguments();
         $this->extension=$this->api->getConfig('url_postfix',$this->extension);
     }
-    /* [private] add arguments set as sticky through API */
+    /** [private] add arguments set as sticky through API */
     function addStickyArguments(){
         $sticky=$this->api->getStickyArguments();
         $args=array();
@@ -64,7 +64,7 @@ class URL extends AbstractModel {
         }
         $this->setArguments($args);
     }
-    /* Call this if you want full URL, not relative */
+    /** Call this if you want full URL, not relative */
     function useAbsoluteURL(){
         /*
            Produced URL will contain absolute, rather than relative address:
@@ -73,7 +73,7 @@ http://mysite:123/install/dir/my/page.html
         $this->absolute=true;
         return $this;
     }
-    /* [private] automatically called with 1st argument of getDestinationURL() */
+    /** [private] automatically called with 1st argument of getDestinationURL() */
     function setPage($page=null){
         // The following argument formats are supported:
         //
@@ -119,12 +119,12 @@ http://mysite:123/install/dir/my/page.html
         $this->page=$destination;
         return $this;
     }
-    /* Set additional arguments */
+    /** Set additional arguments */
     function set($argument,$value=null){
         if(!is_array($argument))$argument=array($argument=>$value);
         return $this->setArguments($argument);
     }
-    /* Set arguments to specified array */
+    /** Set arguments to specified array */
     function setArguments($arguments=array()){
         // add additional arguments
         if(is_null($arguments))$arguments=array();
@@ -143,7 +143,7 @@ http://mysite:123/install/dir/my/page.html
 	function setURL($url){
 		return $this->setBaseURL($url);
 	}
-    /* By default uses detected base_url, but you can use this to redefine */
+    /** By default uses detected base_url, but you can use this to redefine */
     function setBaseURL($base){
         $this->base_url=$base;
         return $this;
@@ -192,7 +192,7 @@ http://mysite:123/install/dir/my/page.html
 
         return $url;
     }
-    /* Returns html-encoded URL */
+    /** Returns html-encoded URL */
     function getHTMLURL(){
         return htmlentities($this->getURL());
     }

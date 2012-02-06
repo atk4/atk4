@@ -68,6 +68,7 @@ abstract class AbstractView extends AbstractObject {
             if($this->controller->hasMethod('setActualFields'))$this->controller->setActualFields($actual_fields);
             if($this->controller->hasMethod('_bindView'))$this->controller->_bindView();
         }
+        if($this->model instanceof Model_Table)$this->dq=$this->model->dsql;    // compatibility
 
         return $this->model;
     }
