@@ -229,6 +229,10 @@ class Model_Table extends Model {
         }
         return $this;
     }
+    function setOrder($field,$desc=false){
+        $this->dsql->order($field,$desc);
+        return $this;
+    }
     /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
         $this->getElement($field)->defaultValue($value)->system(true)->editable(false);
@@ -329,14 +333,16 @@ class Model_Table extends Model {
     }
     function insert(){
         $insert = $this->dsql();
+
+        // Performs the actual database changes. Throw exception if problem occurs
+        $this->hook('beforeInsert',array($insert));
+
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
 
             $f->updateInsertQuery($insert);
         }
 
-        // Performs the actual database changes. Throw exception if problem occurs
-        $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
 
@@ -347,16 +353,16 @@ class Model_Table extends Model {
         $modify = $this->dsql();
         $modify->where($this->id_field, $this->id);
 
-        if(!$this->dirty)return $this;
+        // Performs the actual database changes. Throw exceptions if problem occurs
+        $this->hook('beforeModify',array($modify));
 
+        if(!$this->dirty)return $this;
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
                 $el->updateModifyQuery($modify);
             }
         }
 
-        // Performs the actual database changes. Throw exceptions if problem occurs
-        $this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
 

@@ -81,6 +81,7 @@ class Page_Tester extends Page {
                 try{
                     $result=(string)$test_obj->$test_func($input[0],$input[1]);
                 }catch (Exception $e){
+                    throw $e;
                     $result='Exception: '.(method_exists($e,'getText')?
                         $e->getText():
                         $e->getMessage());

@@ -122,6 +122,14 @@ abstract class AbstractObject {
             $class->owner = $this;
             $class->di_config = array_merge($class->di_config,$di_config);
             return $class;
+        }elseif($class[0]=='.'){
+            $tmp=explode('\\',get_class($this));
+            if(!$tmp[1]){
+                $ns='';
+            }else{
+                $ns=$tmp[0];
+            }
+            $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
             $short_name = strtolower($class);

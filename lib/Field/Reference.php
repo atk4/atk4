@@ -33,8 +33,10 @@ class Field_Reference extends Field {
         return parent::destroy();
     }
     function calculateSubQuery($select){
-        if(is_string($this->model))$this->model=$this->add('Model_'.$this->model);
-
+        if(is_string($this->model)){
+            $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+            $this->model=$this->add($this->model);
+        }
 
         $title=$this->model->titleQuery();
         $title->where(($this->relation?$this->relation->short_name.'.':'').$this->short_name,
