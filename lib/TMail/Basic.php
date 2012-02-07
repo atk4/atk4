@@ -20,7 +20,7 @@ class TMail_Basic extends AbstractModel {
         $this->boundary=str_replace('.','',uniqid('atk4tmail',true));
 
         // Add default transport as per configuration file
-        if($tr=$this->api->get('tmail/default_transport',false)){
+        if($tr=$this->api->getConfig('tmail/default_transport',false)){
             $this->addTransport($tr);
         }
     }
@@ -64,6 +64,7 @@ class TMail_Basic extends AbstractModel {
         }else{
             $this->set($t);
         }
+        return $this;
     }
     function setTag($arg,$val=null){
         return $this->set($arg,$val);
