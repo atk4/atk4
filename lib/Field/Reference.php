@@ -16,9 +16,11 @@ class Field_Reference extends Field {
         return $this;
     }
     function ref(){
-        $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
-        $model=$this->add($model);
-        return $model->load($this->get());
+        if(is_string($this->model)){
+            $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+            $this->model=$this->add($this->model);
+        }
+        return $this->model->load($this->get());
     }
     function getDereferenced(){
         if($this->dereferenced_field)return $this->dereferenced_field;

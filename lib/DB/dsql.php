@@ -322,6 +322,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      *  $q->where(array('a is null','b is null'));
      */
     function where($field,$cond=undefined,$value=undefined,$kind='where'){
+        if($field=='id' &&!$cond)throw $this->exception('ouch');
 
         if(is_array($field)){
             // or conditions

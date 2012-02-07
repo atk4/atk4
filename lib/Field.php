@@ -10,6 +10,7 @@ class Field extends AbstractModel {
     public $display=null;
     public $caption=null;
     public $group=null;
+    public $allowHTML=false;
     public $mandatory=false;
     public $defaultValue=null;
     public $auto_track_element=true;

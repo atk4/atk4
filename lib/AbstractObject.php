@@ -211,7 +211,7 @@ abstract class AbstractObject {
     // {{{ Model and Controller handling
     function setController($controller){
         if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
-            $controller='Controller_'.$controller;
+            $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
         $this->controller=$this->add($controller);
         return $this;
     }

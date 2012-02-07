@@ -123,7 +123,7 @@ class PathFinder extends AbstractController {
 
 			$path=$location->locate($type,$filename,$return);
 
-			if(is_string($path)){
+			if(is_string($path) || is_object($path)){
 				// file found!
 				return $path;
 			}elseif(is_array($path)){
@@ -184,7 +184,7 @@ class PathFinder extends AbstractController {
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
             if($namespace){
-                $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.$file);
+                $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
 
                 if(!is_readable($path)){
                     throw new PathFinder_Exception('addon',$path,$prefix);
@@ -356,6 +356,7 @@ class PathFinder_Location extends AbstractModel {
 					throw new PathFinder_Exception($type,$filename,$f,'File found but it is not readable');
 				}
 
+				if($return=='location')return $this;
 				if($return=='relative')return $pathfile;
 				if($return=='url')return $this->getURL($pathfile);
 				if($return=='path')return $f;

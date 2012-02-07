@@ -265,14 +265,6 @@ class Form_Basic extends AbstractView {
             ->setLabel($label);
     }
 
-    function setCondition($field,$value=null){
-        if(!$this->dq)throw new BaseException('Cannot set condition on empty $form->dq');
-        $this->dq
-            ->set($field,$value)
-            ->where($field,$value);
-        $this->conditions[$field]=$value;
-        return $this;
-    }
     function setConditionFromGET($field='id',$get_field=null){
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
@@ -294,6 +286,7 @@ class Form_Basic extends AbstractView {
         if($this->dq){
             // TODO: move into Controller / hook
 
+            /*
             // if no condition set, use id is null condition
             if(empty($this->conditions))$this->setCondition('id',null);
             // we actually initialize data from database
@@ -302,6 +295,7 @@ class Form_Basic extends AbstractView {
                 $this->set($data);
                 $this->loaded_from_db=true;
             }
+             */
         }
         $this->hook('post-loadData');
     }
