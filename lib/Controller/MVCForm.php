@@ -50,6 +50,7 @@ class Controller_MVCForm extends AbstractController {
         $this->importFields($this->owner->model,$fields);
     }
 
+    private $_hook_set=false;
     function importFields($model,$fields=undefined){
 
         $this->model=$model;
@@ -61,8 +62,11 @@ class Controller_MVCForm extends AbstractController {
             $this->importField($field);
         }
 
-        $this->owner->addHook('update',array($this,'update'));
-        $model->addHook('afterLoad',array($this,'setFields'));
+        if(!$this->_hook_set){
+            $this->owner->addHook('update',array($this,'update'));
+            $model->addHook('afterLoad',array($this,'setFields'));
+            $this->_hook_set=true;
+        }
 
         return $this;
     }
@@ -108,9 +112,14 @@ class Controller_MVCForm extends AbstractController {
         }
     }
     function getFields(){
+        $models=array();
         foreach($this->field_associations as $form_field=>$model_field){
-            $model_field->set($this->form->get($form_field));
+            $model_field->set($v=$this->form->get($form_field));
+            if(!isset($models[$model_field->owner->name])){
+                $models[$model_field->owner->name]=$model_field->owner;
+            }
         }
+        return $models;
     }
     /** Redefine this to add special handling of your own fields */
     function getFieldType($field){
@@ -128,7 +137,7 @@ class Controller_MVCForm extends AbstractController {
         return $type;
     }
     function update($form){
-        $this->getFields();
-        $this->model->update();
+        $models=$this->getFields();
+        foreach($models as $model)$model->update();
     }
 }

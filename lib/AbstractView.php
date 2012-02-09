@@ -65,7 +65,7 @@ abstract class AbstractView extends AbstractObject {
         }
         if($this->default_controller){
             $this->setController($this->default_controller);
-            if($this->controller->hasMethod('setActualFields'))$this->controller->setActualFields($actual_fields);
+            if($this->controller->hasMethod('setActualFields') && $actual_fields!==false)$this->controller->setActualFields($actual_fields);
             if($this->controller->hasMethod('_bindView'))$this->controller->_bindView();
         }
         if($this->model instanceof Model_Table)$this->dq=$this->model->dsql;    // compatibility
@@ -239,7 +239,7 @@ abstract class AbstractView extends AbstractObject {
          * if GET['cut'] is set, then only particular object will be rendered
          */
         if($this->name==$_GET['cut_object'] || $this->short_name==$_GET['cut_object']){
-            $this->downCall('render');
+            $this->recursiveRender();
             if($this->template)echo $this->template->render();
             else $this->render();
             return false;

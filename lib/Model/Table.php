@@ -50,6 +50,7 @@ class Model_Table extends Model {
     public $entity_code=null;   // @osolete. Use $table
 
     // {{{ Basic Functionality, query initialization and actual field handling
+   
     /** Initialization of ID field, which must always be defined */
     function init(){
         parent::init();
@@ -71,7 +72,8 @@ class Model_Table extends Model {
             ->addThis($this)
             ->addAction('Debug this Model',array($this->name.'_debug'=>'query'));
     }
-    /** Initializes base query for this model. Query is then <D-O> */
+    /** Initializes base query for this model. 
+     * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
         $table=$this->table?:$this->entity_code;
@@ -83,6 +85,9 @@ class Model_Table extends Model {
         $this->dsql->debug();
         return $this;
     }
+
+    // }}}
+
     /**
      * Returs list of fields which belong to specific group. You can add fields into groups when you
      * define them and it can be used by the front-end to determine which fields needs to be displayed.
@@ -136,7 +141,7 @@ class Model_Table extends Model {
     }
     /** Returns query which selects title field */
     function titleQuery(){
-        $query=$this->dsql();
+        $query=$this->dsql()->del('fields');
         if($this->title_field && $this->hasElement($this->title_field)){
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
@@ -154,7 +159,7 @@ class Model_Table extends Model {
     }
     public $relations=array();
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
-	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
+    function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
 
         if(!$_foreign_alias)$_foreign_alias='_'.$foreign_table[0];
         $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
@@ -266,10 +271,12 @@ class Model_Table extends Model {
     function getRows($fields=null){
         return $this->selectQuery($fields)->do_getAll();
     }
-    function isInstanceLoaded(){ return $this->loaded(); }
+    function isInstanceLoaded(){ 
+        return $this->loaded(); 
+    }
     /** Loads record specified by ID. If omitted will load first matching record */
-    function load($id=null){
-        $load = $this->selectQuery();
+    function load($id=null,$ignore_missing=null){
+        $load = clone $this->selectQuery();
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
         if(!is_null($id))$load->where($p.$this->id_field,$id)->limit(1);
 
@@ -279,10 +286,15 @@ class Model_Table extends Model {
         $load->stmt=null;
         $data = $load->limit(1)->get();
         $this->reset();
-        if(!isset($data[0]))throw $this->exception('Record could not be loaded')
-            ->addMoreInfo('model',$this)
-            ->addMoreInfo('id',$id)
+
+        if(!isset($data[0])){
+            if($ignore_missing)return $this; else 
+                throw $this->exception('Record could not be loaded')
+                ->addMoreInfo('model',$this)
+                ->addMoreInfo('id',$id)
             ;
+        }
+
         $this->data=$data[0];  // avoid using set() for speed and to avoid field checks
         $this->id=$this->data[$this->id_field];
 
@@ -290,10 +302,10 @@ class Model_Table extends Model {
 
         return $this;
     }
-    function loadBy($field,$cond=undefined,$value=undefined){
+    function loadBy($field,$cond=undefined,$value=undefined,$ignore_missing=null){
         $q=clone $this->dsql;
         $this->addCondition($field,$cond,$value);
-        $this->load();
+        $this->load(null,$ignore_missing);
         $this->dsql=$q;
         return $this;
     }
@@ -310,12 +322,12 @@ class Model_Table extends Model {
         return $row;
     }
     function loadData($id=null){ return $this->load($id); }
-    function unload(){
-        $this->hook('beforeUnload');
-        $this->id=null;
-        parent::unload();
-        $this->hook('afterUnload');
-    }
+        function unload(){
+            $this->hook('beforeUnload');
+            $this->id=null;
+            parent::unload();
+            $this->hook('afterUnload');
+        }
     function save(){
         $this->dsql->owner->beginTransaction();
         $this->hook('beforeSave');
@@ -335,14 +347,13 @@ class Model_Table extends Model {
         $insert = $this->dsql();
 
         // Performs the actual database changes. Throw exception if problem occurs
-        $this->hook('beforeInsert',array($insert));
-
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
 
             $f->updateInsertQuery($insert);
         }
 
+        $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
 
@@ -353,8 +364,6 @@ class Model_Table extends Model {
         $modify = $this->dsql();
         $modify->where($this->id_field, $this->id);
 
-        // Performs the actual database changes. Throw exceptions if problem occurs
-        $this->hook('beforeModify',array($modify));
 
         if(!$this->dirty)return $this;
         foreach($this->dirty as $name=>$junk){
@@ -363,6 +372,8 @@ class Model_Table extends Model {
             }
         }
 
+        // Performs the actual database changes. Throw exceptions if problem occurs
+        $this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
 

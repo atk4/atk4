@@ -119,6 +119,9 @@ abstract class AbstractObject {
             if (isset($this->elements[$class->short_name]))
                 return $this->elements[$class->short_name];
             $this->elements[$class->short_name] = $class;
+            if($class instanceof AbstractView){
+                $class->owner->elements[$class->short_name]=true;
+            }
             $class->owner = $this;
             $class->di_config = array_merge($class->di_config,$di_config);
             return $class;
@@ -369,26 +372,6 @@ abstract class AbstractObject {
         if (!$this->owner)
             return false;
         return $this->owner->upCall($type, $args);
-    }
-    function downCall($type, $args = array()) {
-        /**
-         * Unlike upCallHandler, this will pass call down to all childs. This
-         * one is useful for a "render" or "submitted" calls.
-         */
-        foreach (array_keys($this->elements) as $key) {
-            if (is_object($this->elements[$key]) && !($this->elements[$key] instanceof AbstractController)) {
-                $this_result = $this->elements[$key]->downCall($type, $args);
-                if ($this_result === false)
-                    return false;
-            }
-        }
-        if (method_exists($this, $type)) {
-            return call_user_func_array(array (
-                        $this,
-                        $type
-                        ), $args);
-        }
-        return null;
     }
     // }}} 
 

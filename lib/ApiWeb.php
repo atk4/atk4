@@ -199,7 +199,7 @@ class ApiWeb extends ApiCLI {
             $this->hook('pre-exec');
 
             if(isset($_GET['submit']) && $_POST){
-                $this->downCall('submitted');
+                $this->hook('submitted');
             }
 
             $this->hook('post-submit');

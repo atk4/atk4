@@ -1,13 +1,13 @@
 <?form?>
-<div id="<?$_name?>" class="atk-form <?$class?> wider-labels atk-box atk-block demo-bg">
+<div id="<?$_name?>" class="atk-form <?$form_class?>">
   <?$hint?>
   <form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
     <fieldset class="<?$fieldset?>">
       <?Content?>
       <?form_line?>
-      <div class="atk-form-row atk-form-row-<?$field_type?>">
+      <div class="atk-form-row atk-form-row-<?$field_type?> <?$row_class?>">
         <label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label>
-        <div class="atk-form-field"><?$before_field?><?$before_input?><?$input_row_start?><?field_input?><input/>
+        <div class="atk-form-field"><?$before_field?><?$input_row_start?><?$before_input?><?field_input?><input/>
           <?/?><?$after_input?><?$input_row_stop?><?$after_field?></div>
         <?$field_hint?>
         <?field_error?>
@@ -20,8 +20,8 @@
 
       <?form_separator?>
     </fieldset>
-    <fieldset class="<?$fieldset?>">
-      <?separator?><?$separator_text?><?/?><?/form_separator?>
+    <fieldset class="<?$fieldset_class?>">
+      <?/form_separator?>
       <?form_comment?><?$comment?><?/?>
       <?/Content?>
       <div style="display: none" class="field-error-template atk-form-error">

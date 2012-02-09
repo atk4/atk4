@@ -530,7 +530,7 @@ class Logger extends AbstractController {
 			$output .= "<td valign=top nowrap><font color=".($sh==$n?'red':'blue').">:{$bt['line']}</font>&nbsp;</td>";
 			$name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
 			if($bt['object'])$output .= "<td>".$name."</td>";else $output.="<td></td>";
-			$output .= "<td valign=top><font color=".($sh==$n?'red':'green').">{$bt['class']}{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+			$output .= "<td valign=top><font color=".($sh==$n?'red':'green').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
 		}
 		$output .= "</table></div>\n";
 		return $output;

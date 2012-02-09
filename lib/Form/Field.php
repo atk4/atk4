@@ -30,6 +30,7 @@ abstract class Form_Field extends AbstractView {
 	private $separator='';
 
 	public $show_input_only;
+    public $form=null;
 
     public $button_prepend=null;
     public $button_append=null;
@@ -40,6 +41,15 @@ abstract class Form_Field extends AbstractView {
 			$this->api->addHook('pre-render',array($this,'_cutField'));
 		}
 	}
+    function setForm($form){
+        $form->addHook('loadPOST',$this);
+        $form->addHook('validate',$this);
+        $this->form=$form;
+        $this->form->data[$this->short_name] = $this->value;
+        $this->value =& $this->form->data[$this->short_name];
+        return $this;
+    }
+
 	function _cutField(){
 		// this method is used by ui.atk4_form, when doing reloadField();
 		unset($_GET['cut_object']);
@@ -69,11 +79,11 @@ abstract class Form_Field extends AbstractView {
 	function displayFieldError($msg=null){
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
-		$this->owner->js(true)
+		$this->form->js(true)
 			->atk4_form('fieldError',$this->short_name,$msg)
 			->execute();
 
-		$this->owner->errors[$this->short_name]=$msg;
+		$this->form->errors[$this->short_name]=$msg;
 	}
 	function setNoSave(){
 		// Field value will not be saved into defined source (such as database)
@@ -98,16 +108,38 @@ abstract class Form_Field extends AbstractView {
 	}
     function addButton($label,$position='end'){
         if($position=='end'){
+            /*
             if(!$this->button_append)$this->button_append=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
             return $this->button_append->add('Button')->set($label);
+             */
+            return $this->afterField()->add('Button')->set($label);
         }else{
+            return $this->beforeField()->add('Button')->set($label);
+            /*
             if(!$this->button_prepend)$this->button_prepend=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
             return $this->button_prepend->add('Button')->set($label);
+             */
         }
         return $this;
     }
-    function addComment($text){
-        return $this->add('HtmlElement',null,'after_field')->setElement('ins')->set($text);
+    function beforeField(){
+        if(!$this->button_prepend)return $this->button_prepend=$this
+            ->add('HtmlElement',null,'before_input')->addClass('input-cell');
+        return $this->button_prepend;
+    }
+    function afterField(){
+        if(!$this->button_append)return $this->button_append=$this
+            ->add('HtmlElement',null,'after_input')->addClass('input-cell');
+        return $this->button_append;
+    }
+    function aboveField(){
+        return $this->add('HtmlElement',null,'before_field');
+    }
+    function belowField(){
+        return $this->add('HtmlElement',null,'after_field');
+    }
+    function addComment($text=''){
+        return $this->belowField()->setElement('ins')->set($text);
     }
 	function get(){
 		return $this->value;
@@ -231,8 +263,8 @@ abstract class Form_Field extends AbstractView {
 			$this->output($this->getInput());
 			return;
 		}
-		if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-		if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
+		if(!$this->error_template)$this->error_template = $this->form->template_chunks['field_error'];
+		if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->form->template_chunks['field_mandatory'];
 		$this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
 		$this->template->trySet('field_name',$this->name);
 		$this->template->trySet('field_comment',$this->comment);
@@ -245,8 +277,8 @@ abstract class Form_Field extends AbstractView {
         }
 		$this->template->trySet('field_input',$this->field_prepend.$this->getInput().$this->field_append);
 		$this->template->trySet('field_error',
-				isset($this->owner->errors[$this->short_name])?
-				$this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
+				isset($this->form->errors[$this->short_name])?
+				$this->error_template->set('field_error_str',$this->form->errors[$this->short_name])->render()
 				:''
 				);
 		if (is_object($this->mandatory_template)) {
@@ -343,10 +375,10 @@ abstract class Form_Field extends AbstractView {
 	}
 
 	function setSource(){
-		return call_user_func_array(array($this->owner,'setSource'),func_get_args());
+		return call_user_func_array(array($this->form,'setSource'),func_get_args());
 	}
 	function addField(){
-		return call_user_func_array(array($this->owner,'addField'),func_get_args());
+		return call_user_func_array(array($this->form,'addField'),func_get_args());
 		//throw new ObsoleteException('$form->addField() now returns Field object and not Form. Do not chain it.');
 	}
 }
@@ -420,9 +452,10 @@ class Form_Field_Hidden extends Form_Field {
 					));
 	}
 	function render(){
-		$this->owner->template_chunks['form']->append('Content',$this->getInput());
+        if($this->owner == $this->form){
+            $this->form->template_chunks['form']->append('Content',$this->getInput());
+        }else $this->output($this->getInput());
 	}
-
 }
 class Form_Field_Readonly extends Form_Field {
 	function init(){
@@ -442,21 +475,6 @@ class Form_Field_Readonly extends Form_Field {
 		return $this;
 	}
 
-}
-class Form_Field_File extends Form_Field_upload {
-	function init(){
-		parent::init();
-		$this->attr['type'] = 'file';
-		//we have to set enctype for file upload
-		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
-	}
-}
-class Form_Field_FileSize extends Form_Field_Hidden{
-	function init(){
-		$this->name=$this->short_name='MAX_FILE_SIZE';
-		parent::init();
-		$this->no_save=true;
-	}
 }
 class Form_Field_Time extends Form_Field {
 	function getInput($attr=array()){
@@ -550,24 +568,33 @@ class Form_Field_ValueList extends Form_Field {
 			1=>'No available options #2',
 			2=>'No available options #3'
 			);
+    public $empty_text='';
     function setModel($m){
         $ret=parent::setModel($m);
 
         $this->setValueList(array('foo','bar'));
         return $ret;
     }
+    /** Default value which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
+    function setEmptyText($empty_text){
+        $this->empty_text=$empty_text;
+        return $this;
+    }
 	function getValueList(){
 
         if($this->model){
             $title=$this->model->getTitleField();
 			$data=$this->model->getRows(array($this->model->id_field,$title));
-			$res=array(''=>'');
+			$res=array(''=>$this->empty_text);
 			foreach($data as $row){
 				$res[$row[$this->model->id_field]]=$row[$title];
 			}
 			return $this->value_list=$res;
 		}
 
+        if($this->empty_text && isset($this->value_list[''])){
+            $this->value_list['']=$this->empty_text;
+        }
 		return $this->value_list;
 	}
 	function setValueList($list){
@@ -596,7 +623,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 			   ->execute();
 			   }
 			 */
-			$this->owner->errors[$this->short_name]="This is not one of the offered values";
+			$this->form->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
 	}
@@ -609,22 +636,13 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 					$this->attr)
 				);
 
-		foreach($this->getValueList() as $value=>$descr){
-			// Check if a separator is not needed identified with _separator<
-			if ($value === '_separator') {
-				$output.=
-					$this->getTag('option',array(
-								'disabled'=>'disabled',
-								))
-					.htmlspecialchars($descr)
-					.$this->getTag('/option');
-			} else {
-				$output.=
-					$this->getOption($value)
-					.htmlspecialchars($descr)
-					.$this->getTag('/option');
-			}
-		}
+        foreach($this->getValueList() as $value=>$descr){
+            // Check if a separator is not needed identified with _separator<
+            $output.=
+                $this->getOption($value)
+                .htmlspecialchars($descr)
+                .$this->getTag('/option');
+        }
 		$output.=$this->getTag('/select');
 		return $output;
 	}
