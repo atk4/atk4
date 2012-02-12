@@ -47,7 +47,6 @@ class Paginator extends AbstractView {
 	function applyHook(){
         if(isset($this->owner->dq)){
             $this->limiters[]=$this->owner->dq;
-            $this->owner->dq->debug();
 		}elseif(isset($this->owner->data)){
 			$this->limiters[]=&$this->owner->data;
 		}
