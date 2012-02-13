@@ -45,17 +45,18 @@ class Paginator extends AbstractView {
 		$this->api->addHook('pre-exec',array($this,'applyHook'), 1);
 	}
 	function applyHook(){
-		if(isset($this->owner->dq)){
-			$this->limiters[]=$this->owner->dq;
+        if(isset($this->owner->dq)){
+            $this->limiters[]=$this->owner->dq;
 		}elseif(isset($this->owner->data)){
 			$this->limiters[]=&$this->owner->data;
 		}
 		foreach($this->limiters as $key=>$dq){
 			if($this->limiters[$key] instanceof DBlite_dsql)$this->applyDQ($this->limiters[$key]);
+			if($this->limiters[$key] instanceof DB_dsql)$this->applyDQ($this->limiters[$key]);
 		}
 	}
 	function applyDQ($dq){
-		//$dq->calc_found_rows();
+        //$dq->calc_found_rows();
 		$dq->limit($this->ipp,$this->skip);
 	}
 	function applyData(&$data){
