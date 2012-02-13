@@ -496,6 +496,7 @@ abstract class AbstractObject {
         $this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
     }
     // }}}
+
     /**
      * This funcion given the associative $array and desired new key will return
      * the best matching key which is not yet in the arary. For example if you have
@@ -513,6 +514,9 @@ abstract class AbstractObject {
     }
 
 
+    /** Always call parent if you redefine this */
+    function __destruct(){
+    }
     function __sleep(){
         return array('name');
     }

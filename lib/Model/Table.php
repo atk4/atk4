@@ -376,6 +376,21 @@ class Model_Table extends Model {
     // {{{ Saving Data
 
     /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    function saveAndUnload(){
+        $this->_save_as=false;
+        $this->save();
+        return $this;
+    }
+    /** Will save model later, when it's being destructed by Garbage Collector */
+    function saveLater(){
+        $this->_save_later=true;
+        return $this;
+    }
+    function __destruct(){
+        if($this->_save_later){
+            $this->saveAndUnload();
+        }
+    }
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
@@ -387,6 +402,7 @@ class Model_Table extends Model {
         return $this->save();
     }
     private $_save_as=null;
+    private $_save_later=false;
     /** Save model into database and load it back. If for some reason it won't load, whole operation is undone */
     function save(){
         $this->dsql->owner->beginTransaction();
@@ -418,7 +434,10 @@ class Model_Table extends Model {
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
 
+        if($this->_save_as!==false)return $this->unload();
+        if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
+
         return $o->load($id);
     }
     /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
@@ -440,7 +459,10 @@ class Model_Table extends Model {
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
 
+        if($this->_save_as===false)return $this->unload();
+        if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
+
         return $o->load($this->id);
     }
     /** @obsolete. Use set() then save(). */
