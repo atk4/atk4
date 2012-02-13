@@ -85,9 +85,6 @@ class Model_Table extends Model {
         $this->dsql->debug();
         return $this;
     }
-
-    // }}}
-
     /**
      * Returs list of fields which belong to specific group. You can add fields into groups when you
      * define them and it can be used by the front-end to determine which fields needs to be displayed.
@@ -150,7 +147,8 @@ class Model_Table extends Model {
     }
     // }}}
 
-    // {{{ Model_Table supports more than just fields. Expressions, References and Relations can be added
+    // {{{ Model_Table supports more than just fields. Expressions, References and Joins can be added
+
     /** Adds and returns SQL-calculated expression as a read-only field. See Field_Expression class. */
     function addExpression($name,$expression=null){
         return $expr=$this
@@ -172,7 +170,7 @@ class Model_Table extends Model {
         return $this
             ->add('Model_Field_Reference',$name);
     }
-    function addTitle($name){
+    function _removeme_addTitle($name){
         $this->title=$name;
         return $this->addField($name);
     }
@@ -197,10 +195,11 @@ class Model_Table extends Model {
         $rel=$this->add('SQL_Many',$model)
             ->set($model,$their_field,$our_field);
     }
-    /** Traverses references */
+    /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name){
         return $this->getElement($name)->ref();
     }
+    /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
     function getRef($name){
         return $this->ref($name);
     }
@@ -234,8 +233,20 @@ class Model_Table extends Model {
         }
         return $this;
     }
+    /** Sets an order on the field. Field must be properly defined */
     function setOrder($field,$desc=false){
-        $this->dsql->order($field,$desc);
+        if(!$field instanceof Field){
+            $field=$this->getElement($field);
+        }
+
+        if($field->relation){
+            $this->dsql->order($field->relation->short_name.'.'.$field->short_name,$desc);
+        }elseif($this->relations){
+            $this->dsql->order($this->table_alias?:$this->table.'.'.$field->short_name,$desc);
+        }else{
+            $this->dsql->order($field->short_name,$desc);
+        }
+
         return $this;
     }
     /** Always keep $field equals to $value for queries and new data */
@@ -243,9 +254,10 @@ class Model_Table extends Model {
         $this->getElement($field)->defaultValue($value)->system(true)->editable(false);
         return $this->addCondition($field,$value);
     }
-
+    // }}}
 
     // {{{ Iterator support 
+
     function rewind(){
         $this->dsql->rewind();
         return $this->next();
@@ -265,17 +277,68 @@ class Model_Table extends Model {
     function valid(){
         return $this->loaded();
     }
+
     // }}}
 
+    // {{{ Multiple ways to load data by a model
 
+    /** Loads all matching data into array of hashes */
     function getRows($fields=null){
         return $this->selectQuery($fields)->do_getAll();
     }
+    /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
         return $this->loaded(); 
     }
+    /** Loads the first matching record from the model */
+    function loadAny(){
+        return $this->_load(null);
+    }
+    /** Try to load a matching record for the model. Will not raise exception if no records are found */
+    function tryLoadAny(){
+        return $this->_load(null,true);
+    }
+    /** Try to load a record by specified ID. Will not raise exception if record is not fourd */
+    function tryLoad($id){
+        if(!$id)throw $this->exception('Record ID must be specified, otherwise use loadAny()');
+        return $this->_load($id,true);
+    }
     /** Loads record specified by ID. If omitted will load first matching record */
-    function load($id=null,$ignore_missing=null){
+    function load($id){
+        if(!$id)throw $this->exception('Record ID must be specified, otherwise use loadAny()');
+        return $this->_load($id);
+    }
+    /** Similar to loadAny() but will apply condition before loading. Condition is temporary. Fails if record is not loaded. */
+    function loadBy($field,$cond=undefined,$value=undefined){
+        $q=clone $this->dsql;
+        $this->addCondition($field,$cond,$value);
+        $this->loadAny();
+        $this->dsql=$q;
+        return $this;
+    }
+    /** Attempt to load using a specified condition, but will not fail if such record is not found */
+    function tryLoadBy($field,$cond=undefined,$value=undefined){
+        $q=clone $this->dsql;
+        $this->addCondition($field,$cond,$value);
+        $this->tryloadAny();
+        $this->dsql=$q;
+        return $this;
+    }
+    /** Loads data record and return array of that data. Will not affect currently loaded record. */
+    function getBy($field,$cond=undefined,$value=undefined){
+        $q=clone $this->dsql;
+        $data=$this->data;
+        $id=$this->id;
+        $this->addCondition($field,$cond,$value);
+        $this->tryLoadAny();
+        $row=$this->get();
+        $this->dsql=$q;
+        $this->data=$data;
+        $this->id=$id;
+        return $row;
+    }
+    /** Internal loading funciton. Do not use. OK to override. */
+    protected function _load($id,$ignore_missing=false){
         $load = clone $this->selectQuery();
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
         if(!is_null($id))$load->where($p.$this->id_field,$id)->limit(1);
@@ -302,48 +365,46 @@ class Model_Table extends Model {
 
         return $this;
     }
-    function loadBy($field,$cond=undefined,$value=undefined,$ignore_missing=null){
-        $q=clone $this->dsql;
-        $this->addCondition($field,$cond,$value);
-        $this->load(null,$ignore_missing);
-        $this->dsql=$q;
+    /** @obsolete Backward-compatible. Will attempt to load but will not fail */
+    function loadData($id=null){ 
+        if($id)$this->tryLoad($id);
         return $this;
     }
-    function getBy($field,$cond=undefined,$value=undefined){
-        $q=clone $this->dsql;
-        $data=$this->data;
-        $id=$this->id;
-        $this->addCondition($field,$cond,$value);
-        $this->load();
-        $row=$this->get();
-        $this->dsql=$q;
-        $this->data=$data;
-        $this->id=$id;
-        return $row;
-    }
-    function loadData($id=null){ return $this->load($id); }
-        function unload(){
-            $this->hook('beforeUnload');
-            $this->id=null;
-            parent::unload();
-            $this->hook('afterUnload');
+
+    // }}}
+
+    // {{{ Saving Data
+
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    function saveAs($model){
+        if(is_string($model)){
+            if(substr($model,0,strlen('Model'))!='Model'){
+                $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+            }
+            $model=$this->add($model);
         }
+        $this->_save_as=$model;
+        return $this->save();
+    }
+    private $_save_as=null;
+    /** Save model into database and load it back. If for some reason it won't load, whole operation is undone */
     function save(){
         $this->dsql->owner->beginTransaction();
         $this->hook('beforeSave');
 
         // decide, insert or modify
         if($this->loaded()){
-            $this->modify();
+            $res=$this->modify();
         }else{
-            $this->insert();
+            $res=$this->insert();
         }
 
-        $this->hook('afterSave');
+        $res->hook('afterSave');
         $this->dsql->owner->commit();
-        return $this;
+        return $res;
     }
-    function insert(){
+    /** Internal function which performs insert of data. Use save() instead. OK to override. */
+    private function insert(){
         $insert = $this->dsql();
 
         // Performs the actual database changes. Throw exception if problem occurs
@@ -357,10 +418,12 @@ class Model_Table extends Model {
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
 
-        $this->load($id);
-        return $this;
+        $o=$this->_save_as?:$this;
+        return $o->load($id);
     }
-    function modify(){
+    /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
+        * object if saveAs() is used */
+    private function modify(){
         $modify = $this->dsql();
         $modify->where($this->id_field, $this->id);
 
@@ -377,13 +440,27 @@ class Model_Table extends Model {
         if($modify->args['set'])$modify->do_update();
         $this->hook('afterModify');
 
-        $this->load($this->id);
-        return $this;
+        $o=$this->_save_as?:$this;
+        return $o->load($this->id);
     }
+    /** @obsolete. Use set() then save(). */
     function update($data=array()){ // obsolete
         if($data)$this->set($data);
         return $this->save();
     }
+
+    // }}}
+
+    // {{{ Unloading and Deleting data
+
+    /** forget currently loaded record and it's ID. Will not affect database */
+    function unload(){
+        $this->hook('beforeUnload');
+        $this->id=null;
+        parent::unload();
+        $this->hook('afterUnload');
+    }
+    /** Deletes record matching the ID */
     function delete($id=null){
         if(!$id && !$this->id)throw $this->exception('Specify ID to delete()');
         $delete=$this->dsql()->where($this->id_field,$id?:$this->id)->delete();
@@ -398,4 +475,18 @@ class Model_Table extends Model {
 
         return $this;
     }
+    /** Deletes all records matching this model. Use with caution. */
+    function deleteAll(){
+
+        $delete->owner->beginTransaction();
+        $this->hook('beforeDeleteAll',array($delete));
+        $delete->execute();
+        $this->hook('afterDeleteAll');
+        $delete->owner->commit();
+        $this->reset();
+
+        return $this;
+    }
+
+    // }}}
 }
