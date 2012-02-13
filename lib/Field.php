@@ -34,7 +34,7 @@ class Field extends AbstractModel {
         return $this;
     }
     function get($type=undefined){
-        if($this->owner->loaded())return $this->owner->get($this->short_name);
+        if($this->owner->loaded() || isset($this->owner->data[$this->short_name]))return $this->owner->get($this->short_name);
         return $this->defaultValue();
     }
     function __toString() {

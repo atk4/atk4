@@ -92,27 +92,21 @@ class Form_Field_Upload extends Form_Field {
 			$_POST=array();
 		}
 		if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
-            echo "UPL";
 			if($this->model){
 				try{
                     $model=$this->model;
-                    echo 1;
 					$model->set('filestore_volume_id',1);
-                    echo 2;
 					$model->set('original_filename',$this->getOriginalName());
-                    echo 3;
 					$model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
-                    echo 4;
 					$model->import($this->getFilePath());
-                    echo 5;
 					$model->update();
-                    echo 6;
 				}catch(Exception $e){
+                    throw $e;
 					$this->api->logger->logException($e);
 					$this->uploadFailed($e->getText());
 				}
 
-				$this->uploadComplete($c->get());
+				$this->uploadComplete($model->get());
 			}
 		}
 		if($_POST[$this->name.'_token']){

@@ -14,7 +14,9 @@ class SQL_Many extends AbstractModel {
 
         return $this;
     }
-    function ref(){
+    function ref($load=null){
+        // $load is ignored
+        
         if(!$this->model)$this->setModel($this->dst_model); // avoid circular loop
 
         if(!$this->owner->loaded()){

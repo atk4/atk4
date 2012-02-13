@@ -196,12 +196,12 @@ class Model_Table extends Model {
             ->set($model,$their_field,$our_field);
     }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
-    function ref($name){
-        return $this->getElement($name)->ref();
+    function ref($name,$load=true){
+        return $this->getElement($name)->ref($load);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
-    function getRef($name){
-        return $this->ref($name);
+    function getRef($name,$load=true){
+        return $this->ref($name,$load);
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond=undefined,$value=undefined){
@@ -434,11 +434,13 @@ class Model_Table extends Model {
         $id = $insert->do_insert();
         $this->hook('afterInsert',array($id));
 
-        if($this->_save_as!==false)return $this->unload();
+        if($this->_save_as===false)return $this->unload();
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
-        return $o->load($id);
+        $res=$o->load($id);
+        if(!$res)throw $this->exception('Problem');
+        return $res;
     }
     /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
         * object if saveAs() is used */
@@ -481,6 +483,7 @@ class Model_Table extends Model {
         $this->id=null;
         parent::unload();
         $this->hook('afterUnload');
+        return $this;
     }
     /** Deletes record matching the ID */
     function delete($id=null){

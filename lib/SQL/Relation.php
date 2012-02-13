@@ -56,11 +56,11 @@ class SQL_Relation extends AbstractModel {
         if(is_null($f2))$f2='id';
         $this->f2=$f2;
 
-        $jthis->t=$join_kind?:'left';
+        $this->t=$join_kind?:'inner';
         $this->fa=$this->short_name;
 
         // Use the real ID field as defined by the model as default
-        $this->owner->dsql->join($foreign_table,$this->expr?:($m1.'.'.$m2),$join_kind,$this->short_name);
+        $this->owner->dsql->join($foreign_table,$this->expr?:($m1.'.'.$m2),$this->t,$this->short_name);
 
         // If our ID field is NOT used, must insert record in OTHER table first and use their primary value in OUR field
         if($this->m2 && $this->m2 != $this->owner->id_field){
@@ -105,7 +105,7 @@ class SQL_Relation extends AbstractModel {
         if($this->m2 && $this->m2 != $this->owner->id_field){
             $q->field($this->m2,$this->m1,$this->short_name);
         }elseif($this->m2){
-            $q->field($this->f2,$this->f1,$this->short_name);
+            $q->field($this->f2,$this->fa?:$this->f1,$this->short_name);
         }
     }
     function afterLoad($m){

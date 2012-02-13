@@ -99,7 +99,6 @@ class Controller_MVCForm extends AbstractController {
 
         if($field instanceof Field_Reference)$form_field->setModel($field->model);
         if($field->theModel){
-            echo $form_field;
             $form_field->setModel($field->theModel);
         }
 
