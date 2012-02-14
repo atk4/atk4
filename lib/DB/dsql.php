@@ -33,7 +33,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     public $main_table=null;
 
     /** If no fields are defined, this field is used */
-    public $default_field=null;
+    public $default_field='*';
 
     public $default_exception='Exception_DB';
 
