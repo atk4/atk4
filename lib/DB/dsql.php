@@ -32,6 +32,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Used to determine main table. */
     public $main_table=null;
 
+    /** If no fields are defined, this field is used */
+    public $default_field=null;
+
     public $default_exception='Exception_DB';
 
     /** call $q->debug() to turn on debugging. */
@@ -277,7 +280,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $result=array();
         if(!$this->args['fields']){
             //if($this->main_table)return '*.'.$this->main_table;
-            return '*';
+            return (string)$this->default_field;
         }
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;

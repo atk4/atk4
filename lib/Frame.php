@@ -1,5 +1,5 @@
 <?php
-class Frame extends AbstractView {
+class Frame extends View {
     function setTitle($title){
         $this->template->trySet('title',$title);
         return $this;
