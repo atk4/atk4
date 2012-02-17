@@ -40,7 +40,7 @@ class Field_Reference extends Field {
         $this->owner->getElement($this->getDereferenced())->destroy();
         return parent::destroy();
     }
-    function calculateSubQuery($select){
+    function calculateSubQuery($model,$select){
         if(is_string($this->model)){
             $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
             $this->model=$this->add($this->model);
