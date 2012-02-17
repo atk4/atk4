@@ -341,6 +341,10 @@ class Model_Table extends Model {
         $this->id=$id;
         return $row;
     }
+    /** Unloads then loads current record back. Use this if you have added new fields */
+    function reload(){
+        return $this->load($this->id);
+    }
     /** Internal loading funciton. Do not use. OK to override. */
     protected function _load($id,$ignore_missing=false){
         $load = clone $this->selectQuery();
