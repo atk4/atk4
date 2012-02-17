@@ -115,4 +115,12 @@ class SQL_Relation extends AbstractModel {
     function afterUnload($m){
         $this->id=null;
     }
+
+    function fieldExpr($f){
+        return $this->owner->dsql->expr(
+            $this->owner->dsql->bt($this->short_name).
+            '.'.
+            $this->owner->dsql->bt($f)
+        );
+    }
 }
