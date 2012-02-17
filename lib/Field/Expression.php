@@ -18,7 +18,7 @@
  *
  * or 
  * $myctl=$this->add('Controller_MiscMySQL');   // or by using closure and extra argument
- * $model->addExpression('date_formatted',function($query) uses $myctl { return $myctl->dateExpr2($query,'date_raw'); });
+ * $model->addExpression('date_formatted',function($model,$query) uses $myctl { return $myctl->dateExpr2($query,'date_raw'); });
  *
  * NOTE: MiscMySQL is fictional controller.
  *
@@ -38,7 +38,7 @@ class Field_Expression extends Field {
     }
     function updateSelectQuery($select){
         $expr=$this->expr;
-        if(is_callable($expr))$expr=call_user_func($expr,$select,$this);
+        if(is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
         if($expr instanceof DB_dsql){
             return $select->field($expr,$this->short_name);
         }
