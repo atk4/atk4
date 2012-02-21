@@ -47,7 +47,12 @@ class Field_Reference extends Field {
             $this->model=$this->add($this->model);
         }
 
-        $title=$this->model->titleQuery();
+        if($this->display()){
+            $title=$this->model->dsql()->del('fields');
+            $this->model->getElement($this->display())->updateSelectQuery($title);
+        }else{
+            $title=$this->model->titleQuery();
+        }
         $title->where(($this->relation?$this->relation->short_name.'.':'').$this->short_name,
             $title->getField($this->model->id_field));
         return $title;
