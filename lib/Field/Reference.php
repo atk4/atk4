@@ -16,17 +16,18 @@ class Field_Reference extends Field {
         return $this;
     }
     function ref($load=true){
-        if(is_string($this->model)){
-            $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
-            $this->model=$this->add($this->model);
+        $model=$this->model;
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+            $model=$this->add($model);
         }
-        if(!$load)return $this->model;
+        if(!$load)return $model;
         if(!$this->get())throw $this->exception('Reference field has no value')
             ->addMoreInfo('model',$this->owner)
             ->addMoreInfo('field',$this->short_name)
             ->addMoreInfo('id',$this->owner->id)
             ;
-        return $this->model->load($this->get());
+        return $model->load($this->get());
     }
     function getDereferenced(){
         if($this->dereferenced_field)return $this->dereferenced_field;

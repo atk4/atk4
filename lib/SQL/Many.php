@@ -15,13 +15,15 @@ class SQL_Many extends AbstractModel {
         return $this;
     }
     function ref($load=null){
-        // $load is ignored
-        
-        if(!$this->model)$this->setModel($this->dst_model); // avoid circular loop
+        $model=$this->dst_model;
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+            $model=$this->add($model);
+        }
 
         if(!$this->owner->loaded()){
             throw $this->exception('Model must be loaded before traversing reference');
         }
-        return $this->model->setMasterField($this->their_field,$this->owner->get($this->our_field));
+        return $model->setMasterField($this->their_field,$this->owner->get($this->our_field));
     }
 }
