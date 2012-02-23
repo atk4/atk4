@@ -98,7 +98,6 @@ class Model_Table extends Model {
     function getActualFields($group=undefined){
         $fields=array();
         foreach($this->elements as $el)if($el instanceof Field){
-            if($el->system())continue;
             if($el->hidden())continue;
             if($group===undefined || $el->group()==$group ||
                 ($group=='visible' && $el->visible()) ||
@@ -219,10 +218,17 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
         if($field->type() == 'boolean'){
-            if($value===undefined){
-                $cond=$cond===true?'Y':($cond===false?'N':null);
+            if($field->listData){
+                reset($field->listData);
+                list($yes_value,$junk)=each($field->listData);
             }else{
-                $value=$value===true?'Y':($value===false?'N':null);
+                $yes_value=1;
+            }
+
+            if($value===undefined){
+                $cond=$cond===true?$yes_value:($cond===false?'N':null);
+            }else{
+                $value=$value===true?$yes_value:($value===false?'N':null);
             }
         }
         if($field->calculated()){
@@ -276,7 +282,7 @@ class Model_Table extends Model {
         return $this->get();
     }
     function key(){
-        return $this->get('id');
+        return $this->get($this->id_field);
     }
     function valid(){
         return $this->loaded();
@@ -440,6 +446,14 @@ class Model_Table extends Model {
 
         $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
+        if($id==0){
+            // no auto-increment column present
+            $id=$this->get($this->id_field);
+
+            if($id===null){
+                throw $this->exception('Please add auto-increment ID column to your table or specify ID manually');
+            }
+        }
         $this->hook('afterInsert',array($id));
 
         if($this->_save_as===false)return $this->unload();
@@ -467,6 +481,11 @@ class Model_Table extends Model {
         // Performs the actual database changes. Throw exceptions if problem occurs
         $this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
+
+        if($this->dirty[$this->id_field]){
+            $this->id=$this->get($this->id_field);
+        }
+
         $this->hook('afterModify');
 
         if($this->_save_as===false)return $this->unload();
