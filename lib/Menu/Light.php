@@ -54,10 +54,10 @@ class Menu_Light extends AbstractView {
 
 		$parts=explode('_',$this->api->page);
 
-
 		$matched=false;
 		while($parts){
 			$tag=implode('_',$parts);
+
 			if($this->template->is_set('current_'.$tag)){
 				$this->template->trySet('current_'.$tag,$c);
 				$matched=true;

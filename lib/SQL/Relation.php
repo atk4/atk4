@@ -86,6 +86,10 @@ class SQL_Relation extends AbstractModel {
     function beforeInsert($m,$q){
         // Insert related table data and add ID into the main query
         // TODO: handle cases when $this->m1 != $this->owner->table?:$this->owner->table_alias
+        if($this->owner->hasElement($this->m2) && $this->owner->get($this->m2) !== null){
+            return; // using existing element
+        }
+
         $this->dsql->set($this->f2,null);
         $this->id=$this->dsql->do_insert();
 

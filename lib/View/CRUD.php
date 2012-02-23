@@ -45,7 +45,6 @@ class View_CRUD extends View {
     function setModel($model,$fields=null,$grid_fields=null){
         parent::setModel($model);
 
-
         if($this->form){
             $m=$this->form->setModel($this->model,$fields);
             $this->form->addSubmit();
