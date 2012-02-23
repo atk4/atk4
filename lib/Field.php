@@ -55,7 +55,12 @@ class Field extends AbstractModel {
     function searchable($t=undefined){ return $this->setterGetter('searchable',$t); }
     function sortable($t=undefined){ return $this->setterGetter('sortable',$t); }
     function display($t=undefined){ return $this->setterGetter('display',$t); }
-    function system($t=undefined){ return $this->setterGetter('system',$t); }
+    function system($t=undefined){ 
+        if($t===true){
+            $this->editable(false)->visible(false);
+        }
+        return $this->setterGetter('system',$t); 
+    }
     function hidden($t=undefined){ return $this->setterGetter('hidden',$t); }
     function length($t=undefined){ return $this->setterGetter('length',$t); }
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
@@ -114,7 +119,7 @@ class Field extends AbstractModel {
     /** Get value of this field formatted for SQL. Redefine if you need to convert */
     function getSQL(){
         $val=$this->owner->get($this->short_name);
-        if($val=='' && ($this->listData || $this instanceof Field_Reference)){
+        if($val=='' && ($this->listData || $this instanceof Field_Reference) && $this->type!='boolean'){
             $val=null;
         }
         return $val;

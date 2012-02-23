@@ -72,7 +72,8 @@ class Controller_MVCGrid extends AbstractController {
     }
     /** Redefine this to add special handling of your own fields */
     function getFieldType($field){
-        $type='text';
+        $type=$field->type();
+        //$type='text';
 
         if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
 

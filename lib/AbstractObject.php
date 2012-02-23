@@ -281,8 +281,7 @@ abstract class AbstractObject {
 
 
         // Localization support
-        if($this->api->hasMethod('_'))
-            $message=$this->api->_($message);
+        $message=$this->api->_($message);
 
         if($type=='Exception')$type='BaseException';
         $e=new $type($message);

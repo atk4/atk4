@@ -216,7 +216,7 @@ abstract class AbstractView extends AbstractObject {
     function output($txt){
         if(!$this->hook('output',array($txt))){
             if((isset($this->owner->template)) && (!empty($this->owner->template)))
-                $this->owner->template->append($this->spot,$txt);
+                $this->owner->template->append($this->spot,$txt,false);
         }
     }
     /** When cutting, perform selective render for a region */

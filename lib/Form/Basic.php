@@ -437,7 +437,7 @@ class Form_Basic extends AbstractView {
         }
         $this->template_chunks['form']
             ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
-        $this->owner->template->append($this->spot,$r=$this->template_chunks['form']->render());
+        $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
     }
     function hasField($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;

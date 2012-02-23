@@ -32,7 +32,7 @@ class UpgradeChecker extends HtmlElement {
 
         if(isset($_COOKIE[$this->name.'_'.str_replace('.','_',$v)]))return;
 
-        $this->api->template->append('js_include',
+        $this->api->template->appendHTML('js_include',
                 '<script async="true" onload="try{ atk4_version_check(\''.$this->name.
             '\'); } catch(e){ }" type="text/javascript" src="http://agiletoolkit.org/upgrade_check/'.
                 $this->api->getVersion().'.js"></script>'."\n");

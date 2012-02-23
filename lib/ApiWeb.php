@@ -57,6 +57,8 @@ class ApiWeb extends ApiCLI {
         // send headers, no caching
         $this->sendHeaders();
 
+        $this->cleanMagicQuotes();
+
         parent::init();
 
         /** In addition to default initialization, set up logger and template */
@@ -66,6 +68,27 @@ class ApiWeb extends ApiCLI {
 
         if(get_class($this)=='ApiWeb'){
             $this->setConfig(array('url_postfix'=>'.php','url_prefix'=>''));
+        }
+    }
+    /** Magic Quotes were a design error. Let's strip them if they are enabled */
+    function cleanMagicQuotes(){
+
+        function stripslashes_array(&$array, $iterations=0) {
+            if ($iterations < 3){
+                foreach ($array as $key => $value){
+                    if (is_array($value)){
+                        stripslashes_array($array[$key], $iterations + 1);
+                    } else {
+                        $array[$key] = stripslashes($array[$key]);
+                    }
+                }
+            }
+        }
+
+        if (get_magic_quotes_gpc()){
+            stripslashes_array($_GET);
+            stripslashes_array($_POST);
+            stripslashes_array($_COOKIE);
         }
     }
     /** Sends default headers. Re-define to send your own headers */
@@ -133,7 +156,7 @@ class ApiWeb extends ApiCLI {
         /* Attempts to re-initialize session. If session is not found,
            new one will be created, unless $create is set to false. Avoiding
            session creation and placing cookies is to enhance user privacy. 
-           Call to memorize() / recall() will automatically create session */
+        Call to memorize() / recall() will automatically create session */
 
         if($this->_is_session_initialized)return;
 
@@ -152,12 +175,12 @@ class ApiWeb extends ApiCLI {
         if($create==false && !isset($_COOKIE[$this->name]))return;
         $this->_is_session_initialized=true;
         session_set_cookie_params(
-                $params['lifetime'],
-                $params['path'],
-                $params['domain'],
-                $params['secure'],
-                $params['httponly']
-                );
+            $params['lifetime'],
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
         session_name($this->name);
         session_start();
     }
@@ -251,7 +274,7 @@ class ApiWeb extends ApiCLI {
         $this->hook('post-render-output');
     }
     // }}}
-    
+
     // {{{ Miscelanious Functions
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
@@ -266,7 +289,7 @@ class ApiWeb extends ApiCLI {
     function setTags($t){
         // absolute path to base location
         $t->trySet('atk_path',$q=
-                $this->api->pathfinder->atk_location->getURL().'/');
+            $this->api->pathfinder->atk_location->getURL().'/');
         $t->trySet('base_path',$q=$this->api->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
