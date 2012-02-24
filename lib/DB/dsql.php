@@ -49,6 +49,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         $desired=parent::_unique($array,$desired);
         return $desired;
     }
+    function __clone(){
+        $this->rewind();
+    }
     function __toString(){
         try {
             return $this->render();
@@ -335,7 +338,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                     $or->where($row[0],
                         isset($row[1])?$row[1]:undefined,
                         isset($row[2])?$row[2]:undefined);
-                }elseif($is_object($row)){
+                }elseif(is_object($row)){
                     $or->where($row);
                 }else{
                     $or->where($or->expr($row));
@@ -355,7 +358,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
                 // IF COMPAT
                 $matches[1]=$this->expr($field);
-                if($value)$cond='=';
+                if($value && $value!==undefined)$cond='=';else $cond=undefined;
                 //throw $this->exception('Field is specified incorrectly or condition is not supported')
                     //->addMoreInfo('field',$field);
             }
@@ -899,7 +902,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $c->del('limit');
         $c->del('fields');
         $c->field('count(*)');
-        return $c->do_getOne();
+        return $c->getOne();
     }
     // }}}
 

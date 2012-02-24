@@ -276,7 +276,7 @@ abstract class Form_Field extends AbstractView {
             $this->template->trySet('input_row_stop','</div>');
         }
 		$this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
-		$this->template->trySet('field_error',
+		$this->template->trySetHTML('field_error',
 				isset($this->form->errors[$this->short_name])?
 				$this->error_template->set('field_error_str',$this->form->errors[$this->short_name])->render()
 				:''
@@ -400,6 +400,7 @@ class Form_Field_Search extends Form_Field {
 }
 class Form_Field_Checkbox extends Form_Field {
     public $true_value=1;
+    public $false_value=0;
 	function init(){
 		parent::init();
 		$this->default_value='';

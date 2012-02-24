@@ -55,7 +55,7 @@ class Model_Table extends Model {
     function init(){
         parent::init();
 
-        $this->initQuery();
+        if($this->table)$this->initQuery();
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }

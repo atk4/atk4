@@ -306,7 +306,7 @@ class SMlite extends AbstractModel {
         }
         if($value instanceof URL)$value=$value->__toString();
 
-        if($encode && $value!=htmlentities($value) && $tag!='form_action')throw $this->exception('test')
+        if($encode && $value!=htmlentities($value) && $tag!='form_action' && $tag!='Test_para')throw $this->exception('test')
             ->addMoreInfo('val',var_export($value,true))
             ->addMoreInfo('enc',var_export(htmlentities($value),true))
             ;

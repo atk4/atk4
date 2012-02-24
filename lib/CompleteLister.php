@@ -99,7 +99,7 @@ class CompleteLister extends Lister {
         if($this->totals!==false && $this->totals_t){
             $this->current_row = $this->totals;
             $this->formatTotalsRow();
-            $this->template->append('rows',$this->rowRender($this->totals_t));
+            $this->template->appendHTML('rows',$this->rowRender($this->totals_t));
         }
     }
     function render(){
