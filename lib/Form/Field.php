@@ -106,19 +106,12 @@ abstract class Form_Field extends AbstractView {
 		$this->value=$value;
 		return $this;
 	}
-    function addButton($label,$position='end'){
-        if($position=='end'){
-            /*
-            if(!$this->button_append)$this->button_append=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
-            return $this->button_append->add('Button')->set($label);
-             */
+    /** Position can be either 'before' or 'after' */
+    function addButton($label,$position='after'){
+        if($position=='after'){
             return $this->afterField()->add('Button')->set($label);
         }else{
             return $this->beforeField()->add('Button')->set($label);
-            /*
-            if(!$this->button_prepend)$this->button_prepend=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
-            return $this->button_prepend->add('Button')->set($label);
-             */
         }
         return $this;
     }
@@ -137,6 +130,10 @@ abstract class Form_Field extends AbstractView {
     }
     function belowField(){
         return $this->add('HtmlElement',null,'after_field');
+    }
+    function setComment($text=''){
+        $this->belowField()->setElement('ins')->set($text);
+        return $this;
     }
     function addComment($text=''){
         return $this->belowField()->setElement('ins')->set($text);

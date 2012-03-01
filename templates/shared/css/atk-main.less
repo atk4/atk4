@@ -1,6 +1,7 @@
 /* ==============================================
 	Settings
-============================================== */
+    http://agiletoolkit.org/doc/css
+   ============================================== */
 @gridColumns:       12;			// Column count
 @gridColumnWidth:   6%;			// Column width
 @gridGutterWidth:   2.5%;		// Gutter width
@@ -47,8 +48,8 @@
 
 
 /* ==============================================
-	CSS Reset by Eric Meyer (meyerweb.com)
-============================================== */
+	CSS Reset
+   ============================================== */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -75,7 +76,7 @@ table {border-collapse:collapse;border-spacing:0;}
 
 /* ==============================================
 	Mixins
-============================================== */
+   ============================================== */
 .clearfix() {
   zoom: 1;
   &:before,
@@ -156,8 +157,9 @@ table {border-collapse:collapse;border-spacing:0;}
 
 
 /* ==============================================
-	Grid System from Twitter's Bootstrap
-============================================== */
+	Grid System
+    http://agiletoolkit.org/doc/css/layout
+   ============================================== */
 @extraSpace:        (@gridGutterWidth * 2); /* For our grid calculations */
 @siteWidth:         (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
 
@@ -250,7 +252,7 @@ table {border-collapse:collapse;border-spacing:0;}
 
 /* ==============================================
 	Features
-============================================== */
+   ============================================== */
 .layout() when(ispercentage(@gridColumnWidth)) {
 	.atk-wrapper {.box-sizing();min-width:980px;padding-left:@gridGutterWidth;padding-right:@gridGutterWidth;}
 }
@@ -277,7 +279,7 @@ table {border-collapse:collapse;border-spacing:0;}
 
 /* ==============================================
 	Typography
-============================================== */
+   ============================================== */
 body {font:@fontSize @fontFamily;line-height:@lineHeight;color:@fontColor;}
 
 h1, h2, h3, h4, h5, h6 {line-height:1.3;margin:@margin/1.4 0 @margin/3 0;font-weight:bold;}
@@ -329,7 +331,7 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 
 /* ==============================================
 	Backgrounds
-============================================== */
+   ============================================== */
 #gradient {
   .vertical (@startColor: #555, @endColor: #333) {
     background-color: @endColor;
@@ -372,7 +374,7 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 
 /* ==============================================
 	Forms
-============================================== */
+   ============================================== */
 button::-moz-focus-inner,
 input[type="button"]::-moz-focus-inner,
 input[type="submit"]::-moz-focus-inner,
@@ -543,7 +545,7 @@ textarea:focus {
 
 /* ==============================================
 	Various ATK Objects
-============================================== */
+   ============================================== */
 .atk-wrapper {.fixed-container();}
 
 .atk-grid {
@@ -683,7 +685,7 @@ textarea:focus {
 
 /* ==============================================
 	jQueryUI Tweaks
-============================================== */
+   ============================================== */
 .ui-widget {font-family:@fontFamily;font-size:@fontSize;line-height:@lineHeight;}
 .ui-helper-reset {line-height:@lineHeight;}
 
