@@ -51,12 +51,11 @@ class Paginator extends AbstractView {
 			$this->limiters[]=&$this->owner->data;
 		}
 		foreach($this->limiters as $key=>$dq){
-			if($this->limiters[$key] instanceof DBlite_dsql)$this->applyDQ($this->limiters[$key]);
 			if($this->limiters[$key] instanceof DB_dsql)$this->applyDQ($this->limiters[$key]);
 		}
 	}
 	function applyDQ($dq){
-        //$dq->calc_found_rows();
+        $dq->calc_found_rows();
 		$dq->limit($this->ipp,$this->skip);
 	}
 	function applyData(&$data){
@@ -96,10 +95,10 @@ class Paginator extends AbstractView {
 		$this->template_chunks['link']->trySet('object',$object);
 		return $this;
 	}
-	function render(){
+    function render(){
 		if(!isset($this->found_rows)){
 			if(isset($this->limiters[0])){
-				if($this->limiters[0] instanceof DBlite_dsql)$this->found_rows = $this->limiters[0]->foundRows();
+				if($this->limiters[0] instanceof DB_dsql)$this->found_rows = $this->limiters[0]->foundRows();
 				else $this->found_rows=sizeof($this->limiters[0]);
 			}
 		}
@@ -114,7 +113,7 @@ class Paginator extends AbstractView {
 			$this->cur_page=1;
 			$this->skip=$this->ipp*($this->cur_page-1);
 			foreach($this->limiters as $key=>$l){
-				if($l instanceof DBlite_dsql){
+				if($l instanceof DB_dsql){
 					$this->limiters[$key]->limit($this->ipp,$this->skip);
 					$this->limiters[$key]->do_select();
 				}
@@ -177,7 +176,7 @@ class Paginator extends AbstractView {
 		return $this->api->getDestinationURL(null, $url_args);
 	}
 	function link($chunk,$url_args,$tpl_args=array()){
-		$this->template_chunks['link']->set(array(
+		$this->template_chunks['link']->setHTML(array(
 					'link_url'=>$this->linkUrl($url_args),
 					'link_text'=>$this->template_chunks[$chunk]->set($tpl_args)->render()
 					));

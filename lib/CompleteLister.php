@@ -92,7 +92,7 @@ class CompleteLister extends Lister {
         $this->odd_even='';
         $this->template->del($this->container_tag);
 
-        foreach($this->getIterator() as $this->current_id=>$this->current_row){
+        foreach($this->iterator as $this->current_id=>$this->current_row){
             @$this->totals['row_count']++;
             if($this->totals!==false)$this->updateTotals();
             $this->formatRow();
