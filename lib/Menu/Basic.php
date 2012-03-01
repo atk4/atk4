@@ -36,8 +36,7 @@ class Menu_Basic extends CompleteLister {
 	protected $last_item=null;
 	public $current_menu_class="ui-state-active";
 	public $inactive_menu_class="ui-state-default";
-
-	function defaultTemplate(){
+    function defaultTemplate(){
 		return array('menu','Menu');
 	}
 	function addMenuItem($page,$label=null){
@@ -59,14 +58,14 @@ class Menu_Basic extends CompleteLister {
 			$href=';'.$href;
 		}
 		return $href;
-	}
+    }
 	function isCurrent($href){
 		// returns true if item being added is current
 		$href=str_replace('/','_',$href);
 		return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
-	}
-    function render(){
+    }
+    function prepareIterator(){
         $this->setSource($this->items);
-        return parent::render();
+        parent::prepareIterator();
     }
 }

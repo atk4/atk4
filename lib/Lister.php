@@ -32,6 +32,9 @@ class Lister extends View {
 
     /** Contains ID of current record */
     public $current_id=null;
+    
+    /** Data set fetched from source */
+    public $iterator=array();
 
     /** 
      * Sets source data for the lister. If source is a model, use setModel() instead.
