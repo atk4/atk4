@@ -92,17 +92,17 @@ class CompleteLister extends Lister {
         $this->odd_even='';
         $this->template->del($this->container_tag);
 
-        foreach($this->getIterator() as $this->current_row){
+        foreach($this->getIterator() as $this->current_id=>$this->current_row){
             @$this->totals['row_count']++;
             if($this->totals!==false)$this->updateTotals();
             $this->formatRow();
-            $this->template->append($this->container_tag,$this->rowRender($this->row_t));
+            $this->template->appendHTML($this->container_tag,$this->rowRender($this->row_t));
         }
 
         if($this->totals!==false && $this->totals_t){
             $this->current_row = $this->totals;
             $this->formatTotalsRow();
-            $this->template->append($this->container_tag,$this->rowRender($this->totals_t));
+            $this->template->appendHTML($this->container_tag,$this->rowRender($this->totals_t));
         }
     }
     function render(){

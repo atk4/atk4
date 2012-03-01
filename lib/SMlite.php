@@ -146,18 +146,6 @@ class SMlite extends AbstractModel {
         $this->settings=$this->getDefaultSettings();
         $this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
     }
-    function SMlite($template=array(),$settings=array()){
-        /*
-         * This method creates new instance of SMlite. The proper way to
-         * all it is:
-         *
-         *  $template new SMlite();
-         *
-         * As argument you should point a tag for top-level region. You may
-         * also customize settings by passing them as 2nd argument.
-         */
-        if($template)throw new ObsoleteException("Do not create SMlite directly. Use \$api->add('SMlite'). Alternatively you can use one.");
-    }
     function __clone(){
         if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
         // may be some of the following lines are unneeded...
@@ -175,10 +163,8 @@ class SMlite extends AbstractModel {
          */
         if($this->isTopTag($tag)){
             $class_name=get_class($this);
-            $new=new $class_name();
+            $new=$this->add($class_name);
             $new->template=unserialize(serialize($this->template));
-            $new->owner=$this->owner;
-            $new->api=$this->api;
             $new->top_tag=$tag;
             $new->settings=$this->settings;
             $new->rebuildTags();
@@ -190,7 +176,7 @@ class SMlite extends AbstractModel {
             throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
         }
         $class_name=get_class($this);
-        $new=new $class_name();
+        $new=$this->add($class_name);
         try {
             $new->template=unserialize(serialize($this->tags[$tag][0]));
         }catch(PDOException $e){
@@ -198,7 +184,6 @@ class SMlite extends AbstractModel {
             throw $this->exception('PDO got stuck in template')
                 ->addMoreInfo('tag',$tag);
         }
-        $new->owner=$this->owner;
         $new->top_tag=$tag;
         $new->settings=$this->settings;
         return $new->rebuildTags();
@@ -235,7 +220,10 @@ class SMlite extends AbstractModel {
         if(is_array($v) && count($v)==1)$v=array_shift($v);
         return $v;
     }
-    function append($tag,$value,$delim=""){
+    function appendHTML($tag,$value){
+        return $this->append($tag,$value,false);
+    }
+    function append($tag,$value,$encode=true){
         /*
          * This appends static content to region refered by a tag. This function
          * is useful when you are adding more rows to a list or table.
@@ -246,11 +234,20 @@ class SMlite extends AbstractModel {
          * If tag is used for several regions inide template, they all will be
          * appended with new data.
          */
+        if(!is_bool($encode))throw $this->exception('$delim is depreciated. Now 3rd argument is boolean');
         if($value instanceof URL)$value=$value->__toString();
+        // Temporary here until we finish testing
+        if($encode && $value!=htmlentities($value) && $this->api->getConfig('html_inection_debug',false))throw $this->exception('Attempted to supply html string through append()')
+            ->addMoreInfo('val',var_export($value,true))
+            ->addMoreInfo('enc',var_export(htmlentities($value),true))
+            ;
+        if($encode)$value=htmlentities($value);
         if($this->isTopTag($tag)){
+            /*
             if ($this->template){
                 $this->template[]=$delim;
             }
+             */
             $this->template[]=$value;
             return $this;
         }
@@ -263,14 +260,19 @@ class SMlite extends AbstractModel {
                 //throw new BaseException("Problem appending '".htmlspecialchars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
             }
+            /*
             if ($this->tags[$tag][$key]){
                 $this->tags[$tag][$key][]=$delim;
             }
+             */
             $this->tags[$tag][$key][]=$value;
         }
         return $this;
     }
-    function set($tag,$value=null){
+    function setHTML($tag,$value=null){
+        return $this->set($tag,$value,false);
+    }
+    function set($tag,$value=null,$encode=true){
         /*
          * This function will replace region refered by $tag to a new content.
          *
@@ -291,7 +293,7 @@ class SMlite extends AbstractModel {
             if(is_null($value)){
                 // USE(2)
                 foreach($tag as $s=>$v){
-                    $this->trySet($s,$v);
+                    $this->trySet($s,$v,$encode);
                 }
                 return $this;
             }
@@ -300,13 +302,19 @@ class SMlite extends AbstractModel {
                 reset($tag);reset($value);
                 while(list(,$s)=each($tag)){
                     list(,$v)=each($value);
-                    $this->set($s,$v);
+                    $this->set($s,$v,$encode);
                 }
                 return $this;
             }
             $this->fatal("Incorrect argument types when calling SMlite::set(). Check documentation.");
         }
         if($value instanceof URL)$value=$value->__toString();
+
+        if($encode && $value!=htmlentities($value) && $this->api->getConfig('html_inection_debug',false))throw $this->exception('Attempted to supply html string through append()')
+            ->addMoreInfo('val',var_export($value,true))
+            ->addMoreInfo('enc',var_export(htmlentities($value),true))
+            ;
+        if($encode)$value=htmlentities($value);
         if($this->isTopTag($tag)){
             $this->template=$value;
             return $this;
@@ -329,13 +337,16 @@ class SMlite extends AbstractModel {
         if($this->isTopTag($tag))return true;
         return isset($this->tags[$tag]) && is_array($this->tags[$tag]);
     }
-    function trySet($tag,$value=null){
+    function trySetHTML($tag,$value=null){
+        return $this->trySet($tag,$value,false);
+    }
+    function trySet($tag,$value=null,$encode=true){
         /*
          * Check if tag is present inside template. If it does, execute set(); See documentation
          * for set()
          */
-        if(is_array($tag))return $this->set($tag,$value);
-        return $this->is_set($tag)?$this->set($tag,$value):$this;
+        if(is_array($tag))return $this->set($tag,$value,$encode);
+        return $this->is_set($tag)?$this->set($tag,$value,$encode):$this;
     }
     function del($tag){
         /*
@@ -405,6 +416,7 @@ class SMlite extends AbstractModel {
         /*
          * Load template from file
          */
+        if(!$this->api)throw new Exception('Broken Link');
         if($this->cache[$template_name.$ext]){
             $this->template=unserialize($this->cache[$template_name.$ext]);
             $this->rebuildTags();

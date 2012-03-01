@@ -52,6 +52,7 @@
  */
 class BasicAuth extends AbstractController {
 
+    public $template=null;
 	public $info=false;		// info will contain data loaded about authenticated user. This
 							// property can be accessed through $this->get(); and should not
 							// be changed after authentication.
@@ -304,7 +305,7 @@ class BasicAuth extends AbstractController {
 		$form->addField('Password','password','Password');
 
 		$form->addField('Checkbox','memorize','Remember me');
-		$form->addComment('<dl align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
+		$form->add('Html')->set('<dl align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
 					'will no longer have to use a password to enter this site,<br>until you explicitly ' .
 					'log out.</b></dl>');
 
@@ -333,7 +334,7 @@ class BasicAuth extends AbstractController {
 								);
 								*/
 			//$this->api->setTags($p->template);
-			$frame=$p->frame('Authentication');
+			$frame=$p->add('Frame')->setTitle('Authentication');
 			$this->form=$this->createForm($frame);
 		}
 		// adding token for session exiration detection

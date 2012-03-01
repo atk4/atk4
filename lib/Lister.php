@@ -27,6 +27,12 @@ class Lister extends View {
     /** Points to current row before it's being outputted. Used in formatRow() */
 	public $current_row=array();
 
+    /** Similar to $current_row, but will use for direct HTML output, no escaping. Use with care. */
+    public $current_row_html=array();
+
+    /** Contains ID of current record */
+    public $current_id=null;
+
     /** 
      * Sets source data for the lister. If source is a model, use setModel() instead.
      *
@@ -104,7 +110,12 @@ class Lister extends View {
 	}
     /** Renders single row. If you use for formatting then interact with template->set() directly prior to calling parent */
     function rowRender($template) {
-        $template->set($this->current_row);
+        foreach($this->current_row as $key=>$val){
+            if(isset($this->current_row_html[$key]))continue;
+            $template->trySet($key,$val);
+        }
+        $template->setHTML($this->current_row_html);
+        $template->trySet('id',$this->current_id);
         return $template->render();
     }
     function getIterator(){
@@ -113,7 +124,7 @@ class Lister extends View {
         return $i;
     }
 	function render(){
-        foreach($this->getIterator() as $this->current_row){
+        foreach($this->getIterator() as $this->current_id=>$this->current_row){
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }

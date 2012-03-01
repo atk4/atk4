@@ -53,8 +53,11 @@ class Field_Reference extends Field {
         }else{
             $title=$this->model->titleQuery();
         }
-        $title->where(($this->relation?$this->relation->short_name.'.':'').$this->short_name,
-            $title->getField($this->model->id_field));
+        if($this->relation){
+            $title->where($this->relation->short_name.'.'.$this->short_name,$title->getField($this->model->id_field));
+        }else{
+            $title->where($this->owner->dsql->getField($this->short_name),$title->getField($this->model->id_field));
+        }
         return $title;
     }
 }

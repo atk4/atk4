@@ -17,7 +17,7 @@ $.widget('ui.atk4_notify', {
 		// When click button is present - use it
 		var self=this;
 		if(message.find('.close').length){
-			message.find('.close').hide().click(function(){
+			message.find('.close').click(function(){
 				message.fadeOut(500,function(){
 					message.remove();
 				});
@@ -31,6 +31,7 @@ $.widget('ui.atk4_notify', {
 			});
 		}
 
+        /*
 		message.mouseenter(function(){
 			console.log('entered');
 			message.stop(true);
@@ -46,6 +47,7 @@ $.widget('ui.atk4_notify', {
 				message.remove();
 			});
 		});
+        */
 
 	},
 	_insertMessage: function(message){
@@ -77,25 +79,23 @@ $.widget('ui.atk4_notify', {
 		this._defineBehaviour(message);
 		this._insertMessage(message);
 	},
-	message: function(text,icon){
+	message: function(text,success){
 		/*
 		 * This display a message which you would commonly use on successful operation completion.
 		 */
-		var html=$('<div class="atk-notification ui-state-highlight ui-corner-all"><div class="atk-notification-text"><i class="atk-icon"></i>'
+        var html=$('<div class="atk-notification ui-state-'+(success?'highlight':'error')+
+        ' ui-corner-all"><div class="atk-notification-text"><i class="ui-icon ui-icon-'+(success?'info':'alert')+'"></i>'
 				+text+'</div><a href="javascript:void()" title="Hide this message" class="ui-icon ui-icon-closethick"></i></div>');
-		if(icon){
-            html.find('.atk-icon').addClass('atk-icons-green');
-            html.find('.atk-icon').addClass('atk-icon-'+icon);
-        }else{
-            html.find('.atk-icon:first').remove();
-        }
         html.find('span').text(text);
         html.find('.ui-icon').addClass('close');
 
 		this.messageHTML(html);
 	},
 	successMessage: function(text){
-		this.message(text,'basic-check');
+		this.message(text,true);
+	},
+	errorMessage: function(text){
+		this.message(text,false);
 	}
 	
 });

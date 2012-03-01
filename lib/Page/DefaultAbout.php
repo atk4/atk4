@@ -29,8 +29,8 @@ abstract class page_DefaultAbout extends Page {
 		$this->api->addHook('post-init',array($this,'aboutFramework'));
 	}
 	function aboutframework(){
-		$msg=$this->frame('About Agile Toolkit');
-		$t=$msg->add('Text');
+		$msg=$this->add('Frame')->setTitle('About Agile Toolkit');
+		$t=$msg->add('Html');
 		$text="<p>This web application was developed using <a href=\"http://agiletoolkit.org/\">Agile Toolkit
 			framework</a>. Agile Toolkit is licensed under Affero Gnu Public License. You may use it for free, but you
 			must release software you have built on Agile Toolkit under AGPL license. Sharing your code gives a warm,

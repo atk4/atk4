@@ -272,8 +272,8 @@ abstract class Form_Field extends AbstractView {
             $this->template->trySet('input_row_start','<div class="input-row">');
             $this->template->trySet('input_row_stop','</div>');
         }
-		$this->template->trySet('field_input',$this->field_prepend.$this->getInput().$this->field_append);
-		$this->template->trySet('field_error',
+		$this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
+		$this->template->trySetHTML('field_error',
 				isset($this->form->errors[$this->short_name])?
 				$this->error_template->set('field_error_str',$this->form->errors[$this->short_name])->render()
 				:''
@@ -396,9 +396,11 @@ class Form_Field_Search extends Form_Field {
 	}
 }
 class Form_Field_Checkbox extends Form_Field {
+    public $true_value=1;
+    public $false_value=0;
 	function init(){
 		parent::init();
-		$this->default_value='N';
+		$this->default_value='';
 	}
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
@@ -412,16 +414,16 @@ class Form_Field_Checkbox extends Form_Field {
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
-						'value'=>'Y',
-						'checked'=>$this->value=='Y'
+						'value'=>$this->true_value,
+						'checked'=>(boolean)$this->true_value==$this->value
 					     ),$attr
 					)).' &ndash; '.$label;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
-			$this->set('Y');
+			$this->set($this->true_value);
 		}else{
-			$this->set('');
+			$this->set($this->false_value);
 		}
 	}
 }

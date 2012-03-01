@@ -57,7 +57,7 @@ class jQuery extends AbstractController {
             $url=$this->api->locateURL('js',$file.$ext);
         }else $url=$file;
 
-        $this->api->template->append('js_include',
+        $this->api->template->appendHTML('js_include',
                 '<script type="text/javascript" src="'.$url.'"></script>'."\n");
         return $this;
     }
@@ -72,7 +72,7 @@ class jQuery extends AbstractController {
     /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */
     function addOnReady($js){
         if(is_object($js))$js=$js->getString();
-        $this->api->template->append('document_ready', $js.";\n");
+        $this->api->template->appendHTML('document_ready', $js.";\n");
         return $this;
     }
     /* [private] use $object->js() instead */

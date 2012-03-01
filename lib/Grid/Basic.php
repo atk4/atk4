@@ -35,7 +35,6 @@ class Grid_Basic extends CompleteLister {
     }
 
     function importFields($model,$fields=undefined){
-        echo "Called";
         $this->add('Controller_MVCGrid')->importFields($model,$fields);
     }
 
@@ -80,8 +79,8 @@ class Grid_Basic extends CompleteLister {
         $col = $row->cloneRegion('col');
 
         // tbody -> column
-        $row->set('row_id','<?$id?>');
-        $row->trySet('odd_even','<?$odd_even?>');
+        $row->setHTML('row_id','<?$id?>');
+        $row->trySetHTML('odd_even','<?$odd_even?>');
         $row->del('cols');
 
         // thead -> column
@@ -99,7 +98,7 @@ class Grid_Basic extends CompleteLister {
 
         foreach($this->columns as $name=>$column){
             $col->del('content');
-            $col->set('content','<?$'.$name.'?>');
+            $col->setHTML('content','<?$'.$name.'?>');
 
             if(isset($t_row)){
                 $t_col->del('content');
@@ -110,9 +109,9 @@ class Grid_Basic extends CompleteLister {
 
             // some types needs control over the td
 
-            $col->set('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
+            $col->setHTML('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
 
-            $row->append('cols',$col->render());
+            $row->appendHTML('cols',$col->render());
 
             $header_col->set('descr',$column['descr']);
             $header_col->trySet('type',$column['type']);
@@ -134,12 +133,12 @@ class Grid_Basic extends CompleteLister {
             }
 
             if($column['thparam']){
-                $header_col->trySet('thparam',$column['thparam']);
+                $header_col->trySetHTML('thparam',$column['thparam']);
             }else{
                 $header_col->tryDel('thparam');
             }
 
-            $header->append('cols',$header_col->render());
+            $header->appendHTML('cols',$header_col->render());
 
         }
         $this->row_t = $this->api->add('SMlite');
@@ -150,7 +149,7 @@ class Grid_Basic extends CompleteLister {
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
 
-        $this->template->set('header',$header->render());
+        $this->template->setHTML('header',$header->render());
     }
     function formatRow(){
         if(!$this->columns)throw $this->exception('No columns defined for grid');
@@ -167,7 +166,7 @@ class Grid_Basic extends CompleteLister {
             }
             // setting cell parameters (tdparam)
             $this->applyTDParams($tmp);
-            if($this->current_row[$tmp]=='')$this->current_row[$tmp]='&nbsp;';
+            if($this->current_row[$tmp]=='')$this->current_row[$tmp]=' ';
         }
         return $this->current_row;
     }
@@ -191,4 +190,5 @@ class Grid_Basic extends CompleteLister {
         $this->current_row[$field]=$text;
         $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
+
 }

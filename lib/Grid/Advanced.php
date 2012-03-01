@@ -157,12 +157,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->current_row[$field] = $this->current_row[$field];
     }
     function format_html($field){
-        $this->current_row[$field] = htmlspecialchars_decode($this->current_row[$field]);
-    }
-    function format_boolean($field){
-        if($this->current_row[$field] && $this->current_row[$field]!='N'){
-            $this->current_row[$field]='<div align=center><i class="atk-icon atk-icons-nobg atk-icon-basic-check"></i></div>';
-        }else $this->current_row[$field]='';
+        $this->current_row_html[$field] = $this->current_row[$field];
     }
     function init_money($field){
         @$this->columns[$field]['thparam'].=' style="text-align: right"';
@@ -331,7 +326,7 @@ class Grid_Advanced extends Grid_Basic {
          */
         $val=$this->current_row[$field];
         $this->current_row[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
-            $this->current_row['id']).'" >'.
+            $this->current_id).'" >'.
             '<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i>'.
             $this->current_row[$field].
             '</span>';
@@ -344,13 +339,13 @@ class Grid_Advanced extends Grid_Basic {
             $f=$this->owner->add('Form',$s,null,array('form_empty','form'));
             $ff=$f->addField($this->_getFieldType($field),'e','');
             $ff->set($val);
-            $ff->js('blur',$this->js()->atk4_grid('reloadRow',$this->current_row['id']));
+            $ff->js('blur',$this->js()->atk4_grid('reloadRow',$this->current_id));
             $ff->js(true)->css(array('width'=>'100%'));
             $_GET['cut_object']=$f->name;
 
             if($f->isSubmitted()){
-                $this->_inlineUpdate($field,$this->current_row['id'],$f->get('e'));
-                $this->js()->atk4_grid('reloadRow',$this->current_row['id'])->execute();
+                $this->_inlineUpdate($field,$this->current_id,$f->get('e'));
+                $this->js()->atk4_grid('reloadRow',$this->current_id)->execute();
             }
 
             $f->recursiveRender();
@@ -367,17 +362,17 @@ class Grid_Advanced extends Grid_Basic {
                     'cursor'=>'hand'
                     )
                 );
-        $this->current_row[$field]=$this->record_order->getCell($this->current_row['id']);
+        $this->current_row[$field]=$this->record_order->getCell($this->current_id);
     }
     function init_link($field){
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
     }
     function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_row['id']));
+        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_id));
         return $this->format_template($field);
         /*
            $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
-           array('id'=>$this->current_row['id'])).'">'.
+           array('id'=>$this->current_id)).'">'.
            $this->columns[$field]['descr'].'</a>';
          */
     }
@@ -424,30 +419,38 @@ class Grid_Advanced extends Grid_Basic {
         $this->js(true)->find('.button_'.$field)->button();
     }
     function format_button($field){
-        $this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
+        $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
             'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
-            array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
+            array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_confirm($field){
-        $this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
+        $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
             'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
-            array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'\')">'.
+            array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_prompt($field){
-        $this->current_row[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
+        $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
             'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
-            array($field=>$this->current_row['id'],$this->name.'_'.$field=>$this->current_row['id'])).'&value=\'+value)">'.
+            array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'&value=\'+value)">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
+    function init_boolean($field){
+        @$this->columns[$field]['thparam'].=' style="text-align: center"';
+    }
+    function format_boolean($field){
+        if($this->current_row[$field] && $this->current_row[$field]!='N' && $this->current_row[$field]){
+            $this->current_row_html[$field]='<div align=center><span class="ui-icon ui-icon-check">yes</span></div>';
+        }else $this->current_row[$field]='';
+    }
     function format_checkbox($field){
-        $this->current_row[$field] = '<input type="checkbox" id="cb_'.
-            $this->current_row['id'].'" name="cb_'.$this->current_row['id'].
-            '" value="'.$this->current_row['id'].'"'.
+        $this->current_row_html[$field] = '<input type="checkbox" id="cb_'.
+            $this->current_id.'" name="cb_'.$this->current_id.
+            '" value="'.$this->current_id.'"'.
             ($this->current_row['selected']=='Y'?" checked ":" ").//'" onclick="'.
             //$this->onClick($field).
             '/>';
@@ -455,7 +458,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTDParam($field,'align','center');
     }
     function format_image($field){
-        $this->current_row[$field]='<img src="'.$this->current_row[$field].'"/>';
+        $this->current_row_html[$field]='<img src="'.$this->current_row[$field].'"/>';
     }
     function addRecordOrder($field,$table=''){
         if(!$this->record_order){
@@ -524,7 +527,7 @@ class Grid_Advanced extends Grid_Basic {
             $title.=$this->current_row[$col];
         }
         if($title==' '){
-            return "Row #".$this->current_row['id'];
+            return "Row #".$this->current_id;
         }
         return substr($title,1);
     }
@@ -568,7 +571,7 @@ class Grid_Advanced extends Grid_Basic {
             //walking and combining string
             foreach($tdparam as $id=>$value)$tdparam_str.=$id.'="'.$value.'" ';
             if($totals)$this->totals_t->set("tdparam_$field",trim($tdparam_str));
-            else $this->row_t->trySet("tdparam_$field",trim($tdparam_str));
+            else $this->row_t->trySetHTML("tdparam_$field",trim($tdparam_str));
         }
     }
     function setTotalsTitle($field,$title="Total:"){

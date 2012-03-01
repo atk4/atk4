@@ -82,14 +82,20 @@ class Controller_MVCForm extends AbstractController {
 
         $this->field_associations[$field_name]=$field;
 
-        if($field->listData() || $field instanceof Field_Reference){
+        if($field_type=='checkbox'){
+            if(!$field->listData)$field->enum(array(1,0));
+        }elseif($field->listData() || $field instanceof Field_Reference){
             $field_type='dropdown';
         }
 
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
-        if($field->listData()){
+        if($field_type=='checkbox'){
+            reset($field->listData);
+            list($form_field->true_value,$junk)=each($field->listData);
+            list($form_field->false_value,$junk)=each($field->listData);
+        }elseif($field->listData()){
             $a=$field->listData();
             if(!$field->mandatory()){
                 $a=array(null=>'')+$a;
