@@ -237,9 +237,10 @@ class SMlite extends AbstractModel {
         if(!is_bool($encode))throw $this->exception('$delim is depreciated. Now 3rd argument is boolean');
         if($value instanceof URL)$value=$value->__toString();
         // Temporary here until we finish testing
-        if($encode && $value!=htmlspecialchars($value) && $this->api->getConfig('html_inection_debug',false))throw $this->exception('Attempted to supply html string through append()')
+        if($encode && $value!=htmlspecialchars($value) && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through append()')
             ->addMoreInfo('val',var_export($value,true))
             ->addMoreInfo('enc',var_export(htmlspecialchars($value),true))
+            //->addAction('ignore','Ignore tag'.$tag)
             ;
         if($encode)$value=htmlspecialchars($value);
         if($this->isTopTag($tag)){
@@ -310,9 +311,10 @@ class SMlite extends AbstractModel {
         }
         if($value instanceof URL)$value=$value->__toString();
 
-        if($encode && $value!=htmlspecialchars($value) && $this->api->getConfig('html_inection_debug',false))throw $this->exception('Attempted to supply html string through append()')
+        if($encode && $value!=htmlspecialchars($value) && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through set()')
             ->addMoreInfo('val',var_export($value,true))
             ->addMoreInfo('enc',var_export(htmlspecialchars($value),true))
+            //->addAction('ignore','Ignore tag'.$tag)
             ;
         if($encode)$value=htmlspecialchars($value);
         if($this->isTopTag($tag)){
