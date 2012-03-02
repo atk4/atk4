@@ -260,7 +260,7 @@ class Grid_Advanced extends Grid_Basic {
         // $this->current_row[$field]=$this->add('Button',null,false)
         //  ->
         //
-        @$this->current_row[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
+        @$this->current_row_html[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
             id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
             rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
             array('expander'=>$field,
