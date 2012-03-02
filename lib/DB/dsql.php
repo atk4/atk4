@@ -836,11 +836,14 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Will execute DSQL query and return all results inside array of hashes */
     function get(){
         if(!$this->stmt)$this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        $res=$this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->rewind();
+        return $res;
     }
     /** Will execute DSQL query and return first column of a first row */
     function getOne(){
         $res=$this->getRow();
+        $this->rewind();
         return $res[0];
     }
     /** Will execute DSQL query and return first row as array (not hash) */
