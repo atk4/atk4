@@ -415,7 +415,7 @@ class Form_Field_Checkbox extends Form_Field {
 					array(
 						'type'=>'checkbox',
 						'value'=>$this->true_value,
-						'checked'=>(boolean)$this->true_value==$this->value
+						'checked'=>(boolean)($this->true_value==$this->value)
 					     ),$attr
 					)).' &ndash; '.$label;
 	}
