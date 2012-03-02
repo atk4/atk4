@@ -106,19 +106,12 @@ abstract class Form_Field extends AbstractView {
 		$this->value=$value;
 		return $this;
 	}
-    function addButton($label,$position='end'){
-        if($position=='end'){
-            /*
-            if(!$this->button_append)$this->button_append=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
-            return $this->button_append->add('Button')->set($label);
-             */
+    /** Position can be either 'before' or 'after' */
+    function addButton($label,$position='after'){
+        if($position=='after'){
             return $this->afterField()->add('Button')->set($label);
         }else{
             return $this->beforeField()->add('Button')->set($label);
-            /*
-            if(!$this->button_prepend)$this->button_prepend=$this->add('HtmlElement',null,'after_input')->addClass('input-cell');
-            return $this->button_prepend->add('Button')->set($label);
-             */
         }
         return $this;
     }
@@ -137,6 +130,10 @@ abstract class Form_Field extends AbstractView {
     }
     function belowField(){
         return $this->add('HtmlElement',null,'after_field');
+    }
+    function setComment($text=''){
+        $this->belowField()->setElement('ins')->set($text);
+        return $this;
     }
     function addComment($text=''){
         return $this->belowField()->setElement('ins')->set($text);
@@ -272,8 +269,8 @@ abstract class Form_Field extends AbstractView {
         if($this->button_prepend || $this->button_append){
             $this->field_prepend.='<div class="input-cell expanded">';
             $this->field_append='</div>'.$this->field_append;
-            $this->template->trySet('input_row_start','<div class="input-row">');
-            $this->template->trySet('input_row_stop','</div>');
+            $this->template->trySetHTML('input_row_start','<div class="input-row">');
+            $this->template->trySetHTML('input_row_stop','</div>');
         }
 		$this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
 		$this->template->trySetHTML('field_error',
@@ -418,7 +415,7 @@ class Form_Field_Checkbox extends Form_Field {
 					array(
 						'type'=>'checkbox',
 						'value'=>$this->true_value,
-						'checked'=>(boolean)$this->true_value==$this->value
+						'checked'=>(boolean)($this->true_value==$this->value)
 					     ),$attr
 					)).' &ndash; '.$label;
 	}

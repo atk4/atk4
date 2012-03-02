@@ -22,7 +22,7 @@ class View extends AbstractView {
             foreach($attribute as $a=>$b)$this->setAttr($a,$b);
             return $this;
         }
-        $this->template->append('attributes',' '.$attribute.'="'.$value.'"');
+        $this->template->appendHTML('attributes',' '.$attribute.'="'.$value.'"');
         return $this;
     }
     /** Add class to element. */
@@ -58,7 +58,7 @@ class View extends AbstractView {
     }
     /** Sets HTML */
     function setHtml($html){
-        $this->template->trySet('Content',$html);
+        $this->template->trySetHTML('Content',$html);
         return $this;
     }
     function defaultTemplate(){

@@ -8,9 +8,9 @@ class Controller_Data_Array extends AbstractController {
     }
     function next($model){
         list($model->id,$model->data)=each($model->table);
-        return $model->data;
+        $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
+        return $model;
     }
-
     function init(){
         parent::init();
         $this->owner->addField('id')->type('int')->system(true);

@@ -32,6 +32,9 @@ class Lister extends View {
 
     /** Contains ID of current record */
     public $current_id=null;
+    
+    /** Data set fetched from source */
+    public $iterator=array();
 
     /** 
      * Sets source data for the lister. If source is a model, use setModel() instead.
@@ -58,6 +61,10 @@ class Lister extends View {
      * or   // sql table
      *  $l->setSource( 'user', array('name','surname'));
      **/
+    function init(){
+        parent::init();
+        $this->api->addHook("pre-render", array($this, "prepareIterator"));
+    }
 	function setSource($source,$fields=null){
 
         // Set DSQL
@@ -123,8 +130,17 @@ class Lister extends View {
             throw $this->exception('Please specify data source with setSource or setModel');
         return $i;
     }
-	function render(){
-        foreach($this->getIterator() as $this->current_id=>$this->current_row){
+    function prepareIterator(){
+        /* prefetches data */
+        $this->iterator = $this->getIterator();
+        $data = array();
+        foreach($this->iterator as $id=>$row){
+            $data[$id] = $row;
+        }
+        $this->iterator = $data;
+    }
+    function render(){
+        foreach($this->iterator as $this->current_id=>$this->current_row){
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }

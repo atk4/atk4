@@ -84,13 +84,13 @@ class TMail_Basic extends AbstractModel {
         $this->template->set('body_parts','');
         foreach($this->elements as $el){
             if($el instanceof TMail_Part){
-                $this->template->append('body_parts',$el->render());
+                $this->template->appendHTML('body_parts',$el->render());
             }
         }
         $this->template->set('boundary',$this->boundary);
         $this->headers
             ->set('boundary',$this->boundary)
-            ->set($this->args);
+            ->setHTML($this->args);
     }
     function send($to,$from=null){
         if(is_null($from) && isset($this->args['from']))$from=$this->args['from'];
@@ -140,8 +140,8 @@ class TMail_Part extends AbstractModel {
             $c=$c->render();
         }
 
-        $this->template->set($this->owner->args);
-        $this->template->set('Content',$c);
+        $this->template->setHTML($this->owner->args);
+        $this->template->setHTML('Content',$c);
         $this->template->set('boundary',$this->owner->boundary);
 
         return $this->template->render();

@@ -182,7 +182,6 @@ class BasicAuth extends AbstractController {
 						   )){
 					// Cookie login was successful. No redirect will be performed
 					$this->loggedIn($_COOKIE[$this->name."_username"],$_COOKIE[$this->name."_password"]);
-					$this->memorize('info',$this->info);
 					return;
 				}
 			}else $this->debug("No permanent cookie");
@@ -244,7 +243,9 @@ class BasicAuth extends AbstractController {
 		}
 
 		unset($_GET['submit']);
-		unset($_GET['page']);
+        unset($_GET['page']);
+
+        $this->memorize('info',$this->info);
 	}
 	function login($username,$memorize=false){
 		$this->loggedIn($username,isset($this->allowed_credintals[$username])?
@@ -359,7 +360,6 @@ class BasicAuth extends AbstractController {
 						$this->encryptPassword($this->form->get('password'),$this->form->get('username'))
 						)){
 				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
-				$this->memorize('info',$this->info);
 				$this->loginRedirect();
 			}
 			$this->debug("Incorrect login");

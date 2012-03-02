@@ -30,6 +30,9 @@
 **/
 class CompleteLister extends Lister {
 
+    protected $item_tag='row';
+    protected $container_tag='rows';
+
 	protected $row_t;
 
     /** Will contain accumulated totals for all fields */
@@ -40,10 +43,10 @@ class CompleteLister extends Lister {
 
 	function init(){
 		parent::init();
-        if(!$this->template->is_set('row'))
-            throw $this->exception('Template must have "row" tag');
+        if(!$this->template->is_set($this->item_tag))
+            throw $this->exception('Template must have "'.$this->item_tag.'" tag');
 
-		$this->row_t=$this->template->cloneRegion('row');
+		$this->row_t=$this->template->cloneRegion($this->item_tag);
 	}
 
     /** Enable total calculation for specified array of fields. If not specified, all field totals are calculated */
@@ -87,19 +90,19 @@ class CompleteLister extends Lister {
 
     function renderRows(){
         $this->odd_even='';
-        $this->template->del('rows');
+        $this->template->del($this->container_tag);
 
-        foreach($this->getIterator() as $this->current_id=>$this->current_row){
+        foreach($this->iterator as $this->current_id=>$this->current_row){
             @$this->totals['row_count']++;
             if($this->totals!==false)$this->updateTotals();
             $this->formatRow();
-            $this->template->appendHTML('rows',$this->rowRender($this->row_t));
+            $this->template->appendHTML($this->container_tag,$this->rowRender($this->row_t));
         }
 
         if($this->totals!==false && $this->totals_t){
             $this->current_row = $this->totals;
             $this->formatTotalsRow();
-            $this->template->appendHTML('rows',$this->rowRender($this->totals_t));
+            $this->template->appendHTML($this->container_tag,$this->rowRender($this->totals_t));
         }
     }
     function render(){
