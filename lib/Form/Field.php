@@ -269,8 +269,8 @@ abstract class Form_Field extends AbstractView {
         if($this->button_prepend || $this->button_append){
             $this->field_prepend.='<div class="input-cell expanded">';
             $this->field_append='</div>'.$this->field_append;
-            $this->template->trySet('input_row_start','<div class="input-row">');
-            $this->template->trySet('input_row_stop','</div>');
+            $this->template->trySetHTML('input_row_start','<div class="input-row">');
+            $this->template->trySetHTML('input_row_stop','</div>');
         }
 		$this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
 		$this->template->trySetHTML('field_error',

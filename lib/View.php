@@ -58,7 +58,7 @@ class View extends AbstractView {
     }
     /** Sets HTML */
     function setHtml($html){
-        $this->template->trySet('Content',$html);
+        $this->template->trySetHTML('Content',$html);
         return $this;
     }
     function defaultTemplate(){
