@@ -43,6 +43,15 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** prefix for all parameteric variables: a, a_2, a_3, etc */
     public $param_base='a';
 
+    public $sql_templates=array(
+        'select'=>"select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]",
+        'insert'=>"insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])",
+        'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])",
+        'update'=>"update [table_noalias] set [set] [where]",
+        'delete'=>"delete from  [table_noalias] [where]",
+        'truncate'=>'truncate table [table_noalias]'
+    );
+
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
         $desired=preg_replace('/[^a-zA-Z0-9:]/','_',$desired);
@@ -606,6 +615,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function hasOption($option){
         return @in_array($option,$this->args['options']);
     }
+    function hasInsertOption($option){
+        return @in_array($option,$this->args['options_insert']);
+    }
     // }}}
     // {{{ limit()
     /** Limit row result */
@@ -707,33 +719,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Statement templates and interfaces
 
     /** Switches to select mode (which is default) for this query */
-    function select(){
-        $this->mode='select';
-        $this->template="select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]";
-        return $this;
-    }
-    /** Switches to insert mode. Use with set() */
-    function insert(){
-        $this->mode='insert';
-        $this->template="insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])";
-        return $this;
-    }
-    /** Replace is similar to insert, but will overwrite existing records with same unique key */
-    function replace(){
-        $this->mode='replace';
-        $this->template="replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])";
-        return $this;
-    }
-    /** Switch to update mode. Use with set() */
-    function update(){
-        $this->mode='update';
-        $this->template="update [table_noalias] set [set] [where]";
-        return $this;
-    }
-    /** Switches to delete mode. */
-    function delete(){
-        $this->mode='delete';
-        $this->template="delete from  [table_noalias] [where]";
+    function SQLTemplate($mode){
+        $this->mode=$mode;
+        $this->template=$this->sql_templates[$mode];
         return $this;
     }
     /** Switches to call mode. Use with args() */
@@ -746,89 +734,87 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->template="call [fx]([args])";
         return $this;
     }
+    function render_fx(){
+        return $this->args['fx'];
+    }
     function sum($arg=null){
         return $this->expr('sum([sum])')->setCustom('sum',$this->bt($arg));
     }
-    function render_fx(){
-        return $this->args['fx'];
+    function count($arg=null){
+        if(is_null($arg))$arg='*';
+        return $this->expr('count([count])')->setCustom('count',$this->bt($arg));
     }
     // }}}
 
     // {{{ More complex query generations and specific cases
 
-    /** Executes select query. */
-    function do_select(){
-        try {
-            $this->stmt=$this->owner->query($q=(string)$this->select(),$this->params);
-            return $this;
-        }catch(PDOException $e){
-            throw $this->exception('SELECT statement failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
-        }
-    }
-
-    /** Executes insert query. Returns ID of new record. */
-    function do_insert(){
-        try {
-            $this->stmt=$this->owner->query($q=(string)$this->insert(),$this->params);
-            return $this->owner->lastID();
-        }catch(PDOException $e){
-            throw $this->exception('INSERT statement failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
-        }
-    }
-
-    /** Executes update query */
-    function do_update(){
-        try {
-            $this->stmt=$this->owner->query($q=(string)$this->update(),$this->params);
-            return $this;
-        }catch(PDOException $e){
-            throw $this->exception('UPDATE statement failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
-        }
-    }
-
-    /** Executes replace query */
-    function do_replace(){
-        try {
-            $this->stmt=$this->owner->query($q=(string)$this->replace(),$this->params);
-            return $this;
-        }catch(PDOException $e){
-            throw $this->exception('REPLACE statement failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
-        }
-    }
-    /** Executes delete query */
-    function do_delete(){
-        try {
-            $this->stmt=$this->owner->query($q=(string)$this->delete(),$this->params);
-            return $this;
-        }catch(PDOException $e){
-            throw $this->exception('DELETE statement failed')
-                ->addPDOException($e)
-                ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
-        }
-    }
-    /** Executes user-defined query */
+    /** Executes any query query */
     function execute(){
         try {
-            return $this->stmt=$this->owner->query($q=(string)$this->render(),$this->params);
+            $this->stmt=$this->owner->query($q=$this->render(),$this->params);
+            $this->template=$this->mode=null;
+            return $this;
         }catch(PDOException $e){
-            throw $this->exception('SELECT or expression failed')
+            throw $this->exception('Database Query Failed')
                 ->addPDOException($e)
+                ->addMoreInfo('mode',$this->mode)
                 ->addMoreInfo('params',$this->params)
-                ->addMoreInfo('query',$q);
+                ->addMoreInfo('query',$q)
+                ->addMoreInfo('template',$this->template)
+                ;
         }
+    }
+    /** Executes select query. */
+    function select(){
+        return $this->SQLTemplate('select')->execute();
+    }
+    /** Executes insert query. Returns ID of new record. */
+    function insert(){
+        $this->SQLTemplate('insert')->execute();
+        return 
+            $this->hasInsertOption('ignore')?null:
+            $this->owner->lastID();
+    }
+    /** Inserts multiple rows of data. Uses ignore option. */
+    function insertAll($array){
+        $ids=array();
+        foreach($array as $hash){
+            $ids[]=$this->del('set')->set($hash)->insert();
+        }
+        return $ids;
+    }
+    /** Executes update query */
+    function update(){
+        return $this->SQLTemplate('update')->execute();
+    }
+    /** Executes replace query */
+    function replace(){
+        return $this->SQLTemplate('replace')->execute();
+    }
+    /** Executes delete query */
+    function delete(){
+        return $this->SQLTemplate('delete')->execute();
+    }
+    /** Executes truncate */
+    function truncate(){
+        return $this->SQLTemplate('truncate')->execute();
+    }
+
+    /** @obsolete, use select() */
+    function do_select(){
+        return $this->select();
+    }
+    /** @obsolete, use insert() */
+    function do_insert(){
+        return $this->insert();
+    }
+    /** @obsolete, use update() */
+    function do_update(){
+        return $this->update();
+    }
+    /** @obsolete, use replace() */
+    function do_replace(){
+        return $this->replace();
     }
     // }}}
 
@@ -957,7 +943,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $r;
     }
     function _render(){
-        if(!$this->template)$this->select();
+        if(!$this->template)$this->SQLTemplate('select');
         $self=$this;
         return preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             $fx='render_'.$matches[1];
