@@ -3,10 +3,13 @@ class DB_dsql_pgsql extends DB_dsql {
     public $bt='"';
 
     /** Use extended postgresql syntax for fetching ID */
-    function insert(){
-        parent::insert();
-        $this->template.=" returning id";
-        return $this;
+    function SQLTemplate($mode){
+        $template=parent::SQLTemplate($mode);
+        switch($mode){
+            case 'insert':
+                return $template." returning id";
+        }
+        return $template;
     }
     function render_limit(){
         if($this->args['limit']){
