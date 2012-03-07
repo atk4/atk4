@@ -31,7 +31,7 @@ class View_Tabs_jUItabs extends View_Tabs {
                     'tab_name'=>$title,
                     'tab_id'=>$container->short_name,
                     ));
-        $this->template->append('tabs',$this->tab_template->render());
+        $this->template->appendHTML('tabs',$this->tab_template->render());
         return $container;
     }
     /* Add tab which loads dynamically. Returns $this for chaining */
@@ -41,7 +41,7 @@ class View_Tabs_jUItabs extends View_Tabs {
                     'tab_name'=>$title,
                     'tab_id'=>basename($page),
                     ));
-        $this->template->append('tabs',$this->tab_template->render());
+        $this->template->appendHTML('tabs',$this->tab_template->render());
         return $this;
     }
     function defaultTemplate(){

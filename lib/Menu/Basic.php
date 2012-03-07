@@ -40,6 +40,10 @@ class Menu_Basic extends CompleteLister {
 		return array('menu','Menu');
 	}
 	function addMenuItem($page,$label=null){
+        if(isset($this->api->compat)){
+            // exchange arguments
+            list($page,$label)=array($label,$page);
+        }
 		if(!$label){
 			$label=ucwords(str_replace('_',' ',$page));
 		}

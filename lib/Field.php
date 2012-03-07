@@ -50,6 +50,7 @@ class Field extends AbstractModel {
     function group($t=undefined){ return $this->setterGetter('group',$t); }
     function readonly($t=undefined){ return $this->setterGetter('readonly',$t); }
     function mandatory($t=undefined){ return $this->setterGetter('mandatory',$t); }
+    function required($t=undefined){ return $this->mandatory($t); }
     function editable($t=undefined){ return $this->setterGetter('editable',$t); }
     function allowHTML($t=undefined){ return $this->setterGetter('allowHTML',$t); }
     function searchable($t=undefined){ return $this->setterGetter('searchable',$t); }
