@@ -916,7 +916,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this;
     }
     function next(){
-        return $this->data = $this->fetch();
+        return $this->data;
     }
     function current(){
         return $this->data;
@@ -925,7 +925,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data['id'];
     }
     function valid(){
-        return $this->data!==false;
+        $this->data = $this->fetch();
+        return (boolean)$this->data;
     }
     // }}}
 
