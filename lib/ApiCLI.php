@@ -248,7 +248,7 @@ class ApiCLI extends AbstractView {
     // }}}
 
     // {{{ Version handling
-    /** Determine version of Agile Toolkit */
+    /** Determine version of Agile Toolkit or specified plug-in */
     private $version_cache=null;
     function getVersion($of='atk'){
         if(!$this->version_cache){
@@ -262,12 +262,34 @@ class ApiCLI extends AbstractView {
         return $this->version_cache;
     }
     /** Verifies version. Should be used by addons */
-    function versionRequirement($v,$return_only=false){
-        if(($vc=version_compare($this->getVersion(),$v))<0){
-            if($soft)return false;
-            throw new BaseException('Agile Toolkit is too old. Required at least: '.$v.', you have '.$this->getVersion());
+    function requires($addon='atk',$v,$return_only=false){
+        $cv=$this->getVersion($addon);
+        if(version_compare($cv,$v)<0){
+            if($addon=='atk'){
+                $e=$this->exception('Agile Toolkit version is too old');
+            }else{
+                $e=$this->exception('Add-on is outdated')
+                    ->addMoreInfo('addon',$addon);
+            }
+            $e->addMoreInfo('required',$v)
+                ->addMoreInfo('you have',$cv);
+            throw $e;
+        }
+
+        // Possibly we need to enable compatibility version
+        if($addon=='atk'){
+            if(
+                version_compare($v,'4.2')<0 &&
+                version_compare($v,'4.1.4')>=0 
+            ){
+                $this->add('Controller_Compat');
+                return true;
+            }
         }
         return true;
+    }
+    function versionRequirement($v,$return_only=false){
+        return $this->requires('atk',$v,$return_only);
     }
     // }}}
 

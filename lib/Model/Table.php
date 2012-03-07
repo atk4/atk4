@@ -55,6 +55,10 @@ class Model_Table extends Model {
     function init(){
         parent::init();
 
+        if($this->entity_code){
+            $this->table=$this->entity_code;
+            unset($this->entity_code);
+        }
         if($this->table)$this->initQuery();
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
@@ -76,7 +80,7 @@ class Model_Table extends Model {
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
         $this->dsql=$this->api->db->dsql();
-        $table=$this->table?:$this->entity_code;
+        $table=$this->table;
         if(!$table)throw $this->exception('$table property must be defined');
         $this->dsql->table($table,$this->table_alias);
         $this->dsql->default_field=$this->dsql->expr('*,'.
@@ -184,7 +188,7 @@ class Model_Table extends Model {
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
-            $our_field=($tmp->table?:$tmp->entity_code).'_id';
+            $our_field=($tmp->table).'_id';
         }
         $r=$this->add('Field_Reference',$our_field);
         if($display_field)$r->display($display_field);
@@ -194,7 +198,7 @@ class Model_Table extends Model {
     /** Defines many to one association */
     function hasMany($model,$their_field=null,$our_field=null){
         if(!$our_field)$our_field=$this->id_field;
-        if(!$their_field)$their_field=($this->table?:$this->entity_code).'_id';
+        if(!$their_field)$their_field=($this->table).'_id';
         $rel=$this->add('SQL_Many',$model)
             ->set($model,$their_field,$our_field);
     }
@@ -244,7 +248,14 @@ class Model_Table extends Model {
         return $this;
     }
     /** Sets an order on the field. Field must be properly defined */
-    function setOrder($field,$desc=false){
+    function setOrder($field,$desc=false,$_compat_desc=null){
+
+        if($field===null){
+            // 4.1 compatibility
+            $field=$desc;
+            $desc=$_compat_desc;
+        }
+
         if(!$field instanceof Field){
             $field=$this->getElement($field);
         }
@@ -268,23 +279,24 @@ class Model_Table extends Model {
 
     // {{{ Iterator support 
 
+    protected $_iterating=false;
     function rewind(){
+        $this->_iterating=false;
         $this->dsql->rewind();
-        return $this->next();
     }
     function next(){
-        $this->set($x=$this->dsql->next());
+        $this->dsql->next();
+        $this->set($x=$this->dsql->current());
         $this->id=@$this->data[$this->id_field];
-        return $this;
-        //return $this->data = $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
     function current(){
         return $this->get();
     }
     function key(){
-        return $this->get($this->id_field);
+        return $this->id;
     }
     function valid(){
+        if(!$this->_iterating)$this->next();
         return $this->loaded();
     }
 
