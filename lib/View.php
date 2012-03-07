@@ -49,7 +49,7 @@ class View extends AbstractView {
     }
     /** Sets text appearing inside element. Automatically escapes HTML characters */
     function setText($text){
-        $this->template->trySet('Content',htmlentities($text));
+        $this->template->trySet('Content',$text);
         return $this;
     }
     /** Alias for setText. Escapes HTML characters. */
