@@ -1,0 +1,366 @@
+/* Agile Toolkit // www.agiletoolkit.org */
+/* Updated on 06/04/11 */
+/* obsolete. use atk-main.css */
+
+
+/* ------------ Resetting elements */
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0;padding:0;}
+table {border-collapse:collapse;border-spacing:0;}
+fieldset,img {border:0;}
+address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal;}
+ol,ul {list-style:none;}
+caption,th {text-align:left;}
+h1,h2,h3,h4,h5,h6 {font-size:100%;font-weight:normal;}
+q:before,q:after {content:'';}
+abbr,acronym {border:0;}
+a:active {outline:none; -moz-outline-style:none;}
+a:focus {outline:none; -moz-outline-style:none;}
+
+
+/* ------------ General */
+
+html {height:100%;}
+body {min-height:100%;height:100%;}
+div#layout {height:auto !important;height:100%;min-height:100%;}
+div#footer-guard {height:4em;clear:both;}
+#footer {height:3em;margin-top:-3em;}
+#header:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+#header {.zoom:1;.display:block;}
+
+
+/* ------------ 960 Grid System */
+
+body.gs-12 .gs-wrap {margin-left:auto;margin-right:auto;width:940px;padding-left:10px;padding-right:10px;}
+.gs-12 .g-1, .gs-12 .g-2, .gs-12 .g-3, .gs-12 .g-4, .gs-12 .g-5, .gs-12 .g-6, .gs-12 .g-7, .gs-12 .g-8, .gs-12 .g-9, .gs-12 .g-10, .gs-12 .g-11, .gs-12 .g-12 {margin-left:10px;margin-right:10px;float:left;}
+.g-row:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.g-row {.zoom:1;.display:block;}
+.g-row>*:first-child {margin-left:0;}
+.g-row>*:last-child {margin-right:0;}
+
+.gs-12 .g-1 {width:60px;}
+.gs-12 .g-2 {width:140px;}
+.gs-12 .g-3 {width:220px;}
+.gs-12 .g-4 {width:300px;}
+.gs-12 .g-5 {width:380px;}
+.gs-12 .g-6 {width:460px;}
+.gs-12 .g-7 {width:540px;}
+.gs-12 .g-8 {width:620px;}
+.gs-12 .g-9 {width:700px;}
+.gs-12 .g-10 {width:780px;}
+.gs-12 .g-11 {width:860px;}
+.gs-12 .g-12 {width:940px;}
+
+
+/* ------------ Typography */
+
+h1, h2, h3, h4, h5, h6 {line-height:1.3;margin:1.4em 0 .7em 0;font-weight:bold;}
+h1 {font-size:2em;margin:0.67em 0 0.5em 0;}
+h2 {font-size:1.75em;}
+h3 {font-size:1.5em;}
+h4 {font-size:1.25em;}
+h5 {font-size:1.125em;}
+h6 {font-size:1em;}
+
+p,blockquote, ul, ol, dir, menu {margin:0 0 1.12em 0;}
+
+dir, menu {margin-left:40px}
+ol, ul {margin-left:20px;}
+ol {list-style-type:decimal}
+ul {list-style-type:disc;}
+ol ul, ul ol, ul ul, ol ol {margin-top:0.6em;}
+ul li, ol li {margin-bottom:0.8em;}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {margin-top:0;}
+strong {font-weight:bold;}
+
+.hr, .hr-small {height:60px;background:url(../images/hr.png) repeat-x center;}
+.hr-small {height:30px;}
+.hr+h1, .hr+h2, .hr+h3, .hr+h4, .hr+h5 {margin-top:0;}
+hr {margin:3em 0;padding:0;border:none;height:1px;background:#ccc;}
+
+
+/* ------------ jQuery UI settings */
+
+.atk-frame.ui-widget-content {padding:0;border:0;}
+.atk-frame.ui-widget>.ui-widget-header {padding:0.5em 0.8em;font-size:120%;}
+.atk-frame.ui-widget>.ui-widget-content {padding:1em;}
+.atk-frame>.ui-widget-header+.ui-widget-content {border-top:none;}
+
+.ui-widget {margin-bottom:0;}
+.ui-widget.ui-button {margin-bottom:0;}
+
+#ui-datepicker-div {display:none;}
+
+.ui-dialog {padding:2px;}
+.ui-dialog .ui-dialog-content {padding:17px;}
+
+
+/* ------------ Features */
+
+.gs-12.atk-fullscreen .gs-wrap {width:inherit;padding:0 50px;}
+.gs-12.atk-fullscreen .gs {width:inherit;padding:0 50px;}
+#atk-logo {border:none;font-size:0;line-height:0;width:163px;height:41px;overflow:hidden;}
+.float-left {float:left !important;}
+.float-right {float:right !important;}
+.wrapper {width:980px;margin:auto;}
+.clear {clear:both;font-size:0;line-height:0;}
+.clearwrap {overflow:hidden;}
+.clearafter:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.clearafter {.zoom:1;.display:block;}
+.atk-button-panel>button {margin:0 .5em 1em 0 !important;}
+
+
+/* ------------ Various Objects */
+
+.atk-sep {margin:0 0.2em;color:#999;}
+
+.atk-button {padding:0;margin:0;background:#eee;border:none;background:none;}
+.atk-button::-moz-focus-inner{padding:0;border:none}
+
+.atk-hint {padding:.5em;}
+.atk-hint>div {margin-bottom:.5em;}
+.atk-hint>div>.ui-icon {display:inline-block;margin-right:.3em;position:relative;top:.2em}
+.atk-hint p {margin-bottom:0;}
+
+.atk-loader {display:inline-block;background:#eee;border:1px solid #ccc;padding:.3em .6em;border-radius:10px;-moz-border-radius:10px;-webkit-border-radius:10px;text-transform:uppercase;text-shadow:0 1px 0 #fff;font-size:80%;color:#333;}
+.atk-loader>i {background:url(../images/loader.gif);width:16px;height:16px;float:left;position:relative;top:0;margin-right:0.5em;}
+
+.files-container {overflow:hidden;}
+.files-container .atk-sep {margin:0 .7em;}
+
+.form-quicksearch {position:relative;}
+.form-quicksearch input[type=text] {padding-right:16px;width:200px;}
+.form-quicksearch input[type=text]:focus {outline:none;}
+.form-quicksearch i.atk-icon-basic-ex {position:absolute;margin:4px 0 0 -18px;top:auto;z-index:5;cursor:pointer;}
+.form-quicksearch i.atk-icon-basic-search {cursor:pointer;}
+
+
+/* ------------ Elements */
+
+/* Paginator */
+
+.atk-paginator {padding:0.5em 0;margin:0.7em 0;border-top:1px solid #ccc;text-align:center;}
+.atk-paginator>a {padding:0 0.3em;}
+.atk-paginator>a.ui-state-active {text-decoration:none;}
+.atk-paginator-next {float:right;}
+.atk-paginator-previous {float:left;}
+
+/* Grid */
+
+.atk-grid>.form-quicksearch {float:right;}
+.atk-grid>table {width:100%;border-spacing:0px;}
+.atk-grid>table>thead>tr>th, .atk-grid>table>tbody>tr>td {padding:0.3em 0.6em;vertical-align:top;}
+.atk-grid>table>thead>tr>th {font-weight:bold;}
+html>/**/body .atk-grid>table>thead>tr>th {background:none;}
+.atk-grid>table>tbody>tr>td {border-top:1px solid #eee;}
+.atk-grid>table>tbody>tr:first-child>td {border-top:none;}
+.atk-grid>.atk-paginator {margin-top:0;}
+.atk-grid-notfound {width:14em;margin:1em auto;text-align:center;padding:0.3em 0.3em 0.3em 0.5em;white-space:nowrap;}
+.atk-grid-notfound .ui-icon {margin-right:0.2em;}
+.atk-grid>table>tbody>tr.atk-grid-totals>td {font-weight:bold;border-color:#000;}
+
+.lister_expander_parent>td {background:#f5f5f5;border-top:1px solid #aaa !important;border-bottom:1px solid #ddd;}
+.lister_expander_parent>td:first-child {border-left:1px solid #aaa;}
+.lister_expander_parent>td:last-child {border-right:1px solid #aaa;}
+.lister_expander {padding:0 !important;}
+td.lister_expander {background:#f5f5f5;border:1px solid #bbb;padding:0 !important;}
+td.lister_expander>div {border-top:1px solid #fff;padding:2em;}
+td.lister_expander>div .atk-form, td.lister_expander>div .atk-form-buttons {margin-bottom:0;display:block;}
+
+
+/* Lister */
+
+.atk-lister.ui-widget-content {padding:0.2em;}
+.atk-lister.ui-widget-content>ul {margin:0;padding:0;list-style-type:none;}
+.atk-lister.ui-widget-content>ul>li {border-top:1px solid #eee;}
+.atk-lister.ui-widget-content>ul>li:first-child {border-top:none;}
+.atk-lister.ui-widget-content>.ui-widget-header {margin-bottom:0.2em;}
+.atk-lister.ui-widget-content>.ui-widget-header,
+.atk-lister.ui-widget-content>ul>li {padding:0.4em 0.8em;margin:0;}
+.atk-lister li.even {background:#f5f5f5;}
+
+/* Tabs */
+
+.atk-tabs.ui-widget-content.ui-tabs {padding:0;border:none;}
+ .atk-tabs.ui-tabs .ui-tabs-panel {padding:1.5em 0 0 0}
+.atk-tabs>.ui-widget-header {background:none;border-width:0px 0px 1px 0px;padding:0;border-radius:0;-moz-border-radius:0;}
+
+
+/* Growl */
+
+#atk-growl-holder {position:fixed;top:50px;right:50px;z-index:9999;}
+#atk-growl-holder>div {width:180px;padding:20px;margin-top:1em;position:relative;box-shadow:0 5px 10px rgba(0,0,0,0.3);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.3);-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.3);}
+#atk-growl-holder>div:first-child {margin-top:0;}
+#atk-growl-holder>div>.ui-icon {position:absolute;top:3px;right:3px;display:none;cursor:pointer;}
+#atk-growl-holder>div:hover>.ui-icon {display:block;}
+
+
+/* ------------ Menu */
+
+.atk-menu {overflow:hidden;}
+.atk-menu ul, .atk-menu ul li {margin:0;padding:0;list-style-type:none;}
+.atk-menu-vertical ul li a, .atk-menu-horizontal ul li a {padding:0.4em 0.8em;display:block;}
+
+/* Menu Horizontal */
+
+.atk-menu-horizontal ul li {float:left;border-width:1px 0px 1px 1px;}
+.atk-menu-horizontal ul li:last-child {border-width:1px;border-right-width:1px !important;}
+.atk-menu-horizontal ul li.ui-state-active {border-width:1px;}
+.atk-menu-horizontal ul li.ui-state-active+li {border-width:1px 0px 1px 0;}
+
+/* Menu Vertical */
+
+.atk-menu-vertical ul li {border-width:1px 1px 0px 1px;}
+.atk-menu-vertical ul li:last-child {border-width:1px;border-bottom-width:1px !important;}
+.atk-menu-vertical ul li.ui-state-active {border-width:1px;}
+.atk-menu-vertical ul li.ui-state-active+li {border-width:0px 1px;}
+
+/* Sidebar */
+
+ul.sidebar {float:left;width:200px;}
+ul.sidebar, ul.sidebar li {margin:0;padding:0;list-style-type:none;}
+ul.sidebar>li.sidebar-row {border:1px solid #ccc;border-top:0px;}
+ul.sidebar>li>a {display:block;text-decoration:none;background:#fff;padding:0.5em 1em;}
+ul.sidebar>li.ui-widget-header {border-bottom:none;padding:0.5em 1em;}
+ul.sidebar>li.ui-widget-header>span {text-transform:uppercase;font-size:90%;}
+ul.sidebar>li.ui-state-active>a {background: #999;}
+
+
+/* ------------ Forms */
+
+.atk-form-error {color:#dd2a2a;}
+.atk-form-error i {display:inline-block;position:relative;top:0.3em;margin-right:0.3em;}
+.atk-form-error .ui-icon {background-image:url(../images/ui-icons-red.png);}
+.atk-form ins {text-decoration:none;color:#777;font-size:90%;}
+h3+.atk-form {margin-top:1em;}
+.atk-form fieldset,
+.atk-form-buttons {margin-top:1.5em;padding-top:1.5em;border-top:1px dashed #ccc;}
+.atk-form fieldset:first-child {margin-top:0;padding-top:0;border-top:none;}
+.field_has_error label {color:#dd2a2a;}
+.field_has_error input[type=text],
+.field_has_error input[type=password],
+.field_has_error textarea {background:#ffeaea;}
+.gs-12 .atk-form {max-width:940px;}
+.gs-12 .atk-form dd.form_field input[type=text],
+.gs-12 .atk-form dd.form_field input[type=password],
+.gs-12 .atk-form dd.form_field textarea {width:210px;padding:4px;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text] {width:7em;}
+.gs-12 .atk-form dd.form_field select {width:220px;}
+.atk-radio input {margin:0 5px 0 20px;}
+.atk-radio input:first-child {margin-left:0;}
+.atk-form label.mandatory:after {content:'*';color:#e51e1e;margin-left:0.2em;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text] {margin-right:5px;}
+.gs-12 .atk-form .atk-field-datepicker dd.form_field input[type=text]+img {top:2px;.top:0;position:relative;}
+
+/* Form Common Settings */
+
+.atk-form-basic dl,
+.atk-form-inline dl,
+.atk-form-vertical dl {margin-top:1.5em;}
+.atk-form-basic dl:first-child,
+.atk-form-inline dl:first-child,
+.atk-form-vertical dl:first-child {margin-top:0;}
+.atk-form-basic dt,
+.atk-form-inline dt {float:left;}
+.gs-12 .atk-form-basic dt,
+.gs-12 .atk-form-inline dt {width:140px;}
+.atk-form-basic ins,
+.atk-form-inline ins,
+.atk-form-vertical ins,
+.atk-form-horizontal ins {display:block;margin-top:0.4em;}
+.atk-form-basic dd.atk-form-error,
+.atk-form-vertical dd.atk-form-error,
+.atk-form-horizontal dd.atk-form-error {margin-top:0.4em;}
+.atk-form-inline dl:after,
+.atk-form-horizontal dl:after,
+.atk-form-basic dl:after,
+.atk-form-vertical dl:after {content:".";display:block;height:0;clear:both;visibility:hidden;font-size:0;}
+.atk-form-inline dl,
+.atk-form-horizontal dl,
+.atk-form-basic dl,
+.atk-form-vertical dl, {.zoom:1;.display:block;}
+.atk-form-vertical dt,
+.atk-form-horizontal dt {margin-bottom:0.4em;}
+.gs-12 .atk-form-basic-2col .atk-form-buttons,
+.gs-12 .atk-form-vertical-2col .atk-form-buttons,
+.gs-12 .atk-form-vertical-2col+.atk-form-buttons,
+.gs-12 .atk-form-vertical-3col .atk-form-buttons,
+.gs-12 .atk-form-vertical-3col+.atk-form-buttons {clear:both;margin-top:0;text-align:right;}
+.gs-12 .atk-form-basic-2col fieldset,
+.gs-12 .atk-form-vertical-2col fieldset,
+.gs-12 .atk-form-vertical-3col fieldset {padding-top:0;margin-bottom:1.5em;margin-top:0;border-top:0;}
+.gs-12 fieldset.atk-form-vertical-3col,
+.gs-12 fieldset.atk-form-vertical-2col {padding-top:1.5em;margin-bottom:1.5em;}
+.gs-12 fieldset.atk-form-vertical-2col:first-child,
+.gs-12 fieldset.atk-form-vertical-2col:first-child+fieldset,
+.gs-12 fieldset.atk-form-vertical-3col:first-child,
+.gs-12 fieldset.atk-form-vertical-3col:first-child+fieldset,
+.gs-12 fieldset.atk-form-vertical-3col:first-child+fieldset+fieldset {padding-top:0;margin-top:0;border-top:none;}
+
+/* Form Basic */
+
+.gs-12 .atk-form-basic dd {margin-left:160px;}
+.gs-12 .atk-form-basic-2col fieldset {width:380px;float:left;}
+/* .gs-12 .atk-form-basic-2col fieldset:first-child {} */
+.gs-12 .atk-form-basic-2col fieldset:first-child+fieldset {margin-left:100px;float:left;}
+.gs-12 .atk-form-basic .atk-field-text dd.form_field textarea {width:370px;}
+
+/* Form Inline */
+
+.gs-12 .atk-form-inline dt {min-height:1px;}
+.gs-12 .atk-form-inline dd.form_field {width:220px;float:left;padding-left:20px;}
+.gs-12 .atk-form-inline dd.atk-form-error {margin-left:400px;}
+.gs-12 .atk-form-inline dl.atk-form-buttons dd {margin-left:160px;}
+.gs-12 .atk-form-inline .atk-field-text dd.form_field {width:380px;}
+.gs-12 .atk-form-inline .atk-field-text dd.atk-form-error {margin-left:560px;}
+.gs-12 .atk-form-inline .atk-field-text dd.form_field textarea {width:370px;}
+
+/* Form Vertical */
+
+.gs-12 .atk-form-vertical dd.form_field textarea {width:434px;}
+
+ .atk-form-vertical-2col fieldset,
+.gs-12 fieldset.atk-form-vertical-2col {float:left;width:380px;margin-left:100px;}
+.gs-12 fieldset.atk-form-vertical-2col {margin-left:0px;}
+.gs-12 fieldset.atk-form-vertical-2col+fieldset.atk-form-vertical-2col {margin-left:100px;}
+.gs-12 .atk-form-vertical-2col dd.form_field input[type=text],
+.gs-12 .atk-form-vertical-2col dd.form_field input[type=password],
+.gs-12 .atk-form-vertical-2col dd.form_field textarea {width:370px;}
+.gs-12 .atk-form-vertical-2col dd.form_field select {width:380px;}
+/* .gs-12 .atk-form-vertical-2col .atk-field-datepicker dd.form_field input[type=text] {width:348px;} */
+
+.gs-12 fieldset.atk-form-vertical-3col,
+.gs-12 .atk-form-vertical-3col fieldset {float:left;width:300px;margin-left:20px;}
+.gs-12 .atk-form-vertical-2col fieldset:first-child,
+.gs-12 .atk-form-vertical-3col fieldset:first-child {margin-left:0;}
+.gs-12 fieldset.atk-form-vertical-3col {margin-left:0px;}
+.gs-12 fieldset.atk-form-vertical-3col+fieldset.atk-form-vertical-3col {margin-left:20px;}
+.gs-12 .atk-form-vertical-3col dd.form_field input[type=text],
+.gs-12 .atk-form-vertical-3col dd.form_field input[type=password],
+.gs-12 .atk-form-vertical-3col dd.form_field textarea {width:290px;}
+.gs-12 .atk-form-vertical-3col dd.form_field select {width:300px;}
+/* .gs-12 .atk-form-vertical-3col .atk-field-datepicker dd.form_field input[type=text] {width:268px;} */
+
+
+/* Form Horizontal */
+
+.atk-form-horizontal dl {float:left;width:220px;margin-left:20px;}
+.atk-form-horizontal dl.atk-field-datepicker {width:auto;}
+.atk-form-horizontal dl:first-child {margin-left:0;}
+.atk-form-horizontal dl.atk-form-buttons {float:none;width:100%;margin-left:0;}
+
+
+/* Credit Card form */
+
+.atk-form-creditcard.atk-form fieldset {width:380px;}
+.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry dt {display:none;}
+.atk-form-creditcard dl.atk-form-expiry {float:left;margin-bottom:0;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry select {width:140px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry {margin-left:20px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry select {width:60px;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry+dl.atk-form-expiry dd {margin-left:0;}
+/* .gs-12 .atk-form.atk-form-creditcard dl.atk-form-expiry select {width:inherit;} */
+.atk-form-creditcard dl.atk-form-cvn {clear:both;padding-top:1.5em;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-cvn input[type=text] {width:inherit;}
+.gs-12 .atk-form.atk-form-creditcard dl.atk-form-cvn a {font-size:0.75em;margin-left:1em;}

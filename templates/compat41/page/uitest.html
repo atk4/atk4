@@ -1,0 +1,165 @@
+<h1>Testing zone</h1>
+
+<script>
+	$(document).ready(function(){
+		$('#tabs').tabs();
+		$('button').button();
+	});
+</script>
+
+<h2>Elements in atk-frame</h2>
+
+<div class="ui-widget-content atk-frame">
+	<div class="ui-widget-header ui-corner-top">Header</div>
+	<div class="ui-widget-content">
+	
+		<h3>atk-form-simple</h3>
+		<!-- atk-form starts -->
+		
+		<div class="atk-form atk-form-simple">
+			<form>
+				<fieldset>
+					<dl>
+						<dt><label>First name</label></dt>
+						<dd class="atk-field">
+							<div><input type="text" /></div>
+							<ins>Here goes some nice comment.</ins>
+						</dd>
+					</dl>
+					<dl>
+						<dt><label>Last name<span>*</span></label></dt>
+						<dd class="atk-field">
+							<div><input type="text" /></div>
+							<ins>Here goes some nice comment.</ins>
+						</dd>
+						<dd class="atk-error">
+							<div class="ui-state-error ui-corner-all">
+								<span class="ui-icon"></span>This is error
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt><label>Occupation<span>*</span></label></dt>
+						<dd class="atk-field">
+							<div>
+								<select>
+									<option>Teacher</option>
+									<option>Graphic Designer</option>
+									<option>Corporate Financial Manager</option>
+									<option>Corporate Senior Financial Manager</option>
+								</select>
+							</div>
+							<ins>Here goes some nice comment.</ins>
+						</dd>
+					</dl>
+				</fieldset>
+				<dl class="atk-form-buttons">
+					<dt></dt>
+					<dd>
+						<button>Okay</button><button>Cancel</button>
+					</dd>
+				</dl>
+			</form>
+		</div>		
+		<!-- atk-form ends -->
+		
+		<h3>atk-grid</h3>
+		<!-- atk-grid starts -->
+		
+		<div class="atk-grid">
+			<div class="atk-button-panel">
+				<button>Add</button><button>Edit</button><button>Remove</button><button>Group</button>
+			</div>
+			<table>
+				<thead class="ui-widget-header">
+					<tr>
+						<th class="ui-widget-header" width="3%"></th>
+						<th class="ui-widget-header">First name</th>
+						<th class="ui-widget-header">Last name</th>
+						<th class="ui-widget-header">Age</th>
+						<th class="ui-widget-header">Country</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="checkbox" /></td>
+						<td>Pedro</td>
+						<td>Grinardi</td>
+						<td>35</td>
+						<td>Italy</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" /></td>
+						<td>Ivan</td>
+						<td>Sokolov</td>
+						<td>16</td>
+						<td>Russia</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" /></td>
+						<td>John</td>
+						<td>Smith</td>
+						<td>43</td>
+						<td>USA</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" /></td>
+						<td>Sherlock</td>
+						<td>Flowers</td>
+						<td>55</td>
+						<td>UK</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="atk-paginator">
+				<a href="#" class="atk-paginator-previous">&larr; Previous page</a>
+				<a href="#" class="atk-paginator-next">Next page &rarr;</a>
+				<a href="#">1</a><span class="atk-link-sep">|</span><a href="#">2</a><span class="atk-link-sep">|</span><a href="#" class="ui-state-active ui-corner-all">3</a><span class="atk-link-sep">|</span><a href="#">4</a><span class="atk-link-sep">|</span><a href="#">5</a>
+			</div>
+		</div>
+		
+		<!-- atk-grid ends -->
+		
+		
+		<h3>atk-lister</h3>
+		<div class="atk-lister">
+			<div class="atk-button-panel">
+				<button>Add</button><button>Edit</button>
+			</div>
+			<div class="ui-widget-content ui-corner-all">
+				<div class="ui-widget-header ui-corner-top">Our Best Clients</div>
+				<div class="atk-lister-row">John Nixon</div>
+				<div class="atk-lister-row">Jeremy White</div>
+				<div class="atk-lister-row">Ivan Bobrov</div>
+				<div class="atk-lister-row">Ying Xui</div>
+			</div>
+		</div>
+		
+		<h3>ui-tabs</h3>
+		<!-- ui-tabs starts -->
+		
+		<div id="tabs">
+			<ul>
+				<li><a href="#tabs-1">Nunc tincidunt</a></li>
+				<li><a href="#tabs-2">Proin dolor</a></li>
+				<li><a href="#tabs-3">Aenean lacinia</a></li>
+			</ul>
+			<div id="tabs-1">
+				<p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+			</div>
+			<div id="tabs-2">
+				<p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+			</div>
+			<div id="tabs-3">
+				<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+				<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+			</div>
+		</div>
+		
+		<!-- ui-tabs ends -->
+
+	</div>
+</div>
+
+<h2>Elements outside atk-frame</h2>
+<p>to be added</p>

@@ -1,0 +1,154 @@
+.atk-icon {display:inline-block;height:16px;width:16px;position:relative;margin-right:0.4em;top:.25em;}
+.atk-icon.atk-icon-right {margin-left:0.4em;margin-right:0;}
+
+.atk-icons-red {background-image:url(../images/atk-icons/atk-icons-red.png);}
+.atk-icons-orange {background-image:url(../images/atk-icons/atk-icons-orange.png);}
+.atk-icons-yellow {background-image:url(../images/atk-icons/atk-icons-yellow.png);}
+.atk-icons-green {background-image:url(../images/atk-icons/atk-icons-green.png);}
+.atk-icons-cyan {background-image:url(../images/atk-icons/atk-icons-cyan.png);}
+.atk-icons-blue {background-image:url(../images/atk-icons/atk-icons-blue.png);}
+.atk-icons-violet {background-image:url(../images/atk-icons/atk-icons-violet.png);}
+.atk-icons-pink {background-image:url(../images/atk-icons/atk-icons-pink.png);}
+.atk-icons-gray {background-image:url(../images/atk-icons/atk-icons-gray.png);}
+.atk-icons-nobg {background-image:url(../images/atk-icons/atk-icons-nobg.png);}
+.atk-icons-custom {background-image:url(../images/atk-icons/atk-icons-custom.png);}
+.atk-icons-white {background-image:url(../images/atk-icons/atk-icons-white.png);}
+
+.atk-icon-basic-plus {background-position:0px 0px}
+.atk-icon-basic-minus {background-position:0 -32px}
+.atk-icon-basic-ex {background-position:0px -64px}
+.atk-icon-basic-question {background-position:0px -96px}
+.atk-icon-basic-exclam {background-position:0px -128px}
+.atk-icon-basic-info {background-position:0px -160px}
+.atk-icon-basic-check {background-position:0px -192px}
+.atk-icon-basic-cancel {background-position:0px -224px}
+.atk-icon-basic-user {background-position:0px -256px}
+.atk-icon-basic-group {background-position:0px -288px}
+.atk-icon-basic-search {background-position:0px -320px}
+			
+.atk-icon-arrows-left {background-position:0px -352px;}
+.atk-icon-arrows-right {background-position:0px -384px;}
+.atk-icon-arrows-top {background-position:0px -416px;}
+.atk-icon-arrows-bottom {background-position:0px -448px;}
+.atk-icon-arrows-topright {background-position:0px -480px;}
+.atk-icon-arrows-topleft {background-position:0px -512px;}
+.atk-icon-arrows-bottomleft {background-position:0px -544px;}
+.atk-icon-arrows-bottomright {background-position:0px -576px;}
+.atk-icon-arrows-horizontal {background-position:0px -608px;}
+.atk-icon-arrows-vertical {background-position:0px -640px;}
+.atk-icon-arrows-move {background-position:0px -672px;}
+.atk-icon-arrows-scale {background-position:0px -704px;}
+.atk-icon-arrows-moveleft {background-position:0px -736px;}
+.atk-icon-arrows-moveright {background-position:0px -768px;}
+.atk-icon-arrows-movetop {background-position:0px -800px;}
+.atk-icon-arrows-movebottom {background-position:0px -832px;}
+.atk-icon-arrows-left2 {background-position:0px -864px;}
+.atk-icon-arrows-right2 {background-position:0px -896px;}
+.atk-icon-arrows-top2 {background-position:0px -928px;}
+.atk-icon-arrows-bottom2 {background-position:0px -960px;}
+.atk-icon-arrows-right3 {background-position:0px -992px;}
+.atk-icon-arrows-bottom3 {background-position:0px -1024px;}
+.atk-icon-arrows-left3 {background-position:0px -1056px;}
+.atk-icon-arrows-top3 {background-position:0px -1088px;}
+.atk-icon-arrows-laquo {background-position:0px -1120px;}
+.atk-icon-arrows-raquo {background-position:0px -1152px;}
+
+.atk-icon-player-previous {background-position:0px -1184px;}
+.atk-icon-player-rewind {background-position:0px -1216px;}
+.atk-icon-player-pause {background-position:0px -1248px;}
+.atk-icon-player-stop {background-position:0px -1280px;}
+.atk-icon-player-play {background-position:0px -1312px;}
+.atk-icon-player-rec {background-position:0px -1344px;}
+.atk-icon-player-forward {background-position:0px -1376px;}
+.atk-icon-player-next {background-position:0px -1408px;}
+.atk-icon-player-eject {background-position:0px -1440px;}
+.atk-icon-player-shuffle {background-position:0px -1472px;}
+.atk-icon-player-soundoff {background-position:0px -1504px;}
+.atk-icon-player-soundon {background-position:0px -1536px;}
+.atk-icon-player-soundon2 {background-position:0px -1568px;}
+
+.atk-icon-fun-chat {background-position:0px -1600px;}
+.atk-icon-fun-heart {background-position:0px -1632px;}
+.atk-icon-fun-star {background-position:0px -1664px;}
+.atk-icon-fun-lightning {background-position:0px -1696px;}
+.atk-icon-fun-sun {background-position:0px -1728px;}
+.atk-icon-fun-moon {background-position:0px -1760px;}
+.atk-icon-fun-cloud {background-position:0px -1792px;}
+.atk-icon-fun-thumbsup {background-position:0px -1824px;}
+.atk-icon-fun-thumbsdown {background-position:0px -1856px;}
+.atk-icon-fun-happy {background-position:0px -1888px;}
+.atk-icon-fun-sad {background-position:0px -1920px;}
+.atk-icon-fun-drink {background-position:0px -1952px;}
+.atk-icon-fun-image {background-position:0px -1984px;}
+.atk-icon-fun-music {background-position:0px -2016px;}
+.atk-icon-fun-movie {background-position:0px -2048px;}
+.atk-icon-fun-cart {background-position:0px -2080px;}
+.atk-icon-fun-tag {background-position:0px -2112px;}
+.atk-icon-fun-puzzle {background-position:0px -2144px;}
+.atk-icon-fun-umbrella {background-position:0px -2176px;}
+.atk-icon-fun-tshirt {background-position:0px -2208px;}
+.atk-icon-fun-car {background-position:0px -2240px;}
+.atk-icon-fun-cursor {background-position:0px -2272px;}
+
+.atk-icon-tech-power {background-position:0px -2304px;}
+.atk-icon-tech-pulse {background-position:0px -2336px;}
+.atk-icon-tech-bulb {background-position:0px -2368px;}
+.atk-icon-tech-videocam {background-position:0px -2400px;}
+.atk-icon-tech-tv {background-position:0px -2432px;}
+.atk-icon-tech-cellphone {background-position:0px -2464px;}
+.atk-icon-tech-phone {background-position:0px -2496px;}
+.atk-icon-tech-headphones {background-position:0px -2528px;}
+.atk-icon-tech-clock {background-position:0px -2560px;}
+.atk-icon-tech-printer {background-position:0px -2592px;}
+.atk-icon-tech-microphone {background-position:0px -2624px;}
+.atk-icon-tech-lock {background-position:0px -2656px;}
+.atk-icon-tech-unlock {background-position:0px -2688px;}
+.atk-icon-tech-gear {background-position:0px -2720px;}
+.atk-icon-tech-wrench {background-position:0px -2752px;}
+.atk-icon-tech-scissors {background-position:0px -2784px;}
+.atk-icon-tech-trash {background-position:0px -2816px;}
+
+.atk-icon-nav-home {background-position:0px -2848px;}
+.atk-icon-nav-mail {background-position:0px -2880px;}
+.atk-icon-nav-sitemap {background-position:0px -2912px;}
+.atk-icon-nav-link {background-position:0px -2944px;}
+.atk-icon-nav-restore {background-position:0px -2976px;}
+.atk-icon-nav-switches {background-position:0px -3008px;}
+.atk-icon-nav-at {background-position:0px -3040px;}
+.atk-icon-nav-rss {background-position:0px -3072px;}
+.atk-icon-nav-planet {background-position:0px -3104px;}
+
+.atk-icon-text-font {background-position:0px -3136px;}
+.atk-icon-text-paragraph {background-position:0px -3168px;}
+.atk-icon-text-unitlist {background-position:0px -3200px;}
+.atk-icon-text-underline {background-position:0px -3232px;}
+.atk-icon-text-bold {background-position:0px -3264px;}
+.atk-icon-text-italic {background-position:0px -3296px;}
+.atk-icon-text-left {background-position:0px -3328px;}
+.atk-icon-text-center {background-position:0px -3360px;}
+.atk-icon-text-right {background-position:0px -3392px;}
+.atk-icon-text-justify {background-position:0px -3424px;}
+.atk-icon-text-quoteopen {background-position:0px -3456px;}
+.atk-icon-text-quoteclose {background-position:0px -3488px;}
+
+.atk-icon-office-file {background-position:0px -3520px;}
+.atk-icon-office-folder {background-position:0px -3552px;}
+.atk-icon-office-calendar {background-position:0px -3584px;}
+.atk-icon-office-calendar2 {background-position:0px -3616px;}
+.atk-icon-office-calculator {background-position:0px -3648px;}
+.atk-icon-office-pin {background-position:0px -3680px;}
+.atk-icon-office-attach {background-position:0px -3712px;}
+.atk-icon-office-key {background-position:0px -3744px;}
+.atk-icon-office-flag {background-position:0px -3776px;}
+.atk-icon-office-pencil {background-position:0px -3808px;}
+.atk-icon-office-chart {background-position:0px -3840px;}
+.atk-icon-office-briefcase {background-position:0px -3872px;}
+.atk-icon-office-badge {background-position:0px -3904px;}
+.atk-icon-office-filledfile {background-position:0px -3936px;}
+
+.atk-icon-currency-euro {background-position:0px -3968px;}
+.atk-icon-currency-dollar {background-position:0px -4000px;}
+.atk-icon-currency-yen {background-position:0px -4032px;}
+.atk-icon-currency-rouble {background-position:0px -4064px;}
+
+.atk-icon-none {background-position:0px -8064px;}
