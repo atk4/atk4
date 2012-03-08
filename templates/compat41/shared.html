@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<title><?page_title?>Agile Toolkit<?/?></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" type="image/x-icon"  />
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" />
+
+		<link rel="stylesheet" type="text/css" href="<?template?>css/jquery-ui.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-main.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-visuals.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-icons.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-gs10.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-gs10-fluid.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-custom.css<?/?>" />
+		<?$js_include?>
+		<!--[if lt IE 9]>
+		<script src="<?template?>css/ie.js<?/?>"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			$(function(){
+				<?$document_ready?>
+			});
+		</script>
+	</head>
+	<body class="<?fullscreen?>atk-fullscreen<?/?> gs-10-fluid atk-sticky">
+		<div class="gs-wrap atk-layout">
+			<div id="header" class="g-row">
+					<div class="g-max">
+					<?logo?><div id="atk-logo" class="ui-widget-header float-left"><a 
+                                        href="<?page?>index<?/?>"><img src="<?template?>images/logo.png<?/?>" /></a></div><?/logo?>
+					<div id="header-right">
+						<?Menu?>
+	                            <div class="atk-menu atk-menu-horizontal ui-widget">
+	                                <ul>
+									    <li class="ui-state-default"><a href="javascript:void(0)">Menu is not defined</a></li>
+	                                </ul>
+								</div>
+						<?/?>
+						<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
+					</div>
+				</div>
+			</div>
+			<?$Content?>
+			<div id="footer-guard"></div>
+		</div>
+		<?Footer?>
+		<div id="footer" class="gs-wrap">
+			<div class="g-row">
+				<div class="g-max">
+					<?footer_text?>
+					This system is implemented using <a href="http://agiletoolkit.org/">Agile Toolkit</a>. &copy; 1999–2011
+					Agile Technologies. <a href="http://agiletoolkit.org/about/license">See License</a>
+					<?/?>
+				</div>
+			</div>
+		</div>
+		<?/?>
+		<div id="atk-growl-holder" class="atk-growl-holder"></div>
+	</body>
+</html>

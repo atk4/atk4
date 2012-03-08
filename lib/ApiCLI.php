@@ -33,6 +33,9 @@ class ApiCLI extends AbstractView {
     /** Skin for web application templates */
     public $skin;
 
+    /** For fast compatibility checks. To be more specific use $api->requires() */
+    public $atk_version=4.2;
+
     // {{{ Start-up of application
     /** Initialize application. Redefine in your application but always call parent */
     function __construct($realm=null){

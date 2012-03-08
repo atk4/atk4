@@ -230,11 +230,19 @@ class Model_Table extends Model {
             }
 
             if($value===undefined){
-                $cond=$cond===true?$yes_value:($cond===false?'N':null);
+                $cond=$cond===true?$yes_value:($cond===false?'N':$cond);
             }else{
-                $value=$value===true?$yes_value:($value===false?'N':null);
+                $value=$value===true?$yes_value:($value===false?'N':$value);
             }
         }
+
+        if($cond=='=' || $value===undefined){
+            $v=$value===undefined?$cond:$value;
+
+            $field->defaultValue($v)->system(true)->editable(false);
+        }
+
+
         if($field->calculated()){
             // TODO: should we use expression in where?
             $this->dsql->having($field->short_name,$cond,$value);
@@ -272,7 +280,6 @@ class Model_Table extends Model {
     }
     /** Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
-        $this->getElement($field)->defaultValue($value)->system(true)->editable(false);
         return $this->addCondition($field,$value);
     }
     // }}}

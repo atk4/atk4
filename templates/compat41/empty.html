@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<title><?page_title?>Agile Toolkit<?/?></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" type="image/x-icon"  />
+		<link rel="shortcut icon" href="<?template?>images/favicon.ico<?/?>" />
+
+		<link rel="stylesheet" type="text/css" href="<?template?>css/jquery-ui.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-main.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-visuals.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-icons.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-gs10.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-gs10-fluid.css<?/?>" />
+		<link rel="stylesheet" type="text/css" href="<?template?>css/atk-custom.css<?/?>" />
+		<!--[if lt IE 9]>
+		<script src=<?template?>css/ie.js<?/?>"></script>
+		<![endif]-->
+		<?$js_include?>
+
+
+		<script type="text/javascript">
+			$(function(){
+				<?$document_ready?>
+			});
+		</script>
+
+	</head>
+	<body class="<?fullscreen?>atk-fullscreen<?/?> gs-10-fluid atk-sticky">
+		<div class="gs-wrap atk-layout">
+
+			<div id="header">
+				<?logo?><a href="http://agiletoolkit.org/" target="_blank"><div id="atk-logo" class="ui-widget-header float-left"><img src="<?template?>images/logo.png<?/?>" alt="Agile Toolkit" /></div></a><?/logo?>
+				<div id="header-right">
+					<div id="atk-version"><b><?name?>Agile Toolkit™<?/?></b><br/><i><?$version?></i></div>
+				</div>
+			</div>
+
+			<div id="Content">
+				<?Content?>
+				<?/?>
+			</div>
+			<div id="footer-guard"></div>
+		</div>
+		<div id="footer" class="gs-wrap">
+			This system is implemented using 
+            <a href="http://agiletoolkit.org/license">AGPL</a> version of <a href="http://agiletoolkit.org/">Agile Toolkit</a>. &copy; 1999-2011
+			| <?theme?>jui<?/?> Theme
+		</div>
+		<div id="atk-growl-holder"></div>
+	</body>
+</html>
