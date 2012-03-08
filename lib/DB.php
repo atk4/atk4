@@ -41,7 +41,8 @@ class DB extends AbstractController {
 
 
                 $dsn=array(
-                    $matches[1].':host='.$matches[5].';dbname='.$matches[7],
+                    $matches[1].':host='.$matches[5].';dbname='.$matches[7].
+                    ';charset=utf8',
                     $matches[2],
                     $matches[4]
                 );
