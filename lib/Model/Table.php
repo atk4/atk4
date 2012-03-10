@@ -463,6 +463,7 @@ class Model_Table extends Model {
         // Performs the actual database changes. Throw exception if problem occurs
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
+            if(isset($this->dirty[$name]) || $f->defaultValue()===null)continue;
 
             $f->updateInsertQuery($insert);
         }

@@ -653,7 +653,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function render_set(){
         $x=array();
-        foreach($this->args['set'] as $field=>$value){
+        if($this->args['set'])foreach($this->args['set'] as $field=>$value){
 
             if(is_object($field))$field=$this->consume($field);else$field=$this->bt($field);
             if(is_object($value))$value=$this->consume($value);else$value=$this->escape($value);
@@ -664,7 +664,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function render_set_fields(){
         $x=array();
-        foreach($this->args['set'] as $field=>$value){
+        if($this->args['set'])foreach($this->args['set'] as $field=>$value){
 
             if(is_object($field))$field=$this->consume($field);else$field=$this->bt($field);
 
@@ -674,7 +674,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function render_set_values(){
         $x=array();
-        foreach($this->args['set'] as $field=>$value){
+        if($this->args['set'])foreach($this->args['set'] as $field=>$value){
 
             if(is_object($value))$value=$this->consume($value);else$value=$this->escape($value);
 
