@@ -218,9 +218,10 @@ class BasicAuth extends AbstractController {
         if($this->model){
             if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
             // Use user=email
-            $this->model->loadBy($this->login_field,$user);
+            $this->model->tryLoadBy($this->login_field,$user);
+            if(!$this->model->loaded())return false;
             if($this->model[$this->password_field]!=$this->encryptPassword($password,$user)){
-                $model->unload();
+                $this->model->unload();
                 return false;
             }
             return true;
