@@ -88,14 +88,8 @@ class Lister extends View {
 
         // Set Array as a data source
         if(is_array($source)){
+            $this->iter=$source;
 
-            $m=$this->setModel('Model',$fields);
-
-            if(is_array(reset($source))){
-                $m->setSource('Array',$source);
-            }else{
-                $m->setSource('ArrayAssoc',$source);
-            }
             return $this;
         }
 

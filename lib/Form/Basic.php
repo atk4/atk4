@@ -32,7 +32,7 @@ if(!class_exists('Form_Field',false))include_once'Form/Field.php';
  * @copyright	See file COPYING
  * @version		$Id$
  */
-class Form_Basic extends AbstractView {
+class Form_Basic extends View {
     protected $form_template = null;
     protected $form_tag = null;
     public $errors=array();
@@ -402,7 +402,8 @@ class Form_Basic extends AbstractView {
         return $this;
     }
     function setFormClass($class){
-        $this->template->trySet('form_class',$class);
+        return $this->addClass($class);
+        //$this->template->trySet('form_class',$class);
         return $this;
     }
     function render(){

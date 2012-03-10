@@ -28,8 +28,11 @@
 **/
 class Field_Expression extends Field {
     public $expr=null;
-    function editable(){
-        return false;
+    function editable($x=undefined){
+        return $x===undefined?false:$this;
+    }
+    function calculated($x=undefined){
+        return $x===undefined?true:$this;
     }
     /** specify DSQL, String or funciton($master_dsql,$this) */
     function set($expr=null){
@@ -45,4 +48,11 @@ class Field_Expression extends Field {
         return $select->field($select->expr($expr), $this->short_name);
         
     }
+    function updateInsertQuery($insert){
+        return $this;
+    }
+    function updateModifyQuery($insert){
+        return $this;
+    }
+
 }

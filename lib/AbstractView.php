@@ -61,10 +61,10 @@ abstract class AbstractView extends AbstractObject {
 
         // Some models will want default controller to be associated
         if($this->model->default_controller){
-            $this->model->setController($this->model->default_controller);
+            $this->controller = $this->model->setController($this->model->default_controller);
         }
         if($this->default_controller){
-            $this->setController($this->default_controller);
+            $this->controller = $this->setController($this->default_controller);
             if($this->controller->hasMethod('setActualFields') && $actual_fields!==false)$this->controller->setActualFields($actual_fields);
             if($this->controller->hasMethod('_bindView'))$this->controller->_bindView();
         }

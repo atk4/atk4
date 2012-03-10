@@ -246,6 +246,7 @@ class Model_Table extends Model {
         if($field->calculated()){
             // TODO: should we use expression in where?
             $this->dsql->having($field->short_name,$cond,$value);
+            $field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
             $this->dsql->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
         }elseif($this->relations){
@@ -303,7 +304,10 @@ class Model_Table extends Model {
         return $this->id;
     }
     function valid(){
-        if(!$this->_iterating)$this->next();
+        if(!$this->_iterating){
+            $this->next();
+            $this->_iterating=true;
+        }
         return $this->loaded();
     }
 

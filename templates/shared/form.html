@@ -1,5 +1,5 @@
 <?form?>
-<div id="<?$_name?>" class="atk-form <?$form_class?>">
+<div id="<?$_name?>" class="atk-form <?$class?>" style="<?$style?>">
   <?$hint?>
   <form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
     <fieldset class="<?$fieldset?>">
@@ -28,9 +28,11 @@
         <span class="field-error-text"><?$field_error_str?></span>
       </div>
     </fieldset>
+    <?button_row?>
     <div class="atk-buttons">
       <?$form_buttons?>
     </div>
+    <?/?>
   </form>
 </div>
 <?/form?>

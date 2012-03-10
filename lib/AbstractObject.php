@@ -18,9 +18,6 @@
 abstract class AbstractObject {
     public $settings=array('extension'=>'.html');
 
-    /** Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
-    public $di_config = array();
-
     /** Reference to the current model. Read only. Use setModel() */
     public $model;
 
@@ -104,8 +101,9 @@ abstract class AbstractObject {
     function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
 
         if(is_array($short_name)){
+
             $di_config=$short_name;
-            $short_name=@$di_config['name'];
+            $short_name=@$di_config['name'];unset($di_config['name']);
         }else $di_config=array();
 
         if (is_object($class)) {
@@ -123,7 +121,6 @@ abstract class AbstractObject {
                 $class->owner->elements[$class->short_name]=true;
             }
             $class->owner = $this;
-            $class->di_config = array_merge($class->di_config,$di_config);
             return $class;
         }elseif($class[0]=='.'){
             $tmp=explode('\\',get_class($this));
@@ -162,6 +159,10 @@ abstract class AbstractObject {
             throw $this->exception("You can add only classes based on AbstractObject");
         }
 
+        foreach($di_config as $key=>$val){
+            $element->$key=$val;
+        }
+
         $element->owner = $this;
         $element->api = $this->api;
         $this->elements[$short_name]=$element;
@@ -171,7 +172,6 @@ abstract class AbstractObject {
 
         $element->name = $this->name . '_' . $short_name;
         $element->short_name = $short_name;
-        $element->di_config=$di_config;
 
         // Initialize template before init() starts
         if ($element instanceof AbstractView) {
@@ -215,18 +215,14 @@ abstract class AbstractObject {
     function setController($controller){
         if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
             $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
-        $this->controller=$this->add($controller);
-        return $this;
+        return $this->add($controller);
     }
     function setModel($model){
         if(is_string($model)&&substr($model,0,strlen('Model'))!='Model'){
             $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
         }
         $this->model=$this->add($model);
-        return $this;
-    }
-    function getController(){
-        return $this->controller;
+        return $this->model;
     }
     function getModel(){
         return $this->model;

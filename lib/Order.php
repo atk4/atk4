@@ -96,5 +96,10 @@ class Order extends AbstractController {
 	}
 	function onHook($object,$hook){
 		$object->addHook($hook,array($this,'now'));
+        return $this;
 	}
+    function later(){
+        $this->api->addHook('pre-render',array($this,'now'));
+        return $this;
+    }
 }

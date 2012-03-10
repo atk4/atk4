@@ -16,6 +16,7 @@ class View_CRUD extends View {
     function init(){
         parent::init();
 
+
         if(isset($_GET[$this->name]) && ($this->allow_edit||$this->allow_add)){
             $this->api->stickyGET($this->name);
 

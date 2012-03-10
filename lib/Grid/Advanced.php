@@ -112,7 +112,7 @@ class Grid_Advanced extends Grid_Basic {
     }
     function addQuickSearch($fields,$class='QuickSearch'){
         return $this->add($class,null,'quick_search')
-            ->useGrid($this)
+            ->useWith($this)
             ->useFields($fields);
     }
     function makeSortable($db_sort=null){

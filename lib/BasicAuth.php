@@ -71,6 +71,9 @@ class BasicAuth extends AbstractController {
 
 	protected $allowed_pages=array('Logout');
 
+	public $login_field;
+	public $password_field;
+
 	function init(){
 		parent::init();
 
@@ -86,6 +89,12 @@ class BasicAuth extends AbstractController {
 			$this->logout();
 		}
 	}
+    function setModel($model,$login_field='email',$password_field='password'){
+        parent::setModel($model);
+        $this->login_field=$login_field;
+        $this->password_field=$password_field;
+        return $this->model;
+    }
 	function destroy(){
 		unset($this->api->auth);
 		parent::destroy();
@@ -164,12 +173,6 @@ class BasicAuth extends AbstractController {
 		if(!$this->isLoggedIn()){
 			$this->debug('User is not authenticated yet');
 
-			// Redirect to index page if its ajax action <
-/*            if (isset($_REQUEST['ajax_submit']) || isset($_REQUEST['cut_object']) || isset($_REQUEST['expanded'])) {
-				echo "window.location = 'Index'; <!--endjs-->";
-				exit;
-			}
-*/
 			// No information is present. Let's see if cookie is set
 			if(isset($_COOKIE[$this->name."_username"]) && isset($_COOKIE[$this->name."_password"])){
 
@@ -212,6 +215,16 @@ class BasicAuth extends AbstractController {
 		 * This function verifies username and password. Password might actually be encryped.
 		 * If you want to change authentication logic - redefine this function
 		 */
+        if($this->model){
+            if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
+            // Use user=email
+            $this->model->loadBy($this->login_field,$user);
+            if($this->model[$this->password_field]!=$this->encryptPassword($password,$user)){
+                $model->unload();
+                return false;
+            }
+            return true;
+        }
 		if(!$this->allowed_credintals)$this->allowed_credintals=array('demo'=>'demo');
 		$this->debug("verifying credintals: ".$user.' / '.$password." against array: ".print_r($this->allowed_credintals,true));
 
@@ -233,6 +246,9 @@ class BasicAuth extends AbstractController {
 		 * call parent, then modify it.
 		 */
 		$this->debug("Login successful");
+        if($this->model && $this->model->loaded()){
+            $this->addInfo($this->model->get());
+        }
 		$this->addInfo('username',$username);
 
 		$memorize=$memorize||($this->form && $this->form->get('memorize'));
@@ -253,38 +269,9 @@ class BasicAuth extends AbstractController {
 	}
 	function loginRedirect(){
 
-		/*
-		$this->debug("Redirecting to original page");
-		// Redirect to the page which was originally requested
-		if($original_request=$this->recall('original_request',false)){
-			$p=$original_request['page'];
-			if(!$p)$p=null;
-			unset($original_request['page']);
-			// the following parameters should not remain as thay break the page
-			unset($original_request['submit']);
-			// expanders should not be displayed, going to parent page instead
-			if(isset($original_request['expander'])){
-				$parts=split('_',$p);
-				if(count($parts)>0){
-					unset($parts[count($parts)-1]);
-					$p=join('_',$parts);
-				}
-				unset($original_request['expander']);
-				unset($original_request['expanded']);
-				unset($original_request['id']);
-			}
-			unset($original_request['cut_object']);
-			$this->debug("to $p");
-			// erasing stored URL
-			$this->forget('original_request');
-			if($this->api->isAjaxOutput())$this->ajax()->redirect($p,$original_request)->execute();
-			else $this->api->redirect($p,$original_request);
-		}
-		*/
-
 		// Rederect to index page
 		$this->debug("to Index");
-		if($this->api->isAjaxOutput())$this->ajax()->redirect($this->api->getIndexPage())->execute();
+		if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect('/')->execute();
 		$this->api->redirect($this->api->getIndexPage());
 	}
 	function logout($redirect=true){
@@ -306,10 +293,6 @@ class BasicAuth extends AbstractController {
 		$form->addField('Password','password','Password');
 
 		$form->addField('Checkbox','memorize','Remember me');
-		$form->add('Html')->set('<dl align="left"><font color="red">Security warning</font>: by ticking \'Remember me on this computer\'<br>you ' .
-					'will no longer have to use a password to enter this site,<br>until you explicitly ' .
-					'log out.</b></dl>');
-
 		$form->addSubmit('Login');
 		return $form;
 	}
@@ -318,31 +301,8 @@ class BasicAuth extends AbstractController {
 		 * This function shows a login form. If $this->form is already defined, it's shown right away,
 		 * otherwise simple login form is displayed
 		 */
-		$this->debug("initializating authentication page");
-		//if(!$_GET['page'])$this->api->page=$this->api->getConfig('auth/login_page','Index');
-
-		$p=$this->add('Page',null,null,array('empty'));
-		try{
-			$p->template->loadTemplate('login');
-			$this->form=$this->createForm($p,'Login');
-		}catch(PathFinder_Exception $e){
-			//$p->template->loadTemplate('empty');
-			/*
-			$p->template->trySet('atk_path',$q=
-								$this->api->pathfinder->atk_location->getURL().'/');
-			$p->template->trySet('base_href',
-								$q=$this->api->pm->base_url.'/'
-								);
-								*/
-			//$this->api->setTags($p->template);
-			$frame=$p->add('Frame')->setTitle('Authentication');
-			$this->form=$this->createForm($frame);
-		}
-		// adding token for session exiration detection
-		//$p->add('Text','session_token')
-		//	->set('<div id="session_token" style="display: none;">session is expired, relogin</div>');
-		//$p->template->set('page_title', $this->title_form);
-
+        $p=$this->api->add('Page',null,null,array('page/login'));
+        $this->form=$this->createForm($p);
 		return $p;
 	}
 	function memorizeOriginalURL(){
@@ -353,6 +313,7 @@ class BasicAuth extends AbstractController {
 		// this function is called when authorization is not found.
 		// You should return true, if login process was successful.
 		$this->memorizeOriginalURL();
+        $this->api->template->tryDel('Menu');
 		$p=$this->showLoginForm();
 		if($this->form->isSubmitted()){
 			if($this->verifyCredintials(
@@ -366,9 +327,16 @@ class BasicAuth extends AbstractController {
 			$this->form->getElement('password')->displayFieldError('Incorrect login information');
 		}
 
-		$p->recursiveRender();
-		echo $p->template->render();
-		$this->debug("Page rendered");
-		exit;
+        $this->api->hook('post-init');
+
+        $this->api->hook('pre-exec');
+
+        if(isset($_GET['submit']) && $_POST){
+            $this->api->hook('submitted');
+        }
+
+        $this->api->hook('post-submit');
+        $this->api->execute();
+        exit;
 	}
 }
