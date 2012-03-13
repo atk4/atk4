@@ -81,9 +81,26 @@ class Page_Tester extends Page {
                 try{
                     $result=(string)$test_obj->$test_func($input[0],$input[1]);
                 }catch (Exception $e){
+
+                    if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
+                        throw $e;
+                    }
+
+
                     $result='Exception: '.(method_exists($e,'getText')?
                         $e->getText():
                         $e->getMessage());
+
+                    $ll=$this->add('P');
+                    $v=$ll->add('View')
+                        ->setElement('a')
+                        ->setAttr('href','#')
+                        ->set('More details')
+                        ->js('click')->univ()->frameURL('Exception Details for test '.$row['name'],
+                        $this->api->url(null,array('tester_details'=>$row['name'],'vari'=>$vari)))
+                        ;
+
+                    $result.=$ll->getHTML();
                 }
                     //$this->$method($vari);
                     /*
