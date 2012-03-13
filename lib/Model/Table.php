@@ -539,15 +539,15 @@ class Model_Table extends Model {
     /** Deletes record matching the ID */
     function delete($id=null){
         if(!$id && !$this->id)throw $this->exception('Specify ID to delete()');
-        $delete=$this->dsql()->where($this->id_field,$id?:$this->id)->delete();
+        $delete=$this->dsql()->where($this->id_field,$id?:$this->id);
 
         $delete->owner->beginTransaction();
         $this->hook('beforeDelete',array($delete));
-        $delete->execute();
+        $delete->delete();
         $this->hook('afterDelete');
         $delete->owner->commit();
 
-        if($this->id==$id)$this->reset();
+        if($this->id==$id || !$id)$this->unload();
 
         return $this;
     }
