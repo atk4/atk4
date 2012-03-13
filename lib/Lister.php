@@ -61,10 +61,6 @@ class Lister extends View {
      * or   // sql table
      *  $l->setSource( 'user', array('name','surname'));
      **/
-    function init(){
-        parent::init();
-        $this->api->addHook("pre-render", array($this, "prepareIterator"));
-    }
 	function setSource($source,$fields=null){
 
         // Set DSQL
@@ -120,12 +116,12 @@ class Lister extends View {
         return $template->render();
     }
     function getIterator(){
-        if(!($i=$this->model?:$this->dq?:$this->iter))
+        if(is_null($i=$this->model?:$this->dq?:$this->iter))
             throw $this->exception('Please specify data source with setSource or setModel');
         return $i;
     }
+    /*
     function prepareIterator(){
-        /* prefetches data */
         $this->iterator = $this->getIterator();
         $data = array();
         foreach($this->iterator as $id=>$row){
@@ -133,8 +129,9 @@ class Lister extends View {
         }
         $this->iterator = $data;
     }
+     */
     function render(){
-        foreach($this->iterator as $this->current_id=>$this->current_row){
+        foreach($this->getIterator() as $this->current_id=>$this->current_row){
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }

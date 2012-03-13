@@ -68,8 +68,8 @@ class Menu_Basic extends CompleteLister {
 		$href=str_replace('/','_',$href);
 		return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
     }
-    function prepareIterator(){
+    function render(){
         $this->setSource($this->items);
-        parent::prepareIterator();
+        parent::render();
     }
 }

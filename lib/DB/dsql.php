@@ -899,9 +899,11 @@ class DB_dsql extends AbstractModel implements Iterator {
     public $data=false;
     function rewind(){
         $this->stmt=null;
+        return $this;
     }
     function next(){
         $this->data = $this->fetch();
+        return $this;
     }
     function current(){
         return $this->data;
