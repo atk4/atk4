@@ -608,13 +608,10 @@ class Grid_Advanced extends Grid_Basic {
      * @param $name if set, paginator will get the name specified. Useful for saving
      * 		different page numbers for different filtering conditions
      */
-    function addPaginator($ipp=25,$name=null){
+    function addPaginator($ipp=25){
         // adding ajax paginator
-        $this->paginator=$this->add('Paginator', $name, 'paginator', array('paginator', 'ajax_paginator'));
-        $this->paginator->region($this->name);
-        $this->paginator->cutObject($this->name);
+        $this->paginator=$this->add('Paginator');
         $this->paginator->ipp($ipp);
-        $this->current_row_index=$this->paginator->skip-1;
         return $this;
     }
 

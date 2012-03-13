@@ -4,8 +4,8 @@
  * either dq or array). It will render itself into
  * parent
  */
-class Paginator2 extends CompleteLister {
-	public $ipp=2;
+class Paginator_Basic extends CompleteLister {
+	public $ipp=30;
 	public $skip=0;
 	public $range=4;
 
@@ -17,10 +17,15 @@ class Paginator2 extends CompleteLister {
 
 		$this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
     }
+    /** Set number of items displayed per page */
+    function ipp($ipp){
+        $this->ipp=$ipp;
+        return $this;
+    }
+    /** Specify DQ object */
     function setSource(&$s){
         $this->source =& $s;
     }
-
     function applyHook(){
         if(!isset($this->source)){
             if($this->owner->dq){
@@ -52,7 +57,7 @@ class Paginator2 extends CompleteLister {
             $this->found_rows=count($this->source);
         }
 
-        if($this->total_pages<=1)return;
+        if($this->total_pages<=1)return $this->destroy();
 
 
         if($this->cur_page>1){
@@ -87,7 +92,6 @@ class Paginator2 extends CompleteLister {
                 'label'=>$p
             );
         } 
-
 
         $this->js('click',$this->owner->js()->reload(array($this->name.'_skip'=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
 
