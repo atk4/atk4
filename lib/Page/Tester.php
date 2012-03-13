@@ -121,8 +121,6 @@ class Page_Tester extends Page {
                 }elseif($this->proper_responses[$k]){
                     $row[$key.'_res']='<font color="red">'.var_export($row[$key.'_res'],true).'</font><br/>'.
                         var_export($this->proper_responses[$k],true);
-                }else{
-                    $row[$key.'_res']=var_export($row[$key.'_res'],true);
                 }
 
 
