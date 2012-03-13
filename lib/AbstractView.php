@@ -77,13 +77,17 @@ abstract class AbstractView extends AbstractObject {
     function _tsBuffer($t,$data){
         $this->_tsBuffer.=$data;
     }
-    /** Converting View into string will render recursively and produce HTML. Avoid using this. */
-    function getHTML(){
+    /** Converting View into string will render recursively and produce HTML. If argument is passed, JavaScript will be added 
+        * into on_ready section of your document like when rendered normally. Note that you might require to destroy object 
+        * if you don't want it's HTML to appear normally */
+    function getHTML($destroy=true,$execute_js=true){
         $this->addHook('output',array($this,'_tsBuffer'));
         $this->recursiveRender();
         $this->removeHook('output',array($this,'_tsBuffer'));
         $ret=$this->_tsBuffer;
         $this->_tsBuffer='';
+        if($execute_js && $this->api->jquery)$this->api->jquery->getJS($this);
+        if($destroy)$this->destroy();
         return $ret;
     }
 
