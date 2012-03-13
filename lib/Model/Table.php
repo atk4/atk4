@@ -319,6 +319,19 @@ class Model_Table extends Model {
     function getRows($fields=null){
         return $this->selectQuery($fields)->do_getAll();
     }
+    /** Returs dynamic query selecting number of entries in the database */
+    function count(){
+        $q=$this->dsql();
+        return $q->field($q->count());
+    }
+    /** Returs dynamic query selecting sum of particular field */
+    function sum($field){
+        if(!is_object($field))$field=$this->getElement($field);
+
+        $q=$this->dsql()->expr('sum([field])');
+        $field->updateSelectQuery($q);
+        return $this->dsql()->field($q);
+    }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
         return $this->loaded(); 
@@ -463,7 +476,7 @@ class Model_Table extends Model {
         // Performs the actual database changes. Throw exception if problem occurs
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
-            if(isset($this->dirty[$name]) || $f->defaultValue()===null)continue;
+            if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
 
             $f->updateInsertQuery($insert);
         }
@@ -554,9 +567,10 @@ class Model_Table extends Model {
     /** Deletes all records matching this model. Use with caution. */
     function deleteAll(){
 
+        $delete=$this->dsql();
         $delete->owner->beginTransaction();
         $this->hook('beforeDeleteAll',array($delete));
-        $delete->execute();
+        $delete->delete();
         $this->hook('afterDeleteAll');
         $delete->owner->commit();
         $this->reset();
