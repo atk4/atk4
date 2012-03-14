@@ -172,6 +172,12 @@ class Model_Table extends Model {
         return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
             ->set($foreign_table,$master_field, $join_kind,$relation);
     }
+    /** Creates weak join between tables. The foreign table may be absent and will not be automatically deleted */
+    function leftJoin($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
+        if(!$join_kind)$join_kind='left';
+        $res=$this->join($foreach,$master_field,$join_kind,$_foreign_alias,$relations);
+        $res->delete_behaviour='ignore';
+    }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
         return $this

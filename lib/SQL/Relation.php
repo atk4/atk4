@@ -14,6 +14,8 @@ class SQL_Relation extends AbstractModel {
     // $m1 == $relation->f1
     public $relation=null;
 
+    public $delete_behaviour='cascade';          // cascade, setnull, ignore
+
     function init(){
         parent::init();
         $this->table_alias=$this->short_name;
@@ -67,10 +69,12 @@ class SQL_Relation extends AbstractModel {
             // user.contactinfo_id = contactinfo.id
             $this->owner->addHook('beforeInsert',$this,null,-5);
             $this->owner->addHook('beforeModify',$this,null,-5);
+            $this->owner->addHook('afterDelete',$this,null,-5);
         }elseif($this->m2){
             // author.id = book.author_id
             $this->owner->addHook('afterInsert',$this);
             $this->owner->addHook('beforeModify',$this);
+            $this->owner->addHook('beforeDelete',$this);
         }// else $m2 is not set, expression is used, so don't try to do anything unnecessary
 
         $this->owner->addHook('beforeSave',$this);
@@ -91,17 +95,21 @@ class SQL_Relation extends AbstractModel {
         }
 
         $this->dsql->set($this->f2,null);
-        $this->id=$this->dsql->do_insert();
+        $this->id=$this->dsql->insert();
 
         if($this->relation)$q=$this->relation->dsql;
 
         $q->set($this->m2,$this->id);
     }
     function afterInsert($m,$id){
-        $this->id=$this->dsql->set($this->f2,$id)->do_insert();
+        $this->id=$this->dsql->set($this->f2,$id)->insert();
     }
     function beforeModify($m,$q){
-        if($this->dsql->args['set'])$this->dsql->where($this->f2,$this->id)->do_update();
+        if($this->dsql->args['set'])$this->dsql->where($this->f2,$this->id)->update();
+    }
+    function beforeDelete($m,$id){
+    }
+    function afterDelete($m){
     }
 
     /** Add query for the relation's ID, but then remove it from results. Remove ID when unloading. */
