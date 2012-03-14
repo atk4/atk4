@@ -317,10 +317,7 @@ class BasicAuth extends AbstractController {
         $this->api->template->tryDel('Menu');
 		$p=$this->showLoginForm();
 		if($this->form->isSubmitted()){
-			if($this->verifyCredintials(
-						$this->form->get('username'),
-						$this->encryptPassword($this->form->get('password'),$this->form->get('username'))
-						)){
+			if($this->verifyCredintials( $this->form->get('username'), $this->form->get('password'))){				
 				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
 				$this->loginRedirect();
 			}
