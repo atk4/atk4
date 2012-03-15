@@ -100,7 +100,7 @@ class Paginator_Basic extends CompleteLister {
 
     }
     function defaultTemplate(){
-        return array('paginator','paginator2');
+        return array('paginator42','paginator');
     }
     function defaultSpot(){
         return 'paginator';
