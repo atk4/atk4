@@ -209,7 +209,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->addField($name); 
     }
     function hasField($name){
-        return $htis->hasElement($name);
+        return $this->hasElement($name);
     }
     function getEntityCode(){
         return $this->table?:$this->entity_code;
