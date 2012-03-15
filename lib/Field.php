@@ -129,6 +129,9 @@ class Field extends AbstractModel {
     // OBSOLETE
     // TODO: refactor this!
     function refModel($m){
+        if($m=='Model_Filestore_File'){
+            return $this->add('filestore/Field_File');
+        }
         $this->destroy();
         $fld = $this->add('Field_Reference');
 
