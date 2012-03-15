@@ -44,7 +44,8 @@ class DB extends AbstractController {
                     $matches[1].':host='.$matches[5].';dbname='.$matches[7].
                     ';charset=utf8',
                     $matches[2],
-                    $matches[4]
+                    $matches[4],
+                    array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
                 );
             }
         }
