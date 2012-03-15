@@ -473,6 +473,16 @@ class DB_dsql extends AbstractModel implements Iterator {
      *  $q->join(array('a'=>'address','p'=>'portfolio'));
      */
 	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+        // Compatibility mode
+        if($this->api->compat){
+            if(strpos($foreign_table,' ')){
+                list($foreign_table,$alias)=explode(' ',$foreign_table);
+                $foreign_table=array($alias=>$foreign_table);
+            }
+            if(strpos($master_field,'=')){
+                $master_field=$this->expr($master_field);
+            }
+        }
 
         // If array - add recursively
         if(is_array($foreign_table)){
@@ -505,10 +515,10 @@ class DB_dsql extends AbstractModel implements Iterator {
             // Identify fields we use for joins
             if(is_null($f2) && is_null($m2))$m2=$f1.'_id';
             if(is_null($m2))$m2='id';
-            $j['f1']=$f1;
             $j['m1']=$m1;
             $j['m2']=$m2;
         }
+        $j['f1']=$f1;
         if(is_null($f2))$f2='id';
         $j['f2']=$f2;
 
@@ -698,6 +708,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!$this->bt
         || is_object($s)
         || $s=='*'
+        || strpos($s,'.')!==false
         || strpos($s,'(')!==false
         || strpos($s,$this->bt)!==false
         )return $s;
