@@ -84,6 +84,7 @@ class BasicAuth extends AbstractController {
 		// be available there
 		$this->info=$this->recall('info',false);
 
+
 		// Logout is fictional page. If user tries to access it, he will be logged out and redirected
 		if(strtolower($this->api->page)=='logout'){
 			$this->logout();
@@ -93,6 +94,29 @@ class BasicAuth extends AbstractController {
         parent::setModel($model);
         $this->login_field=$login_field;
         $this->password_field=$password_field;
+
+        // Load model from session
+        if($this->info){
+            if($this->recall('class',false)==get_class($this->model)){
+                $this->debug("Loading model from cache");
+                $this->model->set($this->info);
+                $this->model->id=$this->recall('id',null);
+            }else{
+                // Class changed, re-fetch data from database
+                $this->debug("Class changed, loading from database");
+                $this->model->load($this->recall('id'));
+                if(!$this->model->loaded())$this->logout(false);
+
+                // TODO: move this code to separate method
+                $this->memorize('class',get_class($this->model));
+                $this->memorize('id',$this->model->id);
+
+                $this->info=$this->model->get();
+                $this->info['username']=$user[$this->login_field];
+                $this->memorize('info',$this->info);
+            }
+        }
+
         return $this->model;
     }
 	function destroy(){
@@ -155,7 +179,7 @@ class BasicAuth extends AbstractController {
 			case'sha1':return sha1($password);
 			case'md5':return md5($password);
 			case'rot13':return str_rot13($password);
-			default: throw BaseException('No such encryption method: '.$this->password_encryption);
+			default: throw $this->exception('No such encryption method')->addMoreInfo('encryption',$this->password_encryption);
 		}
 	}
 	function check(){
@@ -264,9 +288,30 @@ class BasicAuth extends AbstractController {
 
         $this->memorize('info',$this->info);
 	}
-	function login($username,$memorize=false){
-		$this->loggedIn($username,isset($this->allowed_credintals[$username])?
-                $this->allowed_credintals[$username]:null,$memorize);
+    /** Log in as specified users. Will not perform password check */
+	function login($user){
+        if(is_object($user)){
+            if(!$this->model)throw $this->exception('Auth Model should be set');
+            $c=get_class($this->model);
+            if(!$user instanceof $c)throw $this->exception('Incorrect method specified when logging in');
+
+            $this->model=$user;
+        }elseif($this->model){
+            $this->model->loadBy($this->login_field,$user);
+        }else{
+            $this->loggedIn($user,isset($this->allowed_credintals[$user])?
+                $this->allowed_credintals[$user]:null,false);
+            return $this;
+        }
+
+        // TODO: move this code to separate method
+        $this->info=$this->model->get();
+        $this->info['username']=$user[$this->login_field];
+
+        $this->memorize('info',$this->info);
+        $this->memorize('class',get_class($this->model));
+        $this->memorize('id',$this->model->id);
+        return $this;
 	}
 	function loginRedirect(){
 
@@ -295,6 +340,19 @@ class BasicAuth extends AbstractController {
 
 		$form->addField('Checkbox','memorize','Remember me');
 		$form->addSubmit('Login');
+
+		if($form->isSubmitted()){
+			if($this->verifyCredintials( $form->get('username'), $form->get('password'))){				
+
+                if($this->hook('LoggedIn',array($form)))return;
+
+				$this->loggedIn($form->get('username'),$this->encryptPassword($form->get('password')));
+				$this->loginRedirect();
+			}
+			$this->debug("Incorrect login");
+            if($this->hook('IncorrectLogin',array($form)))return;
+			$form->getElement('password')->displayFieldError('Incorrect login information');
+		}
 		return $form;
 	}
 	function showLoginForm(){
@@ -316,14 +374,6 @@ class BasicAuth extends AbstractController {
 		$this->memorizeOriginalURL();
         $this->api->template->tryDel('Menu');
 		$p=$this->showLoginForm();
-		if($this->form->isSubmitted()){
-			if($this->verifyCredintials( $this->form->get('username'), $this->form->get('password'))){				
-				$this->loggedIn($this->form->get('username'),$this->encryptPassword($this->form->get('password')));
-				$this->loginRedirect();
-			}
-			$this->debug("Incorrect login");
-			$this->form->getElement('password')->displayFieldError('Incorrect login information');
-		}
 
         $this->api->hook('post-init');
 
