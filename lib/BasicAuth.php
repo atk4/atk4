@@ -107,15 +107,16 @@ class BasicAuth extends AbstractController {
                 $this->model->load($this->recall('id'));
                 if(!$this->model->loaded())$this->logout(false);
 
-                // TODO: move this code to separate method
-                $this->memorize('class',get_class($this->model));
-                $this->memorize('id',$this->model->id);
-
-                $this->info=$this->model->get();
-                $this->info['username']=$user[$this->login_field];
-                $this->memorize('info',$this->info);
+                $this->memorizeModel($this->model);
             }
         }
+
+        $t=$this;
+        $this->model->addHook('afterSave',function($m)use($t){
+            $tmp=$m->get();
+            unset($tmp[$t->password_field]);
+            $t->memorize('info',$tmp);
+        });
 
         return $this->model;
     }
@@ -288,6 +289,15 @@ class BasicAuth extends AbstractController {
 
         $this->memorize('info',$this->info);
 	}
+    function memorizeModel($m){
+        $this->info=$this->model->get();
+        $this->info['username']=$this->info[$this->login_field];
+        unset($this->info[$this->password_field]);
+
+        $this->memorize('info',$this->info);
+        $this->memorize('class',get_class($this->model));
+        $this->memorize('id',$this->model->id);
+    }
     /** Log in as specified users. Will not perform password check */
 	function login($user){
         if(is_object($user)){
@@ -304,13 +314,7 @@ class BasicAuth extends AbstractController {
             return $this;
         }
 
-        // TODO: move this code to separate method
-        $this->info=$this->model->get();
-        $this->info['username']=$user[$this->login_field];
-
-        $this->memorize('info',$this->info);
-        $this->memorize('class',get_class($this->model));
-        $this->memorize('id',$this->model->id);
+        $this->memorizeModel($this->model);
         return $this;
 	}
 	function loginRedirect(){
