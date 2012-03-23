@@ -14,7 +14,15 @@ class SQL_Many extends AbstractModel {
 
         return $this;
     }
-    function ref($load=null){
+    function refSQL(){
+        $model=$this->dst_model;
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+            $model=$this->add($model);
+        }
+        return $model->addCondition($this->their_field,$this->owner->dsql->getField($this->our_field));
+    }
+    function ref(){
         $model=$this->dst_model;
         if(is_string($model)){
             $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
