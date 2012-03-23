@@ -59,7 +59,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $desired;
     }
     function __clone(){
-        $this->rewind();
+        $this->stmt=null;
     }
     function __toString(){
         try {
@@ -474,7 +474,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      */
 	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
         // Compatibility mode
-        if($this->api->compat){
+        if(isset($this->api->compat)){
             if(strpos($foreign_table,' ')){
                 list($foreign_table,$alias)=explode(' ',$foreign_table);
                 $foreign_table=array($alias=>$foreign_table);
@@ -908,8 +908,13 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     // {{{ Iterator support 
     public $data=false;
+    public $_iterating=false;
     function rewind(){
-        $this->stmt=null;
+        if($this->_iterating){
+            $this->stmt=null;
+            $this->_iterating=false;
+        }
+        $this->_iterating=true;
         return $this;
     }
     function next(){
