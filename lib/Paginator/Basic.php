@@ -24,6 +24,7 @@ class Paginator_Basic extends CompleteLister {
     }
     /** Specify DQ object */
     function setSource(&$s){
+        $s->calc_found_rows();
         $this->source =& $s;
     }
     function applyHook(){
