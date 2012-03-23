@@ -59,7 +59,7 @@ class Model_Table extends Model {
             $this->table=$this->entity_code;
             unset($this->entity_code);
         }
-        if($this->table)$this->initQuery();
+        $this->initQuery();
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }
@@ -328,7 +328,7 @@ class Model_Table extends Model {
     /** Returs dynamic query selecting number of entries in the database */
     function count(){
         $q=$this->dsql();
-        return $q->field($q->count());
+        return $q->del('fields')->field($q->count());
     }
     /** Returs dynamic query selecting sum of particular field */
     function sum($field){
@@ -557,8 +557,13 @@ class Model_Table extends Model {
     }
     /** Deletes record matching the ID */
     function delete($id=null){
-        if(!$id && !$this->id)throw $this->exception('Specify ID to delete()');
-        $delete=$this->dsql()->where($this->id_field,$id?:$this->id);
+        if($id)$this->load($id);
+        if(!$this->loaded())throw $this->exception('Unable to determine which record to delete');
+
+        $tmp=$this->dsql;
+
+        $this->initQuery();
+        $delete=$this->dsql->where($this->id_field,$this->id);
 
         $delete->owner->beginTransaction();
         $this->hook('beforeDelete',array($delete));
@@ -566,7 +571,8 @@ class Model_Table extends Model {
         $this->hook('afterDelete');
         $delete->owner->commit();
 
-        if($this->id==$id || !$id)$this->unload();
+        $this->dsql=$tmp;
+        $this->unload();
 
         return $this;
     }
