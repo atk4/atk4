@@ -186,7 +186,7 @@ class Grid_Basic extends CompleteLister {
     function format_shorttext($field){
         $text=$this->current_row[$field];
         //TODO counting words, tags and trimming so that tags are not garbaged
-        if(strlen($text)>60)$text=substr($text,0,28).' <b>~~~</b> '.substr($text,-28);;
+        if(strlen($text)>60)$text=substr($text,0,28).' ~~~ '.substr($text,-28);;
         $this->current_row[$field]=$text;
         $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
