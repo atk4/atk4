@@ -12,6 +12,6 @@ class View_Error extends View_Box {
     public $class="ui-state-error";
     function init(){
         parent::init();
-        $this->template->trySet('Icon','<i class="ui-icon ui-icon-alert"></i>');    // change default icon
+        $this->template->trySetHTML('Icon','<i class="ui-icon ui-icon-alert"></i>');    // change default icon
     }
 }
