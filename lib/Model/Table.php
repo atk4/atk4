@@ -36,8 +36,8 @@
 **/
 class Model_Table extends Model {
 
-    /** Master DSQL record which will be cloned by other operations */
-    public $dsql; 
+    /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
+    protected $dsql; 
 
     /** The actual ID field of the table might now always be "id" */
     public $id_field='id';   // name of ID field
@@ -49,6 +49,11 @@ class Model_Table extends Model {
     public $table_alias=null;   // Defines alias for the table, can improve readability of queries
     public $entity_code=null;   // @osolete. Use $table
 
+    public $relations=array();  // Joins
+
+
+    public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
+
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
@@ -59,7 +64,6 @@ class Model_Table extends Model {
             $this->table=$this->entity_code;
             unset($this->entity_code);
         }
-        $this->initQuery();
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }
@@ -70,6 +74,12 @@ class Model_Table extends Model {
 
         $this->addField($this->id_field)->system(true);
     }
+    function addField($name){
+        if($name=='deleted' && $this->api->compat){
+            return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
+        }
+        return parent::addField($name);
+    }
     /** exception() will automatically add information about current model and will allow to turn on "debug" mode */
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
@@ -79,18 +89,29 @@ class Model_Table extends Model {
     /** Initializes base query for this model. 
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
+        if(!$this->table)throw $this->exception('$table property must be defined');
         $this->dsql=$this->api->db->dsql();
-        $table=$this->table;
-        if(!$table)throw $this->exception('$table property must be defined');
-        $this->dsql->table($table,$this->table_alias);
+        if($this->debug)$this->dsql->debug();
+        $this->dsql->table($this->table,$this->table_alias);
         $this->dsql->default_field=$this->dsql->expr('*,'.
-            $this->dsql->bt($this->table_alias?:$table).'.'.
+            $this->dsql->bt($this->table_alias?:$this->table).'.'.
             $this->dsql->bt($this->id_field))
             ;
     }
+    /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
+    function _dsql(){
+        if(!$this->dsql)$this->initQuery();
+        return $this->dsql;
+    }
+    /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model. 
+     * Use for statements you are going to execute manually. */
+    function dsql(){
+        return clone $this->_dsql();
+    }
     /** Turns on debugging mode for this model. All database operations will be outputed */
     function debug(){
-        $this->dsql->debug();
+        $this->debug=true;
+        if($this->dsql)$this->dsql->debug();
         return $this;
     }
     /**
@@ -100,6 +121,7 @@ class Model_Table extends Model {
      * If no group is specified, then all non-system fields are displayed for backwards compatibility.
      */
     function getActualFields($group=undefined){
+        if($group===undefined && $this->actual_fields)return $this->actual_fields;
         $fields=array();
         foreach($this->elements as $el)if($el instanceof Field){
             if($el->hidden())continue;
@@ -112,30 +134,49 @@ class Model_Table extends Model {
         }
         return $fields;
     }
-    /** Produces Dynamic SQL object configured with table, conditions and joins of this model. Useful for delete or update 
-     * statements */
-    function dsql(){
-        return clone $this->dsql;
+    /** Default set of fields which will be included into further queries */
+    function setActualFields(array $fields){
+        $this->actual_fields=$fields;
+        $this->_selectQuery=false;      // changing actual fields breaks default select query
+        return $this;
     }
-    /** Produces Dynamic SQL and adds specified fields, referenced fields and expressions. Useful for select statements */
+    protected $_selectQuery=false;
+    /** Completes initialization of dsql() by adding fields and expressions. */
     function selectQuery($fields=null){
-        if($fields===null)$fields=$this->getActualFields();
-        $select=$this->dsql;
-        $select->del('fields');
+        if($this->_selectQuery&& $fields===null){
+            return $this->_selectQuery;
+        }
 
+        if($this->damn++>5)throw $this->exception("enough");
+        /**/$this->api->pr->start('selectQuery/getActualF');
+
+        $actual_fields=$fields?:$this->actual_fields?:$this->getActualFields();
+
+        if(!$fields){
+            $this->_selectQuery=$select=$this->_dsql()->del('fields');
+        }else{
+            // operate with a clone
+            $select=$this->dsql()->del('fields');
+        }
+
+        /**/$this->api->pr->next('selectQuery/addSystemFields');
         // add system fields into select
+        /*
         foreach($this->elements as $el)if($el instanceof Field){
             if($el->system() && !in_array($el->short_name,$fields))
                 $fields[]=$el->short_name;
         }
+         */
+        /**/$this->api->pr->next('selectQuery/updateQuery');
 
         // add actual fields
-        foreach($fields as $field){
+        foreach($actual_fields as $field){
             $field=$this->hasElement($field);
             if(!$field)continue;
 
             $field->updateSelectQuery($select);
         }
+        /**/$this->api->pr->stop();
         return $select;
     }
     /** Returns field which should be used as a title */
@@ -150,7 +191,7 @@ class Model_Table extends Model {
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
         }
-        return $query->field($query->expr('concat("Record #",'.$query->bt($this->dsql->getField($this->id_field)).')'));
+        return $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
     }
     // }}}
 
@@ -162,7 +203,6 @@ class Model_Table extends Model {
             ->add('Field_Expression',$name)
             ->set($expression);
     }
-    public $relations=array();
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
     function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
 
@@ -177,15 +217,12 @@ class Model_Table extends Model {
         if(!$join_kind)$join_kind='left';
         $res=$this->join($foreach,$master_field,$join_kind,$_foreign_alias,$relations);
         $res->delete_behaviour='ignore';
+        return $res;
     }
     /** Adds a sub-query and manyToOne reference */
     function addReference($name){
         return $this
             ->add('Model_Field_Reference',$name);
-    }
-    function _removeme_addTitle($name){
-        $this->title=$name;
-        return $this->addField($name);
     }
     /** Defines one to many association */
     function hasOne($model,$our_field=null,$display_field=null){
@@ -219,8 +256,9 @@ class Model_Table extends Model {
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond=undefined,$value=undefined){
 
+        // You may pass plain "dsql" expressions as a first argument
         if($field instanceof DB_dsql && $cond==undefined && $value==undefined){
-            $this->dsql->where($field);
+            $this->_dsql()->where($field);
             return $this;
         }
 
@@ -251,14 +289,14 @@ class Model_Table extends Model {
 
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->dsql->having($field->short_name,$cond,$value);
+            $this->_dsql()->having($field->short_name,$cond,$value);
             $field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
-            $this->dsql->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
         }elseif($this->relations){
-            $this->dsql->where($this->table_alias?:$this->table.'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where($this->table_alias?:$this->table.'.'.$field->short_name,$cond,$value);
         }else{
-            $this->dsql->where($field->short_name,$cond,$value);
+            $this->_dsql()->where($field->short_name,$cond,$value);
         }
         return $this;
     }
@@ -276,16 +314,16 @@ class Model_Table extends Model {
         }
 
         if($field->relation){
-            $this->dsql->order($field->relation->short_name.'.'.$field->short_name,$desc);
+            $this->_dsql()->order($field->relation->short_name.'.'.$field->short_name,$desc);
         }elseif($this->relations){
-            $this->dsql->order($this->table_alias?:$this->table.'.'.$field->short_name,$desc);
+            $this->_dsql()->order($this->table_alias?:$this->table.'.'.$field->short_name,$desc);
         }else{
-            $this->dsql->order($field->short_name,$desc);
+            $this->_dsql()->order($field->short_name,$desc);
         }
 
         return $this;
     }
-    /** Always keep $field equals to $value for queries and new data */
+    /** @depreciated use two-argument addCondition. Always keep $field equals to $value for queries and new data */
     function setMasterField($field,$value){
         return $this->addCondition($field,$value);
     }
@@ -295,12 +333,12 @@ class Model_Table extends Model {
 
     protected $_iterating=false;
     function rewind(){
-        $this->_iterating=false;
-        $this->dsql->rewind();
+        $this->_iterating=$this->selectQuery();
+        $this->_iterating->rewind();
     }
     function next(){
-        $this->dsql->next();
-        $this->set($x=$this->dsql->current());
+        $this->_iterating->next();
+        $this->set($x=$this->_iterating->current());
         $this->id=@$this->data[$this->id_field];
     }
     function current(){
@@ -312,7 +350,7 @@ class Model_Table extends Model {
     function valid(){
         if(!$this->_iterating){
             $this->next();
-            $this->_iterating=true;
+            $this->_iterating=$this->selectQuery();
         }
         return $this->loaded();
     }
@@ -323,7 +361,12 @@ class Model_Table extends Model {
 
     /** Loads all matching data into array of hashes */
     function getRows($fields=null){
-        return $this->selectQuery($fields)->do_getAll();
+        /**/$this->api->pr->start('getRows/selecting huj');
+        $a=$this->selectQuery($fields);
+        /**/$this->api->pr->next('getRows/fetching');
+        $a=$a->get();
+        $this->api->pr->stop();
+        return $a;
     }
     /** Returs dynamic query selecting number of entries in the database */
     function count(){
@@ -334,7 +377,7 @@ class Model_Table extends Model {
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->dsql()->expr('sum([field])');
+        $q=$this->_dsql()->expr('sum([field])');
         $field->updateSelectQuery($q);
         return $this->dsql()->field($q);
     }
@@ -378,15 +421,21 @@ class Model_Table extends Model {
     }
     /** Loads data record and return array of that data. Will not affect currently loaded record. */
     function getBy($field,$cond=undefined,$value=undefined){
-        $q=clone $this->dsql;
+
         $data=$this->data;
         $id=$this->id;
+        $this->selectQuery();
+
+
+        $w=$this->dsql->args['where'];
         $this->addCondition($field,$cond,$value);
-        $this->tryLoadAny();
-        $row=$this->get();
+        $row=$this->dsql->getHash();
+        $this->dsql->args['where']=$w;
+
         $this->dsql=$q;
         $this->data=$data;
         $this->id=$id;
+
         return $row;
     }
     /** Unloads then loads current record back. Use this if you have added new fields */
@@ -395,18 +444,25 @@ class Model_Table extends Model {
     }
     /** Internal loading funciton. Do not use. OK to override. */
     protected function _load($id,$ignore_missing=false){
-        $load = clone $this->selectQuery();
+        /**/$this->api->pr->start('load/selectQuery');
+        $load = $this->selectQuery();
+        /**/$this->api->pr->next('load/clone');
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
+        /**/$this->api->pr->next('load/where');
         if(!is_null($id))$load->where($p.$this->id_field,$id)->limit(1);
 
+        /**/$this->api->pr->next('load/beforeLoad');
         $this->hook('beforeLoad',array($load));
 
 
+        /**/$this->api->pr->next('load/get');
         $load->stmt=null;
-        $data = $load->limit(1)->get();
+        $data = $load->limit(1)->getHash();
+        array_pop($load->args['where']);    // remove where condition
+        /**/$this->api->pr->next('load/ending');
         $this->reset();
 
-        if(!isset($data[0])){
+        if(!isset($data)){
             if($ignore_missing)return $this; else 
                 throw $this->exception('Record could not be loaded')
                 ->addMoreInfo('model',$this)
@@ -414,10 +470,11 @@ class Model_Table extends Model {
             ;
         }
 
-        $this->data=$data[0];  // avoid using set() for speed and to avoid field checks
+        $this->data=$data;  // avoid using set() for speed and to avoid field checks
         $this->id=$this->data[$this->id_field];
 
         $this->hook('afterLoad');
+        /**/$this->api->pr->stop();
 
         return $this;
     }
@@ -426,7 +483,6 @@ class Model_Table extends Model {
         if($id)$this->tryLoad($id);
         return $this;
     }
-
     // }}}
 
     // {{{ Saving Data
@@ -461,7 +517,7 @@ class Model_Table extends Model {
     private $_save_later=false;
     /** Save model into database and load it back. If for some reason it won't load, whole operation is undone */
     function save(){
-        $this->dsql->owner->beginTransaction();
+        $this->_dsql()->owner->beginTransaction();
         $this->hook('beforeSave');
 
         // decide, insert or modify
@@ -472,7 +528,7 @@ class Model_Table extends Model {
         }
 
         $res->hook('afterSave');
-        $this->dsql->owner->commit();
+        $this->_dsql()->owner->commit();
         return $res;
     }
     /** Internal function which performs insert of data. Use save() instead. OK to override. */

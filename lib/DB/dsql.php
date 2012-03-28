@@ -297,7 +297,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;
             if($alias==$field)$alias=undefined;
+            /**/$this->api->pr->start('dsql/render/field/consume');
             $field=$this->consume($field);
+            /**/$this->api->pr->stop();
             if(!$field){
                 $field=$table;
                 $table=undefined;
@@ -762,8 +764,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Executes any query query */
     function execute(){
         try {
-            $this->stmt=$this->owner->query($q=$this->render(),$this->params);
+            /**/$this->api->pr->start('dsql/execute/render');
+            $q=$this->render();
+            /**/$this->api->pr->next('dsql/execute/query');
+            $this->stmt=$this->owner->query($q,$this->params);
             $this->template=$this->mode=null;
+            /**/$this->api->pr->stop();
             return $this;
         }catch(PDOException $e){
             throw $this->exception('Database Query Failed')
@@ -960,14 +966,18 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $r;
     }
     function _render(){
+        /**/$this->api->pr->start('dsql/render');
         if(!$this->template)$this->SQLTemplate('select');
         $self=$this;
-        return preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
+        $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
+            /**/$self->api->pr->next('dsql/render/'.$matches[1]);
             $fx='render_'.$matches[1];
             if($self->hasMethod($fx))return $self->$fx();
             elseif(isset($self->args['custom'][$matches[1]]))return $self->args['custom'][$matches[1]];
             else return $matches[0];
         },$this->template);
+        /**/$this->api->pr->stop();
+        return $res;
     }
     // }}}
 }

@@ -62,7 +62,7 @@ class SQL_Relation extends AbstractModel {
         $this->fa=$this->short_name;
 
         // Use the real ID field as defined by the model as default
-        $this->owner->dsql->join($foreign_table,$this->expr?:($m1.'.'.$m2),$this->t,$this->short_name);
+        $this->owner->_dsql()->join($foreign_table,$this->expr?:($m1.'.'.$m2),$this->t,$this->short_name);
 
         // If our ID field is NOT used, must insert record in OTHER table first and use their primary value in OUR field
         if($this->m2 && $this->m2 != $this->owner->id_field){
@@ -84,8 +84,8 @@ class SQL_Relation extends AbstractModel {
         return $this;
     }
     function beforeSave($m){
-        $this->dsql=$this->owner->dsql->dsql()->table($this->f1);
-        if($this->owner->dsql->debug)$this->dsql->debug();
+        $this->dsql=$this->owner->_dsql()->dsql()->table($this->f1);
+        if($this->owner->_dsql()->debug)$this->dsql->debug();
     }
     function beforeInsert($m,$q){
         // Insert related table data and add ID into the main query
@@ -129,10 +129,10 @@ class SQL_Relation extends AbstractModel {
     }
 
     function fieldExpr($f){
-        return $this->owner->dsql->expr(
-            $this->owner->dsql->bt($this->short_name).
+        return $this->owner->_dsql()->expr(
+            $this->owner->_dsql()->bt($this->short_name).
             '.'.
-            $this->owner->dsql->bt($f)
+            $this->owner->_dsql()->bt($f)
         );
     }
 }
