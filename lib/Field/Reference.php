@@ -56,7 +56,7 @@ class Field_Reference extends Field {
         if($this->relation){
             $title->where($this->relation->short_name.'.'.$this->short_name,$title->getField($this->model->id_field));
         }else{
-            $title->where($this->owner->dsql->getField($this->short_name),$title->getField($this->model->id_field));
+            $title->where($this->owner->_dsql()->getField($this->short_name),$title->getField($this->model->id_field));
         }
         return $title;
     }
