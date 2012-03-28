@@ -227,7 +227,7 @@ class Grid_Advanced extends Grid_Basic {
         if(!($t=$this->columns[$field]['template'])){
             throw new BaseException('use setTemplate() for field '.$field);
         }
-        $this->current_row[$field]=$t
+        $this->current_row_html[$field]=$t
             ->set($this->current_row)
             ->trySet('_value_',$this->current_row[$field])
             ->render();
