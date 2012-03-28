@@ -43,9 +43,6 @@ class PathFinder extends AbstractController {
 		$GLOBALS['atk_pathfinder']=$this;	// used by autoload
 
 
-		// getting ready for atk
-		//$this->api->proxyFunctions($this,array('addLocation','locate'));
-
 		$this->addDefaultLocations();
 	}
 
@@ -175,11 +172,13 @@ class PathFinder extends AbstractController {
 		return $files;
 	}
     function loadClass($class_name){
+        /**/$this->api->pr->start('pathfinder/loadClass '.$class_name);
         list($namespace,$file)=explode('\\',$class_name);
         if (!$file && $namespace){
             $file = $namespace;
             $namespace=null;
         }
+        /**/$this->api->pr->next('pathfinder/loadClass/convertpath '.$class_name);
         // Include class file directly, do not rely on auto-load functionality
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
@@ -190,17 +189,22 @@ class PathFinder extends AbstractController {
                     throw new PathFinder_Exception('addon',$path,$prefix);
                 }
             }else{
+                /**/$this->api->pr->next('pathfinder/loadClass/locate '.$class_name);
                 if(substr($class_name,0,5)=='page_'){
                     $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
                 }else $path=$this->api->pathfinder->locate('php',$file,'path');
 
             }
 
+            /**/$this->api->pr->next('pathfinder/loadClass/include '.$class_name);
+            /**/$this->api->pr->start('php parsing');
             include_once($path);
+            /**/$this->api->pr->stop();
             if(!class_exists($class_name))throw $this->exception('Class is not defined in file')
                 ->addMoreInfo('file',$path)
                 ->addMoreInfo('class',$class_name);
         }
+        /**/$this->api->pr->stop();
     }
 }
 
