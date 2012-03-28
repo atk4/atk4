@@ -44,6 +44,8 @@ class ApiCLI extends AbstractView {
         $this->name  = $realm;
         $this->api   = $this;
 
+        $this->pr=new Dummy();
+
         set_error_handler("error_handler");
 
         try {
