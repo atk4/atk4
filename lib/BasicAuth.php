@@ -52,27 +52,21 @@
  */
 class BasicAuth extends AbstractController {
 
-    public $template=null;
 	public $info=false;		// info will contain data loaded about authenticated user. This
 							// property can be accessed through $this->get(); and should not
 							// be changed after authentication.
 
-	protected $allowed_credintals=array();	// contains pairs with allowed credintals. Use function allow()
-							// to permit different user/password pairs to login
-
-	protected $form=null;	// This form is created when user is being asked about authentication.
+	public $form=null;	// This form is created when user is being asked about authentication.
 							// If you are willing to change the way form looks, create it
 							// prior to calling check(). Your form must have compatible field
 							// names: "username" and "password"
 
 	protected $password_encryption=null;         // Which encryption to use. Few are built-in
 
-	protected $title="Authoriation is necessary";  // use setTitle() to change this text appearing on the top of the form
+	protected $allowed_pages=array();
 
-	protected $allowed_pages=array('Logout');
-
-	public $login_field;
-	public $password_field;
+	public $login_field='email';
+	public $password_field='password';
 
 	function init(){
 		parent::init();
@@ -84,12 +78,14 @@ class BasicAuth extends AbstractController {
 		// be available there
 		$this->info=$this->recall('info',false);
 
-
-		// Logout is fictional page. If user tries to access it, he will be logged out and redirected
-		if(strtolower($this->api->page)=='logout'){
-			$this->logout();
-		}
 	}
+    function allow($user,$pass=null){
+        // creates fictional model to allow specified user and password
+        // TODO: test this
+        $this->setModel($this->add('Model')
+            ->setSource('Array',is_array($user)?$user:array('email'=>$user,'password'=>$pass)));
+        return $this;
+    }
     function setModel($model,$login_field='email',$password_field='password'){
         parent::setModel($model);
         $this->login_field=$login_field;
@@ -107,18 +103,31 @@ class BasicAuth extends AbstractController {
                 $this->model->load($this->recall('id'));
                 if(!$this->model->loaded())$this->logout(false);
 
-                $this->memorizeModel($this->model);
+                $this->memorizeModel();
             }
         }
 
         $t=$this;
+
+        // If model is saved, update our cache too, but don't store password
         $this->model->addHook('afterSave',function($m)use($t){
+            // after this model is saved, re-cache the info
             $tmp=$m->get();
             unset($tmp[$t->password_field]);
             $t->memorize('info',$tmp);
         });
 
+        $this->addEncryptionHook($this->model);
         return $this->model;
+    }
+    function addEncryptionHook($model){
+        // If model is saved, encrypt password
+        $t=$this;
+        $model->addHook('beforeSave',function($m)use($t){
+            if(isset($m->dirty[$t->password_field])){
+                $m['password']=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
+            }
+        });
     }
 	function destroy(){
 		unset($this->api->auth);
@@ -135,22 +144,10 @@ class BasicAuth extends AbstractController {
 	function getAllowedPages(){
 		return $this->allowed_pages;
 	}
-	/**
-	 * This function will add specified credintals to allowed user list. If they are entered
-	 * properly to the login form, user will be granted access
-	 */
-	function allow($username,$password=null){
-		if(is_null($password)&&is_array($username)){
-			foreach($username as $user=>$pass)$this->allow($user,$pass);
-			return $this;
-		}
-		$this->allowed_credintals[$username]=$password;
-		return $this;
-	}
+    /**
+     * Allows page access without login
+     */
 	function allowPage($page){
-		/**
-		 * Allows page access without login
-		 */
 		if(is_array($page)){
 			foreach($page as $p)$this->allowPage($p);
 			return $this;
@@ -159,16 +156,18 @@ class BasicAuth extends AbstractController {
 		return $this;
 	}
 	function isPageAllowed($page){
+        if($this->hook('isPageAllowed')===true)return true;
 		return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
 	}
 	function usePasswordEncryption($method){
 		$this->password_encryption=$method;
 		return $this;
 	}
-	function setTitle($title){
-		$this->title=$title;
-	}
 	function encryptPassword($password,$salt=null){
+        if(is_callable($this->password_encryption)){
+            $e=$this->password_encryption;
+            return $e($password,$salt);
+        }
 		if($this->password_encryption)$this->debug("Encrypting password: '$password'");
 		switch($this->password_encryption){
 			case null: return $password;
@@ -194,25 +193,39 @@ class BasicAuth extends AbstractController {
 		 * your code;
 		 */
 
+
+		// Logout is fictional page. If user tries to access it, he will be logged out and redirected
+		if(strtolower($this->api->page)=='logout'){
+			$this->logout();
+            $this->api->redirect('/');
+		}
+
+        if($this->isPageAllowed($this->api->page))return null;      // no authentication is required
+
 		// Check if user's session contains autentication information
 		if(!$this->isLoggedIn()){
+
+            $this->memorizeURL();
+
+            // Brings up additional verification methods, such as cookie
+            // authentication, token or OpenID. In case of successful login, 
+            // breakHook($user_id) must be used
+            $user_id=$this->hook('check');
+            if(!is_array($user_id) && !is_bool($user_id)){
+                $this->model->load($user_id);
+                //$this->loggedIn();
+                $this->memorizeModel();
+                return true;
+            }
+
+
+            /*
 			$this->debug('User is not authenticated yet');
 
 			// No information is present. Let's see if cookie is set
-			if(isset($_COOKIE[$this->name."_username"]) && isset($_COOKIE[$this->name."_password"])){
-
-				$this->debug("Cookie present, validating it");
-				// Cookie is found, but is it valid?
-				// passwords are always passed encrypted
-				if($this->verifyCredintials(
-							$_COOKIE[$this->name."_username"],
-							$_COOKIE[$this->name."_password"]
-						   )){
-					// Cookie login was successful. No redirect will be performed
-					$this->loggedIn($_COOKIE[$this->name."_username"],$_COOKIE[$this->name."_password"]);
-					return;
 				}
 			}else $this->debug("No permanent cookie");
+             */
 			$this->processLogin();
 			return true;
 		}else $this->debug('User is already authenticated');
@@ -233,139 +246,138 @@ class BasicAuth extends AbstractController {
 		 * This function determines - if user is already logged in or not. It does it by
 		 * looking at $this->info, which was loaded during init() from session.
 		 */
-		return $this->info!==false;
+		return $this->model->loaded();
 	}
+    /**
+     * This function verifies username and password. Password must be supplied in plain text.
+     */
 	function verifyCredintials($user,$password){
-		/*
-		 * This function verifies username and password. Password might actually be encryped.
-		 * If you want to change authentication logic - redefine this function
-		 */
-        if($this->model){
-            if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
-            // Use user=email
-            $this->model->tryLoadBy($this->login_field,$user);
-            if(!$this->model->loaded())return false;
-            if($this->model[$this->password_field]!=$this->encryptPassword($password,$user)){
-                $this->model->unload();
-                return false;
-            }
-            return true;
-        }
-		if(!$this->allowed_credintals)$this->allowed_credintals=array('demo'=>'demo');
-		$this->debug("verifying credintals: ".$user.' / '.$password." against array: ".print_r($this->allowed_credintals,true));
-
-		if(!isset($this->allowed_credintals[$user]))return false; // No such user
-
-		if($this->allowed_credintals[$user]!=$password)return false; // Incorrect password
-
-		// Successful
-		return true;
+        if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
+        $data = $this->model->getBy($this->login_field,$user);
+        if(!$data)return false;
+        if($data[$this->password_field]==$this->encryptPassword($password,$user)){
+            return $data[$this->model->id_field];
+        }else return false;
 	}
-	function loggedIn($username,$password,$memorize=false){
-		/*
-		 * This function is always executed after successful login.
-		 *
-		 * Password passed should be encrypted
-		 *
-		 * It will create $this->info with non-false value. If you are willing to add more
-		 * data to $auth->info, re-define this function and do addition there. You must
-		 * call parent, then modify it.
-		 */
-		$this->debug("Login successful");
-        if($this->model && $this->model->loaded()){
-            $this->addInfo($this->model->get());
+
+    /** Memorize current URL. Called when the first unsuccessful check is executed. */
+    function memorizeURL(){
+        if(!$this->recall('url',false)){
+            $this->memorize('page',$this->api->page);
+            $g=$_GET;unset($g['page']);
+            $this->memorize('args',$g);
         }
-		$this->addInfo('username',$username);
+    }
 
-		$memorize=$memorize||($this->form && $this->form->get('memorize'));
-		if($memorize){
-			$this->debug('setting permanent cookie');
-			setcookie($this->name."_username",$username,time()+60*60*24*30*6);
-			setcookie($this->name."_password",$password,time()+60*60*24*30*6);
-		}
+    /** Return originalally requested URL. */
+    function getURL(){
+        $p=$this->recall('page');
 
-		unset($_GET['submit']);
-        unset($_GET['page']);
+        // If there is a login page, no need to return to it
+        if($p=='login')return $this->api->url('/');
 
-        $this->memorize('info',$this->info);
+        $url=$this->api->url($p, $this->recall('args',null));
+        $this->forget('url');$this->forget('args');
+        return $url;
+    }
+
+    /**
+     * This function is always executed after successfull login through a normal means (login form or plugin)
+     *
+     * It will create cache model data.
+     */
+	function loggedIn($user=null,$pass=null){ //$username,$password,$memorize=false){
+        $this->hook('loggedIn',array($user,$pass));
+        $this->api->redirect($this->getURL());
 	}
-    function memorizeModel($m){
+    /** Store model in session data so that it can be retrieved faster */
+    function memorizeModel(){
+
+        // Don't store password in model / memory / session
+        $this->model['password']=null;
+        unset($this->model->dirty['password']);
+
+        // Cache memory. Should we use controller?
         $this->info=$this->model->get();
         $this->info['username']=$this->info[$this->login_field];
-        unset($this->info[$this->password_field]);
 
         $this->memorize('info',$this->info);
         $this->memorize('class',get_class($this->model));
         $this->memorize('id',$this->model->id);
     }
-    /** Log in as specified users. Will not perform password check */
+    /** Manually Log in as specified users. Will not perform password check or redirect */
+    function loginByID($id){
+        $this->model->load($id);
+        $this->memorizeModel();
+        return $this;
+    }
 	function login($user){
         if(is_object($user)){
             if(!$this->model)throw $this->exception('Auth Model should be set');
             $c=get_class($this->model);
-            if(!$user instanceof $c)throw $this->exception('Incorrect method specified when logging in');
+
+            if(!$user instanceof $c)throw $this->exception('Specified model with incompatible class')
+                ->addMoreInfo('required',$c)
+                ->addMoreInfo('supplied',get_class($user));
 
             $this->model=$user;
-        }elseif($this->model){
-            $this->model->loadBy($this->login_field,$user);
-        }else{
-            $this->loggedIn($user,isset($this->allowed_credintals[$user])?
-                $this->allowed_credintals[$user]:null,false);
             return $this;
         }
 
-        $this->memorizeModel($this->model);
+        $this->model->loadBy($this->login_field,$user);
+        $this->memorizeModel();
         return $this;
 	}
-	function loginRedirect(){
+    /** Manually log out user */
+	function logout(){
+        $this->hook('logout');
 
-		// Rederect to index page
-		$this->debug("to Index");
-		if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect('/')->execute();
-		$this->api->redirect($this->api->getIndexPage());
-	}
-	function logout($redirect=true){
-		// Forces logout. This also cleans cookies
 		$this->forget('info');
-		setcookie($this->name."_username",null);
-		setcookie($this->name."_password",null);
+		$this->forget('id');
+
    	 	setcookie(session_name(), '', time()-42000, '/');
 		session_destroy();
 
 		$this->info=false;
-		if($redirect)$this->api->redirect($this->api->getIndexPage());
+        return $this;
 	}
-	function createForm($frame,$login_tag='Content'){
-		$form=$frame->add('Form',null,$login_tag);
-
-
+    /** Rederect to index page */
+	function loginRedirect(){
+		$this->debug("to Index");
+		$this->api->redirect($this->getURL());
+	}
+	function createForm($page){
+		$form=$page->add('Form');
 		$form->addField('Line','username','Login');
 		$form->addField('Password','password','Password');
-
-		$form->addField('Checkbox','memorize','Remember me');
 		$form->addSubmit('Login');
 
-		if($form->isSubmitted()){
-			if($this->verifyCredintials( $form->get('username'), $form->get('password'))){				
-
-                if($this->hook('LoggedIn',array($form)))return;
-
-				$this->loggedIn($form->get('username'),$this->encryptPassword($form->get('password')));
-				$this->loginRedirect();
-			}
-			$this->debug("Incorrect login");
-            if($this->hook('IncorrectLogin',array($form)))return;
-			$form->getElement('password')->displayFieldError('Incorrect login information');
-		}
-		return $form;
+        return $form;
 	}
 	function showLoginForm(){
 		/*
 		 * This function shows a login form. If $this->form is already defined, it's shown right away,
 		 * otherwise simple login form is displayed
 		 */
-        $p=$this->api->add('Page',null,null,array('page/login'));
-        $this->form=$this->createForm($p);
+        $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
+
+        // hook: createForm use this to build basic login form
+        $this->form=$this->hook('createForm',array($p));
+
+        // If no hook, build standard form
+        if(!is_object($this->form))
+            $this->form=$this->createForm($p);
+
+        $this->hook('updateForm');
+        $f=$this->form;
+        if($f->isSubmitted()){
+			if($this->verifyCredintials($f->get('username'), $f->get('password'))){				
+                $this->login($f->get('username'));
+                $this->loggedIn($f->get('username'),$f->get('password'));
+                exit;
+            }
+			$f->getElement('password')->displayFieldError('Incorrect login information');
+        }
 		return $p;
 	}
 	function memorizeOriginalURL(){
@@ -380,7 +392,6 @@ class BasicAuth extends AbstractController {
 		$p=$this->showLoginForm();
 
         $this->api->hook('post-init');
-
         $this->api->hook('pre-exec');
 
         if(isset($_GET['submit']) && $_POST){
