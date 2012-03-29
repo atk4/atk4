@@ -414,7 +414,7 @@ class Model_Table extends Model {
     }
     /** Attempt to load using a specified condition, but will not fail if such record is not found */
     function tryLoadBy($field,$cond=undefined,$value=undefined){
-        $q=clone $this->dsql;
+        $q=$this->dsql();
         $this->addCondition($field,$cond,$value);
         $this->tryloadAny();
         $this->dsql=$q;
