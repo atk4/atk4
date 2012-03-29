@@ -433,7 +433,6 @@ class Model_Table extends Model {
         $row=$this->dsql->getHash();
         $this->dsql->args['where']=$w;
 
-        $this->dsql=$q;
         $this->data=$data;
         $this->id=$id;
 
