@@ -190,6 +190,10 @@ abstract class AbstractObject {
             /**/$pr->stop();
         }
 
+        // Avoid using this hook. Agile Toolkit creates LOTS of objects, so you'll get significantly
+        // slower code if you try to use this
+        $this->api->hook('beforeObjectInit',array(&$element));
+
         /**/$pr->start('init '.(is_string($class)?$class:get_class($class)));
         $element->init();
         /**/$pr->stop();
@@ -396,7 +400,7 @@ abstract class AbstractObject {
             $priority=$arguments;
             $arguments=array();
         }
-        if(strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
+        if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
         if(is_array($hook_spot)){
             foreach($hook_spot as $h){
                 $this->addHook($h,$callable,$arguments, $priority);
