@@ -124,6 +124,11 @@ http://mysite:123/install/dir/my/page.html
         if(!is_array($argument))$argument=array($argument=>$value);
         return $this->setArguments($argument);
     }
+    /** Get value of an argument */
+    function get($argument){
+        return $this->arguments[$argument];
+    }
+
     /** Set arguments to specified array */
     function setArguments($arguments=array()){
         // add additional arguments
