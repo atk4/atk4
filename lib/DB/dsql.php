@@ -615,7 +615,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function render_args(){
         $x=array();
         foreach($this->args['args'] as $arg){
-            $x[]=$this->escape($arg);
+            $x[]=is_object($arg)?
+                $this->consume($arg):
+                $this->escape($arg);
         }
         return implode(', ',$x);
     }
@@ -745,6 +747,15 @@ class DB_dsql extends AbstractModel implements Iterator {
             $this->args($args);
         }
         $this->template="call [fx]([args])";
+        return $this;
+    }
+    function fx($fx,$args=null){
+        $this->mode='fx';
+        $this->args['fx']=$fx;
+        if(!is_null($args)){
+            $this->args($args);
+        }
+        $this->template="[fx]([args])";
         return $this;
     }
     function render_fx(){
@@ -970,13 +981,13 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!$this->template)$this->SQLTemplate('select');
         $self=$this;
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
-            /**/$self->api->pr->next('dsql/render/'.$matches[1]);
+            /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
             $fx='render_'.$matches[1];
             if($self->hasMethod($fx))return $self->$fx();
             elseif(isset($self->args['custom'][$matches[1]]))return $self->args['custom'][$matches[1]];
             else return $matches[0];
         },$this->template);
-        /**/$this->api->pr->stop();
+        /**/$this->api->pr->stop(null,true);
         return $res;
     }
     // }}}
