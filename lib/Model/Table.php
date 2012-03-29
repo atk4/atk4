@@ -51,6 +51,7 @@ class Model_Table extends Model {
 
     public $relations=array();  // Joins
 
+    public $debug=false;
 
     public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
 
@@ -75,7 +76,7 @@ class Model_Table extends Model {
         $this->addField($this->id_field)->system(true);
     }
     function addField($name){
-        if($name=='deleted' && $this->api->compat){
+        if($name=='deleted' && isset($this->api->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
         return parent::addField($name);
@@ -161,12 +162,11 @@ class Model_Table extends Model {
 
         /**/$this->api->pr->next('selectQuery/addSystemFields');
         // add system fields into select
-        /*
         foreach($this->elements as $el)if($el instanceof Field){
-            if($el->system() && !in_array($el->short_name,$fields))
-                $fields[]=$el->short_name;
+            if($el->system() && !in_array($el->short_name,$actual_fields)){
+                $actual_fields[]=$el->short_name;
+            }
         }
-         */
         /**/$this->api->pr->next('selectQuery/updateQuery');
 
         // add actual fields
@@ -334,7 +334,8 @@ class Model_Table extends Model {
     protected $_iterating=false;
     function rewind(){
         $this->_iterating=$this->selectQuery();
-        $this->_iterating->rewind();
+        $this->_iterating->stmt=null;
+        $this->next();
     }
     function next(){
         $this->_iterating->next();
