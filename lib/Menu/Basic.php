@@ -31,11 +31,21 @@
  */
 class Menu_Basic extends CompleteLister {
 	protected $items=array();
+    protected $class_tag='class';
     protected $item_tag='MenuItem';
     protected $container_tag='Item';
 	protected $last_item=null;
 	public $current_menu_class="ui-state-active";
 	public $inactive_menu_class="ui-state-default";
+    function init(){
+        if($this->template->is_set('current')){
+            $this->current_menu_class=$this->template->get('current');
+            $this->inactive_menu_class='';
+            $this->template->del('current');
+            $this->class_tag='current';
+        }
+        parent::init();
+    }
     function defaultTemplate(){
 		return array('menu','Menu');
 	}
@@ -51,7 +61,7 @@ class Menu_Basic extends CompleteLister {
 						'page'=>$page,
 						'href'=>$this->api->url($page),
 						'label'=>$label,
-						'class'=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
+						$this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
 					   );
 		return $this;
 	}
