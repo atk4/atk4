@@ -282,7 +282,9 @@ class ApiWeb extends ApiCLI {
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */
-        header("Location: ".$this->getDestinationURL($page,$args)->__toString());
+        $url=$this->url($page,$args);
+		if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect($url)->execute();
+        header("Location: ".$url);
         exit;
     }
     /** Called on all templates in the system, populates some system-wide tags */
@@ -302,15 +304,6 @@ class ApiWeb extends ApiCLI {
     function isAjaxOutput(){
         // TODO: rename into isJSOutput();
         return isset($_POST['ajax_submit']);
-    }
-    /** @obsolete Change index page, typically used after login */
-    function setIndexPage($page){
-        $this->index_page=$page;
-        return $this;
-    }
-    /** @obsolete */
-    function getIndexPage(){
-        return $this->index_page;
     }
     /** @private */
     function _locateTemplate($path){
