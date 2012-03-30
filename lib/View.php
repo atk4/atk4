@@ -34,6 +34,10 @@ class View extends AbstractView {
         $this->template->append('class'," ".$class);
         return $this;
     }
+    function setClass($class){
+        $this->template->trySet('class', $class);
+        return $this;
+    }
     /** Add style to element. */
     function setStyle($property,$style=null){
         if(is_null($style)&&is_array($property)){
