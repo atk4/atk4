@@ -115,9 +115,8 @@ abstract class AbstractView extends AbstractObject {
                 if(is_object($template_branch[0])){     // if [0] is object, we'll use that
                     $this->template=$template_branch[0];
                 }else{
-                    "loading $template_branch[0]<br />";
-                    $this->template=$this->api->add('SMlite')   // or if it's string
-                        ->loadTemplate($template_branch[0]);    // we'll use it as a file
+                    $this->template=$this->api->add('SMlite');
+                    $this->template->loadTemplate($template_branch[0]);    // we'll use it as a file
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
                 $this->template=$this->template->cloneRegion(isset($template_branch[1])?$template_branch[1]:'_top');
