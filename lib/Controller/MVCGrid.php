@@ -77,7 +77,9 @@ class Controller_MVCGrid extends AbstractController {
 
         if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
 
-        if($field->display()){
+        if($field->display() && false){
+            // this is wrong and obsolete, as hasOne uses display for way different purpose
+
             $tmp=$field->display();
             if(is_array($tmp))$tmp=$tmp['grid'];
             if($tmp)$type=$tmp;
