@@ -102,7 +102,7 @@ class Form_Field_Upload extends Form_Field {
 					$model->update();
 				}catch(Exception $e){
 					$this->api->logger->logException($e);
-					$this->uploadFailed(method_exists($e,'getText')?$e->getText():$e->getMessage());
+					$this->uploadFailed($e->getMessage()); //more user friendly
 				}
 
 				$this->uploadComplete($model->get());
