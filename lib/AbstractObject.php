@@ -99,8 +99,6 @@ abstract class AbstractObject {
     /** Creates new object and adds it as a child. Returns new object
      * http://agiletoolkit.org/learn/understand/base/adding */
     function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
-        /**/$pr=$this->api->pr;
-        /**/$pr->start($s='add '.(is_string($class)?$class:get_class($class)));
 
         if(is_array($short_name)){
 
@@ -117,7 +115,6 @@ abstract class AbstractObject {
                 throw $this->exception('Cannot add existing object, without short_name');
             }
             if (isset($this->elements[$class->short_name])){
-                $pr->stop();
                 return $this->elements[$class->short_name];
             }
             $this->elements[$class->short_name] = $class;
@@ -125,7 +122,6 @@ abstract class AbstractObject {
                 $class->owner->elements[$class->short_name]=true;
             }
             $class->owner = $this;
-            /**/$pr->stop();
             
             return $class;
         }elseif($class[0]=='.'){
@@ -139,7 +135,6 @@ abstract class AbstractObject {
         }
         if (!$short_name)
             $short_name = strtolower($class);
-            /**/$pr->next('add/uniq '.(is_string($class)?$class:get_class($class)));
 
         $short_name=$this->_unique($this->elements,$short_name);
 
@@ -157,17 +152,14 @@ abstract class AbstractObject {
         if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
             ->addMoreInfo('class',$class);
 
-        /**/$pr->next('add/loadClass '.(is_string($class)?$class:get_class($class)));
         // Separate out namespace
         $class_name=str_replace('/','\\',$class);
         if(isset($this->api->pathfinder))$this->api->pathfinder->loadClass($class_name);
-        /**/$pr->next('add/new '.(is_string($class)?$class:get_class($class)));
         $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception("You can add only classes based on AbstractObject");
         }
-        /**/$pr->next('add/defaults '.(is_string($class)?$class:get_class($class)));
 
         foreach($di_config as $key=>$val){
             $element->$key=$val;
@@ -185,18 +177,14 @@ abstract class AbstractObject {
 
         // Initialize template before init() starts
         if ($element instanceof AbstractView) {
-            /**/$pr->start('template '.(is_string($class)?$class:get_class($class)));
             $element->initializeTemplate($template_spot, $template_branch);
-            /**/$pr->stop();
         }
 
         // Avoid using this hook. Agile Toolkit creates LOTS of objects, so you'll get significantly
         // slower code if you try to use this
         $this->api->hook('beforeObjectInit',array(&$element));
 
-        /**/$pr->start('init '.(is_string($class)?$class:get_class($class)));
         $element->init();
-        /**/$pr->stop();
 
 
         // Make sure init()'s parent was called. Popular coder's mistake
@@ -204,7 +192,6 @@ abstract class AbstractObject {
             ->addMoreInfo('object_name',$element->name)
             ->addMoreInfo('class',get_class($element));
 
-        /**/$pr->stop();
         return $element;
     }
     /** Find child element by their short name. Use in chaining. Exception if not found. */
