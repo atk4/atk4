@@ -316,7 +316,7 @@ class Model_Table extends Model {
         if($field->relation){
             $this->_dsql()->order($field->relation->short_name.'.'.$field->short_name,$desc);
         }elseif($this->relations){
-            $this->_dsql()->order($this->table_alias?:$this->table.'.'.$field->short_name,$desc);
+            $this->_dsql()->order(($this->table_alias?:$this->table).'.'.$field->short_name,$desc);
         }else{
             $this->_dsql()->order($field->short_name,$desc);
         }
@@ -406,7 +406,7 @@ class Model_Table extends Model {
     }
     /** Similar to loadAny() but will apply condition before loading. Condition is temporary. Fails if record is not loaded. */
     function loadBy($field,$cond=undefined,$value=undefined){
-        $q=clone $this->dsql;
+        $q=$this->dsql();
         $this->addCondition($field,$cond,$value);
         $this->loadAny();
         $this->dsql=$q;
@@ -533,6 +533,7 @@ class Model_Table extends Model {
     }
     /** Internal function which performs insert of data. Use save() instead. OK to override. */
     private function insert(){
+
         $insert = $this->dsql();
 
         // Performs the actual database changes. Throw exception if problem occurs
@@ -542,7 +543,6 @@ class Model_Table extends Model {
 
             $f->updateInsertQuery($insert);
         }
-
         $this->hook('beforeInsert',array($insert));
         $id = $insert->do_insert();
         if($id==0){
