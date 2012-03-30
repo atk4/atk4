@@ -316,20 +316,15 @@ class Form_Basic extends View {
         // TODO: start transaction here
         if($this->hook('update'))return $this;
 
-        if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
+        if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
         if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
-        foreach($this->elements as $short_name => $element)
+        foreach($this->elements as $short_name => $element){
             if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))
-                $this->dq->set($short_name, $element->get());
+                $m->set($short_name, $element->get());
             }
-        if($this->loaded_from_db){
-            // id is present, let's do update
-            return $this->dq->do_update();
-        }else{
-            // id is not present
-            return $this->dq->do_insert();
         }
+        $m->save();
     }
     function submitted(){
         /* downcall from ApiWeb */
@@ -402,7 +397,7 @@ class Form_Basic extends View {
         return $this;
     }
     function setFormClass($class){
-        return $this->addClass($class);
+        return $this->setClass($class);
         //$this->template->trySet('form_class',$class);
         return $this;
     }
@@ -426,7 +421,7 @@ class Form_Basic extends View {
                     if(!$this->template_chunks['custom_layout']->is_set($key)){
                         $this->js(true)->univ()->log('No field in layout: '.$key);
                     }
-                    $this->template_chunks['custom_layout']->trySet($key,$val->getInput());
+                    $this->template_chunks['custom_layout']->trySetHTML($key,$val->getInput());
 
                     if($this->errors[$key]){
                         $this->template_chunks['custom_layout']
@@ -434,7 +429,7 @@ class Form_Basic extends View {
                     }
                 }
             }
-            $this->template->set('Content',$this->template_chunks['custom_layout']->render());
+            $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
         $this->template_chunks['form']
             ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
