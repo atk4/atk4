@@ -92,7 +92,7 @@ class BasicAuth extends AbstractController {
         $this->password_field=$password_field;
 
         // Load model from session
-        if($this->info){
+        if($this->info && $this->recall("id")){
             if($this->recall('class',false)==get_class($this->model)){
                 $this->debug("Loading model from cache");
                 $this->model->set($this->info);
