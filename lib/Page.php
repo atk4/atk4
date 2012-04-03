@@ -43,6 +43,13 @@ class Page extends AbstractView {
 		if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
 			$_GET['cut_object']=$this->short_name;
 		$this->template->trySet('_page',$this->short_name);
+
+        if(method_exists($this,get_class($this))){
+            throw $this->exception('Your sub-page name matches your page cass name. PHP will assume that your method is constructor')
+                ->addMoreInfo('method and class',get_class($this))
+                ;
+        }
+
 		parent::init();
 	}
 	function defaultTemplate(){
