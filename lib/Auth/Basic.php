@@ -303,6 +303,12 @@ class Auth_Basic extends AbstractController {
         $this->memorizeModel();
         return $this;
     }
+    /** Manually Log in with specified condition */
+    function loginBy($field,$value){
+        $this->model->loadBy($field,$value);
+        $this->memorizeModel();
+        return $this;
+    }
     /** Manually Log in as specified users by using login name. */
 	function login($user){
         if(is_object($user)){
