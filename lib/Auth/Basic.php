@@ -1,9 +1,7 @@
 <?php
 /***********************************************************
-   ..
-
    Reference:
-     http://atk4.com/doc/ref
+     http://agiletoolkit.org/doc/auth
 
  **ATK4*****************************************************
    This file is part of Agile Toolkit 4 
@@ -50,7 +48,7 @@
  * a hacker. Cookie is transmitted the same way http request does.
  *
  */
-class BasicAuth extends AbstractController {
+class Auth_Basic extends AbstractController {
 
 	public $info=false;		// info will contain data loaded about authenticated user. This
 							// property can be accessed through $this->get(); and should not
