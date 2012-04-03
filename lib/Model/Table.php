@@ -458,7 +458,7 @@ class Model_Table extends Model {
         /**/$this->api->pr->next('load/get');
         $load->stmt=null;
         $data = $load->limit(1)->getHash();
-        array_pop($load->args['where']);    // remove where condition
+        if(!is_null($id))array_pop($load->args['where']);    // remove where condition
         /**/$this->api->pr->next('load/ending');
         $this->reset();
 
