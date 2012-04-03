@@ -77,6 +77,8 @@ class Controller_MVCGrid extends AbstractController {
 
         if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
 
+        if($type=='text' && $field->allowHtml())$type='html';
+
         if($field->display() && false){
             // this is wrong and obsolete, as hasOne uses display for way different purpose
 
