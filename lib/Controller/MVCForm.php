@@ -101,6 +101,10 @@ class Controller_MVCForm extends AbstractController {
                 $a=array(null=>'')+$a;
             }
             $form_field->setValueList($a);
+        } else {
+            if ($msg=$field->mandatory()){
+                $form_field->setNotNull($msg);
+            }
         }
 
         if($field instanceof Field_Reference)$form_field->setModel($field->model);
