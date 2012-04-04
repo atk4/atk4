@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-  Abstract model entity. Use Model/Table for something
+  Abstract model entity. Use class Model for something
   meaningful.
 
   Learn:
@@ -13,7 +13,7 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license

@@ -375,7 +375,7 @@ class Auth_Basic extends AbstractController {
 	}
     /** Do not override this function. */
 	function processLogin(){
-		$this->memorizeOriginalURL();
+		$this->memorizeURL();
         $this->api->template->tryDel('Menu');
 		$p=$this->showLoginForm();
 
