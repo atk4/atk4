@@ -742,7 +742,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 		return parent::validate();
 	}
 	function getInput($attr=array()){
-		$output = '<div id="'.$this->name.'" class="atk-radio">';
+		$output = '<div id="'.$this->name.'" class="atk-form-options">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
 				"<div>".$this->getTag('input',
