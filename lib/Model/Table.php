@@ -462,12 +462,13 @@ class Model_Table extends Model {
         /**/$this->api->pr->next('load/ending');
         $this->reset();
 
-        if(!isset($data)){
-            if($ignore_missing)return $this; else 
+        if(@!$data){
+            if($ignore_missing)return $this; else {
                 throw $this->exception('Record could not be loaded')
                 ->addMoreInfo('model',$this)
                 ->addMoreInfo('id',$id)
             ;
+            }
         }
 
         $this->data=$data;  // avoid using set() for speed and to avoid field checks
@@ -544,12 +545,13 @@ class Model_Table extends Model {
             $f->updateInsertQuery($insert);
         }
         $this->hook('beforeInsert',array($insert));
+        if($this->_save_as===false)$insert->option_insert('ignore');
         $id = $insert->do_insert();
         if($id==0){
             // no auto-increment column present
             $id=$this->get($this->id_field);
 
-            if($id===null){
+            if($id===null && $this->_save_as!== false){
                 throw $this->exception('Please add auto-increment ID column to your table or specify ID manually');
             }
         }
