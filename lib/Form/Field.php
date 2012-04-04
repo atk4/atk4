@@ -745,7 +745,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 		$output = '<div id="'.$this->name.'" class="atk-radio">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
-				$this->getTag('input',
+				"<div>".$this->getTag('input',
 						array_merge(
 							array(
 								'id'=>$this->name.'_'.$value,
@@ -757,7 +757,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 							$this->attr,
 							$attr
 							))
-				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
+				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label></div>";
 		}
 		$output .= '</div>';
 		return $output;
