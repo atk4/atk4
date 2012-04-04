@@ -462,12 +462,13 @@ class Model_Table extends Model {
         /**/$this->api->pr->next('load/ending');
         $this->reset();
 
-        if(!isset($data)){
-            if($ignore_missing)return $this; else 
+        if(@!$data){
+            if($ignore_missing)return $this; else {
                 throw $this->exception('Record could not be loaded')
                 ->addMoreInfo('model',$this)
                 ->addMoreInfo('id',$id)
             ;
+            }
         }
 
         $this->data=$data;  // avoid using set() for speed and to avoid field checks
