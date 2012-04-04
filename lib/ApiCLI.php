@@ -1,6 +1,7 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * Base class for Command-Line Applications
+ * Base class for Command-Line Applications. If you need to share
+ * code between multiple APIs, create a controller.
  *
  * More Info
  *  @link http://agiletoolkit.org/learn/learn/understand/api
@@ -11,14 +12,15 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 class ApiCLI extends AbstractView {
 
-    /** Default database connection */
+    /** Default database connection.
+     * @see dbConnect()  */
     public $db=null;
     
     /** Configuration loaded from config.php and config-defaults.php files. Use getConfig() to access */
@@ -27,7 +29,9 @@ class ApiCLI extends AbstractView {
     /** Points to the instance of system logger (lib/Logger.php) for enriching error logging */
     public $logger=null;
 
-    /** Points to the instance of PathFinder class, which is used to locate resource files */
+    /** Points to the instance of PathFinder class, which is used to locate resource files. PathFinder
+     * is the first class to be initialized after API. */
+    public $pathfinder=null;
     protected $pathfinder_class='PathFinder';
 
     /** Skin for web application templates */
@@ -36,15 +40,22 @@ class ApiCLI extends AbstractView {
     /** For fast compatibility checks. To be more specific use $api->requires() */
     public $atk_version=4.2;
 
+    /** $pr points to profiler. All lines referencing $pr myst be prefixed with the
+     * 4-symbol sequence "/ ** /" (no spaces). When deploying to production, you can
+     * remove all lines from all files starting with the sequence without affecting
+     * how your application works, but slightly improving performance */
+    /**/public $pr;
+
     // {{{ Start-up of application
-    /** Initialize application. Redefine in your application but always call parent */
+    /** Initializes properties of the application. Redefine init() instead of this */
     function __construct($realm=null){
         if(!$realm)$realm=get_class($this);
         $this->owner = $this;
         $this->name  = $realm;
         $this->api   = $this;
 
-        $this->pr=new Dummy();
+        // Profiler is a class for benchmarking your application. All calls to pr 
+        /**/$this->pr=new Dummy();
 
         set_error_handler("error_handler");
 
@@ -62,30 +73,36 @@ class ApiCLI extends AbstractView {
             $this->caughtException($e);
         }
     }
-    function init(){
-        parent::init();
-    }
     // }}}
 
     // {{{ Management of Global Methods 
-    /** Register method with all objects in Agile Toolkit. Use only in controllers. */
+    /** Register method with all objects in Agile Toolkit. 
+     * @see AbstractObject::hasMethod()
+     * @see AbstractObject::__call()
+     */
     function addGlobalMethod($name,$callable){
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('global-method-'.$name,$callable);
     }
-    /** Use only in Controllers */
+    /** Returns if a global method with such name was defined */
     function hasGlobalMethod($name){
         return isset($this->hooks['global-method-'.$name]);
     }
-    /** Use only in Controllers */
+    /** Removes global method */
     function removeGlobalMethod($name){
         $this->removeHook('global-method-'.$name);
     }
     // }}}
 
     // {{{ Localization
-    /** Redefine this function to introduce your localization. Agile Toolkit will call it with some system strings */
+    /** Redefine this function to introduce your localization. Agile Toolkit will pass all system strings
+     * through this method. If some methods are not properly passed through, please fork Agile Toolkit in
+     * http://github.com/atk4/atk4/ , modify, commit, push your fix and notify authors of Agile Toolkit
+     * using contact form on http://agiletoolkit.org/contact
+     *
+     * See file CONTRIBUTING
+     */
     function _($str){
         return $str;
     }
@@ -108,7 +125,10 @@ class ApiCLI extends AbstractView {
     function addLocation($location,$contents){
         return $this->pathfinder->addLocation($location,$contents);
     }
-    /** Returns base URL of this Web application installation */
+    /** Returns base URL of this Web application installation. If you require
+     * link to a page, you can use URL::useAbsoluteURL();
+     *
+     * @see URL::useAbsoluteURL() */
     function getBaseURL(){
         return $this->pm->base_path;
     }
@@ -125,7 +145,7 @@ class ApiCLI extends AbstractView {
                 $url->setPage($page);
         return $url->setArguments($arguments);
     }
-    /** See url() */
+    /** @obsolete use url() */
     function getDestinationURL($page=null,$arguments=array()){ return $this->url($page,$arguments); }
     // }}}
 
@@ -184,7 +204,7 @@ class ApiCLI extends AbstractView {
         if($default!='_config_get_false')return $default;
         throw new BaseException($exceptiontext);
     }
-    /** Read config file and store it in memory */
+    /** Read config file and store it in $this->config. Use getConfig() to access */
     function readConfig($file='config.php'){
         $orig_file = $file;
         if(is_null($this->config))$this->config=array();
@@ -222,7 +242,7 @@ class ApiCLI extends AbstractView {
         $this->config=safe_array_merge($this->config,$config);
     }
     /** Load config if necessary and look up corresponding setting */
-    function getConfig($path, $default_value = '**undefined_value**'){
+    function getConfig($path, $default_value = undefined){
         /**
          * For given path such as 'dsn' or 'logger/log_dir' returns
          * corresponding config value. Throws ExceptionNotConfigured if not set.
@@ -240,7 +260,7 @@ class ApiCLI extends AbstractView {
         $current_position = $this->config;
         foreach($parts as $part){
             if(!array_key_exists($part,$current_position)){
-                if($default_value!=='**undefined_value**')return $default_value;
+                if($default_value!==undefined)return $default_value;
                 throw new ExceptionNotConfigured("You must specify \$config['".
                         join("']['",explode('/',$path)).
                         "'] in your config.php");
@@ -256,6 +276,7 @@ class ApiCLI extends AbstractView {
     /** Determine version of Agile Toolkit or specified plug-in */
     private $version_cache=null;
     function getVersion($of='atk'){
+        // TODO: get version of add-on
         if(!$this->version_cache){
             $f=$this->api->pathfinder->atk_location->base_path.DIRECTORY_SEPARATOR.'VERSION';
             if(file_exists($f)){
@@ -266,7 +287,7 @@ class ApiCLI extends AbstractView {
         }
         return $this->version_cache;
     }
-    /** Verifies version. Should be used by addons */
+    /** Verifies version. Should be used by addons. For speed improvement, redefine this into empty function */
     function requires($addon='atk',$v,$return_only=false){
         $cv=$this->getVersion($addon);
         if(version_compare($cv,$v)<0){
@@ -293,6 +314,7 @@ class ApiCLI extends AbstractView {
         }
         return true;
     }
+    /** @obsolete use @requires */
     function versionRequirement($v,$return_only=false){
         return $this->requires('atk',$v,$return_only);
     }
@@ -304,7 +326,7 @@ class ApiCLI extends AbstractView {
         $this->db=$this->add('DB')->connect($dsn);
         return $this;
     }
-    /** Attempts to connect, but does not raise exception on failure */
+    /** Attempts to connect, but does not raise exception on failure. */
     function tryConnect($dsn){
         $this->db=DBlite::tryConnect($dsn);
     }

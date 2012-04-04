@@ -1,0 +1,35 @@
+
+===============================================================================
+    Agile Toolkit 4.2 Contribution Guide
+===============================================================================
+    We are offering Agile Toolkit free of charge under an open-source
+license. We want it to be accessible and available to everyone under
+many different configurations.
+
+    If Agile Toolkit is not working correctly in your environment or
+you have fixund the bug, follow this guide:
+
+1. Remove "atk4" folder, if you have used ZIP distribution.
+2. Install GIT on your system
+3. Open http://github.com/atk4/atk4 and click Fork. You will need account @ github
+4. Clone your own fork of Agile Toolkit into directory atk4
+5. Perform changes.
+6. git commit
+7. git push
+8. Create "Pull Request" on github, which is a way to notify us to merge your
+    contribution into a global branch.
+
+    If you are willing to enhance functionality of Agile Toolkit, you can do
+so by creating Add-on. Agile Toolkit core generally will remain clean, simple
+and extensible. You can find Add-on developer guide at
+
+    http://agiletoolkit.org/develop/addons
+
+    When your add-on is complete, use your agiletoolkit.org account to deploy
+it as a freely downloadable or paid add-on.
+
+    
+    We highly appreciate your contributions and respect any commercial initiative.
+
+===============================================================================
+

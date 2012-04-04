@@ -1,28 +1,22 @@
 <?php // vim:ts=4:sw=4:et
-/***********************************************************
-  Set of static functions which might be required for
-  Agile Toolkit
-
-  Learn:
-  http://agiletoolkit.org/learn/ ??
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+/**
+ * Contains static functions. Agile Toolkit does not generally use
+ * static functions, so please do not use any functions here.
+ *
+ * More Info
+ *  @link http://agiletoolkit.org/learn/learn/understand/api
+ *  @link http://agiletoolkit.org/doc/apicli
+ */
+/*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 
 define('undefined','_atk4_undefined_value');
 
