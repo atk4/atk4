@@ -282,7 +282,7 @@ abstract class AbstractView extends AbstractObject {
     // {{{ Object JavaScript Interface
     public $js=array();
     /**
-     * Function is() will return jQuery chain and, if first argument was specified, bind
+     * Function js() will return jQuery chain and, if first argument was specified, bind
      * the chain to a certain enent. Use js() to bind views with JavaScript plugins and
      * calls defined in univ() chain or in 3rd party plugins.
      *
