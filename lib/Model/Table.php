@@ -545,8 +545,9 @@ class Model_Table extends Model {
             $f->updateInsertQuery($insert);
         }
         $this->hook('beforeInsert',array($insert));
-        if($this->_save_as===false)$insert->option_insert('ignore');
-        $id = $insert->do_insert();
+        //delayed is not supported by INNODB, but what's worse - it shows error.
+        //if($this->_save_as===false)$insert->option_insert('delayed');
+        $id = $insert->insert();
         if($id==0){
             // no auto-increment column present
             $id=$this->get($this->id_field);
@@ -555,7 +556,8 @@ class Model_Table extends Model {
                 throw $this->exception('Please add auto-increment ID column to your table or specify ID manually');
             }
         }
-        $this->hook('afterInsert',array($id));
+        $res=$this->hook('afterInsert',array($id));
+        if($res===false)return $this;
 
         if($this->_save_as===false)return $this->unload();
         if($this->_save_as)$this->unload();
