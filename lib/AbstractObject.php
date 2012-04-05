@@ -154,7 +154,7 @@ abstract class AbstractObject {
 
         // Separate out namespace
         $class_name=str_replace('/','\\',$class);
-        if(isset($this->api->pathfinder))$this->api->pathfinder->loadClass($class_name);
+        if(!class_exists($class_name,false) && isset($this->api->pathfinder))$this->api->pathfinder->loadClass($class_name);
         $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
