@@ -445,6 +445,7 @@ class Model_Table extends Model {
     /** Internal loading funciton. Do not use. OK to override. */
     protected function _load($id,$ignore_missing=false){
         /**/$this->api->pr->start('load/selectQuery');
+        $this->unload();
         $load = $this->selectQuery();
         /**/$this->api->pr->next('load/clone');
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
