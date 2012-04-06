@@ -193,7 +193,7 @@ $.widget("ui.atk4_form", {
 		if(!notrigger)f.trigger('reload_field');
 
 		//if(f.hasClass('field_reference')){
-			var f2=f.closest('.form_field');
+			var f2=f.closest('.atk-form-field');
 			//f.remove();
 			f=f2;
 
