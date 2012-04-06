@@ -320,6 +320,7 @@ class Auth_Basic extends AbstractController {
                 ->addMoreInfo('supplied',get_class($user));
 
             $this->model=$user;
+            $this->memorizeModel();
             return $this;
         }
 
