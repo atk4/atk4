@@ -68,6 +68,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             throw $this->exception('model->defineField() is obsolete. Change to init()','Obsolete')
             ->addMoreInfo('class',get_class($this));
     }
+    function __clone(){
+        parent::__clone();
+        foreach($this->elements as $key=>$el)if(is_object($el)){
+            $this->elements[$key]=clone $el;
+            $this->elements[$key]->owner=$this;
+        }
+    }
     /** Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc */
     function addField($name){
