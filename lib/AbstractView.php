@@ -69,8 +69,9 @@ abstract class AbstractView extends AbstractObject {
     // {{{ Basic Operations
     /** Duplicate view and it's template. Will not duplicate children */
     function __clone(){
-        parent::__clone();
-        if($this->template)$this->template=clone $this->template;
+        throw $this->exception('Can\'t clone Views');
+        //parent::__clone();
+        //if($this->template)$this->template=clone $this->template;
     }
     /** Get associated model. It's safe to access $object->model directly. */
     function getModel(){

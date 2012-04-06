@@ -59,12 +59,17 @@ abstract class AbstractObject {
     }
     function __clone(){
         // fix short name and add ourselves to the parent
-        $this->short_name=$this->_unique($this->owner->elements,$this->short_name);
-        $this->owner->add($this);
+        //$this->short_name=$this->_unique($this->owner->elements,$this->short_name);
+        //$this->owner->add($this);
 
         // Clone controller and model
         if($this->model)$this->model=clone $this->model;
         if($this->controller)$this->controller=clone $this->controller;
+
+        foreach($this->elements as $key=>$el)if(is_object($el)){
+            $this->elements[$key]=clone $el;
+            $this->elements[$key]->owner=$this;
+        }
     }
     function __toString() {
         return "Object " . get_class($this) . "(" . $this->name . ")";
