@@ -138,27 +138,15 @@ class Model_Table extends Model {
     /** Default set of fields which will be included into further queries */
     function setActualFields(array $fields){
         $this->actual_fields=$fields;
-        $this->_selectQuery=false;      // changing actual fields breaks default select query
         return $this;
     }
-    protected $_selectQuery=false;
     /** Completes initialization of dsql() by adding fields and expressions. */
     function selectQuery($fields=null){
-        if($this->_selectQuery&& $fields===null){
-            return $this->_selectQuery;
-        }
-
-        if($this->damn++>5)throw $this->exception("enough");
         /**/$this->api->pr->start('selectQuery/getActualF');
 
         $actual_fields=$fields?:$this->actual_fields?:$this->getActualFields();
 
-        if(!$fields){
-            $this->_selectQuery=$select=$this->_dsql()->del('fields');
-        }else{
-            // operate with a clone
-            $select=$this->dsql()->del('fields');
-        }
+        $this->_selectQuery=$select=$this->_dsql()->del('fields');
 
         /**/$this->api->pr->next('selectQuery/addSystemFields');
         // add system fields into select
@@ -339,8 +327,19 @@ class Model_Table extends Model {
     }
     function next(){
         $this->_iterating->next();
-        $this->set($x=$this->_iterating->current());
+
+        $this->hook('beforeLoad');
+
+        $this->data=$this->_iterating->current();
+
+        if($this->data===false)return $this->unload();
+
+
         $this->id=@$this->data[$this->id_field];
+        $this->dirty=array();
+
+        $this->hook('afterLoad');
+
     }
     function current(){
         return $this->get();
@@ -406,7 +405,8 @@ class Model_Table extends Model {
     }
     /** Similar to loadAny() but will apply condition before loading. Condition is temporary. Fails if record is not loaded. */
     function loadBy($field,$cond=undefined,$value=undefined){
-        $q=$this->dsql();
+        $q=$this->dsql;
+        $this->dsql=$this->dsql();
         $this->addCondition($field,$cond,$value);
         $this->loadAny();
         $this->dsql=$q;
@@ -414,7 +414,8 @@ class Model_Table extends Model {
     }
     /** Attempt to load using a specified condition, but will not fail if such record is not found */
     function tryLoadBy($field,$cond=undefined,$value=undefined){
-        $q=$this->dsql();
+        $q=$this->dsql;
+        $this->dsql=$this->dsql();
         $this->addCondition($field,$cond,$value);
         $this->tryloadAny();
         $this->dsql=$q;
@@ -425,13 +426,9 @@ class Model_Table extends Model {
 
         $data=$this->data;
         $id=$this->id;
-        $this->selectQuery();
 
-
-        $w=$this->dsql->args['where'];
-        $this->addCondition($field,$cond,$value);
-        $row=$this->dsql->getHash();
-        $this->dsql->args['where']=$w;
+        $this->tryLoadBy($field,$cond,$value);
+        $row=$this->data;
 
         $this->data=$data;
         $this->id=$id;
@@ -492,6 +489,7 @@ class Model_Table extends Model {
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
+        $this->_save_as=null;
         return $this;
     }
     /** Will save model later, when it's being destructed by Garbage Collector */
@@ -512,7 +510,9 @@ class Model_Table extends Model {
             $model=$this->add($model);
         }
         $this->_save_as=$model;
-        return $this->save();
+        $res=$this->save();
+        $this->_save_as=null;
+        return $res;
     }
     private $_save_as=null;
     private $_save_later=false;
@@ -573,8 +573,8 @@ class Model_Table extends Model {
         $modify = $this->dsql();
         $modify->where($this->id_field, $this->id);
 
-
         if(!$this->dirty)return $this;
+
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
                 $el->updateModifyQuery($modify);
