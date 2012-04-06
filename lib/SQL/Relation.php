@@ -125,12 +125,15 @@ class SQL_Relation extends AbstractModel {
         if($this->owner->_dsql()->debug)$this->dsql->debug();
 
         if($this->delete_behaviour=='cascade'){
-            $this->dsql->del('field')->where($this->f2,$this->id)->debug()->delete();
+            try{
+            $this->dsql->del('field')->where($this->f2,$this->id)->delete();
+            }catch(Exception $e){
+                $this->api->caughtException($e);
+            }
         }elseif($this->delete_behaviour=='ignore'){
-            $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->debug()->update();
+            $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->update();
 
         }
-        exit;
     }
 
     /** Add query for the relation's ID, but then remove it from results. Remove ID when unloading. */
