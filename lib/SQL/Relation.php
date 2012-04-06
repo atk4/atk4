@@ -134,7 +134,9 @@ class SQL_Relation extends AbstractModel {
     }
 
     /** Add query for the relation's ID, but then remove it from results. Remove ID when unloading. */
-    function beforeLoad($m,$q){
+    function beforeLoad($m,$q=null){
+        if(is_null($q))return;  // manual load
+
         if($this->m2 && $this->m2 != $this->owner->id_field){
             $q->field($this->m2,$this->m1,$this->short_name);
         }elseif($this->m2){

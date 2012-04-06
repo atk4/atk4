@@ -69,8 +69,9 @@ abstract class AbstractView extends AbstractObject {
     // {{{ Basic Operations
     /** Duplicate view and it's template. Will not duplicate children */
     function __clone(){
-        parent::__clone();
-        if($this->template)$this->template=clone $this->template;
+        throw $this->exception('Can\'t clone Views');
+        //parent::__clone();
+        //if($this->template)$this->template=clone $this->template;
     }
     /** Get associated model. It's safe to access $object->model directly. */
     function getModel(){
@@ -282,7 +283,7 @@ abstract class AbstractView extends AbstractObject {
     // {{{ Object JavaScript Interface
     public $js=array();
     /**
-     * Function is() will return jQuery chain and, if first argument was specified, bind
+     * Function js() will return jQuery chain and, if first argument was specified, bind
      * the chain to a certain enent. Use js() to bind views with JavaScript plugins and
      * calls defined in univ() chain or in 3rd party plugins.
      *

@@ -79,7 +79,7 @@ class Page_Tester extends Page {
                     //$result=call_user_func_array(array($test_obj,$test_func),$input);
                     */
                 try{
-                    $result=(string)$test_obj->$test_func($input[0],$input[1]);
+                    $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
                 }catch (Exception $e){
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){

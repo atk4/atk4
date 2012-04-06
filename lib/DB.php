@@ -14,9 +14,6 @@ class DB extends AbstractController {
     /** Link to PDO database handle */
     public $dbh=null;
 
-    /** when queries are executed, their statements are cached for later re-use */
-    public $query_cache=array();
-
     /** Contains name of the PDO driver used such as "mysql", "sqlite" etc */
     public $type=null;
 
@@ -91,15 +88,8 @@ class DB extends AbstractController {
 
         if(is_object($query))$query=(string)$query;
 
-        // Look in query cache
-        if(isset($this->query_cache[$query])){
-            $statement = $this->query_cache[$query];
-        }else{
-            if(count($this->query_cache)>500)$this->query_cache=array(); 
-            // when many different queries happen, memory is important too
-            $statement = $this->dbh->prepare($query);
-            $this->query_cache[$query]=$statement;
-        }
+        $statement = $this->dbh->prepare($query);
+
         foreach($params as $key=>$val){
             if (!$statement->bindValue($key,$val,is_int($val)?(PDO::PARAM_INT):(PDO::PARAM_STR))){
                 throw $this->exception('Could not bind parameter ' . $key)
