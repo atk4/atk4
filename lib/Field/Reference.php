@@ -17,11 +17,12 @@ class Field_Reference extends Field {
     }
     function ref($load=true){
         if(is_string($this->model)){
-            $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
-            $this->model=$this->add($this->model);
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+            $model=$this->add($model);
+        }else{
+            $model = clone $this->model;
         }
 
-        $model=clone $this->model;
 
         if(!$load)return $model;
         if(!$this->get())throw $this->exception('Reference field has no value')
