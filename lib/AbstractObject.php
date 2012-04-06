@@ -63,8 +63,8 @@ abstract class AbstractObject {
         //$this->owner->add($this);
 
         // Clone controller and model
-        if($this->model)$this->model=clone $this->model;
-        if($this->controller)$this->controller=clone $this->controller;
+        if($this->model && is_object($this->model))$this->model=clone $this->model;
+        if($this->controller && is_object($this->controller))$this->controller=clone $this->controller;
 
         foreach($this->elements as $key=>$el)if(is_object($el)){
             $this->elements[$key]=clone $el;
