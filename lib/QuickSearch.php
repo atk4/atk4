@@ -57,7 +57,7 @@ class QuickSearch extends Filter {
 		if(!($v=$this->get('q')))return;
 
         if($this->view->model){
-            $q=$this->view->model->dsql;
+            $q=$this->view->model->_dsql();
         }else{
             $q=$this->view->dq;
         }
