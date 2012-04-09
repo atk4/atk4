@@ -75,11 +75,11 @@ abstract class AbstractObject {
         foreach($this->elements as $el)if($el instanceof AbstractObject){
             $el->destroy();
         }
-        if($this->model && $this->model instanceof AbstractObject){
+        if(@$this->model && $this->model instanceof AbstractObject){
             $this->model->destroy();
             unset($this->model);
         }
-        if($this->controller && $this->controller instanceof AbstractObject){
+        if(@$this->controller && $this->controller instanceof AbstractObject){
             $this->controller->destroy();
             unset($this->controller);
         }
@@ -115,14 +115,12 @@ abstract class AbstractObject {
             if (!$class->short_name) {
                 throw $this->exception('Cannot add existing object, without short_name');
             }
-            if (isset($this->elements[$class->short_name])){
-                return $this->elements[$class->short_name];
-            }
             $this->elements[$class->short_name] = $class;
             if($class instanceof AbstractView){
                 $class->owner->elements[$class->short_name]=true;
             }
             $class->owner = $this;
+
             
             return $class;
         }elseif($class[0]=='.'){
@@ -462,12 +460,22 @@ abstract class AbstractObject {
     }
     /** [private] attempts to call method, returns array containing result or false */
     function tryCall($method,$arguments){
-        array_unshift($arguments,$this);
         if($ret=$this->hook('method-'.$method,$arguments))return $ret;
+        array_unshift($arguments,$this);
         if($ret=$this->api->hook('global-method-'.$method,$arguments))return $ret;
     }
     /** Add new method for this object */
     function addMethod($name,$callable){
+        if(is_string($name) && strpos($name,',')!==false)$name=explode(',',$name);
+        if(is_array($name)){
+            foreach($name as $h){
+                $this->addMethod($h,$callable);
+            }
+            return $this;
+        }
+        if(is_object($callable) && !is_callable($callable)){
+            $callable=array($callable,$name);
+        }
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('method-'.$name,$callable);

@@ -145,7 +145,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
     function setSource($controller, $table=null, $id=null){
         if(is_string($controller))$controller='Data_'.$controller;
-        $this->setController($controller);
+        $this->controller=$this->setController($controller);
 
         $this->controller->setSource($this,$table);
 
@@ -155,7 +155,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Attempt to load record with specified ID. If this fails, no error is produced */
     function load($id=null){
         $this->hook('beforeLoad',$id);
-        $res=$this->contoller->load($this,$id);
+        $res=$this->controller->load($this,$id);
         $this->hook('afetrLoad');
         return $res;
     }
@@ -203,7 +203,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->get();
     }
     function key(){
-        return $this->get('id');
+        return $this->id;
     }
     function valid(){
         return $this->loaded();

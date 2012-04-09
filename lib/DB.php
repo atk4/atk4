@@ -6,9 +6,16 @@
  *  $this->api->dbConnect();
  *  $query = $this->api->db->dsql();
  *
- * @license See http://agiletoolkit.org/about/license
- * 
-**/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 class DB extends AbstractController {
 
     /** Link to PDO database handle */
@@ -19,6 +26,9 @@ class DB extends AbstractController {
 
     public $dsql_class='DB_dsql';
     
+
+    // {{{ Connectivity
+
     /** we need to move dsn parsing to init, as other wise db->dsql() is 
      * creating new object of class DB_dsql instead of DB_dsql_$driver, as 
      * $this->dsql_class was set in connect, which is called after db->dsql()
@@ -70,7 +80,9 @@ class DB extends AbstractController {
         $this->dsql_class=isset($dsn['class'])?$dsn['class']:'DB_dsql_'.$this->type;
         return $this;
     }
+    // }}} 
 
+    // {{{ Itegration with Dynamic SQL
     /** Returns Dynamic Query object compatible with this database driver (PDO) */
     function dsql($class=null){
         $obj=$this->add($class=$class?:$this->dsql_class);
@@ -81,7 +93,9 @@ class DB extends AbstractController {
         unset($this->elements[$obj->short_name]);
         return $obj;
     }
+    // }}}
 
+    // {{{ Query execution and data fetching 
     /** Query database with SQL statement */
     function query($query, $params=array()){
         if(!$this->dbh)$this->connect();
@@ -132,4 +146,5 @@ class DB extends AbstractController {
 		$this->transaction_depth=0;
 		return $this->dbh->rollBack();
 	}
+    // }}}
 }

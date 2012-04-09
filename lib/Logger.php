@@ -412,6 +412,7 @@ class Logger extends AbstractController {
 	}
 	function logLine($msg,$shiftfunc=null,$severity='info',$trace=null){
 		$log_file='log_'.$severity.'_file';
+        if(!isset($this->$log_file))$this->openLogFile($severity);
 		if($this->log_output==='full' && $severity=='error'){
 			if(!$this->header_sent++){
 				fputs($this->$log_file,"\n\n".

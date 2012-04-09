@@ -10,7 +10,7 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
@@ -19,13 +19,10 @@ class ApiWeb extends ApiCLI {
 
     /** Cleaned up name of the currently requested page */
     public $page=null;
-    
-    /** ?? */
-    protected $page_base=null;
 
-    /* @obsolete - page where user is redirected after log-in */
+    /* Root page where URL will send when ('/') is encountered @todo: make this work properly */
     public $index_page='index';
-
+    
     /** recorded time when execution has started */
     public $start_time=null;
 
@@ -203,7 +200,6 @@ class ApiWeb extends ApiCLI {
 
     // }}}
 
-
     // {{{ Very Important Methods
     /** Call this method from your index file. It is the main method of Agile Toolkit */
     function main(){
@@ -357,4 +353,5 @@ class ApiWeb extends ApiCLI {
     function defaultTemplate(){
         return array('shared');
     }
+    // }}} 
 }

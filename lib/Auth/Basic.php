@@ -66,8 +66,10 @@ class Auth_Basic extends AbstractController {
     function allow($user,$pass=null){
         // creates fictional model to allow specified user and password
         // TODO: test this
-        $this->setModel($this->add('Model')
-            ->setSource('Array',is_array($user)?$user:array('email'=>$user,'password'=>$pass)));
+        $m=$this->add('Model')
+            ->setSource('Array',array(is_array($user)?$user:array('email'=>$user,'password'=>$pass)));
+        $m->id_field='email';
+        $this->setModel($m);
         return $this;
     }
     /** Specify user model */
@@ -331,6 +333,8 @@ class Auth_Basic extends AbstractController {
     /** Manually log out user */
 	function logout(){
         $this->hook('logout');
+
+        $this->model->unload();
 
 		$this->forget('info');
 		$this->forget('id');
