@@ -240,7 +240,7 @@ class Model_Table extends Model {
         return $this->getElement($name)->ref($load);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
-    function getRef($name,$load=true){
+    function getRef($name,$load=null){
         return $this->ref($name,$load);
     }
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
