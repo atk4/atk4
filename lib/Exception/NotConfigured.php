@@ -1,0 +1,16 @@
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
+ * ExceptionNotConfigured is raised when accessing
+ * non-existang config value
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
+class Exception_NotConfigured extends BaseException {
+}
