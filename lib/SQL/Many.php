@@ -32,12 +32,18 @@ class SQL_Many extends AbstractModel {
         $this->restoreConditions();
         return $this->model->addCondition($this->their_field,$this->owner->_dsql()->getField($this->our_field));
     }
-    function ref(){
-        $this->restoreConditions();
-
+    function ref($mode=null){
         if(!$this->owner->loaded()){
             throw $this->exception('Model must be loaded before traversing reference');
         }
+
+        if($mode=='model'){
+            $m=$this->add($this->model_name);
+            return $m->setMasterField($this->their_field,$this->owner->get($this->our_field));
+        }
+
+        $this->restoreConditions();
+
         $this->model->unload();
         return $this->model->setMasterField($this->their_field,$this->owner->get($this->our_field));
     }
