@@ -1,37 +1,44 @@
 <?php
 class SQL_Many extends AbstractModel {
-    public $dst_model=null;
+    public $model_name=null;
     public $their_field=null;
+    public $orig_conditions=null;
     public $our_field=null;
     public $auto_track_element=true;
     function set($model,$their_field=null,$our_field=null){
+
+        $this->model_name=is_string($model)?$model:get_class($model);
+        $this->model_name=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model_name);
 
         $this->their_field=$their_field?:$this->owner->table.'_id';
 
         $this->our_field=$our_field?:$this->owner->id_field;
 
-        $this->dst_model=$model;
-
+        return $this;
+    }
+    function saveConditions(){
+        $this->orig_conditions=$this->model->_dsql()->args['where'];
+        return $this;
+    }
+    function restoreConditions(){
+        if(!$this->model){
+            $this->model=$this->add($this->model_name);
+            $this->saveConditions();
+        }
+        $this->model->_dsql()->args['where']=$this->orig_conditions;
         return $this;
     }
     function refSQL(){
-        $model=$this->dst_model;
-        if(is_string($model)){
-            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
-            $model=$this->add($model);
-        }
-        return $model->addCondition($this->their_field,$this->owner->_dsql()->getField($this->our_field));
+        $this->restoreConditions();
+        return $this->model->addCondition($this->their_field,$this->owner->_dsql()->getField($this->our_field));
     }
     function ref(){
-        $model=$this->dst_model;
-        if(is_string($model)){
-            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
-            $model=$this->add($model);
-        }
+        $this->restoreConditions();
 
         if(!$this->owner->loaded()){
             throw $this->exception('Model must be loaded before traversing reference');
         }
-        return $model->setMasterField($this->their_field,$this->owner->get($this->our_field));
+        $this->model->unload();
+        return $this->model->setMasterField($this->their_field,$this->owner->get($this->our_field));
     }
 }
