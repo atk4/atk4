@@ -8,7 +8,6 @@ class Field_Reference extends Field {
 
         $this->model_name=is_string($model)?$model:get_class($model);
         $this->model_name=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model_name);
-        if(!$this->model)$this->model=$this->add($this->model_name);
         
         if($display_field)$this->display_field=$display_field;
 
@@ -37,6 +36,7 @@ class Field_Reference extends Field {
             return $this->add($this->model_name);
         }
 
+        if(!$this->model)$this->model=$this->add($this->model_name);
         $this->model->unload();
 
 
@@ -83,10 +83,7 @@ class Field_Reference extends Field {
         return parent::destroy();
     }
     function calculateSubQuery($model,$select){
-        if(is_string($this->model)){
-            $this->model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
-            $this->model=$this->add($this->model);
-        }
+        if(!$this->model)$this->model=$this->add($this->model_name);
 
         if($this->display_field){
             $title=$this->model->dsql()->del('fields');
