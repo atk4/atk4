@@ -104,6 +104,9 @@ class Model_Table extends Model {
         if(!$this->dsql)$this->initQuery();
         return $this->dsql;
     }
+    function __clone(){
+        $this->dsql=clone $this->dsql;
+    }
     /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model. 
      * Use for statements you are going to execute manually. */
     function dsql(){
@@ -222,8 +225,7 @@ class Model_Table extends Model {
             $our_field=($tmp->table).'_id';
         }
         $r=$this->add('Field_Reference',$our_field);
-        if($display_field)$r->display($display_field);
-        $r->setModel($model);
+        $r->setModel($model,$display_field);
         return $r;
     }
     /** Defines many to one association */
@@ -234,7 +236,7 @@ class Model_Table extends Model {
             ->set($model,$their_field,$our_field);
     }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
-    function ref($name,$load=true){
+    function ref($name,$load=null){
         return $this->getElement($name)->ref($load);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
@@ -395,12 +397,12 @@ class Model_Table extends Model {
     }
     /** Try to load a record by specified ID. Will not raise exception if record is not fourd */
     function tryLoad($id){
-        if(!$id)throw $this->exception('Record ID must be specified, otherwise use loadAny()');
+        if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id,true);
     }
     /** Loads record specified by ID. If omitted will load first matching record */
     function load($id){
-        if(!$id)throw $this->exception('Record ID must be specified, otherwise use loadAny()');
+        if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id);
     }
     /** Similar to loadAny() but will apply condition before loading. Condition is temporary. Fails if record is not loaded. */
@@ -447,15 +449,20 @@ class Model_Table extends Model {
         /**/$this->api->pr->next('load/clone');
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
         /**/$this->api->pr->next('load/where');
-        if(!is_null($id))$load->where($p.$this->id_field,$id)->limit(1);
+        if(!is_null($id))$load->where($p.$this->id_field,$id);
 
         /**/$this->api->pr->next('load/beforeLoad');
         $this->hook('beforeLoad',array($load));
 
 
         /**/$this->api->pr->next('load/get');
+        $s=$load->stmt;
+        $l=$load->args['limit'];
         $load->stmt=null;
         $data = $load->limit(1)->getHash();
+        $load->stmt=$s;
+        $load->args['limit']=$l;
+
         if(!is_null($id))array_pop($load->args['where']);    // remove where condition
         /**/$this->api->pr->next('load/ending');
         $this->reset();
