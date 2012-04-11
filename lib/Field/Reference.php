@@ -31,13 +31,16 @@ class Field_Reference extends Field {
      *          update current model also and save it too.
      *
      */
+    function getModel(){
+        if(!$this->model)$this->model=$this->add($this->model_name);
+        return $this->model;
+    }
     function ref($mode=null){
         if($mode=='model'){
             return $this->add($this->model_name);
         }
 
-        if(!$this->model)$this->model=$this->add($this->model_name);
-        $this->model->unload();
+        $this->getMode()->unload();
 
 
         if($mode===false || $mode=='ignore'){
