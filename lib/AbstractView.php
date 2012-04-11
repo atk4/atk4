@@ -200,10 +200,6 @@ abstract class AbstractView extends AbstractObject {
             $cutting_here=true;
         }
 
-        if(!isset($this->elements)){
-            var_Dump($this->elements);
-            throw $this->exception('ops');
-        }
         foreach($this->elements as $key=>$obj){
             if($obj instanceof AbstractView){
                 $obj->recursiveRender();
@@ -242,6 +238,7 @@ abstract class AbstractView extends AbstractObject {
             throw $this->exception("You should specify template for this object")
                 ->addMoreInfo('object',$this->name);
         }
+        if($this->model && $this->model->loaded())$this->template->set($this->model->get());
         $this->output($this->template->render());
     }
     /** Low level output function which append's to the parent object's template. Normally you wouldn't want
