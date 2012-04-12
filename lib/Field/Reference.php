@@ -40,7 +40,7 @@ class Field_Reference extends Field {
             return $this->add($this->model_name);
         }
 
-        $this->getMode()->unload();
+        $this->getModel()->unload();
 
 
         if($mode===false || $mode=='ignore'){
