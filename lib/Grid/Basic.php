@@ -102,9 +102,9 @@ class Grid_Basic extends CompleteLister {
 
             if(isset($t_row)){
                 $t_col->del('content');
-                $t_col->set('content','<?$'.$name.'?>');
-                $t_col->trySet('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
-                $t_row->append('cols',$t_col->render());
+                $t_col->setHTML('content','<?$'.$name.'?>');
+                $t_col->trySetHTML('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
+                $t_row->appendHTML('cols',$t_col->render());
             }
 
             // some types needs control over the td
