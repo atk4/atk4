@@ -284,9 +284,9 @@ class Model_Table extends Model {
         }elseif($field->relation){
             $this->_dsql()->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
         }elseif($this->relations){
-            $this->_dsql()->where($this->table_alias?:$this->table.'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.$field->short_name,$cond,$value);
         }else{
-            $this->_dsql()->where($field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).".".$field->short_name,$cond,$value);
         }
         return $this;
     }
