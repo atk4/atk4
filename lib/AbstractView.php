@@ -238,7 +238,7 @@ abstract class AbstractView extends AbstractObject {
             throw $this->exception("You should specify template for this object")
                 ->addMoreInfo('object',$this->name);
         }
-        if($this->model && $this->model->loaded())$this->template->set($this->model->get());
+        if($this->model && is_object($this->model) && $this->model->loaded())$this->template->set($this->model->get());
         $this->output($this->template->render());
     }
     /** Low level output function which append's to the parent object's template. Normally you wouldn't want
