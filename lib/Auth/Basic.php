@@ -87,7 +87,7 @@ class Auth_Basic extends AbstractController {
             }else{
                 // Class changed, re-fetch data from database
                 $this->debug("Class changed, loading from database");
-                $this->model->load($this->recall('id'));
+                $this->model->tryLoad($this->recall('id'));
                 if(!$this->model->loaded())$this->logout(false);
 
                 $this->memorizeModel();
@@ -245,6 +245,9 @@ class Auth_Basic extends AbstractController {
      * logged in user */
 	function verifyCredintials($user,$password){
         if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
+        if(!$this->model->hasElement($this->password_field)){
+            $this->model->addField($this->password_field);
+        }
         $data = $this->model->getBy($this->login_field,$user);
         if(!$data)return false;
         if($data[$this->password_field]==$this->encryptPassword($password,$user)){
@@ -340,7 +343,7 @@ class Auth_Basic extends AbstractController {
 		$this->forget('id');
 
    	 	setcookie(session_name(), '', time()-42000, '/');
-		session_destroy();
+		@session_destroy();
 
 		$this->info=false;
         return $this;
