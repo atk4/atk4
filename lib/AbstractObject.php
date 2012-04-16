@@ -97,6 +97,9 @@ abstract class AbstractObject {
         unset($this->elements[$short_name]);
         return $this;
     }
+    function newInstance(){
+        return $this->owner->add(get_class($this));
+    }
     /** Creates new object and adds it as a child. Returns new object
      * http://agiletoolkit.org/learn/understand/base/adding */
     function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
