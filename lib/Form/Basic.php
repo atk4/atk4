@@ -32,7 +32,7 @@ if(!class_exists('Form_Field',false))include_once'Form/Field.php';
  * @copyright	See file COPYING
  * @version		$Id$
  */
-class Form_Basic extends AbstractView {
+class Form_Basic extends View {
     protected $form_template = null;
     protected $form_tag = null;
     public $errors=array();
@@ -42,7 +42,7 @@ class Form_Basic extends AbstractView {
     public $template_chunks=array();
     // Those templates will be used when rendering form and fields
 
-    protected $data = array(); // This array holds list of values prepared for fields before their initialization. When fields
+    public $data = array(); // This array holds list of values prepared for fields before their initialization. When fields
     // are initialized they will look into this array to see if there are default value for them.
     // Afterwards fields will link to $this->data, so changing $this->data['fld_name'] would actually
     // affect field's value.
@@ -62,6 +62,7 @@ class Form_Basic extends AbstractView {
     public $js_widget_arguments=array();
 
     public $default_exception='Exception_ValidityCheck';
+    public $default_controller='MVCForm';
 
     public $dq = null;
     function init(){
@@ -80,6 +81,7 @@ class Form_Basic extends AbstractView {
         // to default values of those fields.
         $this->api->addHook('pre-exec',array($this,'loadData'));
         $this->api->addHook('pre-render-output',array($this,'lateSubmit'));
+        $this->api->addHook('submitted',$this);
 
     }
     protected function getChunks(){
@@ -135,8 +137,8 @@ class Form_Basic extends AbstractView {
      * @param string $msg message to show
      */
     function showAjaxError($field,$msg){
-        // Depreciated
-        return $this->displayFieldError();
+        // Avoid depricated function use in reference field, line 246
+        return $this->displayError($field,$msg);
     }
 
     function displayError($field=null,$msg=null){
@@ -153,6 +155,7 @@ class Form_Basic extends AbstractView {
 
         $last_field=$this->add('Form_Field_'.$type,$name,null,'form_line')
             ->setCaption($caption);
+        $last_field->setForm($this);
         $last_field->template->trySet('field_type',strtolower($type));
         if (is_array($attr)){
             foreach ($attr as $key => $value){
@@ -168,27 +171,31 @@ class Form_Basic extends AbstractView {
         return $this;
     }
 
+    function importFields($model,$fields=undefined){
+        $this->add('Controller_MVCForm')->importFields($model,$fields);
+    }
+
     function addComment($comment){
         if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
-        return $this->add('Text')->set(
+        return $this->add('Html')->set(
                 $this->template_chunks['form_comment']->set('comment',$comment)->render()
                 );
     }
-    function addSeparator($separator_text=''){
+    function addSeparator($fieldset_class=''){
         if(!isset($this->template_chunks['form_separator']))return $this;
+        $c=$this->template_chunks['form_separator'];
+        $c->trySet('fieldset_class',$fieldset_class);
 
-        $c=clone $this->template_chunks['form_separator'];
-        if(!$separator_text)$c->tryDel('separator');else $c->trySet('separator_text',$separator_text);
-        return $this->add('Text')->set($c->render());
+        return $this->add('Html')->set($c->render());
     }
 
     // Operating with field values
-    function get($field){
-        if(!$f=$this->hasField($field))throw new BaseException('Trying to get value of not-existing field: '.$field);
-        return ($f instanceof Form_Field)?$f->get():null;
-    }
-    function clearData(){
-        $this->downCall('clearFieldValue');
+    function get($field=null){
+        if(!$field)return $this->data;
+        return $this->data[$field];
+
+        //if(!$f=$this->hasField($field))throw new BaseException('Trying to get value of not-existing field: '.$field);
+        //return ($f instanceof Form_Field)?$f->get():null;
     }
     function setSource($table,$db_fields=null){
         if(is_null($db_fields)){
@@ -232,7 +239,13 @@ class Form_Basic extends AbstractView {
         }
         return $this;
     }
-    function getAllData($include_nosave=false){
+    function getAllFields(){
+        return $this->get();
+    }
+    /*
+    function get(){
+        var_dump($this->data);
+        return $this->data;
         $data=array();
         foreach($this->elements as $key=>$val){
             if($val instanceof Form_Field){
@@ -241,6 +254,7 @@ class Form_Basic extends AbstractView {
         }
         return $data;
     }
+     */
     function addSubmit($label='Save',$name=null,$color=null){
         if(!$name)$name=str_replace(' ','_',$label);
 
@@ -252,22 +266,14 @@ class Form_Basic extends AbstractView {
 
         return $submit;
     }
-    function addButton($label,$name=null,$class=null,$style=null){
-        if(is_null($name))$name=$label;
+    function addButton($label){
         // Now add the regular button first
-        $name=str_replace(' ','_',$name);
+        $name=preg_replace('/[^a-zA-Z0-9_-]/','',$label);
+        if(!$name)$name=null;
         return $this->add('Button',$name,'form_buttons')
             ->setLabel($label);
     }
 
-    function setCondition($field,$value=null){
-        if(!$this->dq)throw new BaseException('Cannot set condition on empty $form->dq');
-        $this->dq
-            ->set($field,$value)
-            ->where($field,$value);
-        $this->conditions[$field]=$value;
-        return $this;
-    }
     function setConditionFromGET($field='id',$get_field=null){
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
@@ -289,6 +295,7 @@ class Form_Basic extends AbstractView {
         if($this->dq){
             // TODO: move into Controller / hook
 
+            /*
             // if no condition set, use id is null condition
             if(empty($this->conditions))$this->setCondition('id',null);
             // we actually initialize data from database
@@ -297,6 +304,7 @@ class Form_Basic extends AbstractView {
                 $this->set($data);
                 $this->loaded_from_db=true;
             }
+             */
         }
         $this->hook('post-loadData');
     }
@@ -305,20 +313,18 @@ class Form_Basic extends AbstractView {
         return $this->loaded_from_db;
     }
     function update(){
-        if(!$this->dq)throw new BaseException("Can't save, query was not initialized");
+        // TODO: start transaction here
+        if($this->hook('update'))return $this;
+
+        if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
         if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
-        foreach($this->elements as $short_name => $element)
+        foreach($this->elements as $short_name => $element){
             if($element instanceof Form_Field)if(!$element->no_save){
                 //if(is_null($element->get()))
-                $this->dq->set($short_name, $element->get());
+                $m->set($short_name, $element->get());
             }
-        if($this->loaded_from_db){
-            // id is present, let's do update
-            return $this->dq->do_update();
-        }else{
-            // id is not present
-            return $this->dq->do_insert();
         }
+        $m->save();
     }
     function submitted(){
         /* downcall from ApiWeb */
@@ -330,8 +336,8 @@ class Form_Basic extends AbstractView {
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
         if($this->bail_out)return;
-        $this->downCall('loadPOST');
-        $this->downCall('validate');
+        $this->hook('loadPOST');
+        $this->hook('validate');
 
         if(!empty($this->errors))return false;
         try{
@@ -354,11 +360,17 @@ class Form_Basic extends AbstractView {
                 // already array
                 if($has_output)$this->js(null,$output)->execute();
             }
-        }catch (Exception_ValidityCheck $e){
-            $f=$e->getField();
-            if($f && is_string($f) && $fld=$this->hasElement($f)){
-                $fld->displayFieldError($e->getMessage());
-            } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+        }catch (BaseException $e){
+            if($e instanceof Exception_ForUser){
+                $this->js()->univ()->alert($e->getMessage())->execute();
+            }
+            if($e instanceof Exception_ValidityCheck){
+                $f=$e->getField();
+                if($f && is_string($f) && $fld=$this->hasElement($f)){
+                    $fld->displayFieldError($e->getMessage());
+                } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+            }
+            throw $e;
         }
         return true;
     }
@@ -380,6 +392,7 @@ class Form_Basic extends AbstractView {
     }
     function onSubmit($callback){
         $this->addHook('submit',$callback);
+        $this->isSubmitted();
     }
     function setLayout($template){
         // Instead of building our own Content we will take it from
@@ -390,7 +403,8 @@ class Form_Basic extends AbstractView {
         return $this;
     }
     function setFormClass($class){
-        $this->template->trySet('form_class',$class);
+        return $this->setClass($class);
+        //$this->template->trySet('form_class',$class);
         return $this;
     }
     function render(){
@@ -413,7 +427,7 @@ class Form_Basic extends AbstractView {
                     if(!$this->template_chunks['custom_layout']->is_set($key)){
                         $this->js(true)->univ()->log('No field in layout: '.$key);
                     }
-                    $this->template_chunks['custom_layout']->trySet($key,$val->getInput());
+                    $this->template_chunks['custom_layout']->trySetHTML($key,$val->getInput());
 
                     if($this->errors[$key]){
                         $this->template_chunks['custom_layout']
@@ -421,11 +435,11 @@ class Form_Basic extends AbstractView {
                     }
                 }
             }
-            $this->template->set('Content',$this->template_chunks['custom_layout']->render());
+            $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
         $this->template_chunks['form']
             ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
-        $this->owner->template->append($this->spot,$r=$this->template_chunks['form']->render());
+        $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
     }
     function hasField($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;

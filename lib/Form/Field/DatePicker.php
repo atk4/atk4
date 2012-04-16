@@ -29,15 +29,23 @@
  */
 class Form_Field_DatePicker extends Form_Field_Line {
 	public $options=array();
+    function init(){
+        parent::init();
+        $this->addButton('')
+            ->setHtml('&nbsp;')
+            ->setIcon('calendar')
+            ->js('click',$this->js()->datepicker('show'));
+
+    }
 	function getInput($attr=array()){
 		// $this->value contains date in MySQL format
 		// we need it in locale format
 
 		$this->js(true)->datepicker(array_merge(array(
 						'duration'=>0,
-						'showOn'=>'button',
-						'buttonImage'=>$this->api->locateURL('images','calendar.gif'),
-						'buttonImageOnly'=> true,
+						'showOn'=>'none',
+			//			'buttonImage'=>$this->api->locateURL('images','calendar.gif'),
+				//		'buttonImageOnly'=> true,
 						'changeMonth'=>true,
 						'changeYear'=>true,
 						'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')

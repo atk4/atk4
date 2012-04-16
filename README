@@ -1,13 +1,13 @@
 ===============================================================================
-					Agile Toolkit 4
-                    Web Interface Library and MVC Framework
-                    http://agiletoolkit.org
-
-    Copyright (C) 1999-2011 Romans Malinovskis
+    Agile Toolkit 4.2
 ===============================================================================
+    Agile Toolkit is a PHP framework for developing Web User Interfaces.
+Inspired by desktop GUI it provides a full object-oriented foundation for
+Business and Presentation logic of your web software. Compared to other
+frameworks, Agile Toolkit offers a completely new experience
 
-Agile Toolkit 4 focuses on a quick development of Web Software
+    http://agiletoolkit.org
 
-You can find comprehensive documentation, guides, screencasts and references at
- http://agiletoolkit.org/
+    Copyright (c) 1999-2012 Romans Malinovskis
+===============================================================================
 

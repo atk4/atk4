@@ -28,12 +28,22 @@
  *****************************************************ATK4**/
 class Text extends AbstractView {
     public $text='Your text goes here......';
-    /* Set text */
+    public $html=null;
+    /** Set text. Will be HTML-escaped during render */
     function set($text){
         $this->text=$text;
+        $this->html=null;
         return $this;
     }
+    /** Set HTML. Will be outputed as specified. */
+    function setHtml($html){
+        $this->text=null;
+        $this->html=$html;
+    }
     function render(){
-        $this->output($this->text);
+        $this->output($this->html?:htmlentities($this->text));
+    }
+    function initializeTemplate(){
+        $this->spot=$this->defaultSpot();
     }
 }

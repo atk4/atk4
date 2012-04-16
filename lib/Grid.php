@@ -22,4 +22,4 @@
  http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
-class Grid extends Grid_Basic {}
+class Grid extends Grid_Advanced {}

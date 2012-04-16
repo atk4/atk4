@@ -1,0 +1,22 @@
+<?Menu?>
+<script>
+$(document).ready(function(){
+	$('.atk-menu-horizontal>ul>li:first-child').addClass("ui-corner-left");
+	$('.atk-menu-horizontal>ul>li:last-child').addClass("ui-corner-right");
+	
+	$('.atk-menu-vertical>ul>li:first-child').addClass("ui-corner-top");
+	$('.atk-menu-vertical>ul>li:last-child').addClass("ui-corner-bottom");	
+});
+</script>
+<div id="<?$_name?>" class="atk-menu atk-menu-horizontal ui-widget">
+<ul>
+  <?$Item?>
+</ul>
+</div>
+<?/?>
+
+<?MenuItem?>
+<li class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+<?/MenuItem?>
+
+<?MenuSeparator?><?/MenuSeparator?>

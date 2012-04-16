@@ -1,28 +1,22 @@
 <?php // vim:ts=4:sw=4:et
-/***********************************************************
-  Set of static functions which might be required for
-  Agile Toolkit
-
-  Learn:
-  http://agiletoolkit.org/learn/ ??
-
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
-
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
-
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+/**
+ * Contains static functions. Agile Toolkit does not generally use
+ * static functions, so please do not use any functions here.
+ *
+ * More Info
+ *  @link http://agiletoolkit.org/learn/learn/understand/api
+ *  @link http://agiletoolkit.org/doc/apicli
+ */
+/*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4 
+    http://agiletoolkit.org/
+  
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3
+   
+   See http://agiletoolkit.org/about/license
+ =====================================================ATK4=*/
 
 define('undefined','_atk4_undefined_value');
 
@@ -130,29 +124,24 @@ echo $e->getMessage()."<br>\n";
     }
 };if(!function_exists('__autoload')){
     function loadClass($class){
-        $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
         if(isset($GLOBALS['atk_pathfinder'])){
-            // If PathFinder is loaded, we will rather use that for loading our classes
-            if(substr($class,0,5)=='page_'){
-                return $GLOBALS['atk_pathfinder']->locate('page',substr($file,5),'path');
-            }
-            return $GLOBALS['atk_pathfinder']->locate('php',$file,'path');
+            return $GLOBALS['atk_pathfinder']->loadClass($class);
         }
+        $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
+        $file = str_replace('\\','/',$file);
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
             $fullpath = $path . DIRECTORY_SEPARATOR . $file;
             if (file_exists($fullpath)) {
-                return $fullpath;
+                include_once($fullpath);
+                return;
             }
         }
+        lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
         return false;
     }
     function __autoload($class){
-        if(!$fullpath=loadClass($class)){
-            lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
-        }
-        include_once($fullpath);
+        loadClass($class);
         if(class_exists($class) || interface_exists($class))return;
-
         lowlevel_error("Class $class is not defined in included file");
     }
 };if(!function_exists('unix_dirname')){

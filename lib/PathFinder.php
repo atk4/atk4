@@ -43,9 +43,6 @@ class PathFinder extends AbstractController {
 		$GLOBALS['atk_pathfinder']=$this;	// used by autoload
 
 
-		// getting ready for atk
-		//$this->api->proxyFunctions($this,array('addLocation','locate'));
-
 		$this->addDefaultLocations();
 	}
 
@@ -67,6 +64,7 @@ class PathFinder extends AbstractController {
 		$this->base_location=$this->addLocation('/',array(
 					'php'=>'lib',
 					'page'=>'page',
+                    'addons'=>'atk4-addons',
 					'template'=>'templates/'.$this->api->skin,
 					'xslt'=>'templates/xslt',
 					'mail'=>'templates/mail',
@@ -122,7 +120,7 @@ class PathFinder extends AbstractController {
 
 			$path=$location->locate($type,$filename,$return);
 
-			if(is_string($path)){
+			if(is_string($path) || is_object($path)){
 				// file found!
 				return $path;
 			}elseif(is_array($path)){
@@ -173,6 +171,41 @@ class PathFinder extends AbstractController {
 		}
 		return $files;
 	}
+    function loadClass($class_name){
+        /**/$this->api->pr->start('pathfinder/loadClass '.$class_name);
+        list($namespace,$file)=explode('\\',$class_name);
+        if (!$file && $namespace){
+            $file = $namespace;
+            $namespace=null;
+        }
+        /**/$this->api->pr->next('pathfinder/loadClass/convertpath '.$class_name);
+        // Include class file directly, do not rely on auto-load functionality
+        if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
+            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
+            if($namespace){
+                $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
+
+                if(!is_readable($path)){
+                    throw new PathFinder_Exception('addon',$path,$prefix);
+                }
+            }else{
+                /**/$this->api->pr->next('pathfinder/loadClass/locate '.$class_name);
+                if(substr($class_name,0,5)=='page_'){
+                    $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
+                }else $path=$this->api->pathfinder->locate('php',$file,'path');
+
+            }
+
+            /**/$this->api->pr->next('pathfinder/loadClass/include '.$class_name);
+            /**/$this->api->pr->start('php parsing');
+            include_once($path);
+            /**/$this->api->pr->stop();
+            if(!class_exists($class_name))throw $this->exception('Class is not defined in file')
+                ->addMoreInfo('file',$path)
+                ->addMoreInfo('class',$class_name);
+        }
+        /**/$this->api->pr->stop();
+    }
 }
 
 class PathFinder_Exception extends BaseException {
@@ -180,8 +213,6 @@ class PathFinder_Exception extends BaseException {
 		parent::__construct("Unable to include $filename".($message?':'.$message:''));
 		$this->addMoreInfo('type',$type);
 		$this->addMoreInfo('attempted_locations',$attempted_locations);
-	}
-	function collectBasicData(){
 	}
 }
 
@@ -204,6 +235,8 @@ class PathFinder_Location extends AbstractModel {
 
 	public $base_url=null;
 	public $base_path=null;
+
+    public $auto_track_element=true;
 
 
 	function init(){
@@ -327,6 +360,7 @@ class PathFinder_Location extends AbstractModel {
 					throw new PathFinder_Exception($type,$filename,$f,'File found but it is not readable');
 				}
 
+				if($return=='location')return $this;
 				if($return=='relative')return $pathfile;
 				if($return=='url')return $this->getURL($pathfile);
 				if($return=='path')return $f;

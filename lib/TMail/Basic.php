@@ -18,6 +18,10 @@ class TMail_Basic extends AbstractModel {
         $this->headers=$master_template->cloneRegion('headers');
 
         $this->boundary=str_replace('.','',uniqid('atk4tmail',true));
+
+        if($t=$this->api->getConfig('tmail/transport',false)){
+            $this->addTransport($t);
+        }
     }
     function extractEmail($fuzzy_email){
         preg_match('/^(?:"?([^@"]+)"?\s)?<?([^>]+@[^>]+)>?$/',$fuzzy_email,$m);
@@ -84,13 +88,13 @@ class TMail_Basic extends AbstractModel {
         $this->template->set('body_parts','');
         foreach($this->elements as $el){
             if($el instanceof TMail_Part){
-                $this->template->append('body_parts',$el->render());
+                $this->template->appendHTML('body_parts',$el->render());
             }
         }
         $this->template->set('boundary',$this->boundary);
         $this->headers
             ->set('boundary',$this->boundary)
-            ->set($this->args);
+            ->setHTML($this->args);
     }
     function send($to,$from=null){
         if(is_null($from) && isset($this->args['from']))$from=$this->args['from'];
@@ -119,6 +123,7 @@ class TMail_Basic extends AbstractModel {
 class TMail_Part extends AbstractModel {
     public $template=null;
     public $content;
+    public $auto_track_element=true;
     function init(){
         parent::init();
 
@@ -139,8 +144,8 @@ class TMail_Part extends AbstractModel {
             $c=$c->render();
         }
 
-        $this->template->set($this->owner->args);
-        $this->template->set('Content',$c);
+        $this->template->setHTML($this->owner->args);
+        $this->template->setHTML('Content',$c);
         $this->template->set('boundary',$this->owner->boundary);
 
         return $this->template->render();
@@ -188,7 +193,7 @@ class TMail_Transport extends AbstractController {
   * Uses default sending routine
   */
 class TMail_Transport_Fallback extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         $this->breakHook(false);
     }
 }
@@ -196,12 +201,12 @@ class TMail_Transport_Fallback extends TMail_Transport {
   * Discards email as it's being sent out
   */
 class TMail_Transport_Discard extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         $this->breakHook(true);
     }
 }
 class TMail_Transport_Echo extends TMail_Transport {
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         echo "to: $to<br/>";
         echo "from: $from<br/>";
         echo "subject: $subject<br/>";
@@ -217,7 +222,7 @@ class TMail_Transport_DBStore extends TMail_Transport {
         $this->model=$this->add($m);
         return $this->model;
     }
-    function send($to,$from,$subject,$body,$headers){
+    function send($tm,$to,$from,$subject,$body,$headers){
         if(!$this->model)throw $this->exception('Must use setModel() on DBStore Transport');
         $data=array(
                 'to'=>$to,

@@ -66,8 +66,6 @@
  */
 
 class SQLAuth extends BasicAuth {
-	private $login_field;
-	private $password_field;
 
 
 	function init(){

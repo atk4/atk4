@@ -21,11 +21,6 @@ abstract class Form_Field extends AbstractView {
 	public $field_prepend='';
 	public $field_append='';
 
-	protected $onchange=null;
-	protected $onkeypress=null;
-	protected $onfocus=null;
-	protected $onblur=null;
-	protected $onclick=null;
 	public $comment='&nbsp;';
 	protected $disabled=false;
 	protected $mandatory=false;
@@ -35,6 +30,10 @@ abstract class Form_Field extends AbstractView {
 	private $separator='';
 
 	public $show_input_only;
+    public $form=null;
+
+    public $button_prepend=null;
+    public $button_append=null;
 
 	function init(){
 		parent::init();
@@ -42,6 +41,15 @@ abstract class Form_Field extends AbstractView {
 			$this->api->addHook('pre-render',array($this,'_cutField'));
 		}
 	}
+    function setForm($form){
+        $form->addHook('loadPOST',$this);
+        $form->addHook('validate',$this);
+        $this->form=$form;
+        $this->form->data[$this->short_name] = $this->value;
+        $this->value =& $this->form->data[$this->short_name];
+        return $this;
+    }
+
 	function _cutField(){
 		// this method is used by ui.atk4_form, when doing reloadField();
 		unset($_GET['cut_object']);
@@ -71,11 +79,11 @@ abstract class Form_Field extends AbstractView {
 	function displayFieldError($msg=null){
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
-		$this->owner->js(true)
+		$this->form->js(true)
 			->atk4_form('fieldError',$this->short_name,$msg)
 			->execute();
 
-		$this->owner->errors[$this->short_name]=$msg;
+		$this->form->errors[$this->short_name]=$msg;
 	}
 	function setNoSave(){
 		// Field value will not be saved into defined source (such as database)
@@ -98,6 +106,38 @@ abstract class Form_Field extends AbstractView {
 		$this->value=$value;
 		return $this;
 	}
+    /** Position can be either 'before' or 'after' */
+    function addButton($label,$position='after'){
+        if($position=='after'){
+            return $this->afterField()->add('Button')->set($label);
+        }else{
+            return $this->beforeField()->add('Button')->set($label);
+        }
+        return $this;
+    }
+    function beforeField(){
+        if(!$this->button_prepend)return $this->button_prepend=$this
+            ->add('HtmlElement',null,'before_input')->addClass('input-cell');
+        return $this->button_prepend;
+    }
+    function afterField(){
+        if(!$this->button_append)return $this->button_append=$this
+            ->add('HtmlElement',null,'after_input')->addClass('input-cell');
+        return $this->button_append;
+    }
+    function aboveField(){
+        return $this->add('HtmlElement',null,'before_field');
+    }
+    function belowField(){
+        return $this->add('HtmlElement',null,'after_field');
+    }
+    function setComment($text=''){
+        $this->belowField()->setElement('ins')->set($text);
+        return $this;
+    }
+    function addComment($text=''){
+        return $this->belowField()->setElement('ins')->set($text);
+    }
 	function get(){
 		return $this->value;
 	}
@@ -149,7 +189,7 @@ abstract class Form_Field extends AbstractView {
 		if(is_bool($result = $this->hook('validate')))return $result;
 	}
 	/** @private - handles field validation callback output */
-	function _validateField($condition,$msg){
+	function _validateField($caller,$condition,$msg){
 		$ret=call_user_func($condition,$this);
 
 		if($ret===false){
@@ -220,16 +260,22 @@ abstract class Form_Field extends AbstractView {
 			$this->output($this->getInput());
 			return;
 		}
-		if(!$this->error_template)$this->error_template = $this->owner->template_chunks['field_error'];
-		if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->owner->template_chunks['field_mandatory'];
+		if(!$this->error_template)$this->error_template = $this->form->template_chunks['field_error'];
+		if((!property_exists($this, 'mandatory_template')) || (!$this->mandatory_template))$this->mandatory_template=$this->form->template_chunks['field_mandatory'];
 		$this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
 		$this->template->trySet('field_name',$this->name);
 		$this->template->trySet('field_comment',$this->comment);
 		// some fields may not have field_imput tag at all...
-		$this->template->trySet('field_input',$this->field_prepend.$this->getInput().$this->field_append);
-		$this->template->trySet('field_error',
-				isset($this->owner->errors[$this->short_name])?
-				$this->error_template->set('field_error_str',$this->owner->errors[$this->short_name])->render()
+        if($this->button_prepend || $this->button_append){
+            $this->field_prepend.='<div class="input-cell expanded">';
+            $this->field_append='</div>'.$this->field_append;
+            $this->template->trySetHTML('input_row_start','<div class="input-row">');
+            $this->template->trySetHTML('input_row_stop','</div>');
+        }
+		$this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
+		$this->template->trySetHTML('field_error',
+				isset($this->form->errors[$this->short_name])?
+				$this->error_template->set('field_error_str',$this->form->errors[$this->short_name])->render()
 				:''
 				);
 		if (is_object($this->mandatory_template)) {
@@ -326,10 +372,10 @@ abstract class Form_Field extends AbstractView {
 	}
 
 	function setSource(){
-		return call_user_func_array(array($this->owner,'setSource'),func_get_args());
+		return call_user_func_array(array($this->form,'setSource'),func_get_args());
 	}
 	function addField(){
-		return call_user_func_array(array($this->owner,'addField'),func_get_args());
+		return call_user_func_array(array($this->form,'addField'),func_get_args());
 		//throw new ObsoleteException('$form->addField() now returns Field object and not Form. Do not chain it.');
 	}
 }
@@ -350,9 +396,11 @@ class Form_Field_Search extends Form_Field {
 	}
 }
 class Form_Field_Checkbox extends Form_Field {
+    public $true_value=1;
+    public $false_value=0;
 	function init(){
 		parent::init();
-		$this->default_value='N';
+		$this->default_value='';
 	}
 	function getInput($attr=array()){
 		$this->template->trySet('field_caption','');
@@ -366,16 +414,16 @@ class Form_Field_Checkbox extends Form_Field {
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
-						'value'=>'Y',
-						'checked'=>$this->value=='Y'
+						'value'=>$this->true_value,
+						'checked'=>(boolean)($this->true_value==$this->value)
 					     ),$attr
 					)).' &ndash; '.$label;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
-			$this->set('Y');
+			$this->set($this->true_value);
 		}else{
-			$this->set('');
+			$this->set($this->false_value);
 		}
 	}
 }
@@ -403,9 +451,10 @@ class Form_Field_Hidden extends Form_Field {
 					));
 	}
 	function render(){
-		$this->owner->template_chunks['form']->append('Content',$this->getInput());
+        if($this->owner == $this->form){
+            $this->form->template_chunks['form']->append('Content',$this->getInput());
+        }else $this->output($this->getInput());
 	}
-
 }
 class Form_Field_Readonly extends Form_Field {
 	function init(){
@@ -425,21 +474,6 @@ class Form_Field_Readonly extends Form_Field {
 		return $this;
 	}
 
-}
-class Form_Field_File extends Form_Field_upload {
-	function init(){
-		parent::init();
-		$this->attr['type'] = 'file';
-		//we have to set enctype for file upload
-		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
-	}
-}
-class Form_Field_FileSize extends Form_Field_Hidden{
-	function init(){
-		$this->name=$this->short_name='MAX_FILE_SIZE';
-		parent::init();
-		$this->no_save=true;
-	}
 }
 class Form_Field_Time extends Form_Field {
 	function getInput($attr=array()){
@@ -533,17 +567,37 @@ class Form_Field_ValueList extends Form_Field {
 			1=>'No available options #2',
 			2=>'No available options #3'
 			);
+    public $empty_text='';
+    function setModel($m){
+        $ret=parent::setModel($m);
+
+        $this->setValueList(array('foo','bar'));
+        return $ret;
+    }
+    /** Default value which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
+    function setEmptyText($empty_text){
+        $this->empty_text=$empty_text;
+        return $this;
+    }
 	function getValueList(){
 
-		if($this->getController()){
-			// Rely on controller to get our data
-			$data=$this->getController()->getRows($this->getController()->getListFields());
-			$res=array();
-			foreach($data as $row){
-				$res[$row['id']]=$row['name'];
+        if($this->model){
+            $title=$this->model->getTitleField();
+            $id=$this->model->id_field;
+            if ($this->empty_text){
+                $res=array(''=>$this->empty_text);
+            } else {
+                $res = array();
+            }
+			foreach($this->model as $row){
+				$res[$row[$id]]=$row[$title];
 			}
 			return $this->value_list=$res;
 		}
+
+        if($this->empty_text && isset($this->value_list[''])){
+            $this->value_list['']=$this->empty_text;
+        }
 		return $this->value_list;
 	}
 	function setValueList($list){
@@ -562,6 +616,12 @@ class Form_Field_ValueList extends Form_Field {
 	}
 }
 class Form_Field_Dropdown extends Form_Field_ValueList {
+    public $empty_value='';
+
+    function emptyValue($v){
+        $this->empty_value=$v;
+        return $this;
+    }
 	function validate(){
 		if(!$this->value)return parent::validate();
         $this->getValueList(); //otherwise not preloaded?
@@ -572,7 +632,7 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 			   ->execute();
 			   }
 			 */
-			$this->owner->errors[$this->short_name]="This is not one of the offered values";
+			$this->form->errors[$this->short_name]="This is not one of the offered values";
 		}
 		return parent::validate();
 	}
@@ -580,29 +640,18 @@ class Form_Field_Dropdown extends Form_Field_ValueList {
 		$output=$this->getTag('select',array_merge(array(
 						'name'=>$this->name,
 						'id'=>$this->name,
-						'onchange'=>
-						($this->onchange)?$this->onchange->getString():''
 						),
 					$attr,
 					$this->attr)
 				);
 
-		foreach($this->getValueList() as $value=>$descr){
-			// Check if a separator is not needed identified with _separator<
-			if ($value === '_separator') {
-				$output.=
-					$this->getTag('option',array(
-								'disabled'=>'disabled',
-								))
-					.htmlspecialchars($descr)
-					.$this->getTag('/option');
-			} else {
-				$output.=
-					$this->getOption($value)
-					.htmlspecialchars($descr)
-					.$this->getTag('/option');
-			}
-		}
+        foreach($this->getValueList() as $value=>$descr){
+            // Check if a separator is not needed identified with _separator<
+            $output.=
+                $this->getOption($value)
+                .htmlspecialchars($descr)
+                .$this->getTag('/option');
+        }
 		$output.=$this->getTag('/select');
 		return $output;
 	}
@@ -693,10 +742,10 @@ class Form_Field_Radio extends Form_Field_ValueList {
 		return parent::validate();
 	}
 	function getInput($attr=array()){
-		$output = '<div id="'.$this->name.'" class="atk-radio">';
+		$output = '<div id="'.$this->name.'" class="atk-form-options">';
 		foreach($this->getValueList() as $value=>$descr){
 			$output.=
-				$this->getTag('input',
+				"<div>".$this->getTag('input',
 						array_merge(
 							array(
 								'id'=>$this->name.'_'.$value,
@@ -708,7 +757,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
 							$this->attr,
 							$attr
 							))
-				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label>";
+				."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label></div>";
 		}
 		$output .= '</div>';
 		return $output;

@@ -10,7 +10,7 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2011 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
@@ -18,8 +18,18 @@
 abstract class AbstractObject {
     public $settings=array('extension'=>'.html');
 
-    /** Configuration passed as a 2nd argument/array to add. Useful for dependency injection */
-    public $di_config = array();
+    /** Reference to the current model. Read only. Use setModel() */
+    public $model;
+
+    /** Reference to the current controller. Read only. Use setController() */
+    public $controller;
+
+    /** Exception class to use when $this->exception() is called */
+    public $default_exception='BaseException';
+
+    /** Default controller to initialize when calling setModel() */
+    public $default_controller=null;
+
 
     // {{{ Object hierarchy management: http://agiletoolkit.org/learn/understand/base/adding
 
@@ -36,6 +46,9 @@ abstract class AbstractObject {
     /** Always points to current API */
     public $api;
 
+    /** When this object is added, owner->elements[$this->short_name] will be == $this; */
+    public $auto_track_element=false;
+
     public $_initialized=false;
     /** Initialize object. Always call parent */
     function init() {
@@ -46,32 +59,55 @@ abstract class AbstractObject {
     }
     function __clone(){
         // fix short name and add ourselves to the parent
-        $this->short_name=$this->_unique($this->owner->elements,$this->short_name);
-        $this->owner->add($this);
+        //$this->short_name=$this->_unique($this->owner->elements,$this->short_name);
+        //$this->owner->add($this);
+
+        // Clone controller and model
+        if($this->model && is_object($this->model))$this->model=clone $this->model;
+        if($this->controller && is_object($this->controller))$this->controller=clone $this->controller;
+
     }
     function __toString() {
         return "Object " . get_class($this) . "(" . $this->name . ")";
     }
     /** Removes object from parent and prevents it from renedring */
     function destroy(){
-        foreach($this->elements as $el){
+        foreach($this->elements as $el)if($el instanceof AbstractObject){
             $el->destroy();
         }
-        unset($this->elements);
+        if(@$this->model && $this->model instanceof AbstractObject){
+            $this->model->destroy();
+            unset($this->model);
+        }
+        if(@$this->controller && $this->controller instanceof AbstractObject){
+            $this->controller->destroy();
+            unset($this->controller);
+        }
         $this->owner->_removeElement($this->short_name);
     }
     /** Remove child element if it exists */
+    function removeElement($short_name){
+        if(is_object($this->elements[$short_name])){
+            $this->elements[$short_name]->destroy();
+        }
+        else unset($this->elements[$short_name]);
+        return $this;
+    }
     function _removeElement($short_name){
         unset($this->elements[$short_name]);
         return $this;
+    }
+    function newInstance(){
+        return $this->owner->add(get_class($this));
     }
     /** Creates new object and adds it as a child. Returns new object
      * http://agiletoolkit.org/learn/understand/base/adding */
     function add($class, $short_name = null, $template_spot = null, $template_branch = null) {
 
         if(is_array($short_name)){
+
             $di_config=$short_name;
-            $short_name=@$di_config['name'];
+            $short_name=@$di_config['name'];unset($di_config['name']);
         }else $di_config=array();
 
         if (is_object($class)) {
@@ -82,12 +118,22 @@ abstract class AbstractObject {
             if (!$class->short_name) {
                 throw $this->exception('Cannot add existing object, without short_name');
             }
-            if (isset($this->elements[$class->short_name]))
-                return $this->elements[$class->short_name];
             $this->elements[$class->short_name] = $class;
+            if($class instanceof AbstractView){
+                $class->owner->elements[$class->short_name]=true;
+            }
             $class->owner = $this;
-            $class->di_config = array_merge($class->di_config,$di_config);
+
+            
             return $class;
+        }elseif($class[0]=='.'){
+            $tmp=explode('\\',get_class($this));
+            if(!$tmp[1]){
+                $ns='';
+            }else{
+                $ns=$tmp[0];
+            }
+            $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
             $short_name = strtolower($class);
@@ -99,12 +145,10 @@ abstract class AbstractObject {
                 // AbstractView classes shouldn't be created with the same name. If someone
                 // would still try to do that, it should generate error. Obviously one of
                 // those wouldn't be displayed or other errors would occur
-                $this->warning("Element with name $short_name already exists in " . ($this->__toString()));
+                throw $this->exception("Element with name already exists")
+                    ->addMoreInfo('name',$short_name)
+                    ->addThis($this);
             }
-            if ($this->elements[$short_name] instanceof AbstractController) {
-                return $this->elements[$short_name];
-            }
-            // Model classes may be created several times and we are actually don't care about those.
         }
 
         if(!is_string($class) || !$class)throw $this->exception("Class is not valid")
@@ -112,62 +156,87 @@ abstract class AbstractObject {
 
         // Separate out namespace
         $class_name=str_replace('/','\\',$class);
-        list($namespace,$file)=explode('\\',$class_name);
-        if (!$file && $namespace){
-            $file = $namespace;
-        }
-        // Include class file directly, do not rely on auto-load functionality
-        if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
-            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
-            if(substr($class,0,5)=='page_'){
-                $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
-            }else $path=$this->api->pathfinder->locate('php',$file,'path');
-
-            include_once($path);
-            if(!class_exists($class))throw $this->exception('Class is not defined in file')
-                ->addMoreInfo('file',$path)
-                ->addMoreInfo('class',$class);
-        }
+        if(!class_exists($class_name,false) && isset($this->api->pathfinder))$this->api->pathfinder->loadClass($class_name);
         $element = new $class_name();
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception("You can add only classes based on AbstractObject");
         }
 
+        foreach($di_config as $key=>$val){
+            $element->$key=$val;
+        }
+
         $element->owner = $this;
         $element->api = $this->api;
-        $this->elements[$short_name] = $element;
+        $this->elements[$short_name]=$element;
+        if(!$element->auto_track_element)
+            $this->elements[$short_name]=true;  // dont store extra reference to models and controlers
+            // for purposes of better garbage collection
 
         $element->name = $this->name . '_' . $short_name;
         $element->short_name = $short_name;
-        $element->di_config=$di_config;
 
+        // Initialize template before init() starts
         if ($element instanceof AbstractView) {
             $element->initializeTemplate($template_spot, $template_branch);
         }
 
+        // Avoid using this hook. Agile Toolkit creates LOTS of objects, so you'll get significantly
+        // slower code if you try to use this
+        $this->api->hook('beforeObjectInit',array(&$element));
+
         $element->init();
+
+
+        // Make sure init()'s parent was called. Popular coder's mistake
         if(!$element->_initialized)throw $element->exception('You should call parent::init() when you override it')
             ->addMoreInfo('object_name',$element->name)
             ->addMoreInfo('class',get_class($element));
+
         return $element;
     }
     /** Find child element by their short name. Use in chaining. Exception if not found. */
-    function getElement($short_name, $obligatory = true) {
+    function getElement($short_name) {
         if (!isset ($this->elements[$short_name]))
-            if ($obligatory)
-                throw $this->exception("Child element not found")
-                    ->addMoreInfo('element',$short_name);
-            else
-                return null;
+            throw $this->exception("Child element not found")
+                ->addMoreInfo('element',$short_name);
+
         return $this->elements[$short_name];
     }
     /** Find child element. Use in condition. */ 
     function hasElement($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
-
+    /** Names object accordingly. May not work on some objects */
+    function rename($short_name){
+        unset($this->owner->elements[$this->short_name]);
+        $this->name = $this->name . '_' . $short_name;
+        $this->short_name = $short_name;
+        $this->owner->elements[$short_name]=$this;
+        if(!$this->auto_track_element)
+            $this->owner->elements[$short_name]=true; 
+        return $this;
+    }
     // }}} 
+
+    // {{{ Model and Controller handling
+    function setController($controller){
+        if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
+            $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
+        return $this->add($controller);
+    }
+    function setModel($model){
+        if(is_string($model)&&substr($model,0,strlen('Model'))!='Model'){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+        }
+        $this->model=$this->add($model);
+        return $this->model;
+    }
+    function getModel(){
+        return $this->model;
+    }
+    // }}}
 
     // {{{ Session management: http://agiletoolkit.org/doc/session
     /** Remember object-relevant session data */
@@ -206,19 +275,20 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Exception handling: http://agiletoolkit.org/doc/exception
-    public $default_exception='BaseException';
-
     function exception($message,$type=null){
         if(!$type){
             $type=$this->default_exception;
+        }elseif($type[0]=='_'){
+            $type=$this->default_exception.'_'.substr($type,1);
         }else{
             $type='Exception_'.$type;
         }
 
-        // Localization support
-        if($this->api->hasMethod('_'))
-            $message=$this->api->_($message);
 
+        // Localization support
+        $message=$this->api->_($message);
+
+        if($type=='Exception')$type='BaseException';
         $e=new $type($message);
         $e->owner=$this;
         $e->api=$this->api;
@@ -307,38 +377,35 @@ abstract class AbstractObject {
             return false;
         return $this->owner->upCall($type, $args);
     }
-    function downCall($type, $args = array()) {
-        /**
-         * Unlike upCallHandler, this will pass call down to all childs. This
-         * one is useful for a "render" or "submitted" calls.
-         */
-        foreach (array_keys($this->elements) as $key) {
-            if (!($this->elements[$key] instanceof AbstractController)) {
-                $this_result = $this->elements[$key]->downCall($type, $args);
-                if ($this_result === false)
-                    return false;
-            }
-        }
-        if (method_exists($this, $type)) {
-            return call_user_func_array(array (
-                        $this,
-                        $type
-                        ), $args);
-        }
-        return null;
-    }
     // }}} 
 
     // {{{ Hooks: http://agiletoolkit.org/doc/hooks
     public $hooks = array ();
 
+    /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
         if(!is_array($arguments)){
             // Backwards compatibility
             $priority=$arguments;
             $arguments=array();
         }
-        $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
+        if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
+        if(is_array($hook_spot)){
+            foreach($hook_spot as $h){
+                $this->addHook($h,$callable,$arguments, $priority);
+            }
+            return $this;
+        }
+        if(is_object($callable) && !is_callable($callable)){
+            $callable=array($callable,$hook_spot);  // short for addHook('test',$this); to call $this->test();
+        }
+        if($priority>=0){
+            $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
+        }else{
+            if(!$this->hooks[$hook_spot][$priority])
+                $this->hooks[$hook_spot][$priority]=array();
+            array_unshift($this->hooks[$hook_spot][$priority],array($callable,$arguments));
+        }
         return $this;
     }
     function removeHook($hook_spot) {
@@ -357,7 +424,7 @@ abstract class AbstractObject {
                             if (is_string($data[0]) && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $data[0])) {
                                 $result = eval ($data[0]);
                             } elseif (is_callable($data[0])) {
-                                $result = call_user_func_array($data[0], array_merge($arg,$data[1]));
+                                $result = call_user_func_array($data[0], array_merge(array($this),$arg,$data[1]));
                             } else {
                                 if (!is_array($data[0]))
                                     $data[0] = array (
@@ -389,18 +456,29 @@ abstract class AbstractObject {
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
     function __call($method,$arguments){
         if($ret=$this->tryCall($method,$arguments))return $ret[0];
-        throw $this->exception("Method is not defined for this object")
+        throw $this->exception("Method is not defined for this object",'Logic')
+            ->addMoreInfo('class',get_class($this))
             ->addMoreInfo("method",$method)
             ->addMoreInfo("arguments",$arguments);
     }
     /** [private] attempts to call method, returns array containing result or false */
     function tryCall($method,$arguments){
-        array_unshift($arguments,$this);
         if($ret=$this->hook('method-'.$method,$arguments))return $ret;
+        array_unshift($arguments,$this);
         if($ret=$this->api->hook('global-method-'.$method,$arguments))return $ret;
     }
     /** Add new method for this object */
     function addMethod($name,$callable){
+        if(is_string($name) && strpos($name,',')!==false)$name=explode(',',$name);
+        if(is_array($name)){
+            foreach($name as $h){
+                $this->addMethod($h,$callable);
+            }
+            return $this;
+        }
+        if(is_object($callable) && !is_callable($callable)){
+            $callable=array($callable,$name);
+        }
         if($this->hasMethod($name))
             throw $this->exception('Registering method twice');
         $this->addHook('method-'.$name,$callable);
@@ -432,10 +510,8 @@ abstract class AbstractObject {
         $this->api->getLogger()->logLine($msg.' '.$error."\n",null,'error');
     }
     // }}}
+
     /**
-     *  @private
-     *  DO NOT USE THIS FUNCTION, it might relocate
-     *
      * This funcion given the associative $array and desired new key will return
      * the best matching key which is not yet in the arary. For example if you have
      * array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'. If 
@@ -443,10 +519,19 @@ abstract class AbstractObject {
      */
     function _unique(&$array,$desired=null){
         $postfix=1;$attempted_key=$desired;
-        while(isset($array[$attempted_key])){
+        if(!is_array($array))throw $this->exception('not array');
+        while(array_key_exists($attempted_key,$array)){
             // already used, move on
             $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
         }       
         return $attempted_key;
+    }
+
+
+    /** Always call parent if you redefine this */
+    function __destruct(){
+    }
+    function __sleep(){
+        return array('name');
     }
 }
