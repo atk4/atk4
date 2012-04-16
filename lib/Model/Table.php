@@ -258,15 +258,15 @@ class Model_Table extends Model {
         if($field->type() == 'boolean'){
             if($field->listData){
                 reset($field->listData);
-                list($yes_value,$junk)=each($field->listData);
+                list($yes_value,$no_value)=each($field->listData);
             }else{
-                $yes_value=1;
+                $yes_value=1;$no_value=0;
             }
 
             if($value===undefined){
-                $cond=$cond===true?$yes_value:($cond===false?'N':$cond);
+                $cond=$cond===true?$yes_value:($cond===false?$no_value:$cond);
             }else{
-                $value=$value===true?$yes_value:($value===false?'N':$value);
+                $value=$value===true?$yes_value:($value===false?$no_value:$value);
             }
         }
 
