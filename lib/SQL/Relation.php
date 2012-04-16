@@ -21,8 +21,13 @@ class SQL_Relation extends AbstractModel {
         $this->table_alias=$this->short_name;
     }
 
-    function addField($n){
-        return $this->owner->addField($n)->from($this);
+    /** Second argument to addField() will specify how the field is really called */
+    function addField($n,$actual_field=null){
+        $f=$this->owner->addField($n)->from($this);
+        if($actual_field){
+            $f->actual_field=$actual_field;
+        }
+        return $f;
     }
     function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
         return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias,$this);
@@ -102,7 +107,7 @@ class SQL_Relation extends AbstractModel {
         $q->set($this->m2,$this->id);
     }
     function afterInsert($m,$id){
-        $this->id=$this->dsql->set($this->f2,$id)->insert();
+        $this->id=$this->dsql->set($this->f2,$this->relation?$this->relation->id?:$id:$id)->insert();
     }
     function beforeModify($m,$q){
         if($this->dsql->args['set'])$this->dsql->where($this->f2,$this->id)->update();
