@@ -268,6 +268,9 @@ class ApiCLI extends AbstractView {
         }
         return true;
     }
+    function requires($component,$version){
+        $this->versionRequirement($version);
+    }
     // }}}
 
     // {{{ Database connection handling
