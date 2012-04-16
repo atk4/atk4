@@ -58,13 +58,14 @@ class Model_Table extends Model {
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
-    function init(){
-        parent::init();
-
+    function __construct(){
         if($this->entity_code){
             $this->table=$this->entity_code;
             unset($this->entity_code);
         }
+    }
+    function init(){
+        parent::init();
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }

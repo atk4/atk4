@@ -349,22 +349,22 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 
 /* Custom jQueryUI States */
 .defaultBg(@colorStop1,@colorStop2) {
-	.ui-state-default:not(.ui-state-highlight),
-	.ui-widget-content .ui-state-default:not(.ui-state-highlight),
-	.ui-widget-header .ui-state-default:not(.ui-state-highlight)
+	.ui-state-default,
+	.ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default
 	{ #gradient > .vertical(@colorStop1,@colorStop2); }
 }
 .hoverBg(@colorStop1,@colorStop2) {
-	.ui-state-hover:not(.ui-state-highlight),
-	.ui-widget-content .ui-state-hover:not(.ui-state-highlight),
-	.ui-state-focus:not(.ui-state-highlight),
-	.ui-widget-content .ui-state-focus:not(.ui-state-highlight)
+	.ui-state-hover,
+	.ui-widget-content .ui-state-hover,
+	.ui-state-focus,
+	.ui-widget-content .ui-state-focus
 	{ #gradient > .vertical(@colorStop1,@colorStop2); }
 }
 .activeBg(@colorStop1,@colorStop2) {
-	.ui-state-active:not(.ui-state-highlight),
-	.ui-widget-content .ui-state-active:not(.ui-state-highlight),
-	.ui-widget-header .ui-state-active:not(.ui-state-highlight)
+	.ui-state-active,
+	.ui-widget-content .ui-state-active,
+	.ui-widget-header .ui-state-active
 	{ #gradient > .vertical(@colorStop1,@colorStop2); }
 }
 .headerBg(@colorStop1,@colorStop2) {
@@ -467,10 +467,16 @@ textarea:focus {
 		}
 		.atk-buttons {clear:both;text-align:right;}
 	}
-	&.wider-labels:not(.stacked) { 
+	&.wider-labels { 
 		fieldset .atk-form-row {
-			>label {width:@label+(@label*0.6);}
+			>label {width:@label+(@label*0.6);float:left;}
 			>.atk-form-field {margin-left:@label+(@label*0.6)+@labelMargin;}
+		}
+		&.stacked {
+			fieldset .atk-form-row {
+				>label {width:auto;float:none;}
+				>.atk-form-field {margin-left:0;}
+			}
 		}
 		.atk-buttons, .legend {padding-left:@label+(@label*0.6)+@labelMargin;}
 	}
@@ -689,8 +695,8 @@ textarea:focus {
 .ui-widget {font-family:@fontFamily;font-size:@fontSize;line-height:@lineHeight;}
 .ui-helper-reset {line-height:@lineHeight;}
 
-.ui-tabs.ui-widget-content {background:none;border:none;padding:0;}
-.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;border-width:0px 0px 1px 0;padding:0;.border-radius(0px);}
+.ui-tabs.ui-widget-content {background:none;filter:none;border:none;padding:0;}
+.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;filter:none;border-width:0px 0px 1px 0;padding:0;.border-radius(0px);}
 .ui-tabs .ui-tabs-panel {padding:@padding/1.5 0 0 0;color:@fontColor;}
 
 .ui-widget-overlay {position:fixed !important;top:0;left:0;}
