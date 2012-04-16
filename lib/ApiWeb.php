@@ -184,7 +184,7 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
-    protected $sticky_get_arguments = array();
+    public $sticky_get_arguments = array();
     /** Make current get argument with specified name automatically appended to all generated URLs */
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
