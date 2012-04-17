@@ -99,7 +99,7 @@ class PageManager extends AbstractController {
         if(is_null($url)){
             // Detect it
             $url = 'http';
-            $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT']==443;
+            $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT']==443;
             if($https)$url.='s';
 
             // 2. Continue building. We are adding hostname next and port.
