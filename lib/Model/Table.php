@@ -257,17 +257,11 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
         if($field->type() == 'boolean'){
-            if($field->listData){
-                reset($field->listData);
-                list($yes_value,$no_value)=each($field->listData);
-            }else{
-                $yes_value=1;$no_value=0;
-            }
-
+            $res=$field->getBooleanValue($value===undefined?$cond:$value);
             if($value===undefined){
-                $cond=$cond===true?$yes_value:($cond===false?$no_value:$cond);
+                $cond=$res;
             }else{
-                $value=$value===true?$yes_value:($value===false?$no_value:$value);
+                $value=$res;
             }
         }
 

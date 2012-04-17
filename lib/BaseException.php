@@ -29,7 +29,7 @@ class BaseException extends Exception {
     public $owner=null;
     public $api=null;
 
-    public $more_info;
+    public $more_info=array();
     public $actions;
     function init(){
     }

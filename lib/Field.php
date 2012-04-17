@@ -118,9 +118,25 @@ class Field extends AbstractModel {
         );
         return $this;
     }
+    /** Converts true/false into boolean representation according to the "enum" */
+    function getBooleanValue($value){
+        if($this->listData){
+            reset($this->listData);
+            list($junk,$yes_value)=each($this->listData);
+            @list($junk,$no_value)=each($this->listData);
+            if($no_value==null)$no_value='';
+        }else{
+            $yes_value=1;$no_value=0;
+        }
+
+        return $value?$yes_value:$no_value;
+    }
     /** Get value of this field formatted for SQL. Redefine if you need to convert */
     function getSQL(){
         $val=$this->owner->get($this->short_name);
+        if($this->type=='boolean'){
+            $val=$this->getBooleanValue($val);
+        }
         if($val=='' && ($this->listData || $this instanceof Field_Reference) && $this->type!='boolean'){
             $val=null;
         }

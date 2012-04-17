@@ -653,6 +653,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
     // {{{ set()
     function set($field,$value=undefined){
+        if($value===false){
+            throw $this->exception('Value "false" is not supported by SQL');
+        }
         if(is_array($field)){
             foreach($field as $key=>$value){
                 $this->set($key,$value);
