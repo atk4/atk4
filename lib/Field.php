@@ -142,9 +142,13 @@ class Field extends AbstractModel {
         }
         return $val;
     }
+    /** Returns field of this model */
+    function getExpr(){
+        $q=$this->owner->_dsql();
+        return $q->bt($this->relation?$this->relation->short_name:$q->main_table).'.'.$q->bt($this->short_name);
+    }
 
-    // OBSOLETE
-    // TODO: refactor this!
+    /** @obsolete use hasOne instead */
     function refModel($m){
         if($m=='Model_Filestore_File'){
             return $this->add('filestore/Field_File');
