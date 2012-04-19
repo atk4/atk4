@@ -30,7 +30,7 @@ class SQL_Many extends AbstractModel {
     }
     function refSQL(){
         $this->restoreConditions();
-        return $this->model->addCondition($this->their_field,$this->owner->_dsql()->getField($this->our_field));
+        return $this->model->addCondition($this->their_field,$this->owner->getElement($this->our_field));
     }
     function ref($mode=null){
         if(!$this->owner->loaded()){
