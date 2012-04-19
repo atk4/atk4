@@ -11,8 +11,10 @@ class Field_Reference extends Field {
         
         if($display_field)$this->display_field=$display_field;
 
-        $this->owner->addExpression($this->getDereferenced())
-            ->set(array($this,'calculateSubQuery'))->caption($this->caption());
+        if($display_field!==false){
+            $this->owner->addExpression($this->getDereferenced())
+                ->set(array($this,'calculateSubQuery'))->caption($this->caption());
+        }
 
         $this->visible(false);
 
@@ -73,6 +75,9 @@ class Field_Reference extends Field {
             return $m;
         }
     }
+    function refSQL(){
+        return $this->ref('model')->addCondition($q->id_field,$this);
+    }
     function getDereferenced(){
         if($this->dereferenced_field)return $this->dereferenced_field;
         $f=preg_replace('/_id$/','',$this->short_name);
@@ -94,11 +99,7 @@ class Field_Reference extends Field {
         }else{
             $title=$this->model->titleQuery();
         }
-        if($this->relation){
-            $title->where($this->relation->short_name.'.'.$this->short_name,$title->getField($this->model->id_field));
-        }else{
-            $title->where($this->owner->_dsql()->getField($this->short_name),$title->getField($this->model->id_field));
-        }
+        $title->where($this,$title->getField($this->model->id_field));
         return $title;
     }
 }
