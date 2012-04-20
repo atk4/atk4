@@ -76,7 +76,9 @@ class Field_Reference extends Field {
         }
     }
     function refSQL(){
-        return $this->ref('model')->addCondition($q->id_field,$this);
+        $q=$this->ref('model');
+        $q->addCondition($q->id_field,$this);
+        return $q;
     }
     function getDereferenced(){
         if($this->dereferenced_field)return $this->dereferenced_field;
