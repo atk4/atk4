@@ -106,6 +106,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function consume($dsql,$tick=true){
         if($dsql===undefined)return '';
         if($dsql===null)return '';
+        if(is_object($dsql) && $dsql instanceof Field)return $dsql->getExpr();
         if(!is_object($dsql) || !$dsql instanceof DB_dsql)return $tick?$this->bt($dsql):$dsql;
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
@@ -411,7 +412,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $value=$cond;
                 $cond='=';
                 if(is_array($value))$cond='in';
-                if(is_object($value) && $value->mode=='select')$cond='in';
+                if(is_object($value) && @$value->mode=='select')$cond='in';
             }else{
                 $cond=trim($cond);
             }
@@ -989,7 +990,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
             $fx='render_'.$matches[1];
             if($self->hasMethod($fx))return $self->$fx();
-            elseif(isset($self->args['custom'][$matches[1]]))return $self->args['custom'][$matches[1]];
+            elseif(isset($self->args['custom'][$matches[1]]))return $self->consume($self->args['custom'][$matches[1]]);
             else return $matches[0];
         },$this->template);
         /**/$this->api->pr->stop(null,true);

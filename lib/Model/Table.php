@@ -77,6 +77,8 @@ class Model_Table extends Model {
         $this->addField($this->id_field)->system(true);
     }
     function addField($name){
+        if($this->hasElement($name))throw $this->exception('Field with this name is already defined')
+            ->addMoreInfo('field',$name);
         if($name=='deleted' && isset($this->api->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
@@ -239,6 +241,10 @@ class Model_Table extends Model {
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
         return $this->getElement($name)->ref($load);
+    }
+    /** Returns Model with SQL join usable for subqueries. */
+    function refSQL($name){
+        return $this->getElement($name)->refSQL();
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
     function getRef($name,$load=null){

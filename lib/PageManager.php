@@ -95,16 +95,20 @@ class PageManager extends AbstractController {
 
         // This is the re-constructions of teh proper URL.
         // 1. Schema
-        $url = 'http';
-        if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')$url.='s';
+        $url=$this->api->getConfig('atk/base_url',null);
+        if(is_null($url)){
+            // Detect it
+            $url = 'http';
+            $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT']==443;
+            if($https)$url.='s';
 
-        // 2. Continue building. We are adding hostname next and port.
-        $url .= "://".$_SERVER["SERVER_NAME"];
-        //if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
-        if($_SERVER["SERVER_PORT"]!="80"){
-            if ($_SERVER["SERVER_PORT"]=="448"){
-                $url .= ":443";
-            } else {
+            // 2. Continue building. We are adding hostname next and port.
+            $url .= "://".$_SERVER["SERVER_NAME"];
+            //if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
+            if(($_SERVER["SERVER_PORT"]=="80" && !$https ) || ($_SERVER["SERVER_PORT"]=="443" && $https)){
+                ;
+
+            }else{
                 $url .= ":".$_SERVER['SERVER_PORT'];
             }
         }
