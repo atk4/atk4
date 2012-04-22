@@ -153,7 +153,12 @@ class Form_Basic extends View {
     function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
-        $last_field=$this->add('Form_Field_'.$type,$name,null,'form_line')
+        $class=$type;
+        if(is_string($class)&&substr($class,0,strlen('Form_Field_'))!='Form_Field_'){
+            $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
+        }
+        var_dump($class);
+        $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);
         $last_field->template->trySet('field_type',strtolower($type));
