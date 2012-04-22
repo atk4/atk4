@@ -85,7 +85,7 @@ class Controller_MVCForm extends AbstractController {
         if($field_type=='checkbox'){
             if(!$field->listData)$field->enum(array(1,0));
         }elseif($field->listData() || $field instanceof Field_Reference){
-            $field_type='dropdown';
+            if($field_type=='line')$field_type='dropdown';
         }
 
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
