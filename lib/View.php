@@ -34,6 +34,12 @@ class View extends AbstractView {
         $this->template->append('class'," ".$class);
         return $this;
     }
+    function removeClass($class){
+        $cl=' '.$this->template->get('class').' ';
+        $cl=str_replace($cl,' '.$class.' ',' ');
+        $this->template->set('class',trim($cl));
+        return $this;
+    }
     function setClass($class){
         $this->template->trySet('class', $class);
         return $this;
