@@ -292,6 +292,7 @@ class Auth_Basic extends AbstractController {
 	}
     /** Store model in session data so that it can be retrieved faster */
     function memorizeModel(){
+        if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
 
         // Don't store password in model / memory / session
         $this->model['password']=null;
@@ -307,13 +308,13 @@ class Auth_Basic extends AbstractController {
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){
-        $this->model->load($id);
+        $this->model->tryLoad($id);
         $this->memorizeModel();
         return $this;
     }
     /** Manually Log in with specified condition */
     function loginBy($field,$value){
-        $this->model->loadBy($field,$value);
+        $this->model->tryLoadBy($field,$value);
         $this->memorizeModel();
         return $this;
     }
@@ -332,7 +333,7 @@ class Auth_Basic extends AbstractController {
             return $this;
         }
 
-        $this->model->loadBy($this->login_field,$user);
+        $this->model->tryLoadBy($this->login_field,$user);
         $this->memorizeModel();
         return $this;
 	}
