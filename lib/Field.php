@@ -11,6 +11,8 @@ class Field extends AbstractModel {
     public $caption=null;
     public $group=null;
     public $allowHTML=false;
+    public $sortable=false;
+    public $searchable=false;
     public $mandatory=false;
     public $defaultValue=null;
     public $auto_track_element=true;

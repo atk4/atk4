@@ -68,6 +68,8 @@ class Controller_MVCGrid extends AbstractController {
 
         $column = $this->owner->addColumn($field_type,$field_name,$field_caption);
 
+        if($field->sortable())$column->makeSortable();
+
         return $column;
     }
     /** Redefine this to add special handling of your own fields */

@@ -473,7 +473,12 @@ class Grid_Advanced extends Grid_Basic {
         }
         return strcmp($row1[$this->sortby],$row2[$this->sortby]);
     }
-    function processSorting(){
+    function applySorting($i,$order,$desc){
+        if($i instanceof DB_dsql)$i->order($order,$desc);
+        elseif($i instanceof Model_Table)$i->setOrder($order,$desc);
+    }
+    function getIterator(){
+        $i=parent::getIterator();
         if($this->sortby){
             $desc=false;
             $order=$this->sortby_db;
@@ -481,12 +486,9 @@ class Grid_Advanced extends Grid_Basic {
                 $desc=true;
                 $order=substr($order,1);
             }
-            if($order)$this->dq->order($order,$desc);
+            $this->applySorting($i,$order,$desc);
         }
-    }
-    function execQuery(){
-        $this->processSorting();
-        return parent::execQuery();
+        return $i;
     }
     function setTemplate($template){
         // This allows you to use Template

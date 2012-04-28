@@ -20,6 +20,11 @@ class Grid_Basic extends CompleteLister {
 
     public $default_controller='Controller_MVCGrid';
 
+    public $sort_icons=array(
+        'ui-icon ui-icon-arrowthick-2-n-s',
+        'ui-icon ui-icon-arrowthick-1-n',
+        'ui-icon ui-icon-arrowthick-1-s',
+    );
 
     function init(){
         parent::init();
@@ -116,17 +121,16 @@ class Grid_Basic extends CompleteLister {
             $header_col->set('descr',$column['descr']);
             $header_col->trySet('type',$column['type']);
 
-            // TODO: rewrite this
+            // TODO: rewrite this (and move into Advanced)
             if(isset($column['sortable'])){
                 $s=$column['sortable'];
                 // calculate sortlink
                 $l = $this->api->getDestinationURL(null,array($this->name.'_sort'=>$s[1]));
 
                 $header_sort->trySet('order',$column['sortable'][0]);
-                $sicons=array('vertical','top','bottom');
-                $header_sort->trySet('sorticon',$sicons[$column['sortable'][0]]);
+                $header_sort->trySet('sorticon',$this->sort_icons[$column['sortable'][0]]);
                 $header_sort->set('sortlink',$l);
-                $header_col->set('sort',$header_sort->render());
+                $header_col->setHTML('sort',$header_sort->render());
             }else{
                 $header_col->del('sort');
                 $header_col->tryDel('sort_del');

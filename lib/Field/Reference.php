@@ -37,6 +37,11 @@ class Field_Reference extends Field {
         if(!$this->model)$this->model=$this->add($this->model_name);
         return $this->model;
     }
+    function sortable($x=undefined){
+        $f=$this->owner->hasElement($this->getDereferenced());
+        if(!$f)return parent::sortable($x);
+        return $f->sortable($x);
+    }
     function ref($mode=null){
         if($mode=='model'){
             return $this->add($this->model_name);
@@ -86,6 +91,7 @@ class Field_Reference extends Field {
         if($f!=$this->short_name)return $f;
 
         $f=$this->_unique($this->owner->elements,$f);
+        $this->dereferenced_field=$f;
         return $f;
     }
     function destroy(){
