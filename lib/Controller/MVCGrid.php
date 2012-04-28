@@ -41,6 +41,8 @@ class Controller_MVCGrid extends AbstractController {
         $this->model=$model;
         $this->grid=$this->owner;
 
+        if($fields===false)return;
+
         if(!$fields)$fields='visible';
         if(!is_array($fields))$fields=$model->getActualFields($fields);
         foreach($fields as $field){

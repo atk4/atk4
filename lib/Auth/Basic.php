@@ -241,10 +241,13 @@ class Auth_Basic extends AbstractController {
 		 */
 		return $this->model->loaded();
 	}
+    function verifyCredintials($user,$password){
+        return $this->verifyCredentials($user,$password);
+    }
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
-	function verifyCredintials($user,$password){
-        if($this->model->hasMethod('verifyCredintials'))return $this->model->verifyCredintials($user,$passord);
+	function verifyCredentials($user,$password){
+        if($this->model->hasMethod('verifyCredentials'))return $this->model->verifyCredentials($user,$passord);
         if(!$this->model->hasElement($this->password_field)){
             $this->model->addField($this->password_field);
         }
@@ -289,6 +292,7 @@ class Auth_Basic extends AbstractController {
 	}
     /** Store model in session data so that it can be retrieved faster */
     function memorizeModel(){
+        if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
 
         // Don't store password in model / memory / session
         $this->model['password']=null;
@@ -304,13 +308,13 @@ class Auth_Basic extends AbstractController {
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){
-        $this->model->load($id);
+        $this->model->tryLoad($id);
         $this->memorizeModel();
         return $this;
     }
     /** Manually Log in with specified condition */
     function loginBy($field,$value){
-        $this->model->loadBy($field,$value);
+        $this->model->tryLoadBy($field,$value);
         $this->memorizeModel();
         return $this;
     }
@@ -329,7 +333,7 @@ class Auth_Basic extends AbstractController {
             return $this;
         }
 
-        $this->model->loadBy($this->login_field,$user);
+        $this->model->tryLoadBy($this->login_field,$user);
         $this->memorizeModel();
         return $this;
 	}
@@ -372,7 +376,7 @@ class Auth_Basic extends AbstractController {
         $this->hook('updateForm');
         $f=$this->form;
         if($f->isSubmitted()){
-			if($this->verifyCredintials($f->get('username'), $f->get('password'))){				
+			if($this->verifyCredentials($f->get('username'), $f->get('password'))){				
                 $this->login($f->get('username'));
                 $this->loggedIn($f->get('username'),$f->get('password'));
                 exit;

@@ -156,7 +156,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function load($id=null){
         $this->hook('beforeLoad',$id);
         $res=$this->controller->load($this,$id);
-        $this->hook('afetrLoad');
+        $this->hook('afterLoad');
         return $res;
     }
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 

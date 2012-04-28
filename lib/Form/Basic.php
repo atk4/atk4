@@ -157,7 +157,6 @@ class Form_Basic extends View {
         if(is_string($class)&&substr($class,0,strlen('Form_Field_'))!='Form_Field_'){
             $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
         }
-        var_dump($class);
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);
