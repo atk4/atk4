@@ -160,7 +160,7 @@ abstract class AbstractView extends AbstractObject {
         }
 
         // Cool, now let's set _name of this template
-        if($this->template)$this->template->trySet('_name',$this->name);
+        if($this->template)$this->template->trySet('_name',str_replace('/','_',$this->name));
 
     }
     /** @internal Lets API auto-fill some tags in all views (such as tempalte tag) */
