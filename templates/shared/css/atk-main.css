@@ -716,9 +716,6 @@ textarea:focus {
   padding-top: 2em;
   border-top: 1px solid #e5e5e5;
 }
-.atk-form fieldset {
-  display: block !important;
-}
 .atk-form fieldset.atk-row .atk-form-row {
   margin-top: 0;
 }
