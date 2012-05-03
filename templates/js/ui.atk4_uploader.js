@@ -138,6 +138,15 @@ $.widget("ui.atk4_uploader", {
 				var url='/img/' + $(this).closest('div').attr('rel');
 				$('.elrte_editor').elrte()[0].elrte.selection.insertText('<img src="'+url+'"/>');
 			})
+			tpl.find('.thumbnail').each(function(){
+                $(this).attr('src',row['thumb32']);
+                /*
+                act+'&view=true&'+
+					self.element.attr('name')+'_save_action='+
+					$(this).closest('div').attr('rel') 
+				);
+                */
+			})
 			tpl.find('.image_preview').each(function(){
 				$(this).attr('src',act+'&view=true&'+
 					self.element.attr('name')+'_save_action='+
