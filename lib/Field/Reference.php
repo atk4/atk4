@@ -20,6 +20,15 @@ class Field_Reference extends Field {
 
         return $this;
     }
+    function getModel(){
+        if(!$this->model)$this->model=$this->add($this->model_name);
+        return $this->model;
+    }
+    function sortable($x=undefined){
+        $f=$this->owner->hasElement($this->getDereferenced());
+        if(!$f)return parent::sortable($x);
+        return $f->sortable($x);
+    }
     /**
      * ref() will traverse reference and will attempt to load related model's entry. If the entry will fail to load
      * it will return model which would not be loaded. This can be changed by specifying an argument:
@@ -33,15 +42,6 @@ class Field_Reference extends Field {
      *          update current model also and save it too.
      *
      */
-    function getModel(){
-        if(!$this->model)$this->model=$this->add($this->model_name);
-        return $this->model;
-    }
-    function sortable($x=undefined){
-        $f=$this->owner->hasElement($this->getDereferenced());
-        if(!$f)return parent::sortable($x);
-        return $f->sortable($x);
-    }
     function ref($mode=null){
         if($mode=='model'){
             return $this->add($this->model_name);
@@ -73,10 +73,12 @@ class Field_Reference extends Field {
             $m=$this->add($this->model_name);
             if($this->get())$m->tryLoad($this->get());
             $t=$this;
-            $m->addHook('afterSave',function($m)use($t){
-                $t->set($m->id);
-                $t->owner->save();
-            });
+            if(!$m->loaded()){
+                $m->addHook('afterSave',function($m)use($t){
+                        $t->set($m->id);
+                        $t->owner->save();
+                        });
+            }
             return $m;
         }
     }
