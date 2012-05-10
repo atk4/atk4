@@ -97,7 +97,9 @@ class Field_Reference extends Field {
         return $f;
     }
     function destroy(){
-        $this->owner->getElement($this->getDereferenced())->destroy();
+        if($e=$this->owner->hasElement($this->getDereferenced())){
+            $e->destroy();
+        }
         return parent::destroy();
     }
     function calculateSubQuery($model,$select){
