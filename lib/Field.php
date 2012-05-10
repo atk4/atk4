@@ -58,6 +58,7 @@ class Field extends AbstractModel {
     function searchable($t=undefined){ return $this->setterGetter('searchable',$t); }
     function sortable($t=undefined){ return $this->setterGetter('sortable',$t); }
     function display($t=undefined){ return $this->setterGetter('display',$t); }
+    function actual($t=undefined){ return $this->setterGetter('actual_field',$t); }
     function system($t=undefined){ 
         if($t===true){
             $this->editable(false)->visible(false);

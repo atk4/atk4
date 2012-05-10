@@ -76,13 +76,15 @@ class Model_Table extends Model {
 
         $this->addField($this->id_field)->system(true);
     }
-    function addField($name){
+    function addField($name,$actual_field=null){
         if($this->hasElement($name))throw $this->exception('Field with this name is already defined')
             ->addMoreInfo('field',$name);
         if($name=='deleted' && isset($this->api->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
-        return parent::addField($name);
+        $f=parent::addField($name);
+        if(!is_null($actual_field))$f->actual($actual_field);
+        return $f;
     }
     /** exception() will automatically add information about current model and will allow to turn on "debug" mode */
     function exception(){
