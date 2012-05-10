@@ -50,7 +50,7 @@ class Form_Basic extends View {
     //  should use $this->setStaticSource() to load values from hash
     //  AAAAAAAAAA: this array is no more!
 
-    public $bail_out = false;   // if this is true, we won't load data or submit or validate anything.
+    public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
     protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
@@ -295,7 +295,7 @@ class Form_Basic extends View {
         /**
          * This call will be sent to fields, and they will initialize their values from $this->data
          */
-        if($this->bail_out)return;
+        if(!is_null($this->bail_out))return;
         if($this->dq){
             // TODO: move into Controller / hook
 
@@ -339,10 +339,11 @@ class Form_Basic extends View {
         // hook to those spots here.
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
-        if($this->bail_out)return;
+        if(!is_null($this->bail_out))return $this->bail_out;
         $this->hook('loadPOST');
         $this->hook('validate');
 
+        //TODO: handle errors properly
         if(!empty($this->errors))return false;
         try{
             if(($output=$this->hook('submit',array($this)))){
@@ -381,7 +382,7 @@ class Form_Basic extends View {
     function lateSubmit(){
         if(@$_GET['submit']!=$this->name)return;
 
-        if($this->bail_out || $this->isSubmitted()){
+        if($this->bail_out===null || $this->isSubmitted()){
             $this->js()->univ()->consoleError('Form '.$this->name.' submission is not handled. See: http://agiletoolkit.org/doc/form/submit')->execute();
         }
     }
@@ -389,9 +390,11 @@ class Form_Basic extends View {
         // This is alternative way for form submission. After  form is initialized you can call this method. It will
         // hurry up all the steps, but you will have ready-to-use form right away and can make submission handlers
         // easier
+        if($this->bail_out!==null)return $this->bail_out;
+
         $this->loadData();
         $result = $_POST && $this->submitted();
-        $this->bail_out=true;
+        $this->bail_out=$result;
         return $result;
     }
     function onSubmit($callback){
