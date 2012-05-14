@@ -22,6 +22,7 @@ class Field_Reference extends Field {
     }
     function getModel(){
         if(!$this->model)$this->model=$this->add($this->model_name);
+        if($this->display_field)$this->model->title_field=$this->display_field;
         return $this->model;
     }
     function sortable($x=undefined){
