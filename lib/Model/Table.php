@@ -328,12 +328,12 @@ class Model_Table extends Model {
     function rewind(){
         $this->_iterating=$this->selectQuery();
         $this->_iterating->stmt=null;
+        $this->hook('beforeLoad',array($this->_iterating));
         $this->next();
     }
     function next(){
         $this->_iterating->next();
 
-        $this->hook('beforeLoad');
 
         $this->data=$this->_iterating->current();
 
@@ -581,7 +581,7 @@ class Model_Table extends Model {
     /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
         * object if saveAs() is used */
     private function modify(){
-        $modify = $this->dsql();
+        $modify = $this->dsql()->del('where');
         $modify->where($this->id_field, $this->id);
 
         if(!$this->dirty)return $this;
