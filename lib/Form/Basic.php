@@ -195,12 +195,23 @@ class Form_Basic extends View {
 
     // Operating with field values
     function get($field=null){
+        //default get method should return the data since this will be the primary use case
+        $this->getData($field);
+    }
+        
+    function getData($field=null){
+        //method to fetch a field's data by it's name
         if(!$field)return $this->data;
         return $this->data[$field];
-
-        //if(!$f=$this->hasField($field))throw new BaseException('Trying to get value of not-existing field: '.$field);
-        //return ($f instanceof Form_Field)?$f->get():null;
     }
+    
+    function getField($field=null){
+        //method to fetch a field's element by it's name
+        //this wraps hasField because hasField is not an obvious name for a function that returns the field element
+        return $this->hasField($field);
+    }
+    
+    
     function setSource($table,$db_fields=null){
         if(is_null($db_fields)){
             $db_fields=array();
