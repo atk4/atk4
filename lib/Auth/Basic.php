@@ -356,7 +356,7 @@ class Auth_Basic extends AbstractController {
      * add template/default/page/login.html */
 	function createForm($page){
 		$form=$page->add('Form');
-		$form->addField('Line','username','Login');
+		$form->addField('Line','username','E-mail');
 		$form->addField('Password','password','Password');
 		$form->addSubmit('Login');
 
