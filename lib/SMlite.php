@@ -454,7 +454,7 @@ class SMlite extends AbstractModel {
         $c=pow(10,$level)+$pc;
         while(strlen($this->tmp_template)){
             $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
-            if($text)$template[]=$text;
+            if($text!=='')$template[]=$text;
             $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
             if(substr($tag,0,1)=='$'){
                 $tag = substr($tag,1);
