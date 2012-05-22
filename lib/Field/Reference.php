@@ -23,6 +23,7 @@ class Field_Reference extends Field {
     function getModel(){
         if(!$this->model)$this->model=$this->add($this->model_name);
         if($this->display_field)$this->model->title_field=$this->display_field;
+        $this->model->table_alias=$this->short_name;
         return $this->model;
     }
     function sortable($x=undefined){
@@ -104,7 +105,7 @@ class Field_Reference extends Field {
         return parent::destroy();
     }
     function calculateSubQuery($model,$select){
-        if(!$this->model)$this->model=$this->add($this->model_name);
+        if(!$this->model)$this->getModel(); //$this->model=$this->add($this->model_name);
 
         if($this->display_field){
             $title=$this->model->dsql()->del('fields');

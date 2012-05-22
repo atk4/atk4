@@ -245,8 +245,8 @@ class Model_Table extends Model {
         return $this->getElement($name)->ref($load);
     }
     /** Returns Model with SQL join usable for subqueries. */
-    function refSQL($name){
-        return $this->getElement($name)->refSQL();
+    function refSQL($name,$table_alias=null){
+        return $this->getElement($name)->refSQL($table_alias);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
     function getRef($name,$load=null){
