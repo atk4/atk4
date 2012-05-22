@@ -325,7 +325,7 @@ class Grid_Advanced extends Grid_Basic {
          * set a property showing that id should be added in prerender
          */
         $val=$this->current_row[$field];
-        $this->current_row[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
+        $this->current_row_html[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
             $this->current_id).'" >'.
             '<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i>'.
             $this->current_row[$field].
