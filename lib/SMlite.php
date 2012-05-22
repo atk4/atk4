@@ -310,6 +310,7 @@ class SMlite extends AbstractModel {
             $this->fatal("Incorrect argument types when calling SMlite::set(). Check documentation.");
         }
         if($value instanceof URL)$value=$value->__toString();
+        if(is_array($value))return $this;
 
         if($encode && $value!=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8') && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through set()')
             ->addMoreInfo('val',var_export($value,true))
