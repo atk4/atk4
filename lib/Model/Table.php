@@ -239,6 +239,7 @@ class Model_Table extends Model {
         if(!$their_field)$their_field=($this->table).'_id';
         $rel=$this->add('SQL_Many',$model)
             ->set($model,$their_field,$our_field);
+        return $rel;
     }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
@@ -303,8 +304,15 @@ class Model_Table extends Model {
         }
 
         if(!$field instanceof Field){
+
+            if(is_object($field)){
+                $this->_dsql()->order($field,$desc);
+                return $this;
+            }
+
             $field=$this->getElement($field);
         }
+
 
         if($field->relation){
             $this->_dsql()->order($field->relation->short_name.'.'.$field->short_name,$desc);
