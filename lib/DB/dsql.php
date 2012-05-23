@@ -572,6 +572,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     // }}}
     // {{{ order()
     function order($order,$desc=null){// ,$prepend=null){
+        if(is_object($order))$order='('.$order.')';
         if($desc)$order.=' desc';
         return $this->_setArray($order,'order');
     }
