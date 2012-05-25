@@ -23,17 +23,20 @@ class SQL_Relation extends AbstractModel {
 
     /** Second argument to addField() will specify how the field is really called */
     function addField($n,$actual_field=null){
-        $f=$this->owner->addField($n)->from($this);
-        if($actual_field){
-            $f->actual_field=$actual_field;
-        }
+        $f=$this->owner->addField($n,$actual_field)->from($this);
         return $f;
     }
     function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
         return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias,$this);
     }
+    function leftJoin($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+        return $this->owner->leftJoin($foreign_table, $master_field, $join_kind, $_foreign_alias,$this);
+    }
     function hasOne($model,$our_field=null,$display_field=null){
         return $this->owner->hasOne($model,$our_field,$display_field)->from($this);
+    }
+    function hasMany($model,$their_field=null,$our_field=null){
+        return $this->owner->hasMany($model,$their_field,$our_field)->from($this);
     }
     // TODO: hasMany()
 
