@@ -1285,10 +1285,7 @@ input.ui-button,
 .ui-button-icons-only .ui-button-icon-secondary {
   right: 0.5em;
 }
-.ui-dialog {
-  padding: 0.2em;
-  top: 120px !important;
-}
+/* .ui-dialog {padding:@padding/10;top:@dialogMargin !important;} moved into JS */
 .ui-dialog .ui-dialog-titlebar {
   padding: 0.4em 0.6666666666666666em;
 }

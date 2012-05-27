@@ -272,7 +272,7 @@ dialogBox: function(options){
 		bgiframe: true,
 		modal: true,
 		width: 1000,
-		position: 'top',
+		position: { my:'top',at:'top','of':window,offset:'50' },
 		autoOpen:false,
 		beforeclose: function(){
 			if($(this).is('.atk4_loader')){
