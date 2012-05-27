@@ -171,7 +171,7 @@ class SMlite extends AbstractModel {
             return $new;
         }
 
-        if(!$this->is_set($tag)){
+        if(!$this->hasTag($tag)){
             $o=$this->owner?" for ".$this->owner->__toString():"";
             throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
         }
@@ -333,12 +333,14 @@ class SMlite extends AbstractModel {
         $this->updated_tag_list[$tag] = $value;
         return $this;
     }
-    function is_set($tag){
-        /*
-         * Check if tag is present inside template
-         */
+    /** Check if tag is present inside template */
+    function hasTag($tag){
         if($this->isTopTag($tag))return true;
         return isset($this->tags[$tag]) && is_array($this->tags[$tag]);
+
+    }
+    function is_set($tag){
+        return $this->hasTag($tag);
     }
     function trySetHTML($tag,$value=null){
         return $this->trySet($tag,$value,false);
@@ -349,7 +351,7 @@ class SMlite extends AbstractModel {
          * for set()
          */
         if(is_array($tag))return $this->set($tag,$value,$encode);
-        return $this->is_set($tag)?$this->set($tag,$value,$encode):$this;
+        return $this->hasTag($tag)?$this->set($tag,$value,$encode):$this;
     }
     function del($tag){
         /*
@@ -374,7 +376,7 @@ class SMlite extends AbstractModel {
     }
     function tryDel($tag){
         if(is_array($tag))return $this->del($tag);
-        return $this->is_set($tag)?$this->del($tag):$this;
+        return $this->hasTag($tag)?$this->del($tag):$this;
     }
     function eachTag($tag,$callable){
         /*
