@@ -42,7 +42,7 @@ class jQuery extends AbstractController {
 
         $this->api->template->del('js_include');
 
-        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.5.1.min'));
+        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.7.2.min'));
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
@@ -62,11 +62,14 @@ class jQuery extends AbstractController {
         return $this;
     }
     /* Locate stylesheet file and add it to HTML's head section */
-    function addStylesheet($file,$ext='.css'){
+    function addStylesheet($file,$ext='.css',$locate='css'){
+        return $this->addStaticStylesheet($file,$ext,$locate);
+    }
+    function addStaticStylesheet($file,$ext='.css',$locate='css'){
         //$file=$this->api->locateURL('css',$file.$ext);
 
-        $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->api->locateURL('css',$file.$ext).'" rel="stylesheet" />'."\n");
+        $this->api->template->appendHTML('js_include',
+                '<link type="text/css" href="'.$this->api->locateURL($locate,$file.$ext).'" rel="stylesheet" />'."\n");
         return $this;
     }
     /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */
