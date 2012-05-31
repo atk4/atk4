@@ -414,7 +414,7 @@ class Form_Field_Checkbox extends Form_Field {
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
-						'value'=>$this->true_value,
+						'value'=>$this->true_values[0],
 						'checked'=>(boolean)(in_array($this->value,$this->true_values))
 					     ),$attr
 					)).' &ndash; '.$label;
