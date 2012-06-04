@@ -26,6 +26,9 @@ class ApiWeb extends ApiCLI {
     /** recorded time when execution has started */
     public $start_time=null;
 
+    private $_license_checksum=null;
+    private $_license='unlicensed'; 
+
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
@@ -50,6 +53,9 @@ class ApiWeb extends ApiCLI {
         // find out which page is to display
         //$this->calculatePageName();
         $this->pm=$this->add('PageManager');
+
+        // Verify Licensing
+        $this->licenseCheck('atk4');
 
         // send headers, no caching
         $this->sendHeaders();
@@ -111,12 +117,61 @@ class ApiWeb extends ApiCLI {
     function _showExecutionTimeJS(){
         echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
     }
+    // }}}
+
+    // {{{ License checking function
+    final function license(){
+        return $this->_license;
+    }
+    final function license_checksum(){
+        return $this->_license_checksum;
+    }
+    final function licenseCheck($product){
+        $id=$this->api->getConfig('license/'.$product.'/id',false);
+        if(!$id)return false;
+
+        $type=$this->api->getConfig('license/'.$product.'/type',false);
+
+        $data=$_SERVER['HTTP_HOST'].'|'.$id.'|'.$type;
+
+        if($type=='agpl'){
+            $data.='|'.$this->api->getConfig('license/'.$product.'/repo',false);
+        }
+
+        // License checksum is required by several modules as they communicate with the main site.
+        // This checksum identifies your Agile Toolkit installation.
+        $this->api->_license_checksum=md5($data);
+
+        if(!function_exists('openssl_get_publickey'))return false;
+
+        $cert=$this->api->getConfig('license/'.$product.'/public',dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
+            DIRECTORY_SEPARATOR.'atk4.crt');
+
+        $signature=$this->api->getConfig('license/'.$product.'/signature',false);
+        if(!$signature)return false;
+
+        $cert=openssl_get_publickey(file_get_contents($cert));
+        if(!$cert)return false;
+
+        $result = openssl_verify($data,base64_decode($signature),$cert);
+        openssl_free_key($cert);
+
+        if($result==1 && $product=='atk4'){
+            $this->_license=$type;
+            return true;   // certificate matched
+        }
+
+        return false;
+    }
     /** If version tag is defined in template, inserts current version of Agile Toolkit there. If newer verison is available, it will be reflected */
     function upgradeChecker(){
-        // Checks for ATK upgrades and shows current version
-        if($this->template && $this->template->is_set('version')){
-            $this->add('UpgradeChecker',null,'version');
-        }
+
+ //       try{
+            if($this->template && $this->template->is_set('version')){
+                $this->add('licensor/UpgradeChecker',null,'version');
+            }
+//        }catch(PathFinder_Exception $e){}
+
     }
     // }}}
 
