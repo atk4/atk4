@@ -39,6 +39,9 @@ class Field_Expression extends Field {
         $this->expr=$expr;
         return $this;
     }
+    function getExpr(){
+        return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
+    }
     function updateSelectQuery($select){
         $expr=$this->expr;
         if(is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
