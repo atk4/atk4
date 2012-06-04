@@ -84,8 +84,13 @@ http://mysite:123/install/dir/my/page.html
         // '..' = parent page
         // '../page' = page besides our own (foo/bar -> foo/page)
         // 'index' = properly points to the index page defined in API
+        // '/admin/' = will not be converted
 
         $destination='';
+
+        if(substr($page,strlen($page)-1)=='/'){
+            return $this->setBaseURL(str_replace('//','/',$this->api->pm->base_path.$page));
+        }
         if(is_null($page))$page='.';
         $path=explode('/',$page);
 
