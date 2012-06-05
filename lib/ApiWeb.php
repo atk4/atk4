@@ -166,11 +166,11 @@ class ApiWeb extends ApiCLI {
     /** If version tag is defined in template, inserts current version of Agile Toolkit there. If newer verison is available, it will be reflected */
     function upgradeChecker(){
 
- //       try{
+        try{
             if($this->template && $this->template->is_set('version')){
                 $this->add('licensor/UpgradeChecker',null,'version');
             }
-//        }catch(PathFinder_Exception $e){}
+        }catch(PathFinder_Exception $e){}
 
     }
     // }}}
