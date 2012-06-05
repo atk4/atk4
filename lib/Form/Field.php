@@ -396,8 +396,8 @@ class Form_Field_Search extends Form_Field {
 	}
 }
 class Form_Field_Checkbox extends Form_Field {
-    public $true_value=1;
-    public $false_value=0;
+    public $true_values=array(1,'Y');
+    public $false_values=array(0,'N');
 	function init(){
 		parent::init();
 		$this->default_value='';
@@ -414,16 +414,16 @@ class Form_Field_Checkbox extends Form_Field {
 		return parent::getInput(array_merge(
 					array(
 						'type'=>'checkbox',
-						'value'=>$this->true_value,
-						'checked'=>(boolean)($this->true_value==$this->value)
+						'value'=>$this->true_values[0],
+						'checked'=>(boolean)(in_array($this->value,$this->true_values))
 					     ),$attr
 					)).' &ndash; '.$label;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
-			$this->set($this->true_value);
+			$this->set($this->true_values[0]);
 		}else{
-			$this->set($this->false_value);
+			$this->set($this->false_values[0]);
 		}
 	}
 }
