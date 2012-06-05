@@ -105,7 +105,8 @@ class Form_Basic extends View {
         }
         $this->template_chunks['form']->del('Content');
         $this->template_chunks['form']->del('form_buttons');
-        $this->template_chunks['form']->set('form_name',$this->name);
+        $this->template_chunks['form']->set('form_name',$this->name.'_form');
+
         return $this;
     }
 
