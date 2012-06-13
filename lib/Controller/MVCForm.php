@@ -58,7 +58,7 @@ class Controller_MVCForm extends AbstractController {
 
         if($fields===false)return;
 
-        if(!$fields)$fields='editable';
+        if(!$fields || $fields===undefined)$fields='editable';
         if(!is_array($fields))$fields=$model->getActualFields($fields);
         foreach($fields as $field){
             $this->importField($field);

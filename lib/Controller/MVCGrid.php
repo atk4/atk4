@@ -43,7 +43,7 @@ class Controller_MVCGrid extends AbstractController {
 
         if($fields===false)return;
 
-        if(!$fields)$fields='visible';
+        if(!$fields || $fields===undefined)$fields='visible';
         if(!is_array($fields))$fields=$model->getActualFields($fields);
         foreach($fields as $field){
             $this->importField($field);
@@ -83,7 +83,7 @@ class Controller_MVCGrid extends AbstractController {
 
         if($type=='text' && $field->allowHtml())$type='html';
 
-        if($field->display() && false){
+        if($field->display()){
             // this is wrong and obsolete, as hasOne uses display for way different purpose
 
             $tmp=$field->display();
