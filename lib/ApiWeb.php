@@ -120,13 +120,20 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ License checking function
+    /** This function will return type of the license used: agpl, single, multi */
     final function license(){
         return $this->_license;
     }
+    /** This function will return installation signature. It is used by add-ons
+        when communicating with agiletoolkit.org to detect tampering with license system. */
     final function license_checksum(){
         return $this->_license_checksum;
     }
     final function licenseCheck($product){
+        /* An average Agile Toolkit developer can earn cost of Agile Toolkit in less than
+            3 work hours. Your honest purchase is really necessary to keep Agile Toolkit
+            development alive. Please do not tamper with licensing mechanisms. Thank you!
+            */
         $id=$this->api->getConfig('license/'.$product.'/id',false);
         if(!$id)return false;
 
@@ -138,16 +145,14 @@ class ApiWeb extends ApiCLI {
             $data.='|'.$this->api->getConfig('license/'.$product.'/repo',false);
         }
 
-        // License checksum is required by several modules as they communicate with the main site.
-        // This checksum identifies your Agile Toolkit installation.
         $this->api->_license_checksum=md5($data);
-
         if(!function_exists('openssl_get_publickey'))return false;
 
-        $cert=$this->api->getConfig('license/'.$product.'/public',dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
+        $cert=$this->api->getConfig('license/'.$product.'/public',
+            dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
             DIRECTORY_SEPARATOR.'atk4.crt');
 
-        $signature=$this->api->getConfig('license/'.$product.'/signature',false);
+        $signature=$this->api->getConfig('license/'.$product.'/certificate',false);
         if(!$signature)return false;
 
         $cert=openssl_get_publickey(file_get_contents($cert));
@@ -163,7 +168,9 @@ class ApiWeb extends ApiCLI {
 
         return false;
     }
-    /** If version tag is defined in template, inserts current version of Agile Toolkit there. If newer verison is available, it will be reflected */
+    /** If version tag is defined in template, inserts current version of Agile Toolkit there.
+        When newer verison is available, it will be displayed. Override this with empty function
+        to disable. */
     function upgradeChecker(){
 
         try{
@@ -264,7 +271,7 @@ class ApiWeb extends ApiCLI {
         }catch(Exception $e){
             if(!($e instanceof Exception_StopInit))
                 return $this->caughtException($e);
-            $this->caughtException($e);
+            //$this->caughtException($e);
         }
 
         try{
