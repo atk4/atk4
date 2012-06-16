@@ -99,15 +99,6 @@ class Controller_MVCForm extends AbstractController {
             list($form_field->false_value,$junk)=each($field->listData);
         }elseif($field->listData()){
             $a=$field->listData();
-            if ($b=$field->emptyText()){
-                $a = array(null => $b) + $a;
-            }
-            /*if(!$field->mandatory()){
-                $a=array(null=>'')+$a;
-            }
-            This is already handled by Form/Field.php -- empty is added if empty_text is provided.
-                For radio we simply don't need extra empty field
-             */
             $form_field->setValueList($a);
         } else {
             if ($msg=$field->mandatory()){
@@ -119,6 +110,7 @@ class Controller_MVCForm extends AbstractController {
         if($field->theModel){
             $form_field->setModel($field->theModel);
         }
+        if($form_field instanceof Form_Field_ValueList)$form_field->setEmptyText($field->emptyText());
 
         return $form_field;
     }
