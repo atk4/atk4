@@ -15,6 +15,7 @@ class Field extends AbstractModel {
     public $searchable=false;
     public $mandatory=false;
     public $defaultValue=null;
+    public $emptyText="Please, select";
     public $auto_track_element=true;
     public $listData=null;
     public $theModel=null;  // 
@@ -70,6 +71,7 @@ class Field extends AbstractModel {
     function defaultValue($t=undefined){ return $this->setterGetter('defaultValue',$t); }
     function visible($t=undefined){ return $this->setterGetter('visible',$t); }
     function listData($t=undefined){ return $this->setterGetter('listData',$t); }
+    function emptyText($t=undefined){ return $this->setterGetter('emptyText',$t); }
     function setModel($t=undefined){ return $this->setterGetter('theModel',$t); }
     function getModel(){ return $this->theModel; }
     function setValueList($t){ return $this->listData($t); }
