@@ -147,6 +147,6 @@ class Controller_MVCForm extends AbstractController {
     }
     function update($form){
         $models=$this->getFields();
-        foreach($models as $model)$model->update();
+        foreach($models as $model)$model->save();
     }
 }

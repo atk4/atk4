@@ -53,8 +53,6 @@ class Model_Table extends Model {
 
     public $debug=false;
 
-    public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
-
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
@@ -121,31 +119,6 @@ class Model_Table extends Model {
     function debug(){
         $this->debug=true;
         if($this->dsql)$this->dsql->debug();
-        return $this;
-    }
-    /**
-     * Returs list of fields which belong to specific group. You can add fields into groups when you
-     * define them and it can be used by the front-end to determine which fields needs to be displayed.
-     * 
-     * If no group is specified, then all non-system fields are displayed for backwards compatibility.
-     */
-    function getActualFields($group=undefined){
-        if($group===undefined && $this->actual_fields)return $this->actual_fields;
-        $fields=array();
-        foreach($this->elements as $el)if($el instanceof Field){
-            if($el->hidden())continue;
-            if($group===undefined || $el->group()==$group ||
-                ($group=='visible' && $el->visible()) ||
-                ($group=='editable' && $el->editable())
-            ){
-                $fields[]=$el->short_name;
-            }
-        }
-        return $fields;
-    }
-    /** Default set of fields which will be included into further queries */
-    function setActualFields(array $fields){
-        $this->actual_fields=$fields;
         return $this;
     }
     /** Completes initialization of dsql() by adding fields and expressions. */

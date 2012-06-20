@@ -26,13 +26,29 @@ class Controller_Data_Array extends AbstractController {
         return $this;
     }
     function load($model,$id){
-        if($model->id_field){
+        if(@$model->id_field){
             return $this->loadBy($model,$model->id_field,$id);
         }
         $row=$model->table[$id];
         $model->data=$row;
         $model->dirty=array();
         $model->id=$id;
+        return $this;
+    }
+    function save($model){
+        if(is_null($model->id)){
+            end($model->table);
+            list($model->id)=each($model->table);
+            $model->id++;
+            $model->table[$model->id]=$model->data;
+        }else{
+            $model->table[$model->id]=$model->data;
+        }
+
+        return $this;
+    }
+    function delete($model,$id){
+        unset($model->table[$id]);
         return $this;
     }
     function rewind($model){

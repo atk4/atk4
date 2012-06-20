@@ -60,9 +60,9 @@ class View_CRUD extends View {
             $m=$this->form->getModel();
             if(($id=$_GET[$this->name])!='new' && $this->allow_edit){
 				if(!$this->allow_edit)throw $this->exception('Editing not allowed');
-                $m->loadData($id);
+                $m->load($id);
             }
-			if(!$m->isInstanceLoaded() && !$this->allow_add)throw $this->exception('Adding not allowed');
+			if(!$m->loaded() && !$this->allow_add)throw $this->exception('Adding not allowed');
 
             $this->form->onSubmit(array($this,'formSubmit'));
 
