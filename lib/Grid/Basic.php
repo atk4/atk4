@@ -172,6 +172,7 @@ class Grid_Basic extends CompleteLister {
             $this->applyTDParams($tmp);
             if($this->current_row[$tmp]=='')$this->current_row[$tmp]=' ';
         }
+        $this->hook('formatRow');
         return $this->current_row;
     }
     function renderRows(){

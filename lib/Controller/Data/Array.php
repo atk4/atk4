@@ -4,7 +4,6 @@ class Controller_Data_Array extends AbstractController {
     function init(){
         parent::init();
         $this->owner->addField('id')->type('int')->system(true);
-        $this->owner->addField('name');
         $this->owner->addMethod('getBy,loadBy',$this);
     }
     function getBy($model,$field,$value){

@@ -117,7 +117,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             throw $this->exception('Model field was not loaded')
             ->addMoreInfo('id',$this->id)
             ->addMoreinfo('field',$name);
-        if(!array_key_exists($name,$this->data)){
+        if(@!array_key_exists($name,$this->data)){
             return $this->getElement($name)->defaultValue();
         }
         return $this->data[$name];
@@ -224,7 +224,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->controller->rewind($this);
     }
     function next(){
-        return $this->controller->next($this);
+        $this->controller->next($this);
+        if($this->loaded())$this->hook('afterLoad');
+        return $this;
     }
     function current(){
         return $this->get();
