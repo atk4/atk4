@@ -77,9 +77,13 @@ class View_CRUD extends View {
         }
         return $this;
     }
-	function formSubmit($form){
-		$form->update();
-		$this->api->addHook('pre-render',array($this,'formSubmitSuccess'));
+    function formSubmit($form){
+        try {
+            $form->update();
+            $this->api->addHook('pre-render',array($this,'formSubmitSuccess'));
+        } catch (Exception_ValidityCheck $e){
+            $form->displayError($e->getField(), $e->getMessage());
+        }
 	}
 	function formSubmitSuccess(){
 		$this->form->js(null,$this->js()->trigger('reload'))->univ()->closeDialog()->execute();
