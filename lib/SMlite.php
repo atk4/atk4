@@ -179,6 +179,7 @@ class SMlite extends AbstractModel {
         $new=$this->add($class_name);
         try {
             $new->template=unserialize(serialize($this->tags[$tag][0]));
+            if(is_string($new->template))$new->template=array($new->template);
         }catch(PDOException $e){
             var_Dump($this->tags);
             throw $this->exception('PDO got stuck in template')
@@ -506,7 +507,7 @@ class SMlite extends AbstractModel {
     }
     function rebuildTagsRegion(&$branch){
         if(!isset($branch))throw new BaseException("Cannot rebuild tags, because template is empty");
-        if(!is_array($branch))throw $this->exception('blah');
+        if(!is_array($branch))throw $this->exception('System problem with SMLite. Incorrect use of branch');
         foreach($branch as $key=>$val){
             if(is_int($key))continue;
             list($real_key,$junk)=explode('#',$key);
