@@ -286,9 +286,13 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
+        if($field instanceof Field_Reference || $field instanceof Field_Expression){
+            $this->_dsql()->order($field->getExpr());
+            return $this;
+        }
 
         if($field->relation){
-            $this->_dsql()->order($field->relation->short_name.'.'.$field->short_name,$desc);
+            $this->_dsql()->order($field->relation->short_name.'.'.($field->actual_field?:$field->short_name),$desc);
         }elseif($this->relations){
             $this->_dsql()->order(($this->table_alias?:$this->table).'.'.$field->short_name,$desc);
         }else{
