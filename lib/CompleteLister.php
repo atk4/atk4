@@ -42,7 +42,7 @@ class CompleteLister extends Lister {
     protected $item_tag='row';
     protected $container_tag='rows';
 
-	protected $row_t;
+	public $row_t;
 
     /** Will contain accumulated totals for all fields */
 	public $totals=false;

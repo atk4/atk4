@@ -66,15 +66,63 @@ class Grid_Basic extends CompleteLister {
             return $this;
         }
 
+
         $subtypes=explode(',',$formatters);
         foreach($subtypes as $subtype){
-            if(!$this->hasMethod($m='init_'.$subtype)){
+            if(strpos($subtype,'/')){
+
+                if(!$this->elements[$subtype.' '.$name]){
+                // add-on functionality
+                    $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$subtype);
+                    $this->elements[$subtype.' '.$name]=$this->add($addon);
+                }
+
+                $addon = $this->getElement($subtype.'_'.$name);
+                $addon->initField($name,$descr);
+                return $addon;
+
+            }elseif(!$this->hasMethod($m='init_'.$subtype)){
                 if(!$this->hasMethod($m='format_'.$subtype)){
                     throw $this->exception('No such formatter')->addMoreInfo('formater',$subtype);
                 }
             }else $this->$m($name,$descr);
         }
 
+        return $this;
+    }
+    function addFormatter($field,$formatter){
+        /*
+         * add extra formatter to existing field
+         */
+        if(!isset($this->columns[$field])){
+            throw new BaseException('Cannot format nonexistant field '.$field);
+        }
+        $this->columns[$field]['type'].=','.$formatter;
+        if(strpos($formatter,'/')){
+
+            if(!$this->elements[$formatter.'_'.$field]){
+                // add-on functionality
+                $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$formatter);
+                $this->elements[$formatter.'_'.$field]=$this->add($addon,$formatter);
+            }
+
+            $addon = $this->getElement($formatter.'_'.$field);
+            $addon->initField($field,$this->columns[$field]['descr']);
+            return $addon;
+
+        }elseif(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        return $this;
+    }
+    function setFormatter($field,$formatter){
+        /*
+         * replace current formatter for field
+         */
+        if(!isset($this->columns[$field])){
+            throw new BaseException('Cannot format nonexistant field '.$field);
+        }
+        $this->columns[$field]['type']=$formatter;
+        if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        $this->last_column=$field;
         return $this;
     }
     function precacheTemplate(){
@@ -164,7 +212,9 @@ class Grid_Basic extends CompleteLister {
             $formatters = explode(',',$column['type']);
             foreach($formatters as $formatter){
                 if(!$formatter)continue;
-                if(method_exists($this,$m="format_".$formatter)){
+                if(strpos($formatter,'/')){
+                    $this->getElement($formatter.'_'.$tmp)->formatField($tmp,$column);
+                }elseif(method_exists($this,$m="format_".$formatter)){
                     $this->$m($tmp,$column);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }

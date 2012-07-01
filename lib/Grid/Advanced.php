@@ -310,12 +310,6 @@ class Grid_Advanced extends Grid_Basic {
         $class=$this->name.'_'.$field.'_expander';
         $this->js(true)->_selector('.'.$class)->_load('ui.atk4_expander')->atk4_expander();
     }
-    function _getFieldType($field){
-        return 'line';
-    }
-    function _inlineUpdate($field,$id,$value){
-        $this->dq->set($field,$value)->where($this->dq->args['table'].'.id',$id)->do_update();
-    }
     function format_inline($field, $idfield='id'){
         /**
          * Formats the InlineEdit: field that on click should substitute the text
@@ -324,32 +318,6 @@ class Grid_Advanced extends Grid_Basic {
          * The point is to set an Id for each column of the row. To do this, we should
          * set a property showing that id should be added in prerender
          */
-        $val=$this->current_row[$field];
-        $this->current_row_html[$field]='<span id="'.($s=$this->name.'_'.$field.'_inline_'.
-            $this->current_id).'" >'.
-            '<i style="float: left" class="atk-icon atk-icons-red atk-icon-office-pencil"></i>'.
-            $this->current_row[$field].
-            '</span>';
-        $this->js(true)->_selector('#'.$s)->click(
-                $this->js()->_enclose()->_selectorThis()->parent()->atk4_load($this->api->getDestinationURL(null,array($s=>true)))
-                );
-        if($_GET[$s]){
-            // clicked on link
-            $this->api->stickyGET($s);
-            $f=$this->owner->add('Form',$s,null,array('form_empty','form'));
-            $ff=$f->addField($this->_getFieldType($field),'e','');
-            $ff->set($val);
-            $ff->js('blur',$this->js()->atk4_grid('reloadRow',$this->current_id));
-            $ff->js(true)->css(array('width'=>'100%'));
-            $_GET['cut_object']=$f->name;
-
-            if($f->isSubmitted()){
-                $this->_inlineUpdate($field,$this->current_id,$f->get('e'));
-                $this->js()->atk4_grid('reloadRow',$this->current_id)->execute();
-            }
-
-            $f->recursiveRender();
-        }
     }
     function format_nl2br($field) {
         $this->current_row[$field] = nl2br($this->current_row[$field]);
@@ -685,29 +653,6 @@ class Grid_Advanced extends Grid_Basic {
             ->useArray($this->columns)
             ->move('selected','first')
             ->now();
-    }
-    function addFormatter($field,$formatter){
-        /*
-         * add extra formatter to existing field
-         */
-        if(!isset($this->columns[$field])){
-            throw new BaseException('Cannot format nonexistant field '.$field);
-        }
-        $this->columns[$field]['type'].=','.$formatter;
-        if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
-        return $this;
-    }
-    function setFormatter($field,$formatter){
-        /*
-         * replace current formatter for field
-         */
-        if(!isset($this->columns[$field])){
-            throw new BaseException('Cannot format nonexistant field '.$field);
-        }
-        $this->columns[$field]['type']=$formatter;
-        if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
-        $this->last_column=$field;
-        return $this;
     }
     /* to reuse td params */
     function getAllTDParams(){
