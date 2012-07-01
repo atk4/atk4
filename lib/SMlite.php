@@ -254,7 +254,8 @@ class SMlite extends AbstractModel {
             return $this;
         }
         if(!isset($this->tags[$tag]) || !is_array($this->tags[$tag])){
-            $this->fatal("Cannot append to tag $tag");
+            throw $this->exception("Cannot append to tag $tag")
+                ->addMoreInfo('by',$this->owner);
         }
         foreach($this->tags[$tag] as $key=>$_){
 
