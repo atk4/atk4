@@ -145,7 +145,6 @@ $.each({
 	},
 	reloadArgs: function(url,key,value){
 		var u=$.atk4.addArgument(url,key+'='+value);
-		console.log(url);
 		this.jquery.atk4_load(u);
 	},
 	reload: function(url,arg,fn){
@@ -478,6 +477,15 @@ numericField: function(){
 	this.jquery.bind('keyup change',function () {
 	var t= this.value.replace(/[^0-9\.-]/g,'');
 		if(t != this.value)this.value=t;
+	});
+},
+onKey: function(code,fx,modifier,modival){
+	this.jquery.bind('keydown',function(e){
+		if(e.which==code && (!modifier || e[modifier]==modival)){
+			e.preventDefault();
+			e.stopPropagation();
+			return fx();
+		}
 	});
 },
 disableEnter: function(){
