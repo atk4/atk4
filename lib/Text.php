@@ -43,7 +43,4 @@ class Text extends AbstractView {
     function render(){
         $this->output($this->html?:htmlentities($this->text));
     }
-    function initializeTemplate(){
-        $this->spot=$this->defaultSpot();
-    }
 }
