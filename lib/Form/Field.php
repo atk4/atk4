@@ -116,11 +116,21 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     function beforeField(){
+		if(!$this->template->hasTag('after_input')){
+			$el=$this->owner->add('HtmlElement');
+			$this->owner->add('Order')->move($el,'before',$this)->now();
+			return $el;
+		}
         if(!$this->button_prepend)return $this->button_prepend=$this
             ->add('HtmlElement',null,'before_input')->addClass('input-cell');
         return $this->button_prepend;
     }
     function afterField(){
+		if(!$this->template->hasTag('after_input')){
+			$el=$this->owner->add('HtmlElement');
+			$this->owner->add('Order')->move($el,'after',$this)->now();
+			return $el;
+		}
         if(!$this->button_append)return $this->button_append=$this
             ->add('HtmlElement',null,'after_input')->addClass('input-cell');
         return $this->button_append;
@@ -145,8 +155,12 @@ abstract class Form_Field extends AbstractView {
 		$this->attr[$property]=$value;
 		return $this;
 	}
-	function setClass($class){
+	function addClass($class){
 		$this->attr['class'].=' '.$class;
+		return $this;
+	}
+	function setClass($class){
+		$this->attr['class']=$class;
 		return $this;
 	}
 	function setAttr($property,$value='true'){
@@ -156,6 +170,7 @@ abstract class Form_Field extends AbstractView {
 		/* Adds a hint after this field. Thes will call Field_Hint->set()
 		   with same arguments you called this funciton.
 		 */
+		if(!$this->template->hasTag('after_field'))return $this;
 		$hint=$this->add('Form_Hint',null,'after_field');
 		call_user_func_array(array($hint,'set'), func_get_args());
 		return $this;
