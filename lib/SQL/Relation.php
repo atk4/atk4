@@ -98,6 +98,8 @@ class SQL_Relation extends AbstractModel {
     function beforeInsert($m,$q){
         // Insert related table data and add ID into the main query
         // TODO: handle cases when $this->m1 != $this->owner->table?:$this->owner->table_alias
+        if($this->delete_behaviour=='ignore')return;
+
         if($this->owner->hasElement($this->m2) && $this->owner->get($this->m2) !== null){
             return; // using existing element
         }
@@ -110,6 +112,8 @@ class SQL_Relation extends AbstractModel {
         $q->set($this->m2,$this->id);
     }
     function afterInsert($m,$id){
+        if($this->delete_behaviour=='ignore')return;
+
         $this->id=$this->dsql->set($this->f2,$this->relation?$this->relation->id?:$id:$id)->insert();
     }
     function beforeModify($m,$q){
@@ -139,7 +143,7 @@ class SQL_Relation extends AbstractModel {
                 $this->api->caughtException($e);
             }
         }elseif($this->delete_behaviour=='ignore'){
-            $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->update();
+            //$this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->update();
 
         }
     }
