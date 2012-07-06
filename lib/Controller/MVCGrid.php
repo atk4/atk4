@@ -95,7 +95,7 @@ class Controller_MVCGrid extends AbstractController {
     }
     function update($form){
         $this->getFields();
-        $htis->model->update();
+        $this->model->update();
         echo "update in $form";
     }
 }
