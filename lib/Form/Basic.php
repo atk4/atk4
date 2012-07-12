@@ -367,14 +367,14 @@ class Form_Basic extends View {
                 if($has_output)$this->js(null,$output)->execute();
             }
         }catch (BaseException $e){
-            if($e instanceof Exception_ForUser){
-                $this->js()->univ()->alert($e->getMessage())->execute();
-            }
             if($e instanceof Exception_ValidityCheck){
                 $f=$e->getField();
                 if($f && is_string($f) && $fld=$this->hasElement($f)){
                     $fld->displayFieldError($e->getMessage());
                 } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+            }
+            if($e instanceof Exception_ForUser){
+                $this->js()->univ()->alert($e->getMessage())->execute();
             }
             throw $e;
         }
