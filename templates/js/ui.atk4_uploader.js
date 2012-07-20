@@ -181,6 +181,7 @@ $.widget("ui.atk4_uploader", {
 			tb.find('[rel='+id+']').remove();
 		});
 		self.updateToken();
+		this.element.trigger('file_remove');
 		this.element.show();
 	},
 	updateToken: function(){
@@ -198,6 +199,7 @@ $.widget("ui.atk4_uploader", {
 			return;
 		}
 		$('#'+this.name+'_progress').remove();
+        this.element.data(data);
 		this.element.trigger('upload');
 		this.element.attr('disabled',false);
 		this.addFiles([data]);
