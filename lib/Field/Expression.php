@@ -40,7 +40,12 @@ class Field_Expression extends Field {
         return $this;
     }
     function getExpr(){
-        return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
+        if(is_callable($this->expr))
+            return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
+        
+        if($this->expr instanceof DB_dsql)return $this->expr;
+
+        return $this->owner->dsql()->expr($this->expr);
     }
     function updateSelectQuery($select){
         $expr=$this->expr;

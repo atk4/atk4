@@ -961,23 +961,27 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->debug=1;
         return $this;
     }
+    function getDebugQuery($r=null){
+        if(!$r)$r=$this->_render();
+        $d=$r;
+        $pp=array();
+        $d=preg_replace('/`([^`]*)`/','`<font color="black">\1</font>`',$d);
+        foreach(array_reverse($this->params) as $key=>$val){
+            if(is_string($val))$d=preg_replace('/'.$key.'([^_]|$)/','"<font color="green">'.htmlspecialchars(addslashes($val)).'</font>"\1',$d);
+            elseif(is_null($val))$d=preg_replace('/'.$key.'([^_]|$)/','<font color="black">NULL</font>\1',$d);
+            elseif(is_numeric($val))$d=preg_replace('/'.$key.'([^_]|$)/','<font color="red">'.$val.'</font>\1',$d);
+            else$d=preg_replace('/'.$key.'([^_]|$)/',$val.'\1',$d);
+
+            $pp[]=$key;
+        }
+        return "<font color='blue'>".$d."</font> <font color='gray'>[".join(', ',$pp)."]</font><br/>";
+    }
     /** Converts query into string format. This will contain parametric references */
     function render(){
         $this->params=$this->extra_params;
         $r=$this->_render();
         if($this->debug){
-            $d=$r;
-            $pp=array();
-            $d=preg_replace('/`([^`]*)`/','`<font color="black">\1</font>`',$d);
-            foreach(array_reverse($this->params) as $key=>$val){
-                if(is_string($val))$d=preg_replace('/'.$key.'([^_]|$)/','"<font color="green">'.htmlspecialchars(addslashes($val)).'</font>"\1',$d);
-                elseif(is_null($val))$d=preg_replace('/'.$key.'([^_]|$)/','<font color="black">NULL</font>\1',$d);
-                elseif(is_numeric($val))$d=preg_replace('/'.$key.'([^_]|$)/','<font color="red">'.$val.'</font>\1',$d);
-                else$d=preg_replace('/'.$key.'([^_]|$)/',$val.'\1',$d);
-
-                $pp[]=$key;
-            }
-            echo "<font color='blue'>".$d."</font> <font color='gray'>[".join(', ',$pp)."]</font><br/>";
+            echo $this->getDebugQuery($r);
         }
         return $r;
     }
