@@ -5,15 +5,28 @@ class SQL_Many extends AbstractModel {
     public $orig_conditions=null;
     public $our_field=null;
     public $auto_track_element=true;
-    function set($model,$their_field=null,$our_field=null){
+    public $relation=null;
+    function set($model,$their_field=null,$our_field=null,$relation=null){
 
         $this->model_name=is_string($model)?$model:get_class($model);
         $this->model_name=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model_name);
+
+        if($relation){
+            $this->relation=$relation;
+            $this->our_field=$our_field;
+            $this->their_field=$their_field;
+            return $this;
+        }
 
         $this->their_field=$their_field?:$this->owner->table.'_id';
 
         $this->our_field=$our_field?:$this->owner->id_field;
 
+        return $this;
+    }
+    function from($m){
+        if($m===undefined)return $this->relation;
+        $this->relation=$m;
         return $this;
     }
     function saveConditions(){

@@ -84,10 +84,12 @@ class LoremIpsum extends AbstractView {
 		return $this;
 	}
 	function render(){
+        $this->output('<div id="'.$this->name.'">');
 		for($x=0;$x<$this->paragraphs;$x++){
-			$this->output('<p id="'.$this->name.'">');
+			$this->output('<p>');
 			$this->output($this->create_greeking($this->words));
 			$this->output('</p>');
 		}
+        $this->output('</div>');
 	}
 }
