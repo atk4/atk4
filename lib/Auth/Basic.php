@@ -66,6 +66,10 @@ class Auth_Basic extends AbstractController {
     function allow($user,$pass=null){
         // creates fictional model to allow specified user and password
         // TODO: test this
+        if($this->model){
+            $this->model->table[]=array('email'=>$user,'password'=>$pass);
+            return $this;
+        }
         $m=$this->add('Model')
             ->setSource('Array',array(is_array($user)?$user:array('email'=>$user,'password'=>$pass)));
         $m->id_field='email';
@@ -356,7 +360,14 @@ class Auth_Basic extends AbstractController {
      * add template/default/page/login.html */
 	function createForm($page){
 		$form=$page->add('Form');
-		$form->addField('Line','username','E-mail');
+
+        $email=$this->model->hasField($this->login_field);
+        $email=$email?$email->caption:'E-mail';
+
+        $password=$this->model->hasField($this->password_field);
+        $password=$password?$password->caption:'Password';
+
+		$form->addField('Line','username',$email);
 		$form->addField('Password','password','Password');
 		$form->addSubmit('Login');
 

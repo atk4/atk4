@@ -33,6 +33,8 @@ class Paginator_Basic extends CompleteLister {
                 $this->setSource($this->owner->dq);
             }
         }
+        parent::setSource(array());
+        return;
         if(!isset($this->source))
             throw $this->exception('Unable to find source for Paginator');
 
@@ -40,8 +42,8 @@ class Paginator_Basic extends CompleteLister {
 
             // Set the limit first, then execute
             $this->source->limit($this->ipp,$this->skip);
-            if(!$this->source->stmt)$this->source->execute();       // execute early but not fetch
-            $this->found_rows=$this->source->foundRows();
+//            if(!$this->source->stmt)$this->source->execute();       // execute early but not fetch
+ //           $this->found_rows=$this->source->foundRows();
             $this->cur_page=floor($this->skip / $this->ipp) +1;
             $this->total_pages = ceil($this->found_rows / $this->ipp);
 
