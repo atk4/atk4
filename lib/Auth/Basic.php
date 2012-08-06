@@ -368,7 +368,7 @@ class Auth_Basic extends AbstractController {
         $password=$password?$password->caption:'Password';
 
 		$form->addField('Line','username',$email);
-		$form->addField('Password','password','Password');
+		$form->addField('Password','password',$password);
 		$form->addSubmit('Login');
 
         return $form;
