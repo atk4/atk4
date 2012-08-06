@@ -169,7 +169,7 @@ class Auth_Basic extends AbstractController {
 	}
     /** Manually encrypt password */
 	function encryptPassword($password,$salt=null){
-        if(is_callable($this->password_encryption)){
+        if(!is_string($this->password_encryption) && is_callable($this->password_encryption)){
             $e=$this->password_encryption;
             return $e($password,$salt);
         }
