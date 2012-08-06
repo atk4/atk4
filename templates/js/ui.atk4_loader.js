@@ -64,8 +64,6 @@ $.widget('ui.atk4_loader', {
 		this.options.debug=true;
 		this.options.anchoring=true;
 		*/
-		console.log(this.element[0]);
-
 		this.element.addClass('atk4_loader');
 
 		if(this.options.url){
@@ -90,11 +88,6 @@ $.widget('ui.atk4_loader', {
 			$('<a/>').attr('title','Attempt to remove').attr('href','javascript: void(0)').text('Remove')
 				.click(function(){ self.remove()}).appendTo(d);
 			d.append(' ');
-			$('<a/>').attr('title','Successful close').attr('href','javascript: void(0)').text('OK')
-				.click(function(){ self.successClose()}).appendTo(d);
-			d.append(' ');
-			$('<a/>').attr('title','Canceled close').attr('href','javascript: void(0)').text('Cancel')
-				.click(function(){ self.cancelClose()}).appendTo(d);
 
 			d.insertBefore(self.element);
 			d.draggable();
@@ -173,8 +166,8 @@ $.widget('ui.atk4_loader', {
 			var n=source.children();
 
 			var oldid=el.attr('id');
-			el.removeAttr('id');
 			if(n.length==1 && (reload || (n.attr('id') && n.attr('id')==oldid))){
+				el.removeAttr('id');
 				// Only one child have been returned to us. We also checked ID's and they match
 				// with existing element. In this case we will be copying contents of
 				// provided element
@@ -248,12 +241,6 @@ $.widget('ui.atk4_loader', {
 		}
 		self.element.find('.form_changed').removeClass('form_changed');
 		return true;
-	},
-	successClose: function(){
-		console.log('successClose');
-	},
-	cancelClose: function(){
-		console.log('cancelClose');
 	},
 	setURL: function(url){
 		var self=this;

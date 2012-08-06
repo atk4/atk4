@@ -86,6 +86,9 @@ class Order extends AbstractController {
 
 					if($where=='after')$this->array=array_reverse($this->array);
 					break;
+                case 'middle':
+                    array_splice($this->array,floor(count($this->array)/2),0,array($name=>$v));
+                    break;
 
 
 			}
@@ -93,5 +96,10 @@ class Order extends AbstractController {
 	}
 	function onHook($object,$hook){
 		$object->addHook($hook,array($this,'now'));
+        return $this;
 	}
+    function later(){
+        $this->api->addHook('pre-render',array($this,'now'));
+        return $this;
+    }
 }

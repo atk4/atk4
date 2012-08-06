@@ -133,6 +133,20 @@ $.widget("ui.atk4_uploader", {
 				var url=act+'&view=true&'+self.element.attr('name')+'_save_action='+ $(this).closest('div').attr('rel');
 				$('.atk4_richtext').atk4_richtext('append','<img src="'+url+'"/>');
 			})
+			tpl.find('.add_image_elrte').click(function(ev){
+				ev.preventDefault();
+				var url='/img/' + $(this).closest('div').attr('rel');
+				$('.elrte_editor').elrte()[0].elrte.selection.insertText('<img src="'+url+'"/>');
+			})
+			tpl.find('.thumbnail').each(function(){
+                $(this).attr('src',row['thumb32']);
+                /*
+                act+'&view=true&'+
+					self.element.attr('name')+'_save_action='+
+					$(this).closest('div').attr('rel') 
+				);
+                */
+			})
 			tpl.find('.image_preview').each(function(){
 				$(this).attr('src',act+'&view=true&'+
 					self.element.attr('name')+'_save_action='+
@@ -167,6 +181,7 @@ $.widget("ui.atk4_uploader", {
 			tb.find('[rel='+id+']').remove();
 		});
 		self.updateToken();
+		this.element.trigger('file_remove');
 		this.element.show();
 	},
 	updateToken: function(){
@@ -184,6 +199,7 @@ $.widget("ui.atk4_uploader", {
 			return;
 		}
 		$('#'+this.name+'_progress').remove();
+        this.element.data(data);
 		this.element.trigger('upload');
 		this.element.attr('disabled',false);
 		this.addFiles([data]);

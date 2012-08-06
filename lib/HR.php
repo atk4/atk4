@@ -22,4 +22,4 @@
  http://agiletoolkit.org/commercial
 
  *****************************************************ATK4**/
-class HR extends HtmlElement { function init(){ parent::init(); $this->setElement('div')->addClass('hr')->set(''); } }
+class HR extends HtmlElement { function init(){ parent::init(); $this->addClass('hr')->set(''); } }

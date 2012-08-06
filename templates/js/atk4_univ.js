@@ -38,7 +38,9 @@ $.each({
 		document.location=url;
 	},
 	page: function(page,fn){
-		$('#Content').atk4_load(page,fn);
+        $c=$('#Content');
+        if(!$c.length)$c=this.jquery;
+        $c.atk4_load(page,fn);
 	},
 	log: function(arg1){
 		if(console)console.log(arg1);
@@ -143,7 +145,6 @@ $.each({
 	},
 	reloadArgs: function(url,key,value){
 		var u=$.atk4.addArgument(url,key+'='+value);
-		console.log(url);
 		this.jquery.atk4_load(u);
 	},
 	reload: function(url,arg,fn){
@@ -270,7 +271,7 @@ dialogBox: function(options){
 		bgiframe: true,
 		modal: true,
 		width: 1000,
-		position: 'top',
+		position: { my:'top',at:'top','of':window,offset:'50' },
 		autoOpen:false,
 		beforeclose: function(){
 			if($(this).is('.atk4_loader')){
@@ -358,39 +359,22 @@ message: function(msg,icon){
 successMessage: function(msg){
 	var html="";
 
-	if($.ui.atk4_notify && $('.atk-growl-holder').length){
-		$('.atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
 		return;
 	}
 
-	if(!$('.atk-growl-holder').length)return alert(msg);
-	html = '<p class="growl">'+msg
-		+'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="growl_close"></a></p>';
+	return alert(msg);
+},
+errorMessage: function(msg){
+	var html="";
 
-	var growl=$(html).prependTo('#atk-growl-holder');
-	growl.find('.growl_close').click(function(){
-			growl.fadeOut(500,function(){ growl.remove(); });
-	});
+	if($.ui.atk4_notify && $('#atk-growl-holder').length){
+		$('#atk-growl-holder').atk4_notify().atk4_notify('errorMessage',msg);
+		return;
+	}
 
-	growl.slideDown(200)
-	   	.animate({opacity: 1.0},4000) // few seconds to show message
-   		.fadeOut(500,function() {
-				growl.remove();
-				});
-
-	growl.mouseover(function(){
-			$(this).stop(true);
-			$(this).find(".growl_close").css("display","block");
-			});
-	growl.mouseout(function(){
-			$(this).animate({opacity: 1.0},4000) // few seconds to show message
-			.fadeOut(500,function() {
-				growl.remove();
-				});
-			$(this).find(".growl_close").css("display","none");
-			});
-
-	//this.dialogAttention(text);
+	return alert(msg);
 },
 fillFormFromFrame: function(options){
 	/*
@@ -493,6 +477,15 @@ numericField: function(){
 	this.jquery.bind('keyup change',function () {
 	var t= this.value.replace(/[^0-9\.-]/g,'');
 		if(t != this.value)this.value=t;
+	});
+},
+onKey: function(code,fx,modifier,modival){
+	this.jquery.bind('keydown',function(e){
+		if(e.which==code && (!modifier || e[modifier]==modival)){
+			e.preventDefault();
+			e.stopPropagation();
+			return fx();
+		}
 	});
 },
 disableEnter: function(){

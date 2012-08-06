@@ -1,0 +1,13 @@
+                    <?paginator?>
+                    <?link?><a href="<?$link_url?>"><?link_text?><?prev?>&lt;&lt;<?/prev?><?/link_text?></a><?/?>
+                    <?cur_item?><strong><?$item?></strong> (<?$total_items?> total)<?/cur_item?> <?separator?> | <?/?>
+                    2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 
+                    <?next?>&gt;&gt;<?/next?>
+                    <?/paginator?>
+
+                    <?ajax_paginator?>
+                    <?link?><a href="javascript:void('<?$region?>');" onclick="return $('#<?$region?>').atk4_load('<?$link_url?>&cut_region=<?$region?>&cut_object=<?$object?>')"><?link_text?><?prev?>&lt;&lt;<?/prev?><?/link_text?></a><?/?>
+                    <?cur_item?><strong><?$item?></strong> (<?$total_items?> total)<?/cur_item?> <?separator?> | <?/?>
+                    2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 
+                    <?next?>&gt;&gt;<?/next?>
+                    <?/ajax_paginator?>

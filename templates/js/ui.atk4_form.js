@@ -193,7 +193,7 @@ $.widget("ui.atk4_form", {
 		if(!notrigger)f.trigger('reload_field');
 
 		//if(f.hasClass('field_reference')){
-			var f2=f.closest('.form_field');
+			var f2=f.closest('.atk-form-field');
 			//f.remove();
 			f=f2;
 
@@ -232,10 +232,10 @@ $.widget("ui.atk4_form", {
 		field.closest('form').find('.field_error').remove();
 
 		// highlight field
-		var field_highlight=field.closest('.atk-field').addClass('field_has_error');
+		var field_highlight=field.closest('.atk-form-row').addClass('has-error').find('.atk-form-field');
 
 		// Clear previous errors
-		field_highlight.find('.atk-form-error').remove();
+		field_highlight.children('.atk-form-error').remove();
 
 		if(!this.template['field_error'].length){
 			// no template, use alert;
@@ -259,7 +259,7 @@ $.widget("ui.atk4_form", {
 			 error+'</div></dd>').insertAfter(field_highlight);
 		*/
 
-		error_bl.click(function(){ field_highlight.removeClass('field_has_error'); error_bl.remove(); });
+		error_bl.click(function(){ $(this).closest('.has-error').removeClass('has-error'); error_bl.remove(); });
 
 		var self=this;
 
@@ -269,21 +269,20 @@ $.widget("ui.atk4_form", {
 			t.unbind('change.errorhide');
 
 			self.form.removeClass('form_has_error');
-			field_highlight.removeClass('field_has_error');
+			field_highlight.closest('.has-error').removeClass('has-error');
 			error_bl.fadeOut(function(){ error_bl.remove(); });
 		});
 	},
 	clearError: function(field){
 		if(field){
-			field=field.closest('.field_has_error');
+			field=field.closest('.has-error');
 		}else{
-			field=this.form.find('.field_has_error');
+			field=this.form.find('.has-error');
 		}
+		field.find('.atk-form-error').remove();
+		field.removeClass('has-error');
 
-		field.nextAll('.atk-error').fadeOut(function(){ $(this).remove(); });
-		field.removeClass('field_has_error');
-
-		if(!this.form.find('.field_has_error').length)this.form.removeClass('form_has_error');
+		//if(!this.form.find('.field_has_error').length)this.form.removeClass('form_has_error');
 	},
 	submitForm: function(btn){
 		var params={}, form=this;

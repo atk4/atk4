@@ -10,7 +10,7 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
@@ -19,15 +19,15 @@ class ApiWeb extends ApiCLI {
 
     /** Cleaned up name of the currently requested page */
     public $page=null;
-    
-    /** ?? */
-    protected $page_base=null;
 
-    /* @obsolete - page where user is redirected after log-in */
+    /* Root page where URL will send when ('/') is encountered @todo: make this work properly */
     public $index_page='index';
-
+    
     /** recorded time when execution has started */
     public $start_time=null;
+
+    private $_license_checksum=null;
+    private $_license='unlicensed'; 
 
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
@@ -52,10 +52,15 @@ class ApiWeb extends ApiCLI {
 
         // find out which page is to display
         //$this->calculatePageName();
-        $this->add('PageManager');
+        $this->pm=$this->add('PageManager');
+
+        // Verify Licensing
+        $this->licenseCheck('atk4');
 
         // send headers, no caching
         $this->sendHeaders();
+
+        $this->cleanMagicQuotes();
 
         parent::init();
 
@@ -66,6 +71,27 @@ class ApiWeb extends ApiCLI {
 
         if(get_class($this)=='ApiWeb'){
             $this->setConfig(array('url_postfix'=>'.php','url_prefix'=>''));
+        }
+    }
+    /** Magic Quotes were a design error. Let's strip them if they are enabled */
+    function cleanMagicQuotes(){
+
+        function stripslashes_array(&$array, $iterations=0) {
+            if ($iterations < 3){
+                foreach ($array as $key => $value){
+                    if (is_array($value)){
+                        stripslashes_array($array[$key], $iterations + 1);
+                    } else {
+                        $array[$key] = stripslashes($array[$key]);
+                    }
+                }
+            }
+        }
+
+        if (get_magic_quotes_gpc()){
+            stripslashes_array($_GET);
+            stripslashes_array($_POST);
+            stripslashes_array($_COOKIE);
         }
     }
     /** Sends default headers. Re-define to send your own headers */
@@ -91,12 +117,68 @@ class ApiWeb extends ApiCLI {
     function _showExecutionTimeJS(){
         echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
     }
-    /** If version tag is defined in template, inserts current version of Agile Toolkit there. If newer verison is available, it will be reflected */
-    function upgradeChecker(){
-        // Checks for ATK upgrades and shows current version
-        if($this->template && $this->template->is_set('version')){
-            $this->add('UpgradeChecker',null,'version');
+    // }}}
+
+    // {{{ License checking function
+    /** This function will return type of the license used: agpl, single, multi */
+    final function license(){
+        return $this->_license;
+    }
+    /** This function will return installation signature. It is used by add-ons
+        when communicating with agiletoolkit.org to detect tampering with license system. */
+    final function license_checksum(){
+        return $this->_license_checksum;
+    }
+    final function licenseCheck($product){
+        /* An average Agile Toolkit developer can earn cost of Agile Toolkit in less than
+            3 work hours. Your honest purchase is really necessary to keep Agile Toolkit
+            development alive. Please do not tamper with licensing mechanisms. Thank you!
+            */
+        $id=$this->api->getConfig('license/'.$product.'/id',false);
+        if(!$id)return false;
+
+        $type=$this->api->getConfig('license/'.$product.'/type',false);
+
+        $data=$_SERVER['HTTP_HOST'].'|'.$id.'|'.$type;
+
+        if($type=='agpl'){
+            $data.='|'.$this->api->getConfig('license/'.$product.'/repo',false);
         }
+
+        $this->api->_license_checksum=md5($data);
+        if(!function_exists('openssl_get_publickey'))return false;
+
+        $cert=$this->api->getConfig('license/'.$product.'/public',
+            dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
+            DIRECTORY_SEPARATOR.'atk4.crt');
+
+        $signature=$this->api->getConfig('license/'.$product.'/certificate',false);
+        if(!$signature)return false;
+
+        $cert=openssl_get_publickey(file_get_contents($cert));
+        if(!$cert)return false;
+
+        $result = openssl_verify($data,base64_decode($signature),$cert);
+        openssl_free_key($cert);
+
+        if($result==1 && $product=='atk4'){
+            $this->_license=$type;
+            return true;   // certificate matched
+        }
+
+        return false;
+    }
+    /** If version tag is defined in template, inserts current version of Agile Toolkit there.
+        When newer verison is available, it will be displayed. Override this with empty function
+        to disable. */
+    function upgradeChecker(){
+
+        try{
+            if($this->template && $this->template->is_set('version')){
+                $this->add('licensor/UpgradeChecker',null,'version');
+            }
+        }catch(PathFinder_Exception $e){}
+
     }
     // }}}
 
@@ -133,7 +215,7 @@ class ApiWeb extends ApiCLI {
         /* Attempts to re-initialize session. If session is not found,
            new one will be created, unless $create is set to false. Avoiding
            session creation and placing cookies is to enhance user privacy. 
-           Call to memorize() / recall() will automatically create session */
+        Call to memorize() / recall() will automatically create session */
 
         if($this->_is_session_initialized)return;
 
@@ -152,19 +234,19 @@ class ApiWeb extends ApiCLI {
         if($create==false && !isset($_COOKIE[$this->name]))return;
         $this->_is_session_initialized=true;
         session_set_cookie_params(
-                $params['lifetime'],
-                $params['path'],
-                $params['domain'],
-                $params['secure'],
-                $params['httponly']
-                );
+            $params['lifetime'],
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
         session_name($this->name);
         session_start();
     }
     // }}}
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
-    protected $sticky_get_arguments = array();
+    public $sticky_get_arguments = array();
     /** Make current get argument with specified name automatically appended to all generated URLs */
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
@@ -180,7 +262,6 @@ class ApiWeb extends ApiCLI {
 
     // }}}
 
-
     // {{{ Very Important Methods
     /** Call this method from your index file. It is the main method of Agile Toolkit */
     function main(){
@@ -190,6 +271,7 @@ class ApiWeb extends ApiCLI {
         }catch(Exception $e){
             if(!($e instanceof Exception_StopInit))
                 return $this->caughtException($e);
+            //$this->caughtException($e);
         }
 
         try{
@@ -198,7 +280,7 @@ class ApiWeb extends ApiCLI {
             $this->hook('pre-exec');
 
             if(isset($_GET['submit']) && $_POST){
-                $this->downCall('submitted');
+                $this->hook('submitted');
             }
 
             $this->hook('post-submit');
@@ -243,14 +325,14 @@ class ApiWeb extends ApiCLI {
 
         $this->hook('pre-render-output');
         if(headers_sent($file,$line)){
-            echo "<br/>Direct output (echo or print) ditected on $file:$line. <a target='_blank' "
+            echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
                 ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
         }
         echo $this->template->render();
         $this->hook('post-render-output');
     }
     // }}}
-    
+
     // {{{ Miscelanious Functions
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
@@ -258,14 +340,16 @@ class ApiWeb extends ApiCLI {
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */
-        header("Location: ".$this->getDestinationURL($page,$args)->__toString());
+        $url=$this->url($page,$args);
+		if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect($url)->execute();
+        header("Location: ".$url);
         exit;
     }
     /** Called on all templates in the system, populates some system-wide tags */
     function setTags($t){
         // absolute path to base location
         $t->trySet('atk_path',$q=
-                $this->api->pathfinder->atk_location->getURL().'/');
+            $this->api->pathfinder->atk_location->getURL().'/');
         $t->trySet('base_path',$q=$this->api->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
@@ -278,15 +362,6 @@ class ApiWeb extends ApiCLI {
     function isAjaxOutput(){
         // TODO: rename into isJSOutput();
         return isset($_POST['ajax_submit']);
-    }
-    /** @obsolete Change index page, typically used after login */
-    function setIndexPage($page){
-        $this->index_page=$page;
-        return $this;
-    }
-    /** @obsolete */
-    function getIndexPage(){
-        return $this->index_page;
     }
     /** @private */
     function _locateTemplate($path){
@@ -309,8 +384,6 @@ class ApiWeb extends ApiCLI {
     function initLayout(){
         if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
         $this->layout_initialized=true;
-        $this->addLayout('Content');
-        $this->upgradeChecker();
     }
     /** Register new layout, which, if has method and tag in the template, will be rendered */
     function addLayout($name){
@@ -342,4 +415,5 @@ class ApiWeb extends ApiCLI {
     function defaultTemplate(){
         return array('shared');
     }
+    // }}} 
 }

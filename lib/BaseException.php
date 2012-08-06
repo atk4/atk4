@@ -12,7 +12,7 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
@@ -29,7 +29,8 @@ class BaseException extends Exception {
     public $owner=null;
     public $api=null;
 
-    public $more_info;
+    public $more_info=array();
+    public $actions;
     function init(){
     }
     function __construct($msg,$func=null,$shift=1,$code=0){
@@ -60,8 +61,19 @@ class BaseException extends Exception {
         }
         $this->my_backtrace = debug_backtrace();
     }
+    /** Call this to add additional information to the exception you are about to throw */
     function addMoreInfo($key,$value){
         $this->more_info[$key]=$value;
+        return $this;
+    }
+    /** Add reference to the object. Do not call this directly, exception() method takes care of that */
+    function addThis($t){
+        return $this->addMoreInfo('Raised by object',$t);
+    }
+    /** Actions will be displayed as links on the exception page allowing viewer to perform additional debug
+     * functions. addAction('show info',array('info'=>true)) will result in link to &info=1  */
+    function addAction($key,$descr){
+        $this->actions[$key]=$descr;
         return $this;
     }
     function getMyTrace(){
@@ -73,6 +85,7 @@ class BaseException extends Exception {
     function getMyFile(){ return $this->my_backtrace[$this->shift]['file']; }
     function getMyLine(){ return $this->my_backtrace[$this->shift]['line']; }
 
+    /** Returns HTML representation of the exceptoin */
     function getHTML($message=null){
         $html='';
         $html.= '<h2>'.get_class($this).(isset($message)?': '.$message:'').'</h2>';
@@ -82,6 +95,18 @@ class BaseException extends Exception {
         $html.= backtrace($this->shift+1,$this->getMyTrace());
         return $html;
     }
+    /** Returns Textual representaiton of the exception */
+    function getText(){
+        $text='';$args=array();
+        foreach($this->more_info as $key=>$value){
+            $args[]=$key.'='.$value;
+        }
+
+        $text.= get_class($this).': '.$this->getMessage().' ('.join(', ',$args).')';
+        $text.= ' in '.$this->getMyFile() . ':' . $this->getMyLine();
+        return $text;
+    }
+    /** Redefine this function to add additional HTML output */
     function getDetailedHTML(){
         return '';
     }

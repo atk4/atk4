@@ -43,7 +43,7 @@ class URL extends AbstractModel {
         $this->addStickyArguments();
         $this->extension=$this->api->getConfig('url_postfix',$this->extension);
     }
-    /* [private] add arguments set as sticky through API */
+    /** [private] add arguments set as sticky through API */
     function addStickyArguments(){
         $sticky=$this->api->getStickyArguments();
         $args=array();
@@ -64,7 +64,7 @@ class URL extends AbstractModel {
         }
         $this->setArguments($args);
     }
-    /* Call this if you want full URL, not relative */
+    /** Call this if you want full URL, not relative */
     function useAbsoluteURL(){
         /*
            Produced URL will contain absolute, rather than relative address:
@@ -73,7 +73,7 @@ http://mysite:123/install/dir/my/page.html
         $this->absolute=true;
         return $this;
     }
-    /* [private] automatically called with 1st argument of getDestinationURL() */
+    /** [private] automatically called with 1st argument of getDestinationURL() */
     function setPage($page=null){
         // The following argument formats are supported:
         //
@@ -84,8 +84,13 @@ http://mysite:123/install/dir/my/page.html
         // '..' = parent page
         // '../page' = page besides our own (foo/bar -> foo/page)
         // 'index' = properly points to the index page defined in API
+        // '/admin/' = will not be converted
 
         $destination='';
+
+        if(substr($page,strlen($page)-1)=='/'){
+            return $this->setBaseURL(str_replace('//','/',$this->api->pm->base_path.$page));
+        }
         if(is_null($page))$page='.';
         $path=explode('/',$page);
 
@@ -105,7 +110,7 @@ http://mysite:123/install/dir/my/page.html
                 continue;
             }
 
-            if($component=='index' && $destination=''){
+            if($component=='index' && $destination==''){
                 $destination=$this->api->index_page;
                 continue;
             }
@@ -119,12 +124,17 @@ http://mysite:123/install/dir/my/page.html
         $this->page=$destination;
         return $this;
     }
-    /* Set additional arguments */
+    /** Set additional arguments */
     function set($argument,$value=null){
         if(!is_array($argument))$argument=array($argument=>$value);
         return $this->setArguments($argument);
     }
-    /* Set arguments to specified array */
+    /** Get value of an argument */
+    function get($argument){
+        return $this->arguments[$argument];
+    }
+
+    /** Set arguments to specified array */
     function setArguments($arguments=array()){
         // add additional arguments
         if(is_null($arguments))$arguments=array();
@@ -143,7 +153,7 @@ http://mysite:123/install/dir/my/page.html
 	function setURL($url){
 		return $this->setBaseURL($url);
 	}
-    /* By default uses detected base_url, but you can use this to redefine */
+    /** By default uses detected base_url, but you can use this to redefine */
     function setBaseURL($base){
         $this->base_url=$base;
         return $this;
@@ -157,9 +167,6 @@ http://mysite:123/install/dir/my/page.html
 
         // add base path
         $url.=$this->api->pm->base_path;
-
-        // add prefix if defined in config
-        $url.=$this->api->getConfig('url_prefix','');
 
         return $url;
     }
@@ -182,15 +189,20 @@ http://mysite:123/install/dir/my/page.html
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
 
         $url=$this->getBaseURL();
-        $url.=$this->page;
-        $url.=$this->getExtension();
+        if($this->page && $this->page!='index'){
+            // add prefix if defined in config
+            $url.=$this->api->getConfig('url_prefix','');
+
+            $url.=$this->page;
+            $url.=$this->getExtension();
+        }
 
 
 		$url.=$this->getArguments($url);
 
         return $url;
     }
-    /* Returns html-encoded URL */
+    /** Returns html-encoded URL */
     function getHTMLURL(){
         return htmlentities($this->getURL());
     }

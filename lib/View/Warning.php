@@ -23,5 +23,9 @@
 
  *****************************************************ATK4**/
 class View_Warning extends View_Box {
-    public $class="alert";
+    public $class="ui-state-highlight";
+    function init(){
+        parent::init();
+        $this->template->trySetHTML('Icon','<i class="ui-icon ui-icon-alert"></i>');    // change default icon
+    }
 }

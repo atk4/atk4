@@ -250,21 +250,57 @@ class Logger extends AbstractController {
 		}
 		return array();
 	}
-	function caughtException($e){
-		$e->shift-=1;
-		if($this->log_output){
-			//$frame=$this->findFrame('warning',$shift);
-
+    public $recskip=array();
+    function showRenderTree($e,$obj){
+        if(in_array($obj->name,$this->recskip)){
+            echo '..recursion('.$obj.')';
+            return;
+        };
+        $this->recskip[]=$obj;
+        if($e->owner==$obj || $e->owner->owner == $obj || $e->owner->owner->owner == $obj){
+            echo '<font color="red">'.$obj->__toString()."</font>";
+        }else echo $obj->__toString();
+        if($obj->elements){
+            echo '<ul>';
+            foreach($obj->elements as $name=>$object){
+                echo '<li>'.$name.': ';
+                $this->showRenderTree($e,$object);
+                echo '</li>';
+            }
+            echo '</ul>';
+        }
+    }
+    function logCaughtException($e){
 			if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
 			else $trace=$e->getTrace();
 
 			$frame=$e->my_backtrace[$e->shift];
 			$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
+            if(method_exists($e,'getAdditionalMessage'))
+                $this->logLine($e->getAdditionalMessage());
+    }
+	function caughtException($caller,$e){
+		$e->shift-=1;
+		if($this->log_output){
+			//$frame=$this->findFrame('warning',$shift);
+            $this->logCaughtException($e);
 		}
 		if(!$this->web_output){
 			echo $this->public_error_message;
 			exit;
 		}
+        if($_GET[$this->name.'_debug']=='rendertree'){
+            echo '<h2>Object Tree</h2>';
+            try{
+                $this->showRenderTree($e,$this->api);
+            }catch(Exception $e){
+                echo '<h1>Exception while trying to render tree:</h1>';
+                //unset($_GET[$htis->name.'_debug']);
+                //$this->api->caughtException($e);
+            }
+        }
+
+
 		echo "<h2>".get_class($e)."</h2>\n";
 		echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
 		if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
@@ -276,6 +312,13 @@ class Logger extends AbstractController {
 			}
 			echo '</ul></p>';
 		}
+		if($e->actions){
+			echo '<p>Possible Actions: <ul>';
+			foreach($e->actions as $key=>$val){
+				echo '<li><a href="'.$this->api->getDestinationURL(null,$val).'">'.$key.'</a></li>';
+			}
+			echo '</ul></p>';
+        }
 		if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
 		if(method_exists($e,'getMyTrace'))echo $this->backtrace($e->shift,$e->getMyTrace());
@@ -283,7 +326,7 @@ class Logger extends AbstractController {
 
 		exit;
 	}
-	function outputWarning($msg,$shift=0){
+	function outputWarning($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('warning',$shift);
 		if($this->log_output){
@@ -298,7 +341,7 @@ class Logger extends AbstractController {
 			return true;
 		}
 	}
-	function outputDebug($msg,$shift=0){
+	function outputDebug($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('debug');
 		if($this->log_output){
@@ -314,7 +357,7 @@ class Logger extends AbstractController {
 			return true;
 		}
 	}
-	function outputInfo($msg,$shift=0,$nohtml=false){
+	function outputInfo($caller,$msg,$shift=0,$nohtml=false){
 		if($this->log_output){
 			$this->logLine($this->txtLine("info: $msg"),null,'info');
 		}
@@ -325,7 +368,7 @@ class Logger extends AbstractController {
 		}
 		return true;
 	}
-	function outputFatal($msg,$shift=0){
+	function outputFatal($caller,$msg,$shift=0){
 		// first, let's see if we should log this
 		$frame=$this->findFrame('fatal');
 		if($this->log_output){
@@ -369,6 +412,7 @@ class Logger extends AbstractController {
 	}
 	function logLine($msg,$shiftfunc=null,$severity='info',$trace=null){
 		$log_file='log_'.$severity.'_file';
+        if(!isset($this->$log_file))$this->openLogFile($severity);
 		if($this->log_output==='full' && $severity=='error'){
 			if(!$this->header_sent++){
 				fputs($this->$log_file,"\n\n".
@@ -487,7 +531,7 @@ class Logger extends AbstractController {
 			$output .= "<td valign=top nowrap><font color=".($sh==$n?'red':'blue').">:{$bt['line']}</font>&nbsp;</td>";
 			$name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
 			if($bt['object'])$output .= "<td>".$name."</td>";else $output.="<td></td>";
-			$output .= "<td valign=top><font color=".($sh==$n?'red':'green').">{$bt['class']}{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+			$output .= "<td valign=top><font color=".($sh==$n?'red':'green').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
 		}
 		$output .= "</table></div>\n";
 		return $output;

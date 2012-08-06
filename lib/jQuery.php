@@ -29,6 +29,9 @@
  */
 class jQuery extends AbstractController {
     private $chains=0;
+
+    public $included=array();
+
     function init(){
         parent::init();
 
@@ -42,7 +45,7 @@ class jQuery extends AbstractController {
 
         $this->api->template->del('js_include');
 
-        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.5.1.min'));
+        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.7.2.min'));
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
@@ -53,26 +56,32 @@ class jQuery extends AbstractController {
         return $this->addStaticInclude($file,$ext);
     }
     function addStaticInclude($file,$ext='.js'){
+        if(@$this->included['js-'.$file.$ext]++)return;
+
         if(substr($file,0,4)!='http'){
             $url=$this->api->locateURL('js',$file.$ext);
         }else $url=$file;
 
-        $this->api->template->append('js_include',
+        $this->api->template->appendHTML('js_include',
                 '<script type="text/javascript" src="'.$url.'"></script>'."\n");
         return $this;
     }
     /* Locate stylesheet file and add it to HTML's head section */
-    function addStylesheet($file,$ext='.css'){
+    function addStylesheet($file,$ext='.css',$locate='css'){
+        return $this->addStaticStylesheet($file,$ext,$locate);
+    }
+    function addStaticStylesheet($file,$ext='.css',$locate='css'){
         //$file=$this->api->locateURL('css',$file.$ext);
+        if(@$this->included[$locate.'-'.$file.$ext]++)return;
 
-        $this->api->template->append('js_include',
-                '<link type="text/css" href="'.$this->api->locateURL('css',$file.$ext).'" rel="stylesheet" />'."\n");
+        $this->api->template->appendHTML('js_include',
+                '<link type="text/css" href="'.$this->api->locateURL($locate,$file.$ext).'" rel="stylesheet" />'."\n");
         return $this;
     }
     /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */
     function addOnReady($js){
         if(is_object($js))$js=$js->getString();
-        $this->api->template->append('document_ready', $js.";\n");
+        $this->api->template->appendHTML('document_ready', $js.";\n");
         return $this;
     }
     /* [private] use $object->js() instead */

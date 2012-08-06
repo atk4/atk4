@@ -27,8 +27,8 @@ class View_Button extends View_HtmlElement {
     function setIcon($icon, $colour='blue'){
         // TODO: implment thorugh Icon
         $this->icon=$icon;
-        $this->template->set('icon',$icon);
-        $this->template->set('colour',$colour);
+        //$this->template->set('icon',$icon);
+        //$this->template->set('colour',$colour);
         return $this;
     }
     function setLabel($label){
@@ -50,17 +50,12 @@ class View_Button extends View_HtmlElement {
     }
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
-        if(!($this->owner instanceof ButtonSet))$this->js(true)->button();
+        $opt=array();
+        if($this->icon)$opt['icons']['primary']='ui-icon-'.$this->icon;
+        if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
     }
     function render(){
         $this->jsButton();
-
-        if($this->icon){
-            $this->addClass('ui-button-and-icon');
-        }else{
-            //$this->addClass('ui-button');
-            $this->template->tryDel('icon_span');
-        }
 
         return parent::render();
     }

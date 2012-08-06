@@ -68,12 +68,12 @@ class Page_EntityManager extends Page {
 		$g->setController($c=$this->c);
 
 		if($this->allow_edit)
-			$g->addColumnPlain('expander_widget', 'edit', $this->read_only?'View':'Edit');
+			$g->addColumn('expander_widget', 'edit', $this->read_only?'View':'Edit');
 		if($this->allow_add){
 			$g->addButton('Add')->js('click')->univ()->dialogURL('Add new',$this->api->getDestinationURL('./edit'));
 		}
 		if($this->allow_delete){
-			$g->addColumnPlain('confirm','delete');
+			$g->addColumn('confirm','delete');
 			if(@$_GET['delete']){
 				$c->loadData($_GET['delete']);
 				$c->delete();

@@ -1,3 +1,2 @@
 <?php
-class Button extends View_Button {
-}
+class Button extends View_Button {}

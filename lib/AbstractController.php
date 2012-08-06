@@ -15,25 +15,10 @@
    This file is part of Agile Toolkit 4 
     http://agiletoolkit.org/
   
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
    Distributed under Affero General Public License v3
    
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 class AbstractController extends AbstractObject {
-    protected $model;
-
-    function __clone(){
-        parent::__clone();
-        if($this->model)$this->model=clone $this->model;
-    }
-    /** Associate controller with Model */
-    public function setModel($classname) {
-        $this->model = $this->add($classname);
-        return $this;
-    }
-    /** get associated model */
-    public function getModel() {
-        return $this->model;
-    }
 }
