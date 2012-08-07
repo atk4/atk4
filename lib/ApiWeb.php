@@ -75,14 +75,15 @@ class ApiWeb extends ApiCLI {
     }
     /** Magic Quotes were a design error. Let's strip them if they are enabled */
     function cleanMagicQuotes(){
-
-        function stripslashes_array(&$array, $iterations=0) {
-            if ($iterations < 3){
-                foreach ($array as $key => $value){
-                    if (is_array($value)){
-                        stripslashes_array($array[$key], $iterations + 1);
-                    } else {
-                        $array[$key] = stripslashes($array[$key]);
+        if (!function_exists("stripslashes_array")){
+            function stripslashes_array(&$array, $iterations=0) {
+                if ($iterations < 3){
+                    foreach ($array as $key => $value){
+                        if (is_array($value)){
+                            stripslashes_array($array[$key], $iterations + 1);
+                        } else {
+                            $array[$key] = stripslashes($array[$key]);
+                        }
                     }
                 }
             }

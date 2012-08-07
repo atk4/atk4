@@ -255,7 +255,10 @@ class PathFinder_Location extends AbstractModel {
 			$this->setParent($this->owner->base_location);
 		}
 	}
-
+    function setRelativePath($path){
+        $this->relative_path = $path;
+        return $this;
+    }
 	function setParent($parent){
 		$this->parent_location=$parent;
 		return $this;
@@ -295,7 +298,7 @@ class PathFinder_Location extends AbstractModel {
 
 		$path='';
 		if($this->base_path)$path=$this->base_path;else
-			if($this->parent_location){
+            if($this->parent_location){
 				$path=$this->parent_location->getPath();
 				if(substr($path,-1)!='/')$path.='/';
 				$path.=$this->relative_path;
