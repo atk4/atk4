@@ -61,11 +61,10 @@ class Grid_Basic extends CompleteLister {
 
         $this->last_column=$name;
 
-        if(is_callable($formatters)){
+        if(!is_string($formatters) && is_callable($formatters)){
             $this->columns[$name]['fx']=$formatters;
             return $this;
         }
-
 
         $subtypes=explode(',',$formatters);
         foreach($subtypes as $subtype){

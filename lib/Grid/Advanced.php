@@ -336,7 +336,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
     }
     function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_id));
+        $this->current_row['_link']=$this->api->getDestinationURL('./'.$field,array('id'=>$this->current_id));
         return $this->format_template($field);
         /*
            $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
