@@ -611,7 +611,7 @@ class Form_Field_ValueList extends Form_Field {
 			foreach($this->model as $row){
 				$res[$row[$id]]=$row[$title];
 			}
-			return $this->value_list=$res;
+			$this->setValueList($res);
 		}
 
         if($this->empty_text && isset($this->value_list[''])){
