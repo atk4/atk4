@@ -436,7 +436,7 @@ class Form_Field_Checkbox extends Form_Field {
 						'value'=>$this->true_value,
 						'checked'=>(boolean)($this->true_value==$this->value)
 					     ),$attr
-					)).' &ndash; '.$label;
+					)).$label;
 	}
 	function loadPOST(){
 		if(isset($_POST[$this->name])){
