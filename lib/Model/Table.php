@@ -155,12 +155,21 @@ class Model_Table extends Model {
     }
     /** Returns query which selects title field */
     function titleQuery(){
-        $query=$this->dsql()->del('fields');
+        // Create new model object and set unique alias for it
+        $m = $this->newInstance();
+        $a = array($this->table=>true);
+        if($this->table_alias) $a[$this->table_alias]=true;
+        $m->table_alias = $m->_unique($a,$m->table);
+
+        // Create title query
+        $query = $m->dsql()->del('fields');
         if($this->title_field && $this->hasElement($this->title_field)){
             $this->getElement($this->title_field)->updateSelectQuery($query);
-            return $query;
+        } else {
+            $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
         }
-        return $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
+
+        return $query;
     }
     // }}}
 
