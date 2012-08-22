@@ -218,6 +218,8 @@ class Grid_Basic extends CompleteLister {
                     $this->getElement($formatter.'_'.$tmp)->formatField($tmp,$column);
                 }elseif(method_exists($this,$m="format_".$formatter)){
                     $this->$m($tmp,$column);
+                }else if ($this->hasMethod($m)){
+                    $this->$m($tmp,$column);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
             // setting cell parameters (tdparam)
