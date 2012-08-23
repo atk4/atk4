@@ -449,7 +449,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function render_having(){
         if(!$this->args['having'])return;
-        return 'having '.join(' or ',$this->_render_where('having'));
+        return 'having '.join(' and ',$this->_render_where('having'));
     }
     // }}}
     // {{{ join()

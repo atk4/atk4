@@ -70,10 +70,10 @@ class Grid_Basic extends CompleteLister {
         foreach($subtypes as $subtype){
             if(strpos($subtype,'/')){
 
-                if(!$this->elements[$subtype.' '.$name]){
+                if(!$this->elements[$subtype.'_'.$name]){
                 // add-on functionality
                     $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$subtype);
-                    $this->elements[$subtype.' '.$name]=$this->add($addon);
+                    $this->elements[$subtype.'_'.$name]=$this->add($addon);
                 }
 
                 $addon = $this->getElement($subtype.'_'.$name);
@@ -217,6 +217,8 @@ class Grid_Basic extends CompleteLister {
                 if(strpos($formatter,'/')){
                     $this->getElement($formatter.'_'.$tmp)->formatField($tmp,$column);
                 }elseif(method_exists($this,$m="format_".$formatter)){
+                    $this->$m($tmp,$column);
+                }else if ($this->hasMethod($m)){
                     $this->$m($tmp,$column);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }
