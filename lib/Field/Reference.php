@@ -17,6 +17,8 @@ class Field_Reference extends Field {
                 ->set(array($this,'calculateSubQuery'))->caption($this->caption());
         }
 
+        $this->system(true);
+        $this->editable(true);
         $this->visible(false);
 
         return $this;
