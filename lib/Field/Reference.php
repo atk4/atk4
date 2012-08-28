@@ -31,8 +31,13 @@ class Field_Reference extends Field {
     }
     function sortable($x=undefined){
         $f=$this->owner->hasElement($this->getDereferenced());
-        if(!$f)return parent::sortable($x);
-        return $f->sortable($x);
+        if($f)$f->sortable($x);
+        return parent::sortable($x);
+    }
+    function caption($x=undefined){
+        $f=$this->owner->hasElement($this->getDereferenced());
+        if($f)$f->caption($x);
+        return parent::caption($x);
     }
     /**
      * ref() will traverse reference and will attempt to load related model's entry. If the entry will fail to load
