@@ -11,53 +11,55 @@ class Paginator_Basic extends CompleteLister {
 
     public $source=null;
 
-    function init(){
-        parent::init();
-		$this->api->addHook('pre-exec',array($this,'applyHook'), 1);
-
-		$this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
-    }
     /** Set number of items displayed per page */
     function ipp($ipp){
         $this->ipp=$ipp;
         return $this;
     }
-    /** Specify DQ object */
-    function setSource(&$s){
-        $s->calc_found_rows();
-        $this->source =& $s;
-    }
-    function applyHook(){
-        if(!isset($this->source)){
-            if($this->owner->dq){
-                $this->setSource($this->owner->dq);
-            }
+    /** Set a custom source. Must be an object with foundRows() method */
+    function setSource(&$source){
+        $this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
+        if($source instanceof Model_Table){
+
+            // Start iterating early
+            $source = $source->_preexec();
+
+            $source->limit($this->ipp,$this->skip);
+            $source->calc_found_rows();
+
+            $this->source=$source;
+
+        }elseif($source instanceof DB_dsql){
+            $source->_dsql()->calc_found_rows();
+
+        }else{
+            $this->source &= $source;
         }
-        parent::setSource(array());
-        return;
+    }
+    function recursiveRender(){
+
+        if(!$this->source){
+            if($this->owner->model)$this->setSource($this->owner->model);
+        }
+
         if(!isset($this->source))
             throw $this->exception('Unable to find source for Paginator');
 
-        if($this->source instanceof DB_dsql || $this->source instanceof Model_Array){
-
-            // Set the limit first, then execute
-            $this->source->limit($this->ipp,$this->skip);
-//            if(!$this->source->stmt)$this->source->execute();       // execute early but not fetch
- //           $this->found_rows=$this->source->foundRows();
-            $this->cur_page=floor($this->skip / $this->ipp) +1;
-            $this->total_pages = ceil($this->found_rows / $this->ipp);
-
-            if($this->cur_page>$this->total_pages){
-                $this->cur_page=1;
-                $this->skip=$this->ipp*($this->cur_page-1);
-                $this->source->limit($this->ipp,$this->skip);
-                $this->source->rewind()->execute();                 // re-execute the query
-            }
-
-
+        if($this->source instanceof DB_dsql){
+            $this->source->preexec();
+            $this->found_rows=$this->source->foundRows();
         }else{
-            // TODO: array_slice
             $this->found_rows=count($this->source);
+        }
+
+        $this->cur_page=floor($this->skip / $this->ipp) +1;
+        $this->total_pages = ceil($this->found_rows / $this->ipp);
+
+        if($this->cur_page>$this->total_pages){
+            $this->cur_page=1;
+            $this->skip=$this->ipp*($this->cur_page-1);
+            $this->source->limit($this->ipp,$this->skip);
+            $this->source->rewind();                 // re-execute the query
         }
 
         if($this->total_pages<=1)return $this->destroy();
@@ -100,6 +102,7 @@ class Paginator_Basic extends CompleteLister {
 
 
         parent::setSource($data);
+        return parent::recursiveRender();
 
     }
     function defaultTemplate(){

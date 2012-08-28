@@ -314,6 +314,11 @@ class Model_Table extends Model {
     function rewind(){
         $this->_iterating=true;
     }
+    function _preexec(){
+        $this->_iterating=$this->selectQuery();
+        $this->hook('beforeLoad',array($this->_iterating));
+        return $this->_iterating;
+    }
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();

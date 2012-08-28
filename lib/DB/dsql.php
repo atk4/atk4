@@ -931,6 +931,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     public $_iterating=false;
+    public $preexec=false;
+    function preexec(){
+        $this->execute();
+        $this->preexec=true;
+        return $this;
+    }
     function rewind(){
         if($this->_iterating){
             $this->stmt=null;
@@ -950,7 +956,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data['id'];
     }
     function valid(){
-        if(!$this->stmt)$this->data = $this->fetch();
+        if(!$this->stmt || $this->preexec){
+            $this->preexec=false;
+            $this->data = $this->fetch();
+        }
         return (boolean)$this->data;
     }
     // }}}
