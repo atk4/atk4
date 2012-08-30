@@ -51,6 +51,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         'delete'=>"delete from  [table_noalias] [where]",
         'truncate'=>'truncate table [table_noalias]'
     );
+    /** required for non-id based tables */
+    public $id_field;
 
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
@@ -953,7 +955,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data;
     }
     function key(){
-        return $this->data['id'];
+        return $this->data[$this->id_field];
     }
     function valid(){
         if(!$this->stmt || $this->preexec){

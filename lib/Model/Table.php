@@ -101,6 +101,7 @@ class Model_Table extends Model {
             $this->dsql->bt($this->table_alias?:$this->table).'.'.
             $this->dsql->bt($this->id_field))
             ;
+        $this->dsql->id_field = $this->id_field;
     }
     /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
     function _dsql(){

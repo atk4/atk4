@@ -25,7 +25,6 @@ class Grid_Basic extends CompleteLister {
         'ui-icon ui-icon-arrowthick-1-n',
         'ui-icon ui-icon-arrowthick-1-s',
     );
-
     function init(){
         parent::init();
         $this->initWidget();
