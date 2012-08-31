@@ -345,12 +345,13 @@ class Form_Basic extends View {
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
         if(!is_null($this->bail_out))return $this->bail_out;
-        $this->hook('loadPOST');
-        $this->hook('validate');
 
-        //TODO: handle errors properly
-        if(!empty($this->errors))return false;
+        $this->hook('loadPOST');
         try{
+            $this->hook('validate');
+
+            if(!empty($this->errors))return false;
+            
             if(($output=$this->hook('submit',array($this)))){
                 /* checking if anything usefull in output */
                 if(is_array($output)){
