@@ -515,7 +515,6 @@ abstract class AbstractObject {
 
     function _shorten($desired){
         if(strlen($desired)>$this->api->max_name_length){
-            if(!$this->api->unique_hashes)$this->api->unique_hashes=array();
 
             $len=$this->api->max_name_length-10;
             if($len<5)$len=$this->api->max_name_length;

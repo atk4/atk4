@@ -49,6 +49,9 @@ class ApiCLI extends AbstractView {
     /** Maximum length of the name arguments (for SUHOSIN) */
     public $max_name_length=60;
 
+    /** Contains list of hashes which used for name shortening */
+    public $unique_hashes=array();
+
     // {{{ Start-up of application
     /** Initializes properties of the application. Redefine init() instead of this */
     function __construct($realm=null){
