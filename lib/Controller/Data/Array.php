@@ -4,7 +4,7 @@ class Controller_Data_Array extends AbstractController {
     function init(){
         parent::init();
         $this->owner->addField('id')->type('int')->system(true);
-        $this->owner->addMethod('getBy,loadBy',$this);
+        $this->owner->addMethod('getBy,loadBy,tryLoadBy,tryLoad',$this);
     }
     function getBy($model,$field,$value){
         foreach($model->table as $row){
@@ -13,7 +13,7 @@ class Controller_Data_Array extends AbstractController {
             }
         }
     }
-    function loadBy($model,$field,$value){
+    function tryLoadBy($model,$field,$value){
         foreach($model->table as $row){
             if($row[$field]==$value){
                 $model->data=$row;
@@ -24,14 +24,34 @@ class Controller_Data_Array extends AbstractController {
         }
         return $this;
     }
-    function load($model,$id){
+    function loadBy($model,$field,$value){
+        $this->loadBy($model,$field,$value);
+        if(!$model->loaded())throw $this->exceptoin('Unable to load data')
+            ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
+        foreach($model->table as $row){
+            if($row[$field]==$value){
+                $model->data=$row;
+                $model->dirty=array();
+                $model->id=$row[$model->id_field];
+                return $this;
+            }
+        }
+        return $this;
+    }
+    function tryLoad($model,$id){
         if(@$model->id_field){
-            return $this->loadBy($model,$model->id_field,$id);
+            return $this->tryLoadBy($model,$model->id_field,$id);
         }
         $row=$model->table[$id];
         $model->data=$row;
         $model->dirty=array();
         $model->id=$id;
+        return $this;
+    }
+    function load($model,$id){
+        $this->tryLoad($model,$id);
+        if(!$model->loaded())throw $this->exceptoin('Unable to load data')
+            ->addMoreInfo('id',$id);
         return $this;
     }
     function save($model){

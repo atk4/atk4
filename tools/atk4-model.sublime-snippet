@@ -1,0 +1,16 @@
+<snippet>
+	<content><![CDATA[
+<?php
+class Model_${1:${TM_FILENAME/\.php//}} extends ${2:Model_Table} {
+	public \$table="${1/(.*)/\L$1\E/g}";
+	function init(){
+		parent::init();
+		$3
+	}
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>model</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -101,6 +101,7 @@ class Model_Table extends Model {
             $this->dsql->bt($this->table_alias?:$this->table).'.'.
             $this->dsql->bt($this->id_field))
             ;
+        $this->dsql->id_field = $this->id_field;
     }
     /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
     function _dsql(){
@@ -309,27 +310,35 @@ class Model_Table extends Model {
 
     // {{{ Iterator support 
 
+    /* False: finished iterating. True, reset not yet fetched. Object=DSQL */
     protected $_iterating=false;
     function rewind(){
+        $this->_iterating=true;
+    }
+    function _preexec(){
         $this->_iterating=$this->selectQuery();
-        $this->_iterating->stmt=null;
         $this->hook('beforeLoad',array($this->_iterating));
-        $this->next();
+        return $this->_iterating;
     }
     function next(){
+        if($this->_iterating===true){
+            $this->_iterating=$this->selectQuery();
+            $this->hook('beforeLoad',array($this->_iterating));
+        }
         $this->_iterating->next();
-
-
         $this->data=$this->_iterating->current();
 
-        if($this->data===false)return $this->unload();
+        if($this->data===false){
+            $this->unload();
+            $this->_iterating=false;
+            return;
+        }
 
 
         $this->id=@$this->data[$this->id_field];
         $this->dirty=array();
 
         $this->hook('afterLoad');
-
     }
     function current(){
         return $this->get();
@@ -338,9 +347,14 @@ class Model_Table extends Model {
         return $this->id;
     }
     function valid(){
+        /*
         if(!$this->_iterating){
             $this->next();
             $this->_iterating=$this->selectQuery();
+        }
+        */
+        if($this->_iterating===true){
+            $this->next();
         }
         return $this->loaded();
     }

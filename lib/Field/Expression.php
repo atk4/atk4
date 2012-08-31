@@ -40,7 +40,7 @@ class Field_Expression extends Field {
         return $this;
     }
     function getExpr(){
-        if(is_callable($this->expr))
+        if(!is_string($this->expr) && is_callable($this->expr))
             return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
         
         if($this->expr instanceof DB_dsql)return $this->expr;
@@ -49,7 +49,7 @@ class Field_Expression extends Field {
     }
     function updateSelectQuery($select){
         $expr=$this->expr;
-        if(is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
+        if(!is_string($expr) && is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
         if($expr instanceof DB_dsql){
             return $select->field($expr,$this->short_name);
         }

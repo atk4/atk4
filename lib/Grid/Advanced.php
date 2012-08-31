@@ -104,11 +104,10 @@ class Grid_Advanced extends Grid_Basic {
         if($this->last_column==$name)$this->last_column=null;
         return $this;
     }
-    function addButton($label,$name=null,$return_button=false){
-        $button=$this->add('Button','gbtn'.count($this->elements),'grid_buttons');
-        $button->setLabel($label);
-        if($return_button)return $button;
-        return $button;
+    function addButton($label){
+        return $this
+            ->add('Button','gbtn'.count($this->elements),'grid_buttons')
+            ->setLabel($label);
     }
     function addQuickSearch($fields,$class='QuickSearch'){
         return $this->add($class,null,'quick_search')
@@ -336,7 +335,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
     }
     function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./details',array('id'=>$this->current_id));
+        $this->current_row['_link']=$this->api->getDestinationURL('./'.$field,array('id'=>$this->current_id));
         return $this->format_template($field);
         /*
            $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,

@@ -136,7 +136,7 @@ abstract class AbstractObject {
             $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
-            $short_name = strtolower($class);
+            $short_name = str_replace('/','_',strtolower($class));
 
         $short_name=$this->_unique($this->elements,$short_name);
 
@@ -454,6 +454,7 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
+    /* Call method is used to display exception for non-existant methods and also ability to extend objects with addMethod */
     function __call($method,$arguments){
         if($ret=$this->tryCall($method,$arguments))return $ret[0];
         throw $this->exception("Method is not defined for this object",'Logic')

@@ -25,7 +25,6 @@ class Grid_Basic extends CompleteLister {
         'ui-icon ui-icon-arrowthick-1-n',
         'ui-icon ui-icon-arrowthick-1-s',
     );
-
     function init(){
         parent::init();
         $this->initWidget();
@@ -61,20 +60,19 @@ class Grid_Basic extends CompleteLister {
 
         $this->last_column=$name;
 
-        if(is_callable($formatters)){
+        if(!is_string($formatters) && is_callable($formatters)){
             $this->columns[$name]['fx']=$formatters;
             return $this;
         }
-
 
         $subtypes=explode(',',$formatters);
         foreach($subtypes as $subtype){
             if(strpos($subtype,'/')){
 
-                if(!$this->elements[$subtype.' '.$name]){
+                if(!$this->elements[$subtype.'_'.$name]){
                 // add-on functionality
                     $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$subtype);
-                    $this->elements[$subtype.' '.$name]=$this->add($addon);
+                    $this->elements[$subtype.'_'.$name]=$this->add($addon);
                 }
 
                 $addon = $this->getElement($subtype.'_'.$name);
@@ -110,7 +108,7 @@ class Grid_Basic extends CompleteLister {
             $addon->initField($field,$this->columns[$field]['descr']);
             return $addon;
 
-        }elseif(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        }elseif($this->hasMethod($m='init_'.$formatter))$this->$m($field);
         return $this;
     }
     function setFormatter($field,$formatter){
@@ -121,7 +119,7 @@ class Grid_Basic extends CompleteLister {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
         $this->columns[$field]['type']=$formatter;
-        if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        if($this->hasMethod($m='init_'.$formatter))$this->$m($field);
         $this->last_column=$field;
         return $this;
     }
@@ -217,7 +215,7 @@ class Grid_Basic extends CompleteLister {
                 if(!$formatter)continue;
                 if(strpos($formatter,'/')){
                     $this->getElement($formatter.'_'.$tmp)->formatField($tmp,$column);
-                }elseif(method_exists($this,$m="format_".$formatter)){
+                }elseif($this->hasMethod($m="format_".$formatter)){
                     $this->$m($tmp,$column);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }

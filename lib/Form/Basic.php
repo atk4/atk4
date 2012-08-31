@@ -271,12 +271,16 @@ class Form_Basic extends View {
 
         return $submit;
     }
-    function addButton($label){
-        // Now add the regular button first
-        $name=preg_replace('/[^a-zA-Z0-9_-]/','',$label);
-        if(!$name)$name=null;
-        return $this->add('Button',$name,'form_buttons')
+    function addButton($label='Button',$name=null,$color=null){
+        if(!$name)$name=str_replace(' ','_',$label);
+        $name = preg_replace('/[^a-zA-Z0-9_-]/','', isset($name)?$name:$label);
+
+        $button = $this->add('Button',$name,'form_buttons')
             ->setLabel($label);
+        if (!is_null($color))
+            $button->setColor($color);
+
+       return $button;
     }
 
     function setConditionFromGET($field='id',$get_field=null){
@@ -341,12 +345,13 @@ class Form_Basic extends View {
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
         if(!is_null($this->bail_out))return $this->bail_out;
-        $this->hook('loadPOST');
-        $this->hook('validate');
 
-        //TODO: handle errors properly
-        if(!empty($this->errors))return false;
+        $this->hook('loadPOST');
         try{
+            $this->hook('validate');
+
+            if(!empty($this->errors))return false;
+            
             if(($output=$this->hook('submit',array($this)))){
                 /* checking if anything usefull in output */
                 if(is_array($output)){
