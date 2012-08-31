@@ -105,10 +105,11 @@ class Grid_Advanced extends Grid_Basic {
         return $this;
     }
     function addButton($label,$name=null,$return_button=false){
-        $button=$this->add('Button','gbtn'.count($this->elements),'grid_buttons');
+        if(is_null($name)) $name='gbtn'.count($this->elements);
+        $button=$this->add('Button',$name,'grid_buttons');
         $button->setLabel($label);
         if($return_button)return $button;
-        return $button;
+        return $this;
     }
     function addQuickSearch($fields,$class='QuickSearch'){
         return $this->add($class,null,'quick_search')
