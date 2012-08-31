@@ -32,6 +32,9 @@ class Lister extends View {
 
     /** Contains ID of current record */
     public $current_id=null;
+
+    /** Name of the ID field in this lister */
+    public $id_field=null;
     
     /** Data set fetched from source */
     public $iterator=array();
