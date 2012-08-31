@@ -136,9 +136,10 @@ abstract class AbstractObject {
             $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
-            $short_name = str_replace('/','_',strtolower($class));
+            $short_name = $this->_unique($this->elements,
+                str_replace('/','_',strtolower($class)));
 
-        $short_name=$this->_unique($this->elements,$short_name);
+        //$short_name=$this->_unique($this->elements,$short_name);
 
         if (isset ($this->elements[$short_name])) {
             if ($this->elements[$short_name] instanceof AbstractView) {
@@ -174,7 +175,7 @@ abstract class AbstractObject {
             $this->elements[$short_name]=true;  // dont store extra reference to models and controlers
             // for purposes of better garbage collection
 
-        $element->name = $this->name . '_' . $short_name;
+        $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
 
         // Initialize template before init() starts
@@ -512,6 +513,24 @@ abstract class AbstractObject {
     }
     // }}}
 
+    function _shorten($desired){
+        if(strlen($desired)>$this->api->max_name_length){
+            if(!$this->api->unique_hashes)$this->api->unique_hashes=array();
+
+            $len=$this->api->max_name_length-10;
+            if($len<5)$len=$this->api->max_name_length;
+
+            $key=substr($desired,0,$len);
+            $rest=substr($desired,$len);
+
+            if(!$this->api->unique_hashes[$key]){
+                $this->api->unique_hashes[$key]=count($this->api->unique_hashes)+1;
+            }
+            $desired=$this->api->unique_hashes[$key].'__'.$rest;
+        };
+
+        return $desired;
+    }
     /**
      * This funcion given the associative $array and desired new key will return
      * the best matching key which is not yet in the arary. For example if you have
