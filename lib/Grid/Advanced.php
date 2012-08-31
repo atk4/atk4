@@ -260,7 +260,7 @@ class Grid_Advanced extends Grid_Basic {
         //  ->
         //
         @$this->current_row_html[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
-            id="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'"
+            id="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'"
             rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
             array('expander'=>$field,
                     'cut_page'=>1,
@@ -271,8 +271,11 @@ class Grid_Advanced extends Grid_Basic {
                     $this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
                  )
                 ).'"
-                /><label for="'.$this->name.'_'.$field.'_'.$this->current_row[$column['idfield']?$column['idfield']:'id'].'">'.
+                /><label for="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'">'.
                 $this->current_row[$field].'</label>';
+    }
+    function prepareIdField($val){
+        return preg_replace("/[^a-zA-Z0-9_]/", "_", $val);
     }
     function init_expander_widget($field){
         @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';

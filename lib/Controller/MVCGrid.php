@@ -48,9 +48,6 @@ class Controller_MVCGrid extends AbstractController {
         foreach($fields as $field){
             $this->importField($field);
         }
-        if ($model->id_field != $this->owner->id_field){
-            $this->owner->id_field = $model->id_field;
-        }
         $model->setActualFields($fields);
 
         return $this;
