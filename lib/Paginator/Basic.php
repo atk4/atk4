@@ -17,7 +17,7 @@ class Paginator_Basic extends CompleteLister {
         return $this;
     }
     /** Set a custom source. Must be an object with foundRows() method */
-    function setSource(&$source){
+    function setSource($source){
         $this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
         if($source instanceof Model_Table){
 
