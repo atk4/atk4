@@ -286,8 +286,7 @@ $.widget('ui.atk4_loader', {
 		// remove error messages
 		$('#tiptip_holder').remove();
 		self.base_url=url;
-
-		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);
+		url=$.atk4.addArgument(url,"cut_"+self.options.cut_mode+'='+self.options.cut);
 		this._loadHTML(self.element,url,fn,strip_layer);
 	}
 
