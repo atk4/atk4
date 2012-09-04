@@ -109,7 +109,9 @@ class Model_Table extends Model {
         return $this->dsql;
     }
     function __clone(){
-        $this->dsql=clone $this->dsql;
+        if (is_object($this->dsql)){
+            $this->dsql=clone $this->dsql;
+        }
     }
     /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model. 
      * Use for statements you are going to execute manually. */
