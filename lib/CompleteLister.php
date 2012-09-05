@@ -107,7 +107,7 @@ class CompleteLister extends Lister {
             $this->formatRow();
             $this->template->appendHTML($this->container_tag,$this->rowRender($this->row_t));
         }
-
+        $this->current_row = $this->current_row_html = array();
         if($this->totals!==false && $this->totals_t){
             $this->current_row = $this->totals;
             $this->formatTotalsRow();
