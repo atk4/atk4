@@ -298,7 +298,8 @@ $.extend($.ui.atk4_loader, {
 
 $.fn.extend({
 	atk4_load: function(url,fn){
-		this.atk4_loader()
+		url=url+"&format=raw"
+               this.atk4_loader()
 			.atk4_loader('loadURL',url,fn)
 			;
 	},
