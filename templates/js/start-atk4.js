@@ -13,7 +13,7 @@
   $this->js(true)->_load('start-atk4');
 */
 
-;$.atk4||(function($){
+;jQuery.atk4||(function($){
 
 /*
 
@@ -391,7 +391,7 @@ $.extend($.atk4,{
 
 });
 
-})($);
+})(jQuery);
 
 
 // we use console.log a lot. It is handy in WebKit and Firebug, but

@@ -19,7 +19,7 @@
 // </form>	
 //</div>
 
-$.widget("ui.atk4_form", {
+jQuery.widget("ui.atk4_form", {
 
 	form: undefined,
 	id: undefined,

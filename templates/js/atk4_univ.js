@@ -5,7 +5,7 @@
 //
 
 ;
-$||console.error("jQuery must be loaded");
+jQuery||console.error("jQuery must be loaded");
 (function($){
 
 
@@ -742,4 +742,4 @@ $.fn.extend({
 		return u;
 	}
 });
-})($);
+})(jQuery);
