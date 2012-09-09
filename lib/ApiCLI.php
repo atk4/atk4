@@ -63,8 +63,6 @@ class ApiCLI extends AbstractView {
         // Profiler is a class for benchmarking your application. All calls to pr 
         /**/$this->pr=new Dummy();
 
-        set_error_handler("error_handler");
-
         try {
             $this->add($this->pathfinder_class);
             $this->init();
