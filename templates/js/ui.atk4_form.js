@@ -306,7 +306,7 @@ jQuery.widget("ui.atk4_form", {
 
 		var properties={
 			type: "POST",
-			url: this.form.attr('action')+"&format=raw"
+			url: this.form.attr('action')
 		};
 
 		form.loading=true;
