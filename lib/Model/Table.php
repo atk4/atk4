@@ -367,7 +367,7 @@ class Model_Table extends Model {
 
     /** Loads all matching data into array of hashes */
     function getRows($fields=null){
-        /**/$this->api->pr->start('getRows/selecting huj');
+        /**/$this->api->pr->start('getRows/selecting');
         $a=$this->selectQuery($fields);
         /**/$this->api->pr->next('getRows/fetching');
         $a=$a->get();
