@@ -253,4 +253,51 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function getField($f){
         return $this->getElement($f);
     }
+
+    // Reference traversal for regular models
+    private $_references;
+    /* defines relation for non-sql model. You can traverse the reference using ref() */
+    function hasOne($model,$our_field){
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+        }
+        $this->_references[$our_field]=$model;
+
+        return $this->addField($our_field);
+    }
+    /* defines relation for non-sql model. You can traverse the reference using ref() */
+    function hasMany($model,$their_field,$our_field){
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+        }
+        $this->_references[$model]=array($model,$our_field,$their_field);
+        return null;
+    }
+    /* traverses reference which was defined previously. */
+    function ref($ref){
+        if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
+            ->addMoreInfo('name',$ref);
+
+        $r=$this->_references[$ref];
+
+        if(is_array($r)){
+            list($m,$our_field,$their_field)=$r;
+
+            if(is_string($m)){
+                $m=$this->add($m);
+            }else{
+                $m=$m->newInstance();
+            }
+
+            return $m->addCondition($their_field,$this[$our_field]);
+        }
+
+
+        if(is_string($m)){
+            $m=$this->add($m);
+        }else{
+            $m=$m->newInstance();
+        }
+        return $m->load($this[$our_field]);
+    }
 }
