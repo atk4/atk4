@@ -287,7 +287,11 @@ dialogBox: function(options){
 				$(this).dialog('close');
 			}
 		},
+		open: function(){
+			$("body").css({ overflow: 'hidden' });
+		},
 		close: function(){
+			$("body").css({ overflow: 'inherit' });
 			$(this).dialog('destroy');
 			$(this).remove();
 		}
