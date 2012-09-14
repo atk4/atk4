@@ -154,6 +154,10 @@ class Form_Basic extends View {
     function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
+        switch(strtolower($type)){
+            case'dropdown':$type='DropDown';break;
+            case'line':$type='Line';break;
+        }
         $class=$type;
         if(is_string($class)&&substr($class,0,strlen('Form_Field_'))!='Form_Field_'){
             $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
