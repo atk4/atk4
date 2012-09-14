@@ -51,6 +51,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         'delete'=>"delete from  [table_noalias] [where]",
         'truncate'=>'truncate table [table_noalias]'
     );
+    /** required for non-id based tables */
+    public $id_field;
 
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
@@ -931,6 +933,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     public $_iterating=false;
+    public $preexec=false;
+    function preexec(){
+        $this->execute();
+        $this->preexec=true;
+        return $this;
+    }
     function rewind(){
         if($this->_iterating){
             $this->stmt=null;
@@ -947,10 +955,13 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data;
     }
     function key(){
-        return $this->data['id'];
+        return $this->data[$this->id_field];
     }
     function valid(){
-        if(!$this->stmt)$this->data = $this->fetch();
+        if(!$this->stmt || $this->preexec){
+            $this->preexec=false;
+            $this->data = $this->fetch();
+        }
         return (boolean)$this->data;
     }
     // }}}

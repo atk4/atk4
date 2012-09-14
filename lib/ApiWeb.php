@@ -184,7 +184,7 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Obsolete
-    /** @obsolete */
+    /** This method is called when exception was caught in the application */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
         echo "<font color=red>",$e,"</font>";

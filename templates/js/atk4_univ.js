@@ -5,7 +5,7 @@
 //
 
 ;
-$||console.error("jQuery must be loaded");
+jQuery||console.error("jQuery must be loaded");
 (function($){
 
 
@@ -241,7 +241,7 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
+    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div class="loading centred"><i></i><i></i></div><div></div></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	if(options.customClass){
@@ -742,4 +742,4 @@ $.fn.extend({
 		return u;
 	}
 });
-})($);
+})(jQuery);

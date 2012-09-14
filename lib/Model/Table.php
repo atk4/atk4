@@ -101,6 +101,7 @@ class Model_Table extends Model {
             $this->dsql->bt($this->table_alias?:$this->table).'.'.
             $this->dsql->bt($this->id_field))
             ;
+        $this->dsql->id_field = $this->id_field;
     }
     /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
     function _dsql(){
@@ -108,7 +109,9 @@ class Model_Table extends Model {
         return $this->dsql;
     }
     function __clone(){
-        $this->dsql=clone $this->dsql;
+        if (is_object($this->dsql)){
+            $this->dsql=clone $this->dsql;
+        }
     }
     /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model. 
      * Use for statements you are going to execute manually. */
@@ -313,6 +316,11 @@ class Model_Table extends Model {
     protected $_iterating=false;
     function rewind(){
         $this->_iterating=true;
+    }
+    function _preexec(){
+        $this->_iterating=$this->selectQuery();
+        $this->hook('beforeLoad',array($this->_iterating));
+        return $this->_iterating;
     }
     function next(){
         if($this->_iterating===true){

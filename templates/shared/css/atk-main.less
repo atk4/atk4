@@ -276,6 +276,34 @@ table {border-collapse:collapse;border-spacing:0;}
 .clearafter {.clearfix();}
 .clearwrap {overflow:hidden;}
 
+/* ==============================================
+	Loader
+   ============================================== */
+
+@-webkit-keyframes rotate-i1 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@-webkit-keyframes rotate-i2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(-360deg); }
+}
+.loading img.i1 {
+    -webkit-animation-name:             rotate-i1; 
+    -webkit-animation-duration:         5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-transition-timing-function: linear;
+    margin: 10px 10px;
+    position: absolute;
+}
+.loading img.i2 {
+    -webkit-animation-name:             rotate-i2; 
+    -webkit-animation-duration:         5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-transition-timing-function: linear;
+    margin: 35px 27px;
+    position: absolute;
+}
 
 /* ==============================================
 	Typography

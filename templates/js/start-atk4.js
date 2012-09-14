@@ -13,7 +13,7 @@
   $this->js(true)->_load('start-atk4');
 */
 
-;$.atk4||(function($){
+;jQuery.atk4||(function($){
 
 /*
 
@@ -386,12 +386,12 @@ $.extend($.atk4,{
 		}
 		if(typeof(a)=='undefined')return url;
 		if(b)a+='='+encodeURIComponent(b);
-        return url+(url.indexOf('?')==-1?'?':'&')+a;
+        return url+(url.indexOf('?')==-1?'?':'&')+a + "&format=raw";
 	}
 
 });
 
-})($);
+})(jQuery);
 
 
 // we use console.log a lot. It is handy in WebKit and Firebug, but

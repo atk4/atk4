@@ -25,7 +25,6 @@ class Grid_Basic extends CompleteLister {
         'ui-icon ui-icon-arrowthick-1-n',
         'ui-icon ui-icon-arrowthick-1-s',
     );
-
     function init(){
         parent::init();
         $this->initWidget();
@@ -109,7 +108,7 @@ class Grid_Basic extends CompleteLister {
             $addon->initField($field,$this->columns[$field]['descr']);
             return $addon;
 
-        }elseif(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        }elseif($this->hasMethod($m='init_'.$formatter))$this->$m($field);
         return $this;
     }
     function setFormatter($field,$formatter){
@@ -120,7 +119,7 @@ class Grid_Basic extends CompleteLister {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
         $this->columns[$field]['type']=$formatter;
-        if(method_exists($this,$m='init_'.$formatter))$this->$m($field);
+        if($this->hasMethod($m='init_'.$formatter))$this->$m($field);
         $this->last_column=$field;
         return $this;
     }
@@ -216,9 +215,7 @@ class Grid_Basic extends CompleteLister {
                 if(!$formatter)continue;
                 if(strpos($formatter,'/')){
                     $this->getElement($formatter.'_'.$tmp)->formatField($tmp,$column);
-                }elseif(method_exists($this,$m="format_".$formatter)){
-                    $this->$m($tmp,$column);
-                }else if ($this->hasMethod($m)){
+                }elseif($this->hasMethod($m="format_".$formatter)){
                     $this->$m($tmp,$column);
                 }else throw new BaseException("Grid does not know how to format type: ".$formatter);
             }

@@ -38,24 +38,28 @@ $.widget('ui.atk4_loader', {
 	/*
 	 base_url will contain URL which will be used to refresh contents.
 	*/
-	base_url: undefined,
+    options: {
+        base_url: undefined,
 
-	/*
-	 loading will be set to true, when contents of this widgets are being
-	 loaded.
-	*/
-	loading: false,
+        /*
+        loading will be set to true, when contents of this widgets are being
+        loaded.
+        */
+        loading: false,
 
-	/*
-	 when we are loading URLs, we will automaticaly pass arguments to cut stuff out
-	*/
-	cut_mode: 'page',
-	cut: '1',
+        cogs: '<div class="loading"><i></i><i></i></div>',
+        /*
+        when we are loading URLs, we will automaticaly pass arguments to cut stuff out
+        */
+        cut_mode: 'page',
+        cut: '1',
 
-	/*
-	 Helper contains some extra thingies
-	*/
-	helper: undefined,
+        /*
+        Helper contains some extra thingies
+        */
+    },
+    helper: undefined,
+    loader: undefined,
 
 	_create: function(){
 
@@ -64,15 +68,22 @@ $.widget('ui.atk4_loader', {
 		this.options.debug=true;
 		this.options.anchoring=true;
 		*/
-		this.element.addClass('atk4_loader');
+        this.element.addClass('atk4_loader');
 
-		if(this.options.url){
-			this.base_url=this.options.url;
-		}
-		 if(this.options.cut_object){
-			 this.cut_mode='object';
-			 this.cut=this.options.cut_object;
-		 }
+        if(this.options.url){
+            this.base_url=this.options.url;
+        }
+        if(this.options.cut_object){
+            this.cut_mode='object';
+            this.cut=this.options.cut_object;
+        }
+
+        if(this.options.cogs){
+            var l=$(this.options.cogs);
+			l.insertBefore(self.element);
+            self.loader=l;
+        }
+
 		if(this.options.debug){
 			var d=$('<div style="z-index: 2000"/>');
 			d.css({background:'#fe8',border: '1px solid black',position:'absolute',width:'100px',height:'50px'});
@@ -106,6 +117,10 @@ $.widget('ui.atk4_loader', {
 		if(this.helper){
 			this.helper.remove();
 			this.helper=undefined;
+		}
+		if(this.loader){
+			this.loader.remove();
+			this.loader=undefined;
 		}
 	},
 
@@ -271,8 +286,7 @@ $.widget('ui.atk4_loader', {
 		// remove error messages
 		$('#tiptip_holder').remove();
 		self.base_url=url;
-
-		url=$.atk4.addArgument(url,"cut_"+self.cut_mode+'='+self.cut);
+		url=$.atk4.addArgument(url,"cut_"+self.options.cut_mode+'='+self.options.cut);
 		this._loadHTML(self.element,url,fn,strip_layer);
 	}
 
@@ -284,7 +298,8 @@ $.extend($.ui.atk4_loader, {
 
 $.fn.extend({
 	atk4_load: function(url,fn){
-		this.atk4_loader()
+		url=url+"&format=raw"
+               this.atk4_loader()
 			.atk4_loader('loadURL',url,fn)
 			;
 	},
