@@ -87,6 +87,7 @@ class Auth_Basic extends AbstractController {
             if($this->recall('class',false)==get_class($this->model)){
                 $this->debug("Loading model from cache");
                 $this->model->set($this->info);
+                $this->model->dirty=array();
                 $this->model->id=$this->recall('id',null);
             }else{
                 // Class changed, re-fetch data from database
