@@ -575,8 +575,8 @@ class Model_Table extends Model {
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
-        $res=$o->load($id);
-        if(!$res)throw $this->exception('Problem');
+        $res=$o->tryLoad($id);
+        if(!$res->loaded())throw $this->exception('Saved model did not match conditions. Save aborted.');
         return $res;
     }
     /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
