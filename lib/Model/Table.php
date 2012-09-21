@@ -156,6 +156,12 @@ class Model_Table extends Model {
         if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
         return $this->id_field;
     }
+    /** Retucn query for a specific field. All other fileds are ommitted */
+    function fieldQuery($field){
+        $query=$this->dsql()->del('fields');
+        if(is_string($field))$field=$this->getElement($field);
+        return $field->updateSelectQuery($query);
+    }
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql()->del('fields');
