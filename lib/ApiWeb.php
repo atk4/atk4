@@ -335,6 +335,10 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Miscelanious Functions
+    /** Render only specified object or object with specified name */
+    function cut($object){
+        $_GET['cut_object']=is_object($object)?$object->name:$object;
+    }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
         /**
