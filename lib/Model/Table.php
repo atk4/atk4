@@ -562,7 +562,7 @@ class Model_Table extends Model {
             $res=$this->insert();
         }
 
-        $res->hook('afterSave');
+        if($this->loaded())$res->hook('afterSave');
         $this->_dsql()->owner->commit();
         return $res;
     }
