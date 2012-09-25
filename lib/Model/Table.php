@@ -389,9 +389,9 @@ class Model_Table extends Model {
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->_dsql()->expr('sum([field])');
-        $field->updateSelectQuery($q);
-        return $this->dsql()->field($q);
+        $q=$this->dsql()->del('fields');
+        $q->field($q->expr('sum([s_field])')->setCustom('s_field',$field));
+        return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
