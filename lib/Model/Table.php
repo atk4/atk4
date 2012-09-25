@@ -399,7 +399,11 @@ class Model_Table extends Model {
     }
     /** Loads the first matching record from the model */
     function loadAny(){
-        return $this->_load(null);
+        try{
+            return $this->_load(null);
+        }catch(BaseException $e){
+            throw $this->exception('No matching records found');
+        }
     }
     /** Try to load a matching record for the model. Will not raise exception if no records are found */
     function tryLoadAny(){
