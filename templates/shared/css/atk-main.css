@@ -890,7 +890,10 @@ textarea:focus {
 .input-row .input-cell.expanded input {
   width: 100%;
 }
-.input-row .input-cell .ui-button {
+.input-row .input-cell .ui-buttonset {
+	white-space: nowrap;
+}
+.input-row .input-cell > .ui-button {
   margin-left: 0;
   margin-right: 0;
 }
