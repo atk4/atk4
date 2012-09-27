@@ -102,17 +102,28 @@ class DB extends AbstractController {
 
         if(is_object($query))$query=(string)$query;
 
-        $statement = $this->dbh->prepare($query);
+        $e=null;
+        for($i=0;$i<2;$i++){
+            try {
+                $statement = $this->dbh->prepare($query);
 
-        foreach($params as $key=>$val){
-            if (!$statement->bindValue($key,$val,is_int($val)?(PDO::PARAM_INT):(PDO::PARAM_STR))){
-                throw $this->exception('Could not bind parameter ' . $key)
-                    ->addMoreInfo('val',$val)
-                    ->addMoreInfo('query',$query);
+                foreach($params as $key=>$val){
+                    if (!$statement->bindValue($key,$val,is_int($val)?(PDO::PARAM_INT):(PDO::PARAM_STR))){
+                        throw $this->exception('Could not bind parameter ' . $key)
+                            ->addMoreInfo('val',$val)
+                            ->addMoreInfo('query',$query);
+                    }
+                }
+
+                $statement->execute();
+                return $statement;
+            }catch(PDOException $e){
+                if ($e->errorInfo[1] === 17 && !$i){
+                    continue;
+                }
+                throw $e;
             }
         }
-        $statement->execute();
-        return $statement;
     }
 
     /** Executes query and returns first column of first row */
