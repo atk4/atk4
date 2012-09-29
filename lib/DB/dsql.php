@@ -763,6 +763,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->template="[fx]([args])";
         return $this;
     }
+    function concat(){
+        $t=clone $this;
+        return $t->fx('concat',func_get_args());
+    }
     function render_fx(){
         return $this->args['fx'];
     }
@@ -772,6 +776,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function count($arg=null){
         if(is_null($arg))$arg='*';
         return $this->expr('count([count])')->setCustom('count',$this->bt($arg));
+    }
+    function random(){
+        return $this->expr('rand()');
     }
     // }}}
 
