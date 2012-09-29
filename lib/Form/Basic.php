@@ -286,7 +286,8 @@ class Form_Basic extends View {
 
        return $button;
     }
-
+    /*
+    // @obsolete method
     function setConditionFromGET($field='id',$get_field=null){
         // If GET pases an argument you need to put into your where clause, this is the function you should use.
         if(!isset($get_field))$get_field=$field;
@@ -294,12 +295,15 @@ class Form_Basic extends View {
         $this->api->stickyGET($get_field);
         return $this->setCondition($field,$_GET[$get_field]);
     }
+    // @obsolete method
     function addConditionFromGET($field='id',$get_field=null){
         $this->setConditionFromGET($field,$get_field);
     }
+    // @obsolete method
     function addCondition($field,$value=null){
         return $this->setCondition($field,$value);
     }
+    */
     function loadData(){
         /**
          * This call will be sent to fields, and they will initialize their values from $this->data
