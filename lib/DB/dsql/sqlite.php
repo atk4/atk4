@@ -18,4 +18,8 @@ class DB_dsql_sqlite extends DB_dsql {
     function random(){
         return $this->expr('random()');
     }
+    function describe($table){
+        return $this->expr('pragma table_info([desc_table])')
+            ->setCustom('desc_table',$table);
+    }
 }

@@ -767,6 +767,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         $t=clone $this;
         return $t->fx('concat',func_get_args());
     }
+    function describe($table){
+        return $this->expr('desc [desc_table]')
+            ->setCustom('desc_table',$table);
+    }
     function render_fx(){
         return $this->args['fx'];
     }
@@ -1005,7 +1009,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function _render(){
         /**/$this->api->pr->start('dsql/render');
-        if(!$this->template)$this->SQLTemplate('select');
+        if(is_null($this->template))$this->SQLTemplate('select');
         $self=$this;
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
