@@ -287,38 +287,11 @@ class Form_Basic extends View {
        return $button;
     }
 
-    function setConditionFromGET($field='id',$get_field=null){
-        // If GET pases an argument you need to put into your where clause, this is the function you should use.
-        if(!isset($get_field))$get_field=$field;
-        $this->get_field=$field;
-        $this->api->stickyGET($get_field);
-        return $this->setCondition($field,$_GET[$get_field]);
-    }
-    function addConditionFromGET($field='id',$get_field=null){
-        $this->setConditionFromGET($field,$get_field);
-    }
-    function addCondition($field,$value=null){
-        return $this->setCondition($field,$value);
-    }
     function loadData(){
         /**
          * This call will be sent to fields, and they will initialize their values from $this->data
          */
         if(!is_null($this->bail_out))return;
-        if($this->dq){
-            // TODO: move into Controller / hook
-
-            /*
-            // if no condition set, use id is null condition
-            if(empty($this->conditions))$this->setCondition('id',null);
-            // we actually initialize data from database
-            $data = $this->dq->do_getHash();
-            if($data){
-                $this->set($data);
-                $this->loaded_from_db=true;
-            }
-             */
-        }
         $this->hook('post-loadData');
     }
 
@@ -340,7 +313,6 @@ class Form_Basic extends View {
         $m->save();
     }
     function submitted(){
-        /* downcall from ApiWeb */
         /**
          * Default down-call submitted will automatically call this method if form was submitted
          */
