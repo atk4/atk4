@@ -371,7 +371,7 @@ class Model_Table extends Model {
 
     /** Loads all matching data into array of hashes */
     function getRows($fields=null){
-        /**/$this->api->pr->start('getRows/selecting huj');
+        /**/$this->api->pr->start('getRows/selecting');
         $a=$this->selectQuery($fields);
         /**/$this->api->pr->next('getRows/fetching');
         $a=$a->get();
@@ -387,9 +387,9 @@ class Model_Table extends Model {
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->_dsql()->expr('sum([field])');
-        $field->updateSelectQuery($q);
-        return $this->dsql()->field($q);
+        $q=$this->dsql()->del('fields');
+        $q->field($q->expr('sum([s_field])')->setCustom('s_field',$field));
+        return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
@@ -397,11 +397,27 @@ class Model_Table extends Model {
     }
     /** Loads the first matching record from the model */
     function loadAny(){
-        return $this->_load(null);
+        try{
+            return $this->_load(null);
+        }catch(BaseException $e){
+            throw $this->exception('No matching records found');
+        }
     }
     /** Try to load a matching record for the model. Will not raise exception if no records are found */
     function tryLoadAny(){
         return $this->_load(null,true);
+    }
+    /** Loads random entry into model */
+    function tryLoadRandom(){
+        // get ID first
+        $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
+        if($id)$this->load($id);
+        return this;
+    }
+    function loadRandom(){
+        $this->tryLoadRandom();
+        if(!$this->loaded())throw $this->exception('Unable to load random entry');
+        return $this;
     }
     /** Try to load a record by specified ID. Will not raise exception if record is not fourd */
     function tryLoad($id){
@@ -544,7 +560,7 @@ class Model_Table extends Model {
             $res=$this->insert();
         }
 
-        $res->hook('afterSave');
+        if($this->loaded())$res->hook('afterSave');
         $this->_dsql()->owner->commit();
         return $res;
     }
