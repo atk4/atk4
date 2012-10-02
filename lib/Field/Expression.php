@@ -11,7 +11,7 @@
  * // Below example achieves the same, but it prefixes age with proper table name
  * $model->addExpression('age','year(now())-year('.$model->getElement('adatege')->getField().')');
  *
- * $model->addExpression('row_counter',$this->api->db->dsql()->useExpr('@x := @x+1');
+ * $model->addExpression('row_counter',$this->db->dsql()->useExpr('@x := @x+1');
  *
  * $myctl=$this->add('Controller_MiscMySQL');   // using custom controller to format field
  * $model->addExpression('date_formatted',array($myctl,'dateExpr1'));

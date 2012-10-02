@@ -53,6 +53,8 @@ class Model_Table extends Model {
 
     public $debug=false;
 
+    public $db=null;            // Set to use different database connection
+
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
@@ -64,6 +66,9 @@ class Model_Table extends Model {
     }
     function init(){
         parent::init();
+
+        if(!$this->db)$this->db=$this->api->db;
+
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }
@@ -94,7 +99,7 @@ class Model_Table extends Model {
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
         if(!$this->table)throw $this->exception('$table property must be defined');
-        $this->dsql=$this->api->db->dsql();
+        $this->dsql=$this->db->dsql();
         if($this->debug)$this->dsql->debug();
         $this->dsql->table($this->table,$this->table_alias);
         $this->dsql->default_field=$this->dsql->expr('*,'.
