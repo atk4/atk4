@@ -26,7 +26,7 @@ class Controller_Data_Array extends AbstractController {
     }
     function loadBy($model,$field,$value){
         $this->loadBy($model,$field,$value);
-        if(!$model->loaded())throw $this->exceptoin('Unable to load data')
+        if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
         foreach($model->table as $row){
             if($row[$field]==$value){
@@ -50,7 +50,7 @@ class Controller_Data_Array extends AbstractController {
     }
     function load($model,$id){
         $this->tryLoad($model,$id);
-        if(!$model->loaded())throw $this->exceptoin('Unable to load data')
+        if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('id',$id);
         return $this;
     }
