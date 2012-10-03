@@ -248,7 +248,7 @@ class Auth_Basic extends AbstractController {
 		return $this->model->loaded();
 	}
     function verifyCredintials($user,$password){
-        throw $this->exceptoin('please use verifyCredentials (not verifyCredinteals)');
+        throw $this->exception('please use verifyCredentials (not verifyCredinteals)');
     }
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
