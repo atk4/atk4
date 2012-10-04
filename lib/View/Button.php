@@ -32,7 +32,7 @@ class View_Button extends View_HtmlElement {
         return $this;
     }
     function setLabel($label){
-        return $this->setText($label);
+        return $this->setText($this->api->_($label));
     }
     /** Adds CSS of the news  */
     function setButtonStyle($n){

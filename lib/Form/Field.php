@@ -73,7 +73,7 @@ abstract class Form_Field extends AbstractView {
 		return $this->mandatory;
 	}
 	function setCaption($_caption){
-		$this->caption=$_caption;
+		$this->caption=$this->api->_($_caption);
 		return $this;
 	}
 	function displayFieldError($msg=null){
@@ -109,9 +109,9 @@ abstract class Form_Field extends AbstractView {
     /** Position can be either 'before' or 'after' */
     function addButton($label,$position='after'){
         if($position=='after'){
-            return $this->afterField()->add('Button')->set($label);
+            return $this->afterField()->add('Button')->setLabel($label);
         }else{
-            return $this->beforeField()->add('Button')->set($label);
+            return $this->beforeField()->add('Button')->setLabel($label);
         }
         return $this;
     }
@@ -212,7 +212,7 @@ abstract class Form_Field extends AbstractView {
 		$ret=call_user_func($condition,$this);
 
 		if($ret===false){
-			if(is_null($msg))$msg='Error in '.$this->caption;
+			if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
 			$this->displayFieldError($msg);
 		}elseif(is_string($ret)){
 			$this->displayFieldError($ret);
