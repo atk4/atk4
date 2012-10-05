@@ -53,6 +53,17 @@ class View_Tabs_jUItabs extends View_Tabs {
         $this->template->appendHTML('tabs',$this->tab_template->render());
         return $this;
     }
+    
+    /**
+     * Set specific tab as selected
+     * $id  is zero-based index of the tab to be selected or the id selector
+     *      of the panel the tab is associated with (the tab's href fragment
+     *      identifier, e.g. hash, points to the panel's id).
+     */
+    function setSelect($id){
+		$this->js(true)->tabs('select',$id);
+    }
+
     function defaultTemplate(){
         return array('tabs');
 
