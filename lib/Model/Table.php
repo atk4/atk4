@@ -174,7 +174,7 @@ class Model_Table extends Model {
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
         }
-        return $query->field($query->concat('Record #',$query->bt($this->_dsql()->getField($this->id_field))));
+        return $query->field($query->concat('Record #',$this->getElement($this->id_field)));
     }
     // }}}
 
