@@ -588,7 +588,7 @@ menu {
 }
 ol,
 ul {
-  margin-left: 20px;
+  margin-left: 2em;
 }
 ol {
   list-style-type: decimal;
@@ -600,16 +600,18 @@ ol ul,
 ul ol,
 ul ul,
 ol ol {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 1em;
 }
 ul li,
 ol li {
   margin-bottom: 0.8em;
 }
+ul.simple,
+ul.simple ul {
+  list-style-type: none;
+}
 ul.simple {
   margin-left: 0;
-  list-style-type: none;
 }
 dl dt {
   width: 7em;
