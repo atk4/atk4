@@ -19,17 +19,15 @@ class View_Tabs_jUItabs extends View_Tabs {
         parent::init();
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
-        $this->js(true)
-            ->tabs($this->options);
     }
-    /* Set tabs option, for example, 'selected'=>'zero-based index of tab or ID of tab panel or href' */
+    /* Set tabs option, for example, 'selected'=>'zero-based index of tab */
     function setOption($key,$value){
         $this->options[$key]=$value;
         return $this;
     }
     function render(){
         $this->js(true)
-            ->tabs('option',$this->options);
+            ->tabs($this->options);
 
         return parent::render();
     }
