@@ -85,7 +85,7 @@ class BaseException extends Exception {
     function getMyFile(){ return $this->my_backtrace[$this->shift]['file']; }
     function getMyLine(){ return $this->my_backtrace[$this->shift]['line']; }
 
-    /** Returns HTML representation of the exceptoin */
+    /** Returns HTML representation of the exception */
     function getHTML($message=null){
         $html='';
         $html.= '<h2>'.get_class($this).(isset($message)?': '.$message:'').'</h2>';
@@ -95,7 +95,7 @@ class BaseException extends Exception {
         $html.= backtrace($this->shift+1,$this->getMyTrace());
         return $html;
     }
-    /** Returns Textual representaiton of the exception */
+    /** Returns Textual representation of the exception */
     function getText(){
         $text='';$args=array();
         foreach($this->more_info as $key=>$value){
