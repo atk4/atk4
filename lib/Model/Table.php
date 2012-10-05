@@ -174,7 +174,9 @@ class Model_Table extends Model {
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
         }
-        return $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
+        return ($this->api->db->type == 'sqlite')?
+                $query->field($query->expr('"Record #" || '.$query->bt($this->_dsql()->getField($this->id_field)))):
+                $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
     }
     // }}}
 
