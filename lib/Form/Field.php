@@ -80,7 +80,7 @@ abstract class Form_Field extends AbstractView {
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
 		$this->form->js(true)
-			->atk4_form('fieldError',$this->short_name,$msg)
+			->atk4_form('fieldError',$this->name,$msg)
 			->execute();
 
 		$this->form->errors[$this->short_name]=$msg;
