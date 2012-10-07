@@ -67,9 +67,11 @@ class Filter extends Form {
 	}
 	function submitted(){
 		if(parent::submitted()){
+			/* Imants: These rows are useless because forgetting is done inside memorizeAll
 			if($this->isClicked('Clear')){
 				$this->clearData();
 			}
+			*/
 			$this->memorizeAll();
             $this->view->js()->reload()->execute();
 		}

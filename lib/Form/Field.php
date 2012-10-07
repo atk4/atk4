@@ -80,7 +80,7 @@ abstract class Form_Field extends AbstractView {
 		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
 		$this->form->js(true)
-			->atk4_form('fieldError',$this->short_name,$msg)
+			->atk4_form('fieldError',$this->name,$msg)
 			->execute();
 
 		$this->form->errors[$this->short_name]=$msg;
@@ -185,14 +185,8 @@ abstract class Form_Field extends AbstractView {
 		$this->value=null;
 	}
 	function loadPOST(){
-		$gpc = get_magic_quotes_gpc();
-		if ($gpc){
-			if(isset($_POST[$this->name]))$this->set(stripslashes($_POST[$this->name]));
-			else $this->set($this->default_value);
-		} else {
-			if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
-			else $this->set($this->default_value);
-		}
+		if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
+		else $this->set($this->default_value);
 		$this->normalize();
 	}
 	function normalize(){
@@ -553,7 +547,7 @@ class Form_Field_Text extends Form_Field {
 
 		return
 			parent::getInput(array_merge(array(''=>'textarea'),$attr)).
-			htmlspecialchars(stripslashes($this->value),ENT_COMPAT,'ISO-8859-1',false).
+			htmlspecialchars($this->value,ENT_COMPAT,'ISO-8859-1',false).
 			$this->getTag('/textarea');
 	}
 }

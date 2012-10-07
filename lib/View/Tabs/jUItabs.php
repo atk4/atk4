@@ -13,13 +13,22 @@
 **/
 class View_Tabs_jUItabs extends View_Tabs {
     public $tab_template=null;
+    public $options=array('cache'=>false);
 
     function init(){
         parent::init();
-        $this->js(true)
-            ->tabs(array('cache'=>false));
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
+    }
+    function setSelect($number){
+        $this->options['select']=$number;
+        return $this;
+    }
+    function render(){
+        $this->js(true)
+            ->tabs($this->options);
+
+        return parent::render();
     }
     /* Add tab and returns it so that you can add static content */
     function addTab($title,$name=null){
