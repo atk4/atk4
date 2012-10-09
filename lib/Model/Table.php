@@ -517,7 +517,7 @@ class Model_Table extends Model {
 
     // {{{ Saving Data
 
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    /** Save model into database and don't try to load it back */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
@@ -534,6 +534,7 @@ class Model_Table extends Model {
             $this->saveAndUnload();
         }
     }
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
