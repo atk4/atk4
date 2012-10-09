@@ -102,7 +102,7 @@ class Controller_MVCForm extends AbstractController {
             $form_field->setValueList($a);
         } else {
             if ($msg=$field->mandatory()){
-                $form_field->setNotNull($msg);
+                $form_field->validateNotNULL($msg);
             }
         }
 

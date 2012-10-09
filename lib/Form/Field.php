@@ -225,7 +225,7 @@ abstract class Form_Field extends AbstractView {
 		return $this;
 	}
 	function _validateNotNull($field){
-		if($field->get()==="")return false;
+		if($field->get()==="" || is_null($field->get()))return false;
 	}
 	/** Adds asterisk to the field and validation */
 	function validateNotNULL($msg=null){
@@ -236,11 +236,6 @@ abstract class Form_Field extends AbstractView {
             $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
         }
 		$this->validateField(array($this,'_validateNotNull'),$msg);
-		return $this;
-	}
-	/** obsolete version of validateNotNULL */
-	function setNotNull($msg=''){
-		$this->validateNotNULL($msg);
 		return $this;
 	}
 	function setDefault($default=null){
