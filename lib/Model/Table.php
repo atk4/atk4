@@ -165,7 +165,8 @@ class Model_Table extends Model {
     function fieldQuery($field){
         $query=$this->dsql()->del('fields');
         if(is_string($field))$field=$this->getElement($field);
-        return $field->updateSelectQuery($query);
+        $field->updateSelectQuery($query);
+        return $query;
     }
     /** Returns query which selects title field */
     function titleQuery(){
