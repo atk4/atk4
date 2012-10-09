@@ -573,6 +573,7 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
             if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
+            if(!$f->get() && !is_numeric($f->get())) $f->set(null);
 
             $f->updateInsertQuery($insert);
         }
@@ -609,6 +610,7 @@ class Model_Table extends Model {
 
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
+                if(!$el->get() && !is_numeric($el->get())) $el->set(null);
                 $el->updateModifyQuery($modify);
             }
         }
