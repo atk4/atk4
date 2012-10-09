@@ -283,7 +283,7 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Exception handling: http://agiletoolkit.org/doc/exception
-    function exception($message,$type=null){
+    function exception($message,$type=null,$code=null){
         if(!$type){
             $type=$this->default_exception;
         }elseif($type[0]=='_'){
@@ -297,7 +297,7 @@ abstract class AbstractObject {
         $message=$this->api->_($message);
 
         if($type=='Exception')$type='BaseException';
-        $e=new $type($message);
+        $e=new $type($message,null,null,$code);
         $e->owner=$this;
         $e->api=$this->api;
         $e->init();

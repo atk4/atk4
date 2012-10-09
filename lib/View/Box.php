@@ -34,7 +34,7 @@ class View_Box extends View {
         $this->has_close=$state;
         return $this;
     }
-    /** By default box uses information Icon. You can use addIcon() to override or $this->del('Icon') to remove. */
+    /** By default box uses information Icon. You can use addIcon() to override or $this->template->del('Icon') to remove. */
     function addIcon($i){
         return $this->add('Icon',null,'Icon')->set($i);
     }
