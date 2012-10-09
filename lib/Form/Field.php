@@ -238,11 +238,6 @@ abstract class Form_Field extends AbstractView {
 		$this->validateField(array($this,'_validateNotNull'),$msg);
 		return $this;
 	}
-	/** obsolete version of validateNotNULL */
-	function setNotNull($msg=''){
-		$this->validateNotNULL($msg);
-		return $this;
-	}
 	function setDefault($default=null){
 		/* OBSOLETE 4.1, use set() */
 		$this->default_value=$default;
