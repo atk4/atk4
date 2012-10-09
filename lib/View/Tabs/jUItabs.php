@@ -20,8 +20,9 @@ class View_Tabs_jUItabs extends View_Tabs {
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
     }
-    function setSelect($number){
-        $this->options['select']=$number;
+    /* Set tabs option, for example, 'selected'=>'zero-based index of tab */
+    function setOption($key,$value){
+        $this->options[$key]=$value;
         return $this;
     }
     function render(){
