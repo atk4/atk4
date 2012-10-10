@@ -375,7 +375,7 @@ $.extend($.atk4,{
 		}
 		if(typeof(a)=='undefined')return url;
 		if(b)a+='='+encodeURIComponent(b);
-        return url+(url.indexOf('?')==-1?'?':'&')+a + "&format=raw";
+        return url+(url.indexOf('?')==-1?'?':'&')+a;
 	}
 
 });
