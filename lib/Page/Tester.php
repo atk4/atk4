@@ -200,7 +200,7 @@ class Page_Tester extends Page {
                 }
 
 
-                $this->responses[]='"'.$k.'"'.'=>'.addslashes(var_export($result,true));
+                $this->responses[]='"'.$k.'"'.'=>'.var_export($result,true);
             }
 
             $data[]=$row;
