@@ -417,6 +417,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $cond=trim($cond);
             }
 
+            if($cond==='=' && $value===null)$cond='is';
+
 
             if($cond=='in' && is_string($value)){
                 $value=explode(',',$value);
