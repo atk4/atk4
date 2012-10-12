@@ -165,8 +165,7 @@ class Model_Table extends Model {
     function fieldQuery($field){
         $query=$this->dsql()->del('fields');
         if(is_string($field))$field=$this->getElement($field);
-        $field->updateSelectQuery($query);
-        return $query;
+        return $field->updateSelectQuery($query);
     }
     /** Returns query which selects title field */
     function titleQuery(){
@@ -518,7 +517,7 @@ class Model_Table extends Model {
 
     // {{{ Saving Data
 
-    /** Save model into database and don't try to load it back */
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
@@ -535,7 +534,6 @@ class Model_Table extends Model {
             $this->saveAndUnload();
         }
     }
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
@@ -575,7 +573,6 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
             if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
-            if(!$f->get() && !is_numeric($f->get())) $f->set(null);
 
             $f->updateInsertQuery($insert);
         }
@@ -612,7 +609,6 @@ class Model_Table extends Model {
 
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
-                if(!$el->get() && !is_numeric($el->get())) $el->set(null);
                 $el->updateModifyQuery($modify);
             }
         }
