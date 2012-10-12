@@ -125,6 +125,7 @@ class Field extends AbstractModel {
     }
     /** Converts true/false into boolean representation according to the "enum" */
     function getBooleanValue($value){
+        if($value===null)return null;
         if($this->listData){
             reset($this->listData);
             list($junk,$yes_value)=each($this->listData);
