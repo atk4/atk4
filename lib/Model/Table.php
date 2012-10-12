@@ -301,10 +301,6 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
-        if($field instanceof Field_Reference || $field instanceof Field_Expression){
-            $this->_dsql()->order($field->getExpr());
-            return $this;
-        }
         $this->_dsql()->order($field->getExpr(), $desc);
 
         return $this;
