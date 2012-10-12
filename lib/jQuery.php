@@ -47,7 +47,11 @@ class jQuery extends AbstractController {
 
         $this->api->template->del('js_include');
 
-        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.7.2.min'));
+        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
+        if($v=$this->api->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
+        else($v=$this->api->getConfig('js/jquery','jquery-1.8.2.min'));
+
+        $this->addInclude($v);
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
