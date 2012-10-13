@@ -575,10 +575,13 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     // }}}
     // {{{ order()
-    function order($order,$desc=null){// ,$prepend=null){
-        if(is_object($order))$order='('.$order.')';
-        if($desc)$order.=' desc';
-        return $this->_setArray($order,'order');
+    function order($order,$desc=null,$parse_commas=true){// ,$prepend=null){
+		if(is_object($order)){
+			$order='('.$order.')';
+			$parse_commas=false;
+		}
+		if($desc && strtolower($desc)!='asc') $order.=' desc';
+		return $this->_setArray($order,'order',$parse_commas);
     }
 
     function render_order(){
