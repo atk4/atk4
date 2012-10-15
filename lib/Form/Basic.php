@@ -265,7 +265,7 @@ class Form_Basic extends View {
     }
      */
     function addSubmit($label='Save',$name=null){
-        return $this->addButton($name,$label,'Form_Submit',true);
+        return $this->addButton($label,$name,'Form_Submit',true);
     }
     function addButton($label='Button',$name=null,$class='Button',$nosave=false){
         if(!$name)$name=str_replace(' ','_',$label);
