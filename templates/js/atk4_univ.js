@@ -37,11 +37,12 @@ $.each({
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
-	page: function(page,fn){
+    page: function(page,fn){
         $c=$('#Content');
         if(!$c.length)$c=this.jquery;
+        window.history.pushState(null, null, page);
         $c.atk4_load(page,fn);
-	},
+    },
 	log: function(arg1){
 		if(console)console.log(arg1);
    	},
