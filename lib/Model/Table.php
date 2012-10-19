@@ -409,7 +409,7 @@ class Model_Table extends Model {
         // get ID first
         $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
         if($id)$this->load($id);
-        return this;
+        return $this;
     }
     function loadRandom(){
         $this->tryLoadRandom();
