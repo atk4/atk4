@@ -497,6 +497,41 @@ body #atk-layout #atk-footer-guard {
   overflow: hidden;
 }
 /* ==============================================
+	Loader
+   ============================================== */
+@-webkit-keyframes rotate-i1 {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate-i2 {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+  }
+}
+.loading img.i1 {
+  -webkit-animation-name: rotate-i1;
+  -webkit-animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-transition-timing-function: linear;
+  margin: 10px 10px;
+  position: absolute;
+}
+.loading img.i2 {
+  -webkit-animation-name: rotate-i2;
+  -webkit-animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-transition-timing-function: linear;
+  margin: 35px 27px;
+  position: absolute;
+}
+/* ==============================================
 	Typography
    ============================================== */
 body {
@@ -553,7 +588,7 @@ menu {
 }
 ol,
 ul {
-  margin-left: 20px;
+  margin-left: 2em;
 }
 ol {
   list-style-type: decimal;
@@ -565,16 +600,18 @@ ol ul,
 ul ol,
 ul ul,
 ol ol {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 1em;
 }
 ul li,
 ol li {
   margin-bottom: 0.8em;
 }
+ul.simple,
+ul.simple ul {
+  list-style-type: none;
+}
 ul.simple {
   margin-left: 0;
-  list-style-type: none;
 }
 dl dt {
   width: 7em;
@@ -855,7 +892,10 @@ textarea:focus {
 .input-row .input-cell.expanded input {
   width: 100%;
 }
-.input-row .input-cell .ui-button {
+.input-row .input-cell .ui-buttonset {
+	white-space: nowrap;
+}
+.input-row .input-cell > .ui-button {
   margin-left: 0;
   margin-right: 0;
 }

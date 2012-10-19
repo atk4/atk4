@@ -40,6 +40,10 @@ class Page_Tester extends Page {
         $ff->set($this->responses);
         $ff->js('click')->select();
     }
+    public $cnt;
+    function ticker(){
+        $this->cnt++;
+    }
     function silentTest($test_obj=null){
         if(!$test_obj)$test_obj=$this;
 
@@ -74,6 +78,11 @@ class Page_Tester extends Page {
 
                 $me=memory_get_peak_usage();
                 $ms=microtime(true);
+
+                $this->cnt=0;
+                declare(ticks=10);
+                register_tick_function(array($this,'ticker'));
+
                 try{
                     $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
                     $ms=microtime(true)-$ms;
@@ -94,7 +103,9 @@ class Page_Tester extends Page {
                     $me=($mend=memory_get_peak_usage())-$me;
                 }
 
-                $speed+=$ms;
+                unregister_tick_function(array($this,'ticker'));
+
+                $speed+=$this->cnt*10;
                 $memory+=$me;
             }
         }
@@ -145,6 +156,9 @@ class Page_Tester extends Page {
                 // Test speed
                 $me=memory_get_peak_usage();
                 $ms=microtime(true);
+                $this->cnt=0;
+                declare(ticks=10);
+                register_tick_function(array($this,'ticker'));
                 try{
                     $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
                 }catch (Exception $e){
@@ -171,7 +185,9 @@ class Page_Tester extends Page {
                 }
                 $ms=microtime(true)-$ms;
                 $me=($mend=memory_get_peak_usage())-$me;
-                $row[$key.'_inf']='Speed: '.round($ms,3).'<br/>Memory: '.$me;
+                unregister_tick_function(array($this,'ticker'));
+
+                $row[$key.'_inf']='Ticks: '.($this->cnt*10).'<br/>Memory: '.$me;
 
                 $result=$this->formatResult($row,$key,$result);
 
@@ -184,7 +200,7 @@ class Page_Tester extends Page {
                 }
 
 
-                $this->responses[]='"'.$k.'"'.'=>'.addslashes(var_export($result,true));
+                $this->responses[]='"'.$k.'"'.'=>'.var_export($result,true);
             }
 
             $data[]=$row;

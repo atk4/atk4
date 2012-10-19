@@ -5,7 +5,7 @@
 //
 
 ;
-$||console.error("jQuery must be loaded");
+jQuery||console.error("jQuery must be loaded");
 (function($){
 
 
@@ -37,11 +37,11 @@ $.each({
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
-	page: function(page,fn){
+    page: function(page,fn){
         $c=$('#Content');
         if(!$c.length)$c=this.jquery;
         $c.atk4_load(page,fn);
-	},
+    },
 	log: function(arg1){
 		if(console)console.log(arg1);
    	},
@@ -241,7 +241,7 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-	var dialog=$('<div class="dialog dialog_autosize" title="Untitled">Loading<div></div></div>').appendTo('body');
+    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div class="loading centred"><i></i><i></i></div><div></div></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	if(options.customClass){
@@ -287,7 +287,11 @@ dialogBox: function(options){
 				$(this).dialog('close');
 			}
 		},
+		open: function(){
+			$("body").css({ overflow: 'hidden' });
+		},
 		close: function(){
+			$("body").css({ overflow: 'inherit' });
 			$(this).dialog('destroy');
 			$(this).remove();
 		}
@@ -742,4 +746,4 @@ $.fn.extend({
 		return u;
 	}
 });
-})($);
+})(jQuery);

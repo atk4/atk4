@@ -32,6 +32,8 @@ class jQuery extends AbstractController {
 
     public $included=array();
 
+    public $chain_class='jQuery_Chain';
+
     function init(){
         parent::init();
 
@@ -45,7 +47,11 @@ class jQuery extends AbstractController {
 
         $this->api->template->del('js_include');
 
-        $this->addInclude('jquery-'.$this->api->getConfig('js/versions/jquery','1.7.2.min'));
+        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
+        if($v=$this->api->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
+        else($v=$this->api->getConfig('js/jquery','jquery-1.8.2.min'));
+
+        $this->addInclude($v);
 
         // Controllers are not rendered, but we need to do some stuff manually
         $this->api->addHook('pre-render-output',array($this,'postRender'));
@@ -87,7 +93,7 @@ class jQuery extends AbstractController {
     /* [private] use $object->js() instead */
     function chain($object){
         if(!is_object($object))throw new BaseException("Specify \$this as argument if you call chain()");
-        return $object->add('jQuery_Chain');
+        return $object->add($this->chain_class);
     }
     /* [private] When partial render is done, this function includes JS for rendered region */
     function cutRender(){

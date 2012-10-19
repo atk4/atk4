@@ -42,7 +42,13 @@ class jUI extends jQuery {
     }
     function addDefaultIncludes(){
         $this->addInclude('start-atk4');
-        $this->addInclude('jquery-ui-'.$this->api->getConfig('js/versions/jqueryui','1.9.0m8.min'));
+
+        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
+        if($v=$this->api->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
+        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.9.0.min'));
+
+        $this->addInclude($v);
+
         $this->addInclude('ui.atk4_loader');
         $this->addInclude('ui.atk4_notify');
         $this->addInclude('atk4_univ');

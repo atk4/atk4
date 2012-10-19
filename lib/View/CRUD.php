@@ -36,7 +36,7 @@ class View_CRUD extends View {
     }
     function setController($controller){
         if($this->form){
-            $m=$this->form->setController($controller);
+            $this->form->setController($controller);
             $this->form->addSubmit('Save');
         }elseif($this->grid){
             $this->grid->setController($controller);
@@ -58,7 +58,7 @@ class View_CRUD extends View {
     function initComponents(){
         if($this->form){
             $m=$this->form->getModel();
-            if(($id=$_GET[$this->name])!='new' && $this->allow_edit){
+            if(($id=$_GET[$this->name])!='new'){
 				if(!$this->allow_edit)throw $this->exception('Editing not allowed');
                 $m->load($id);
             }

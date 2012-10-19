@@ -26,9 +26,6 @@ class ApiWeb extends ApiCLI {
     /** recorded time when execution has started */
     public $start_time=null;
 
-    private $_license_checksum=null;
-    private $_license='unlicensed'; 
-
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
@@ -75,14 +72,15 @@ class ApiWeb extends ApiCLI {
     }
     /** Magic Quotes were a design error. Let's strip them if they are enabled */
     function cleanMagicQuotes(){
-
-        function stripslashes_array(&$array, $iterations=0) {
-            if ($iterations < 3){
-                foreach ($array as $key => $value){
-                    if (is_array($value)){
-                        stripslashes_array($array[$key], $iterations + 1);
-                    } else {
-                        $array[$key] = stripslashes($array[$key]);
+        if (!function_exists("stripslashes_array")){
+            function stripslashes_array(&$array, $iterations=0) {
+                if ($iterations < 3){
+                    foreach ($array as $key => $value){
+                        if (is_array($value)){
+                            stripslashes_array($array[$key], $iterations + 1);
+                        } else {
+                            $array[$key] = stripslashes($array[$key]);
+                        }
                     }
                 }
             }
@@ -120,6 +118,9 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ License checking function
+    private $_license_checksum=null;
+    private $_license='unlicensed'; 
+
     /** This function will return type of the license used: agpl, single, multi */
     final function license(){
         return $this->_license;
@@ -183,7 +184,7 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Obsolete
-    /** @obsolete */
+    /** This method is called when exception was caught in the application */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
         echo "<font color=red>",$e,"</font>";
@@ -334,6 +335,10 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Miscelanious Functions
+    /** Render only specified object or object with specified name */
+    function cut($object){
+        $_GET['cut_object']=is_object($object)?$object->name:$object;
+    }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
         /**

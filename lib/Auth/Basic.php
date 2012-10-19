@@ -87,6 +87,7 @@ class Auth_Basic extends AbstractController {
             if($this->recall('class',false)==get_class($this->model)){
                 $this->debug("Loading model from cache");
                 $this->model->set($this->info);
+                $this->model->dirty=array();
                 $this->model->id=$this->recall('id',null);
             }else{
                 // Class changed, re-fetch data from database
@@ -122,6 +123,7 @@ class Auth_Basic extends AbstractController {
     function addEncryptionHook($model){
         // If model is saved, encrypt password
         $t=$this;
+        $model->has_encryption_hook=true;
         $model->addHook('beforeSave',function($m)use($t){
             if(isset($m->dirty[$t->password_field])){
                 $m['password']=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
@@ -169,7 +171,7 @@ class Auth_Basic extends AbstractController {
 	}
     /** Manually encrypt password */
 	function encryptPassword($password,$salt=null){
-        if(is_callable($this->password_encryption)){
+        if(!is_string($this->password_encryption) && is_callable($this->password_encryption)){
             $e=$this->password_encryption;
             return $e($password,$salt);
         }
@@ -246,7 +248,7 @@ class Auth_Basic extends AbstractController {
 		return $this->model->loaded();
 	}
     function verifyCredintials($user,$password){
-        return $this->verifyCredentials($user,$password);
+        throw $this->exception('please use verifyCredentials (not verifyCredinteals)');
     }
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
@@ -368,7 +370,7 @@ class Auth_Basic extends AbstractController {
         $password=$password?$password->caption:'Password';
 
 		$form->addField('Line','username',$email);
-		$form->addField('Password','password','Password');
+		$form->addField('Password','password',$password);
 		$form->addSubmit('Login');
 
         return $form;

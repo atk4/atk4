@@ -32,6 +32,9 @@ class Lister extends View {
 
     /** Contains ID of current record */
     public $current_id=null;
+
+    /** Name of the ID field in this lister */
+    public $id_field=null;
     
     /** Data set fetched from source */
     public $iterator=array();
@@ -84,7 +87,14 @@ class Lister extends View {
 
         // Set Array as a data source
         if(is_array($source)){
-            $this->iter=$source;
+//            $this->iter=$source;
+            $m=$this->setModel('Model',$fields);
+
+            if(is_array(reset($source))){
+                $m->setSource('Array',$source);
+            }else{
+                $m->setSource('ArrayAssoc',$source);
+            }
 
             return $this;
         }

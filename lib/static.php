@@ -77,6 +77,8 @@ if(!function_exists('lowlevel_error')){
             }
         }
     }
+    set_error_handler("error_handler");
+
     /*
        };if(!function_exists('htmlize_exception')){
        function htmlize_exception($e,$msg){

@@ -154,6 +154,10 @@ class Form_Basic extends View {
     function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
+        switch(strtolower($type)){
+            case'dropdown':$type='DropDown';break;
+            case'line':$type='Line';break;
+        }
         $class=$type;
         if(is_string($class)&&substr($class,0,strlen('Form_Field_'))!='Form_Field_'){
             $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
@@ -271,46 +275,23 @@ class Form_Basic extends View {
 
         return $submit;
     }
-    function addButton($label){
-        // Now add the regular button first
-        $name=preg_replace('/[^a-zA-Z0-9_-]/','',$label);
-        if(!$name)$name=null;
-        return $this->add('Button',$name,'form_buttons')
+    function addButton($label='Button',$name=null,$color=null){
+        if(!$name)$name=str_replace(' ','_',$label);
+        $name = preg_replace('/[^a-zA-Z0-9_-]/','', isset($name)?$name:$label);
+
+        $button = $this->add('Button',$name,'form_buttons')
             ->setLabel($label);
+        if (!is_null($color))
+            $button->setColor($color);
+
+       return $button;
     }
 
-    function setConditionFromGET($field='id',$get_field=null){
-        // If GET pases an argument you need to put into your where clause, this is the function you should use.
-        if(!isset($get_field))$get_field=$field;
-        $this->get_field=$field;
-        $this->api->stickyGET($get_field);
-        return $this->setCondition($field,$_GET[$get_field]);
-    }
-    function addConditionFromGET($field='id',$get_field=null){
-        $this->setConditionFromGET($field,$get_field);
-    }
-    function addCondition($field,$value=null){
-        return $this->setCondition($field,$value);
-    }
     function loadData(){
         /**
          * This call will be sent to fields, and they will initialize their values from $this->data
          */
         if(!is_null($this->bail_out))return;
-        if($this->dq){
-            // TODO: move into Controller / hook
-
-            /*
-            // if no condition set, use id is null condition
-            if(empty($this->conditions))$this->setCondition('id',null);
-            // we actually initialize data from database
-            $data = $this->dq->do_getHash();
-            if($data){
-                $this->set($data);
-                $this->loaded_from_db=true;
-            }
-             */
-        }
         $this->hook('post-loadData');
     }
 
@@ -332,7 +313,6 @@ class Form_Basic extends View {
         $m->save();
     }
     function submitted(){
-        /* downcall from ApiWeb */
         /**
          * Default down-call submitted will automatically call this method if form was submitted
          */
@@ -341,12 +321,13 @@ class Form_Basic extends View {
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
         if(!is_null($this->bail_out))return $this->bail_out;
-        $this->hook('loadPOST');
-        $this->hook('validate');
 
-        //TODO: handle errors properly
-        if(!empty($this->errors))return false;
+        $this->hook('loadPOST');
         try{
+            $this->hook('validate');
+
+            if(!empty($this->errors))return false;
+            
             if(($output=$this->hook('submit',array($this)))){
                 /* checking if anything usefull in output */
                 if(is_array($output)){

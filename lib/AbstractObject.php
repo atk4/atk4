@@ -57,20 +57,28 @@ abstract class AbstractObject {
          */
         $this->_initialized=true;
     }
+
+    /* \section Object Management Methods */
+    /** Clones associated controller and model. If cloning views, add them to the owner */
     function __clone(){
-        // fix short name and add ourselves to the parent
         //$this->short_name=$this->_unique($this->owner->elements,$this->short_name);
         //$this->owner->add($this);
 
-        // Clone controller and model
         if($this->model && is_object($this->model))$this->model=clone $this->model;
         if($this->controller && is_object($this->controller))$this->controller=clone $this->controller;
 
     }
+    /* Converts into string "Object View(myapp_page_view)"   */
     function __toString() {
         return "Object " . get_class($this) . "(" . $this->name . ")";
     }
-    /** Removes object from parent and prevents it from renedring */
+    /* 
+        Removes object from parent and prevents it from renedring 
+        \code
+        $view = $this->add('View');
+        $view -> destroy();
+        \endcode
+    */
     function destroy(){
         foreach($this->elements as $el)if($el instanceof AbstractObject){
             $el->destroy();
@@ -136,7 +144,7 @@ abstract class AbstractObject {
             $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
-            $short_name = strtolower($class);
+            $short_name = str_replace('/','_',strtolower($class));
 
         $short_name=$this->_unique($this->elements,$short_name);
 
@@ -174,7 +182,7 @@ abstract class AbstractObject {
             $this->elements[$short_name]=true;  // dont store extra reference to models and controlers
             // for purposes of better garbage collection
 
-        $element->name = $this->name . '_' . $short_name;
+        $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
 
         // Initialize template before init() starts
@@ -275,7 +283,7 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Exception handling: http://agiletoolkit.org/doc/exception
-    function exception($message,$type=null){
+    function exception($message,$type=null,$code=null){
         if(!$type){
             $type=$this->default_exception;
         }elseif($type[0]=='_'){
@@ -289,7 +297,7 @@ abstract class AbstractObject {
         $message=$this->api->_($message);
 
         if($type=='Exception')$type='BaseException';
-        $e=new $type($message);
+        $e=new $type($message,null,null,$code);
         $e->owner=$this;
         $e->api=$this->api;
         $e->init();
@@ -454,6 +462,7 @@ abstract class AbstractObject {
     // }}}
 
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
+    /* Call method is used to display exception for non-existant methods and also ability to extend objects with addMethod */
     function __call($method,$arguments){
         if($ret=$this->tryCall($method,$arguments))return $ret[0];
         throw $this->exception("Method is not defined for this object",'Logic')
@@ -511,6 +520,23 @@ abstract class AbstractObject {
     }
     // }}}
 
+    function _shorten($desired){
+        if(strlen($desired)>$this->api->max_name_length){
+
+            $len=$this->api->max_name_length-10;
+            if($len<5)$len=$this->api->max_name_length;
+
+            $key=substr($desired,0,$len);
+            $rest=substr($desired,$len);
+
+            if(!$this->api->unique_hashes[$key]){
+                $this->api->unique_hashes[$key]=count($this->api->unique_hashes)+1;
+            }
+            $desired=$this->api->unique_hashes[$key].'__'.$rest;
+        };
+
+        return $desired;
+    }
     /**
      * This funcion given the associative $array and desired new key will return
      * the best matching key which is not yet in the arary. For example if you have

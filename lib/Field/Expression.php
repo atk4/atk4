@@ -11,7 +11,7 @@
  * // Below example achieves the same, but it prefixes age with proper table name
  * $model->addExpression('age','year(now())-year('.$model->getElement('adatege')->getField().')');
  *
- * $model->addExpression('row_counter',$this->api->db->dsql()->useExpr('@x := @x+1');
+ * $model->addExpression('row_counter',$this->db->dsql()->useExpr('@x := @x+1');
  *
  * $myctl=$this->add('Controller_MiscMySQL');   // using custom controller to format field
  * $model->addExpression('date_formatted',array($myctl,'dateExpr1'));
@@ -40,7 +40,7 @@ class Field_Expression extends Field {
         return $this;
     }
     function getExpr(){
-        if(is_callable($this->expr))
+        if(!is_string($this->expr) && is_callable($this->expr))
             return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
         
         if($this->expr instanceof DB_dsql)return $this->expr;
@@ -49,7 +49,7 @@ class Field_Expression extends Field {
     }
     function updateSelectQuery($select){
         $expr=$this->expr;
-        if(is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
+        if(!is_string($expr) && is_callable($expr))$expr=call_user_func($expr,$this->owner,$select,$this);
         if($expr instanceof DB_dsql){
             return $select->field($expr,$this->short_name);
         }

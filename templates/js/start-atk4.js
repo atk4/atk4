@@ -13,7 +13,7 @@
   $this->js(true)->_load('start-atk4');
 */
 
-;$.atk4||(function($){
+;jQuery.atk4||(function($){
 
 /*
 
@@ -333,28 +333,17 @@ $.extend($.atk4,{
         head.appendChild(script);
     },
 	/*
-	 WARNING: this function will include CSS file in global context,
-	 which means relative paths will be counted from current directory
-	 and not the URL of the CSS file. This breaks url(../images) in
-	 CSS files
-
-	 This function will dynamically load CSS file
+	 This function will dynamically load CSS file.
+	 Also relative URLs like url(../images) will not break.
 	*/
     includeCSS: function(url){
-        if(this._isIncluded(url))return;
+		if(this._isIncluded(url))return;
 
-        this.get(url,function(code){
-            var cssTag = document.createElement('style');
-            cssTag.setAttribute('type', 'text/css');
-			if(cssTag.styleSheet){ // IE quirk
-				cssTag.styleSheet.cssText=code;
-			}else{	 // compliant browsers
-            	var t = document.createTextNode(code);
-				cssTag.appendChild(t);
-			}
-            var headerTag = document.getElementsByTagName('head')[0];
-            headerTag.appendChild(cssTag);
-        });
+		$("<link>", {
+			rel: "stylesheet",
+			type: "text/css",
+			href: url
+		}).appendTo("head");
     },
     _isIncluded: function(url){
         if(this._includes[url])return true;
@@ -391,7 +380,7 @@ $.extend($.atk4,{
 
 });
 
-})($);
+})(jQuery);
 
 
 // we use console.log a lot. It is handy in WebKit and Firebug, but

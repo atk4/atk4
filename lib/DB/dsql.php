@@ -51,6 +51,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         'delete'=>"delete from  [table_noalias] [where]",
         'truncate'=>'truncate table [table_noalias]'
     );
+    /** required for non-id based tables */
+    public $id_field;
 
     // {{{ Generic stuff
     function _unique(&$array,$desired=null){
@@ -415,6 +417,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $cond=trim($cond);
             }
 
+            if($cond==='=' && $value===null)$cond='is';
+
 
             if($cond=='in' && is_string($value)){
                 $value=explode(',',$value);
@@ -449,7 +453,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function render_having(){
         if(!$this->args['having'])return;
-        return 'having '.join(' or ',$this->_render_where('having'));
+        return 'having '.join(' and ',$this->_render_where('having'));
     }
     // }}}
     // {{{ join()
@@ -761,6 +765,14 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->template="[fx]([args])";
         return $this;
     }
+    function concat(){
+        $t=clone $this;
+        return $t->fx('concat',func_get_args());
+    }
+    function describe($table){
+        return $this->expr('desc [desc_table]')
+            ->setCustom('desc_table',$table);
+    }
     function render_fx(){
         return $this->args['fx'];
     }
@@ -770,6 +782,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function count($arg=null){
         if(is_null($arg))$arg='*';
         return $this->expr('count([count])')->setCustom('count',$this->bt($arg));
+    }
+    function random(){
+        return $this->expr('rand()');
     }
     // }}}
 
@@ -931,6 +946,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     // {{{ Iterator support 
     public $data=false;
     public $_iterating=false;
+    public $preexec=false;
+    function preexec(){
+        $this->execute();
+        $this->preexec=true;
+        return $this;
+    }
     function rewind(){
         if($this->_iterating){
             $this->stmt=null;
@@ -947,10 +968,13 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->data;
     }
     function key(){
-        return $this->data['id'];
+        return $this->data[$this->id_field];
     }
     function valid(){
-        if(!$this->stmt)$this->data = $this->fetch();
+        if(!$this->stmt || $this->preexec){
+            $this->preexec=false;
+            $this->data = $this->fetch();
+        }
         return (boolean)$this->data;
     }
     // }}}
@@ -987,7 +1011,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function _render(){
         /**/$this->api->pr->start('dsql/render');
-        if(!$this->template)$this->SQLTemplate('select');
+        if(is_null($this->template))$this->SQLTemplate('select');
         $self=$this;
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
