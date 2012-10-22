@@ -326,6 +326,7 @@ class Model_Table extends Model {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }
         $this->_iterating->next();
