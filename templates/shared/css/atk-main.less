@@ -322,12 +322,13 @@ h1 small, h2 small, h3 small, h4 small, h5 small {font-size:0.75em;font-weight:n
 
 p,blockquote, ul, ol, dir, menu {margin:0 0 @margin/1.8 0;}
 
-ol, ul {margin-left:20px;}
+ol, ul {margin-left:2em;}
 ol {list-style-type:decimal}
 ul {list-style-type:disc;}
-ol ul, ul ol, ul ul, ol ol {margin-top:0;margin-bottom:0}
+ol ul, ul ol, ul ul, ol ol {margin-bottom:@margin*0.5;}
 ul li, ol li {margin-bottom:@margin/2.5;}
-ul.simple {margin-left:0;list-style-type:none;}
+ul.simple, ul.simple ul {list-style-type:none;}
+ul.simple {margin-left:0;}
 
 dl {
 	dt {width:@label;font-weight:bold;float:left;}
@@ -527,7 +528,8 @@ textarea:focus {
 		display:table-cell;
 		vertical-align:middle;
 		&.expanded input {width:100%;}
-		.ui-button {margin-left:0;margin-right:0;}
+		.ui-buttonset {white-space:nowrap;}
+		>.ui-button {margin-left:0;margin-right:0;}
 		.ui-button * {line-height:normal;}
 	}
 }
@@ -762,7 +764,6 @@ input.ui-button,
 .ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right:@padding/4; }
 .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right:@padding/4; }
 
-/* .ui-dialog {padding:@padding/10;top:@dialogMargin !important;} moved into JS */
 .ui-dialog .ui-dialog-titlebar {padding:@padding/5 @padding/3;}
 .ui-dialog .ui-dialog-content {padding:@padding/2;}
 .ui-tabs .ui-tabs-nav li a {padding:@padding/4 @padding/2;}

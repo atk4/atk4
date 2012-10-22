@@ -53,6 +53,8 @@ class Model_Table extends Model {
 
     public $debug=false;
 
+    public $db=null;            // Set to use different database connection
+
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
@@ -64,6 +66,9 @@ class Model_Table extends Model {
     }
     function init(){
         parent::init();
+
+        if(!$this->db)$this->db=$this->api->db;
+
         if($d=$_GET[$this->name.'_debug']){
             if($d=='query')$this->debug();
         }
@@ -94,7 +99,7 @@ class Model_Table extends Model {
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
         if(!$this->table)throw $this->exception('$table property must be defined');
-        $this->dsql=$this->api->db->dsql();
+        $this->dsql=$this->db->dsql();
         if($this->debug)$this->dsql->debug();
         $this->dsql->table($this->table,$this->table_alias);
         $this->dsql->default_field=$this->dsql->expr('*,'.
@@ -156,6 +161,13 @@ class Model_Table extends Model {
         if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
         return $this->id_field;
     }
+    /** Retucn query for a specific field. All other fileds are ommitted */
+    function fieldQuery($field){
+        $query=$this->dsql()->del('fields');
+        if(is_string($field))$field=$this->getElement($field);
+        $field->updateSelectQuery($query);
+        return $query;
+    }
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql()->del('fields');
@@ -163,7 +175,7 @@ class Model_Table extends Model {
             $this->getElement($this->title_field)->updateSelectQuery($query);
             return $query;
         }
-        return $query->field($query->expr('concat("Record #",'.$query->bt($this->_dsql()->getField($this->id_field)).')'));
+        return $query->field($query->concat('Record #',$this->getElement($this->id_field)));
     }
     // }}}
 
@@ -197,7 +209,7 @@ class Model_Table extends Model {
             ->add('Model_Field_Reference',$name);
     }
     /** Defines one to many association */
-    function hasOne($model,$our_field=null,$display_field=null){
+    function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
         if(!$our_field){
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
@@ -205,7 +217,7 @@ class Model_Table extends Model {
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
         }
-        $r=$this->add('Field_Reference',$our_field);
+        $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
         return $r;
     }
@@ -289,18 +301,7 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
-        if($field instanceof Field_Reference || $field instanceof Field_Expression){
-            $this->_dsql()->order($field->getExpr());
-            return $this;
-        }
-
-        if($field->relation){
-            $this->_dsql()->order($field->relation->short_name.'.'.($field->actual_field?:$field->short_name),$desc);
-        }elseif($this->relations){
-            $this->_dsql()->order(($this->table_alias?:$this->table).'.'.$field->short_name,$desc);
-        }else{
-            $this->_dsql()->order($field->short_name,$desc);
-        }
+        $this->_dsql()->order($field->getExpr(), $desc);
 
         return $this;
     }
@@ -383,9 +384,9 @@ class Model_Table extends Model {
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->_dsql()->expr('sum([field])');
-        $field->updateSelectQuery($q);
-        return $this->dsql()->field($q);
+        $q=$this->dsql()->del('fields');
+        $q->field($q->expr('sum([s_field])')->setCustom('s_field',$field));
+        return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
@@ -393,11 +394,27 @@ class Model_Table extends Model {
     }
     /** Loads the first matching record from the model */
     function loadAny(){
-        return $this->_load(null);
+        try{
+            return $this->_load(null);
+        }catch(BaseException $e){
+            throw $this->exception('No matching records found');
+        }
     }
     /** Try to load a matching record for the model. Will not raise exception if no records are found */
     function tryLoadAny(){
         return $this->_load(null,true);
+    }
+    /** Loads random entry into model */
+    function tryLoadRandom(){
+        // get ID first
+        $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
+        if($id)$this->load($id);
+        return $this;
+    }
+    function loadRandom(){
+        $this->tryLoadRandom();
+        if(!$this->loaded())throw $this->exception('Unable to load random entry');
+        return $this;
     }
     /** Try to load a record by specified ID. Will not raise exception if record is not fourd */
     function tryLoad($id){
@@ -497,7 +514,7 @@ class Model_Table extends Model {
 
     // {{{ Saving Data
 
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    /** Save model into database and don't try to load it back */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
@@ -514,6 +531,7 @@ class Model_Table extends Model {
             $this->saveAndUnload();
         }
     }
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
@@ -540,7 +558,7 @@ class Model_Table extends Model {
             $res=$this->insert();
         }
 
-        $res->hook('afterSave');
+        if($this->loaded())$res->hook('afterSave');
         $this->_dsql()->owner->commit();
         return $res;
     }
@@ -553,6 +571,7 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
             if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
+            if(!$f->get() && !is_numeric($f->get())) $f->set(null);
 
             $f->updateInsertQuery($insert);
         }
@@ -575,8 +594,8 @@ class Model_Table extends Model {
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
-        $res=$o->load($id);
-        if(!$res)throw $this->exception('Problem');
+        $res=$o->tryLoad($id);
+        if(!$res->loaded())throw $this->exception('Saved model did not match conditions. Save aborted.');
         return $res;
     }
     /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
@@ -589,6 +608,7 @@ class Model_Table extends Model {
 
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
+                if(!$el->get() && !is_numeric($el->get())) $el->set(null);
                 $el->updateModifyQuery($modify);
             }
         }

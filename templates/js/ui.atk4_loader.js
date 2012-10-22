@@ -53,6 +53,7 @@ $.widget('ui.atk4_loader', {
         */
         cut_mode: 'page',
         cut: '1',
+        history: false,
 
         /*
         Helper contains some extra thingies
@@ -84,9 +85,26 @@ $.widget('ui.atk4_loader', {
             self.loader=l;
         }
 
+        if(this.options.history){
+            $(window).bind('popstate', function(event){
+                var state = event.originalEvent.state;
+
+                if (location.href != self.base_url && self.base_url) {
+                    self.options.history=false;
+                    self.loadURL(location.href,function(){
+                        self.options.history=true;
+                    });
+                }
+            });
+
+        }
+
 		if(this.options.debug){
 			var d=$('<div style="z-index: 2000"/>');
 			d.css({background:'#fe8',border: '1px solid black',position:'absolute',width:'100px',height:'50px'});
+
+			$('<div/>').text('History: '+(this.options.history?'yes':'no')).appendTo(d);
+
 			$('<a/>').attr('title','Canceled close').attr('href','javascript: void(0)').text('X').css({float:'right'})
 				.click(function(){ $(this).closest('div').next().css({border:'0px'});$(this).closest('div').remove(); }).appendTo(d);
 			d.append(' ');
@@ -160,6 +178,9 @@ $.widget('ui.atk4_loader', {
 				return;
 			}
 			*/
+
+            if(self.options.history)window.history.pushState({path: self.base_url}, 'foobar', self.base_url);
+
             var scripts=[], source=res;
 
 
@@ -298,10 +319,7 @@ $.extend($.ui.atk4_loader, {
 
 $.fn.extend({
 	atk4_load: function(url,fn){
-		url=url+"&format=raw"
-               this.atk4_loader()
-			.atk4_loader('loadURL',url,fn)
-			;
+        this.atk4_loader().atk4_loader('loadURL',url,fn) ;
 	},
 	atk4_reload: function(url,arg,fn){
         if(arg){

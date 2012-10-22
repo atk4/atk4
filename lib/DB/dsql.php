@@ -417,6 +417,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $cond=trim($cond);
             }
 
+            if($cond==='=' && $value===null)$cond='is';
+
 
             if($cond=='in' && is_string($value)){
                 $value=explode(',',$value);
@@ -763,6 +765,14 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->template="[fx]([args])";
         return $this;
     }
+    function concat(){
+        $t=clone $this;
+        return $t->fx('concat',func_get_args());
+    }
+    function describe($table){
+        return $this->expr('desc [desc_table]')
+            ->setCustom('desc_table',$table);
+    }
     function render_fx(){
         return $this->args['fx'];
     }
@@ -772,6 +782,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function count($arg=null){
         if(is_null($arg))$arg='*';
         return $this->expr('count([count])')->setCustom('count',$this->bt($arg));
+    }
+    function random(){
+        return $this->expr('rand()');
     }
     // }}}
 
@@ -998,7 +1011,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function _render(){
         /**/$this->api->pr->start('dsql/render');
-        if(!$this->template)$this->SQLTemplate('select');
+        if(is_null($this->template))$this->SQLTemplate('select');
         $self=$this;
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);

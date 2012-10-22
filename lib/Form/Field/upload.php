@@ -101,7 +101,7 @@ class Form_Field_Upload extends Form_Field {
 					$model->import($this->getFilePath());
 					$model->update();
 				}catch(Exception $e){
-					$this->api->logger->logException($e);
+					$this->api->logger->logCaughtException($e);
 					$this->uploadFailed($e->getMessage()); //more user friendly
 				}
 

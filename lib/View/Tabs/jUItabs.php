@@ -13,13 +13,23 @@
 **/
 class View_Tabs_jUItabs extends View_Tabs {
     public $tab_template=null;
+    public $options=array('cache'=>false);
 
     function init(){
         parent::init();
-        $this->js(true)
-            ->tabs(array('cache'=>false));
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
+    }
+    /* Set tabs option, for example, 'selected'=>'zero-based index of tab */
+    function setOption($key,$value){
+        $this->options[$key]=$value;
+        return $this;
+    }
+    function render(){
+        $this->js(true)
+            ->tabs($this->options);
+
+        return parent::render();
     }
     /* Add tab and returns it so that you can add static content */
     function addTab($title,$name=null){
@@ -35,7 +45,10 @@ class View_Tabs_jUItabs extends View_Tabs {
         return $container;
     }
     /* Add tab which loads dynamically. Returns $this for chaining */
-    function addTabURL($page,$title){
+    function addTabURL($page,$title=null){
+        if(is_null($title)){
+            $title=ucwords(preg_replace('/[_\/\.]+/',' ',$page));
+        }
         $this->tab_template->set(array(
                     'url'=>$this->api->url($page,array('cut_page'=>1)),
                     'tab_name'=>$title,

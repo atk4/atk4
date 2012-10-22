@@ -114,7 +114,7 @@ class Field extends AbstractModel {
         );
         return $this;
     }
-    /** Modify insert query to set value of this field */
+    /** Modify update query to set value of this field */
     function updateModifyQuery($modify){
         if($this->relation)$modify=$this->relation->dsql;
 

@@ -37,11 +37,11 @@ $.each({
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
-	page: function(page,fn){
+    page: function(page,fn){
         $c=$('#Content');
         if(!$c.length)$c=this.jquery;
         $c.atk4_load(page,fn);
-	},
+    },
 	log: function(arg1){
 		if(console)console.log(arg1);
    	},
@@ -287,7 +287,11 @@ dialogBox: function(options){
 				$(this).dialog('close');
 			}
 		},
+		open: function(){
+			$("body").css({ overflow: 'hidden' });
+		},
 		close: function(){
+			$("body").css({ overflow: 'inherit' });
 			$(this).dialog('destroy');
 			$(this).remove();
 		}
@@ -501,17 +505,17 @@ bindConditionalShow: function(conditions,tag){
 	//   when element A hides element B which should also hide
 	//   element C. You may end up with B hidden and C still showing.
 	var f=this.jquery;
-	var n=f.closest('form');
+	var n=f.closest('form').parent();
 	if(!n.attr('id'))n=n.parent();
 	n=n.attr('id');
 
-	if(typeof tag == 'undefined')tag='div';
+	if(typeof tag == 'undefined')tag='div.atk-row';
 
 	var sel=function(name){
 		var s=[]
 		fid=n;
 		$.each(name,function(){
-			var dom=$(a='#'+fid+'_'+this)[0];
+			var dom=(this[0]=='#'?$(this+'')[0]:$(a='#'+fid+'_'+this)[0]);
 			if(dom){
 				s.push(dom);
 			}else{
@@ -567,6 +571,8 @@ bindConditionalShow: function(conditions,tag){
 				exact_match=sel(conditions['*']);
 			}
 		}
+
+        console.log(exact_match);
 
 		if(exact_match && exact_match.length){
 			if(exact_match instanceof Array){

@@ -26,9 +26,6 @@ class ApiWeb extends ApiCLI {
     /** recorded time when execution has started */
     public $start_time=null;
 
-    private $_license_checksum=null;
-    private $_license='unlicensed'; 
-
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
@@ -121,6 +118,9 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ License checking function
+    private $_license_checksum=null;
+    private $_license='unlicensed'; 
+
     /** This function will return type of the license used: agpl, single, multi */
     final function license(){
         return $this->_license;
@@ -335,6 +335,10 @@ class ApiWeb extends ApiCLI {
     // }}}
 
     // {{{ Miscelanious Functions
+    /** Render only specified object or object with specified name */
+    function cut($object){
+        $_GET['cut_object']=is_object($object)?$object->name:$object;
+    }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
         /**

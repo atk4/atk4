@@ -179,10 +179,11 @@ class Logger extends AbstractController {
 						'We are currently having some technical difficulties. '.
 						'Please retry later.');
 		}
+		
+		$this->log_dir=$this->api->getConfig('logger/log_dir',
+			"/var/log/atk4/".$this->api->name);
 
 		if($this->log_output){
-			$this->log_dir=$this->api->getConfig('logger/log_dir',
-					"/var/log/atk4/".$this->api->name);
 			$this->openLogFile('error');
 			$this->openLogFile('debug');
 			$this->openLogFile('info');
@@ -271,13 +272,19 @@ class Logger extends AbstractController {
         }
     }
     function logCaughtException($e){
-			if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
-			else $trace=$e->getTrace();
+    	if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
+    	else $trace=$e->getTrace();
 
-			$frame=$e->my_backtrace[$e->shift];
-			$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
-            if(method_exists($e,'getAdditionalMessage'))
-                $this->logLine($e->getAdditionalMessage());
+    	$frame=$e->my_backtrace[$e->shift];
+    	$this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
+    	if(method_exists($e,'getAdditionalMessage'))
+    		$this->logLine($e->getAdditionalMessage(),2,'error');
+
+    	if($e->more_info){
+    		$this->logLine("Additional information:\n".
+			$this->print_r(
+				$e->more_info,'','','* ',"\n",' '),2,'error');
+    	}
     }
 	function caughtException($caller,$e){
 		$e->shift-=1;
@@ -305,12 +312,9 @@ class Logger extends AbstractController {
 		echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
 		if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
 		if($e->more_info){
-			echo '<p>Additional information: <ul>';
-			foreach($e->more_info as $key=>$info){
-				if(is_array($info))$info=print_r($info,true);
-				echo '<li>'.$key.': '.$info.'</li>';
-			}
-			echo '</ul></p>';
+			echo '<p>Additional information:';
+			echo $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
+			echo '</p>';
 		}
 		if($e->actions){
 			echo '<p>Possible Actions: <ul>';
@@ -325,6 +329,21 @@ class Logger extends AbstractController {
 		else echo $this->backtrace($e->shift,$e->getTrace());
 
 		exit;
+	}
+	function print_r($key,$gs,$ge,$ls,$le,$ind=' '){
+		$o='';
+		if(strlen($ind)>3)return;
+		if(is_array($key)){
+			$o=$gs;
+			foreach($key as $a=>$b){
+				$o.= $ind.$ls.$a.': '.$this->print_r($b,$gs,$ge,$ls,$le,$ind.' ').$le;
+			}
+			$o.=$ge;
+
+		}else{
+			$o.=$key;
+		}
+		return $o;
 	}
 	function outputWarning($caller,$msg,$shift=0){
 		// first, let's see if we should log this
