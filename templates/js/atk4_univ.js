@@ -508,7 +508,7 @@ bindConditionalShow: function(conditions,tag){
 	var n=f.closest('form').parent();
 	if(!n.attr('id'))n=n.parent();
 	n=n.attr('id');
-
+	n=n.substring(0,n.length - 5); //Form name has another _form at the end which is not part of field ids at atk4/lib/Form/basic.php line 108
 	if(typeof tag == 'undefined')tag='div.atk-row';
 
 	var sel=function(name){
