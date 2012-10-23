@@ -217,7 +217,7 @@ class Grid_Advanced extends Grid_Basic {
         }
     }
     function format_nowrap($field){
-        $this->tdparam[$this->getCurrentIndex()][$field]['style']='nwhite-space: nowrap';
+        $this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: nowrap';
     }
     function format_wrap($field){
         $this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: wrap';
