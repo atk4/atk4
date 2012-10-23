@@ -67,11 +67,11 @@ class Auth_Basic extends AbstractController {
         // creates fictional model to allow specified user and password
         // TODO: test this
         if($this->model){
-            $this->model->table[]=array('email'=>$user,'password'=>$pass);
+            $this->model->table[]=array($this->login_field=>$user,$this->password_field=>$pass);
             return $this;
         }
         $m=$this->add('Model')
-            ->setSource('Array',array(is_array($user)?$user:array('email'=>$user,'password'=>$pass)));
+            ->setSource('Array',array(is_array($user)?$user:array($this->login_field=>$user,$this->password_field=>$pass)));
         $m->id_field='email';
         $this->setModel($m);
         return $this;
@@ -126,7 +126,7 @@ class Auth_Basic extends AbstractController {
         $model->has_encryption_hook=true;
         $model->addHook('beforeSave',function($m)use($t){
             if(isset($m->dirty[$t->password_field])){
-                $m['password']=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
+                $m[$this->password_field]=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
             }
         });
     }

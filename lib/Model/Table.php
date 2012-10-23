@@ -516,6 +516,22 @@ class Model_Table extends Model {
     // {{{ Saving Data
 
     /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    function saveAndUnload(){
+        $this->_save_as=false;
+        $this->save();
+        $this->_save_as=null;
+        return $this;
+    }
+    /** Will save model later, when it's being destructed by Garbage Collector */
+    function saveLater(){
+        $this->_save_later=true;
+        return $this;
+    }
+    function __destruct(){
+        if($this->_save_later){
+            $this->saveAndUnload();
+        }
+    }
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
@@ -553,7 +569,6 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
             if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
-            if(!$f->get() && !is_numeric($f->get())) $f->set(null);
 
             $f->updateInsertQuery($insert);
         }
@@ -590,7 +605,6 @@ class Model_Table extends Model {
 
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
-                if(!$el->get() && !is_numeric($el->get())) $el->set(null);
                 $el->updateModifyQuery($modify);
             }
         }
