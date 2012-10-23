@@ -1,19 +1,22 @@
 <?php
-class Controller_Data_Array extends AbstractController {
+class Controller_Data_Array extends Controller_Data {
+    function setSource($model,$data=undefined){
+        parent::setSource($model,$data);
 
-    function init(){
-        parent::init();
-        $this->owner->addField('id')->type('int')->system(true);
-        $this->owner->addMethod('getBy,loadBy,tryLoadBy,tryLoad',$this);
+        if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
+
+        return $this;
     }
-    function getBy($model,$field,$value){
+
+
+    function getBy($model,$field,$cond=undefined,$value=undefined){
         foreach($model->table as $row){
             if($row[$field]==$value){
                 return $row;
             }
         }
     }
-    function tryLoadBy($model,$field,$value){
+    function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
         foreach($model->table as $row){
             if($row[$field]==$value){
                 $model->data=$row;
@@ -24,7 +27,7 @@ class Controller_Data_Array extends AbstractController {
         }
         return $this;
     }
-    function loadBy($model,$field,$value){
+    function loadBy($model,$field,$cond=undefined,$value=undefined){
         $this->loadBy($model,$field,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
@@ -48,7 +51,7 @@ class Controller_Data_Array extends AbstractController {
         $model->id=$id;
         return $this;
     }
-    function load($model,$id){
+    function load($model,$id=null){
         $this->tryLoad($model,$id);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('id',$id);
@@ -66,10 +69,25 @@ class Controller_Data_Array extends AbstractController {
 
         return $this;
     }
-    function delete($model,$id){
-        unset($model->table[$id]);
+    function delete($model,$id=null){
+        unset($model->table[$id?:$model->id]);
         return $this;
     }
+
+    function deleteAll($model){
+        $model->table=array();
+        return $this;
+    }
+    function getRows($model){
+        return $model->table;
+    }
+    function setOrder($model,$field,$desc=false){
+        // TODO: sort array
+    }
+    function setLimit($model,$count,$offset=0){
+        // TODO: splice
+    }
+
     function rewind($model){
         reset($model->table);
         list($model->id,$model->data)=each($model->table);
@@ -81,10 +99,6 @@ class Controller_Data_Array extends AbstractController {
         if(@$model->id_field)$model->id=$model->data[$model->id_field];
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
-    }
-    function setSource($model,$data){
-        $model->table=$data;
-        return $this;
     }
     function setAssoc($data){
         $this->array_data=array();

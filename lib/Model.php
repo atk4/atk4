@@ -26,7 +26,7 @@
  * }
  *
  *
- * $pc=$this->add('Model_PageCache')->setSource('Memcached');
+ * $pc=$this->add('Model_PageCache')->addCache('Memcached');
  * $pc->load($this->api->page);
  *
  * if(!$pc->loaded()){
@@ -157,7 +157,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Forget loaded data */
     function unload(){
-        $this->hook('beforeUnload');
+        if($this->loaded())$this->hook('beforeUnload');
         $this->data=$this->dirty=array();
         $this->id=null;
         $this->hook('afterUnload');
@@ -167,41 +167,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->unload();
     }
     // }}}
-
-    /// {{{ Operation with external Data Controllers
-    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
-    function setSource($controller, $table=null, $id=null){
-        if(is_string($controller))$controller='Data_'.$controller;
-        $this->controller=$this->setController($controller);
-
-        $this->controller->setSource($this,$table);
-
-        if($id)$this->load($id);
-        return $this;
-    }
-    /** Attempt to load record with specified ID. If this fails, no error is produced */
-    function load($id=null){
-        $this->hook('beforeLoad',$id);
-        $res=$this->controller->load($this,$id);
-        $this->hook('afterLoad');
-        return $res;
-    }
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
-     * record with new ID. Returns ID of saved record */
-    function save($id=null){
-        $this->hook('beforeSave',$id);
-        $res=$this->controller->save($this,$id);
-        $this->hook('afterSave');
-        return $res;
-    }
-    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
-    function delete($id=null){
-        $this->hook('beforeDelete',$id);
-        $res=$this->controller->delete($this,$id?:$this->id);
-        $this->hook('afterDelete');
-        return $res;
-    }
-    /// }}}
 
     // {{{ ArrayAccess support 
     function offsetExists($name){
@@ -217,6 +182,51 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         unset($this->dirty[$name]);
     }
     // }}}
+
+    /// {{{ Operation with external Data Controllers
+
+    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
+    function setSource($controller, $table=null, $id=null){
+        if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        else if(!$controller instanceof Controller_Data)throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+        $this->controller=$this->setController($controller);
+
+        $this->controller->setSource($this,$table);
+
+        if($id)$this->load($id);
+        return $this;
+    }
+    /** Cache controller is used to attempt and load data a little faster then the primary controller */
+    function addCache($controller, $table=null, $priority=5){
+        $controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        return $this->setController($controller)
+            ->addHooks($priority)
+            ->setSource($this,$table);
+    }
+    /** Attempt to load record with specified ID. If this fails, no error is produced */
+    function load($id=null){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeLoad',array($id));
+        if(!$this->loaded())$res=$this->controller->load($this,$id);
+        $this->hook('afterLoad');
+        return $res;
+    }
+    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
+     * record with new ID. Returns ID of saved record */
+    function save($id=null){
+        $this->hook('beforeSave',$id);
+        $res=$this->controller->save($this,$id);
+        $this->hook('afterSave',$id);
+        return $res;
+    }
+    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
+    function delete($id=null){
+        $this->hook('beforeDelete',$id);
+        $res=$this->controller->delete($this,$id?:$this->id);
+        $this->hook('afterDelete',$id);
+        return $res;
+    }
+    /// }}}
 
     // {{{ Iterator support 
     function rewind(){
@@ -266,7 +276,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->addField($our_field);
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasMany($model,$their_field,$our_field){
+    function hasMany($model,$their_field=undefined,$our_field=undefined){
         if(is_string($model)){
             $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
         }

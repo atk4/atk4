@@ -7,38 +7,57 @@ Additionally Model_Table can use data controllers for caching their data
 
 */
 
-abstract class Model_Data extends AbstractController {
-	public $source=null;
+abstract class Controller_Data extends AbstractController {
 
-	function init(){
-		parent::init();
+    function setSource($model,$data=undefined){
+        if($data===undefined)return $this;
+        $model->table=$data;
+        return $this;
+    }
 
-		// default for caching
-		if($this->owner instanceof Model_Table){
-			$this->setModel($this->owner);
-			$this->setSource(get_class($this->owner));
-		}elseif($this->owner instanceof Model){
-			$this->setModel($this->owner);
-			$this->setSource($this->owner->table);
-		}
-	}
+    /* Normally model will call our methods. If the controller is used as a secondary cache, then we need to place hooks
+     * instead */
+    function addHooks($priority){
 
-	abstract function load($id){}
-	abstract function save(){}
-	abstract function delete($id){}
+        $m=$this->owner;
+        if($m->controller===$this)throw $this->exception('Cannot be data source and cache simultaniously');
 
-	abstract function rewind(){}
-	abstract function rewind(){}
+        $m->addHook('beforeLoad',array($this,'tryLoad'),array(),$priority);
+        $m->addHook('afterSave',array($this,'save'),array(),-$priority);
+        $m->addHook('afterDelete',array($this,'delete'),array(),-$priority);
+        $m->addHook('unCache',$this);
 
-	abstract function tryLoad($id){}
-    abstract function loadBy($field,$cond=undefined,$value=undefined){}
-    abstract function tryLoadBy($field,$cond=undefined,$value=undefined){}
+        return $this;
+    }
 
-    abstract function deleteAll(){}
-    abstract function getRows(){}
+    function isCache($model){
+        return $model->controller != $this;
+    }
 
-    abstract function setOrder($field,$desc=false){}
-    abstract function setLimit($count,$offset=0){}
+    /* Remove record from the cache */
+    function unCache($model){
+        $this->delete($model);
+    }
 
+	abstract function load($model,$id=null);
+	abstract function save($model);
+	abstract function delete($model,$id=null);
+
+	abstract function tryLoad($model,$id);
+    abstract function loadBy($model,$field,$cond,$value);
+    abstract function tryLoadBy($model,$field,$cond,$value);
+
+    abstract function deleteAll($model);
+    abstract function getRows($model);
+    abstract function getBy($model,$field,$cond,$value);
+
+    /* must implement in underlying layer */
+    abstract function setOrder($model,$field,$desc=false);
+
+    /* must implement in underlying layer */
+    abstract function setLimit($model,$count,$offset=0);
+
+	abstract function rewind($model);
+	abstract function next($model);
 }
 
