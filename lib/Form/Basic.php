@@ -264,25 +264,16 @@ class Form_Basic extends View {
         return $data;
     }
      */
-    function addSubmit($label='Save',$name=null,$color=null){
-        if(!$name)$name=str_replace(' ','_',$label);
-
-        $submit = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
-            ->setLabel($label)
-            ->setNoSave();
-        if (!is_null($color))
-            $submit->setColor($color);
-
-        return $submit;
+    function addSubmit($label='Save',$name=null){
+        return $this->addButton($label,$name,'Form_Submit',true);
     }
-    function addButton($label='Button',$name=null,$color=null){
+    function addButton($label='Button',$name=null,$class='Button',$nosave=false){
         if(!$name)$name=str_replace(' ','_',$label);
-        $name = preg_replace('/[^a-zA-Z0-9_-]/','', isset($name)?$name:$label);
+        $name = preg_replace('/[^a-zA-Z0-9_-]/','', $name?:$label);
 
-        $button = $this->add('Button',$name,'form_buttons')
+        $button = $this->add($class,$name,'form_buttons')
             ->setLabel($label);
-        if (!is_null($color))
-            $button->setColor($color);
+        if($nosave) $button->setNosave();
 
        return $button;
     }
