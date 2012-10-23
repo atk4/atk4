@@ -208,7 +208,7 @@ class Model_Table extends Model {
         return $this
             ->add('Model_Field_Reference',$name);
     }
-    /** Defines one to many association */
+    /** Defines one to many association. If filed is not found it will add a new Field_Reference. This function implementation will rely on the parent's hasOne to actually record a relation */
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
         if(!$our_field){
             if(!is_object($model)){
@@ -515,23 +515,6 @@ class Model_Table extends Model {
 
     // {{{ Saving Data
 
-    /** Save model into database and don't try to load it back */
-    function saveAndUnload(){
-        $this->_save_as=false;
-        $this->save();
-        $this->_save_as=null;
-        return $this;
-    }
-    /** Will save model later, when it's being destructed by Garbage Collector */
-    function saveLater(){
-        $this->_save_later=true;
-        return $this;
-    }
-    function __destruct(){
-        if($this->_save_later){
-            $this->saveAndUnload();
-        }
-    }
     /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
@@ -545,8 +528,6 @@ class Model_Table extends Model {
         $this->_save_as=null;
         return $res;
     }
-    private $_save_as=null;
-    private $_save_later=false;
     /** Save model into database and load it back. If for some reason it won't load, whole operation is undone */
     function save(){
         $this->_dsql()->owner->beginTransaction();

@@ -61,6 +61,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
 
+    protected $_save_as=null;
+    protected $_save_later=false;
 
     // {{{ Basic functionality, field definitions, set(), get() and related methods
     function init(){
@@ -219,12 +221,39 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterSave',$id);
         return $res;
     }
+    /** Save model into database and don't try to load it back */
+    function saveAndUnload(){
+        $this->_save_as=false;
+        $this->save();
+        $this->_save_as=null;
+        return $this;
+    }
+    /** Will save model later, when it's being destructed by Garbage Collector */
+    function saveLater(){
+        $this->_save_later=true;
+        return $this;
+    }
+    function __destruct(){
+        if($this->_save_later){
+            $this->saveAndUnload();
+        }
+    }
     /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
     function delete($id=null){
+        if($id===null)$id=$this->id;
+        if($this->loaded() && $this->id == $id)$this->unload();   // record we are about to delete is loaded, unload it.
         $this->hook('beforeDelete',$id);
-        $res=$this->controller->delete($this,$id?:$this->id);
+        $this->controller->delete($this,$id);
         $this->hook('afterDelete',$id);
-        return $res;
+        return $this;
+    }
+    /** Deletes all records associated with this modle. */
+    function deleteAll(){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeDeleteAll');
+        $this->controller->deleteAll($this);
+        $this->hook('afterDeleteAll');
+        return $this;
     }
     /// }}}
 
@@ -266,11 +295,21 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     // Reference traversal for regular models
     private $_references;
-    /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasOne($model,$our_field){
-        if(is_string($model)){
-            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+
+    /* defines relation between models. You can traverse the reference using ref() */
+    function hasOne($model,$our_field=null){
+
+        if(!$our_field){
+            // determine the actual class of the other model
+            if(!is_object($model)){
+                $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                $tmp=new $tmp; // avoid recursion
+            }else $tmp=$model;
+            $our_field=($tmp->table).'_id';
         }
+
+        // if our_field is not defined, let's try to guess it from other model's table
+
         $this->_references[$our_field]=$model;
 
         return $this->addField($our_field);
