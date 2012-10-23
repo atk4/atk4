@@ -72,7 +72,7 @@ class Auth_Basic extends AbstractController {
         }
         $m=$this->add('Model')
             ->setSource('Array',array(is_array($user)?$user:array($this->login_field=>$user,$this->password_field=>$pass)));
-        $m->id_field='email';
+        $m->id_field=$this->login_field;
         $this->setModel($m);
         return $this;
     }
