@@ -208,8 +208,13 @@ class Model_Table extends Model {
         return $this
             ->add('Model_Field_Reference',$name);
     }
-    /** Defines one to many association. If filed is not found it will add a new Field_Reference. This function implementation will rely on the parent's hasOne to actually record a relation */
+    /** Defines one to many association. If field is not found it will add a new Field_Reference.
+        This function implementation will rely on the parent's hasOne to actually record a relation */
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
+
+        // register reference, but don't cerate any fields there
+        parent::hasOne($model,null);
+
         if(!$our_field){
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
@@ -217,6 +222,7 @@ class Model_Table extends Model {
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
         }
+
         $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
         return $r;

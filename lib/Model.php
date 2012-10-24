@@ -297,9 +297,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     private $_references;
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=null){
+    function hasOne($model,$our_field=undefined,$field_class='Field'){
 
-        if(!$our_field){
+        // if our_field is not specified, let's try to guess it from other model's table
+        if($our_field===undefined){
             // determine the actual class of the other model
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
@@ -308,11 +309,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             $our_field=($tmp->table).'_id';
         }
 
-        // if our_field is not defined, let's try to guess it from other model's table
-
         $this->_references[$our_field]=$model;
 
-        return $this->addField($our_field);
+        if($our_field !== null && $our_field!=='_id' && !$this->hasElement($our_field)){
+            return $this->add($this->field_class,$our_field);
+        }
+
+        return null; // no field added
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
     function hasMany($model,$their_field=undefined,$our_field=undefined){
@@ -322,8 +325,111 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->_references[$model]=array($model,$our_field,$their_field);
         return null;
     }
-    /* traverses reference which was defined previously. */
+    /*
+     * How references work:
+     *
+     * $this->hasMany('Chapter'); // hasMany('Section'), hasOne('Picture');
+     * $this->hasOne('Author');   // hasMany('Book'), hasOne('Person','father_id'), hasOne('Person','mother_id')
+     *
+     * $this->ref('Chapter');
+     *   1. Creates Model_Chapter
+     *   2. Model_Chapter -> addCondition() // meaning the traversed model must support them!
+     *   3. Returns
+     *
+     * $this->ref('Chapter/Section');
+     *   1. $b=Creates Model_Chapter
+     *   2. Calls $c=Model_Chapter->_ref('Section'); which only returns model, no binding
+     *   3. Decisions:
+     *   hasMany
+     *      a. $b is loaded(). $c->addCondition();
+     *      b. $b and $c are both SQL. $c->join($b);
+     *      c. load all id's from $b. $c->addCondition(field,ids);
+     *   hasOne()
+     *      a. $b is loaded(). $c->load($b[field]);
+     *      b. $b and $c are both SQL. $c->join($b);
+     *      c. load all [field] values, $c->addCondition('id',ids);
+     *
+     *  Book/Chapter/Section both SQL:
+     *    $book->load(5);
+     *    $book->ref('Chapter/Section');  // get all sections
+     *      $c=$b->_ref('Chapter/Section')
+     *      $s=$c->_ref('Section');
+     *      if($s and $c sql){
+     *        $s->addCondition('chapter_id',$c->getElement('id'))
+     *      }
+
+    /* For a current model, will resolve the reference, initialize the related model and call _refBind. If this
+     * is a deep traversing, then it will also specify a field_out to acquire expression, which will be passed
+     * into the further model and so on. 
+     *
+     * if the submodel's ref() will return 
+     */
     function ref($ref){
+        $id=$this->get($ref);
+        return $this->_ref($ref,$id);
+    }
+    /* Join Binding
+     * ============
+     *
+     * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
+     * first subquery to complete before starting working on the next query. 
+     *
+     * Join binding exists as an extension in Model_Table::_ref(). It will iterate through array of models and load
+     * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
+     * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
+     * have field_in same as field_out.
+     *
+
+    /* Subselect Binding
+     * =================
+     *
+     * Binding conditions when traversing. The model must apply field=expression, however this might work differently
+     * depending on the type of, the second argument and the refBind implementation. 
+     *
+     * If the model cannot embed this type of expression into field condition, it must call $expression->get(), fetch
+     * all the IDs and then use them instead. This insures intercompatibility between different model implementation.
+     *
+     * If model is using controller, it will attempt to seek controller's help for applying a condition.
+     *
+     * If field_out is specified, then the output should be the expression for the next join containing a set of
+     * values from the field_out.
+     *
+     * SQL: select field_out from table where field_in in (expression)
+     * Generic: foreach(expression->get() as $item){ $res[]=$m->loadBy($field_in,$item[id_field)->get($field_out) };
+     *
+     * If field_out is not specified, then the condition must be applied on a current model and the current model
+     * must be returned with the condition applied. This model bubbles up and is returned through a top-most 
+     * ref / refSQL.
+     *
+     * Shortcuts
+     * ---------
+     * if field_in and field_out are the same, simply return expression
+     *
+     * Book -< Chapter -< Section
+     * select * from section where chapter_id in (select id from chapter where book_id=5)
+     *
+     */
+    function _refBind($field_in,$expression,$field_out=null){
+
+        if($this->controller)return $this->controller->refBind($this,$field,$expression);
+
+        list($myref,$rest)=explode('/',$ref,2);
+
+        if(!$this->_references[$myref])throw $this->exception('No such relation')
+            ->addMoreInfo('ref',$myref)
+            ->addMoreInfo('rest',$rest);
+        // Determine and populate related model
+
+        if(is_array($this->_references[$myref])){
+            $m=$this->_references[$myref][0];
+        }else{
+            $m=$this->_references[$myref];
+        }
+        $m=$this->add($m);
+        if($rest)$m=$m->_ref($rest);
+        $this->_refGlue();
+        
+
         if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
             ->addMoreInfo('name',$ref);
 
