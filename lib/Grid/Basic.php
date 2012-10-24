@@ -210,6 +210,12 @@ class Grid_Basic extends CompleteLister {
         foreach($this->columns as $tmp=>$column){ 
             $this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
 
+            // if model field has listData structure, then get value instead of key
+            if($this->model && $f=$this->model->hasElement($tmp)){
+                if($values=$f->listData())
+                    $this->current_row[$tmp] = $values[$this->current_row[$tmp]];
+            }
+
             $formatters = explode(',',$column['type']);
             foreach($formatters as $formatter){
                 if(!$formatter)continue;
