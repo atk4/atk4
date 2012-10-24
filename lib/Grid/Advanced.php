@@ -158,14 +158,6 @@ class Grid_Advanced extends Grid_Basic {
     function format_html($field){
         $this->current_row_html[$field] = $this->current_row[$field];
     }
-    function format_lookup($field){
-        if($this->model) {
-            if($f=$this->model->getElement($field)){
-                if($values=$f->listData())
-                    $this->current_row[$field] = $values[$this->current_row[$field]];
-            } else throw $this->exception("Model doesn't have element $field!");
-        } else throw $this->exception("Lookup formatter can only be used with setModel()!");
-    }
     function init_money($field){
         @$this->columns[$field]['thparam'].=' style="text-align: right"';
     }
