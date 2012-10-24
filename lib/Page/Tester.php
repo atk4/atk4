@@ -21,7 +21,7 @@ class Page_Tester extends Page {
     function init(){
         parent::init();
         $this->grid=$this->add('Grid');
-        $this->grid->addColumn('text','name');
+        $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->api->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
 
         //$this->setVariance(array('GiTemplate','SMlite'));
         $this->setVariance(array('Test'));
@@ -30,15 +30,17 @@ class Page_Tester extends Page {
         
         $this->runTests();
 
-        $f=$this->add('Form');
-        $ff=$f->addField('text','responses');
-        $this->responses=
-'    public $proper_responses=array(
-        '.join(',
-        ',$this->responses).'
-    );';
-        $ff->set($this->responses);
-        $ff->js('click')->select();
+        if(!$_GET['testonly']){
+            $f=$this->add('Form');
+            $ff=$f->addField('text','responses');
+            $this->responses=
+    '    public $proper_responses=array(
+            '.join(',
+            ',$this->responses).'
+        );';
+            $ff->set($this->responses);
+            $ff->js('click')->select();
+        }
     }
     public $cnt;
     function ticker(){
@@ -131,6 +133,8 @@ class Page_Tester extends Page {
             }elseif(substr($method,0,8)=='prepare_'){
                 $m=substr($method,8);
             }else continue;
+
+            if(isset($_GET['testonly']) && 'test_'.$_GET['testonly']!=$method)continue;
 
             // Do not retest same function even if it has both prepare and test
             if($tested[$m])continue;$tested[$m]=true;

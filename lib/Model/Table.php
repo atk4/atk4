@@ -326,6 +326,7 @@ class Model_Table extends Model {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }
         $this->_iterating->next();
@@ -409,7 +410,7 @@ class Model_Table extends Model {
         // get ID first
         $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
         if($id)$this->load($id);
-        return this;
+        return $this;
     }
     function loadRandom(){
         $this->tryLoadRandom();
@@ -514,7 +515,7 @@ class Model_Table extends Model {
 
     // {{{ Saving Data
 
-    /** Save model into database and don't try to load it back */
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
@@ -531,7 +532,6 @@ class Model_Table extends Model {
             $this->saveAndUnload();
         }
     }
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             if(substr($model,0,strlen('Model'))!='Model'){
@@ -571,7 +571,6 @@ class Model_Table extends Model {
         foreach($this->elements as $name=>$f)if($f instanceof Field){
             if(!$f->editable() && !$f->system())continue;
             if(!isset($this->dirty[$name]) && $f->defaultValue()===null)continue;
-            if(!$f->get() && !is_numeric($f->get())) $f->set(null);
 
             $f->updateInsertQuery($insert);
         }
@@ -608,7 +607,6 @@ class Model_Table extends Model {
 
         foreach($this->dirty as $name=>$junk){
             if($el=$this->hasElement($name))if($el instanceof Field){
-                if(!$el->get() && !is_numeric($el->get())) $el->set(null);
                 $el->updateModifyQuery($modify);
             }
         }
