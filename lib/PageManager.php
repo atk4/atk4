@@ -182,6 +182,7 @@ class PageManager extends AbstractController {
         if($r=='')$r='/';
         return $r;
     }
+    /* @obsolete since 4.2.2
     function getDestinationURL($page){
         if($page[0]=='/'){
             // Location absolute
@@ -189,4 +190,5 @@ class PageManager extends AbstractController {
         }
         return $page.'.html';
     }
+    */
 }

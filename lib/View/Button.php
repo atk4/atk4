@@ -68,7 +68,7 @@ class View_Button extends View_HtmlElement {
         $cl=$this->js('click')->univ();
         if($confirm)$cl->confirm($confirm);
 
-        $cl->ajaxec($this->api->getDestinationURL(null,array($this->name=>'clicked')));
+        $cl->ajaxec($this->api->url(null,array($this->name=>'clicked')));
 
         return isset($_GET[$this->name]);
     }
@@ -96,7 +96,7 @@ class View_Button extends View_HtmlElement {
     }
     /** @obsolete */
     function redirect($page){
-        return $this->js('click')->univ()->redirect($this->api->getDestinationURL($page));
+        return $this->js('click')->univ()->redirect($this->api->url($page));
     }
     /** @obsolete */
     function submitForm($form){
