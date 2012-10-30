@@ -126,7 +126,7 @@ class Auth_Basic extends AbstractController {
         $model->has_encryption_hook=true;
         $model->addHook('beforeSave',function($m)use($t){
             if(isset($m->dirty[$t->password_field])){
-                $m[$this->password_field]=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
+                $m[$t->password_field]=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
             }
         });
     }

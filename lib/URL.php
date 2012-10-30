@@ -1,7 +1,7 @@
 <?php
 /***********************************************************
-  When $api->getDestinationURL() is called, this object is used
-  to avoid double-encoding. Return URL when converting to string
+  When $api->url() is called, this object is used to avoid
+  double-encoding. Return URL when converting to string.
 
   Reference:
   http://agiletoolkit.org/doc/ref
@@ -73,7 +73,7 @@ http://mysite:123/install/dir/my/page.html
         $this->absolute=true;
         return $this;
     }
-    /** [private] automatically called with 1st argument of getDestinationURL() */
+    /** [private] automatically called with 1st argument of api->url() */
     function setPage($page=null){
         // The following argument formats are supported:
         //

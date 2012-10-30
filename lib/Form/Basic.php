@@ -264,25 +264,21 @@ class Form_Basic extends View {
         return $data;
     }
      */
-    function addSubmit($label='Save',$name=null,$color=null){
+    function addSubmit($label='Save',$name=null){
         if(!$name)$name=str_replace(' ','_',$label);
 
         $submit = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
-        if (!is_null($color))
-            $submit->setColor($color);
 
         return $submit;
     }
-    function addButton($label='Button',$name=null,$color=null){
+    function addButton($label='Button',$name=null){
         if(!$name)$name=str_replace(' ','_',$label);
         $name = preg_replace('/[^a-zA-Z0-9_-]/','', isset($name)?$name:$label);
 
         $button = $this->add('Button',$name,'form_buttons')
             ->setLabel($label);
-        if (!is_null($color))
-            $button->setColor($color);
 
        return $button;
     }
@@ -427,7 +423,7 @@ class Form_Basic extends View {
             $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
         $this->template_chunks['form']
-            ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
+            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
         $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
     }
     function hasField($name){
