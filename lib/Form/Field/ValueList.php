@@ -38,7 +38,7 @@ class Form_Field_ValueList extends Form_Field {
 			return $this->value_list=$res;
 		}
 
-        if($this->empty_text && isset($this->value_list[''])){
+        if($this->empty_text && !isset($this->value_list[''])){
             $this->value_list['']=$this->empty_text;
         }
 		return $this->value_list;
