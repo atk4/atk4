@@ -331,19 +331,10 @@ dialogConfirm: function(title,text,fn,options){
 	/*
 	 * Displays confirmation dialogue.
 	 */
-	var dlg=this.dialogBox($.extend({title: title, width: 450, height: 200,
-	buttons: {
-		'Ok': function(){
-			$(this).dialog('close');
-			if(fn)fn();
-		},
-		'Cancel': function(){
-			$(this).dialog('close');
-		}
-	}},options));
+	var dlg=this.dialogBox($.extend({title: title, width: 450, height: 200},options));
 
 	dlg.html("<form></form>"+text);
-	dlg.find('form').submit(function(ev){ ev.preventDefault(); console.log('ok clicked'); fn; dlg.dialog('close'); });
+	dlg.find('form').submit(function(ev){ ev.preventDefault(); if(fn)fn(); dlg.dialog('close'); });
 	dlg.dialog('open');
 },
 dialogError: function(text,options,fn){
