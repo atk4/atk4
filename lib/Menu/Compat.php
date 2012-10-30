@@ -54,7 +54,7 @@ class Menu_Compat extends AbstractView {
 		$this->items[]=$this->last_item=$this->add('MenuItem',$this->short_name."_$href",'Item')
 			->setProperty(array(
 						'page'=>$href,
-						'href'=>$this->api->getDestinationURL($href),
+						'href'=>$this->api->url($href),
 						'label'=>$label,
 						'class'=>$this->isCurrent($href)?$this->current_menu_class:$this->inactive_menu_class,
 					   ));

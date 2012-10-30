@@ -374,7 +374,7 @@ class ApiWeb extends ApiCLI {
     }
     /** @private */
     function _locatePage($path){
-        return $this->getDestinationURL($path);
+        return $this->url($path);
     }
     /** Only show $object in the final rendering */
     function renderOnly($object){

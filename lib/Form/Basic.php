@@ -423,7 +423,7 @@ class Form_Basic extends View {
             $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
         $this->template_chunks['form']
-            ->set('form_action',$this->api->getDestinationURL(null,array('submit'=>$this->name)));
+            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
         $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
     }
     function hasField($name){
