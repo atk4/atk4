@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/**
+/*
  * Lister implements a very simple and fast way to output series
  * of data by applying template formatting
  * 
@@ -35,11 +35,11 @@ class Lister extends View {
 
     /** Name of the ID field in this lister */
     public $id_field=null;
-    
+
     /** Data set fetched from source */
     public $iterator=array();
 
-    /** 
+    /*
      * Sets source data for the lister. If source is a model, use setModel() instead.
      *
      * @link http://agiletoolkit.org/doc/lister
@@ -63,7 +63,7 @@ class Lister extends View {
      *
      * or   // sql table
      *  $l->setSource( 'user', array('name','surname'));
-     **/
+     */
 	function setSource($source,$fields=null){
 
         // Set DSQL
