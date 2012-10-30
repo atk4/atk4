@@ -334,7 +334,7 @@ dialogConfirm: function(title,text,fn,options){
 	var dlg=this.dialogBox($.extend({title: title, width: 450, height: 200},options));
 
 	dlg.html("<form></form>"+text);
-	dlg.find('form').submit(function(ev){ ev.preventDefault(); fn(); dlg.dialog('close'); });
+	dlg.find('form').submit(function(ev){ ev.preventDefault(); if(fn)fn(); dlg.dialog('close'); });
 	dlg.dialog('open');
 },
 dialogError: function(text,options,fn){
