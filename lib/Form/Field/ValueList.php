@@ -19,12 +19,12 @@ class Form_Field_ValueList extends Form_Field {
         $this->setValueList(array('foo','bar'));
         return $ret;
     }
-    /** Value and text which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
-    function setEmptyText($a){
-        if(is_array($a)) list($this->empty_value,$this->empty_text) = $a;
-		else $this->empty_text = $a;
+    /** Default text which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
+    function setEmptyText($empty_text){
+		$this->empty_text = $empty_text;
         return $this;
     }
+
 	function getValueList(){
 
         if($this->model){
