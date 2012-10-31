@@ -10,25 +10,28 @@ class Form_Field_ValueList extends Form_Field {
 			1=>'No available options #2',
 			2=>'No available options #3'
 			);
-    public $empty_text='';
+	public $empty_text=null;
+	protected $empty_value=''; // don't change this value
+
     function setModel($m){
         $ret=parent::setModel($m);
 
         $this->setValueList(array('foo','bar'));
         return $ret;
     }
-    /** Default value which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
+    /** Default text which is displayed on a null-value option. Set to "Select.." or "Pick one.." */
     function setEmptyText($empty_text){
-        $this->empty_text=$empty_text;
+		$this->empty_text = $empty_text;
         return $this;
     }
+
 	function getValueList(){
 
         if($this->model){
             $title=$this->model->getTitleField();
             $id=$this->model->id_field;
             if ($this->empty_text){
-                $res=array(''=>$this->empty_text);
+                $res=array($this->empty_value => $this->empty_text);
             } else {
                 $res = array();
             }
@@ -38,8 +41,8 @@ class Form_Field_ValueList extends Form_Field {
 			return $this->value_list=$res;
 		}
 
-        if($this->empty_text && isset($this->value_list[''])){
-            $this->value_list['']=$this->empty_text;
+        if($this->empty_text && !isset($this->value_list[$this->empty_value])){
+            $this->value_list[$this->empty_value]=$this->empty_text;
         }
 		return $this->value_list;
 	}
