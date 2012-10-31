@@ -10,8 +10,8 @@ class Form_Field_ValueList extends Form_Field {
 			1=>'No available options #2',
 			2=>'No available options #3'
 			);
-	public $empty_value='';
 	public $empty_text=null;
+	protected $empty_value=''; // don't change this value
 
     function setModel($m){
         $ret=parent::setModel($m);
