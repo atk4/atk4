@@ -77,7 +77,6 @@ class Controller_MVCGrid extends AbstractController {
     /** Redefine this to add special handling of your own fields */
     function getFieldType($field){
         $type=$field->type();
-        //$type='text';
 
         if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
 
@@ -92,10 +91,5 @@ class Controller_MVCGrid extends AbstractController {
         }
 
         return $type;
-    }
-    function update($form){
-        $this->getFields();
-        $this->model->update();
-        echo "update in $form";
     }
 }

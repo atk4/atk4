@@ -319,7 +319,7 @@ class Logger extends AbstractController {
 		if($e->actions){
 			echo '<p>Possible Actions: <ul>';
 			foreach($e->actions as $key=>$val){
-				echo '<li><a href="'.$this->api->getDestinationURL(null,$val).'">'.$key.'</a></li>';
+				echo '<li><a href="'.$this->api->url(null,$val).'">'.$key.'</a></li>';
 			}
 			echo '</ul></p>';
         }

@@ -173,7 +173,7 @@ class Grid_Basic extends CompleteLister {
             if(isset($column['sortable'])){
                 $s=$column['sortable'];
                 // calculate sortlink
-                //$l = $this->api->getDestinationURL(null,array($this->name.'_sort'=>$s[1]));
+                //$l = $this->api->url(null,array($this->name.'_sort'=>$s[1]));
 
                 $header_sort->trySet('order',$column['sortable'][0]);
                 $header_sort->trySet('sorticon',$this->sort_icons[$column['sortable'][0]]);
@@ -211,6 +211,12 @@ class Grid_Basic extends CompleteLister {
 
         foreach($this->columns as $tmp=>$column){ 
             $this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
+
+            // if model field has listData structure, then get value instead of key
+            if($this->model && $f=$this->model->hasElement($tmp)){
+                if($values=$f->listData())
+                    $this->current_row[$tmp] = $values[$this->current_row[$tmp]];
+            }
 
             $formatters = explode(',',$column['type']);
             foreach($formatters as $formatter){

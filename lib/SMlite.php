@@ -292,6 +292,7 @@ class SMlite extends AbstractModel {
          * ALTERNATIVE USE(3) of this function is to pass 2 arrays. First array
          * will contain tag names and 2nd array will contain their values.
          */
+        if(is_object($tag))$tag=$tag->get();
         if(is_array($tag)){
             if(is_null($value)){
                 // USE(2)

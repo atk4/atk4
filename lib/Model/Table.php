@@ -165,7 +165,8 @@ class Model_Table extends Model {
     function fieldQuery($field){
         $query=$this->dsql()->del('fields');
         if(is_string($field))$field=$this->getElement($field);
-        return $field->updateSelectQuery($query);
+        $field->updateSelectQuery($query);
+        return $query;
     }
     /** Returns query which selects title field */
     function titleQuery(){
@@ -208,7 +209,7 @@ class Model_Table extends Model {
             ->add('Model_Field_Reference',$name);
     }
     /** Defines one to many association */
-    function hasOne($model,$our_field=null,$display_field=null){
+    function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
         if(!$our_field){
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
@@ -216,7 +217,7 @@ class Model_Table extends Model {
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
         }
-        $r=$this->add('Field_Reference',$our_field);
+        $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
         return $r;
     }
@@ -300,10 +301,6 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
-        if($field instanceof Field_Reference || $field instanceof Field_Expression){
-            $this->_dsql()->order($field->getExpr());
-            return $this;
-        }
         $this->_dsql()->order($field->getExpr(), $desc);
 
         return $this;
@@ -329,6 +326,7 @@ class Model_Table extends Model {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }
         $this->_iterating->next();
@@ -412,7 +410,7 @@ class Model_Table extends Model {
         // get ID first
         $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
         if($id)$this->load($id);
-        return this;
+        return $this;
     }
     function loadRandom(){
         $this->tryLoadRandom();

@@ -31,7 +31,7 @@ class View_CRUD extends View {
 		if($this->allow_add){
 			$this->add_button = $this->grid->addButton('Add');
 			$this->add_button->js('click')->univ()
-				->frameURL('New',$this->api->getDestinationURL(null,array($this->name=>'new')),$this->frame_options);
+				->frameURL('New',$this->api->url(null,array($this->name=>'new')),$this->frame_options);
 		}
     }
     function setController($controller){
@@ -73,7 +73,7 @@ class View_CRUD extends View {
         if($this->allow_edit)$this->grid->addColumn('button','edit');
         if($this->allow_del)$this->grid->addColumn('delete','delete');
         if($id=@$_GET[$this->grid->name.'_edit']){
-            $this->js()->univ()->frameURL('Edit',$this->api->getDestinationURL(null,array($this->name=>$id)))->execute();
+            $this->js()->univ()->frameURL('Edit',$this->api->url(null,array($this->name=>$id)))->execute();
         }
         return $this;
     }

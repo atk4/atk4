@@ -1,7 +1,7 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
  * Implements ability for a Grids (or listers) to divide their rows into multiple
- * pages. Usage: $grid->addPaginatior(20);
+ * pages. Usage: $grid->addPaginator(20);
  *
  * @link http://agiletoolkit.org/learn/understand/view/usage
  * @link http://agiletoolkit.org/learn/template
@@ -173,7 +173,7 @@ class Paginator_Compat extends AbstractView {
 		}
 	}
 	function linkUrl($url_args = array()){
-		return $this->api->getDestinationURL(null, $url_args);
+		return $this->api->url(null, $url_args);
 	}
 	function link($chunk,$url_args,$tpl_args=array()){
 		$this->template_chunks['link']->setHTML(array(

@@ -217,7 +217,7 @@ class Grid_Advanced extends Grid_Basic {
         }
     }
     function format_nowrap($field){
-        $this->tdparam[$this->getCurrentIndex()][$field]['style']='nwhite-space: nowrap';
+        $this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: nowrap';
     }
     function format_wrap($field){
         $this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: wrap';
@@ -261,7 +261,7 @@ class Grid_Advanced extends Grid_Basic {
         //
         @$this->current_row_html[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
             id="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'"
-            rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
+            rel="'.$this->api->url($column['page']?$column['page']:'./'.$field,
             array('expander'=>$field,
                     'cut_page'=>1,
                     'expanded'=>$this->name,
@@ -338,10 +338,10 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
     }
     function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./'.$field,array('id'=>$this->current_id));
+        $this->current_row['_link']=$this->api->url('./'.$field,array('id'=>$this->current_id));
         return $this->format_template($field);
         /*
-           $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
+           $this->current_row[$field]='<a href="'.$this->api->url($field,
            array('id'=>$this->current_id)).'">'.
            $this->columns[$field]['descr'].'</a>';
          */
@@ -390,21 +390,21 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_button($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-            'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="$(this).univ().ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_confirm($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
-            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_prompt($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-            'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'&value=\'+value)">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
