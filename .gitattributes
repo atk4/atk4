@@ -1,0 +1,9 @@
+# Auto detect text files and perform LF normalization
+* text eol=lf
+
+# Pure text files
+*.php	 diff=astextplain
+*.html	 diff=astextplain
+*.js diff=astextplain
+*.txt diff=astextplain
+*.md diff=astextplain
