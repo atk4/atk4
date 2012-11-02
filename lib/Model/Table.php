@@ -278,7 +278,6 @@ class Model_Table extends Model {
             $this->_dsql()->where(($this->table_alias?:$this->table).'.'.($field->actual_field?:$field->short_name),$cond,$value);
         }else{
             $this->_dsql()->where(($this->table_alias?:$this->table).".".($field->actual_field?:$field->short_name),$cond,$value);
-            echo $this->_dsql();
         }
         return $this;
     }
