@@ -157,7 +157,7 @@ class Field extends AbstractModel {
     /** Returns field of this model */
     function getExpr(){
         $q=$this->owner->_dsql();
-        return $q->bt($this->relation?$this->relation->short_name:$q->main_table).'.'.$q->bt($this->short_name);
+        return $q->bt($this->relation?$this->relation->short_name:$q->main_table).'.'.$q->bt($this->actual_field?:$this->short_name);
     }
 
     /** @obsolete use hasOne instead */
