@@ -268,17 +268,17 @@ class Model_Table extends Model {
             $field->defaultValue($v)->system(true)->editable(false);
         }
 
-
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->_dsql()->having($field->short_name,$cond,$value);
+            $this->_dsql()->having($field->actual_field?:$field->short_name,$cond,$value);
             $field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
-            $this->_dsql()->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where($field->relation->short_name.'.'.($field->actual_field?:$field->short_name),$cond,$value);
         }elseif($this->relations){
-            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.($field->actual_field?:$field->short_name),$cond,$value);
         }else{
-            $this->_dsql()->where(($this->table_alias?:$this->table).".".$field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).".".($field->actual_field?:$field->short_name),$cond,$value);
+            echo $this->_dsql();
         }
         return $this;
     }
@@ -286,7 +286,6 @@ class Model_Table extends Model {
     function setOrder($field,$desc=null){
 
         if(!$field instanceof Field){
-
             if(is_object($field)){
                 $this->_dsql()->order($field,$desc);
                 return $this;

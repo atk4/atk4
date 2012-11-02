@@ -76,7 +76,7 @@ class Field extends AbstractModel {
     function getModel(){ return $this->theModel; }
     function setValueList($t){ return $this->listData($t); }
     function enum($t){ return $this->listData(array_combine($t,$t)); }
-    /** Binds the field to a realtion (returned by join() function) */
+    /** Binds the field to a relation (returned by join() function) */
     function from($m){
         if($m===undefined)return $this->relation;
         if(is_object($m)){
