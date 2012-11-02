@@ -130,7 +130,7 @@ class PageManager extends AbstractController {
             $page=$_GET['page'];
         }else{
             $request_uri=$this->getRequestURI();
-            if($path != substr($request_uri,0,strlen($path))){
+            if(strpos($request_uri,$path)!==0){
                 throw new BaseException("URL matching problem. RequestURI=$request_uri should start with BasePath=$path");
             }
             $page=substr($request_uri,strlen($path));
@@ -141,7 +141,7 @@ class PageManager extends AbstractController {
             $page=preg_replace('/\/$/','',$page);
             $page=str_replace('/','_',$page);
 
-            if(substr($page,-1,1)=='_')$page=substr($page,0,-1);
+            if(substr($page,-1)=='_')$page=substr($page,0,-1);
         }
 
         if(strpos($page,'.')!==false)throw new BaseException("Failed to determine page name. Page name may not contain ".

@@ -462,11 +462,11 @@ class SMlite extends AbstractModel {
             $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
             if($text!=='')$template[]=$text;
             $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
-            if(substr($tag,0,1)=='$'){
+            if(strpos($tag,'$')===0){
                 $tag = substr($tag,1);
                 $template[$tag.'#'.$c]=array();
                 $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-            }elseif(substr($tag,0,1)=='/'){
+            }elseif(strpos($tag,'/')===0){
                 $tag = substr($tag,1);
                 return $tag;
             }elseif(substr($tag,-1,1)=='/'){

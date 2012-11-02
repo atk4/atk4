@@ -40,17 +40,17 @@ class DBlite_dsql  {
         /*
          * This call wrapper implements the following function:
          */
-        if(substr($function,0,3)=='do_'){
+        if(strpos($function,'do_')===0){
             // do_select, do_insert combine functionality of generating insert/select and executing it
             $fnname = substr($function,3);
             $query = call_user_func_array(array($this,$fnname),$args);
-            if(substr($function,3,3)=='get'){
+            if(strpos($function,'get',3)===3){
                 // we need those values saved, before we run our query
                 $this->db->fatal("I do not know how to handle this function call :((((");
             }
             return $this->query($query);
         }
-        if(substr($function,0,3)=='get'){
+        if(strpos($function,'get')===0){
             $tmp=array($this->db->cursor,$this->db->found_rows);
             $this->db->cursor=$this->cursor;
             $this->db->found_rows=$this->found_rows;
@@ -272,17 +272,17 @@ class DBlite_dsql  {
                 if(is_null($equals)){
                     $where.=" is null";
                 }else{
-                    if(substr($where,-1,1)==' ')$where=substr($where,0,-1);
+                    if(substr($where,-1)==' ')$where=substr($where,0,-1);
                     // let's see if there is a sign, so we don't put there anything
-                    $c=substr($where,-1,1);
+                    $c=substr($where,-1);
                     if($c=='<' || $c=='>' || $c=='='){
                         // no need to add sign, it's already there
                         $where.=" '".$this->db->escape($equals)."'";
-                    }elseif(substr($where,-5,5)==' like'){
+                    }elseif(substr($where,-5)==' like'){
                         $where.=" '".$this->db->escape($equals)."'";
-                    }elseif(substr($where,-3,3)==' in'){
+                    }elseif(substr($where,-3)==' in'){
                         if($escape){
-                            if(is_string($equals) && strtolower(substr($equals,0,6))=='select'){
+                            if(is_string($equals) && strpos(strtolower($equals),'select')===0){
                                 throw new BaseException("use 3rd argument if you pass sub-queries to where()");
                             }
                             if(is_array($equals)){
