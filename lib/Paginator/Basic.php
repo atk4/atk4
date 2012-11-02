@@ -39,7 +39,10 @@ class Paginator_Basic extends CompleteLister {
     function recursiveRender(){
 
         if(!$this->source){
-            if($this->owner->model)$this->setSource($this->owner->model);
+            if($this->owner->model){
+				if($this->owner instanceof Grid_Advanced) $this->owner->getIterator(); // force grid->model sorting implemented in Grid_Advanced
+				$this->setSource($this->owner->model);
+			}
         }
 
         if(!isset($this->source))
