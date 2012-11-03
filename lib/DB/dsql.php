@@ -116,7 +116,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         unset($dsql->params);$dsql->params=array();
         return $ret;
     }
-    /** Defines a custom template variable. */
+    /** Defines a custom template variable. WARNING: always backtick / escape argument */
     function setCustom($template,$value){
         $this->args['custom'][$template]=$value;
         return $this;
@@ -803,7 +803,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function describe($table){
         return $this->expr('desc [desc_table]')
-            ->setCustom('desc_table',$table);
+            ->setCustom('desc_table',$this->bt($table));
     }
     function render_fx(){
         return $this->args['fx'];
