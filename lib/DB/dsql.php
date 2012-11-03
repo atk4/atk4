@@ -1048,7 +1048,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
             $fx='render_'.$matches[1];
-            if(isset($self->args['custom'][$matches[1]]))return $self->consume($self->args['custom'][$matches[1]]);
+            if(isset($self->args['custom'][$matches[1]]))return $self->consume($self->args['custom'][$matches[1]],false);
             elseif($self->hasMethod($fx))return $self->$fx();
             else return $matches[0];
         },$this->template);
