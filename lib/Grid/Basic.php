@@ -175,8 +175,8 @@ class Grid_Basic extends CompleteLister {
                 // calculate sortlink
                 //$l = $this->api->url(null,array($this->name.'_sort'=>$s[1]));
 
-                $header_sort->trySet('order',$column['sortable'][0]);
-                $header_sort->trySet('sorticon',$this->sort_icons[$column['sortable'][0]]);
+                $header_sort->trySet('order',$s[0]);
+                $header_sort->trySet('sorticon',$this->sort_icons[$s[0]]);
                 $header_col->trySet('sortid',$sel=$this->name.'_sort_'.$name);
 
                 $this->js('click',$this->js()->reload(array($this->name.'_sort'=>$s[1])))

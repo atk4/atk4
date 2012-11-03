@@ -1,8 +1,7 @@
 <?php
 /**
- * Paginator needs to have source set (which can be
- * either dq or array). It will render itself into
- * parent
+ * Paginator needs to have source set (which can be either Model,
+ * DSQL or Array). It will render itself into parent.
  */
 class Paginator_Basic extends CompleteLister {
 	public $ipp=30;
@@ -39,7 +38,10 @@ class Paginator_Basic extends CompleteLister {
     function recursiveRender(){
 
         if(!$this->source){
-            if($this->owner->model)$this->setSource($this->owner->model);
+            if($this->owner->model){
+                if($this->owner instanceof Grid_Advanced) $this->owner->getIterator(); // force grid->model sorting implemented in Grid_Advanced
+                $this->setSource($this->owner->model);
+            }
         }
 
         if(!isset($this->source))
@@ -55,15 +57,14 @@ class Paginator_Basic extends CompleteLister {
         $this->cur_page=floor($this->skip / $this->ipp) +1;
         $this->total_pages = ceil($this->found_rows / $this->ipp);
 
-        if($this->cur_page>$this->total_pages){
+        if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
-            $this->skip=$this->ipp*($this->cur_page-1);
+            $this->learn('skip',$this->skip=0);
             $this->source->limit($this->ipp,$this->skip);
             $this->source->rewind();                 // re-execute the query
         }
 
         if($this->total_pages<=1)return $this->destroy();
-
 
         if($this->cur_page>1){
             $this->add('View',null,'prev')
@@ -85,10 +86,9 @@ class Paginator_Basic extends CompleteLister {
                 ->set('Next →')
                 ;
         }
-        //
+
         // generate our source now
         $data=array();
-
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
             $data[]=array(
                 'href'=>$this->api->url(null,array($this->name.'_skip'=>$pn=($p-1)*$this->ipp)),

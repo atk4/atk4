@@ -577,8 +577,6 @@ class Grid_Advanced extends Grid_Basic {
     /**
      * Adds paginator to the grid
      * @param $ipp row count per page
-     * @param $name if set, paginator will get the name specified. Useful for saving
-     * 		different page numbers for different filtering conditions
      */
     function addPaginator($ipp=25){
         // adding ajax paginator
