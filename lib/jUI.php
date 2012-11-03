@@ -45,7 +45,7 @@ class jUI extends jQuery {
 
         /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
         if($v=$this->api->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
-        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.9.0.min'));
+        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.9.1.min'));
 
         $this->addInclude($v);
 
@@ -54,7 +54,7 @@ class jUI extends jQuery {
         $this->addInclude('atk4_univ');
     }
     function addInclude($file,$ext='.js'){
-        if(substr($file,0,4)=='http'){
+        if(strpos($file,'http')===0){
             parent::addOnReady('$.atk4.includeJS("'.$file.'")');
             return $this;
         }

@@ -117,7 +117,7 @@ class Grid_Advanced extends Grid_Basic {
     function makeSortable($db_sort=null){
         // Sorting
         $reverse=false;
-        if(substr($db_sort,0,1)=='-'){
+        if(strpos($db_sort,'-')===0){
             $reverse=true;
             $db_sort=substr($db_sort,1);
         }
@@ -452,7 +452,7 @@ class Grid_Advanced extends Grid_Basic {
         if($this->sortby){
             $desc=false;
             $order=$this->sortby_db;
-            if(substr($this->sortby_db,0,1)=='-'){
+            if(strpos($this->sortby_db,'-')===0){
                 $desc=true;
                 $order=substr($order,1);
             }
@@ -577,8 +577,6 @@ class Grid_Advanced extends Grid_Basic {
     /**
      * Adds paginator to the grid
      * @param $ipp row count per page
-     * @param $name if set, paginator will get the name specified. Useful for saving
-     * 		different page numbers for different filtering conditions
      */
     function addPaginator($ipp=25){
         // adding ajax paginator

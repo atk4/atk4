@@ -268,17 +268,16 @@ class Model_Table extends Model {
             $field->defaultValue($v)->system(true)->editable(false);
         }
 
-
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->_dsql()->having($field->short_name,$cond,$value);
+            $this->_dsql()->having($field->actual_field?:$field->short_name,$cond,$value);
             $field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
-            $this->_dsql()->where($field->relation->short_name.'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where($field->relation->short_name.'.'.($field->actual_field?:$field->short_name),$cond,$value);
         }elseif($this->relations){
-            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.$field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.($field->actual_field?:$field->short_name),$cond,$value);
         }else{
-            $this->_dsql()->where(($this->table_alias?:$this->table).".".$field->short_name,$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).".".($field->actual_field?:$field->short_name),$cond,$value);
         }
         return $this;
     }
@@ -292,16 +291,14 @@ class Model_Table extends Model {
         }
 
         if(!$field instanceof Field){
-
             if(is_object($field)){
                 $this->_dsql()->order($field,$desc);
                 return $this;
             }
-
-            $field=$this->getElement($field);
+            if($field)$field=$this->getElement($field);
         }
 
-        $this->_dsql()->order($field->getExpr(), $desc);
+        if($field)$this->_dsql()->order($field->getExpr(), $desc);
 
         return $this;
     }
@@ -534,7 +531,7 @@ class Model_Table extends Model {
     }
     function saveAs($model){
         if(is_string($model)){
-            if(substr($model,0,strlen('Model'))!='Model'){
+            if(strpos($model,'Model')!==0){
                 $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
             }
             $model=$this->add($model);
