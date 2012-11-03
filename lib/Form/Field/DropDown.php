@@ -1,11 +1,6 @@
 <?php
 class Form_Field_DropDown extends Form_Field_ValueList {
-    public $empty_value='';
 
-    function emptyValue($v){
-        $this->empty_value=$v;
-        return $this;
-    }
 	function validate(){
 		if(!$this->value)return parent::validate();
         $this->getValueList(); //otherwise not preloaded?

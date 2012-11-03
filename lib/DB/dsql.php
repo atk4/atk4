@@ -116,7 +116,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         unset($dsql->params);$dsql->params=array();
         return $ret;
     }
-    /** Defines a custom template variable. */
+    /** Defines a custom template variable. WARNING: always backtick / escape argument */
     function setCustom($template,$value){
         $this->args['custom'][$template]=$value;
         return $this;
@@ -142,6 +142,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** Shortcut to produce expression which concatinates "where" clauses with "OR" operator */
     function orExpr(){
         return $this->expr('([orwhere])');
+    }
+    function andExpr(){
+        return $this->expr('([andwhere])');
     }
     /** @private Change template and bind parameters for existing query */
     function useExpr($expr,$params=array()){
@@ -451,6 +454,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!$this->args['where'])return;
         return join(' or ',$this->_render_where('where'));
     }
+    function render_andwhere(){
+        if(!$this->args['where'])return;
+        return join(' and ',$this->_render_where('where'));
+    }
     function render_having(){
         if(!$this->args['having'])return;
         return 'having '.join(' and ',$this->_render_where('having'));
@@ -575,21 +582,46 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     // }}}
     // {{{ order()
+    /** Orders results by field */
     function order($order,$desc=null){// ,$prepend=null){
-        if(is_object($order))$order='('.$order.')';
-        if($desc)$order.=' desc';
-        return $this->_setArray($order,'order');
+
+        // Case with comma-separated fields or first argument being an array
+        if(is_string($order) && strpos($order,',')!==false){
+            // Check for multiple 
+            $order=explode(',',$order);
+        }
+        if(is_array($order)){
+            if(!is_null($desc))
+                throw $this->exception('If first argument is array, second argument must not be used');
+            foreach($order as $o)$this->order($o);
+            return $this;
+        }
+
+        // First argument may contain space, which is used to divide field and keyword
+        if(is_null($desc) && is_string($order) && strpos($order,' ')!==false){
+            list($order,$desc)=array_map('trim',explode(' ',trim($order),2));
+        }
+
+        if(is_string($order) && strpos($order,'.')!==false){
+            $order=join('.',$this->bt(explode('.',$order)));
+        }
+
+        if(is_bool($desc)){
+            $desc=$desc?'desc':'';
+        }elseif(strtolower($desc)=='asc')$desc='';
+        elseif($desc && strtolower($desc)!='desc')
+            throw $this->exception('Incorrect ordering keyword')->addMoreInfo('order by',$desc);
+
+        $this->args['order'][]=array($order,$desc);
+        return $this;
     }
 
     function render_order(){
         if(!$this->args['order'])return'';
         $x=array();
-        foreach($this->args['order'] as $arg){
-            if(substr($arg,-5)==' desc'){
-                $x[]=$this->bt(substr($arg,0,-5)).' desc';
-            }else{
-                $x[]=$this->bt($arg);
-            }
+        foreach($this->args['order'] as $tmp){
+            list($arg,$desc)=$tmp;
+            $x[]=$this->consume($arg).($desc?(' '.$desc):'');
         }
         return 'order by '.implode(', ',$x);
     }
@@ -771,7 +803,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function describe($table){
         return $this->expr('desc [desc_table]')
-            ->setCustom('desc_table',$table);
+            ->setCustom('desc_table',$this->bt($table));
     }
     function render_fx(){
         return $this->args['fx'];
@@ -1016,8 +1048,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         $res= preg_replace_callback('/\[([a-z0-9_]*)\]/',function($matches) use($self){
             /**/$self->api->pr->next('dsql/render/'.$matches[1],true);
             $fx='render_'.$matches[1];
-            if($self->hasMethod($fx))return $self->$fx();
-            elseif(isset($self->args['custom'][$matches[1]]))return $self->consume($self->args['custom'][$matches[1]]);
+            if(isset($self->args['custom'][$matches[1]]))return $self->consume($self->args['custom'][$matches[1]],false);
+            elseif($self->hasMethod($fx))return $self->$fx();
             else return $matches[0];
         },$this->template);
         /**/$this->api->pr->stop(null,true);
