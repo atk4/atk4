@@ -183,7 +183,7 @@ class PathFinder extends AbstractController {
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
             if($namespace){
-                if(substr($class_name_nonn,0,5)=='page_'){
+                if(strpos($class_name_nonn,'page_')===0){
                 	$path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.$file);
                 }else{
                 	$path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
@@ -194,7 +194,7 @@ class PathFinder extends AbstractController {
                 }
             }else{
                 /**/$this->api->pr->next('pathfinder/loadClass/locate '.$class_name);
-                if(substr($class_name,0,5)=='page_'){
+                if(strpos($class_name,'page_')===0){
                     $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
                 }else $path=$this->api->pathfinder->locate('php',$file,'path');
 

@@ -88,7 +88,7 @@ http://mysite:123/install/dir/my/page.html
 
         $destination='';
 
-        if(substr($page,strlen($page)-1)=='/'){
+        if(substr($page,-1)=='/'){
             return $this->setBaseURL(str_replace('//','/',$this->api->pm->base_path.$page));
         }
         if(is_null($page))$page='.';

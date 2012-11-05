@@ -536,7 +536,7 @@ class Model_Table extends Model {
     }
     function saveAs($model){
         if(is_string($model)){
-            if(substr($model,0,strlen('Model'))!='Model'){
+            if(strpos($model,'Model')!==0){
                 $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
             }
             $model=$this->add($model);

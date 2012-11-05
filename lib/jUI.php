@@ -54,7 +54,7 @@ class jUI extends jQuery {
         $this->addInclude('atk4_univ');
     }
     function addInclude($file,$ext='.js'){
-        if(substr($file,0,4)=='http'){
+        if(strpos($file,'http')===0){
             parent::addOnReady('$.atk4.includeJS("'.$file.'")');
             return $this;
         }

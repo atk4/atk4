@@ -230,12 +230,12 @@ abstract class AbstractObject {
 
     // {{{ Model and Controller handling
     function setController($controller){
-        if(is_string($controller)&&substr($controller,0,strlen('Controller'))!='Controller')
+        if(is_string($controller)&&strpos($controller,'Controller')!==0)
             $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
         return $this->add($controller);
     }
     function setModel($model){
-        if(is_string($model)&&substr($model,0,strlen('Model'))!='Model'){
+        if(is_string($model)&&strpos($model,'Model')!==0){
             $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
         }
         $this->model=$this->add($model);

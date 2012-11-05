@@ -90,7 +90,7 @@ class PageManager extends AbstractController {
         if(substr($this->base_path,-1)=='\\')$this->base_path=substr($this->base_path,1,-1).'/';
         if(substr($this->base_path,-1)!='/')$this->base_path.='/';
 
-        // We are assuming that all requests are being redirected thorugh a single file
+        // We are assuming that all requests are being redirected though a single file
         $this->base_directory=unix_dirname($_SERVER['SCRIPT_FILENAME']).'/';
 
         // This is the re-constructions of teh proper URL.
@@ -130,7 +130,7 @@ class PageManager extends AbstractController {
             $page=$_GET['page'];
         }else{
             $request_uri=$this->getRequestURI();
-            if($path != substr($request_uri,0,strlen($path))){
+            if(strpos($request_uri,$path)!==0){
                 throw new BaseException("URL matching problem. RequestURI=$request_uri should start with BasePath=$path");
             }
             $page=substr($request_uri,strlen($path));
@@ -141,7 +141,7 @@ class PageManager extends AbstractController {
             $page=preg_replace('/\/$/','',$page);
             $page=str_replace('/','_',$page);
 
-            if(substr($page,-1,1)=='_')$page=substr($page,0,-1);
+            if(substr($page,-1)=='_')$page=substr($page,0,-1);
         }
 
         if(strpos($page,'.')!==false)throw new BaseException("Failed to determine page name. Page name may not contain ".
