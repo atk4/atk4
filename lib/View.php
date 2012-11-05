@@ -11,9 +11,6 @@
  * 
 **/
 class View extends AbstractView {
-
-    public $default_controller='MVCView';
-
     /** Change which element is used. 'div' by default, but change with this funciton */
     function setElement($element){
         $this->template->trySet('element',$element);
