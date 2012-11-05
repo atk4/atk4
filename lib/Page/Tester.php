@@ -54,9 +54,9 @@ class Page_Tester extends Page {
 
         $tested=array();
         foreach(get_class_methods($test_obj) as $method){
-            if(substr($method,0,5)=='test_'){
+            if(strpos($method,'test_')===0){
                 $m=substr($method,5);
-            }elseif(substr($method,0,8)=='prepare_'){
+            }elseif(strpos($method,'prepare_')===0){
                 $m=substr($method,8);
             }else continue;
             if($tested[$m])continue;$tested[$m]=true;
@@ -128,9 +128,9 @@ class Page_Tester extends Page {
         $data=array();
         foreach(get_class_methods($test_obj) as $method){
             $m='';
-            if(substr($method,0,5)=='test_'){
+            if(strpos($method,'test_')===0){
                 $m=substr($method,5);
-            }elseif(substr($method,0,8)=='prepare_'){
+            }elseif(strpos($method,'prepare_')===0){
                 $m=substr($method,8);
             }else continue;
 

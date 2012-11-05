@@ -159,7 +159,7 @@ class Form_Basic extends View {
             case'line':$type='Line';break;
         }
         $class=$type;
-        if(is_string($class)&&substr($class,0,strlen('Form_Field_'))!='Form_Field_'){
+        if(is_string($class)&&strpos($class,'Form_Field_')!==0){
             $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
         }
         $last_field=$this->add($class,$name,null,'form_line')

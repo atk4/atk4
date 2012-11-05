@@ -117,7 +117,7 @@ class Grid_Advanced extends Grid_Basic {
     function makeSortable($db_sort=null){
         // Sorting
         $reverse=false;
-        if(substr($db_sort,0,1)=='-'){
+        if($db_sort[0]=='-'){
             $reverse=true;
             $db_sort=substr($db_sort,1);
         }
@@ -452,7 +452,7 @@ class Grid_Advanced extends Grid_Basic {
         if($this->sortby){
             $desc=false;
             $order=$this->sortby_db;
-            if(substr($this->sortby_db,0,1)=='-'){
+            if($this->sortby_db[0]=='-'){
                 $desc=true;
                 $order=substr($order,1);
             }
