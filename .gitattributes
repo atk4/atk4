@@ -1,9 +1,16 @@
 # Auto detect text files and perform LF normalization
-* text eol=lf
+* text=auto
 
 # Pure text files
-*.php	 diff=astextplain
-*.html	 diff=astextplain
-*.js diff=astextplain
-*.txt diff=astextplain
-*.md diff=astextplain
+*.php text diff=php
+*.html text diff=html
+*.js text diff=html
+*.txt text
+*.md text
+
+# Binary files
+*.jpg binary
+*.png binary
+*.gif binary
+*.crt binary
+*.pdf binary
