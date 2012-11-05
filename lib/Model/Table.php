@@ -203,11 +203,6 @@ class Model_Table extends Model {
         $res->delete_behaviour='ignore';
         return $res;
     }
-    /** Adds a sub-query and manyToOne reference */
-    function addReference($name){
-        return $this
-            ->add('Model_Field_Reference',$name);
-    }
     /** Defines one to many association */
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
         if(!$our_field){
