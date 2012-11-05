@@ -203,13 +203,7 @@ class Model_Table extends Model {
         $res->delete_behaviour='ignore';
         return $res;
     }
-    /** Adds a sub-query and manyToOne reference */
-    function addReference($name){
-        return $this
-            ->add('Model_Field_Reference',$name);
-    }
-    /** Defines one to many association. If field is not found it will add a new Field_Reference.
-        This function implementation will rely on the parent's hasOne to actually record a relation */
+    /** Defines one to many association */
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
 
         // register reference, but don't cerate any fields there
