@@ -35,33 +35,33 @@
  */
 class Auth_Basic extends AbstractController {
 
-	public $info=false;		// info will contain data loaded about authenticated user. This
-							// property can be accessed through $this->get(); and should not
-							// be changed after authentication.
+    public $info=false;     // info will contain data loaded about authenticated user. This
+                            // property can be accessed through $this->get(); and should not
+                            // be changed after authentication.
 
-	public $form=null;	// This form is created when user is being asked about authentication.
-							// If you are willing to change the way form looks, create it
-							// prior to calling check(). Your form must have compatible field
-							// names: "username" and "password"
+    public $form=null;  // This form is created when user is being asked about authentication.
+                            // If you are willing to change the way form looks, create it
+                            // prior to calling check(). Your form must have compatible field
+                            // names: "username" and "password"
 
-	protected $password_encryption=null;         // Which encryption to use. Few are built-in
+    protected $password_encryption=null;         // Which encryption to use. Few are built-in
 
-	protected $allowed_pages=array();
+    protected $allowed_pages=array();
 
-	public $login_field='email';
-	public $password_field='password';
+    public $login_field='email';
+    public $password_field='password';
 
-	function init(){
-		parent::init();
+    function init(){
+        parent::init();
 
-		// Register as auth handler.
-		$this->api->auth=$this;
+        // Register as auth handler.
+        $this->api->auth=$this;
 
-		// Try to get information from the session. If user is authenticated, information will
-		// be available there
-		$this->info=$this->recall('info',false);
+        // Try to get information from the session. If user is authenticated, information will
+        // be available there
+        $this->info=$this->recall('info',false);
 
-	}
+    }
     /** Create an array model and specify it for authentication as a quick way to get authentication working */
     function allow($user,$pass=null){
         // creates fictional model to allow specified user and password
@@ -111,10 +111,10 @@ class Auth_Basic extends AbstractController {
 
         $this->addEncryptionHook($this->model);
 
-		if(strtolower($this->api->page)=='logout'){
-			$this->logout();
+        if(strtolower($this->api->page)=='logout'){
+            $this->logout();
             $this->api->redirect('/');
-		}
+        }
 
         return $this->model;
     }
@@ -130,77 +130,77 @@ class Auth_Basic extends AbstractController {
             }
         });
     }
-	function destroy(){
-		unset($this->api->auth);
-		parent::destroy();
-	}
+    function destroy(){
+        unset($this->api->auth);
+        parent::destroy();
+    }
     /** Auth memorizes data about a logged-in user in session. You can either use this function to access
      * that data or $auth->model (preferred)   $auth->get('username') will always point to the login field
      * value ofthe user regardless of how your field is named
      */
-	function get($property=null,$default=null){
-		if(is_null($property))return $this->info;
-		if(!isset($this->info[$property]))return $default;
-		return $this->info[$property];
-	}
-	function getAll(){
-		return $this->info;
-	}
+    function get($property=null,$default=null){
+        if(is_null($property))return $this->info;
+        if(!isset($this->info[$property]))return $default;
+        return $this->info[$property];
+    }
+    function getAll(){
+        return $this->info;
+    }
     /** Specify page or array of pages which will exclude authentication. Add your registration page here
      * or page containing terms and conditions */
-	function allowPage($page){
-		if(is_array($page)){
-			foreach($page as $p)$this->allowPage($p);
-			return $this;
-		}
-		$this->allowed_pages[]=$page;
-		return $this;
-	}
-	function getAllowedPages(){
-		return $this->allowed_pages;
-	}
-	function isPageAllowed($page){
+    function allowPage($page){
+        if(is_array($page)){
+            foreach($page as $p)$this->allowPage($p);
+            return $this;
+        }
+        $this->allowed_pages[]=$page;
+        return $this;
+    }
+    function getAllowedPages(){
+        return $this->allowed_pages;
+    }
+    function isPageAllowed($page){
         if($this->hook('isPageAllowed')===true)return true;
-		return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
-	}
+        return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
+    }
     /** Specifies how password will be encrypted when stored. Some values are "sha256/salt", "md5", "rot13". If you
      * don't call this, passwords will be stored in plain-text */
-	function usePasswordEncryption($method){
-		$this->password_encryption=$method;
-		return $this;
-	}
+    function usePasswordEncryption($method){
+        $this->password_encryption=$method;
+        return $this;
+    }
     /** Manually encrypt password */
-	function encryptPassword($password,$salt=null){
+    function encryptPassword($password,$salt=null){
         if(!is_string($this->password_encryption) && is_callable($this->password_encryption)){
             $e=$this->password_encryption;
             return $e($password,$salt);
         }
-		if($this->password_encryption)$this->debug("Encrypting password: '$password'");
-		switch($this->password_encryption){
-			case null: return $password;
+        if($this->password_encryption)$this->debug("Encrypting password: '$password'");
+        switch($this->password_encryption){
+            case null: return $password;
             case'sha256/salt':
                        if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
                        return hash_hmac('sha256',
                                  $password.$salt,
                                  $this->api->getConfig('auth/key',$this->api->name));
-			case'sha1':return sha1($password);
-			case'md5':return md5($password);
-			case'rot13':return str_rot13($password);
-			default: throw $this->exception('No such encryption method')->addMoreInfo('encryption',$this->password_encryption);
-		}
-	}
+            case'sha1':return sha1($password);
+            case'md5':return md5($password);
+            case'rot13':return str_rot13($password);
+            default: throw $this->exception('No such encryption method')->addMoreInfo('encryption',$this->password_encryption);
+        }
+    }
     /** Call this function to perform a check for logged in user. This will also display a login-form
      * and will verify user's credential. If you want to handle log-in form on your own, use
      * auth->isLoggedIn() to check and redirect user to a login page.
      *
      * check() returns true if user have just logged in and will return "null" for requests when user
      * continues to use his session. Use that to perform some calculation on log-in */
-	function check(){
+    function check(){
 
         if($this->isPageAllowed($this->api->page))return null;      // no authentication is required
 
-		// Check if user's session contains autentication information
-		if(!$this->isLoggedIn()){
+        // Check if user's session contains autentication information
+        if(!$this->isLoggedIn()){
 
             $this->memorizeURL();
 
@@ -217,42 +217,42 @@ class Auth_Basic extends AbstractController {
 
 
             /*
-			$this->debug('User is not authenticated yet');
+            $this->debug('User is not authenticated yet');
 
-			// No information is present. Let's see if cookie is set
-				}
-			}else $this->debug("No permanent cookie");
+            // No information is present. Let's see if cookie is set
+                }
+            }else $this->debug("No permanent cookie");
              */
-			$this->processLogin();
-			return true;
-		}else $this->debug('User is already authenticated');
-	}
+            $this->processLogin();
+            return true;
+        }else $this->debug('User is already authenticated');
+    }
     /** Add additional info to be stored in user session. */
-	function addInfo($key,$val=null){
-		if(is_null($val) && is_array($key)){
-			foreach($key as $a=>$b){
-				$this->addInfo($a,$b);
-			}
-			return;
-		}
-		$this->debug("Gathered info: $key=$val");
-		$this->info[$key]=$val;
-		return $this;
-	}
+    function addInfo($key,$val=null){
+        if(is_null($val) && is_array($key)){
+            foreach($key as $a=>$b){
+                $this->addInfo($a,$b);
+            }
+            return;
+        }
+        $this->debug("Gathered info: $key=$val");
+        $this->info[$key]=$val;
+        return $this;
+    }
     /** Returns if user is authenticated or not. For more info on user see auth->model */
-	function isLoggedIn(){
-		/*
-		 * This function determines - if user is already logged in or not. It does it by
-		 * looking at $this->info, which was loaded during init() from session.
-		 */
-		return $this->model->loaded();
-	}
+    function isLoggedIn(){
+        /*
+         * This function determines - if user is already logged in or not. It does it by
+         * looking at $this->info, which was loaded during init() from session.
+         */
+        return $this->model->loaded();
+    }
     function verifyCredintials($user,$password){
         throw $this->exception('please use verifyCredentials (not verifyCredinteals)');
     }
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
-	function verifyCredentials($user,$password){
+    function verifyCredentials($user,$password){
         if($this->model->hasMethod('verifyCredentials'))return $this->model->verifyCredentials($user,$password);
         if(!$this->model->hasElement($this->password_field)){
             $this->model->addField($this->password_field);
@@ -262,7 +262,7 @@ class Auth_Basic extends AbstractController {
         if($data[$this->password_field]==$this->encryptPassword($password,$user)){
             return $data[$this->model->id_field];
         }else return false;
-	}
+    }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
     function memorizeURL(){
         if(!$this->recall('page',false)){
@@ -283,19 +283,19 @@ class Auth_Basic extends AbstractController {
         return $url;
     }
     /** Rederect to page user tried to access before authentication was requested */
-	function loginRedirect(){
-		$this->debug("to Index");
-		$this->api->redirect($this->getURL());
-	}
+    function loginRedirect(){
+        $this->debug("to Index");
+        $this->api->redirect($this->getURL());
+    }
     /**
      * This function is always executed after successfull login through a normal means (login form or plugin)
      *
      * It will create cache model data.
      */
-	function loggedIn($user=null,$pass=null){ //$username,$password,$memorize=false){
+    function loggedIn($user=null,$pass=null){ //$username,$password,$memorize=false){
         $this->hook('loggedIn',array($user,$pass));
         $this->api->redirect($this->getURL());
-	}
+    }
     /** Store model in session data so that it can be retrieved faster */
     function memorizeModel(){
         if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
@@ -325,7 +325,7 @@ class Auth_Basic extends AbstractController {
         return $this;
     }
     /** Manually Log in as specified users by using login name. */
-	function login($user){
+    function login($user){
         if(is_object($user)){
             if(!$this->model)throw $this->exception('Auth Model should be set');
             $c=get_class($this->model);
@@ -342,26 +342,26 @@ class Auth_Basic extends AbstractController {
         $this->model->tryLoadBy($this->login_field,$user);
         $this->memorizeModel();
         return $this;
-	}
+    }
     /** Manually log out user */
-	function logout(){
+    function logout(){
         $this->hook('logout');
 
         $this->model->unload();
 
-		$this->forget('info');
-		$this->forget('id');
+        $this->forget('info');
+        $this->forget('id');
 
-   	 	setcookie(session_name(), '', time()-42000, '/');
-		@session_destroy();
+        setcookie(session_name(), '', time()-42000, '/');
+        @session_destroy();
 
-		$this->info=false;
+        $this->info=false;
         return $this;
-	}
+    }
     /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form, 
      * add template/default/page/login.html */
-	function createForm($page){
-		$form=$page->add('Form');
+    function createForm($page){
+        $form=$page->add('Form');
 
         $email=$this->model->hasField($this->login_field);
         $email=$email?$email->caption:'E-mail';
@@ -369,14 +369,14 @@ class Auth_Basic extends AbstractController {
         $password=$this->model->hasField($this->password_field);
         $password=$password?$password->caption:'Password';
 
-		$form->addField('Line','username',$email);
-		$form->addField('Password','password',$password);
-		$form->addSubmit('Login');
+        $form->addField('Line','username',$email);
+        $form->addField('Password','password',$password);
+        $form->addSubmit('Login');
 
         return $form;
-	}
+    }
     /** Do not override this function. */ 
-	function showLoginForm(){
+    function showLoginForm(){
         $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
 
         // hook: createForm use this to build basic login form
@@ -389,20 +389,20 @@ class Auth_Basic extends AbstractController {
         $this->hook('updateForm');
         $f=$this->form;
         if($f->isSubmitted()){
-			if($this->verifyCredentials($f->get('username'), $f->get('password'))){				
+            if($this->verifyCredentials($f->get('username'), $f->get('password'))){             
                 $this->login($f->get('username'));
                 $this->loggedIn($f->get('username'),$f->get('password'));
                 exit;
             }
-			$f->getElement('password')->displayFieldError('Incorrect login information');
+            $f->getElement('password')->displayFieldError('Incorrect login information');
         }
-		return $p;
-	}
+        return $p;
+    }
     /** Do not override this function. */
-	function processLogin(){
-		$this->memorizeURL();
+    function processLogin(){
+        $this->memorizeURL();
         $this->api->template->tryDel('Menu');
-		$p=$this->showLoginForm();
+        $p=$this->showLoginForm();
 
         $this->api->hook('post-init');
         $this->api->hook('pre-exec');
@@ -414,5 +414,5 @@ class Auth_Basic extends AbstractController {
         $this->api->hook('post-submit');
         $this->api->execute();
         exit;
-	}
+    }
 }

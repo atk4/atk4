@@ -25,24 +25,24 @@
 /**
  * This is the description for the Class
  *
- * @author		Romans <romans@adevel.com>
- * @copyright	See file COPYING
- * @version		$Id$
+ * @author      Romans <romans@adevel.com>
+ * @copyright   See file COPYING
+ * @version     $Id$
  */
 class Page extends AbstractView {
-	protected $title='Page';
-	public $default_exception='Exception_ForUser';
-	function init(){
+    protected $title='Page';
+    public $default_exception='Exception_ForUser';
+    function init(){
         $this->api->page_object=$this;
-		if($this->owner!=$this->api && !($this->owner instanceof BasicAuth)){
-			throw $this->exception('Do not add page manually. Page is automatically initialized by the Application class')
+        if($this->owner!=$this->api && !($this->owner instanceof BasicAuth)){
+            throw $this->exception('Do not add page manually. Page is automatically initialized by the Application class')
                 ->addMoreInfo('owner',$this->owner->name)
                 ->addMoreInfo('api',$this->api->name)
                 ;
-		}
-		if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
-			$_GET['cut_object']=$this->short_name;
-		$this->template->trySet('_page',$this->short_name);
+        }
+        if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
+            $_GET['cut_object']=$this->short_name;
+        $this->template->trySet('_page',$this->short_name);
 
         if(method_exists($this,get_class($this))){
             throw $this->exception('Your sub-page name matches your page cass name. PHP will assume that your method is constructor')
@@ -50,20 +50,20 @@ class Page extends AbstractView {
                 ;
         }
 
-		parent::init();
-	}
-	function defaultTemplate(){
-		if(isset($_GET['cut_page']))return array('page');
-		$page_name='page/'.strtolower($this->short_name);
-		// See if we can locate the page
-		try{
-			$p=$this->api->locate('templates',$page_name.'.html');
-		}catch(PathFinder_Exception $e){
-			return array('page');
-		}
-		return array($page_name,'_top');
-	}
-	function getTitle(){
-		return $this->title;
-	}
+        parent::init();
+    }
+    function defaultTemplate(){
+        if(isset($_GET['cut_page']))return array('page');
+        $page_name='page/'.strtolower($this->short_name);
+        // See if we can locate the page
+        try{
+            $p=$this->api->locate('templates',$page_name.'.html');
+        }catch(PathFinder_Exception $e){
+            return array('page');
+        }
+        return array($page_name,'_top');
+    }
+    function getTitle(){
+        return $this->title;
+    }
 }

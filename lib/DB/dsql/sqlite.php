@@ -1,7 +1,7 @@
 <?php
 class DB_dsql_sqlite extends DB_dsql {
     function concat(){
-    	$t=clone $this;
+        $t=clone $this;
         $t->template="([concat])";
         $t->args['concat']=func_get_args();
         return $t;

@@ -48,21 +48,21 @@ class Grid_Advanced extends Grid_Basic {
      * This should be a hash: 'param_name'=>'param_value'
      * Following parameters treated and processed in a special way:
      * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
-     * 		 style: style="param_name: param_value; param_name: param_value"
+     *       style: style="param_name: param_value; param_name: param_value"
      * 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
-     * 		use style/white-space property or simply format_wrap()
+     *      use style/white-space property or simply format_wrap()
      *
      * All the rest are not checked and converted to a form of param_name="param_value"
      *
      * This is a tree-like array with the following structure:
      * array(
-     * 		[level1]=>dataset_row=array(
-     * 			[level2]=>field=array(
-     * 				[level3]=>tdparam_elements=array(
-     * 					param_name=>param_value
-     * 				)
-     * 			)
-     * 		)
+     *      [level1]=>dataset_row=array(
+     *          [level2]=>field=array(
+     *              [level3]=>tdparam_elements=array(
+     *                  param_name=>param_value
+     *              )
+     *          )
+     *      )
      * )
      */
     protected $tdparam=array();
@@ -117,7 +117,7 @@ class Grid_Advanced extends Grid_Basic {
     function makeSortable($db_sort=null){
         // Sorting
         $reverse=false;
-        if(substr($db_sort,0,1)=='-'){
+        if($db_sort[0]=='-'){
             $reverse=true;
             $db_sort=substr($db_sort,1);
         }
@@ -452,7 +452,7 @@ class Grid_Advanced extends Grid_Basic {
         if($this->sortby){
             $desc=false;
             $order=$this->sortby_db;
-            if(substr($this->sortby_db,0,1)=='-'){
+            if($this->sortby_db[0]=='-'){
                 $desc=true;
                 $order=substr($order,1);
             }
@@ -625,7 +625,7 @@ class Grid_Advanced extends Grid_Basic {
     /**
      * Sets inline properties.
      * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
-     * 	hash keys should replicate local properties names
+     *  hash keys should replicate local properties names
      */
     public function setInlineProperties($props){
         foreach($props as $key=>$val){

@@ -4,9 +4,9 @@
  * DSQL or Array). It will render itself into parent.
  */
 class Paginator_Basic extends CompleteLister {
-	public $ipp=30;
-	public $skip=0;
-	public $range=4;
+    public $ipp=30;
+    public $skip=0;
+    public $range=4;
 
     public $source=null;
 

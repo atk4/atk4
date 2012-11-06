@@ -132,7 +132,7 @@ class jQuery_Chain extends AbstractModel {
             }elseif($arg instanceof AbstractView){
                 return "'#".str_replace('/','_',$arg->name)."'";
             }else{
-                return "'".$this->_safe_js_string((string)$arg)."'";	// indirectly call toString();
+                return "'".$this->_safe_js_string((string)$arg)."'";    // indirectly call toString();
             }
         }elseif(is_array($arg)){
             $a2=array();

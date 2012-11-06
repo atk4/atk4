@@ -21,7 +21,7 @@ class GiTemplate extends AbstractModel {
 
     public $source='';
 
-	public $template_type='template';
+    public $template_type='template';
 
     function __clone(){
         parent::__clone();
@@ -104,25 +104,25 @@ class GiTemplate extends AbstractModel {
         return $this;
     }
     function set($tag,$value=null){
-		if(is_array($tag)){
-			if(is_null($value)){
-				// USE(2)
-				foreach($tag as $s=>$v){
-					$this->trySet($s,$v);
-				}
-				return $this;
-			}
-			if(is_array($value)){
-				// USE(2)
-				reset($tag);reset($value);
-				while(list(,$s)=each($tag)){
-					list(,$v)=each($value);
-					$this->set($s,$v);
-				}
-				return $this;
-			}
-			throw $this->exception("Incorrect argument types when calling Template->set()");
-		}
+        if(is_array($tag)){
+            if(is_null($value)){
+                // USE(2)
+                foreach($tag as $s=>$v){
+                    $this->trySet($s,$v);
+                }
+                return $this;
+            }
+            if(is_array($value)){
+                // USE(2)
+                reset($tag);reset($value);
+                while(list(,$s)=each($tag)){
+                    list(,$v)=each($value);
+                    $this->set($s,$v);
+                }
+                return $this;
+            }
+            throw $this->exception("Incorrect argument types when calling Template->set()");
+        }
 
         if($this->getTagRefList($tag,$template)){
             foreach($template as $key=>&$ref){
@@ -165,33 +165,33 @@ class GiTemplate extends AbstractModel {
         return $this;
     }
 
-	function findTemplate($template_name){
-		/*
-		 * Find template location inside search directory path
-		 */
+    function findTemplate($template_name){
+        /*
+         * Find template location inside search directory path
+         */
         $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
-		return join('',file($f));
-	}
-	function loadTemplate($template_name,$ext=null){
-		/*
-		 * Load template from file
-		 */
-		if($ext){
-			$tempext=$this->settings['extension'];
-			$this->settings['extension']=$ext;
-		};
-		$this->tmp_template = $this->findTemplate($template_name);
+        return join('',file($f));
+    }
+    function loadTemplate($template_name,$ext=null){
+        /*
+         * Load template from file
+         */
+        if($ext){
+            $tempext=$this->settings['extension'];
+            $this->settings['extension']=$ext;
+        };
+        $this->tmp_template = $this->findTemplate($template_name);
         $this->template_file=$template_name;
 
-		if(!isset($this->tmp_template))
-			throw $this->exception("Template not found")
+        if(!isset($this->tmp_template))
+            throw $this->exception("Template not found")
                ->setTemplate($template_name.$this->settings['extension']);
 
-		$this->loadTemplateFromString($this->tmp_template);
+        $this->loadTemplateFromString($this->tmp_template);
         $this->source='file '.$template_name;
-		if($ext){ $this->settings['extension']=$tempext; }
-		return $this;
-	}
+        if($ext){ $this->settings['extension']=$tempext; }
+        return $this;
+    }
     function loadTemplateFromString($str){
         $this->source='string';
         $this->template=$this->tags=array();
@@ -245,7 +245,7 @@ class GiTemplate extends AbstractModel {
         //$this->template=unserialize(serialize($this->template));
         //$this->rebuildTagsRegion($this->template);
     }
-	function rebuildTagsRegion(&$old,&$new){
+    function rebuildTagsRegion(&$old,&$new){
         //var_dump($old,$new);
         foreach($old as $tag=>$val){
             if(is_numeric($tag)){

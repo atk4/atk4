@@ -301,7 +301,7 @@ abstract class AbstractView extends AbstractObject {
      *
      * 1. Calling with arguments:
      *
-     * $view->js();					    // does nothing
+     * $view->js();                     // does nothing
      * $a = $view->js()->hide();        // creates chain for hiding $view but does not
      *                                  // bind to event yet.
      *

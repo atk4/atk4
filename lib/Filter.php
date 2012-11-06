@@ -23,7 +23,7 @@
 
  *****************************************************ATK4**/
 class Filter extends Form {
-	public $limiters=array();
+    public $limiters=array();
     public $memorize=true;
     public $view;
     function init(){
@@ -38,7 +38,7 @@ class Filter extends Form {
         return $this;
     }
     /** Remembers values and uses them as condition */
-	function postInit(){
+    function postInit(){
         foreach($this->elements as $x=>$field){
             if($field instanceof Form_Field){
 
@@ -54,26 +54,26 @@ class Filter extends Form {
                     if($this->view->dq->where($x,$field->get()));
                 }
             }
-		}
-	}
-	function memorizeAll(){
-		//by Camper: memorize() method doesn't memorize anything if value is null
+        }
+    }
+    function memorizeAll(){
+        //by Camper: memorize() method doesn't memorize anything if value is null
         foreach($this->elements as $x=>$field){
             if($field instanceof Form_Field){
                 if($this->isClicked('Clear')||is_null($this->get($x)))$this->forget($x);
                 else $this->memorize($x,$this->get($x));
             }
-		}
-	}
-	function submitted(){
-		if(parent::submitted()){
-			/* Imants: These rows are useless because forgetting is done inside memorizeAll
-			if($this->isClicked('Clear')){
-				$this->clearData();
-			}
-			*/
-			$this->memorizeAll();
+        }
+    }
+    function submitted(){
+        if(parent::submitted()){
+            /* Imants: These rows are useless because forgetting is done inside memorizeAll
+            if($this->isClicked('Clear')){
+                $this->clearData();
+            }
+            */
+            $this->memorizeAll();
             $this->view->js()->reload()->execute();
-		}
-	}
+        }
+    }
 }

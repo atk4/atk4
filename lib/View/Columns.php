@@ -31,7 +31,7 @@ class View_Columns extends View {
         if(is_numeric($width)){
             $this->mode='grid';
             $c->addClass('span'.$width);
-        }elseif(substr($width,-1,1)=='%'){
+        }elseif(substr($width,-1)=='%'){
             if($this->mode!='pct'){
                 $this->template->trySet('class','atk-flexy');
             }
