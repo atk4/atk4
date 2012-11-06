@@ -46,9 +46,9 @@ class DB extends AbstractController {
                 // don't be too worried about properly parsing it
                 preg_match('|([a-z]+)://([^:]*)(:(.*))?@([A-Za-z0-9\.-]*)(/([0-9a-zA-Z_/\.]*))|',$dsn,$matches);
 
-				// check if PDO_MySQL is enabled
-				if (!defined('PDO::MYSQL_ATTR_INIT_COMMAND'))
-					throw $this->exception('PDO_MYSQL unavailable',DB);
+                // check if PDO_MySQL is enabled
+                if (!defined('PDO::MYSQL_ATTR_INIT_COMMAND'))
+                    throw $this->exception('PDO_MYSQL unavailable',DB);
 
                 $dsn=array(
                     $matches[1].':host='.$matches[5].';dbname='.$matches[7].
@@ -142,23 +142,23 @@ class DB extends AbstractController {
     }
 
     public $transaction_depth=0;
-	public function beginTransaction() {
-		$this->transaction_depth++;
-		// transaction starts only if it was not started before
-		if($this->transaction_depth==1)return $this->dbh->beginTransaction();
-		return false;
-	}
-	public function commit() {
-		$this->transaction_depth--;
-		if($this->transaction_depth==0)return $this->dbh->commit();
-		return false;
-	}
-	public function inTransaction(){
-		return $this->transaction_depth>0;
-	}
-	public function rollBack($option=null) {
-		$this->transaction_depth=0;
-		return $this->dbh->rollBack();
-	}
+    public function beginTransaction() {
+        $this->transaction_depth++;
+        // transaction starts only if it was not started before
+        if($this->transaction_depth==1)return $this->dbh->beginTransaction();
+        return false;
+    }
+    public function commit() {
+        $this->transaction_depth--;
+        if($this->transaction_depth==0)return $this->dbh->commit();
+        return false;
+    }
+    public function inTransaction(){
+        return $this->transaction_depth>0;
+    }
+    public function rollBack($option=null) {
+        $this->transaction_depth=0;
+        return $this->dbh->rollBack();
+    }
     // }}}
 }

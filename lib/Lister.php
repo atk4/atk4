@@ -19,13 +19,13 @@
 class Lister extends View {
 
     /** If lister data is retrieed from the SQL database, this will contain dynamic query. */
-	public $dq=null;
+    public $dq=null;
 
     /** For other iterators, this variable will be used */
     public $iter=null;
 
     /** Points to current row before it's being outputted. Used in formatRow() */
-	public $current_row=array();
+    public $current_row=array();
 
     /** Similar to $current_row, but will use for direct HTML output, no escaping. Use with care. */
     public $current_row_html=array();
@@ -64,7 +64,7 @@ class Lister extends View {
      * or   // sql table
      *  $l->setSource( 'user', array('name','surname'));
      **/
-	function setSource($source,$fields=null){
+    function setSource($source,$fields=null){
 
         // Set DSQL
         if($source instanceof DB_dsql){
@@ -105,16 +105,16 @@ class Lister extends View {
             ->table($source)
             ->field($fields?:'*');
 
-		return $this;
-	}
+        return $this;
+    }
     /** @obsolete set array source */
-	function setStaticSource($data){
+    function setStaticSource($data){
         return $this->setSource($data);
-	}
+    }
     /** Redefine and change $this->current_row to format data before it appears */
-	function formatRow(){
-		$this->hook('formatRow');
-	}
+    function formatRow(){
+        $this->hook('formatRow');
+    }
     /** Renders single row. If you use for formatting then interact with template->set() directly prior to calling parent */
     function rowRender($template) {
         foreach($this->current_row as $key=>$val){
@@ -145,7 +145,7 @@ class Lister extends View {
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }
-	}
+    }
     function defaultTemplate(){
         return array('view/lister');
     }

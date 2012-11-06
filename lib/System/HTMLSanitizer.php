@@ -36,32 +36,32 @@
  */
 
 class System_HTMLSanitizer extends AbstractController {
-	public $xslt='htmlsanitize';
-	function sanitize($html_string){
+    public $xslt='htmlsanitize';
+    function sanitize($html_string){
 
-		// First HTML may use badly written templates, such as <li> without closing them off.
-		// We are using DOMDocument to convert them into valid XML
+        // First HTML may use badly written templates, such as <li> without closing them off.
+        // We are using DOMDocument to convert them into valid XML
 
-		if(!$html_string)return '';
+        if(!$html_string)return '';
 
-		$html=new DOMDocument();
-		libxml_use_internal_errors(true);
-		$html->loadHTML($html_string);
+        $html=new DOMDocument();
+        libxml_use_internal_errors(true);
+        $html->loadHTML($html_string);
 
-		/*
-		   $body=$html_dom->getElementsByTagName('body')->item(0);
+        /*
+           $body=$html_dom->getElementsByTagName('body')->item(0);
 
-		   $input_xml = $html_dom->saveXML($body);
-		 */
+           $input_xml = $html_dom->saveXML($body);
+         */
 
-		// Next we need to transform our XML using XSLT
-		$xslt = new DOMDocument();
-		$xslt_file = $this->api->locatePath('xslt','htmlsanitize.xml');
-		$xslt->load($xslt_file);
+        // Next we need to transform our XML using XSLT
+        $xslt = new DOMDocument();
+        $xslt_file = $this->api->locatePath('xslt','htmlsanitize.xml');
+        $xslt->load($xslt_file);
 
-		$proc = new XSLTProcessor();
-		$proc->importStylesheet($xslt);
-		return $proc->transformToXML($html);
+        $proc = new XSLTProcessor();
+        $proc->importStylesheet($xslt);
+        return $proc->transformToXML($html);
 
-	}
+    }
 }

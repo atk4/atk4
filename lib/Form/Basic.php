@@ -28,9 +28,9 @@ if(!class_exists('Form_Field',false))include_once'Form/Field.php';
  * This class implements generic form, which you can actually use without
  * redeclaring it. Just add fields, buttons and use execute method.
  *
- * @author		Romans <romans@adevel.com>
- * @copyright	See file COPYING
- * @version		$Id$
+ * @author      Romans <romans@adevel.com>
+ * @copyright   See file COPYING
+ * @version     $Id$
  */
 class Form_Basic extends View {
     protected $form_template = null;
@@ -54,8 +54,8 @@ class Form_Basic extends View {
     protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
-    protected $ajax_submits=array();	// contains AJAX instances assigned to buttons
-    protected $get_field=null;			// if condition was passed to a form throough GET, contains a GET field name
+    protected $ajax_submits=array();    // contains AJAX instances assigned to buttons
+    protected $get_field=null;          // if condition was passed to a form throough GET, contains a GET field name
     protected $conditions=array();
 
     public $js_widget='ui.atk4_form';

@@ -15,15 +15,15 @@
    See http://agiletoolkit.org/about/license
  =====================================================ATK4=*/
 class HelloWorld extends AbstractView {
-	private $message;
-	function init(){
+    private $message;
+    function init(){
         parent::init();
-		$this->message = 'Hello world';
-	}
-	function setMessage($msg){
-		$this->message=$msg;
-	}
-	function render(){
-		$this->output('<p>'.$this->message.'</p>');
-	}
+        $this->message = 'Hello world';
+    }
+    function setMessage($msg){
+        $this->message=$msg;
+    }
+    function render(){
+        $this->output('<p>'.$this->message.'</p>');
+    }
 }

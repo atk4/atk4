@@ -123,7 +123,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     /** Removes definition for argument. $q->del('where') */
     function del($args){
-		$this->args[$args]=array();
+        $this->args[$args]=array();
         return $this;
     }
     /** Removes all definitions. Start from scratch */
@@ -186,7 +186,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      * If multiple tables are used, "false" is returned. Return is not quoted. Please avoid using table() without arguments 
      * as more tables may be dynamically added later.
      **/
-	function table($table=undefined,$alias=undefined){
+    function table($table=undefined,$alias=undefined){
         if($table===undefined)return $this->main_table;
 
         if(is_array($table)){
@@ -237,7 +237,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             $ret[]=$table;
         }
         return join(', ',$ret);
-	}
+    }
     // }}}
     // {{{ field()
     /** 
@@ -268,7 +268,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      *  $q->field( $q->dsql()->table('x')... , 'alias');    // must always use alias
      *
      */
-	function field($field,$table=null,$alias=null) {
+    function field($field,$table=null,$alias=null) {
         if(is_array($field)){
             foreach($field as $alias=>$f){
                 if(is_numeric($alias))$alias=null;
@@ -292,8 +292,8 @@ class DB_dsql extends AbstractModel implements Iterator {
             $alias=$table;$table=null;
         }
         $this->args['fields'][]=array($field,$table,$alias);
-		return $this;
-	}
+        return $this;
+    }
     function render_field(){
         $result=array();
         if(!$this->args['fields']){
@@ -484,7 +484,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      * Using array syntax you can join multiple tables too
      *  $q->join(array('a'=>'address','p'=>'portfolio'));
      */
-	function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
+    function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null){
         // Compatibility mode
         if(isset($this->api->compat)){
             if(strpos($foreign_table,' ')){
