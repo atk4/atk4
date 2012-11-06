@@ -108,7 +108,7 @@ class System_ProcessIO extends AbstractModel {
 		// Similar to write but will send EOF after sending text.
 		// Also makes sure your list do not end with endline (because write
 		// adds it)
-		if(substr($str,-1,1)=="\n")$str=substr($str,0,-1);
+		if(substr($str,-1)=="\n")$str=substr($str,0,-1);
 		$this->write($str);
 		$this->close('in');
 		$this->debugStatus();
@@ -118,7 +118,7 @@ class System_ProcessIO extends AbstractModel {
 		// Reads one line of output. Careful - if no output is provided it this function
 		// will be waiting.
 		$str=fgets($this->pipes[$res]);
-		if(substr($str,-1,1)=="\n")$str=substr($str,0,-1);
+		if(substr($str,-1)=="\n")$str=substr($str,0,-1);
 		return $str;
 	}
 	function read_all($res='out'){
@@ -130,7 +130,7 @@ class System_ProcessIO extends AbstractModel {
 		//stream_set_blocking($this->pipes[$res],0);
 		$str=stream_get_contents($this->pipes[$res]);
 		$this->close($res);
-		if(substr($str,-1,1)!="\n")$str.="\n";
+		if(substr($str,-1)!="\n")$str.="\n";
 
 		return $str;
 	}

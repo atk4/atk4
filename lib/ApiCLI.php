@@ -148,9 +148,8 @@ class ApiCLI extends AbstractView {
         }
         $url=$this->add('URL','url_'.$this->url_object_count++);
         unset($this->elements[$url->short_name]);   // garbage collect URLs
-        if(substr($page,0,7)=='http://')$url->setURL($page);elseif
-            (substr($page,0,8)=='https://')$url->setURL($page);else
-                $url->setPage($page);
+        if(strpos($page,'http://')===0 || strpos($page,'https://')===0) $url->setURL($page);
+        else $url->setPage($page);
         return $url->setArguments($arguments);
     }
     /** @obsolete use url() */

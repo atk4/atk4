@@ -371,7 +371,7 @@ abstract class Form_Field extends AbstractView {
 			return "<$tag>".($value?$value."</$tag>":"");
 		}
 		$tmp = array();
-		if(substr($tag,-1,1)=='/'){
+		if(substr($tag,-1)=='/'){
 			$tag = substr($tag,0,-1);
 			$postfix = '/';
 		} else $postfix = '';
