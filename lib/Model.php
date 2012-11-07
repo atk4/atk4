@@ -214,18 +214,24 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $res;
     }
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
-     * record with new ID. Returns ID of saved record */
-    function save($id=null){
+     * record with new ID. */
+    function save($id=undefined){
         $this->hook('beforeSave',$id);
-        $res=$this->controller->save($this,$id);
+
+        $id=$this->controller->save($this,$id);
+        $this->id=$id;
+        if($this->id_field)$this->data[$this->id_field]=$id;
+
         $this->hook('afterSave',$id);
-        return $res;
+        return $this;
     }
     /** Save model into database and don't try to load it back */
     function saveAndUnload(){
-        $this->_save_as=false;
-        $this->save();
-        $this->_save_as=null;
+        $this->hook('beforeSave',$id);
+
+        $id=$this->controller->save($this,$id);
+        $this->unload();     // clean if there is anything loaded
+
         return $this;
     }
     /** Will save model later, when it's being destructed by Garbage Collector */

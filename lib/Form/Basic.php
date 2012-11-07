@@ -433,6 +433,9 @@ class Form_Basic extends View {
         if(is_object($name))$name=$name->short_name;
         return ($_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]));
     }
+    function error($field,$text){
+        $this->getElement($field)->displayFieldError($text);
+    }
     /* external error management */
     function setFieldError($field, $name){
         if (isset($this->errors[$field])){

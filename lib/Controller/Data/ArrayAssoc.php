@@ -1,7 +1,7 @@
 <?php
 class Controller_Data_ArrayAssoc extends Controller_Data {
 
-    function load($model,$id){
+    function load($model,$id=null){
         $model->data=$model->table[$id];
     }
 
@@ -47,5 +47,13 @@ class Controller_Data_ArrayAssoc extends Controller_Data {
             }
         }
         return null;
+    }
+
+    function setOrder($model,$field,$desc=false){
+        return $this->exception('','NotSupported');
+    }
+
+    function setLimit($model,$count,$offset=0){
+        return $this->exception('','NotSupported');
     }
 }

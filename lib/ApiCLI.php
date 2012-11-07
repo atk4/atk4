@@ -246,7 +246,9 @@ class ApiCLI extends AbstractView {
     }
     /** Manually set configuration option */
     function setConfig($config=array()){
-        $this->config=safe_array_merge($this->config,$config);
+        if(!$config)$config=array();
+        if(!$this->config)$this->config=array();
+        $this->config=array_merge($this->config,$config);
     }
     /** Load config if necessary and look up corresponding setting */
     function getConfig($path, $default_value = undefined){

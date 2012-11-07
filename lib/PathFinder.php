@@ -71,7 +71,7 @@ class PathFinder extends AbstractController {
                     'js'=>'templates/js',
                     'banners'=>'banners',
                     'logs'=>'logs',
-                    'dbupdates'=>'docs/dbupdates',
+                    'dbupdates'=>'doc/dbupdates',
                     ))->setBasePath($base_directory)
             ;
 

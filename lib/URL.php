@@ -188,6 +188,7 @@ http://mysite:123/install/dir/my/page.html
     function getURL(){
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
 
+
         $url=$this->getBaseURL();
         if($this->page && $this->page!='index'){
             // add prefix if defined in config

@@ -10,14 +10,16 @@ class Controller_Data_Array extends Controller_Data {
 
 
     function getBy($model,$field,$cond=undefined,$value=undefined){
-        foreach($model->table as $row){
+        $this->bindTable($model,$t);
+        foreach($t as $row){
             if($row[$field]==$value){
                 return $row;
             }
         }
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
-        foreach($model->table as $row){
+        $this->bindTable($model,$t);
+        foreach($t as $row){
             if($row[$field]==$value){
                 $model->data=$row;
                 $model->dirty=array();
@@ -27,11 +29,23 @@ class Controller_Data_Array extends Controller_Data {
         }
         return $this;
     }
+    function tryLoadAny($model){
+        $this->bindTable($model,$t);
+        reset($t);
+        list($id,$row)=each($t);
+
+        $model->data=$row;
+        $model->dirty=array();
+        $model->id=$model->id_field?$row[$model->id_field]:$id;
+
+        return $this;
+    }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
+        $this->bindTable($model,$t);
         $this->loadBy($model,$field,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
-        foreach($model->table as $row){
+        foreach($t as $row){
             if($row[$field]==$value){
                 $model->data=$row;
                 $model->dirty=array();
@@ -45,7 +59,8 @@ class Controller_Data_Array extends Controller_Data {
         if(@$model->id_field){
             return $this->tryLoadBy($model,$model->id_field,$id);
         }
-        $row=$model->table[$id];
+        $this->bindTable($model,$t);
+        $row=$t[$id];
         $model->data=$row;
         $model->dirty=array();
         $model->id=$id;
@@ -57,17 +72,20 @@ class Controller_Data_Array extends Controller_Data {
             ->addMoreInfo('id',$id);
         return $this;
     }
-    function save($model){
+    function save($model,$id=null){
+        $this->bindTable($model,$t);
         if(is_null($model->id)){
-            end($model->table);
-            list($model->id)=each($model->table);
-            $model->id++;
-            $model->table[$model->id]=$model->data;
+            if(is_null($id)){
+                end($t);
+                list($id)=each($model->table);
+                $id++;
+            }
+            $t[$id]=$model->data;
         }else{
-            $model->table[$model->id]=$model->data;
+            $id=uniqid();
+            $t[$id]=$model->data;
         }
-
-        return $this;
+        return $id;
     }
     function delete($model,$id=null){
         unset($model->table[$id?:$model->id]);

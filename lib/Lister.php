@@ -90,11 +90,14 @@ class Lister extends View {
 //            $this->iter=$source;
             $m=$this->setModel('Model',$fields);
 
+            $m->setSource('Array',$source);
+            /*
             if(is_array(reset($source))){
                 $m->setSource('Array',$source);
             }else{
                 $m->setSource('ArrayAssoc',$source);
             }
+             */
 
             return $this;
         }

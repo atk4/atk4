@@ -11,8 +11,24 @@ abstract class Controller_Data extends AbstractController {
 
     function setSource($model,$data=undefined){
         if($data===undefined)return $this;
-        $model->table=$data;
+
+        $this->bindTable($model,$t);
+        $t=$data;
+
         return $this;
+    }
+
+
+    /* Binds variable to resource which can be used for data storage. Normally 
+        * $model->table stores it, but if you are using caches, then 
+        * your model might have different table for a cache. Call this 
+        * method to get a proper reference */
+    function bindTable($model,&$t){
+        if($this->isCache($model)){
+            $t = &$model->cache_table[$this->name];
+        }else{
+            $t = &$model->table;
+        }
     }
 
     /* Normally model will call our methods. If the controller is used as a secondary cache, then we need to place hooks
@@ -22,21 +38,20 @@ abstract class Controller_Data extends AbstractController {
         $m=$this->owner;
         if($m->controller===$this)throw $this->exception('Cannot be data source and cache simultaniously');
 
-        $m->addHook('beforeLoad',array($this,'tryLoad'),array(),$priority);
+        $m->addHook('beforeLoad',array($this,'cache_load'),array(),$priority);
         $m->addHook('afterSave',array($this,'save'),array(),-$priority);
         $m->addHook('afterDelete',array($this,'delete'),array(),-$priority);
-        $m->addHook('unCache',$this);
 
         return $this;
     }
 
+    /* Cache Implementation */
     function isCache($model){
         return $model->controller != $this;
     }
-
-    /* Remove record from the cache */
-    function unCache($model){
-        $this->delete($model);
+    function cache_load($model,$id=null){
+        if($model->loaded())return; // other cache loaded us
+        $this->tryLoad($model,$id);
     }
 
 	abstract function load($model,$id=null);
@@ -46,6 +61,7 @@ abstract class Controller_Data extends AbstractController {
 	abstract function tryLoad($model,$id);
     abstract function loadBy($model,$field,$cond,$value);
     abstract function tryLoadBy($model,$field,$cond,$value);
+    abstract function tryLoadAny($model);
 
     abstract function deleteAll($model);
     abstract function getRows($model);
