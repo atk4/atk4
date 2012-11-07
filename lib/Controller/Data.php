@@ -12,23 +12,10 @@ abstract class Controller_Data extends AbstractController {
     function setSource($model,$data=undefined){
         if($data===undefined)return $this;
 
-        $this->bindTable($model,$t);
+        $t =& $model->table[$this->name];
         $t=$data;
 
         return $this;
-    }
-
-
-    /* Binds variable to resource which can be used for data storage. Normally 
-        * $model->table stores it, but if you are using caches, then 
-        * your model might have different table for a cache. Call this 
-        * method to get a proper reference */
-    function bindTable($model,&$t){
-        if($this->isCache($model)){
-            $t = &$model->cache_table[$this->name];
-        }else{
-            $t = &$model->table;
-        }
     }
 
     /* Normally model will call our methods. If the controller is used as a secondary cache, then we need to place hooks

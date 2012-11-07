@@ -50,7 +50,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     public $strict_fields=false;
 
     /** Contains information about table/file/bucket/array used by Controller to determine source */
-    public $table;
+    public $table=array();
 
     /** Contains identifier of currently loaded record or null. Use load() and reset() */
     public $id=null;     // currently loaded record
