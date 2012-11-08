@@ -132,7 +132,7 @@ class jQuery_Chain extends AbstractModel {
             }elseif($arg instanceof AbstractView){
                 return "'#".str_replace('/','_',$arg->name)."'";
             }else{
-                return "'".$this->_safe_js_string((string)$arg)."'";	// indirectly call toString();
+                return "'".$this->_safe_js_string((string)$arg)."'";    // indirectly call toString();
             }
         }elseif(is_array($arg)){
             $a2=array();
@@ -169,16 +169,16 @@ class jQuery_Chain extends AbstractModel {
         }
         return $s;
     }
-    /* Calls real redirect (from univ), but accepts page name. Use getDestinationURL for 1st argument manually anyway. */
+    /* Calls real redirect (from univ), but accepts page name. Use url() for 1st argument manually anyway. */
     function redirect($page=null,$arg=null){
-        $url=$this->api->getDestinationURL($page,$arg);
+        $url=$this->api->url($page,$arg);
         return $this->_fn('redirect',array($url));
     }
     /* Reload object. You can bind this to custom event and trigger it if object is not directly accessible. */
     function reload($arguments=array(),$fn=null,$url=null){
         if($fn)$fn->_enclose();
         $id=$this->owner;
-        if(!$url)$url=$this->api->getDestinationURL(null,array('cut_object'=>$id->name));
+        if(!$url)$url=$this->api->url(null,array('cut_object'=>$id->name));
         return $this->_fn('atk4_reload',array($url,$arguments,$fn));
     }
     /* Chain will not be called but will return callable function instead. */

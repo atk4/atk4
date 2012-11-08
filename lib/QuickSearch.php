@@ -23,19 +23,19 @@
 
  *****************************************************ATK4**/
 class QuickSearch extends Filter {
-	/*
-	 * Quicksearch represents one-field filter which goes perfectly with a grid
-	 */
+    /*
+     * Quicksearch represents one-field filter which goes perfectly with a grid
+     */
 
-	public $js_widget='ui.atk4_form';
+    public $js_widget='ui.atk4_form';
     public $icon;// to configure icon
-	var $region=null;
-	var $region_url=null;
-	public $search_cross=null;
-	public $grid;
+    var $region=null;
+    var $region_url=null;
+    public $search_cross=null;
+    public $grid;
 
-	function init(){
-		parent::init();
+    function init(){
+        parent::init();
         //$this->addClass('span3');
 
         $this->addClass('float-right stacked span4');
@@ -47,14 +47,14 @@ class QuickSearch extends Filter {
             ->setIcon('search')
             ->js('click',$this->js()->submit());
             ;
-	}
-	function useFields($fields){
-		$this->fields=$fields;
-		return $this;
-	}
-	function postInit(){
+    }
+    function useFields($fields){
+        $this->fields=$fields;
+        return $this;
+    }
+    function postInit(){
         parent::postInit();
-		if(!($v=$this->get('q')))return;
+        if(!($v=$this->get('q')))return;
 
         if($this->view->model){
             $q=$this->view->model->_dsql();
@@ -62,9 +62,9 @@ class QuickSearch extends Filter {
             $q=$this->view->dq;
         }
         $or=$q->orExpr();
-		foreach($this->fields as $field){
+        foreach($this->fields as $field){
             $or->where($field,'like','%'.$v.'%');
-		}
+        }
         $q->having($or);
-	}
+    }
 }

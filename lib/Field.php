@@ -76,7 +76,7 @@ class Field extends AbstractModel {
     function getModel(){ return $this->theModel; }
     function setValueList($t){ return $this->listData($t); }
     function enum($t){ return $this->listData(array_combine($t,$t)); }
-    /** Binds the field to a realtion (returned by join() function) */
+    /** Binds the field to a relation (returned by join() function) */
     function from($m){
         if($m===undefined)return $this->relation;
         if(is_object($m)){
@@ -157,7 +157,7 @@ class Field extends AbstractModel {
     /** Returns field of this model */
     function getExpr(){
         $q=$this->owner->_dsql();
-        return $q->bt($this->relation?$this->relation->short_name:$q->main_table).'.'.$q->bt($this->short_name);
+        return $q->bt($this->relation?$this->relation->short_name:$q->main_table).'.'.$q->bt($this->actual_field?:$this->short_name);
     }
 
     /** @obsolete use hasOne instead */

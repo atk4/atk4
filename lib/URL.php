@@ -1,7 +1,7 @@
 <?php
 /***********************************************************
-  When $api->getDestinationURL() is called, this object is used
-  to avoid double-encoding. Return URL when converting to string
+  When $api->url() is called, this object is used to avoid
+  double-encoding. Return URL when converting to string.
 
   Reference:
   http://agiletoolkit.org/doc/ref
@@ -32,7 +32,7 @@ class URL extends AbstractModel {
 
     protected $extension='.html';
 
-    protected $absolute=false;	// if true then will return full URL (for external documents)
+    protected $absolute=false;  // if true then will return full URL (for external documents)
 
     public $base_url=null;
 
@@ -73,7 +73,7 @@ http://mysite:123/install/dir/my/page.html
         $this->absolute=true;
         return $this;
     }
-    /** [private] automatically called with 1st argument of getDestinationURL() */
+    /** [private] automatically called with 1st argument of api->url() */
     function setPage($page=null){
         // The following argument formats are supported:
         //
@@ -88,7 +88,7 @@ http://mysite:123/install/dir/my/page.html
 
         $destination='';
 
-        if(substr($page,strlen($page)-1)=='/'){
+        if(substr($page,-1)=='/'){
             return $this->setBaseURL(str_replace('//','/',$this->api->pm->base_path.$page));
         }
         if(is_null($page))$page='.';
@@ -150,9 +150,9 @@ http://mysite:123/install/dir/my/page.html
     function __toString(){
         return $this->getURL();
     }
-	function setURL($url){
-		return $this->setBaseURL($url);
-	}
+    function setURL($url){
+        return $this->setBaseURL($url);
+    }
     /** By default uses detected base_url, but you can use this to redefine */
     function setBaseURL($base){
         $this->base_url=$base;
@@ -173,18 +173,18 @@ http://mysite:123/install/dir/my/page.html
     function getExtension(){
         return $this->extension;
     }
-	function getArguments($url=null){
+    function getArguments($url=null){
         $tmp=array();
         foreach($this->arguments as $key=>$value){
             if($value===false)continue;
             $tmp[]=$key.'='.urlencode($value);
         }
 
-		$arguments='';
+        $arguments='';
         if($tmp)$arguments=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
 
-		return $arguments;
-	}
+        return $arguments;
+    }
     function getURL(){
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
 
@@ -198,7 +198,7 @@ http://mysite:123/install/dir/my/page.html
         }
 
 
-		$url.=$this->getArguments($url);
+        $url.=$this->getArguments($url);
 
         return $url;
     }

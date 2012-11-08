@@ -346,7 +346,7 @@ class ApiWeb extends ApiCLI {
          * Use this function instead of issuing header("Location") stuff
          */
         $url=$this->url($page,$args);
-		if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect($url)->execute();
+        if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect($url)->execute();
         header("Location: ".$url);
         exit;
     }
@@ -374,7 +374,7 @@ class ApiWeb extends ApiCLI {
     }
     /** @private */
     function _locatePage($path){
-        return $this->getDestinationURL($path);
+        return $this->url($path);
     }
     /** Only show $object in the final rendering */
     function renderOnly($object){

@@ -5,7 +5,9 @@
 	.demo-bg .atk-buttons {border-color:#c3d0d9 !important;}
 	section, div.section {margin-bottom:6em;}
 	.section-heading {font-size:42px;color:#d5dde5;margin-bottom:0.7em;}
+	#jui-menu .ui-menu { width: 150px; }
 </style>
+
 <script>
 	$(function(){
 		$('.demo-button').button();
@@ -71,8 +73,13 @@
             text: false
         });
         
+        $('#jui-menu').menu();
+        $('#jui-tooltip').tooltip();
+        $('#jui-tooltip-tracking').tooltip({track:true});
+        
 	});
 </script>
+
 <div class="section-heading">Grid System</div>
 <div id="demo-gs" class="section">
 	<div class="atk-row" title="12 column layout">
@@ -120,6 +127,7 @@
 		<div class="span12">.span12</div>
 	</div><!-- /row -->
 </div>
+
 <div class="section-heading">Typography</div>
 <section id="demo-typography">
 	<div class="atk-row">
@@ -201,6 +209,7 @@
 		</div>
 	</div>
 </section>
+
 <div class="section-heading">Forms</div>
 <section id="demo-forms">
 	<div class="atk-row">
@@ -683,6 +692,7 @@
 		</form>
 	</div>
 </section>
+
 <div class="section-heading">Tables</div>
 <section id="demo-tables">
 	<h2>Basic Grid</h2>
@@ -829,6 +839,7 @@
 		</div>
 	</div>
 </section>
+
 <div class="section-heading">Menus</div>
 <section id="demo-navs">
 	<div class="atk-row">
@@ -862,6 +873,7 @@
 		</div>
 	</div>
 </section>
+
 <div class="section-heading">jQuery UI</div>
 <section id="demo-jui">
 	<script>
@@ -967,7 +979,51 @@
 			</div><!-- End demo -->
 		</div>
 	</div>
+	<div class="atk-row">
+		<div class="span4">
+            <h2>Menu</h2>
+            <ul id="jui-menu">
+				<li><a href="#">Item #1</a></li>
+				<li><a href="#">Item #2</a>
+                    <ul>
+                        <li class="ui-state-disabled"><a href="#">Item #2.1 (disabled)</a></li>
+                        <li><a href="#">Item #2.2</a></li>
+                        <li><a href="#">Item #2.3</a>
+                        <ul>
+                            <li><a href="#">Item #2.3.1</a></li>
+                            <li><a href="#">Item #2.3.2</a></li>
+                        </ul>
+                        </li>
+                    </ul>
+				</li>
+				<li><a href="#">Item #3</a></li>
+				<li class="ui-state-active"><a href="#">Item #4 (active)</a></li>
+				<li><a href="#">Item #5</a></li>
+				<li class="ui-state-disabled"><a href="#">Item #6 (disabled)</a></li>
+            </ul>
+		</div>
+		<div class="span8">
+            <h2>Tooltip</h2>
+            <div id="jui-tooltip">
+                <p><a href="#" title="That's what this widget is">Tooltips</a> can be attached to any element.
+                    When you hover the element with your mouse, the title attribute is displayed in a little box next to the
+                    element, just like a native tooltip. But as it's not a native tooltip, it can be styled. Any themes built with
+                    <a href="http://themeroller.com" title="ThemeRoller: jQuery UI's theme builder application">ThemeRoller</a>
+                    will also style tooltips accordingly.
+                </p>
+                <p>Tooltips are also useful for form elements, to show some additional information in the context of each field.
+                    <label for="age">Your age:</label><input id="age" title="We ask for your age only for statistical purposes." />
+                    (hover the field to see the tooltip)
+                </p>
+            </div>
+            <div id="jui-tooltip-tracking">
+                <p>Tooltip can track your mouse movements too. <a href="#" title="I'm tracking your mouse movement">Test here</a>.</p>
+                <p>And also have custom styling and other options.</p>
+            </div>
+        </div>
+	</div>
 </section>
+
 <div class="section-heading">Misc</div>
 <section id="demo-misc">
 	<div class="atk-row">
@@ -1005,6 +1061,7 @@
 		</div>
 	</div>
 </section>
+
 <script>
 	$(function(){
 		$('.atk-growl').hide();
@@ -1013,6 +1070,7 @@
 		});;
 	});
 </script>
+
 <div id="atk-growl" class="atk-growl">
 	<div class="atk-notification ui-state-highlight ui-corner-all ">
 		<div class="atk-notification-text">

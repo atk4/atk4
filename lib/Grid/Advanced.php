@@ -48,21 +48,21 @@ class Grid_Advanced extends Grid_Basic {
      * This should be a hash: 'param_name'=>'param_value'
      * Following parameters treated and processed in a special way:
      * 1) 'style': nested array, style parameter. items of this nested array converted to a form of
-     * 		 style: style="param_name: param_value; param_name: param_value"
+     *       style: style="param_name: param_value; param_name: param_value"
      * 2) OBSOLTE! wrap: possible values are true|false; if true, 'wrap' is added
-     * 		use style/white-space property or simply format_wrap()
+     *      use style/white-space property or simply format_wrap()
      *
      * All the rest are not checked and converted to a form of param_name="param_value"
      *
      * This is a tree-like array with the following structure:
      * array(
-     * 		[level1]=>dataset_row=array(
-     * 			[level2]=>field=array(
-     * 				[level3]=>tdparam_elements=array(
-     * 					param_name=>param_value
-     * 				)
-     * 			)
-     * 		)
+     *      [level1]=>dataset_row=array(
+     *          [level2]=>field=array(
+     *              [level3]=>tdparam_elements=array(
+     *                  param_name=>param_value
+     *              )
+     *          )
+     *      )
      * )
      */
     protected $tdparam=array();
@@ -117,7 +117,7 @@ class Grid_Advanced extends Grid_Basic {
     function makeSortable($db_sort=null){
         // Sorting
         $reverse=false;
-        if(substr($db_sort,0,1)=='-'){
+        if($db_sort[0]=='-'){
             $reverse=true;
             $db_sort=substr($db_sort,1);
         }
@@ -261,7 +261,7 @@ class Grid_Advanced extends Grid_Basic {
         //
         @$this->current_row_html[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
             id="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'"
-            rel="'.$this->api->getDestinationURL($column['page']?$column['page']:'./'.$field,
+            rel="'.$this->api->url($column['page']?$column['page']:'./'.$field,
             array('expander'=>$field,
                     'cut_page'=>1,
                     'expanded'=>$this->name,
@@ -338,10 +338,10 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
     }
     function format_link($field){
-        $this->current_row['_link']=$this->api->getDestinationURL('./'.$field,array('id'=>$this->current_id));
+        $this->current_row['_link']=$this->api->url('./'.$field,array('id'=>$this->current_id));
         return $this->format_template($field);
         /*
-           $this->current_row[$field]='<a href="'.$this->api->getDestinationURL($field,
+           $this->current_row[$field]='<a href="'.$this->api->url($field,
            array('id'=>$this->current_id)).'">'.
            $this->columns[$field]['descr'].'</a>';
          */
@@ -390,21 +390,21 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_button($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-            'onclick="$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="$(this).univ().ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_confirm($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
-            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_prompt($field){
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-            'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->getDestinationURL(null,
+            'onclick="value=prompt(\'Enter value: \');$(this).univ().ajaxec(\''.$this->api->url(null,
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'&value=\'+value)">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
@@ -452,7 +452,7 @@ class Grid_Advanced extends Grid_Basic {
         if($this->sortby){
             $desc=false;
             $order=$this->sortby_db;
-            if(substr($this->sortby_db,0,1)=='-'){
+            if($this->sortby_db[0]=='-'){
                 $desc=true;
                 $order=substr($order,1);
             }
@@ -577,8 +577,6 @@ class Grid_Advanced extends Grid_Basic {
     /**
      * Adds paginator to the grid
      * @param $ipp row count per page
-     * @param $name if set, paginator will get the name specified. Useful for saving
-     * 		different page numbers for different filtering conditions
      */
     function addPaginator($ipp=25){
         // adding ajax paginator
@@ -627,7 +625,7 @@ class Grid_Advanced extends Grid_Basic {
     /**
      * Sets inline properties.
      * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
-     * 	hash keys should replicate local properties names
+     *  hash keys should replicate local properties names
      */
     public function setInlineProperties($props){
         foreach($props as $key=>$val){

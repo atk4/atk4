@@ -67,145 +67,145 @@ is joined with an image model.
 
 
 class Form_Field_Upload extends Form_Field {
-	public $max_file_size=null;
-	public $mode='iframe';
-	public $multiple=false;
-	public $debug=false;
+    public $max_file_size=null;
+    public $mode='iframe';
+    public $multiple=false;
+    public $debug=false;
     public $format_files_template="view/uploaded_files";
-	function allowMultiple($multiple=50){
-		// Allow no more than $multiple files to be present in the table
-		$this->multiple=$multiple;
-		return $this;
+    function allowMultiple($multiple=50){
+        // Allow no more than $multiple files to be present in the table
+        $this->multiple=$multiple;
+        return $this;
     }
     function setFormatFilesTemplate($template){
         $this->format_files_template=$template;
         return $this;
     }
-	function setMode($mode){
-		$this->mode=$mode;
-		return $this;
-	}
-	function loadPOST(){
-		parent::loadPOST();
-		if($_GET[$this->name.'_upload_action']){
-			// This is JavaScript upload. We do not want to trigger form submission event
-			$_POST=array();
-		}
-		if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
-			if($this->model){
-				try{
+    function setMode($mode){
+        $this->mode=$mode;
+        return $this;
+    }
+    function loadPOST(){
+        parent::loadPOST();
+        if($_GET[$this->name.'_upload_action']){
+            // This is JavaScript upload. We do not want to trigger form submission event
+            $_POST=array();
+        }
+        if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
+            if($this->model){
+                try{
                     $model=$this->model;
-					$model->set('filestore_volume_id',1);
-					$model->set('original_filename',$this->getOriginalName());
-					$model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
-					$model->import($this->getFilePath());
-					$model->update();
-				}catch(Exception $e){
-					$this->api->logger->logCaughtException($e);
-					$this->uploadFailed($e->getMessage()); //more user friendly
-				}
+                    $model->set('filestore_volume_id',1);
+                    $model->set('original_filename',$this->getOriginalName());
+                    $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
+                    $model->import($this->getFilePath());
+                    $model->update();
+                }catch(Exception $e){
+                    $this->api->logger->logCaughtException($e);
+                    $this->uploadFailed($e->getMessage()); //more user friendly
+                }
 
-				$this->uploadComplete($model->get());
-			}
-		}
-		if($_POST[$this->name.'_token']){
-			$a=explode(',',$_POST[$this->name.'_token']);$b=array();
-			foreach($a as $val)if($val)$b[]=$val;
-			$this->set(join(',',filter_var_array($b,FILTER_VALIDATE_INT)));
-		}
-		else $this->set($this->default_value);
-	}
-	function uploadComplete($data=null){
-		echo "<html><head><script>window.top.$('#".
-			$_GET[$this->name.'_upload_action']."').atk4_uploader('uploadComplete',".
-			json_encode($data).");</script></head></html>";
-		exit;
-	}
-	function uploadFailed($message){
+                $this->uploadComplete($model->get());
+            }
+        }
+        if($_POST[$this->name.'_token']){
+            $a=explode(',',$_POST[$this->name.'_token']);$b=array();
+            foreach($a as $val)if($val)$b[]=$val;
+            $this->set(join(',',filter_var_array($b,FILTER_VALIDATE_INT)));
+        }
+        else $this->set($this->default_value);
+    }
+    function uploadComplete($data=null){
+        echo "<html><head><script>window.top.$('#".
+            $_GET[$this->name.'_upload_action']."').atk4_uploader('uploadComplete',".
+            json_encode($data).");</script></head></html>";
+        exit;
+    }
+    function uploadFailed($message){
 
-		$d='';
-		if($this->debug)$d=','.json_encode($_FILES[$this->name]);
+        $d='';
+        if($this->debug)$d=','.json_encode($_FILES[$this->name]);
 
-		echo "<html><head><script>window.top.$('#".
-			$_GET[$this->name.'_upload_action']."').atk4_uploader('uploadFailed',".
-			json_encode($message).
-			$d.
-			");</script></head></html>";
-		exit;
-	}
+        echo "<html><head><script>window.top.$('#".
+            $_GET[$this->name.'_upload_action']."').atk4_uploader('uploadFailed',".
+            json_encode($message).
+            $d.
+            ");</script></head></html>";
+        exit;
+    }
 
-	function init(){
+    function init(){
         parent::init();
-		$this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
-		$this->attr['type']='file';
+        $this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
+        $this->attr['type']='file';
 
-		$max_post=$this->convertToBytes(ini_get('post_max_size'))/2;
-		$max_upload=$this->convertToBytes(ini_get('upload_max_filesize'));
+        $max_post=$this->convertToBytes(ini_get('post_max_size'))/2;
+        $max_upload=$this->convertToBytes(ini_get('upload_max_filesize'));
 
-		$this->max_file_size=$max_upload<$max_post?$max_upload:$max_post;
+        $this->max_file_size=$max_upload<$max_post?$max_upload:$max_post;
 
-		/*
-		 */
+        /*
+         */
 
-		/*
-		   if($_POST[$this->name.'_token']){
-		   $t=json_decode(stripslashes($_POST[$this->name.'_token']));
-		   $_FILES[$this->name]=array(
-		   'name'=>$t->fileInfo->name,
-		   'tmp_name'=>'upload/temp/'.$t->filename,
-		   );
-		   }
-		 */
-	}
-	function convertToBytes($val){
-		$val = trim($val);
-		$last = strtolower($val[strlen($val) - 1]);
-		switch($last) {
-			case 'g':
-				$size = $val * 1024 * 1024 * 1024;
-				break;
-			case 'm':
-				$size = $val * 1024 * 1024;
-				break;
-			case 'k':
-				$size = $val * 1024;
-				break;
-			default:
-				$size = (int) $val;
-		}
-		return $size;
+        /*
+           if($_POST[$this->name.'_token']){
+           $t=json_decode(stripslashes($_POST[$this->name.'_token']));
+           $_FILES[$this->name]=array(
+           'name'=>$t->fileInfo->name,
+           'tmp_name'=>'upload/temp/'.$t->filename,
+           );
+           }
+         */
+    }
+    function convertToBytes($val){
+        $val = trim($val);
+        $last = strtolower($val[strlen($val) - 1]);
+        switch($last) {
+            case 'g':
+                $size = $val * 1024 * 1024 * 1024;
+                break;
+            case 'm':
+                $size = $val * 1024 * 1024;
+                break;
+            case 'k':
+                $size = $val * 1024;
+                break;
+            default:
+                $size = (int) $val;
+        }
+        return $size;
 
-	}
+    }
 
-	// TODO:
-	// add functions for file type and extension validation
-	// those can be done in flash thingie as well
+    // TODO:
+    // add functions for file type and extension validation
+    // those can be done in flash thingie as well
 
-	function getUploadedFiles(){
-		if($c=$this->model){
+    function getUploadedFiles(){
+        if($c=$this->model){
 
-			$a=explode(',',$this->value);$b=array();
-			foreach($a as $val)if($val)$b[]=$val;
-			$files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
+            $a=explode(',',$this->value);$b=array();
+            foreach($a as $val)if($val)$b[]=$val;
+            $files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
             if($files){
                 $c->addCondition('id','in',($files?$files:0));
                 $data=$c->getRows(array('id','original_filename','filesize'));
             }else $data=array();
-			return $this->formatFiles($data);
-		}
-	}
-	function formatFiles($data){
-		$this->js(true)->atk4_uploader('addFiles',$data);
-		$o = $this->add('SMLite')->loadTemplate($this->format_files_template)->render();
-		return $o;
-	}
+            return $this->formatFiles($data);
+        }
+    }
+    function formatFiles($data){
+        $this->js(true)->atk4_uploader('addFiles',$data);
+        $o = $this->add('SMLite')->loadTemplate($this->format_files_template)->render();
+        return $o;
+    }
 
 
-	function getInput(){
-		if($id=$_GET[$this->name.'_delete_action']){
-			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
-			// This is JavaScript upload. We do not want to trigger form submission event
-			if($c=$this->model){
+    function getInput(){
+        if($id=$_GET[$this->name.'_delete_action']){
+            // this won't be called in post unfortunatelly, because ajaxec does not send POST data
+            // This is JavaScript upload. We do not want to trigger form submission event
+            if($c=$this->model){
                 try {
                     $c->loadData($id);
                     $c->delete();
@@ -213,120 +213,120 @@ class Form_Field_Upload extends Form_Field {
                 } catch (Exception $e){
                     $this->js()->univ()->alert("Could not delete image - " . $e->getMessage())->execute();
                 }
-				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
-			}
-		}
+                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+            }
+        }
 
-		if($id=$_GET[$this->name.'_save_action']){
-			// this won't be called in post unfortunatelly, because ajaxec does not send POST data
-			// This is JavaScript upload. We do not want to trigger form submission event
-			if($c=$this->model){
-				$c->loadData($id);
-				$f=$c;
-				$mime = $f->getRef('filestore_type_id')->get('mime_type');
-				$path = $f->getPath();
-				$name = $f->get("original_filename");
-				$len = $f->get("filesize");
-				header("Content-type: $mime");
-				header("Content-legnth: $len");
-				if($_GET["redirect"]){
-					/* it should be possible to use redirect method as well */
-					header("HTTP/1.1 301 Moved Permanently"); 
-					header("Location: $path");
-				} else {
-					if(!$_GET['view']){
-						header("Content-disposition: attachment; filename=\"$name\"");
-					}
-					print(file_get_contents($path));
-				}
-				exit;
+        if($id=$_GET[$this->name.'_save_action']){
+            // this won't be called in post unfortunatelly, because ajaxec does not send POST data
+            // This is JavaScript upload. We do not want to trigger form submission event
+            if($c=$this->model){
+                $c->loadData($id);
+                $f=$c;
+                $mime = $f->getRef('filestore_type_id')->get('mime_type');
+                $path = $f->getPath();
+                $name = $f->get("original_filename");
+                $len = $f->get("filesize");
+                header("Content-type: $mime");
+                header("Content-legnth: $len");
+                if($_GET["redirect"]){
+                    /* it should be possible to use redirect method as well */
+                    header("HTTP/1.1 301 Moved Permanently"); 
+                    header("Location: $path");
+                } else {
+                    if(!$_GET['view']){
+                        header("Content-disposition: attachment; filename=\"$name\"");
+                    }
+                    print(file_get_contents($path));
+                }
+                exit;
 
-				$this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
-				//$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
-			}
-		}
-		if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
-		$o='';
+                $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
+                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+            }
+        }
+        if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
+        $o='';
 
-		$options=array('size_limit'=>$this->max_file_size);
+        $options=array('size_limit'=>$this->max_file_size);
 
-		switch($this->mode){
-			case'simple':break;
-			case'iframe':
-				     $options['iframe']=$this->name.'_iframe';
-				     break;
-			case'flash':
-				     $options['flash']=true;
-				     break;
+        switch($this->mode){
+            case'simple':break;
+            case'iframe':
+                     $options['iframe']=$this->name.'_iframe';
+                     break;
+            case'flash':
+                     $options['flash']=true;
+                     break;
 
-		}
-		if($this->multiple){
-			$options['multiple']=$this->multiple;
-		}
-		if($this->mode!='simple'){
-			$options['form']=$this->owner;
-			$this->js(true)->_load('ui.atk4_uploader')->atk4_uploader($options);
-		}
+        }
+        if($this->multiple){
+            $options['multiple']=$this->multiple;
+        }
+        if($this->mode!='simple'){
+            $options['form']=$this->owner;
+            $this->js(true)->_load('ui.atk4_uploader')->atk4_uploader($options);
+        }
 
-		// First - output list of files wi already have uploaded
-		$o.='<div id="'.$this->name.'_files" class="uploaded_files">'.
-			$this->getUploadedFiles().
-			'</div>';
+        // First - output list of files wi already have uploaded
+        $o.='<div id="'.$this->name.'_files" class="uploaded_files">'.
+            $this->getUploadedFiles().
+            '</div>';
 
-		$o.=
-			$this->getTag('input',array(
-						'type'=>'hidden',
-						'name'=>'MAX_FILE_SIZE',
-						'value'=>$this->max_file_size
-						));
-		$o.=
-			$this->getTag('input',array(
-						'type'=>'hidden',
-						'name'=>$this->name.'_token',
-						'value'=>$this->value,
-						'id'=>$this->name.'_token',
-						));
+        $o.=
+            $this->getTag('input',array(
+                        'type'=>'hidden',
+                        'name'=>'MAX_FILE_SIZE',
+                        'value'=>$this->max_file_size
+                        ));
+        $o.=
+            $this->getTag('input',array(
+                        'type'=>'hidden',
+                        'name'=>$this->name.'_token',
+                        'value'=>$this->value,
+                        'id'=>$this->name.'_token',
+                        ));
 
 
-		$o.=parent::getInput();
-		return $o;
-	}
-	function isUploaded(){
-		return isset($_FILES[$this->name]) && $_FILES[$this->name]['name'];
-	}
-	function getOriginalName(){
-		return $_FILES[$this->name]['name'];
-	}
-	function getOriginalType(){
-		// detect filetype instead of relying on uploaded type
-		if(function_exists('mime_content_type'))return mime_content_type($this->getFilePath());
-		return $_FILES[$this->name]['type'];
-	}
-	function getFilePath(){
-		return $_FILES[$this->name]['tmp_name'];
-	}
-	function getFile(){
-		return file_get_contents($this->getFilePath());
-	}
-	function getFileSize(){
-		return filesize($this->getFilePath());
-	}
+        $o.=parent::getInput();
+        return $o;
+    }
+    function isUploaded(){
+        return isset($_FILES[$this->name]) && $_FILES[$this->name]['name'];
+    }
+    function getOriginalName(){
+        return $_FILES[$this->name]['name'];
+    }
+    function getOriginalType(){
+        // detect filetype instead of relying on uploaded type
+        if(function_exists('mime_content_type'))return mime_content_type($this->getFilePath());
+        return $_FILES[$this->name]['type'];
+    }
+    function getFilePath(){
+        return $_FILES[$this->name]['tmp_name'];
+    }
+    function getFile(){
+        return file_get_contents($this->getFilePath());
+    }
+    function getFileSize(){
+        return filesize($this->getFilePath());
+    }
 
-	function saveInto($directory){
-		// Moves file into a directory.
-		// TODO: we should make sure we are not overwriting anything here
-		if(!move_uploaded_file($_FILES[$this->name],$directory)){
-			throw new BaseException('Unable to save uploaded file into '.$directory);
-		}
-	}
-	function displayUploadInfo(){
-		$this->owner->info('Was file uploaded: '.($this->isUploaded()?'Yes':'No'));
-		$this->owner->info('Filename: '.$this->getFilePath());
-		$this->owner->info('Size: '.$this->getFileSize());
-		$this->owner->info('Original Name: '.$this->getOriginalName());
-	}
-	function debug(){
-		$this->debug=true;
-		return $this;
-	}
+    function saveInto($directory){
+        // Moves file into a directory.
+        // TODO: we should make sure we are not overwriting anything here
+        if(!move_uploaded_file($_FILES[$this->name],$directory)){
+            throw new BaseException('Unable to save uploaded file into '.$directory);
+        }
+    }
+    function displayUploadInfo(){
+        $this->owner->info('Was file uploaded: '.($this->isUploaded()?'Yes':'No'));
+        $this->owner->info('Filename: '.$this->getFilePath());
+        $this->owner->info('Size: '.$this->getFileSize());
+        $this->owner->info('Original Name: '.$this->getOriginalName());
+    }
+    function debug(){
+        $this->debug=true;
+        return $this;
+    }
 }

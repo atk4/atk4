@@ -60,12 +60,12 @@ if(!function_exists('lowlevel_error')){
                 case 2:
                     if(strpos($errstr,'mysql_connect')!==false)break;
                 case 8:
-                    if(substr($errstr,0,16)=='Undefined offset')break;
-                    if(substr($errstr,0,15)=='Undefined index')break;
+                    if(strpos($errstr,'Undefined offset')===0)break;
+                    if(strpos($errstr,'Undefined index')===0)break;
                 case 2048:
-                    if(substr($errstr,0,15)=='var: Deprecated')break;
-                    if(substr($errstr,0,15)=='Declaration of ')break;
-                    if(substr($errstr,0,17)=='Non-static method')break;
+                    if(strpos($errstr,'var: Deprecated')===0)break;
+                    if(strpos($errstr,'Declaration of ')===0)break;
+                    if(strpos($errstr,'Non-static method')===0)break;
                 case 8192:
                     if(substr($errstr,-13)=='is deprecated')break;
                 default:
