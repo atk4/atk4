@@ -996,6 +996,9 @@ textarea:focus {
   border-bottom: 1px solid #e5e5e5;
   padding: 0.6666666666666666em;
 }
+.atk-grid > table > tbody > tr > td > img {
+  vertical-align: middle;
+}
 .atk-grid > table > tbody > tr > td .atk-dropmenu {
   filter: alpha(opacity=0);
   -khtml-opacity: 0;
