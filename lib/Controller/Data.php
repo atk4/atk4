@@ -12,7 +12,7 @@ abstract class Controller_Data extends AbstractController {
     function setSource($model,$data=undefined){
         if($data===undefined)return $this;
 
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         $t=$data;
 
         return $this;

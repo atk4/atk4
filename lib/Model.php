@@ -49,8 +49,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** If true, model will now allow to set values for non-existant fields */
     public $strict_fields=false;
 
-    /** Contains information about table/file/bucket/array used by Controller to determine source */
-    public $table=array();
+    /** Contains name of table, session key, collection or file, depending on a driver */
+    public $table=null;
+
+    /** Controllers store some custom informatio in here under key equal to their name */
+    public $_table=array();
 
     /** Contains identifier of currently loaded record or null. Use load() and reset() */
     public $id=null;     // currently loaded record

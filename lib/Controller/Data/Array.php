@@ -8,7 +8,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         foreach($t as $row){
             if($row[$field]==$value){
                 return $row;
@@ -16,7 +16,7 @@ class Controller_Data_Array extends Controller_Data {
         }
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         foreach($t as $row){
             if($row[$field]==$value){
                 $model->data=$row;
@@ -28,7 +28,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoadAny($model){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         reset($t);
         list($id,$row)=each($t);
 
@@ -39,7 +39,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         $this->loadBy($model,$field,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
@@ -57,7 +57,7 @@ class Controller_Data_Array extends Controller_Data {
         if(@$model->id_field){
             return $this->tryLoadBy($model,$model->id_field,$id);
         }
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         $row=$t[$id];
         $model->data=$row;
         $model->dirty=array();
@@ -71,7 +71,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function save($model,$id=null){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         if(is_null($model->id)){
             if(is_null($id)){
                 end($t);
@@ -86,19 +86,19 @@ class Controller_Data_Array extends Controller_Data {
         return $id;
     }
     function delete($model,$id=null){
-        $t =& $model->table[$this->name];
+        $t =& $model->_table[$this->name];
         unset($t[$id?:$model->id]);
         return $this;
     }
 
     function deleteAll($model){
-        $model->table=array();
-        $t =& $model->table[$this->name];
+        $model->_table=array();
+        $t =& $model->_table[$this->name];
         return $this;
     }
     function getRows($model){
-        return $model->table;
-        $t =& $model->table[$this->name];
+        return $model->_table;
+        $t =& $model->_table[$this->name];
     }
     function setOrder($model,$field,$desc=false){
         // TODO: sort array
@@ -108,14 +108,14 @@ class Controller_Data_Array extends Controller_Data {
     }
 
     function rewind($model){
-        reset($model->table[$this->name]);
+        reset($model->_table[$this->name]);
 
-        list($model->id,$model->data)=each($model->table[$this->name]);
+        list($model->id,$model->data)=each($model->_table[$this->name]);
         if(@$model->id_field)$model->id=$model->data[$model->id_field];
         return $model->data;
     }
     function next($model){
-        list($model->id,$model->data)=each($model->table[$this->name]);
+        list($model->id,$model->data)=each($model->_table[$this->name]);
         if(@$model->id_field)$model->id=$model->data[$model->id_field];
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
