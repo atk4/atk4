@@ -26,27 +26,19 @@ class QuickSearch extends Filter {
     /*
      * Quicksearch represents one-field filter which goes perfectly with a grid
      */
-
-    public $js_widget='ui.atk4_form';
-    public $icon;// to configure icon
-    var $region=null;
-    var $region_url=null;
-    public $search_cross=null;
-    public $grid;
+    public $icon='search'; // to configure icon
 
     function init(){
         parent::init();
-        //$this->addClass('span3');
 
-        $this->addClass('float-right stacked span4');
+        $this->addClass('float-right span4 atk-quicksearch');
         $this->template->trySet('fieldset','atk-row');
         $this->template->tryDel('button_row');
         $this->search_field=$this->addField('line','q','')->setNoSave();
         $this->search_field->addButton('')
             ->setHtml('&nbsp;')
-            ->setIcon('search')
+            ->setIcon($this->icon)
             ->js('click',$this->js()->submit());
-            ;
     }
     function useFields($fields){
         $this->fields=$fields;

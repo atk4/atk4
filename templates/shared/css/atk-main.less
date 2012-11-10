@@ -595,7 +595,10 @@ textarea:focus {
 .atk-wrapper {.fixed-container();}
 
 .atk-grid {
-	>.atk-grid-panel { margin:0 0 @margin/3 0; }
+	>.atk-grid-panel {
+        float:left;
+        >.ui-buttonset,>.atk-quicksearch {margin:@margin/12 0 @margin/4 0;}
+    }
 	>table {
 		border-collapse:separate;
 		width:100%;
