@@ -163,7 +163,6 @@ $.extend($.atk4,{
 		var timeout=setTimeout(function(){
 			self._stillLoading(url);
 		},2000);
-
 		if(typeof(url)=="object" && url[0])url=$.atk4.addArgument(url);
 		if(typeof(url)=="string")url={url:url};
 
