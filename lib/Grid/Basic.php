@@ -25,6 +25,7 @@ class Grid_Basic extends CompleteLister {
         'ui-icon ui-icon-arrowthick-1-n',
         'ui-icon ui-icon-arrowthick-1-s',
     );
+    public $show_header = true;
     function init(){
         parent::init();
         $this->initWidget();
@@ -201,8 +202,11 @@ class Grid_Basic extends CompleteLister {
             $this->totals_t = $this->api->add('SMlite');
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
-
-        $this->template->setHTML('header',$header->render());
+        if ($this->show_header){
+            $this->template->setHTML('header',$header->render());
+        } else {
+            $this->template->setHTML('header', '');
+        }
     }
     function formatRow(){
         if(!$this->columns)throw $this->exception('No columns defined for grid');
