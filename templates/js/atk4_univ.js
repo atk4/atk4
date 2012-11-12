@@ -109,6 +109,7 @@ $.each({
 						w.document.write(response_text);
 						w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 					}else{
+                        console.log(response_text, e);
 						showMessage("Error in AJAX response: "+e+"\n"+response_text);
 					}
 					try{
@@ -416,7 +417,8 @@ ajaxec: function(url,data){
 				w.document.write(ret);
 				w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 			}else{
-				showMessage("Error in AJAXec response: "+e+"\n"+response_text);
+                console.log("Error in ajaxec response", e,ret);
+				showMessage("Error in AJAXec response: "+e+"\n"+ret);
 			}
 		}
 
