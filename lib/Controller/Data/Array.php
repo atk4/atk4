@@ -28,9 +28,9 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoadAny($model){
-        $t =& $model->_table[$this->name];
-        reset($t);
-        list($id,$row)=each($t);
+        if(!is_array($model->_table[$this->name]))return null;
+        reset($model->_table[$this->name]);
+        list($id,$row)=each($model->_table[$this->name]);
 
         $model->data=$row;
         $model->dirty=array();
@@ -57,9 +57,7 @@ class Controller_Data_Array extends Controller_Data {
         if(@$model->id_field){
             return $this->tryLoadBy($model,$model->id_field,$id);
         }
-        $t =& $model->_table[$this->name];
-        $row=$t[$id];
-        $model->data=$row;
+        $model->data=$model->_table[$this->name][$id];
         $model->dirty=array();
         $model->id=$id;
         return $this;

@@ -212,9 +212,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function load($id=null){
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
-        if(!$this->loaded())$res=$this->controller->load($this,$id);
+        if(!$this->loaded())$this->controller->load($this,$id);
         $this->hook('afterLoad');
-        return $res;
+        return $this;
     }
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
      * record with new ID. */
@@ -264,7 +264,28 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterDeleteAll');
         return $this;
     }
-    /// }}}
+    // }}}
+
+    // {{{ Load Wrappers
+
+    /* Attempt to load record with specified ID. If this fails, no error is produced */
+    function tryLoad($id=null){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeLoad',array($id));
+        if(!$this->loaded())$this->controller->tryLoad($this,$id);
+        if(!$this->loaded())return $this;
+        $this->hook('afterLoad');
+        return $this;
+    }
+    function tryLoadAny(){
+        if($this->loaded())$this->unload();
+        if(!$this->loaded())$this->controller->tryLoadAny($this,$id);
+        if(!$this->loaded())return $this;
+        $this->hook('afterLoad');
+        return $this;
+    }
+
+    // }}}
 
     // {{{ Iterator support 
     function rewind(){

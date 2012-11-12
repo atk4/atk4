@@ -77,4 +77,8 @@ class Controller_Data_Dumper extends Controller_Data {
         $this->log($model,"next");
         if($this->sh)return $sh->next($model);
     }
+    function __call($method,$arg){
+        $this->log($model,"$method");
+        if($this->sh)return call_user_func_array(array($sh,$method),$arg);
+    }
 }

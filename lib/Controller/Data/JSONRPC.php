@@ -17,7 +17,7 @@ class Controller_Data_RestAPI extends Controller_Data {
 
     public $last_request=null;
 
-    function request($url,$method,$params=null,$id=undefined){
+    function request($model,$method,$params=null,$id=undefined){
         // if method is array, then the batch is executed. It must be in 
         // format:  TODO: IMPLEMENT
         // array( 
@@ -41,8 +41,7 @@ class Controller_Data_RestAPI extends Controller_Data {
 
         // Send Request
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $model->_table[$this->name]);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -75,4 +74,54 @@ class Controller_Data_RestAPI extends Controller_Data {
         // Decode Request
         return $result->result;
     }
+    function getBy($model,$field,$cond=undefined,$value=undefined){
+    }
+    function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
+    }
+    function tryLoadAny($model){
+    }
+    function loadBy($model,$field,$cond=undefined,$value=undefined){
+    }
+    function tryLoad($model,$id){
+    }
+    function load($model,$id=null){
+        $model->data=$this->request($model,'load',array($id));
+        $model->dirty=array();
+        $model->id=$id;
+    }
+    function save($model,$id=null,$data=array()){
+        $model->data=$this->request($model,'save',array($id,$data));
+    }
+    function delete($model,$id){
+        $this->request($model,'delete',array($id));
+    }
+    function deleteAll($model){
+        $this->request($model,'deleteAll');
+    }
+    function getRows($model){
+        $this->request($model,'getRows');
+    }
+    function setOrder($model,$field,$desc=false){
+        $this->stickyRequest($model,'setOrder',array($field,$desc));
+    }
+    function setLimit($model,$count,$offset=0){
+        $this->stickyRequest($model,'setLimit',array($field,$desc));
+    }
+
+    function rewind($model){
+        if(isset($model->_table[$this->name.'/list'])){
+            reset($model->_table[$this->name.'/list']);
+        }else{
+            $this->request($model,'getRows');
+        }
+        $this->log($model,"rewind");
+        if($this->sh)return $sh->rewind($model);
+    }
+    function next($model){
+        $this->log($model,"next");
+        if($this->sh)return $sh->next($model);
+    }
+    function __call($method,$arg){
+        $this->log($model,"$method");
+        if($this->sh)return call_user_func_array(array($sh,$method),$arg);
 }
