@@ -259,6 +259,7 @@ class Model_Table extends Model {
 
         if($cond=='=' || $value===undefined){
             $v=$value===undefined?$cond:$value;
+            if($v===undefined)throw $this->exception('Incorrect condition. Please specify value');
 
             $field->defaultValue($v)->system(true)->editable(false);
         }
