@@ -396,7 +396,7 @@ closeDialog: function(){
 getjQuery: function(){
 	return this.jquery;
 },
-ajaxec: function(url,data){
+ajaxec: function(url,data,fn){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	region=this.jquery;
 	$.atk4.get(url,data,function(ret){
@@ -409,7 +409,8 @@ ajaxec: function(url,data){
 		*/
 		if(!$.atk4._checkSession(ret))return;
 		try{
-			eval(ret)
+			eval(ret);
+            if(fn)fn();
 		}catch(e){
 			w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
 			if(w){
