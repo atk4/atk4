@@ -144,7 +144,7 @@ abstract class AbstractObject {
             $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
-            $short_name = str_replace('/','_',strtolower($class));
+            $short_name = str_replace('\\','_',str_replace('/','_',strtolower($class)));
 
         $short_name=$this->_unique($this->elements,$short_name);
 
