@@ -101,18 +101,4 @@ class jUI extends jQuery {
         // if we can we should load jUI_widget_name <-- TODO
         return $this->add('jUI_stdWidget',$name);
     }
-    function cutRender(){
-        $x=$this->api->template->get('document_ready');
-        if(is_array($x))$x=join('',$x);
-        echo '<script type="text/javascript">'.$x.'</script>';
-        return;
-        echo "
-            <script>
-            $(function(){
-                    ".$x."
-                    });
-        </script>
-
-            ";
-    }
 }
