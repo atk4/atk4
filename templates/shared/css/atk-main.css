@@ -516,6 +516,7 @@ body #atk-layout #atk-footer-guard {
 }
 .loading {
   position: absolute;
+  margin: auto;
   background: gray;
   opacity: 0.7;
 }

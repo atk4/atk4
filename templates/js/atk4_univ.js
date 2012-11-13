@@ -242,7 +242,7 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div class="loading centred"><i></i><i></i></div><div></div></div>').appendTo('body');
+    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div style="min-height: 300px"></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	if(options.customClass){
@@ -300,6 +300,7 @@ dialogBox: function(options){
 },
 dialogURL: function(title,url,options,callback){
 	var dlg=this.dialogBox($.extend(options,{title: title,autoOpen: true}));
+    dlg.closest('.ui-dialog').hide().fadeIn('slow');
 	dlg.atk4_load(url,callback);
 	return dlg.dialog('open');
 },
