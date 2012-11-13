@@ -439,7 +439,6 @@ table {
 	Features
    ============================================== */
 .atk-wrapper {
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -515,21 +514,35 @@ body #atk-layout #atk-footer-guard {
     -webkit-transform: rotate(-360deg);
   }
 }
-.loading img.i1 {
+.loading {
+  position: absolute;
+  background: gray;
+  opacity: 0.7;
+}
+.loading.centred {
+  background: white;
+}
+.loading i:first-child {
   -webkit-animation-name: rotate-i1;
   -webkit-animation-duration: 5s;
   -webkit-animation-iteration-count: infinite;
   -webkit-transition-timing-function: linear;
   margin: 10px 10px;
   position: absolute;
+  background: url(../images/gear-32x32.png);
+  width: 32px;
+  height: 32px;
 }
-.loading img.i2 {
+.loading i:last-child {
   -webkit-animation-name: rotate-i2;
   -webkit-animation-duration: 5s;
   -webkit-animation-iteration-count: infinite;
   -webkit-transition-timing-function: linear;
   margin: 35px 27px;
   position: absolute;
+  background: url(../images/gear-32x32.png);
+  width: 32px;
+  height: 32px;
 }
 /* ==============================================
 	Typography
@@ -727,7 +740,6 @@ textarea {
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 0.4em;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -893,7 +905,7 @@ textarea:focus {
   width: 100%;
 }
 .input-row .input-cell .ui-buttonset {
-	white-space: nowrap;
+  white-space: nowrap;
 }
 .input-row .input-cell > .ui-button {
   margin-left: 0;
@@ -1095,7 +1107,6 @@ textarea:focus {
 .atk-flexy > div {
   display: table-cell;
   vertical-align: top;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -1328,7 +1339,6 @@ input.ui-button,
 .ui-button-icons-only .ui-button-icon-secondary {
   right: 0.5em;
 }
-/* .ui-dialog {padding:@padding/10;top:@dialogMargin !important;} moved into JS */
 .ui-dialog .ui-dialog-titlebar {
   padding: 0.4em 0.6666666666666666em;
 }
