@@ -99,7 +99,7 @@ class jQuery extends AbstractController {
     function cutRender(){
         $x=$this->api->template->get('document_ready');
         if(is_array($x))$x=join('',$x);
-        echo '<script type="text/javascript">'.$x.'</script>';
+        if(!empty($x)) echo '<script type="text/javascript">'.$x.'</script>';
         return;
     }
     /* [private] .. ? */
