@@ -12,7 +12,7 @@
  *
  * NOTE: This is pretty awesome controller!
  */
-class Controller_Data_RestAPI extends Controller_Data {
+class Controller_Data_JSONRPC extends Controller_Data {
     /* Sends Generic Request */
 
     public $last_request=null;
@@ -41,8 +41,9 @@ class Controller_Data_RestAPI extends Controller_Data {
 
         // Send Request
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $model->_table[$this->name]);
+        curl_setopt($ch, CURLOPT_URL, $url=$model->_table[$this->name]);
         curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_FAILONERROR, 1);
@@ -58,6 +59,7 @@ class Controller_Data_RestAPI extends Controller_Data {
 
         $result=json_decode($result);
 
+
         if($result->id != $id){
             // ERROR
             //$e=$this->exception($result->error->message,$result->error->code);
@@ -72,7 +74,7 @@ class Controller_Data_RestAPI extends Controller_Data {
         }
 
         // Decode Request
-        return $result->result;
+        return (array)$result->result;
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
     }
@@ -92,7 +94,7 @@ class Controller_Data_RestAPI extends Controller_Data {
     function save($model,$id=null,$data=array()){
         $model->data=$this->request($model,'save',array($id,$data));
     }
-    function delete($model,$id){
+    function delete($model,$id=null){
         $this->request($model,'delete',array($id));
     }
     function deleteAll($model){
@@ -124,4 +126,5 @@ class Controller_Data_RestAPI extends Controller_Data {
     function __call($method,$arg){
         $this->log($model,"$method");
         if($this->sh)return call_user_func_array(array($sh,$method),$arg);
+    }
 }

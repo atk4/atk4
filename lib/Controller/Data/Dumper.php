@@ -5,11 +5,13 @@ class Controller_Data_Dumper extends Controller_Data {
     public $sh=null;
 
     function log($model,$s){
+        if(!$model)throw $this->exception('model empty');
         $this->log[]=$model->table.":".$model." :: ".$s;
     }
     function setPrimarySource($model,$controller,$data=undefined){
         if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
         $this->sh=$model->setController($controller);
+        if($data)$this->sh->setSource($model,$data);
     }
     function __destruct(){
         if(!$this->log)return;
@@ -78,7 +80,7 @@ class Controller_Data_Dumper extends Controller_Data {
         if($this->sh)return $sh->next($model);
     }
     function __call($method,$arg){
-        $this->log($model,"$method");
-        if($this->sh)return call_user_func_array(array($sh,$method),$arg);
+        $this->log($arg[0],"$method");
+        if($this->sh)return call_user_func_array(array($this->sh,$method),$arg);
     }
 }

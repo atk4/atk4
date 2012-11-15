@@ -27,8 +27,8 @@ class Model_AgileToolkit_Access extends Model {
         $s=$this->setController('Data_Dumper');
         $s->setPrimarySource($this,'JSONRPC','http://sites.local.agiletech.ie/atk42/atk4-testsuite/testrpc.php');
 
-        $result=$s->request($this, 'auth',array('email'=>$this['email'], 'password'=>$this['password']));
-
+        $result=$s->request($this, 'auth',array(
+            'email'=>$this['email'], 'password'=>$this['password']));
 
         if($result['token']){
 
@@ -36,6 +36,7 @@ class Model_AgileToolkit_Access extends Model {
             $this['password']=null;
 
         }else throw $this->exception('Authentication Failed','AccessDenied')->addMoreInfo('error',$result['error']);
+        $this->save();
     }
 
     function beforeSave(){
