@@ -81,7 +81,8 @@ $.widget('ui.atk4_loader', {
 
         if(this.options.cogs){
             var l=$(this.options.cogs);
-			l.insertBefore(self.element);
+			l.prependTo(self.element);
+            l.hide();
             self.loader=l;
         }
 
@@ -171,6 +172,7 @@ $.widget('ui.atk4_loader', {
 		var m;
 
 		self.loading=true;
+        self.loader.show();
         $.atk4.get(url,null,function(res){
 			/*
 			if(res.substr(0,13)=='SESSION OVER:'){
@@ -195,7 +197,7 @@ $.widget('ui.atk4_loader', {
             }
 
 			m=el;
-			if(!(jQuery.browser.msie))m.hide();
+			//if(!(jQuery.browser.msie))m.hide();
 
 			// Parse into Document
 			var source=$('<div/>').append(source);
@@ -248,6 +250,7 @@ $.widget('ui.atk4_loader', {
                 if(!f.hasClass('nofocus'))f.focus();
 			});
 		},function(){	// second callback, which is always called, when loading is completed
+            self.loader.hide();
 			self.loading=false;
 		});
     },
