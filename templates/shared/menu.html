@@ -64,9 +64,10 @@ $(document).ready(function(){
 <ul id="<?$_name?>" class="<?$class?>" style="<?$style?>">
     <?Item?>
         <?MenuItem?>
-        <li class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+        <li id="<?$id?>" class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
         <?/MenuItem?>
     <?/?>
+    <?$Content?>
 </ul>
 <?MenuSeparator?><?/MenuSeparator?>
 <?/?>

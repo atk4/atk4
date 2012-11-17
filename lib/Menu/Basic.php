@@ -53,7 +53,7 @@ class Menu_Basic extends CompleteLister {
 		if(!$label){
 			$label=ucwords(str_replace('_',' ',$page));
 		}
-        $id=$this->name.'_'.count($this->items);
+        $id=$this->name.'_i'.count($this->items);
 		$label=$this->api->_($label);
         $js_page=null;
         if($page instanceof jQuery_Chain){
