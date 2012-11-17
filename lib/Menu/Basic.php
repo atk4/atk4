@@ -47,33 +47,6 @@ class Menu_Basic extends CompleteLister {
         parent::init();
     }
     function defaultTemplate(){
-<<<<<<< HEAD
-        return array('menu','Menu');
-    }
-    function addMenuItem($page,$label=null){
-        if(isset($this->api->compat)){
-            // exchange arguments
-            list($page,$label)=array($label,$page);
-        }
-        if(!$label){
-            $label=ucwords(str_replace('_',' ',$page));
-        }
-        $this->items[]=array(
-                        'page'=>$page,
-                        'href'=>$this->api->url($page),
-                        'label'=>$label,
-                        $this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
-                       );
-        return $this;
-    }
-    protected function getDefaultHref($label){
-        $href=preg_replace('/[^a-zA-Z0-9]/','',$label);
-        if($label[0]==';'){
-            $label=substr($label,1);
-            $href=';'.$href;
-        }
-        return $href;
-=======
 		return array('menu','Menu');
 	}
 	function addMenuItem($page,$label=null){
@@ -103,7 +76,6 @@ class Menu_Basic extends CompleteLister {
 			$href=';'.$href;
 		}
 		return $href;
->>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
     }
     function isCurrent($href){
         // returns true if item being added is current
