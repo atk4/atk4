@@ -39,11 +39,6 @@ class Model_Table extends Model {
     /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
     protected $dsql; 
 
-    /** The actual ID field of the table might now always be "id" */
-    public $id_field='id';   // name of ID field
-
-    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
-
     /** If you wish that alias is used for the table when selected, you can define it here.
      * This will help to keep SQL syntax shorter, but will not impact functionality */
     public $table_alias=null;   // Defines alias for the table, can improve readability of queries

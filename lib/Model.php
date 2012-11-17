@@ -58,6 +58,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Contains identifier of currently loaded record or null. Use load() and reset() */
     public $id=null;     // currently loaded record
 
+    /** The actual ID field of the table might now always be "id" */
+    public $id_field='id';   // name of ID field
+
+    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+
+
     // Curretly loaded record
     public $data=array();
     public $dirty=array();

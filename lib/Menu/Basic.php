@@ -55,6 +55,7 @@ class Menu_Basic extends CompleteLister {
 		}
         $id=$this->name.'_'.count($this->items);
 		$label=$this->api->_($label);
+        $js_page=null;
         if($page instanceof jQuery_Chain){
             $js_page="#";
             $this->js('click',$page)->_selector('#'.$id);
