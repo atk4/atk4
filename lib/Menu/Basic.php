@@ -50,17 +50,20 @@ class Menu_Basic extends CompleteLister {
 		return array('menu','Menu');
 	}
 	function addMenuItem($page,$label=null){
-        if(isset($this->api->compat)){
-            // exchange arguments
-            list($page,$label)=array($label,$page);
-        }
 		if(!$label){
 			$label=ucwords(str_replace('_',' ',$page));
 		}
+        $id=$this->name.'_'.count($this->items);
 		$label=$this->api->_($label);
+        if($page instanceof jQuery_Chain){
+            $js_page="#";
+            $this->js('click',$page)->_selector('#'.$id);
+            $page=$id;
+        }
 		$this->items[]=array(
+                        'id'=>$id,
 						'page'=>$page,
-						'href'=>$this->api->url($page),
+						'href'=>$js_page?:$this->api->url($page),
 						'label'=>$label,
 						$this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
 					   );
