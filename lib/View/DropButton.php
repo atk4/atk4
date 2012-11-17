@@ -15,14 +15,15 @@ class View_DropButton extends Button {
     /* Show menu when clicked */
     function useMenu($width=3){
         $this->menu=$m=$this->owner->add('Menu_jUI',null,$this->owner->spot);
-        //$m->addStyle('display','none');
+        $m->addStyle('display','none')->addStyle('position','absolute');
 
 
         $this->js('click',array(
             $m->js()->show()->position(array(
-                'my'=>'left top',
-                'at'=>'left bottom',
-                'of'=>$this
+                'my'=>'center top',
+                'at'=>'center bottom',
+                'of'=>$this,
+                'offset'=>5
             ),
             $this->js()->_selectorDocument()->one('click',$m->js()->hide()->_enclose())
         )));
