@@ -56,6 +56,7 @@ abstract class Form_Field extends AbstractView {
         $this->recursiveRender();
         if($this->api->jquery)$this->api->jquery->getJS($this);
         throw new Exception_StopRender(
+<<<<<<< HEAD
                 $this->template->renderRegion($this->template->tags['before_field']).
                 $this->getInput().
                 $this->template->renderRegion($this->template->tags['after_field'])
@@ -78,6 +79,30 @@ abstract class Form_Field extends AbstractView {
     }
     function displayFieldError($msg=null){
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
+=======
+				$this->template->renderRegion($this->template->tags['before_field']).
+				$this->getInput().
+				$this->template->renderRegion($this->template->tags['after_field'])
+				);
+	}
+	function setMandatory($mandatory=true){
+		$this->mandatory=$mandatory;
+		return $this;
+	}
+	function setReadonly($readonly=true){
+		$this->readonly=$readonly;
+		return $this;
+	}
+	function isMandatory(){
+		return $this->mandatory;
+	}
+	function setCaption($_caption){
+		$this->caption=$this->api->_($_caption);
+		return $this;
+	}
+	function displayFieldError($msg=null){
+		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
+>>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
 
         $this->form->js(true)
             ->atk4_form('fieldError',$this->name,$msg)
@@ -109,9 +134,9 @@ abstract class Form_Field extends AbstractView {
     /** Position can be either 'before' or 'after' */
     function addButton($label,$position='after'){
         if($position=='after'){
-            return $this->afterField()->add('Button')->set($label);
+            return $this->afterField()->add('Button')->setLabel($label);
         }else{
-            return $this->beforeField()->add('Button')->set($label);
+            return $this->beforeField()->add('Button')->setLabel($label);
         }
         return $this;
     }
@@ -205,6 +230,7 @@ abstract class Form_Field extends AbstractView {
     function _validateField($caller,$condition,$msg){
         $ret=call_user_func($condition,$this);
 
+<<<<<<< HEAD
         if($ret===false){
             if(is_null($msg))$msg='Error in '.$this->caption;
             $this->displayFieldError($msg);
@@ -230,11 +256,39 @@ abstract class Form_Field extends AbstractView {
     /** Adds asterisk to the field and validation */
     function validateNotNULL($msg=null){
         $this->setMandatory();
+=======
+		if($ret===false){
+			if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
+			$this->displayFieldError($msg);
+		}elseif(is_string($ret)){
+			$this->displayFieldError($ret);
+		}
+		return $this;
+	}
+	/** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
+	  * $msg or a standard error message about field being incorrect */
+	function validateField($condition,$msg=null){
+		if(is_callable($condition)){
+			$this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
+		}else{
+			$this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
+						($msg?$msg:'Error in ".$this->caption."').'");');
+		}
+		return $this;
+	}
+	function _validateNotNull($field){
+		if($field->get()==="" || is_null($field->get()))return false;
+	}
+	/** Adds asterisk to the field and validation */
+	function validateNotNULL($msg=null){
+		$this->setMandatory();
+>>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
         if($msg){
             $msg=$this->api->_($msg);
         }else{
             $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
         }
+<<<<<<< HEAD
         $this->validateField(array($this,'_validateNotNull'),$msg);
         return $this;
     }
@@ -252,6 +306,20 @@ abstract class Form_Field extends AbstractView {
         /* OBSOLETE 4.1, use set() */
         return $this->default_value;
     }
+=======
+		$this->validateField(array($this,'_validateNotNull'),$msg);
+		return $this;
+	}
+	function setDefault($default=null){
+		/* OBSOLETE 4.1, use set() */
+		$this->default_value=$default;
+		return $this;
+	}
+	function getDefault(){
+		/* OBSOLETE 4.1, use set() */
+		return $this->default_value;
+	}
+>>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
 
     function getInput($attr=array()){
         // This function returns HTML tag for the input field. Derived classes should inherit this and add

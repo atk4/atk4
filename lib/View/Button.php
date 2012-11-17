@@ -18,6 +18,8 @@ class View_Button extends View_HtmlElement {
 
     /** use setIcon() to change icon displayed on the button */
     private $icon=null;
+
+    public $options=array();
     function defaultTemplate(){
         return array('button','button');
     }
@@ -32,7 +34,7 @@ class View_Button extends View_HtmlElement {
         return $this;
     }
     function setLabel($label){
-        return $this->setText($label);
+        return $this->setText($this->api->_($label));
     }
     /** Adds CSS of the news  */
     function setButtonStyle($n){
@@ -50,7 +52,7 @@ class View_Button extends View_HtmlElement {
     }
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
-        $opt=array();
+        $opt=$this->options;
         if($this->icon)$opt['icons']['primary']='ui-icon-'.$this->icon;
         if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
     }

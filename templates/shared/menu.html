@@ -57,7 +57,16 @@ $(document).ready(function(){
     <?/?>
 </ul>
 </div>
+<?MenuSeparator?><?/MenuSeparator?>
+<?/?>
 
-
+<?MenujUI?>
+<ul id="<?$_name?>" class="<?$class?>" style="<?$style?>">
+    <?Item?>
+        <?MenuItem?>
+        <li class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+        <?/MenuItem?>
+    <?/?>
+</ul>
 <?MenuSeparator?><?/MenuSeparator?>
 <?/?>
