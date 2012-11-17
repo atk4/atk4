@@ -56,11 +56,10 @@ abstract class Form_Field extends AbstractView {
         $this->recursiveRender();
         if($this->api->jquery)$this->api->jquery->getJS($this);
         throw new Exception_StopRender(
-<<<<<<< HEAD
-                $this->template->renderRegion($this->template->tags['before_field']).
+            $this->template->renderRegion($this->template->tags['before_field']).
                 $this->getInput().
                 $this->template->renderRegion($this->template->tags['after_field'])
-                );
+            );
     }
     function setMandatory($mandatory=true){
         $this->mandatory=$mandatory;
@@ -74,35 +73,11 @@ abstract class Form_Field extends AbstractView {
         return $this->mandatory;
     }
     function setCaption($_caption){
-        $this->caption=$_caption;
+        $this->caption=$this->api->_($_caption);
         return $this;
     }
     function displayFieldError($msg=null){
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
-=======
-				$this->template->renderRegion($this->template->tags['before_field']).
-				$this->getInput().
-				$this->template->renderRegion($this->template->tags['after_field'])
-				);
-	}
-	function setMandatory($mandatory=true){
-		$this->mandatory=$mandatory;
-		return $this;
-	}
-	function setReadonly($readonly=true){
-		$this->readonly=$readonly;
-		return $this;
-	}
-	function isMandatory(){
-		return $this->mandatory;
-	}
-	function setCaption($_caption){
-		$this->caption=$this->api->_($_caption);
-		return $this;
-	}
-	function displayFieldError($msg=null){
-		if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
->>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
 
         $this->form->js(true)
             ->atk4_form('fieldError',$this->name,$msg)
