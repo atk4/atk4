@@ -9,12 +9,13 @@ class View_DropButton extends Button {
         }
         parent::render();
         if($this->menu){
-            $this->menu->js(true)->append('<div class="arrow top">ouaoue</div>');
+            $this->js(true)->_selector('#'.$this->menu->name)->append('<div class="arrow top"></div>');
         }
     }
     /* Show menu when clicked */
     function useMenu($width=3){
         $this->menu=$m=$this->owner->add('Menu_jUI',null,$this->owner->spot);
+        $this->owner->add('Order')->move($this->menu,'before',$this)->now();
         $m->addStyle('display','none')->addStyle('position','absolute');
 
 
@@ -23,7 +24,7 @@ class View_DropButton extends Button {
                 'my'=>'center top',
                 'at'=>'center bottom',
                 'of'=>$this,
-                'offset'=>5
+                'offset'=>'20px'
             ),
             $this->js()->_selectorDocument()->one('click',$m->js()->hide()->_enclose())
         )));
