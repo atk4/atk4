@@ -14,7 +14,7 @@ class View_DropButton extends Button {
     }
     /* Show menu when clicked */
     function useMenu($width=3){
-        $this->menu=$m=$this->owner->add('Menu_jUI',null,$this->owner->spot);
+        $this->menu=$m=$this->owner->add('Menu_jUI',null,$this->spot);
         $m->addStyle('display','none')->addStyle('position','absolute');
 
 
