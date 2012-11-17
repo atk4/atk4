@@ -205,9 +205,8 @@ abstract class Form_Field extends AbstractView {
     function _validateField($caller,$condition,$msg){
         $ret=call_user_func($condition,$this);
 
-<<<<<<< HEAD
         if($ret===false){
-            if(is_null($msg))$msg='Error in '.$this->caption;
+            if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
             $this->displayFieldError($msg);
         }elseif(is_string($ret)){
             $this->displayFieldError($ret);
@@ -215,13 +214,13 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     /** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
-      * $msg or a standard error message about field being incorrect */
+     * $msg or a standard error message about field being incorrect */
     function validateField($condition,$msg=null){
         if(is_callable($condition)){
             $this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
         }else{
             $this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
-                        ($msg?$msg:'Error in ".$this->caption."').'");');
+                ($msg?$msg:'Error in ".$this->caption."').'");');
         }
         return $this;
     }
@@ -231,47 +230,15 @@ abstract class Form_Field extends AbstractView {
     /** Adds asterisk to the field and validation */
     function validateNotNULL($msg=null){
         $this->setMandatory();
-=======
-		if($ret===false){
-			if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
-			$this->displayFieldError($msg);
-		}elseif(is_string($ret)){
-			$this->displayFieldError($ret);
-		}
-		return $this;
-	}
-	/** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
-	  * $msg or a standard error message about field being incorrect */
-	function validateField($condition,$msg=null){
-		if(is_callable($condition)){
-			$this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
-		}else{
-			$this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
-						($msg?$msg:'Error in ".$this->caption."').'");');
-		}
-		return $this;
-	}
-	function _validateNotNull($field){
-		if($field->get()==="" || is_null($field->get()))return false;
-	}
-	/** Adds asterisk to the field and validation */
-	function validateNotNULL($msg=null){
-		$this->setMandatory();
->>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
         if($msg){
             $msg=$this->api->_($msg);
         }else{
             $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
         }
-<<<<<<< HEAD
         $this->validateField(array($this,'_validateNotNull'),$msg);
         return $this;
     }
     /** obsolete version of validateNotNULL */
-    function setNotNull($msg=''){
-        $this->validateNotNULL($msg);
-        return $this;
-    }
     function setDefault($default=null){
         /* OBSOLETE 4.1, use set() */
         $this->default_value=$default;
@@ -281,21 +248,6 @@ abstract class Form_Field extends AbstractView {
         /* OBSOLETE 4.1, use set() */
         return $this->default_value;
     }
-=======
-		$this->validateField(array($this,'_validateNotNull'),$msg);
-		return $this;
-	}
-	function setDefault($default=null){
-		/* OBSOLETE 4.1, use set() */
-		$this->default_value=$default;
-		return $this;
-	}
-	function getDefault(){
-		/* OBSOLETE 4.1, use set() */
-		return $this->default_value;
-	}
->>>>>>> 19137556d56a2a2a426e1c3f911f3b1551fdd478
-
     function getInput($attr=array()){
         // This function returns HTML tag for the input field. Derived classes should inherit this and add
         // new properties if needed
