@@ -11,7 +11,7 @@ class View_Flyout extends View {
 
     function init(){
         parent::init();
-        $this->addClass('flyout atk-box ui-widget-content ui-corner-all');
+        $this->addClass('flyout ui-widget-content ui-corner-all');
         $this->addStyle('display','none');
         $this->addStyle('position','absolute');
     }
