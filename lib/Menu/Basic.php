@@ -57,6 +57,7 @@ class Menu_Basic extends CompleteLister {
         if(!$label){
             $label=ucwords(str_replace('_',' ',$page));
         }
+		$label=$this->api->_($label);
         $this->items[]=array(
                         'page'=>$page,
                         'href'=>$this->api->url($page),
