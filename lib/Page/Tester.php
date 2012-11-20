@@ -46,10 +46,6 @@ class Page_Tester extends Page {
     function ticker(){
         $this->cnt++;
     }
-    public $cnt;
-    function ticker(){
-        $this->cnt++;
-    }
     function silentTest($test_obj=null){
         if(!$test_obj)$test_obj=$this;
 
