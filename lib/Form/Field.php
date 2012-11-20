@@ -476,11 +476,7 @@ class Form_Field_Readonly extends Form_Field {
     }
 
     function getInput($attr=array()){
-        if (isset($this->value_list)){
-            return $this->value_list[$this->value];
-        } else {
-            return $this->value;
-        }
+        return nl2br(isset($this->value_list) ? $this->value_list[$this->value] : $this->value);
     }
     function setValueList($list){
         $this->value_list = $list;
