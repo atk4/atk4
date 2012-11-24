@@ -12,7 +12,10 @@ abstract class Controller_Data extends AbstractController {
     function setSource($model,$data=undefined){
         if($data===undefined)return $this;
 
-        $t =& $model->_table[$this->name];
+        if(!$model->_table[$this->short_name]){
+            $model->_table[$this->short_name]=array();
+        }
+        $t =& $model->_table[$this->short_name];
         $t=$data;
 
         return $this;
@@ -20,9 +23,7 @@ abstract class Controller_Data extends AbstractController {
 
     /* Normally model will call our methods. If the controller is used as a secondary cache, then we need to place hooks
      * instead */
-    function addHooks($priority){
-
-        $m=$this->owner;
+    function addHooks($m,$priority){
         if($m->controller===$this)throw $this->exception('Cannot be data source and cache simultaniously');
 
         $m->addHook('beforeLoad',array($this,'cache_load'),array(),$priority);

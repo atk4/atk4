@@ -43,7 +43,6 @@ class ApiFrontend extends ApiWeb{
     function layout_Content(){
         // required class prefix depends on the content_type
         // This function initializes content. Content is page-dependant
-        var_Dump($this->page);
         $page=str_replace('/','_',$this->page);
         $page=str_replace('-','',$page);
         $class=$this->content_type.'_'.$page;

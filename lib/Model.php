@@ -38,7 +38,7 @@
  *
  * @license See http://agiletoolkit.org/about/license
  * 
-**/
+ **/
 class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $default_exception='Exception';
@@ -205,7 +205,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function addCache($controller, $table=null, $priority=5){
         $controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
         return $this->setController($controller)
-            ->addHooks($priority)
+            ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
     /** Attempt to load record with specified ID. If this fails, no error is produced */
@@ -219,13 +219,17 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
      * record with new ID. */
     function save($id=undefined){
-        $this->hook('beforeSave',$id);
+        if($this->id_field && $id!==undefined && $id!==null){
+            $this->data[$this->id_field]=$id;
+        }
+        if($id!=undefined)$this->id=$id;
 
-        $id=$this->controller->save($this,$id);
-        $this->id=$id;
-        if($this->id_field)$this->data[$this->id_field]=$id;
 
-        $this->hook('afterSave',$id);
+        $this->hook('beforeSave',array($this->id));
+
+        $this->id=$this->controller->save($this,$this->id);
+
+        if($this->loaded())$this->hook('afterSave',array($this->id));
         return $this;
     }
     /** Save model into database and don't try to load it back */
