@@ -130,7 +130,7 @@ class Field extends AbstractModel {
             reset($this->listData);
             list($junk,$yes_value)=each($this->listData);
             @list($junk,$no_value)=each($this->listData);
-            if($no_value==null)$no_value='';
+            if($no_value===null)$no_value='';
             /* not to convert N to Y */
             if ($yes_value == $value){
                 return $yes_value;
