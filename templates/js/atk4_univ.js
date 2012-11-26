@@ -17,7 +17,7 @@ $.each({
 		setTimeout(code,delay);
 	},
 	setInterval: function(code,delay){
-		setInterval(code,delay);
+		return setInterval(code,delay);
 	},
 	clearInterval: function(a){
 		clearInterval(a);
