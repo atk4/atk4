@@ -16,6 +16,12 @@ $.each({
 	setTimeout: function(code,delay){
 		setTimeout(code,delay);
 	},
+	setInterval: function(code,delay){
+		setInterval(code,delay);
+	},
+	clearInterval: function(a){
+		clearInterval(a);
+	},
 	displayAlert: function(a){
 		alert(a);
 	},
