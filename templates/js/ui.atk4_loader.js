@@ -35,10 +35,10 @@
 
 $.widget('ui.atk4_loader', {
 
-	/*
-	 base_url will contain URL which will be used to refresh contents.
-	*/
     options: {
+        /*
+        base_url will contain URL which will be used to refresh contents.
+        */
         base_url: undefined,
 
         /*
@@ -46,19 +46,19 @@ $.widget('ui.atk4_loader', {
         loaded.
         */
         loading: false,
-
         cogs: '<div class="loading"><i></i><i></i></div>',
+
         /*
         when we are loading URLs, we will automaticaly pass arguments to cut stuff out
         */
         cut_mode: 'page',
         cut: '1',
-        history: false,
-
-        /*
-        Helper contains some extra thingies
-        */
+        history: false
     },
+
+    /*
+    Helper contains some extra thingies
+    */
     helper: undefined,
     loader: undefined,
 
