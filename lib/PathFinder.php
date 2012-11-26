@@ -286,11 +286,12 @@ class PathFinder_Location extends AbstractModel {
             }else
                 throw new BaseException('Unable to determine URL');
 
-            if($file_path){
-                if(substr($url,-1)!='/')$url.='/';
-                $url.=$file_path;
-            }
-            return $url;
+        if($file_path){
+            if(substr($url,-1)!='/')$url.='/';
+            $url.=$file_path;
+        }
+        $url=str_replace('/./','/',$url);
+        return $url;
     }
 
     function getPath($file_path=null){
