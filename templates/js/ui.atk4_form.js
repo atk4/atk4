@@ -212,7 +212,7 @@ jQuery.widget("ui.atk4_form", {
 
         var field=
             typeof(field_name)=='string'?
-                $('[name="'+field_name+'"]','#'+this.id):
+                $('[data-shortname="'+field_name+'"]','#'+this.id):
                     field_name;
 
 		if(!field.length){

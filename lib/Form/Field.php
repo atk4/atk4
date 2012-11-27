@@ -259,6 +259,7 @@ abstract class Form_Field extends AbstractView {
         return $this->getTag('input',
                 array_merge(array(
                         'name'=>$this->name,
+                        'data-shortname'=>$this->short_name,
                         'id'=>$this->name,
                         'value'=>$this->value,
                         ),$attr,$this->attr)
