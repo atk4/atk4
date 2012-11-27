@@ -312,10 +312,10 @@ class Form_Field_Upload extends Form_Field {
         return filesize($this->getFilePath());
     }
 
-    function saveInto($directory){
+    function saveInto($file){
         // Moves file into a directory.
         // TODO: we should make sure we are not overwriting anything here
-        if(!move_uploaded_file($_FILES[$this->name],$directory)){
+	if(!move_uploaded_file($this->getFilePath(),$file)){
             throw new BaseException('Unable to save uploaded file into '.$directory);
         }
     }
