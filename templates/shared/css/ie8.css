@@ -1,0 +1,3 @@
+/* Fix for loading indicator for IE8 */
+.loading {z-index: auto;}
+.loading i {z-index:9999;}
