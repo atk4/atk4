@@ -18,6 +18,7 @@ class Form_Field_DropDown extends Form_Field_ValueList {
     function getInput($attr=array()){
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name,
+			'data-shortname'=>$this->short_name,
                         'id'=>$this->name,
                         ),
                     $attr,
