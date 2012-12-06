@@ -18,6 +18,8 @@ class View_Button extends View_HtmlElement {
 
     /** use setIcon() to change icon displayed on the button */
     private $icon=null;
+
+    public $options=array();
     function defaultTemplate(){
         return array('button','button');
     }
