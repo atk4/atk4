@@ -75,9 +75,9 @@ class SQL_Relation extends AbstractModel {
         // If our ID field is NOT used, must insert record in OTHER table first and use their primary value in OUR field
         if($this->m2 && $this->m2 != $this->owner->id_field){
             // user.contactinfo_id = contactinfo.id
-            $this->owner->addHook('beforeInsert',$this,null,-5);
-            $this->owner->addHook('beforeModify',$this,null,-5);
-            $this->owner->addHook('afterDelete',$this,null,-5);
+            $this->owner->addHook('beforeInsert',$this,array(),-5);
+            $this->owner->addHook('beforeModify',$this,array(),-5);
+            $this->owner->addHook('afterDelete',$this,array(),-5);
         }elseif($this->m2){
             // author.id = book.author_id
             $this->owner->addHook('afterInsert',$this);
