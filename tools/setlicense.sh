@@ -27,7 +27,7 @@ find lib -name '*.php' | while read f; do
 
 echo -n "$f.. "
 
-grep -q '===ATK=' "$f" && {
+grep -q '===ATK4=' "$f" && {
 vim -e $f <<EOF
 H
 /==ATK4===/,/===ATK4=\//-1d
@@ -40,7 +40,7 @@ continue
 
 }
 
-grep -q '\*\*ATK\*' "$f" && {
+grep -q '\*\*ATK4\*' "$f" && {
 vim -e $f <<EOF
 H
 /\*\*ATK4\*\*\*/,/\*\*\*ATK4\*\*\//-1d
