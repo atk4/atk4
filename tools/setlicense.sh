@@ -27,30 +27,43 @@ find lib -name '*.php' | while read f; do
 
 echo -n "$f.. "
 
-grep -q '===ATK==' "$f" || {
-
+grep -q '===ATK=' "$f" && {
 vim -e $f <<EOF
-1r tools/header1
-w
+H
+/==ATK4===/,/===ATK4=\//-1d
+/===ATK4=\//-1r tools/header2
+w!
 EOF
-echo "added"
+
+echo "updated"
+continue
+
+}
+
+grep -q '\*\*ATK\*' "$f" && {
+vim -e $f <<EOF
+H
+/\*\*ATK4\*\*\*/,/\*\*\*ATK4\*\*\//-1d
+/\*\*\*ATK4\*\*\//-1r tools/header2
+/\*\*\*ATK4\*\*\//s/.*/=====================================================ATK4=\*\//
+w!
+EOF
+
+echo "updated"
 continue
 
 }
 
 
-# Replace license text
+
 vim -e $f <<EOF
-H
-/\==ATK4===/,/===ATK4==\//-1d
-/===ATK4==\//-1r tools/header1
-w!
+1r tools/header2
+w
 EOF
+echo "added"
+continue
 
 
-#indent
-#vim -esc "normal gg=G" -c "wq" $f
 
-echo "updated"
-
+# Replace license text
 done
