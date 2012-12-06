@@ -53,7 +53,7 @@ class View_Button extends View_HtmlElement {
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
         $opt=$this->options;
-        if($this->icon)$opt['icons']['primary']='ui-icon-'.$this->icon;
+        if($this->icon)$opt['icons']['primary']=$this->icon;
         if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
     }
     function render(){

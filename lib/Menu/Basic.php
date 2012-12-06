@@ -47,34 +47,34 @@ class Menu_Basic extends CompleteLister {
         parent::init();
     }
     function defaultTemplate(){
-		return array('menu','Menu');
-	}
-	function addMenuItem($page,$label=null){
-		if(!$label){
-			$label=ucwords(str_replace('_',' ',$page));
-		}
+        return array('menu','Menu');
+    }
+    function addMenuItem($page,$label=null){
+        if(!$label){
+            $label=ucwords(str_replace('_',' ',$page));
+        }
         $id=$this->name.'_i'.count($this->items);
-		$label=$this->api->_($label);
+        $label=$this->api->_($label);
         $js_page=null;
         if($page instanceof jQuery_Chain){
             $js_page="#";
             $this->js('click',$page)->_selector('#'.$id);
             $page=$id;
         }
-		$this->items[]=array(
-                        'id'=>$id,
-						'page'=>$page,
-						'href'=>$js_page?:$this->api->url($page),
-						'label'=>$label,
-						$this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
-					   );
-		return $this;
-	}
-	protected function getDefaultHref($label){
-		$href=preg_replace('/[^a-zA-Z0-9]/','',$label);
-		if($label[0]==';'){
-			$label=substr($label,1);
-			$href=';'.$href;
+        $this->items[]=array(
+            'id'=>$id,
+            'page'=>$page,
+            'href'=>$js_page?:$this->api->url($page),
+            'label'=>$label,
+            $this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
+        );
+        return $this;
+    }
+    protected function getDefaultHref($label){
+        $href=preg_replace('/[^a-zA-Z0-9]/','',$label);
+        if($label[0]==';'){
+            $label=substr($label,1);
+            $href=';'.$href;
 		}
 		return $href;
     }

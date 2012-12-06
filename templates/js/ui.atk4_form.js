@@ -210,10 +210,10 @@ jQuery.widget("ui.atk4_form", {
 			return this.options.error_handler(field_name,error);
 		}
 
-		var field=
-			typeof(field_name)=='string'?
-				$('#'+this.id+'_'+field_name):
-				field_name;
+        var field=
+            typeof(field_name)=='string'?
+                $('[data-shortname="'+field_name+'"]','#'+this.id):
+                    field_name;
 
 		if(!field.length){
 			field=this.form.find('[name="'+field_name+'"]');

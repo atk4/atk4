@@ -57,9 +57,9 @@ abstract class Form_Field extends AbstractView {
         if($this->api->jquery)$this->api->jquery->getJS($this);
         throw new Exception_StopRender(
             $this->template->renderRegion($this->template->tags['before_field']).
-                $this->getInput().
-                $this->template->renderRegion($this->template->tags['after_field'])
-            );
+            $this->getInput().
+            $this->template->renderRegion($this->template->tags['after_field'])
+        );
     }
     function setMandatory($mandatory=true){
         $this->mandatory=$mandatory;
@@ -80,7 +80,7 @@ abstract class Form_Field extends AbstractView {
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
         $this->form->js(true)
-            ->atk4_form('fieldError',$this->name,$msg)
+            ->atk4_form('fieldError',$this->short_name,$msg)
             ->execute();
 
         $this->form->errors[$this->short_name]=$msg;
@@ -254,6 +254,7 @@ abstract class Form_Field extends AbstractView {
         return $this->getTag('input',
                 array_merge(array(
                         'name'=>$this->name,
+                        'data-shortname'=>$this->short_name,
                         'id'=>$this->name,
                         'value'=>$this->value,
                         ),$attr,$this->attr)
@@ -291,7 +292,6 @@ abstract class Form_Field extends AbstractView {
         }
         $this->output($this->template->render());
     }
-
     function getTag($tag, $attr=null, $value=null){
         /**
          * Draw HTML attribute with supplied attributes.
@@ -471,11 +471,7 @@ class Form_Field_Readonly extends Form_Field {
     }
 
     function getInput($attr=array()){
-        if (isset($this->value_list)){
-            return $this->value_list[$this->value];
-        } else {
-            return $this->value;
-        }
+        return nl2br(isset($this->value_list) ? $this->value_list[$this->value] : $this->value);
     }
     function setValueList($list){
         $this->value_list = $list;

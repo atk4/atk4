@@ -576,7 +576,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         if(!$this->args['group'])return'';
         $x=array();
         foreach($this->args['group'] as $arg){
-            $x[]=$this->bt($arg);
+            $x[]=$this->consume($arg);
         }
         return 'group by '.implode(', ',$x);
     }

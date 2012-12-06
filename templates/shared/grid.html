@@ -1,9 +1,6 @@
 <?$Misc?>
 <div id="<?$_name?>" class="atk-grid <?$class?>">
-  <div class="atk-grid-panel">
-    <?quick_search?><?/?>
-    <div class="atk-buttons"><?grid_buttons?>&nbsp;<?/?></div>
-  </div>
+  <div class="atk-grid-panel"><?$quick_search?><?$grid_buttons?></div>
   <table width="<?table_width?>100%<?/?>">
     <?header?>
     <thead class="ui-widget-header"><tr>
@@ -37,8 +34,6 @@
       </tr>
       <?/totals?>
       <?/rows?>
-
-
     </tbody>
     <?$full_table?>
   </table>
