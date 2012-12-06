@@ -57,8 +57,8 @@ continue
 
 
 vim -e $f <<EOF
-1d
-1r tools/header1
+0d
+0r tools/header1
 w
 EOF
 echo "added"
