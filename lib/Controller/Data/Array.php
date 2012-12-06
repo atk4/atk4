@@ -1,5 +1,36 @@
 <?php
+/*
+ * Implementation of array access controller for Agile Toolkit Models.
+ *
+ * $m=$this->add('Model');
+ * $m->addField('test');
+ * $m->table='test_table';
+ *
+ * $storage=array();
+ *
+ * $m->setSource('Array', $storage);
+ * $m['test']=123;
+ * $m->save(1);
+ *
+ * $m['test']=321;
+ * $m->save(2);
+ *
+ * $m->load(1);
+ * echo $m['test'];
+ */
+
 class Controller_Data_Array extends Controller_Data {
+
+    /* By default new records are added with the ID being sequetnial. If you set this to false, then model IDs will be assigned using unique identifiers */
+    public $sequential_id=true;
+
+    /* If your model is using id_field and the record with key==id was not found, controller will scan array for a matching record based on the field. 
+     * When you are using data blob from external source which does not have key associations, you should keep this "true". If you save records using
+     * save() only, it will maintain keys automatically and you can set this to false for extra speed.
+     *
+     * This setting have no effect on models without id_field property, as those would always rely on keys */
+    public $search_on_load=true;
+
     function setSource($model,$data=undefined){
         parent::setSource($model,$data);
 
@@ -8,7 +39,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
         foreach($t as $row){
             if($row[$field]==$value){
                 return $row;
@@ -16,7 +47,11 @@ class Controller_Data_Array extends Controller_Data {
         }
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
+        if($value===undefined){
+            $value=$cond;
+            $cond='=';
+        }
         foreach($t as $row){
             if($row[$field]==$value){
                 $model->data=$row;
@@ -28,9 +63,9 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoadAny($model){
-        if(!is_array($model->_table[$this->name]))return null;
-        reset($model->_table[$this->name]);
-        list($id,$row)=each($model->_table[$this->name]);
+        if(!is_array($model->_table[$this->short_name]))return null;
+        reset($model->_table[$this->short_name]);
+        list($id,$row)=each($model->_table[$this->short_name]);
 
         $model->data=$row;
         $model->dirty=array();
@@ -39,7 +74,7 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
         $this->loadBy($model,$field,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
@@ -55,9 +90,13 @@ class Controller_Data_Array extends Controller_Data {
     }
     function tryLoad($model,$id){
         if(@$model->id_field){
-            return $this->tryLoadBy($model,$model->id_field,$id);
+            if( !isset($model->_table[$this->short_name][$id]) || $model->_table[$this->short_name][$id][$model->id_field]!=$id){
+                return $this->tryLoadBy($model,$model->id_field,$id);
+            }
+            // ID key exists and it points to record witch a matching id_field. Lucky! Can save some time loading it.
         }
-        $model->data=$model->_table[$this->name][$id];
+        if(!isset($model->_table[$this->short_name][$id]))return $this;
+        $model->data=$model->_table[$this->short_name][$id];
         $model->dirty=array();
         $model->id=$id;
         return $this;
@@ -69,34 +108,40 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function save($model,$id=null){
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
         if(is_null($model->id)){
-            if(is_null($id)){
-                end($t);
-                list($id)=each($t);
-                $id++;
+            if($this->sequential_id){
+                if(is_null($id)){
+                    end($t);
+                    list($id)=each($t);
+                    $id++;
+                }
+            }else{
+                $id=uniqid();
+            }
+            if($model->id_field){
+                $model->data[$model->id_field]=$id;
             }
             $t[$id]=$model->data;
         }else{
-            $id=uniqid();
             $t[$id]=$model->data;
         }
         return $id;
     }
     function delete($model,$id=null){
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
         unset($t[$id?:$model->id]);
         return $this;
     }
 
     function deleteAll($model){
         $model->_table=array();
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
         return $this;
     }
     function getRows($model){
         return $model->_table;
-        $t =& $model->_table[$this->name];
+        $t =& $model->_table[$this->short_name];
     }
     function setOrder($model,$field,$desc=false){
         // TODO: sort array
@@ -106,14 +151,14 @@ class Controller_Data_Array extends Controller_Data {
     }
 
     function rewind($model){
-        reset($model->_table[$this->name]);
+        reset($model->_table[$this->short_name]);
 
-        list($model->id,$model->data)=each($model->_table[$this->name]);
+        list($model->id,$model->data)=each($model->_table[$this->short_name]);
         if(@$model->id_field)$model->id=$model->data[$model->id_field];
         return $model->data;
     }
     function next($model){
-        list($model->id,$model->data)=each($model->_table[$this->name]);
+        list($model->id,$model->data)=each($model->_table[$this->short_name]);
         if(@$model->id_field)$model->id=$model->data[$model->id_field];
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;

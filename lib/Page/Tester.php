@@ -82,7 +82,7 @@ class Page_Tester extends Page {
                 $ms=microtime(true);
 
                 $this->cnt=0;
-                declare(ticks=10);
+                declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
 
                 try{
@@ -107,7 +107,7 @@ class Page_Tester extends Page {
 
                 unregister_tick_function(array($this,'ticker'));
 
-                $speed+=$this->cnt*10;
+                $speed+=$this->cnt*1;
                 $memory+=$me;
             }
         }
@@ -161,7 +161,7 @@ class Page_Tester extends Page {
                 $me=memory_get_peak_usage();
                 $ms=microtime(true);
                 $this->cnt=0;
-                declare(ticks=10);
+                declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
                 try{
                     $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
@@ -191,7 +191,7 @@ class Page_Tester extends Page {
                 $me=($mend=memory_get_peak_usage())-$me;
                 unregister_tick_function(array($this,'ticker'));
 
-                $row[$key.'_inf']='Ticks: '.($this->cnt*10).'<br/>Memory: '.$me;
+                $row[$key.'_inf']='Ticks: '.($this->cnt*1).'<br/>Memory: '.$me;
 
                 $result=$this->formatResult($row,$key,$result);
 

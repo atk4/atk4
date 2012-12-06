@@ -230,10 +230,10 @@ abstract class AbstractObject {
     // }}} 
 
     // {{{ Model and Controller handling
-    function setController($controller){
+    function setController($controller,$name=null){
         if(is_string($controller)&&strpos($controller,'Controller')!==0)
             $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
-        return $this->add($controller);
+        return $this->add($controller,$name);
     }
     function setModel($model){
         if(is_string($model)&&strpos($model,'Model')!==0){
@@ -393,10 +393,8 @@ abstract class AbstractObject {
 
     /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
-        if(!is_array($arguments)){
-            // Backwards compatibility
-            $priority=$arguments;
-            $arguments=array();
+        if(!is_array($arguments) || (!is_callable($callable) && !$callable->hasMethod($hook_spot))){
+            throw $this->exception('Incorrect arguments, or hook does not exist');
         }
         if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
         if(is_array($hook_spot)){
@@ -422,7 +420,11 @@ abstract class AbstractObject {
         return $this;
     }
     function hook($hook_spot, $arg = array ()) {
+        if(!is_array($arg)){
+            throw $this->exception('Incorrect arguments, or hook does not exist');
+        }
         $return=array();
+        if($arg===undefined)$arg=array();
         try{
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
