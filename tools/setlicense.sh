@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WARNING:
-#  Agile Toolkit 4 is copyright of Agile Technologies Limited Ireland.
+#  Agile Toolkit 4 is a copyrighted material.
 #  Toolkit it freely available under terms of AGPL license. You are
 #  permitted to download, use it for any project as long as that project
 #  code is licensed under AGPLv3. You must provide source code download
@@ -42,9 +42,8 @@ continue
 # Replace license text
 vim -e $f <<EOF
 H
-/\*\*ATK4\*\*\*/,/\*\*\*ATK4\*\*\//-1d
-/\*\*\*ATK4\*\*\//-1r tools/header2
-%s/atk4\.com/agiletoolkit.org/g
+/\==ATK4===/,/===ATK4==\//-1d
+/===ATK4==\//-1r tools/header2
 w!
 EOF
 
