@@ -19,9 +19,7 @@ class Grid_Advanced extends Grid_Basic {
     public $last_column;
     public $sortby='0';
     public $sortby_db=null;
-    public $not_found=false;
-
-    public $displayed_rows=0;
+    public $buttonset=null;
 
     private $totals_title_field=null;
     private $totals_title="";
@@ -105,8 +103,10 @@ class Grid_Advanced extends Grid_Basic {
         return $this;
     }
     function addButton($label){
-        return $this
-            ->add('Button','gbtn'.count($this->elements),'grid_buttons')
+        if(!$this->buttonset)
+            $this->buttonset=$this->add('ButtonSet',null,'grid_buttons');
+        return $this->buttonset
+            ->add('Button','gbtn'.count($this->elements))
             ->setLabel($label);
     }
     function addQuickSearch($fields,$class='QuickSearch'){

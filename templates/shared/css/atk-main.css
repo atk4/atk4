@@ -994,7 +994,13 @@ textarea:focus {
   clear: both;
 }
 .atk-grid > .atk-grid-panel {
-  margin: 0 0 0.6666666666666666em 0;
+  clear:both;
+}
+.atk-grid > .atk-grid-panel > .ui-buttonset {
+  margin: 0.1666666666666666em 0 0.5em 0;
+}
+.atk-grid > .atk-grid-panel > .atk-quicksearch {
+  margin: 0.1666666666666666em 0 0.5em 0;
 }
 .atk-grid > table {
   border-collapse: separate;
