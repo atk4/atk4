@@ -69,6 +69,7 @@ class Grid_Basic extends CompleteLister {
         }
 
         $subtypes=explode(',',$formatters);
+        // TODO call addFormatter instead!
         foreach($subtypes as $subtype){
             if(strpos($subtype,'/')){
 
@@ -98,7 +99,12 @@ class Grid_Basic extends CompleteLister {
         if(!isset($this->columns[$field])){
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
-        $this->columns[$field]['type'].=','.$formatter;
+        if($this->columns[$field]['type']){
+            $this->columns[$field]['type'].=','.$formatter;
+        }else{
+            $this->columns[$field]['type']=$formatter;
+        }
+
         if(strpos($formatter,'/')){
 
             if(!$this->elements[$formatter.'_'.$field]){
@@ -121,8 +127,8 @@ class Grid_Basic extends CompleteLister {
         if(!isset($this->columns[$field])){
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
-        $this->columns[$field]['type']=$formatter;
-        if($this->hasMethod($m='init_'.$formatter))$this->$m($field);
+        $this->columns[$field]['type']='';
+        $this->addFormatter($field,$formatter);
         $this->last_column=$field;
         return $this;
     }
