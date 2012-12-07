@@ -393,8 +393,8 @@ abstract class AbstractObject {
 
     /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
-        if(!is_array($arguments) || (!is_callable($callable) && !$callable->hasMethod($hook_spot))){
-            throw $this->exception('Incorrect arguments, or hook does not exist');
+        if(!is_array($arguments))){
+            throw $this->exception('Incorrect arguments');
         }
         if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
         if(is_array($hook_spot)){
@@ -402,6 +402,9 @@ abstract class AbstractObject {
                 $this->addHook($h,$callable,$arguments, $priority);
             }
             return $this;
+        }
+        if(!is_callable($callable) && !$callable->hasMethod($hook_spot)){
+            throw $this->exception('Hook does not exist');
         }
         if(is_object($callable) && !is_callable($callable)){
             $callable=array($callable,$hook_spot);  // short for addHook('test',$this); to call $this->test();
