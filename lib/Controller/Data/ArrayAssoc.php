@@ -1,6 +1,15 @@
 <?php
-class Controller_Data_ArrayAssoc extends Controller_Data {
+class Controller_Data_ArrayAssoc extends Controller_Data_Array {
 
+    function setSource($m,$s){
+        $d=array();
+        foreach($s as $key=>$val){
+            $d[$key]=array('name'=>$val,'id'=>$key);
+        }
+        return parent::setSource($m,$d);
+    }
+
+    /*
     function load($model,$id=null){
         $model->data=$model->table[$id];
     }
@@ -56,4 +65,5 @@ class Controller_Data_ArrayAssoc extends Controller_Data {
     function setLimit($model,$count,$offset=0){
         return $this->exception('','NotSupported');
     }
+     */
 }
