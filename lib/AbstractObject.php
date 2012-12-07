@@ -393,7 +393,7 @@ abstract class AbstractObject {
 
     /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
-        if(!is_array($arguments))){
+        if(!is_array($arguments)){
             throw $this->exception('Incorrect arguments');
         }
         if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
