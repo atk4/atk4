@@ -154,12 +154,12 @@ class Controller_Data_Array extends Controller_Data {
         reset($model->_table[$this->short_name]);
 
         list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field)$model->id=$model->data[$model->id_field];
+        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
         return $model->data;
     }
     function next($model){
         list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field)$model->id=$model->data[$model->id_field];
+        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
     }
