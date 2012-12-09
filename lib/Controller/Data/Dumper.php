@@ -6,7 +6,7 @@ class Controller_Data_Dumper extends Controller_Data {
 
     function log($model,$s){
         if(!$model)throw $this->exception('model empty');
-        $this->log[]=$model->table.":".$this->sh->short_name." :: ".$s;
+        $this->log[]=$model->table.":".@$this->sh->short_name." :: ".$s;
     }
     function setPrimarySource($model,$controller,$data=undefined){
         if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);

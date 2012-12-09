@@ -261,9 +261,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function delete($id=null){
         if($id===null)$id=$this->id;
         if($this->loaded() && $this->id == $id)$this->unload();   // record we are about to delete is loaded, unload it.
-        $this->hook('beforeDelete',$id);
+        $this->hook('beforeDelete',array($id));
         $this->controller->delete($this,$id);
-        $this->hook('afterDelete',$id);
+        $this->hook('afterDelete',array($id));
         return $this;
     }
     /** Deletes all records associated with this modle. */

@@ -15,9 +15,7 @@ abstract class Controller_Data extends AbstractController {
         if(!$model->_table[$this->short_name]){
             $model->_table[$this->short_name]=array();
         }
-        $t =& $model->_table[$this->short_name];
-        $t=$data;
-
+        $model->_table[$this->short_name] = $data;
         return $this;
     }
 

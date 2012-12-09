@@ -15,6 +15,6 @@ class Controller_Data_Session extends Controller_Data_Array {
         }
 
 
-        $model->_table[$this->short_name] =& $_SESSION['ctl_data'][$data];
+        $model->_table[$this->short_name] =& $_SESSION['ctl_data'][$data][$model->table];
     }
 }
