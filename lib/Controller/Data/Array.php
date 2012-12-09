@@ -47,12 +47,11 @@ class Controller_Data_Array extends Controller_Data {
         }
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->short_name];
         if($value===undefined){
             $value=$cond;
             $cond='=';
         }
-        foreach($t as $row){
+        foreach($model->_table[$this->short_name] as $row){
             if($row[$field]==$value){
                 $model->data=$row;
                 $model->dirty=array();
@@ -108,12 +107,11 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function save($model,$id=null){
-        $t =& $model->_table[$this->short_name];
         if(is_null($model->id)){
             if($this->sequential_id){
                 if(is_null($id)){
-                    end($t);
-                    list($id)=each($t);
+                    end($model->_table[$this->short_name]);
+                    list($id)=each($model->_table[$this->short_name]);
                     $id++;
                 }
             }else{
@@ -122,15 +120,14 @@ class Controller_Data_Array extends Controller_Data {
             if($model->id_field){
                 $model->data[$model->id_field]=$id;
             }
-            $t[$id]=$model->data;
+            $model->_table[$this->short_name][$id]=$model->data;
         }else{
-            $t[$id]=$model->data;
+            $model->_table[$this->short_name][$id]=$model->data;
         }
         return $id;
     }
     function delete($model,$id=null){
-        $t =& $model->_table[$this->short_name];
-        unset($t[$id?:$model->id]);
+        unset($model->_table[$this->short_name][$id?:$model->id]);
         return $this;
     }
 
