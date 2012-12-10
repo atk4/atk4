@@ -15,7 +15,18 @@
  *
  * @license See http://agiletoolkit.org/about/license
  *
-**/
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class Lister extends View {
 
     /** If lister data is retrieed from the SQL database, this will contain dynamic query. */
