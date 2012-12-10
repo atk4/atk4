@@ -166,8 +166,8 @@ class Model_Table extends Model {
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql()->del('fields');
-        if($this->title_field && $this->hasElement($this->title_field)){
-            $this->getElement($this->title_field)->updateSelectQuery($query);
+        if($this->title_field && $el=$this->hasElement($this->title_field)){
+            $el->updateSelectQuery($query);
             return $query;
         }
         return $query->field($query->concat('Record #',$this->getElement($this->id_field)));
