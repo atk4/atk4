@@ -156,7 +156,7 @@ class Model_Table extends Model {
         if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
         return $this->id_field;
     }
-    /** Retucn query for a specific field. All other fileds are ommitted */
+    /** Return query for a specific field. All other fields are ommitted. */
     function fieldQuery($field){
         $query=$this->dsql()->del('fields');
         if(is_string($field))$field=$this->getElement($field);
@@ -166,8 +166,8 @@ class Model_Table extends Model {
     /** Returns query which selects title field */
     function titleQuery(){
         $query=$this->dsql()->del('fields');
-        if($this->title_field && $this->hasElement($this->title_field)){
-            $this->getElement($this->title_field)->updateSelectQuery($query);
+        if($this->title_field && $el=$this->hasElement($this->title_field)){
+            $el->updateSelectQuery($query);
             return $query;
         }
         return $query->field($query->concat('Record #',$this->getElement($this->id_field)));
@@ -425,7 +425,7 @@ class Model_Table extends Model {
         if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id,true);
     }
-    /** Loads record specified by ID. If omitted will load first matching record */
+    /** Loads record specified by ID. */
     function load($id){
         if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id);
@@ -623,10 +623,11 @@ class Model_Table extends Model {
         $this->hook('afterModify');
 
         if($this->_save_as===false)return $this->unload();
+        $id=$this->id;
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
-        return $o->load($this->id);
+        return $o->load($id);
     }
     /** @obsolete. Use set() then save(). */
     function update($data=array()){ // obsolete
