@@ -623,10 +623,11 @@ class Model_Table extends Model {
         $this->hook('afterModify');
 
         if($this->_save_as===false)return $this->unload();
+        $id=$this->id;
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
-        return $o->load($this->id);
+        return $o->load($id);
     }
     /** @obsolete. Use set() then save(). */
     function update($data=array()){ // obsolete
