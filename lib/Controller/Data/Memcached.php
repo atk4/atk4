@@ -21,10 +21,13 @@ class Controller_Data_Memcached extends Controller_Data {
 
     function setSource($model,$data=undefined){
         parent::setSource($model,array(
-            'db'=>new Memcached($data.':'.$model->table),
+            'db'=>new Memcached($x=$data.'_'.$model->table),
             'prefix'=>$model->table
         ));
-        $model->_table[$this->short_name]['db']->addServer('localhost', 11211);
+
+        if(!$model->_table[$this->short_name]['db']->getServerList()){
+            $model->_table[$this->short_name]['db']->addServer('localhost', 11211);
+        }
 
         if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
 

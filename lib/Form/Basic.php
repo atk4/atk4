@@ -157,6 +157,10 @@ class Form_Basic extends View {
         switch(strtolower($type)){
             case'dropdown':$type='DropDown';break;
             case'line':$type='Line';break;
+            case'upload':$type='Upload';break;
+            case'radio':$type='Radio';break;
+            case'slider':$type='Slider';break;
+            case'checkboxlist':$type='CheckboxList';break;
         }
         $class=$type;
         if(is_string($class)&&strpos($class,'Form_Field_')!==0){
