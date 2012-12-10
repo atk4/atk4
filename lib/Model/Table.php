@@ -425,7 +425,7 @@ class Model_Table extends Model {
         if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id,true);
     }
-    /** Loads record specified by ID. If omitted will load first matching record */
+    /** Loads record specified by ID. */
     function load($id){
         if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id);
