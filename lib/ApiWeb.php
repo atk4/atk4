@@ -46,7 +46,6 @@ class ApiWeb extends ApiCLI {
     function init(){
         // Do not initialize unless requsetd
         //$this->initializeSession();
-        $this->getLogger();
 
         // find out which page is to display
         //$this->calculatePageName();
@@ -63,6 +62,7 @@ class ApiWeb extends ApiCLI {
         parent::init();
 
         /** In addition to default initialization, set up logger and template */
+        $this->getLogger();
         $this->initializeTemplate();
 
 
@@ -187,7 +187,7 @@ class ApiWeb extends ApiCLI {
     /** This method is called when exception was caught in the application */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
-        echo "<font color=red>Problem with your request.</font>";
+        echo "<font color=red>",$e,"</font>";
         echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
         exit;
     }
