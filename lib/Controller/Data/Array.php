@@ -42,9 +42,11 @@ class Controller_Data_Array extends Controller_Data {
     public $search_on_load=true;
 
     function setSource($model,$data=undefined){
+        if(!$data || $data===undefined)$data=array();
         parent::setSource($model,$data);
 
         if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
+
 
         return $this;
     }
@@ -98,6 +100,9 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoad($model,$id){
+
+        if(is_object($id))return;
+
         if(@$model->id_field){
             if( !isset($model->_table[$this->short_name][$id]) || $model->_table[$this->short_name][$id][$model->id_field]!=$id){
                 return $this->tryLoadBy($model,$model->id_field,$id);

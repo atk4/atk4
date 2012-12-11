@@ -35,7 +35,8 @@ abstract class Controller_Data extends AbstractController {
     function isCache($model){
         return $model->controller != $this;
     }
-    function cache_load($model,$id=null){
+    function cache_load($model,$id=null,$id2=null){
+        if(is_object($id))$id=$id2;
         if($model->loaded())return; // other cache loaded us
         $this->tryLoad($model,$id);
     }

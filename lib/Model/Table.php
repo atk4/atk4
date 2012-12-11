@@ -492,32 +492,34 @@ class Model_Table extends Model {
         if(!is_null($id))$load->where($p.$this->id_field,$id);
 
         /**/$this->api->pr->next('load/beforeLoad');
-        $this->hook('beforeLoad',array($load));
+        $this->hook('beforeLoad',array($load,$id));
 
 
-        /**/$this->api->pr->next('load/get');
-        $s=$load->stmt;
-        $l=$load->args['limit'];
-        $load->stmt=null;
-        $data = $load->limit(1)->getHash();
-        $load->stmt=$s;
-        $load->args['limit']=$l;
+        if(!$this->loaded()){
+            /**/$this->api->pr->next('load/get');
+            $s=$load->stmt;
+            $l=$load->args['limit'];
+            $load->stmt=null;
+            $data = $load->limit(1)->getHash();
+            $load->stmt=$s;
+            $load->args['limit']=$l;
 
-        if(!is_null($id))array_pop($load->args['where']);    // remove where condition
-        /**/$this->api->pr->next('load/ending');
-        $this->reset();
+            if(!is_null($id))array_pop($load->args['where']);    // remove where condition
+            /**/$this->api->pr->next('load/ending');
+            $this->reset();
 
-        if(@!$data){
-            if($ignore_missing)return $this; else {
-                throw $this->exception('Record could not be loaded')
-                ->addMoreInfo('model',$this)
-                ->addMoreInfo('id',$id)
-            ;
+            if(@!$data){
+                if($ignore_missing)return $this; else {
+                    throw $this->exception('Record could not be loaded')
+                    ->addMoreInfo('model',$this)
+                    ->addMoreInfo('id',$id)
+                ;
+                }
             }
-        }
 
-        $this->data=$data;  // avoid using set() for speed and to avoid field checks
-        $this->id=$this->data[$this->id_field];
+            $this->data=$data;  // avoid using set() for speed and to avoid field checks
+            $this->id=$this->data[$this->id_field];
+        }
 
         $this->hook('afterLoad');
         /**/$this->api->pr->stop();
