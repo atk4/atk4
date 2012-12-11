@@ -187,7 +187,7 @@ class ApiWeb extends ApiCLI {
     /** This method is called when exception was caught in the application */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
-        echo "<font color=red>",$e,"</font>";
+        echo "<font color=red>Problem with your request.</font>";
         echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
         exit;
     }
