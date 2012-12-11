@@ -191,7 +191,7 @@ class Page_Tester extends Page {
                         $e->getText():
                         $e->getMessage());
 
-                    $ll=$this->add('P');
+                    $ll=$this->add('P',$row['name']);
                     $v=$ll->add('View')
                         ->setElement('a')
                         ->setAttr('href','#')
