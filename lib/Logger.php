@@ -324,7 +324,7 @@ class Logger extends AbstractController {
 
 
         echo "<h2>".get_class($e)."</h2>\n";
-        echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
+        echo '<p><font color=red>' . htmlspecialchars($e->getMessage()) . '</font></p>';
         if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
         if($e->more_info){
             echo '<p>Additional information:';
@@ -356,7 +356,7 @@ class Logger extends AbstractController {
             $o.=$ge;
 
         }else{
-            $o.=$key;
+            $o.=$gs?htmlspecialchars($key):$key;
         }
         return $o;
     }
