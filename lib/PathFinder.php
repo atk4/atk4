@@ -1,10 +1,15 @@
 <?php
-/***********************************************************
-  ..
+/*
+  PathFinder will help you to maintain consistent structure of files. This
+  controller is used by many other parts of Agile Toolkit
+
+  PathFinder concerns itself only with relative paths. It relies on PageManager
+  ($api->pm) to convert relative paths into absolute.
 
   Reference:
   http://agiletoolkit.org/doc/ref
 
+  *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -16,14 +21,6 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class PathFinder extends AbstractController {
-    /*
-       PathFinder will help you to maintain consistent structure of files. This
-       controller is used by many other parts of Agile Toolkit
-
-       PathFinder concerns itself only with relative paths. It relies on PageManager
-       ($api->pm) to convert relative paths into absolute.
-     */
-
     public $base_location=null;
     // Object referencing base location. You might want to add more content here
 
