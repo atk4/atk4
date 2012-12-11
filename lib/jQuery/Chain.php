@@ -79,6 +79,10 @@ class jQuery_Chain extends AbstractModel {
         $this->prepend=$code.';'.$this->prepend;
         return $this;
     }
+    function debug(){
+        $this->debug=true;
+        return $this;
+    }
     /* Send chain in response to form submit, button click or ajaxec() function for AJAX control output */
     function execute(){
         if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
@@ -208,6 +212,9 @@ class jQuery_Chain extends AbstractModel {
         }elseif($this->enclose){
             $ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
                 ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
+        }
+        if(@$this->debug){
+            echo "<font color='blue'>".htmlspecialchars($ret)."</font><br/>";
         }
         return $ret;
     }
