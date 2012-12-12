@@ -182,11 +182,15 @@ jQuery.widget("ui.atk4_form", {
 
 		f.val(value).change();
 	},
-	reloadField: function(field_name,url,fn,notrigger){
+	reloadField: function(field_name,url,fn,notrigger,arg){
 		var field_id=this.id+'_'+field_name;
 		if(!url)url=this.base_url;
 		console.log('Field reloading: ',field_name);
-
+        if(arg){
+            $.each(arg,function(key,value){
+                url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
+            });
+        }
 		url=$.atk4.addArgument(url,this.id+'_cut_field',field_id);
 		var f=$("#"+field_id);
 
