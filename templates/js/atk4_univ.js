@@ -298,7 +298,7 @@ dialogBox: function(options){
 			$("body").css({ overflow: 'hidden' });
 		},
 		close: function(){
-			$("body").css({ overflow: 'inherit' });
+			$("body").css({ overflow: 'auto' });
 			$(this).dialog('destroy');
 			$(this).remove();
 		}
