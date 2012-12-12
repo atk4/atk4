@@ -6,57 +6,57 @@
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
-  background-color: #c8d3de;
+  background-color: #dce2e5;
   background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#ecf3f9), to(#c8d3de));
-  background-image: -moz-linear-gradient(top, #ecf3f9, #c8d3de);
-  background-image: -ms-linear-gradient(top, #ecf3f9, #c8d3de);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ecf3f9), color-stop(100%, #c8d3de));
-  background-image: -webkit-linear-gradient(top, #ecf3f9, #c8d3de);
-  background-image: -o-linear-gradient(top, #ecf3f9, #c8d3de);
-  background-image: linear-gradient(top, #ecf3f9, #c8d3de);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ecf3f9', endColorstr='#c8d3de', GradientType=0);
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f0f3f5), to(#dce2e5));
+  background-image: -moz-linear-gradient(top, #f0f3f5, #dce2e5);
+  background-image: -ms-linear-gradient(top, #f0f3f5, #dce2e5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f0f3f5), color-stop(100%, #dce2e5));
+  background-image: -webkit-linear-gradient(top, #f0f3f5, #dce2e5);
+  background-image: -o-linear-gradient(top, #f0f3f5, #dce2e5);
+  background-image: linear-gradient(top, #f0f3f5, #dce2e5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f3f5', endColorstr='#dce2e5', GradientType=0);
 }
 .ui-state-hover,
 .ui-widget-content .ui-state-hover,
 .ui-state-focus,
 .ui-widget-content .ui-state-focus {
-  background-color: #d5e1ed;
+  background-color: #dce2e5;
   background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#f5f9fc), to(#d5e1ed));
-  background-image: -moz-linear-gradient(top, #f5f9fc, #d5e1ed);
-  background-image: -ms-linear-gradient(top, #f5f9fc, #d5e1ed);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f9fc), color-stop(100%, #d5e1ed));
-  background-image: -webkit-linear-gradient(top, #f5f9fc, #d5e1ed);
-  background-image: -o-linear-gradient(top, #f5f9fc, #d5e1ed);
-  background-image: linear-gradient(top, #f5f9fc, #d5e1ed);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f9fc', endColorstr='#d5e1ed', GradientType=0);
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#ffffff), to(#dce2e5));
+  background-image: -moz-linear-gradient(top, #ffffff, #dce2e5);
+  background-image: -ms-linear-gradient(top, #ffffff, #dce2e5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #dce2e5));
+  background-image: -webkit-linear-gradient(top, #ffffff, #dce2e5);
+  background-image: -o-linear-gradient(top, #ffffff, #dce2e5);
+  background-image: linear-gradient(top, #ffffff, #dce2e5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dce2e5', GradientType=0);
 }
 .ui-state-active,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
   background-color: #ffffff;
   background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#ecf3f9), to(#ffffff));
-  background-image: -moz-linear-gradient(top, #ecf3f9, #ffffff);
-  background-image: -ms-linear-gradient(top, #ecf3f9, #ffffff);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ecf3f9), color-stop(100%, #ffffff));
-  background-image: -webkit-linear-gradient(top, #ecf3f9, #ffffff);
-  background-image: -o-linear-gradient(top, #ecf3f9, #ffffff);
-  background-image: linear-gradient(top, #ecf3f9, #ffffff);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ecf3f9', endColorstr='#ffffff', GradientType=0);
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f0f3f5), to(#ffffff));
+  background-image: -moz-linear-gradient(top, #f0f3f5, #ffffff);
+  background-image: -ms-linear-gradient(top, #f0f3f5, #ffffff);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f0f3f5), color-stop(100%, #ffffff));
+  background-image: -webkit-linear-gradient(top, #f0f3f5, #ffffff);
+  background-image: -o-linear-gradient(top, #f0f3f5, #ffffff);
+  background-image: linear-gradient(top, #f0f3f5, #ffffff);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f3f5', endColorstr='#ffffff', GradientType=0);
 }
 .ui-widget-header {
-  background-color: #002d5e;
+  background-color: #282e33;
   background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#00070f), to(#002d5e));
-  background-image: -moz-linear-gradient(top, #00070f, #002d5e);
-  background-image: -ms-linear-gradient(top, #00070f, #002d5e);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00070f), color-stop(100%, #002d5e));
-  background-image: -webkit-linear-gradient(top, #00070f, #002d5e);
-  background-image: -o-linear-gradient(top, #00070f, #002d5e);
-  background-image: linear-gradient(top, #00070f, #002d5e);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00070f', endColorstr='#002d5e', GradientType=0);
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#282e33), to(#282e33));
+  background-image: -moz-linear-gradient(top, #282e33, #282e33);
+  background-image: -ms-linear-gradient(top, #282e33, #282e33);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #282e33), color-stop(100%, #282e33));
+  background-image: -webkit-linear-gradient(top, #282e33, #282e33);
+  background-image: -o-linear-gradient(top, #282e33, #282e33);
+  background-image: linear-gradient(top, #282e33, #282e33);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#282e33', endColorstr='#282e33', GradientType=0);
 }
 /* Additional Effects */
 .ui-dialog {
@@ -843,6 +843,15 @@ textarea:focus {
 .atk-form fieldset .atk-form-row {
   zoom: 1;
   margin-top: 1em;
+}
+.atk-form fieldset .atk-form-row:before,
+.atk-form fieldset .atk-form-row:after {
+  display: table;
+  content: "";
+  zoom: 1;
+}
+.atk-form fieldset .atk-form-row:after {
+  clear: both;
 }
 .atk-form fieldset .atk-form-row:before,
 .atk-form fieldset .atk-form-row:after {
