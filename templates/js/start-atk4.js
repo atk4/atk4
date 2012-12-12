@@ -163,7 +163,6 @@ $.extend($.atk4,{
 		var timeout=setTimeout(function(){
 			self._stillLoading(url);
 		},2000);
-
 		if(typeof(url)=="object" && url[0])url=$.atk4.addArgument(url);
 		if(typeof(url)=="string")url={url:url};
 
@@ -337,13 +336,17 @@ $.extend($.atk4,{
 	 Also relative URLs like url(../images) will not break.
 	*/
     includeCSS: function(url){
-		if(this._isIncluded(url))return;
+        if(this._isIncluded(url))return;
 
-		$("<link>", {
-			rel: "stylesheet",
-			type: "text/css",
-			href: url
-		}).appendTo("head");
+        /*
+         Dynamically loads CSS. Now works for IE too as noted in:
+         http://stackoverflow.com/questions/1184950/dynamically-loading-css-stylesheet-doesnt-work-on-ie
+         see comment by ekerner on Apr 4 11 at 16:44
+        */
+        $("<link>")
+            .appendTo($('head'))
+            .attr({type : 'text/css', rel : 'stylesheet'})
+            .attr('href', url);
     },
     _isIncluded: function(url){
         if(this._includes[url])return true;

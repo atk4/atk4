@@ -42,7 +42,7 @@ class Paginator_Compat extends AbstractView {
         $this->skip=$this->learn('skip',
                 @$_GET[$this->name.'_skip'])+0;
 
-        $this->api->addHook('pre-exec',array($this,'applyHook'), 1);
+        $this->api->addHook('pre-exec',array($this,'applyHook'), array(), 1);
     }
     function applyHook(){
         if(isset($this->owner->dq)){

@@ -35,10 +35,10 @@
 
 $.widget('ui.atk4_loader', {
 
-	/*
-	 base_url will contain URL which will be used to refresh contents.
-	*/
     options: {
+        /*
+        base_url will contain URL which will be used to refresh contents.
+        */
         base_url: undefined,
 
         /*
@@ -46,19 +46,19 @@ $.widget('ui.atk4_loader', {
         loaded.
         */
         loading: false,
-
         cogs: '<div class="loading"><i></i><i></i></div>',
+
         /*
         when we are loading URLs, we will automaticaly pass arguments to cut stuff out
         */
         cut_mode: 'page',
         cut: '1',
-        history: false,
-
-        /*
-        Helper contains some extra thingies
-        */
+        history: false
     },
+
+    /*
+    Helper contains some extra thingies
+    */
     helper: undefined,
     loader: undefined,
 
@@ -81,7 +81,8 @@ $.widget('ui.atk4_loader', {
 
         if(this.options.cogs){
             var l=$(this.options.cogs);
-			l.insertBefore(self.element);
+			l.prependTo(self.element);
+            l.hide();
             self.loader=l;
         }
 
@@ -171,6 +172,7 @@ $.widget('ui.atk4_loader', {
 		var m;
 
 		self.loading=true;
+        self.loader.show();
         $.atk4.get(url,null,function(res){
 			/*
 			if(res.substr(0,13)=='SESSION OVER:'){
@@ -195,7 +197,7 @@ $.widget('ui.atk4_loader', {
             }
 
 			m=el;
-			if(!(jQuery.browser.msie))m.hide();
+			//if(!(jQuery.browser.msie))m.hide();
 
 			// Parse into Document
 			var source=$('<div/>').append(source);
@@ -248,7 +250,9 @@ $.widget('ui.atk4_loader', {
                 if(!f.hasClass('nofocus'))f.focus();
 			});
 		},function(){	// second callback, which is always called, when loading is completed
+            		self.loader.hide();
 			self.loading=false;
+            		el.trigger('after_html_loaded');
 		});
     },
 	/*

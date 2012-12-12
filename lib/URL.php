@@ -6,23 +6,16 @@
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 class URL extends AbstractModel {
 
     // Page is a location of destination page. It have to be absolute and relative to project root
@@ -187,6 +180,7 @@ http://mysite:123/install/dir/my/page.html
     }
     function getURL(){
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
+
 
         $url=$this->getBaseURL();
         if($this->page && $this->page!='index'){

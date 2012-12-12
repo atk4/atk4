@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class SQL_Relation extends AbstractModel {
     public $f1=null;            // Foreign Table (actual name)
     // short_name = Foreign alias
@@ -75,9 +90,9 @@ class SQL_Relation extends AbstractModel {
         // If our ID field is NOT used, must insert record in OTHER table first and use their primary value in OUR field
         if($this->m2 && $this->m2 != $this->owner->id_field){
             // user.contactinfo_id = contactinfo.id
-            $this->owner->addHook('beforeInsert',$this,null,-5);
-            $this->owner->addHook('beforeModify',$this,null,-5);
-            $this->owner->addHook('afterDelete',$this,null,-5);
+            $this->owner->addHook('beforeInsert',$this,array(),-5);
+            $this->owner->addHook('beforeModify',$this,array(),-5);
+            $this->owner->addHook('afterDelete',$this,array(),-5);
         }elseif($this->m2){
             // author.id = book.author_id
             $this->owner->addHook('afterInsert',$this);

@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class PageManager extends AbstractController {
     /*
      * This is a generic page manager. For web applications it calculates
@@ -131,7 +146,9 @@ class PageManager extends AbstractController {
         }else{
             $request_uri=$this->getRequestURI();
             if(strpos($request_uri,$path)!==0){
-                throw new BaseException("URL matching problem. RequestURI=$request_uri should start with BasePath=$path");
+                throw $this->exception("URL matching problem")
+                    ->addMoreInfo('RequestURI',$request_uri)
+                    ->addMoreInfo('BasePath',$path);
             }
             $page=substr($request_uri,strlen($path));
             if(!$page)$page='index';
@@ -144,8 +161,8 @@ class PageManager extends AbstractController {
             if(substr($page,-1)=='_')$page=substr($page,0,-1);
         }
 
-        if(strpos($page,'.')!==false)throw new BaseException("Failed to determine page name. Page name may not contain ".
-                "periods (.) page=".$page);
+        if(strpos($page,'.')!==false)throw $this->exception('Page may not contain periods (.)')
+            ->addMoreInfo('page',$page);
 
         // We have now arrived at the page as per specification.
         $this->page=str_replace('/','_',$page);
@@ -172,7 +189,7 @@ class PageManager extends AbstractController {
             $request_uri = $_SERVER['ORIG_PATH_INFO'];
             // This one comes without QUERRY string
         } else {
-            throw new BaseException('Unable to determine RequestURI. This shouldnt be called at all in CLI');
+            throw new BaseException('Unable to determine RequestURI. This shouldn\'t be called at all in CLI');
         }
         $request_uri=explode('?',$request_uri,2);
         return $request_uri[0];

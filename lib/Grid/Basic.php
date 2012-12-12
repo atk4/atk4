@@ -1,4 +1,19 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  * This is a Basic Grid implementation, which produces fully
  * functional HTML grid capable of filtering, sorting, paginating
@@ -25,6 +40,7 @@ class Grid_Basic extends CompleteLister {
         'ui-icon ui-icon-arrowthick-1-n',
         'ui-icon ui-icon-arrowthick-1-s',
     );
+    public $show_header = true;
     function init(){
         parent::init();
         $this->initWidget();
@@ -50,6 +66,8 @@ class Grid_Basic extends CompleteLister {
 
         if($descr===null)$descr=ucwords(str_replace('_',' ',$name));
 
+        $descr=$this->api->_($descr);
+
         $this->columns[$name]=array('type'=>$formatters);
 
         if(is_array($descr)){
@@ -66,6 +84,7 @@ class Grid_Basic extends CompleteLister {
         }
 
         $subtypes=explode(',',$formatters);
+        // TODO call addFormatter instead!
         foreach($subtypes as $subtype){
             if(strpos($subtype,'/')){
 
@@ -95,7 +114,12 @@ class Grid_Basic extends CompleteLister {
         if(!isset($this->columns[$field])){
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
-        $this->columns[$field]['type'].=','.$formatter;
+        if($this->columns[$field]['type']){
+            $this->columns[$field]['type'].=','.$formatter;
+        }else{
+            $this->columns[$field]['type']=$formatter;
+        }
+
         if(strpos($formatter,'/')){
 
             if(!$this->elements[$formatter.'_'.$field]){
@@ -118,8 +142,8 @@ class Grid_Basic extends CompleteLister {
         if(!isset($this->columns[$field])){
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
-        $this->columns[$field]['type']=$formatter;
-        if($this->hasMethod($m='init_'.$formatter))$this->$m($field);
+        $this->columns[$field]['type']='';
+        $this->addFormatter($field,$formatter);
         $this->last_column=$field;
         return $this;
     }
@@ -201,8 +225,11 @@ class Grid_Basic extends CompleteLister {
             $this->totals_t = $this->api->add('SMlite');
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
-
-        $this->template->setHTML('header',$header->render());
+        if ($this->show_header){
+            $this->template->setHTML('header',$header->render());
+        } else {
+            $this->template->setHTML('header', '');
+        }
     }
     function formatRow(){
         if(!$this->columns)throw $this->exception('No columns defined for grid');

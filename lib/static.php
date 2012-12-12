@@ -86,14 +86,6 @@ if(!function_exists('lowlevel_error')){
 echo $e->getMessage()."<br>\n";
 }
      */
-};if(!function_exists('safe_array_merge')){
-    // array_merge gives us an error when one of arguments is null. This function
-    // acts the same as array_merge, but without warnings
-    function safe_array_merge($a,$b=null){
-        if(is_null($a))return $b;
-        if(is_null($b))return $a;
-        return array_merge($a,$b);
-    }
 };if(!function_exists('hash_filter')){
     // array_merge gives us an error when one of arguments is null. This function
     // acts the same as array_merge, but without warnings

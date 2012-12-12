@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/**
+/*
  * Lister implements a very simple and fast way to output series
  * of data by applying template formatting
  * 
@@ -15,7 +15,18 @@
  *
  * @license See http://agiletoolkit.org/about/license
  *
-**/
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class Lister extends View {
 
     /** If lister data is retrieed from the SQL database, this will contain dynamic query. */
@@ -35,11 +46,11 @@ class Lister extends View {
 
     /** Name of the ID field in this lister */
     public $id_field=null;
-    
+
     /** Data set fetched from source */
     public $iterator=array();
 
-    /** 
+    /*
      * Sets source data for the lister. If source is a model, use setModel() instead.
      *
      * @link http://agiletoolkit.org/doc/lister
@@ -63,8 +74,8 @@ class Lister extends View {
      *
      * or   // sql table
      *  $l->setSource( 'user', array('name','surname'));
-     **/
-    function setSource($source,$fields=null){
+     */
+	function setSource($source,$fields=null){
 
         // Set DSQL
         if($source instanceof DB_dsql){
@@ -87,9 +98,7 @@ class Lister extends View {
 
         // Set Array as a data source
         if(is_array($source)){
-//            $this->iter=$source;
             $m=$this->setModel('Model',$fields);
-
             if(is_array(reset($source))){
                 $m->setSource('Array',$source);
             }else{

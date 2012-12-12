@@ -74,9 +74,9 @@ q:before, q:after {content:'';content:none;}
 table {border-collapse:collapse;border-spacing:0;}
 
 
-/* ==============================================
-	Mixins
-   ============================================== */
+// ==============================================
+//  Mixins
+// ==============================================
 .clearfix() {
   zoom: 1;
   &:before,
@@ -90,7 +90,7 @@ table {border-collapse:collapse;border-spacing:0;}
   }
 }
 
-/* Input placeholder text */
+// Input placeholder text
 .placeholder(@color: @lightGray) {
   :-moz-placeholder {
     color: @color;
@@ -100,14 +100,14 @@ table {border-collapse:collapse;border-spacing:0;}
   }
 }
 
-/* Border Radius */
+// Border Radius
 .border-radius(@radius: 5px) {
   -webkit-border-radius: @radius;
      -moz-border-radius: @radius;
           border-radius: @radius;
 }
 
-/* Drop shadows */
+// Drop shadows
 .box-shadow(@shadow: 0 1px 3px fadeout(@shadowColor,25%)) {
   -webkit-box-shadow: @shadow;
      -moz-box-shadow: @shadow;
@@ -115,23 +115,41 @@ table {border-collapse:collapse;border-spacing:0;}
 }
 
 .box-sizing (@boxtype: border-box) {
-	box-sizing: @boxtype;
-	-moz-box-sizing: @boxtype;
-	-webkit-box-sizing: @boxtype;
-	-ms-box-sizing: @boxtype;
-	box-sizing: @boxtype;
+  -webkit-box-sizing: @boxtype;
+	 -moz-box-sizing: @boxtype;
+	  -ms-box-sizing: @boxtype;
+	   -o-box-sizing: @boxtype;
+	      box-sizing: @boxtype;
 }
 
-/* Transitions */
-.transition(@transition) {
-     -webkit-transition: @transition;
-        -moz-transition: @transition;
-         -ms-transition: @transition;
-          -o-transition: @transition;
-             transition: @transition;
+// Transitions
+.transition(@arguments) {
+  -webkit-transition: @arguments;
+     -moz-transition: @arguments;
+      -ms-transition: @arguments;
+       -o-transition: @arguments;
+          transition: @arguments;
 }
 
-/* Add an alphatransparency value to any background or border color (via Elyse Holladay) */
+// Animations
+.animation(@arguments) {
+  -webkit-animation: @arguments;
+     -moz-animation: @arguments;
+      -ms-animation: @arguments;
+       -o-animation: @arguments;
+          animation: @arguments;
+}
+
+// 2D Transformations
+.transform(@arguments) {
+  -webkit-transform: @arguments;
+     -moz-transform: @arguments;
+      -ms-transform: @arguments;
+       -o-transform: @arguments;
+          transform: @arguments;
+}
+
+// Add an alphatransparency value to any background or border color (via Elyse Holladay)
 #translucent {
   .background(@color: @white, @alpha: 1) {
     background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
@@ -142,12 +160,12 @@ table {border-collapse:collapse;border-spacing:0;}
   }
 }
 
-/* Reset filters for IE */
+// Reset filters for IE
 .reset-filter() {
   filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
 }
 
-/* Opacity */
+// Opacity
 .opacity(@opacity: 100) {
   filter: e(%("alpha(opacity=%d)", @opacity));
   -khtml-opacity: @opacity / 100;
@@ -277,34 +295,49 @@ table {border-collapse:collapse;border-spacing:0;}
 .clearwrap {overflow:hidden;}
 
 /* ==============================================
-	Loader
+   Loader
    ============================================== */
+// http://radiatingstar.com/css-keyframes-animations-with-less
+.clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(360deg));}
+}
+.anti-clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(-360deg));}
+}
 
-@-webkit-keyframes rotate-i1 {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
-}
-@-webkit-keyframes rotate-i2 {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(-360deg); }
-}
-.loading img.i1 {
-    -webkit-animation-name:             rotate-i1; 
-    -webkit-animation-duration:         5s; 
-    -webkit-animation-iteration-count:  infinite;
-    -webkit-transition-timing-function: linear;
-    margin: 10px 10px;
+@-webkit-keyframes rotate-i1 {.clockwise;}
+   @-moz-keyframes rotate-i1 {.clockwise;}
+    @-ms-keyframes rotate-i1 {.clockwise;}
+     @-o-keyframes rotate-i1 {.clockwise;}
+        @keyframes rotate-i1 {.clockwise;}
+
+@-webkit-keyframes rotate-i2 {.anti-clockwise;}
+   @-moz-keyframes rotate-i2 {.anti-clockwise;}
+    @-ms-keyframes rotate-i2 {.anti-clockwise;}
+     @-o-keyframes rotate-i2 {.anti-clockwise;}
+        @keyframes rotate-i2 {.anti-clockwise;}
+
+.loading {
+  position: absolute;
+  margin: auto;
+  z-index: 9999;
+  .opacity(70);
+  i {
     position: absolute;
-}
-.loading img.i2 {
-    -webkit-animation-name:             rotate-i2; 
-    -webkit-animation-duration:         5s; 
-    -webkit-animation-iteration-count:  infinite;
-    -webkit-transition-timing-function: linear;
+    background: url(../images/gear-32x32.png);
+    width: 32px;
+    height: 32px;
+    .transition(linear);
     margin: 35px 27px;
-    position: absolute;
+    .animation(rotate-i2 5s infinite);
+    &:first-child {
+      margin: 10px 10px;
+      .animation(rotate-i1 5s infinite);
+    }
+  }
 }
-
 /* ==============================================
 	Typography
    ============================================== */
@@ -358,21 +391,21 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 .atk-box p:last-child {margin-bottom:0;}
 
 
-/* ==============================================
-	Backgrounds
-   ============================================== */
+// ==============================================
+//	Backgrounds
+// ==============================================
 #gradient {
   .vertical (@startColor: #555, @endColor: #333) {
     background-color: @endColor;
     background-repeat: repeat-x;
-    background-image: -khtml-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); /* Konqueror */
-    background-image: -moz-linear-gradient(top, @startColor, @endColor); /* FF 3.6+ */
-    background-image: -ms-linear-gradient(top, @startColor, @endColor); /* IE10 */
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @startColor), color-stop(100%, @endColor)); /* Safari 4+, Chrome 2+ */
-    background-image: -webkit-linear-gradient(top, @startColor, @endColor); /* Safari 5.1+, Chrome 10+ */
-    background-image: -o-linear-gradient(top, @startColor, @endColor); /* Opera 11.10 */
-    background-image: linear-gradient(top, @startColor, @endColor); /* The standard */
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); /* IE9 and down */
+    background-image: -khtml-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); // Konqueror
+    background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(top, @startColor, @endColor); // IE10
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @startColor), color-stop(100%, @endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(top, @startColor, @endColor); // The standard
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down
   }
   .horizontal(@startColor: #555, @endColor: #333) {
     background-color: @endColor;
@@ -387,7 +420,7 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
   }
 }
 
-/* Custom jQueryUI States */
+// Custom jQueryUI States
 .defaultBg(@colorStop1,@colorStop2) {
 	.ui-state-default,
 	.ui-widget-content .ui-state-default,
@@ -595,12 +628,16 @@ textarea:focus {
 .atk-wrapper {.fixed-container();}
 
 .atk-grid {
-	>.atk-grid-panel { margin:0 0 @margin/3 0; }
+	>.atk-grid-panel {
+    clear:both;
+        >.ui-buttonset,>.atk-quicksearch {margin:@margin/12 0 @margin/4 0;}
+    }
 	>table {
 		border-collapse:separate;
 		width:100%;
 		>thead>tr>th {border:none;text-align:left;padding:@padding/5 @padding/3;}
 		>tbody>tr>td {border-bottom:1px solid @border;padding:@padding/3;}
+		>tbody>tr>td>img {vertical-align: middle;}
 		>tbody>tr>td .atk-dropmenu {.opacity(0);}
 		>tbody>tr:hover>td .atk-dropmenu {
 			.transition(opacity @transition);
@@ -742,7 +779,7 @@ textarea:focus {
 .ui-widget-overlay {position:fixed !important;top:0;left:0;}
 .ui-dialog {padding:0;}
 
-/* .ui-selected {background:#2e8ae5;color:@white;} */
+// .ui-selected {background:#2e8ae5;color:@white;}
 
 
 /* Relative Paddings  */

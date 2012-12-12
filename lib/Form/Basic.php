@@ -5,23 +5,16 @@
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 // Field bundle
 if(!class_exists('Form_Field',false))include_once'Form/Field.php';
 /**
@@ -157,6 +150,10 @@ class Form_Basic extends View {
         switch(strtolower($type)){
             case'dropdown':$type='DropDown';break;
             case'line':$type='Line';break;
+            case'upload':$type='Upload';break;
+            case'radio':$type='Radio';break;
+            case'slider':$type='Slider';break;
+            case'checkboxlist':$type='CheckboxList';break;
         }
         $class=$type;
         if(is_string($class)&&strpos($class,'Form_Field_')!==0){
@@ -432,6 +429,9 @@ class Form_Basic extends View {
     function isClicked($name){
         if(is_object($name))$name=$name->short_name;
         return ($_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]));
+    }
+    function error($field,$text){
+        $this->getElement($field)->displayFieldError($text);
     }
     /* external error management */
     function setFieldError($field, $name){

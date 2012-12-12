@@ -16,6 +16,12 @@ $.each({
 	setTimeout: function(code,delay){
 		setTimeout(code,delay);
 	},
+	setInterval: function(code,delay){
+		return setInterval(code,delay);
+	},
+	clearInterval: function(a){
+		clearInterval(a);
+	},
 	displayAlert: function(a){
 		alert(a);
 	},
@@ -109,6 +115,7 @@ $.each({
 						w.document.write(response_text);
 						w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 					}else{
+                        console.log(response_text, e);
 						showMessage("Error in AJAX response: "+e+"\n"+response_text);
 					}
 					try{
@@ -241,7 +248,7 @@ dialogPrepare: function(options){
  * This function creates a new dialog and makes sure other dialog-related functions will
  * work perfectly with it
  */
-    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div class="loading centred"><i></i><i></i></div><div></div></div>').appendTo('body');
+    var dialog=$('<div class="dialog dialog_autosize" title="Untitled"><div style="min-height: 300px"></div>').appendTo('body');
 	if(options.noAutoSizeHack)dialog.removeClass('dialog_autosize');
 	dialog.dialog(options);
 	if(options.customClass){
@@ -299,6 +306,7 @@ dialogBox: function(options){
 },
 dialogURL: function(title,url,options,callback){
 	var dlg=this.dialogBox($.extend(options,{title: title,autoOpen: true}));
+    dlg.closest('.ui-dialog').hide().fadeIn('slow');
 	dlg.atk4_load(url,callback);
 	return dlg.dialog('open');
 },
@@ -395,7 +403,7 @@ closeDialog: function(){
 getjQuery: function(){
 	return this.jquery;
 },
-ajaxec: function(url,data){
+ajaxec: function(url,data,fn){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	region=this.jquery;
 	$.atk4.get(url,data,function(ret){
@@ -408,7 +416,8 @@ ajaxec: function(url,data){
 		*/
 		if(!$.atk4._checkSession(ret))return;
 		try{
-			eval(ret)
+			eval(ret);
+            if(fn)fn();
 		}catch(e){
 			w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
 			if(w){
@@ -416,7 +425,8 @@ ajaxec: function(url,data){
 				w.document.write(ret);
 				w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 			}else{
-				showMessage("Error in AJAXec response: "+e+"\n"+response_text);
+                console.log("Error in ajaxec response", e,ret);
+				showMessage("Error in AJAXec response: "+e+"\n"+ret);
 			}
 		}
 

@@ -1,4 +1,19 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  * Implementation of a Generic Model. 
  * @link http://agiletoolkit.org/doc/model
@@ -26,7 +41,7 @@
  * }
  *
  *
- * $pc=$this->add('Model_PageCache')->setSource('Memcached');
+ * $pc=$this->add('Model_PageCache')->addCache('Memcached');
  * $pc->load($this->api->page);
  *
  * if(!$pc->loaded()){
@@ -38,7 +53,7 @@
  *
  * @license See http://agiletoolkit.org/about/license
  * 
-**/
+ **/
 class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $default_exception='Exception';
@@ -49,11 +64,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** If true, model will now allow to set values for non-existant fields */
     public $strict_fields=false;
 
-    /** Contains information about table/file/bucket/array used by Controller to determine source */
-    public $table;
+    /** Contains name of table, session key, collection or file, depending on a driver */
+    public $table=null;
+
+    /** Controllers store some custom informatio in here under key equal to their name */
+    public $_table=array();
 
     /** Contains identifier of currently loaded record or null. Use load() and reset() */
     public $id=null;     // currently loaded record
+
+    /** The actual ID field of the table might now always be "id" */
+    public $id_field='id';   // name of ID field
+
+    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+
 
     // Curretly loaded record
     public $data=array();
@@ -61,6 +85,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
 
+    protected $_save_as=null;
+    protected $_save_later=false;
 
     // {{{ Basic functionality, field definitions, set(), get() and related methods
     function init(){
@@ -157,7 +183,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Forget loaded data */
     function unload(){
-        $this->hook('beforeUnload');
+        if($this->loaded())$this->hook('beforeUnload');
         $this->data=$this->dirty=array();
         $this->id=null;
         $this->hook('afterUnload');
@@ -167,41 +193,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->unload();
     }
     // }}}
-
-    /// {{{ Operation with external Data Controllers
-    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
-    function setSource($controller, $table=null, $id=null){
-        if(is_string($controller))$controller='Data_'.$controller;
-        $this->controller=$this->setController($controller);
-
-        $this->controller->setSource($this,$table);
-
-        if($id)$this->load($id);
-        return $this;
-    }
-    /** Attempt to load record with specified ID. If this fails, no error is produced */
-    function load($id=null){
-        $this->hook('beforeLoad',$id);
-        $res=$this->controller->load($this,$id);
-        $this->hook('afterLoad');
-        return $res;
-    }
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
-     * record with new ID. Returns ID of saved record */
-    function save($id=null){
-        $this->hook('beforeSave',$id);
-        $res=$this->controller->save($this,$id);
-        $this->hook('afterSave');
-        return $res;
-    }
-    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
-    function delete($id=null){
-        $this->hook('beforeDelete',$id);
-        $res=$this->controller->delete($this,$id?:$this->id);
-        $this->hook('afterDelete');
-        return $res;
-    }
-    /// }}}
 
     // {{{ ArrayAccess support 
     function offsetExists($name){
@@ -216,6 +207,109 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function offsetUnset($name){
         unset($this->dirty[$name]);
     }
+    // }}}
+
+    /// {{{ Operation with external Data Controllers
+
+    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
+    function setSource($controller, $table=null, $id=null){
+        if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        else if(!$controller instanceof Controller_Data)throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+        $this->controller=$this->setController($controller);
+
+        $this->controller->setSource($this,$table);
+
+        if($id)$this->load($id);
+        return $this;
+    }
+    /** Cache controller is used to attempt and load data a little faster then the primary controller */
+    function addCache($controller, $table=null, $priority=5){
+        $controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        return $this->setController($controller)
+            ->addHooks($this,$priority)
+            ->setSource($this,$table);
+    }
+    /** Attempt to load record with specified ID. If this fails, no error is produced */
+    function load($id=null){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeLoad',array($id));
+        if(!$this->loaded())$this->controller->load($this,$id);
+        $this->hook('afterLoad');
+        return $this;
+    }
+    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
+     * record with new ID. */
+    function save($id=undefined){
+        if($this->id_field && $id!==undefined && $id!==null){
+            $this->data[$this->id_field]=$id;
+        }
+        if($id!=undefined)$this->id=$id;
+
+
+        $this->hook('beforeSave',array($this->id));
+
+        $this->id=$this->controller->save($this,$this->id);
+
+        if($this->loaded())$this->hook('afterSave',array($this->id));
+        return $this;
+    }
+    /** Save model into database and don't try to load it back */
+    function saveAndUnload(){
+        $this->hook('beforeSave',$id);
+
+        $id=$this->controller->save($this,$id);
+        $this->unload();     // clean if there is anything loaded
+
+        return $this;
+    }
+    /** Will save model later, when it's being destructed by Garbage Collector */
+    function saveLater(){
+        $this->_save_later=true;
+        return $this;
+    }
+    function __destruct(){
+        if($this->_save_later){
+            $this->saveAndUnload();
+        }
+    }
+    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
+    function delete($id=null){
+        if($id===null)$id=$this->id;
+        if($this->loaded() && $this->id == $id)$this->unload();   // record we are about to delete is loaded, unload it.
+        $this->hook('beforeDelete',array($id));
+        $this->controller->delete($this,$id);
+        $this->hook('afterDelete',array($id));
+        return $this;
+    }
+    /** Deletes all records associated with this modle. */
+    function deleteAll(){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeDeleteAll');
+        $this->controller->deleteAll($this);
+        $this->hook('afterDeleteAll');
+        return $this;
+    }
+    // }}}
+
+    // {{{ Load Wrappers
+
+    /* Attempt to load record with specified ID. If this fails, no error is produced */
+    function tryLoad($id=null){
+        if($this->loaded())$this->unload();
+        $this->hook('beforeLoad',array($id));
+        if(!$this->loaded())$this->controller->tryLoad($this,$id);
+        if(!$this->loaded())return $this;
+        $this->hook('afterLoad');
+        return $this;
+    }
+    function tryLoadAny(){
+        if($this->loaded())$this->unload();
+        if(!$this->loaded())$this->controller->tryLoadAny($this,$id);
+        if(!$this->loaded())return $this;
+        $this->hook('afterLoad');
+        return $this;
+    }
+
     // }}}
 
     // {{{ Iterator support 
@@ -252,5 +346,168 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     function getField($f){
         return $this->getElement($f);
+    }
+
+    // Reference traversal for regular models
+    public $_references;
+
+    /* defines relation between models. You can traverse the reference using ref() */
+    function hasOne($model,$our_field=undefined,$field_class='Field'){
+
+        // if our_field is not specified, let's try to guess it from other model's table
+        if($our_field===undefined){
+            // determine the actual class of the other model
+            if(!is_object($model)){
+                $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                $tmp=new $tmp; // avoid recursion
+            }else $tmp=$model;
+            $our_field=($tmp->table).'_id';
+        }
+
+        $this->_references[$our_field]=$model;
+
+        if($our_field !== null && $our_field!=='_id' && !$this->hasElement($our_field)){
+            return $this->add($this->field_class,$our_field);
+        }
+
+        return null; // no field added
+    }
+    /* defines relation for non-sql model. You can traverse the reference using ref() */
+    function hasMany($model,$their_field=undefined,$our_field=undefined){
+        if(is_string($model)){
+            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
+        }
+        $this->_references[$model]=array($model,$our_field,$their_field);
+        return null;
+    }
+    /*
+     * How references work:
+     *
+     * $this->hasMany('Chapter'); // hasMany('Section'), hasOne('Picture');
+     * $this->hasOne('Author');   // hasMany('Book'), hasOne('Person','father_id'), hasOne('Person','mother_id')
+     *
+     * $this->ref('Chapter');
+     *   1. Creates Model_Chapter
+     *   2. Model_Chapter -> addCondition() // meaning the traversed model must support them!
+     *   3. Returns
+     *
+     * $this->ref('Chapter/Section');
+     *   1. $b=Creates Model_Chapter
+     *   2. Calls $c=Model_Chapter->_ref('Section'); which only returns model, no binding
+     *   3. Decisions:
+     *   hasMany
+     *      a. $b is loaded(). $c->addCondition();
+     *      b. $b and $c are both SQL. $c->join($b);
+     *      c. load all id's from $b. $c->addCondition(field,ids);
+     *   hasOne()
+     *      a. $b is loaded(). $c->load($b[field]);
+     *      b. $b and $c are both SQL. $c->join($b);
+     *      c. load all [field] values, $c->addCondition('id',ids);
+     *
+     *  Book/Chapter/Section both SQL:
+     *    $book->load(5);
+     *    $book->ref('Chapter/Section');  // get all sections
+     *      $c=$b->_ref('Chapter/Section')
+     *      $s=$c->_ref('Section');
+     *      if($s and $c sql){
+     *        $s->addCondition('chapter_id',$c->getElement('id'))
+     *      }
+
+    /* For a current model, will resolve the reference, initialize the related model and call _refBind. If this
+     * is a deep traversing, then it will also specify a field_out to acquire expression, which will be passed
+     * into the further model and so on. 
+     *
+     * if the submodel's ref() will return 
+     */
+    function ref($ref){
+        $id=$this->get($ref);
+        return $this->_ref($ref,$id);
+    }
+    /* Join Binding
+     * ============
+     *
+     * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
+     * first subquery to complete before starting working on the next query. 
+     *
+     * Join binding exists as an extension in Model_Table::_ref(). It will iterate through array of models and load
+     * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
+     * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
+     * have field_in same as field_out.
+     *
+
+    /* Subselect Binding
+     * =================
+     *
+     * Binding conditions when traversing. The model must apply field=expression, however this might work differently
+     * depending on the type of, the second argument and the refBind implementation. 
+     *
+     * If the model cannot embed this type of expression into field condition, it must call $expression->get(), fetch
+     * all the IDs and then use them instead. This insures intercompatibility between different model implementation.
+     *
+     * If model is using controller, it will attempt to seek controller's help for applying a condition.
+     *
+     * If field_out is specified, then the output should be the expression for the next join containing a set of
+     * values from the field_out.
+     *
+     * SQL: select field_out from table where field_in in (expression)
+     * Generic: foreach(expression->get() as $item){ $res[]=$m->loadBy($field_in,$item[id_field)->get($field_out) };
+     *
+     * If field_out is not specified, then the condition must be applied on a current model and the current model
+     * must be returned with the condition applied. This model bubbles up and is returned through a top-most 
+     * ref / refSQL.
+     *
+     * Shortcuts
+     * ---------
+     * if field_in and field_out are the same, simply return expression
+     *
+     * Book -< Chapter -< Section
+     * select * from section where chapter_id in (select id from chapter where book_id=5)
+     *
+     */
+    function _refBind($field_in,$expression,$field_out=null){
+
+        if($this->controller)return $this->controller->refBind($this,$field,$expression);
+
+        list($myref,$rest)=explode('/',$ref,2);
+
+        if(!$this->_references[$myref])throw $this->exception('No such relation')
+            ->addMoreInfo('ref',$myref)
+            ->addMoreInfo('rest',$rest);
+        // Determine and populate related model
+
+        if(is_array($this->_references[$myref])){
+            $m=$this->_references[$myref][0];
+        }else{
+            $m=$this->_references[$myref];
+        }
+        $m=$this->add($m);
+        if($rest)$m=$m->_ref($rest);
+        $this->_refGlue();
+        
+
+        if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
+            ->addMoreInfo('name',$ref);
+
+        $r=$this->_references[$ref];
+
+        if(is_array($r)){
+            list($m,$our_field,$their_field)=$r;
+
+            if(is_string($m)){
+                $m=$this->add($m);
+            }else{
+                $m=$m->newInstance();
+            }
+
+            return $m->addCondition($their_field,$this[$our_field]);
+        }
+
+
+        if(is_string($m)){
+            $m=$this->add($m);
+        }else{
+            $m=$m->newInstance();
+        }
+        return $m->load($this[$our_field]);
     }
 }

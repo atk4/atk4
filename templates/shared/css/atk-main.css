@@ -9,29 +9,13 @@
   background-color: #c8d3de;
   background-repeat: repeat-x;
   background-image: -khtml-gradient(linear, left top, left bottom, from(#ecf3f9), to(#c8d3de));
-  /* Konqueror */
-
   background-image: -moz-linear-gradient(top, #ecf3f9, #c8d3de);
-  /* FF 3.6+ */
-
   background-image: -ms-linear-gradient(top, #ecf3f9, #c8d3de);
-  /* IE10 */
-
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ecf3f9), color-stop(100%, #c8d3de));
-  /* Safari 4+, Chrome 2+ */
-
   background-image: -webkit-linear-gradient(top, #ecf3f9, #c8d3de);
-  /* Safari 5.1+, Chrome 10+ */
-
   background-image: -o-linear-gradient(top, #ecf3f9, #c8d3de);
-  /* Opera 11.10 */
-
   background-image: linear-gradient(top, #ecf3f9, #c8d3de);
-  /* The standard */
-
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ecf3f9', endColorstr='#c8d3de', GradientType=0);
-  /* IE9 and down */
-
 }
 .ui-state-hover,
 .ui-widget-content .ui-state-hover,
@@ -40,29 +24,13 @@
   background-color: #d5e1ed;
   background-repeat: repeat-x;
   background-image: -khtml-gradient(linear, left top, left bottom, from(#f5f9fc), to(#d5e1ed));
-  /* Konqueror */
-
   background-image: -moz-linear-gradient(top, #f5f9fc, #d5e1ed);
-  /* FF 3.6+ */
-
   background-image: -ms-linear-gradient(top, #f5f9fc, #d5e1ed);
-  /* IE10 */
-
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f5f9fc), color-stop(100%, #d5e1ed));
-  /* Safari 4+, Chrome 2+ */
-
   background-image: -webkit-linear-gradient(top, #f5f9fc, #d5e1ed);
-  /* Safari 5.1+, Chrome 10+ */
-
   background-image: -o-linear-gradient(top, #f5f9fc, #d5e1ed);
-  /* Opera 11.10 */
-
   background-image: linear-gradient(top, #f5f9fc, #d5e1ed);
-  /* The standard */
-
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f9fc', endColorstr='#d5e1ed', GradientType=0);
-  /* IE9 and down */
-
 }
 .ui-state-active,
 .ui-widget-content .ui-state-active,
@@ -70,57 +38,25 @@
   background-color: #ffffff;
   background-repeat: repeat-x;
   background-image: -khtml-gradient(linear, left top, left bottom, from(#ecf3f9), to(#ffffff));
-  /* Konqueror */
-
   background-image: -moz-linear-gradient(top, #ecf3f9, #ffffff);
-  /* FF 3.6+ */
-
   background-image: -ms-linear-gradient(top, #ecf3f9, #ffffff);
-  /* IE10 */
-
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ecf3f9), color-stop(100%, #ffffff));
-  /* Safari 4+, Chrome 2+ */
-
   background-image: -webkit-linear-gradient(top, #ecf3f9, #ffffff);
-  /* Safari 5.1+, Chrome 10+ */
-
   background-image: -o-linear-gradient(top, #ecf3f9, #ffffff);
-  /* Opera 11.10 */
-
   background-image: linear-gradient(top, #ecf3f9, #ffffff);
-  /* The standard */
-
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ecf3f9', endColorstr='#ffffff', GradientType=0);
-  /* IE9 and down */
-
 }
 .ui-widget-header {
   background-color: #002d5e;
   background-repeat: repeat-x;
   background-image: -khtml-gradient(linear, left top, left bottom, from(#00070f), to(#002d5e));
-  /* Konqueror */
-
   background-image: -moz-linear-gradient(top, #00070f, #002d5e);
-  /* FF 3.6+ */
-
   background-image: -ms-linear-gradient(top, #00070f, #002d5e);
-  /* IE10 */
-
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00070f), color-stop(100%, #002d5e));
-  /* Safari 4+, Chrome 2+ */
-
   background-image: -webkit-linear-gradient(top, #00070f, #002d5e);
-  /* Safari 5.1+, Chrome 10+ */
-
   background-image: -o-linear-gradient(top, #00070f, #002d5e);
-  /* Opera 11.10 */
-
   background-image: linear-gradient(top, #00070f, #002d5e);
-  /* The standard */
-
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00070f', endColorstr='#002d5e', GradientType=0);
-  /* IE9 and down */
-
 }
 /* Additional Effects */
 .ui-dialog {
@@ -282,16 +218,6 @@ table {
   border-spacing: 0;
 }
 /* ==============================================
-	Mixins
-   ============================================== */
-/* Input placeholder text */
-/* Border Radius */
-/* Drop shadows */
-/* Transitions */
-/* Add an alphatransparency value to any background or border color (via Elyse Holladay) */
-/* Reset filters for IE */
-/* Opacity */
-/* ==============================================
 	Grid System
     http://agiletoolkit.org/doc/css/layout
    ============================================== */
@@ -439,10 +365,10 @@ table {
 	Features
    ============================================== */
 .atk-wrapper {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
   box-sizing: border-box;
   min-width: 980px;
   padding-left: 2.5%;
@@ -497,39 +423,201 @@ body #atk-layout #atk-footer-guard {
   overflow: hidden;
 }
 /* ==============================================
-	Loader
+   Loader
    ============================================== */
 @-webkit-keyframes rotate-i1 {
   from {
     -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
     -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes rotate-i1 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-ms-keyframes rotate-i1 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes rotate-i1 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate-i1 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 @-webkit-keyframes rotate-i2 {
   from {
     -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
     -webkit-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
   }
 }
-.loading img.i1 {
-  -webkit-animation-name: rotate-i1;
-  -webkit-animation-duration: 5s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-transition-timing-function: linear;
-  margin: 10px 10px;
-  position: absolute;
+@-moz-keyframes rotate-i2 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
+  }
 }
-.loading img.i2 {
-  -webkit-animation-name: rotate-i2;
-  -webkit-animation-duration: 5s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-transition-timing-function: linear;
-  margin: 35px 27px;
+@-ms-keyframes rotate-i2 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
+  }
+}
+@-o-keyframes rotate-i2 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
+  }
+}
+@keyframes rotate-i2 {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+    -moz-transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -o-transform: rotate(-360deg);
+    transform: rotate(-360deg);
+  }
+}
+.loading {
   position: absolute;
+  margin: auto;
+  z-index: 9999;
+  filter: alpha(opacity=70);
+  -khtml-opacity: 0.7;
+  -moz-opacity: 0.7;
+  opacity: 0.7;
+}
+.loading i {
+  position: absolute;
+  background: url(../images/gear-32x32.png);
+  width: 32px;
+  height: 32px;
+  -webkit-transition: linear;
+  -moz-transition: linear;
+  -ms-transition: linear;
+  -o-transition: linear;
+  transition: linear;
+  margin: 35px 27px;
+  -webkit-animation: rotate-i2 5s infinite;
+  -moz-animation: rotate-i2 5s infinite;
+  -ms-animation: rotate-i2 5s infinite;
+  -o-animation: rotate-i2 5s infinite;
+  animation: rotate-i2 5s infinite;
+}
+.loading i:first-child {
+  margin: 10px 10px;
+  -webkit-animation: rotate-i1 5s infinite;
+  -moz-animation: rotate-i1 5s infinite;
+  -ms-animation: rotate-i1 5s infinite;
+  -o-animation: rotate-i1 5s infinite;
+  animation: rotate-i1 5s infinite;
 }
 /* ==============================================
 	Typography
@@ -699,10 +787,6 @@ h6:first-child {
   margin-bottom: 0;
 }
 /* ==============================================
-	Backgrounds
-   ============================================== */
-/* Custom jQueryUI States */
-/* ==============================================
 	Forms
    ============================================== */
 button::-moz-focus-inner,
@@ -727,10 +811,10 @@ textarea {
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 0.4em;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
   box-sizing: border-box;
   resize: none;
   -webkit-transition: border linear 0.15s, box-shadow linear 0.15s;
@@ -893,7 +977,7 @@ textarea:focus {
   width: 100%;
 }
 .input-row .input-cell .ui-buttonset {
-	white-space: nowrap;
+  white-space: nowrap;
 }
 .input-row .input-cell > .ui-button {
   margin-left: 0;
@@ -981,7 +1065,11 @@ textarea:focus {
   clear: both;
 }
 .atk-grid > .atk-grid-panel {
-  margin: 0 0 0.6666666666666666em 0;
+  clear: both;
+}
+.atk-grid > .atk-grid-panel > .ui-buttonset,
+.atk-grid > .atk-grid-panel > .atk-quicksearch {
+  margin: 0.16666666666666666em 0 0.5em 0;
 }
 .atk-grid > table {
   border-collapse: separate;
@@ -995,6 +1083,9 @@ textarea:focus {
 .atk-grid > table > tbody > tr > td {
   border-bottom: 1px solid #e5e5e5;
   padding: 0.6666666666666666em;
+}
+.atk-grid > table > tbody > tr > td > img {
+  vertical-align: middle;
 }
 .atk-grid > table > tbody > tr > td .atk-dropmenu {
   filter: alpha(opacity=0);
@@ -1092,10 +1183,10 @@ textarea:focus {
 .atk-flexy > div {
   display: table-cell;
   vertical-align: top;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
   box-sizing: border-box;
 }
 .atk-box {
@@ -1267,7 +1358,6 @@ textarea:focus {
 .ui-dialog {
   padding: 0;
 }
-/* .ui-selected {background:#2e8ae5;color:@white;} */
 /* Relative Paddings  */
 .ui-accordion .ui-accordion-header a {
   padding: 0.5em 0.5em 0.5em 0.3076923076923077em;
@@ -1325,7 +1415,6 @@ input.ui-button,
 .ui-button-icons-only .ui-button-icon-secondary {
   right: 0.5em;
 }
-/* .ui-dialog {padding:@padding/10;top:@dialogMargin !important;} moved into JS */
 .ui-dialog .ui-dialog-titlebar {
   padding: 0.4em 0.6666666666666666em;
 }

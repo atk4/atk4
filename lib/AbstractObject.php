@@ -105,8 +105,9 @@ abstract class AbstractObject {
         unset($this->elements[$short_name]);
         return $this;
     }
-    function newInstance(){
-        return $this->owner->add(get_class($this));
+    /* Creates one more of the same object */
+    function newInstance($properties=null){
+        return $this->owner->add(get_class($this),$properties);
     }
     /** Creates new object and adds it as a child. Returns new object
      * http://agiletoolkit.org/learn/understand/base/adding */
@@ -144,7 +145,7 @@ abstract class AbstractObject {
             $class=$ns.'/'.substr($class,2);
         }
         if (!$short_name)
-            $short_name = str_replace('/','_',strtolower($class));
+            $short_name = str_replace('\\','_',str_replace('/','_',strtolower($class)));
 
         $short_name=$this->_unique($this->elements,$short_name);
 
@@ -229,10 +230,10 @@ abstract class AbstractObject {
     // }}} 
 
     // {{{ Model and Controller handling
-    function setController($controller){
+    function setController($controller,$name=null){
         if(is_string($controller)&&strpos($controller,'Controller')!==0)
             $controller=preg_replace('|^(.*/)?(.*)$|','\1Controller_\2',$controller);
-        return $this->add($controller);
+        return $this->add($controller,$name);
     }
     function setModel($model){
         if(is_string($model)&&strpos($model,'Model')!==0){
@@ -393,9 +394,7 @@ abstract class AbstractObject {
     /** If priority is negative, then hooks will be executed in reverse order */
     function addHook($hook_spot, $callable, $arguments=array(), $priority = 5) {
         if(!is_array($arguments)){
-            // Backwards compatibility
-            $priority=$arguments;
-            $arguments=array();
+            throw $this->exception('Incorrect arguments');
         }
         if(is_string($hook_spot) && strpos($hook_spot,',')!==false)$hook_spot=explode(',',$hook_spot);
         if(is_array($hook_spot)){
@@ -403,6 +402,9 @@ abstract class AbstractObject {
                 $this->addHook($h,$callable,$arguments, $priority);
             }
             return $this;
+        }
+        if(!is_callable($callable) && !$callable->hasMethod($hook_spot)){
+            throw $this->exception('Hook does not exist');
         }
         if(is_object($callable) && !is_callable($callable)){
             $callable=array($callable,$hook_spot);  // short for addHook('test',$this); to call $this->test();
@@ -421,7 +423,11 @@ abstract class AbstractObject {
         return $this;
     }
     function hook($hook_spot, $arg = array ()) {
+        if(!is_array($arg)){
+            throw $this->exception('Incorrect arguments, or hook does not exist');
+        }
         $return=array();
+        if($arg===undefined)$arg=array();
         try{
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {

@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class Logger extends AbstractController {
     /**
      * Logger class is implemented a more sophisticated and usable error handling.
@@ -309,7 +324,7 @@ class Logger extends AbstractController {
 
 
         echo "<h2>".get_class($e)."</h2>\n";
-        echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
+        echo '<p><font color=red>' . htmlspecialchars($e->getMessage()) . '</font></p>';
         if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
         if($e->more_info){
             echo '<p>Additional information:';
@@ -341,7 +356,7 @@ class Logger extends AbstractController {
             $o.=$ge;
 
         }else{
-            $o.=$key;
+            $o.=$gs?htmlspecialchars($key):$key;
         }
         return $o;
     }

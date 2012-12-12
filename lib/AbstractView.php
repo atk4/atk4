@@ -128,7 +128,7 @@ abstract class AbstractView extends AbstractObject {
     function initializeTemplate($template_spot=null,$template_branch=null){
         if(!$template_spot)$template_spot=$this->defaultSpot();
         $this->spot=$template_spot;
-        if($this->owner->template && 
+        if(@$this->owner->template && 
                 !$this->owner->template->is_set($this->spot))throw
             $this->exception('Spot is not found in owner\'s template')
                 ->addMoreInfo('spot',$this->spot);

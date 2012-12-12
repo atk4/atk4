@@ -1,4 +1,19 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  * This is a Basic Grid implementation, which produces fully
  * functional HTML grid capable of filtering, sorting, paginating
@@ -19,9 +34,7 @@ class Grid_Advanced extends Grid_Basic {
     public $last_column;
     public $sortby='0';
     public $sortby_db=null;
-    public $not_found=false;
-
-    public $displayed_rows=0;
+    public $buttonset=null;
 
     private $totals_title_field=null;
     private $totals_title="";
@@ -105,8 +118,10 @@ class Grid_Advanced extends Grid_Basic {
         return $this;
     }
     function addButton($label){
-        return $this
-            ->add('Button','gbtn'.count($this->elements),'grid_buttons')
+        if(!$this->buttonset)
+            $this->buttonset=$this->add('ButtonSet',null,'grid_buttons');
+        return $this->buttonset
+            ->add('Button','gbtn'.count($this->elements))
             ->setLabel($label);
     }
     function addQuickSearch($fields,$class='QuickSearch'){
