@@ -19,7 +19,7 @@ class QuickSearch extends Filter {
     /*
      * Quicksearch represents one-field filter which goes perfectly with a grid
      */
-    public $icon='search'; // to configure icon
+    public $icon='ui-icon-search'; // to configure icon
 
     function init(){
         parent::init();
