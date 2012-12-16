@@ -367,7 +367,7 @@ class ApiWeb extends ApiCLI {
     /** Returns true if browser is going to EVAL output. */
     function isAjaxOutput(){
         // TODO: rename into isJSOutput();
-        return isset($_POST['ajax_submit']);
+        return isset($_POST['ajax_submit']) || ($_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest');
     }
     /** @private */
     function _locateTemplate($path){
