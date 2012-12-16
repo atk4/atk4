@@ -26,7 +26,7 @@ class Form_Field_DatePicker extends Form_Field_Line {
         parent::init();
         $this->addButton('')
             ->setHtml('&nbsp;')
-            ->setIcon('calendar')
+            ->setIcon('ui-icon-calendar')
             ->js('click',$this->js()->datepicker('show'));
 
     }
