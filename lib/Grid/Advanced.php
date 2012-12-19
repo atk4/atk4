@@ -654,8 +654,7 @@ class Grid_Advanced extends Grid_Basic {
             ;
     }
     /**
-     * Adds column on the basis of Model definition
-     * If $type is passed - column type is replaced by this value
+     * Adds column with checkboxes on the basis of Model definition
      */
     function addSelectable($field){
         $this->js_widget=null;
