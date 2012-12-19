@@ -533,7 +533,7 @@ class Grid_Advanced extends Grid_Basic {
         $row_data=$this->api->db->getHash($this->dq->select());
 
         // *** Initializing template ***
-        $this->precacheTemplate(false);
+        $this->precacheTemplate();
 
         // *** Rendering row ***
         $this->current_row=(array)$row_data;
