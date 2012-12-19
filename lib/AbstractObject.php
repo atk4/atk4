@@ -298,7 +298,7 @@ abstract class AbstractObject {
         $message=$this->api->_($message);
 
         if($type=='Exception')$type='BaseException';
-        $e=new $type($message,null,null,$code);
+        $e=new $type($message,$code);
         $e->owner=$this;
         $e->api=$this->api;
         $e->init();
@@ -353,6 +353,10 @@ abstract class AbstractObject {
          * but disable for object
          * $object->debug=false;
          */
+        if($msg===true){
+            $this->debug=true;
+            return $this;
+        }
         if ((isset ($this->debug) && $this->debug) || (isset ($this->api->debug) && $this->api->debug)) {
             $this->upCall('outputDebug', array (
                         $msg,
