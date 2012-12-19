@@ -149,7 +149,6 @@ class Grid_Basic extends CompleteLister {
     }
     function precacheTemplate(){
         // pre-cache our template for row
-        // $full=false used for certain row init
         $row = $this->row_t;
         $col = $row->cloneRegion('col');
 
