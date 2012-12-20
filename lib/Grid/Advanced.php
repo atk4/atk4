@@ -629,6 +629,8 @@ class Grid_Advanced extends Grid_Basic {
     }
     /**
      * Adds column with checkboxes on the basis of Model definition
+     * @field - should be Form_Field object or jQuery selector of 1 field
+     * When passing it as jQuery selector don't forget hash sign like "#myfield"
      */
     function addSelectable($field){
         $this->js_widget=null;
