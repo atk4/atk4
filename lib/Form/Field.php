@@ -122,11 +122,17 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     /** Position can be either 'before' or 'after' */
-    function addButton($label,$position='after'){
-        if($position=='after'){
-            return $this->afterField()->add('Button')->setLabel($label);
+    function addButton($label,$options=array()){
+        $position='after';
+        if(is_string($options)){
+            $position=$options;
         }else{
-            return $this->beforeField()->add('Button')->setLabel($label);
+            if(isset($options['position']))$position=$options['position'];
+        }
+        if($position=='after'){
+            return $this->afterField()->add('Button',$options)->setLabel($label);
+        }else{
+            return $this->beforeField()->add('Button',$options)->setLabel($label);
         }
         return $this;
     }

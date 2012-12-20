@@ -28,7 +28,7 @@ class QuickSearch extends Filter {
         $this->template->trySet('fieldset','atk-row');
         $this->template->tryDel('button_row');
         $this->search_field=$this->addField('line','q','')->setNoSave();
-        $this->search_field->addButton('')
+        $this->search_field->addButton('',array('options'=>array('text'=>false)))
             ->setHtml('&nbsp;')
             ->setIcon($this->icon)
             ->js('click',$this->js()->submit());
