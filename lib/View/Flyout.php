@@ -9,26 +9,32 @@ class View_Flyout extends View {
 
     public $offset='';
 
-    function init(){
-        parent::init();
-        $this->addClass('flyout ui-widget-content ui-corner-all');
-        $this->addStyle('display','none');
-        $this->addStyle('position','absolute');
-    }
-
     function useArrow(){
         $this->offset='+10';
+        /*
         $this->add('View')->setClass('arrow '.$this->position);
+         */
     }
 
     /* Returns JS which will position this element and show it */
     function showJS($element=null){
-        $js = $this->js()->_selectorDocument()->one('click',$this->js()->hide()->_enclose());
-
-        return $this->js(null, $js)->show()->position(array(
-            'my'=>'center '.$this->position.$this->offset,
-            'at'=>'center bottom',
-            'of'=>$element?:$this->owner,
+        $this->js(true)->dialog(array(
+            'modal'=>true,
+            'dragable'=>false,
+            'resizable'=>false,
+            'autoOpen'=>false,
+            'width'=>500,
+            'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar')->remove())->click(
+                $this->js()->dialog('close')->_enclose()
+            )->_selector('.ui-widget-overlay:last')->_enclose(),
+            'position'=>array(
+                'my'=>'center '.$this->position.$this->offset,
+                'at'=>'center bottom',
+                'of'=>$element?:$this->owner,
+                'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); $(this).addClass("arrow-"+data[data.important]);}')
+            )
         ));
+
+        return $this->js()->dialog('open');
     }
 }
