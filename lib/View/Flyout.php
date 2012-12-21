@@ -14,6 +14,7 @@ class View_Flyout extends View {
         /*
         $this->add('View')->setClass('arrow '.$this->position);
          */
+        return $this;
     }
 
     /* Returns JS which will position this element and show it */
