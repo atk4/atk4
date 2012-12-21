@@ -262,18 +262,13 @@ class Form_Basic extends View {
     }
      */
     function addSubmit($label='Save',$name=null){
-        if(!$name)$name=str_replace(' ','_',$label);
-
-        $submit = $this->add('Form_Submit',isset($name)?$name:$label,'form_buttons')
+        $submit = $this->add('Form_Submit',$name,'form_buttons')
             ->setLabel($label)
             ->setNoSave();
 
         return $submit;
     }
     function addButton($label='Button',$name=null){
-        if(!$name)$name=str_replace(' ','_',$label);
-        $name = preg_replace('/[^a-zA-Z0-9_-]/','', isset($name)?$name:$label);
-
         $button = $this->add('Button',$name,'form_buttons')
             ->setLabel($label);
 
