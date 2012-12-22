@@ -12,29 +12,30 @@ class View_Flyout extends View {
     function useArrow(){
         $this->offset='+10';
         /*
-        $this->add('View')->setClass('arrow '.$this->position);
          */
         return $this;
     }
 
     /* Returns JS which will position this element and show it */
-    function showJS($element=null){
+    function showJS($element=null,$options=array()){
+
         $this->js(true)->dialog(array(
             'modal'=>true,
+            'dialogClass'=>'flyout',
             'dragable'=>false,
             'resizable'=>false,
             'autoOpen'=>false,
-            'width'=>500,
+            'width'=>$options['width']?:250,
             'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar')->remove())->click(
                 $this->js()->dialog('close')->_enclose()
-            )->_selector('.ui-widget-overlay:last')->_enclose(),
-            'position'=>array(
-                'my'=>'center '.$this->position.$this->offset,
-                'at'=>'center bottom',
+            )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
+            'position'=>$p=array(
+                'my'=>$options['my']?:'left top',
+                'at'=>$options['at']?:'left-5 bottom+5',
                 'of'=>$element?:$this->owner,
-                'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); $(this).addClass("arrow-"+data[data.important]);}')
+                //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
             )
-        ));
+        ))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>');
 
         return $this->js()->dialog('open');
     }
