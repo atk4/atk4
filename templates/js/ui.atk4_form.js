@@ -183,7 +183,7 @@ jQuery.widget("ui.atk4_form", {
 		f.val(value).change();
 	},
 	reloadField: function(field_name,url,fn,notrigger,arg){
-		var field_id = $("#"+this.id+' input[data-shortname="'+field_name+'"]').first().attr("id");
+		var field_id = $("#"+this.id+' [data-shortname="'+field_name+'"]').first().attr("id");
 		if(!url)url=this.base_url;
 		console.log('Field reloading: ',field_name);
         if(arg){
