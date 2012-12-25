@@ -25,6 +25,8 @@ class Paginator_Basic extends CompleteLister {
 
     public $source=null;
 
+    public $calc_found_rows=false;
+
     /** Set number of items displayed per page */
     function ipp($ipp){
         $this->ipp=$ipp;
@@ -34,17 +36,16 @@ class Paginator_Basic extends CompleteLister {
     function setSource($source){
         $this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
         if($source instanceof Model_Table){
-
             // Start iterating early
             $source = $source->_preexec();
 
             $source->limit($this->ipp,$this->skip);
-            $source->calc_found_rows();
+            if($this->calc_found_rows)$source->calc_found_rows();
 
             $this->source=$source;
 
         }elseif($source instanceof DB_dsql){
-            $source->_dsql()->calc_found_rows();
+            if($this->calc_found_rows)$source->_dsql()->calc_found_rows();
 
         }else{
             $this->source &= $source;
