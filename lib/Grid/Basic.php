@@ -265,7 +265,6 @@ class Grid_Basic extends CompleteLister {
         if(!$this->totals['row_count']){
             $def_template = $this->defaultTemplate();
             $this->totals=false;
-            $this->template->del('full_table');
         }else{
             $this->template->del('not_found');
         }
