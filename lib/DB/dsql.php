@@ -136,7 +136,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $this->args['custom'][$template]=$value;
         return $this;
     }
-    /** Removes definition for argument. $q->del('where') */
+    /** Removes definition for argument. $q->del('where'), $q->del('fields') etc. */
     function del($args){
         $this->args[$args]=array();
         return $this;
@@ -308,6 +308,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         $this->args['fields'][]=array($field,$table,$alias);
         return $this;
+    }
+    function fieldQuery($field,$table=null,$alias=null){
+        return $this->del('fields')->field($field,$table=null,$alias=null);
     }
     function render_field(){
         $result=array();
@@ -984,8 +987,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         /* db-compatibl way: */
         $c=clone $this;
         $c->del('limit');
-        $c->del('fields');
-        $c->field('count(*)');
+        $c->fieldQuery('count(*)');
         return $c->getOne();
     }
     // }}}
