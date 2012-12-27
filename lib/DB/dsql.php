@@ -310,7 +310,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this;
     }
     function fieldQuery($field,$table=null,$alias=null){
-        return $this->del('fields')->field($field,$table=null,$alias=null);
+        return $this->del('fields')->field($field,$table,$alias);
     }
     function render_field(){
         $result=array();
