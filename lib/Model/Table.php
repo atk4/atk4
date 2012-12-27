@@ -398,15 +398,14 @@ class Model_Table extends Model {
     }
     /** Returs dynamic query selecting number of entries in the database */
     function count(){
-        $q=$this->dsql();
-        return $q->del('fields')->field($q->count());
+        return $this->dsql()->fieldQuery($q->count());
     }
     /** Returs dynamic query selecting sum of particular field */
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->dsql()->del('fields');
-        $q->field($q->expr('sum([s_field])')->setCustom('s_field',$field));
+        $q=$this->dsql()
+            ->fieldQuery($q->expr('sum([s_field])')->setCustom('s_field',$field));
         return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
