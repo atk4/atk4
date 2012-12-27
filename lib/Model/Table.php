@@ -79,10 +79,6 @@ class Model_Table extends Model {
 
         if(!$this->db)$this->db=$this->api->db;
 
-        if($d=$_GET[$this->name.'_debug']){
-            if($d=='query')$this->debug();
-        }
-
         if($this->owner instanceof Field_Reference && $this->owner->owner->relations){
             $this->relations =& $this->owner->owner->relations;
         }
@@ -103,7 +99,7 @@ class Model_Table extends Model {
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
             ->addThis($this)
-            ->addAction('Debug this Model',array($this->name.'_debug'=>'query'));
+            ;
     }
     /** Initializes base query for this model. 
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
