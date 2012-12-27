@@ -396,11 +396,12 @@ class Model_Table extends Model {
         $this->api->pr->stop();
         return $a;
     }
-    /** Returs dynamic query selecting number of entries in the database */
+    /** Returns dynamic query selecting number of entries in the database */
     function count(){
-        return $this->dsql()->fieldQuery($q->count());
+        $q = $this->dsql();
+        return $q->fieldQuery($q->count());
     }
-    /** Returs dynamic query selecting sum of particular field */
+    /** Returns dynamic query selecting sum of particular field */
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
