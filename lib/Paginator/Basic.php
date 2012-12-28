@@ -23,6 +23,8 @@ class Paginator_Basic extends CompleteLister {
     public $skip=0;
     public $range=4;
 
+    public $ajax_reload=true;
+
     public $source=null;
 
     /** Set number of items displayed per page */
@@ -113,7 +115,9 @@ class Paginator_Basic extends CompleteLister {
             );
         } 
 
-        $this->js('click',$this->owner->js()->reload(array($this->name.'_skip'=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
+        if($this->ajax_reload){
+            $this->js('click',$this->owner->js()->reload(array($this->name.'_skip'=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
+        }
 
 
         parent::setSource($data);
