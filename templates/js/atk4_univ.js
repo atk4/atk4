@@ -294,8 +294,9 @@ dialogBox: function(options){
 				$(this).dialog('close');
 			}
 		},
-		open: function(){
+		open: function(x){
 			$("body").css({ overflow: 'hidden' });
+            $(x.target).css({'max-height': $(window).height()-180});
 		},
 		close: function(){
 			$("body").css({ overflow: 'auto' });
