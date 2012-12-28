@@ -184,8 +184,7 @@ jQuery.widget("ui.atk4_form", {
 	},
 	reloadField: function(field_name,url,fn,notrigger,arg){
 		var field_id=this.id+'_'+field_name;
-		if(!url)url=this.base_url;
-		console.log('Field reloading: ',field_name);
+		if(!url) url=this.form.attr('action');
         if(arg){
             $.each(arg,function(key,value){
                 url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
