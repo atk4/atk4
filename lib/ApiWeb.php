@@ -220,7 +220,9 @@ class ApiWeb extends ApiCLI {
 
         if($this->_is_session_initialized)return;
 
-        if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
+        // Temporary commented. If nothing breaks, will remove
+        // Romans / bob's suggestion 28 Dec 2012
+        //if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
 
 
         // Change settings if defined in settings file
