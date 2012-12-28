@@ -220,7 +220,9 @@ class ApiWeb extends ApiCLI {
 
         if($this->_is_session_initialized)return;
 
-        if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
+        // Temporary commented. If nothing breaks, will remove
+        // Romans / bob's suggestion 28 Dec 2012
+        //if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
 
 
         // Change settings if defined in settings file
@@ -359,6 +361,7 @@ class ApiWeb extends ApiCLI {
 
         // We are using new capability of SMlite to process tags individually
         $t->eachTag('template',array($this,'_locateTemplate'));
+        $t->eachTag('js',array($this,'_locateJS'));
         $t->eachTag('page',array($this,'_locatePage'));
 
         $this->hook('set-tags',array($t));
@@ -366,11 +369,14 @@ class ApiWeb extends ApiCLI {
     /** Returns true if browser is going to EVAL output. */
     function isAjaxOutput(){
         // TODO: rename into isJSOutput();
-        return isset($_POST['ajax_submit']);
+        return isset($_POST['ajax_submit']) || ($_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest');
     }
     /** @private */
     function _locateTemplate($path){
         return $this->locateURL('template',$path);
+    }
+    function _locateJS($path){
+        return $this->locateURL('js',$path);
     }
     /** @private */
     function _locatePage($path){

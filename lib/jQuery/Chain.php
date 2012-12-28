@@ -214,7 +214,8 @@ class jQuery_Chain extends AbstractModel {
                 ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
         }
         if(@$this->debug){
-            echo "<font color='blue'>".htmlspecialchars($ret)."</font><br/>";
+            echo "<font color='blue'>".htmlspecialchars($ret).";</font><br/>";
+            $this->debug=false;
         }
         return $ret;
     }

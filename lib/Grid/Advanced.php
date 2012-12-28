@@ -42,16 +42,6 @@ class Grid_Advanced extends Grid_Basic {
     public $totals_value_na = '-';
     public $data=null;
 
-    /**
-     * Inline related property
-     * If true - TAB key submits row and activates next row
-     */
-    protected $tab_moves_down=false;
-    /**
-     * Inline related property
-     * Wether or not to show submit line
-     */
-    protected $show_submit=true;
     private $record_order=null;
 
     public $title_col=array();
@@ -533,7 +523,7 @@ class Grid_Advanced extends Grid_Basic {
         $row_data=$this->api->db->getHash($this->dq->select());
 
         // *** Initializing template ***
-        $this->precacheTemplate(false);
+        $this->precacheTemplate();
 
         // *** Rendering row ***
         $this->current_row=(array)$row_data;
@@ -629,33 +619,18 @@ class Grid_Advanced extends Grid_Basic {
         }
         $current_position=$value;
     }
-    public function setTabMovesDown($down=true){
-        $this->tab_moves_down=$down;
-        return $this;
-    }
-    public function setShowSubmit($show=true){
-        $this->show_submit=$show;
-        return $this;
-    }
     /**
-     * Sets inline properties.
-     * @param $props - hash with properties: array('tab_moves_down'=>false/true,'show_submit'=>false/true,etc)
-     *  hash keys should replicate local properties names
+     * Adds column ordering object. With it you can reorder your columns.
      */
-    public function setInlineProperties($props){
-        foreach($props as $key=>$val){
-            $this->$key=$val;
-        }
-        return $this;
-    }
     function addOrder(){
         return $this->add('Order','columns')
             ->useArray($this->columns)
             ;
     }
     /**
-     * Adds column on the basis of Model definition
-     * If $type is passed - column type is replaced by this value
+     * Adds column with checkboxes on the basis of Model definition
+     * @field - should be Form_Field object or jQuery selector of 1 field
+     * When passing it as jQuery selector don't forget hash sign like "#myfield"
      */
     function addSelectable($field){
         $this->js_widget=null;

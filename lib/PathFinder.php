@@ -65,6 +65,9 @@ class PathFinder extends AbstractController {
                     ))->setBasePath($base_directory)
             ;
 
+
+        if(method_exists($this->api,'addSharedLocations'))$this->api->addSharedLocations($this,$base_directory);
+
         // Files not found in webroot - will be looked for in library dir
         // We are assuming that we are located as atk4/lib/PathFinder.php
         $atk_directory=dirname(dirname(__FILE__));

@@ -9,26 +9,34 @@ class View_Flyout extends View {
 
     public $offset='';
 
-    function init(){
-        parent::init();
-        $this->addClass('flyout ui-widget-content ui-corner-all');
-        $this->addStyle('display','none');
-        $this->addStyle('position','absolute');
-    }
-
     function useArrow(){
         $this->offset='+10';
-        $this->add('View')->setClass('arrow '.$this->position);
+        /*
+         */
+        return $this;
     }
 
     /* Returns JS which will position this element and show it */
-    function showJS($element=null){
-        $js = $this->js()->_selectorDocument()->one('click',$this->js()->hide()->_enclose());
+    function showJS($element=null,$options=array()){
 
-        return $this->js(null, $js)->show()->position(array(
-            'my'=>'center '.$this->position.$this->offset,
-            'at'=>'center bottom',
-            'of'=>$element?:$this->owner,
-        ));
+        $this->js(true)->dialog(array(
+            'modal'=>true,
+            'dialogClass'=>'flyout',
+            'dragable'=>false,
+            'resizable'=>false,
+            'autoOpen'=>false,
+            'width'=>$options['width']?:250,
+            'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar')->remove())->click(
+                $this->js()->dialog('close')->_enclose()
+            )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
+            'position'=>$p=array(
+                'my'=>$options['my']?:'left top',
+                'at'=>$options['at']?:'left-5 bottom+5',
+                'of'=>$element?:$this->owner,
+                //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
+            )
+        ))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>');
+
+        return $this->js()->dialog('open');
     }
 }

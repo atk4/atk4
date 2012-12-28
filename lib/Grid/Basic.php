@@ -149,7 +149,6 @@ class Grid_Basic extends CompleteLister {
     }
     function precacheTemplate(){
         // pre-cache our template for row
-        // $full=false used for certain row init
         $row = $this->row_t;
         $col = $row->cloneRegion('col');
 
@@ -266,7 +265,6 @@ class Grid_Basic extends CompleteLister {
         if(!$this->totals['row_count']){
             $def_template = $this->defaultTemplate();
             $this->totals=false;
-            $this->template->del('full_table');
         }else{
             $this->template->del('not_found');
         }

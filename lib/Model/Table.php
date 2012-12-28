@@ -79,10 +79,6 @@ class Model_Table extends Model {
 
         if(!$this->db)$this->db=$this->api->db;
 
-        if($d=$_GET[$this->name.'_debug']){
-            if($d=='query')$this->debug();
-        }
-
         if($this->owner instanceof Field_Reference && $this->owner->owner->relations){
             $this->relations =& $this->owner->owner->relations;
         }
@@ -103,7 +99,7 @@ class Model_Table extends Model {
     function exception(){
         return call_user_func_array(array('parent',__FUNCTION__), func_get_args())
             ->addThis($this)
-            ->addAction('Debug this Model',array($this->name.'_debug'=>'query'));
+            ;
     }
     /** Initializes base query for this model. 
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
@@ -117,6 +113,7 @@ class Model_Table extends Model {
             $this->dsql->bt($this->id_field))
             ;
         $this->dsql->id_field = $this->id_field;
+        return $this;
     }
     /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
     function _dsql(){
@@ -292,6 +289,11 @@ class Model_Table extends Model {
         }
         return $this;
     }
+    /** Sets limit on query */
+    function setLimit($a,$b=null){
+        $this->_dsql()->limit($a,$b);
+        return $this;
+    }
     /** Sets an order on the field. Field must be properly defined */
     function setOrder($field,$desc=null){
 
@@ -394,17 +396,17 @@ class Model_Table extends Model {
         $this->api->pr->stop();
         return $a;
     }
-    /** Returs dynamic query selecting number of entries in the database */
+    /** Returns dynamic query selecting number of entries in the database */
     function count(){
-        $q=$this->dsql();
-        return $q->del('fields')->field($q->count());
+        $q = $this->dsql();
+        return $q->fieldQuery($q->count());
     }
-    /** Returs dynamic query selecting sum of particular field */
+    /** Returns dynamic query selecting sum of particular field */
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
 
-        $q=$this->dsql()->del('fields');
-        $q->field($q->expr('sum([s_field])')->setCustom('s_field',$field));
+        $q=$this->dsql();
+        $q->fieldQuery($q->expr('sum([s_field])')->setCustom('s_field',$field));
         return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */

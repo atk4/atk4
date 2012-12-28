@@ -183,7 +183,7 @@ jQuery.widget("ui.atk4_form", {
 		f.val(value).change();
 	},
 	reloadField: function(field_name,url,fn,notrigger,arg){
-		var field_id=this.id+'_'+field_name;
+		var field_id = $("#"+this.id+' [data-shortname="'+field_name+'"]').first().attr("id");
 		if(!url) url=this.form.attr('action');
         if(arg){
             $.each(arg,function(key,value){
@@ -192,6 +192,7 @@ jQuery.widget("ui.atk4_form", {
         }
 		url=$.atk4.addArgument(url,this.id+'_cut_field',field_id);
 		var f=$("#"+field_id);
+		console.log('Field found: ',field_id,'->',f);
 
 		if(!notrigger)f.trigger('reload_field');
 
