@@ -4,3 +4,4 @@
 *.bak
 *.sql.fail
 *.sql.ok
+/nbproject/private/
