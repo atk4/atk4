@@ -29,8 +29,8 @@ echo -n "$f.. "
 
 grep -q '===ATK4=' "$f" && {
 vim -e $f <<EOF
-/==ATK4===/,/===ATK4=\//-1d
-/===ATK4=\//-1r tools/header2
+/==ATK4===/,/===ATK4=\*\//-1d
+/===ATK4=\*\//-1r tools/header2
 w!
 EOF
 
