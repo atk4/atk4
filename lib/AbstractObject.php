@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/**
+/*
  * A base class for all objects/classes in Agile Toolkit.
  * Do not directly inherit from this class, instead use one of
  * AbstractModel, AbstractController or AbstractView

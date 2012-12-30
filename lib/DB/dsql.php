@@ -1,8 +1,8 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /*
- * Undocumented
+ * Implementation of SQL Qurey Abstraction Layer for Agile Toolkit
  *
- * @link http://agiletoolkit.org/
+ * @link http://agiletoolkit.org/learn/dblite
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4

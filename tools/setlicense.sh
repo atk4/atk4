@@ -29,27 +29,25 @@ echo -n "$f.. "
 
 grep -q '===ATK4=' "$f" && {
 vim -e $f <<EOF
-H
 /==ATK4===/,/===ATK4=\//-1d
 /===ATK4=\//-1r tools/header2
 w!
 EOF
 
-echo "updated"
+echo "updated1"
 continue
 
 }
 
 grep -q '\*\*ATK4\*' "$f" && {
 vim -e $f <<EOF
-H
 /\*\*ATK4\*\*\*/,/\*\*\*ATK4\*\*\//-1d
 /\*\*\*ATK4\*\*\//-1r tools/header2
 /\*\*\*ATK4\*\*\//s/.*/=====================================================ATK4=\*\//
 w!
 EOF
 
-echo "updated"
+echo "updated2"
 continue
 
 }
