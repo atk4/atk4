@@ -110,11 +110,11 @@ class Form_Field_Upload extends Form_Field {
             if($this->model){
                 try{
                     $model=$this->model;
-                    $model->set('filestore_volume_id',1);
+                    $model->set('filestore_volume_id',$model->getAvailableVolumeID());
                     $model->set('original_filename',$this->getOriginalName());
                     $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
                     $model->import($this->getFilePath());
-                    $model->update();
+                    $model->save();
                 }catch(Exception $e){
                     $this->api->logger->logCaughtException($e);
                     $this->uploadFailed($e->getMessage()); //more user friendly
