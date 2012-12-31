@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /* This controller will simply output data as it's being passed through */
 class Controller_Data_Dumper extends Controller_Data {
     public $log=array();
