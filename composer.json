@@ -1,4 +1,7 @@
 {
     "name": "atk4/atk4",
-    "version": "4.2.4"
+    "version": "4.2.4",
+    "autoload": {
+        "psr-0": {"\\", "lib/"}
+    }
 }
