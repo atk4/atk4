@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /*
- * Implementation of SQL Qurey Abstraction Layer for Agile Toolkit
+ * Implementation of SQL Query Abstraction Layer for Agile Toolkit
  *
  * @link http://agiletoolkit.org/learn/dblite
 *//*
