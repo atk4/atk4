@@ -14,9 +14,6 @@
  =====================================================ATK4=*/
 class View_Button extends View_HtmlElement {
 
-    /** @obsolete */
-    private $link=null;
-
     /** use setIcon() to change icon displayed on the button */
     private $icon=null;
 
