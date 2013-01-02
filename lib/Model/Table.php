@@ -401,6 +401,10 @@ class Model_Table extends Model {
         $q = $this->dsql();
         return $q->fieldQuery($q->count());
     }
+    /** Returns count of records */
+    function getCount(){
+       return $this->count()->getOne();
+    }
     /** Returns dynamic query selecting sum of particular field */
     function sum($field){
         if(!is_object($field))$field=$this->getElement($field);
