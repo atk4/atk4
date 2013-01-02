@@ -28,7 +28,7 @@ class View_Button extends View_HtmlElement {
     // {{ Management of button 
     /** Button management */
     function setIcon($icon, $colour='blue'){
-        // TODO: implment thorugh Icon
+        // TODO: implement through Icon
         $this->icon=$icon;
         //$this->template->set('icon',$icon);
         //$this->template->set('colour',$colour);
@@ -44,8 +44,6 @@ class View_Button extends View_HtmlElement {
     }
     function setStyle($key,$value=null){
         return parent::setStyle($key,$value);
-        //$this->style[]="$key: $value";
-        //return $this;
     }
     function setClass($class){
         $this->class=$class;
