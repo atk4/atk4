@@ -14,9 +14,6 @@
  =====================================================ATK4=*/
 class View_Button extends View_HtmlElement {
 
-    /** @obsolete */
-    private $link=null;
-
     /** use setIcon() to change icon displayed on the button */
     private $icon=null;
 
@@ -28,7 +25,7 @@ class View_Button extends View_HtmlElement {
     // {{ Management of button 
     /** Button management */
     function setIcon($icon, $colour='blue'){
-        // TODO: implment thorugh Icon
+        // TODO: implement through Icon
         $this->icon=$icon;
         //$this->template->set('icon',$icon);
         //$this->template->set('colour',$colour);
@@ -44,8 +41,6 @@ class View_Button extends View_HtmlElement {
     }
     function setStyle($key,$value=null){
         return parent::setStyle($key,$value);
-        //$this->style[]="$key: $value";
-        //return $this;
     }
     function setClass($class){
         $this->class=$class;
@@ -93,7 +88,7 @@ class View_Button extends View_HtmlElement {
     // {{{ Obsolete
     /** @obsolete */
     function setAction($js=null,$page=null){
-        throw $this->exception('setAction is not obsolete. use onClick or redirect method');
+        throw $this->exception('setAction() is now obsolete. use onClick() or redirect() method');
 
         return $this;
     }
