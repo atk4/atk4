@@ -88,7 +88,7 @@ class View_Button extends View_HtmlElement {
     // {{{ Obsolete
     /** @obsolete */
     function setAction($js=null,$page=null){
-        throw $this->exception('setAction is not obsolete. use onClick or redirect method');
+        throw $this->exception('setAction() is now obsolete. use onClick() or redirect() method');
 
         return $this;
     }
