@@ -222,7 +222,7 @@ class Form_Field_Upload extends Form_Field {
             // This is JavaScript upload. We do not want to trigger form submission event
             if($c=$this->model){
                 try {
-                    $c->loadData($id);
+                    $c->tryLoad($id);
                     $c->delete();
                     $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
                 } catch (Exception $e){
@@ -236,7 +236,7 @@ class Form_Field_Upload extends Form_Field {
             // this won't be called in post unfortunatelly, because ajaxec does not send POST data
             // This is JavaScript upload. We do not want to trigger form submission event
             if($c=$this->model){
-                $c->loadData($id);
+                $c->tryLoad($id);
                 $f=$c;
                 $mime = $f->ref('filestore_type_id')->get('mime_type');
                 $path = $f->getPath();
