@@ -29,15 +29,11 @@ $.each({
 		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
 			$.univ.page(url,fn);
 		}else{
-			document.location=url;
+			$.univ.location(url);
 		}
 	},
-	redirectURL: function(page,fn){
-		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
-			$.univ.page(page,fn);
-		}else{
-			document.location=page;
-		}
+	redirectURL: function(url,fn){
+		$.univ.redirect(url,fn);
 	},
 	location: function(url){
 		if(!url)document.location.reload(true);else
