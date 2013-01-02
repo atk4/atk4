@@ -238,7 +238,7 @@ class Form_Field_Upload extends Form_Field {
             if($c=$this->model){
                 $c->loadData($id);
                 $f=$c;
-                $mime = $f->getRef('filestore_type_id')->get('mime_type');
+                $mime = $f->ref('filestore_type_id')->get('mime_type');
                 $path = $f->getPath();
                 $name = $f->get("original_filename");
                 $len = $f->get("filesize");
