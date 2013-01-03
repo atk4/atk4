@@ -244,7 +244,10 @@ abstract class AbstractView extends AbstractObject {
                 ->addMoreInfo('object',$this->name);
         }
         if($this->model && is_object($this->model) && $this->model->loaded())$this->template->set($this->model->get());
-        $this->output($this->template->render());
+        $this->output($render=$this->template->render());
+        if (@$this->debug) {
+            echo '<font color="blue">'.htmlspecialchars($render).'</font>';
+        }
     }
     /** Low level output function which append's to the parent object's template. Normally you wouldn't want
      * to use this function but should modify $this->template instead. */
