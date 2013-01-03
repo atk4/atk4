@@ -80,7 +80,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function __toString(){
         try {
-            return $this->render();
+            return $this->getOne();
         }catch(Exception $e){
             return "Exception: ".$e->getText();
         }
