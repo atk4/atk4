@@ -251,7 +251,7 @@ abstract class Form_Field extends AbstractView {
     /** Adds asterisk to the field and validation */
     function validateNotNULL($msg=null){
         $this->setMandatory();
-        if($msg){
+        if($msg && $msg!==true){
             $msg=$this->api->_($msg);
         }else{
             $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
