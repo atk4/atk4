@@ -84,7 +84,7 @@ class Controller_Data_Memcached extends Controller_Data {
 
     function getBy($model,$field,$cond=undefined,$value=undefined){
         $data=$model->_table[$this->short_name]['db']->get($id);
-        if($data===false)throw $this->exceptoin('Unable to load data');
+        if($data===false)throw $this->exception('Unable to load data');
         return $data;
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){

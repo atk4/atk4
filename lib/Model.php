@@ -352,7 +352,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function each($callable)
     {
         if (!($this instanceof Iterator)) {
-            throw $this->exceptoin('Calling each() on non-iterative model');
+            throw $this->exception('Calling each() on non-iterative model');
         }
 
         foreach ($this as $value) {
