@@ -242,12 +242,13 @@ abstract class AbstractObject
 
         // Separate out namespace
         $class_name=str_replace('/', '\\', $class);
-        if (!class_exists($class_name, false)
+        $class_name_nodash=str_replace('-', '', $class_name);
+        if (!class_exists($class_name_nodash, false)
             && isset($this->api->pathfinder)
         ) {
             $this->api->pathfinder->loadClass($class_name);
         }
-        $element = new $class_name();
+        $element = new $class_name_nodash();
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception(
@@ -549,7 +550,7 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function debug($msg, $file = null, $line = null)
+    function debug($msg=true, $file = null, $line = null)
     {
         if ($msg===true) {
             $this->debug=true;

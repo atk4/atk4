@@ -164,14 +164,85 @@ class PathFinder extends AbstractController {
         }
         return $files;
     }
-    function loadClass($class_name){
+    function loadClass($className){
+        $origClassName = str_replace('-','',$className);
+
         /**/$this->api->pr->start('pathfinder/loadClass ');
+
+        /**/$this->api->pr->next('pathfinder/loadClass/convertpath ');
+        $className = ltrim($className, '\\');
+        $nsPath = '';
+        $namespace = '';
+        if ($lastNsPos = strripos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $nsPath  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace)
+                . DIRECTORY_SEPARATOR;
+        }
+        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className) .
+            '.php';
+
+        /**/$this->api->pr->next('pathfinder/loadClass/locate ');
+        try {
+            if ($namespace){
+                if (strpos($className,'page_')===0) {
+                    $path=$this->api->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR.$classPath
+                    );
+                } else {
+                    $path=$this->api->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR
+                        .'lib'.DIRECTORY_SEPARATOR.$classPath
+                    );
+                }
+            } else {
+                if (strpos($className,'page_')===0) {
+                    $path=$this->api->locatePath(
+                        'page',
+                        substr($classPath,5)
+                    );
+                } else {
+                    $path=$this->api->locatePath(
+                        'php',
+                        $classPath
+                    );
+                }
+            }
+        }catch(PathFinder_Exception $e){
+            $e
+                ->addMoreInfo('class',$className)
+                ->addMoreInfo('namespace',$namespace)
+                ->addMoreInfo('orig_class',$origClassName)
+                ;
+            throw $e;
+        }
+
+        if(!is_readable($path)){
+            throw new PathFinder_Exception('addon',$path,$prefix);
+        }
+
+
+        /**/$this->api->pr->next('pathfinder/loadClass/include ');
+        /**/$this->api->pr->start('php parsing');
+        include_once($path);
+        /**/$this->api->pr->stop();
+        if(!class_exists($origClassName ,false))throw $this->exception('Class is not defined in file')
+            ->addMoreInfo('file',$path)
+            ->addMoreInfo('class',$className);
+        /**/$this->api->pr->stop();
+    }
+
+
+
+
+    /*
         list($namespace,$file)=explode('\\',$class_name);
         if (!$file && $namespace){
             $file = $namespace;
             $namespace=null;
         }else $class_name_nonn=$file;
-        /**/$this->api->pr->next('pathfinder/loadClass/convertpath ');
         // Include class file directly, do not rely on auto-load functionality
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
@@ -182,27 +253,16 @@ class PathFinder extends AbstractController {
                     $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
                 }
 
-                if(!is_readable($path)){
-                    throw new PathFinder_Exception('addon',$path,$prefix);
                 }
             }else{
-                /**/$this->api->pr->next('pathfinder/loadClass/locate ');
                 if(substr($class_name,0,5)=='page_'){
                     $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
                 }else $path=$this->api->pathfinder->locate('php',$file,'path');
 
             }
 
-            /**/$this->api->pr->next('pathfinder/loadClass/include ');
-            /**/$this->api->pr->start('php parsing');
-            include_once($path);
-            /**/$this->api->pr->stop();
-            if(!class_exists($class_name))throw $this->exception('Class is not defined in file')
-                ->addMoreInfo('file',$path)
-                ->addMoreInfo('class',$class_name);
         }
-        /**/$this->api->pr->stop();
-    }
+     */
 }
 
 class PathFinder_Exception extends BaseException {
