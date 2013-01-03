@@ -23,9 +23,7 @@
  * @version     $Id$
  */
 class Form_Submit extends Button {
-    protected $label;   // absolute: TODO: remove
     public $no_save=null;
-    protected $style=array();
 
     function init(){
         parent::init();
