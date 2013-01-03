@@ -42,15 +42,6 @@ class View_Button extends View_HtmlElement {
         $this->template->set('button_style',$n);
         return $this;
     }
-    function setStyle($key,$value=null){
-        return parent::setStyle($key,$value);
-        //$this->style[]="$key: $value";
-        //return $this;
-    }
-    function setClass($class){
-        $this->class=$class;
-        return $this;
-    }
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
         $opt=$this->options;
