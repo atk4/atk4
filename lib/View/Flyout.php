@@ -25,6 +25,7 @@ class View_Flyout extends View {
     public $offset='';
 
     function useArrow(){
+        $this->addStyle('display','none');
         $this->offset='+10';
         /*
          */
