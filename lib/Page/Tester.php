@@ -101,7 +101,7 @@ class Page_Tester extends Page {
                 register_tick_function(array($this,'ticker'));
 
                 try{
-                    $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                     $ms=microtime(true)-$ms;
                     $me=($mend=memory_get_peak_usage())-$me;
 
@@ -179,7 +179,7 @@ class Page_Tester extends Page {
                 declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
                 try{
-                    $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                 }catch (Exception $e){
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
@@ -228,7 +228,7 @@ class Page_Tester extends Page {
     }
     function formatResult(&$row,$key,$result){
         $row[$key.'_res']=$result;
-        return $result;
+        return (string)$result;
     }
     function expect($value,$expectation){
         return $value==$expectation?'OK':'ERR';

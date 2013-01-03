@@ -80,9 +80,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function __toString(){
         try {
-            return $this->getOne();
+            return (string)$this->getOne();
         }catch(Exception $e){
-            return "Exception: ".$e->getText();
+            return "Exception: ".$e->getMessage();
         }
 
         return $this->toString();
@@ -320,7 +320,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         foreach($this->args['fields'] as $row){
             list($field,$table,$alias)=$row;
-            if($alias==$field)$alias=undefined;
+            if($alias===$field)$alias=undefined;
             /**/$this->api->pr->start('dsql/render/field/consume');
             $field=$this->consume($field);
             /**/$this->api->pr->stop();
