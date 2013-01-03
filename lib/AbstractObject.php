@@ -902,6 +902,29 @@ abstract class AbstractObject
     }
     // }}}
 
+
+    /**
+     * A handy shortcut for foreach(){ .. } code. Make your callable return
+     * "false" if you would like to break the loop.
+     *
+     * @param callable $callable will be executed for each member
+     *
+     * @return AbstractObject $this
+     */
+    function each($callable)
+    {
+        if (!($this instanceof Iterator)) {
+            throw $this->exceptoin('Calling each() on non-iterative model');
+        }
+
+        foreach ($this as $value) {
+            if (call_user_func($callable, $value) === false) {
+                break;
+            }
+        }
+        return $this;
+    }
+
     /**
      * Method used internally for shortening object names.
      *
