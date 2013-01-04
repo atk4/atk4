@@ -914,7 +914,7 @@ abstract class AbstractObject
     function each($callable)
     {
         if (!($this instanceof Iterator)) {
-            throw $this->exception('Calling each() on non-iterative model');
+            throw $this->exception('Calling each() on non-iterative object');
         }
 
         foreach ($this as $value) {
