@@ -52,6 +52,22 @@
      -moz-border-bottom-right-radius: @radius;
           border-bottom-right-radius: @radius;
 }
+.border-top-radius(@radius: 5px) {
+    .border-top-left-radius(@radius);
+    .border-top-right-radius(@radius);
+}
+.border-bottom-radius(@radius: 5px) {
+    .border-bottom-left-radius(@radius);
+    .border-bottom-right-radius(@radius);
+}
+.border-left-radius(@radius: 5px) {
+    .border-top-left-radius(@radius);
+    .border-bottom-left-radius(@radius);
+}
+.border-right-radius(@radius: 5px) {
+    .border-top-right-radius(@radius);
+    .border-bottom-right-radius(@radius);
+}
 
 // Drop shadows
 .box-shadow(@shadow: 0 1px 3px fadeout(@shadowColor,25%)) {
