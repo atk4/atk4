@@ -68,7 +68,7 @@ class Page_EntityManager extends Page {
         if($this->allow_delete){
             $g->addColumn('confirm','delete');
             if(@$_GET['delete']){
-                $c->loadData($_GET['delete']);
+                $c->tryLoad($_GET['delete']);
                 $c->delete();
                 $g->js(null,$g->js()->univ()->successMessage('Record deleted'))->reload()->execute();
             }
@@ -100,7 +100,7 @@ class Page_EntityManager extends Page {
             unset($f->elements['Save']);
         }
 
-        if($_GET['id'])$c->loadData($_GET['id']);
+        if($_GET['id'])$c->tryLoad($_GET['id']);
 
         if($f->isSubmitted() && !$this->read_only){
             $f->update();
