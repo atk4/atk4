@@ -80,11 +80,13 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function __toString(){
         try {
+            // when cast as string will query DB and return 1 value
             return (string)$this->getOne();
         }catch(Exception $e){
             return "Exception: ".$e->getMessage();
         }
-
+        // Do lines below ever get executed ???
+        
         return $this->toString();
 
         if($this->expr)return $this->parseTemplate($this->expr);
@@ -165,7 +167,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function useExpr($expr,$params=array()){
         $this->template=$expr;
         $this->extra_params=$params;
-        return $this;
+        return $this->render();
     }
     /** Return expression containing a properly escaped field. Use make subquery condition reference parent query */
     function getField($fld){
