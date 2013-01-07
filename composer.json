@@ -10,7 +10,7 @@
         "type": "git"
     },
     "autoload": {
-        "psr-0": {"": "atk4/lib/"},
-        "files": ["atk4/lib/static.php"]
+        "psr-0": {"": "lib/"},
+        "files": ["lib/static.php"]
     }
 }
