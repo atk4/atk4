@@ -82,7 +82,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         try {
             return (string)$this->getOne();
         }catch(Exception $e){
-            return "Exception: ".$e->getMessage();
+            $this->api->caughtException($e);
+            //return "Exception: ".$e->getMessage();
         }
 
         return $this->toString();
@@ -123,7 +124,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     function consume($dsql,$tick=true){
         if($dsql===undefined)return '';
         if($dsql===null)return '';
-        if(is_object($dsql) && $dsql instanceof Field)return $dsql->getExpr();
+        if(is_object($dsql) && $dsql instanceof Field){
+            $dsql=$dsql->getExpr();
+        }
         if(!is_object($dsql) || !$dsql instanceof DB_dsql)return $tick?$this->bt($dsql):$dsql;
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
@@ -316,6 +319,9 @@ class DB_dsql extends AbstractModel implements Iterator {
         $result=array();
         if(!$this->args['fields']){
             //if($this->main_table)return '*.'.$this->main_table;
+            if($this->default_field instanceof DB_dsql){
+                return $this->consume($this->default_field);
+            }
             return (string)$this->default_field;
         }
         foreach($this->args['fields'] as $row){
