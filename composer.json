@@ -1,7 +1,16 @@
 {
     "name": "atk4/atk4",
-    "version": "4.2.4",
+    "version": "4.2.3",
+    "dist": {
+        "url": "http://agiletoolkit.org/distfiles/agiletoolkit-4.2.3.zip",
+        "type": "zip"
+    },
+    "source": {
+        "url": "git@github.com:atk4/atk4.git",
+        "type": "git"
+    },
     "autoload": {
-        "psr-0": {"\\": "lib/"}
+        "psr-0": {"": "atk4/lib/"},
+        "files": ["atk4/lib/static.php"]
     }
 }
