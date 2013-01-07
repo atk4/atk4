@@ -58,6 +58,9 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** prefix for all parameteric variables: a, a_2, a_3, etc */
     public $param_base='a';
 
+    /** When you convert this object to string, the following happens: */
+    public $output_mode='getOne';
+
     public $sql_templates=array(
         'select'=>"select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]",
         'insert'=>"insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])",
@@ -80,7 +83,11 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
     function __toString(){
         try {
-            return (string)$this->getOne();
+            if($this->output_mode=='render'){
+                return $this->render();
+            }else{
+                return (string)$this->getOne();
+            }
         }catch(Exception $e){
             $this->api->caughtException($e);
             //return "Exception: ".$e->getMessage();
@@ -168,6 +175,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function useExpr($expr,$params=array()){
         $this->template=$expr;
         $this->extra_params=$params;
+        $this->output_mode='render';
         return $this;
     }
     /** Return expression containing a properly escaped field. Use make subquery condition reference parent query */
