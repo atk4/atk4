@@ -7,10 +7,11 @@
     },
     "source": {
         "url": "git@github.com:atk4/atk4.git",
-        "type": "git"
+        "type": "git",
+        "reference": "tags/atk4/distribution/"
     },
     "autoload": {
         "psr-0": {"": "lib/"},
-        "files": ["lib/static.php"]
+        "files": ["/lib/static.php"]
     }
 }
