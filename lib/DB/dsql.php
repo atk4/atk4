@@ -73,19 +73,22 @@ class DB_dsql extends AbstractModel implements Iterator {
     public $id_field;
 
     // {{{ Generic stuff
-    function _unique(&$array,$desired=null){
-        $desired=preg_replace('/[^a-zA-Z0-9:]/','_',$desired);
-        $desired=parent::_unique($array,$desired);
+    function _unique(&$array,$desired=null)
+    {
+        $desired=preg_replace('/[^a-zA-Z0-9:]/', '_', $desired);
+        $desired=parent::_unique($array, $desired);
         return $desired;
     }
-    function __clone(){
+    function __clone()
+    {
         $this->stmt=null;
     }
-    function __toString(){
+    function __toString()
+    {
         try {
-            if($this->output_mode=='render'){
+            if ($this->output_mode=='render') {
                 return $this->render();
-            }else{
+            } else {
                 return (string)$this->getOne();
             }
         }catch(Exception $e){
@@ -98,22 +101,52 @@ class DB_dsql extends AbstractModel implements Iterator {
         if($this->expr)return $this->parseTemplate($this->expr);
         return $this->select();
     }
-    /** Explicitly sets template to your query. Remember to change $this->mode if you switch this */
-    function template($template){
+    /** 
+     * Explicitly sets template to your query. Remember to change 
+     * $this->mode if you switch this
+     *
+     * @param string $template New template to use by render
+     *
+     * @return DB_dsql $this
+     */
+    function template($template)
+    {
         $this->template=$template;
         return $this;
     }
-    /** Change prefix for parametric values. Useful if you are combining multiple queries. */
-    function paramBase($param_base){
+
+    /** 
+     * Change prefix for parametric values. Not really useful.
+     *
+     * @param string $param_base prefix to use for param names
+     *
+     * @return DB_dsql $this
+     */
+    function paramBase($param_base)
+    {
         $this->param_base=$param_base;
         return $this;
     }
-    /** Create new dsql object which can then be used as sub-query. */
-    function dsql(){
+
+    /** 
+     * Create new dsql object linked with the same database connection and
+     * bearing same data-type. You can use this method to create sub-queries.
+     *
+     * @return DB_dsql Empty query for same database
+     */
+    function dsql()
+    {
         return $this->owner->dsql(get_class($this));
     }
-    /** Converts value into parameter and returns reference. Use only during query rendering. */
-    function escape($val){
+
+    /**
+     * Converts value into parameter and returns reference. Use only during
+     * query rendering. Consider using `consume()` instead.
+     *
+     * @param string $val String literal containing input data
+     */
+    function escape($val)
+    {
         if($val===undefined)return '';
         if(is_array($val)){
             $out=array();
@@ -128,7 +161,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $name;
     }
     /** Recursively renders sub-query or expression, combining parameters */
-    function consume($dsql,$tick=true){
+    function consume($dsql,$tick=true)
+    {
         if($dsql===undefined)return '';
         if($dsql===null)return '';
         if(is_object($dsql) && $dsql instanceof Field){
@@ -142,17 +176,20 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $ret;
     }
     /** Defines a custom template variable. WARNING: always backtick / escape argument */
-    function setCustom($template,$value){
+    function setCustom($template,$value)
+    {
         $this->args['custom'][$template]=$value;
         return $this;
     }
     /** Removes definition for argument. $q->del('where'), $q->del('fields') etc. */
-    function del($args){
+    function del($args)
+    {
         $this->args[$args]=array();
         return $this;
     }
     /** Removes all definitions. Start from scratch */
-    function reset(){
+    function reset()
+    {
         $this->args=array();
     }
     // }}}
