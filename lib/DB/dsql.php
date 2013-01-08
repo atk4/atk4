@@ -1023,7 +1023,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             list($arg,$desc)=$tmp;
             $x[]=$this->consume($arg).($desc?(' '.$desc):'');
         }
-        return 'order by '.implode(', ', $x);
+        return 'order by '.implode(', ', array_reverse($x));
     }
     // }}}
     // {{{ option() and args()
