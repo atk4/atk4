@@ -19,7 +19,8 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-define('undefined','_atk4_undefined_value');
+define('undefined', '_atk4_undefined_value');
+define('UNDEFINED', '_atk4_undefined_value');
 
 if(!function_exists('lowlevel_error')){
     function lowlevel_error($error,$lev=null){
