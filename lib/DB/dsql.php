@@ -1010,6 +1010,9 @@ class DB_dsql extends AbstractModel implements Iterator {
             $this->args['order'][0] === array($order,$desc))) {
         }
          */
+        if (!is_array($this->args['order'])) {
+            $this->args['order']=array();
+        }
         array_unshift($this->args['order'], array($order,$desc));
         return $this;
     }
