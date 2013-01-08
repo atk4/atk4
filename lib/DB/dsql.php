@@ -1004,7 +1004,13 @@ class DB_dsql extends AbstractModel implements Iterator {
                 ->addMoreInfo('order by', $desc);
         }
 
-        $this->args['order'][]=array($order,$desc);
+        // TODO:
+        /*
+        if (isset($this->args['order'][0]) and (
+            $this->args['order'][0] === array($order,$desc))) {
+        }
+         */
+        array_unshift($this->args['order'], array($order,$desc));
         return $this;
     }
 
@@ -1023,7 +1029,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             list($arg,$desc)=$tmp;
             $x[]=$this->consume($arg).($desc?(' '.$desc):'');
         }
-        return 'order by '.implode(', ', array_reverse($x));
+        return 'order by '.implode(', ', $x);
     }
     // }}}
     // {{{ option() and args()
