@@ -980,7 +980,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                     'If first argument is array, second argument must not be used'
                 );
             }
-            foreach ($order as $o) {
+            foreach (array_reverse($order) as $o) {
                 $this->order($o);
             }
             return $this;
@@ -1010,10 +1010,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             $this->args['order'][0] === array($order,$desc))) {
         }
          */
-        if (!is_array($this->args['order'])) {
-            $this->args['order']=array();
-        }
-        array_unshift($this->args['order'], array($order,$desc));
+        $this->args['order'][]=array($order,$desc);
         return $this;
     }
 
