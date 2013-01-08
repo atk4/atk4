@@ -310,7 +310,7 @@ class Model_Table extends Model {
                 if(!is_null($desc))
                     throw $this->exception('If first argument is array, second argument must not be used');
 
-                foreach($field as $o)$this->setOrder($o);
+                foreach(array_reverse($field) as $o)$this->setOrder($o);
                 return $this;
             }
 
