@@ -8,7 +8,7 @@
     "source": {
         "url": "git@github.com:atk4/atk4.git",
         "type": "git",
-        "reference": "tags/atk4/distribution/"
+        "reference": "origin/master"
     },
     "autoload": {
         "psr-0": {"": "lib/"},
