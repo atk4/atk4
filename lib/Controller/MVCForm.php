@@ -42,24 +42,24 @@ class Controller_MVCForm extends AbstractController {
     public $field_associations=array();
 
     public $type_associations=array(
-        'string'=>'line',
-        'text'=>'text',
-        'int'=>'line',
-        'numeric'=>'line',
-        'money'=>'line',
-        'real'=>'line',
+        'string'=>'Line',
+        'text'=>'Text',
+        'int'=>'Line',
+        'numeric'=>'Line',
+        'money'=>'Line',
+        'real'=>'Line',
         'date'=>'DatePicker',
         'datetime'=>'DatePicker',
         'daytime'=>'timepickr',
-        'boolean'=>'checkbox',
-        'reference'=>'readonly',
-        'reference_id'=>'dropdown',
-        'password'=>'password',
-        'list'=>'dropdown',
+        'boolean'=>'Checkbox',
+        'reference'=>'Readonly',
+        'reference_id'=>'Dropdown',
+        'password'=>'Password',
+        'list'=>'Dropdown',
         'radio'=>'Radio',
-        'readonly'=>'readonly',
-        'image'=>'image',
-        'file'=>'upload',
+        'readonly'=>'Readonly',
+        'image'=>'Image',
+        'file'=>'Upload',
     );
     function setActualFields($fields){
         $this->importFields($this->owner->model,$fields);
