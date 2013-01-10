@@ -18,7 +18,7 @@ class SQL_Relation extends AbstractModel {
     public $f1=null;            // Foreign Table (actual name)
     // short_name = Foreign alias
 
-    public $t=null;             // Join kind
+    public $t=null;             // Join kind (inner|left|right|full)
 
     public $expr=null;          // Using expression when joining
 
@@ -56,6 +56,7 @@ class SQL_Relation extends AbstractModel {
     // TODO: hasMany()
 
     function set($foreign_table,$master_field=null,$join_kind=null,$relation=null){
+        $join_types = array('inner','left','right','full');
 
         $this->relation=$relation;
 
@@ -81,7 +82,7 @@ class SQL_Relation extends AbstractModel {
         if(is_null($f2))$f2='id';
         $this->f2=$f2;
 
-        $this->t=$join_kind?:'inner';
+        $this->t=in_array($join_kind=strtolower($join_kind),$join_types)?$join_kind:'inner';
         $this->fa=$this->short_name;
 
         // Use the real ID field as defined by the model as default
