@@ -18,7 +18,7 @@ class SQL_Relation extends AbstractModel {
     public $f1=null;            // Foreign Table (actual name)
     // short_name = Foreign alias
 
-    public $t=null;             // Join kind (inner|left|right|full)
+    public $t=null;             // Join kind (left|right|inner|cross etc.)
 
     public $expr=null;          // Using expression when joining
 
