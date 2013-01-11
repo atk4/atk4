@@ -56,7 +56,13 @@ class SQL_Relation extends AbstractModel {
     // TODO: hasMany()
 
     function set($foreign_table,$master_field=null,$join_kind=null,$relation=null){
-        $join_types = array('inner','left','right','full');
+        // http://dev.mysql.com/doc/refman/5.0/en/join.html
+        $join_types = array('left','right','inner','cross','natural','left outer','right outer','natural left','natural right','natural left outer','natural right outer');
+        if($join_kind && !in_array(strtolower($join_kind),$join_types)) {
+            throw $this->exception('Specify reasonable SQL join type such as inner, left, right, cross etc.')
+                ->addMoreInfo('Specified join type',$join_kind)
+                ->addMoreInfo('Allowed join types',implode(', ',$join_types));
+        }
 
         $this->relation=$relation;
 
@@ -82,7 +88,7 @@ class SQL_Relation extends AbstractModel {
         if(is_null($f2))$f2='id';
         $this->f2=$f2;
 
-        $this->t=in_array($join_kind=strtolower($join_kind),$join_types)?$join_kind:'inner';
+        $this->t=$join_kind;
         $this->fa=$this->short_name;
 
         // Use the real ID field as defined by the model as default
