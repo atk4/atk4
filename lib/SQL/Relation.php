@@ -18,7 +18,7 @@ class SQL_Relation extends AbstractModel {
     public $f1=null;            // Foreign Table (actual name)
     // short_name = Foreign alias
 
-    public $t=null;             // Join kind
+    public $t=null;             // Join kind (left|right|inner|cross etc.)
 
     public $expr=null;          // Using expression when joining
 
@@ -56,6 +56,13 @@ class SQL_Relation extends AbstractModel {
     // TODO: hasMany()
 
     function set($foreign_table,$master_field=null,$join_kind=null,$relation=null){
+        // http://dev.mysql.com/doc/refman/5.0/en/join.html
+        $join_types = array('left','right','inner','cross','natural','left outer','right outer','natural left','natural right','natural left outer','natural right outer');
+        if($join_kind && !in_array(strtolower($join_kind),$join_types)) {
+            throw $this->exception('Specify reasonable SQL join type.')
+                ->addMoreInfo('Specified',$join_kind)
+                ->addMoreInfo('Allowed',implode(', ',$join_types));
+        }
 
         $this->relation=$relation;
 
