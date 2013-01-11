@@ -382,7 +382,7 @@ class Form_Basic extends View {
     function setLayout($template){
         // Instead of building our own Content we will take it from
         // pre-defined template and insert fields into there
-        $this->template_chunks['custom_layout']=$this->add('SMLite')->loadTemplate($template);
+        $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
         $this->template_chunks['custom_layout']->trySet('_name',$this->name);
         $this->template->trySet('form_class_layout',$c='form_'.basename($template));
         return $this;
