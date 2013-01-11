@@ -9,13 +9,14 @@
  */
 /*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class ApiCLI extends AbstractView {
 
@@ -51,6 +52,8 @@ class ApiCLI extends AbstractView {
 
     /** Contains list of hashes which used for name shortening */
     public $unique_hashes=array();
+
+    public $logger_class='Logger';
 
     // {{{ Start-up of application
     /** Initializes properties of the application. Redefine init() instead of this */
@@ -158,9 +161,9 @@ class ApiCLI extends AbstractView {
 
     // {{{ Error handling
     /** Initialize logger or return existing one */
-    function getLogger($class_name='Logger'){
+    function getLogger($class_name=undefined){
         if(is_null($this->logger)){
-            $this->logger=$this->add($class_name);
+            $this->logger=$this->add($class_name===undefined?$this->logger_class:$class_name);
         }
         return $this->logger;
     }
@@ -246,7 +249,9 @@ class ApiCLI extends AbstractView {
     }
     /** Manually set configuration option */
     function setConfig($config=array()){
-        $this->config=safe_array_merge($this->config,$config);
+        if(!$config)$config=array();
+        if(!$this->config)$this->config=array();
+        $this->config=array_merge($this->config,$config);
     }
     /** Load config if necessary and look up corresponding setting */
     function getConfig($path, $default_value = undefined){

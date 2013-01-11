@@ -7,5 +7,3 @@ if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 }
 
 include 'static.php';
-//include dirname(__FILE__).DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'static.php';
-?>

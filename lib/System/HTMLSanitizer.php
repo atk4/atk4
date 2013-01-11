@@ -5,23 +5,16 @@
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 /*
    After looking at many HTML sanitization classes, I believe they are still missing the point
    and trying to duplicate functionality. The HTML we receive is almost as good as XML. In fact

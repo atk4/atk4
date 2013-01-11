@@ -9,13 +9,14 @@
   Reference:
 *//*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class BaseException extends Exception {
     // Exception defines it's methods as "final", which is complete nonsence
@@ -33,32 +34,12 @@ class BaseException extends Exception {
     public $actions;
     function init(){
     }
-    function __construct($msg,$func=null,$shift=1,$code=0){
+    function __construct($msg,$code=0){
         parent::__construct($msg,$code);
-        $this->collectBasicData($func,$shift,$code);
+        $this->collectBasicData($code);
     }
-    function collectBasicData($func,$shift,$code){
+    function collectBasicData($code){
         $this->name=get_class($this);
-        $this->frame_stop=$func;
-        $this->shift=$shift;
-
-        if(is_int($func)){
-            $shift=$func;$func=null;
-        }
-
-        $tr=debug_backtrace();
-        if(!isset($this->frame_stop)){
-            $this->my_backtrace=$tr;
-            return;
-        }
-
-        while($tr[0] && $tr[0]['function']!=$this->frame_stop){
-            array_shift($tr);
-        }
-        if($tr){
-            $this->my_backtrace=$tr;
-            return;
-        }
         $this->my_backtrace = debug_backtrace();
     }
     /** Call this to add additional information to the exception you are about to throw */
@@ -82,8 +63,8 @@ class BaseException extends Exception {
     function getAdditionalMessage(){
         return '';
     }
-    function getMyFile(){ return $this->my_backtrace[$this->shift]['file']; }
-    function getMyLine(){ return $this->my_backtrace[$this->shift]['line']; }
+    function getMyFile(){ return $this->my_backtrace[2]['file']; }
+    function getMyLine(){ return $this->my_backtrace[2]['line']; }
 
     /** Returns HTML representation of the exception */
     function getHTML($message=null){

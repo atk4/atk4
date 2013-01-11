@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  * Implementation of abstract form's field
  *
@@ -56,10 +71,10 @@ abstract class Form_Field extends AbstractView {
         $this->recursiveRender();
         if($this->api->jquery)$this->api->jquery->getJS($this);
         throw new Exception_StopRender(
-                $this->template->renderRegion($this->template->tags['before_field']).
-                $this->getInput().
-                $this->template->renderRegion($this->template->tags['after_field'])
-                );
+            $this->template->renderRegion($this->template->tags['before_field']).
+            $this->getInput().
+            $this->template->renderRegion($this->template->tags['after_field'])
+        );
     }
     function setMandatory($mandatory=true){
         $this->mandatory=$mandatory;
@@ -73,14 +88,14 @@ abstract class Form_Field extends AbstractView {
         return $this->mandatory;
     }
     function setCaption($_caption){
-        $this->caption=$_caption;
+        $this->caption=$this->api->_($_caption);
         return $this;
     }
     function displayFieldError($msg=null){
         if(!isset($msg))$msg='Error in field "'.$this->caption.'"';
 
         $this->form->js(true)
-            ->atk4_form('fieldError',$this->name,$msg)
+            ->atk4_form('fieldError',$this->short_name,$msg)
             ->execute();
 
         $this->form->errors[$this->short_name]=$msg;
@@ -107,11 +122,17 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     /** Position can be either 'before' or 'after' */
-    function addButton($label,$position='after'){
-        if($position=='after'){
-            return $this->afterField()->add('Button')->set($label);
+    function addButton($label,$options=array()){
+        $position='after';
+        if(is_string($options)){
+            $position=$options;
         }else{
-            return $this->beforeField()->add('Button')->set($label);
+            if(isset($options['position']))$position=$options['position'];
+        }
+        if($position=='after'){
+            return $this->afterField()->add('Button',$options)->setLabel($label);
+        }else{
+            return $this->beforeField()->add('Button',$options)->setLabel($label);
         }
         return $this;
     }
@@ -206,7 +227,7 @@ abstract class Form_Field extends AbstractView {
         $ret=call_user_func($condition,$this);
 
         if($ret===false){
-            if(is_null($msg))$msg='Error in '.$this->caption;
+            if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
             $this->displayFieldError($msg);
         }elseif(is_string($ret)){
             $this->displayFieldError($ret);
@@ -214,13 +235,13 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     /** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
-      * $msg or a standard error message about field being incorrect */
+     * $msg or a standard error message about field being incorrect */
     function validateField($condition,$msg=null){
         if(is_callable($condition)){
             $this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
         }else{
             $this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
-                        ($msg?$msg:'Error in ".$this->caption."').'");');
+                ($msg?$msg:'Error in ".$this->caption."').'");');
         }
         return $this;
     }
@@ -230,7 +251,7 @@ abstract class Form_Field extends AbstractView {
     /** Adds asterisk to the field and validation */
     function validateNotNULL($msg=null){
         $this->setMandatory();
-        if($msg){
+        if($msg && $msg!==true){
             $msg=$this->api->_($msg);
         }else{
             $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
@@ -239,10 +260,6 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     /** obsolete version of validateNotNULL */
-    function setNotNull($msg=''){
-        $this->validateNotNULL($msg);
-        return $this;
-    }
     function setDefault($default=null){
         /* OBSOLETE 4.1, use set() */
         $this->default_value=$default;
@@ -252,13 +269,13 @@ abstract class Form_Field extends AbstractView {
         /* OBSOLETE 4.1, use set() */
         return $this->default_value;
     }
-
     function getInput($attr=array()){
         // This function returns HTML tag for the input field. Derived classes should inherit this and add
         // new properties if needed
         return $this->getTag('input',
                 array_merge(array(
                         'name'=>$this->name,
+                        'data-shortname'=>$this->short_name,
                         'id'=>$this->name,
                         'value'=>$this->value,
                         ),$attr,$this->attr)
@@ -296,7 +313,6 @@ abstract class Form_Field extends AbstractView {
         }
         $this->output($this->template->render());
     }
-
     function getTag($tag, $attr=null, $value=null){
         /**
          * Draw HTML attribute with supplied attributes.
@@ -476,11 +492,10 @@ class Form_Field_Readonly extends Form_Field {
     }
 
     function getInput($attr=array()){
-        if (isset($this->value_list)){
-            return $this->value_list[$this->value];
-        } else {
-            return $this->value;
-        }
+        return nl2br(isset($this->value_list) ? $this->value_list[$this->value] : $this->value);
+    }
+    function loadPOST(){
+        // do nothing, readonly field
     }
     function setValueList($list){
         $this->value_list = $list;

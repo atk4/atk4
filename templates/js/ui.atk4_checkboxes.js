@@ -43,6 +43,18 @@ $.widget("ui.atk4_checkboxes", {
 		$(c).children().not('.ui-selected').find('input').removeAttr('checked',true);
 		this.recalc();
 	},
+	select_all: function(){
+		this.element.find('tbody tr').not('.ui-selected')
+			.addClass('ui-selected')
+			.find('input[type="checkbox"]').attr('checked',true);
+		this.recalc();
+	},
+	unselect_all: function(){
+		this.element.find('tbody tr.ui-selected')
+			.removeClass('ui-selected')
+			.find('input[type="checkbox"]').removeAttr('checked');
+		this.recalc();
+	},
 	recalc: function(){
 		var r=[];
 		this.element.find('input:checked').each(function(){

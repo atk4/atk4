@@ -7,13 +7,14 @@
  * @link http://agiletoolkit.org/learn/template
 *//*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Paginator_Compat extends AbstractView {
     /*
@@ -42,7 +43,7 @@ class Paginator_Compat extends AbstractView {
         $this->skip=$this->learn('skip',
                 @$_GET[$this->name.'_skip'])+0;
 
-        $this->api->addHook('pre-exec',array($this,'applyHook'), 1);
+        $this->api->addHook('pre-exec',array($this,'applyHook'), array(), 1);
     }
     function applyHook(){
         if(isset($this->owner->dq)){

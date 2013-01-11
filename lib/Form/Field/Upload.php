@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  *
  * This class is for uploading files. It supports 3 types of upload:
@@ -95,11 +110,11 @@ class Form_Field_Upload extends Form_Field {
             if($this->model){
                 try{
                     $model=$this->model;
-                    $model->set('filestore_volume_id',1);
+                    $model->set('filestore_volume_id',$model->getAvailableVolumeID());
                     $model->set('original_filename',$this->getOriginalName());
                     $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
                     $model->import($this->getFilePath());
-                    $model->update();
+                    $model->save();
                 }catch(Exception $e){
                     $this->api->logger->logCaughtException($e);
                     $this->uploadFailed($e->getMessage()); //more user friendly
@@ -207,7 +222,7 @@ class Form_Field_Upload extends Form_Field {
             // This is JavaScript upload. We do not want to trigger form submission event
             if($c=$this->model){
                 try {
-                    $c->loadData($id);
+                    $c->tryLoad($id);
                     $c->delete();
                     $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
                 } catch (Exception $e){
@@ -221,9 +236,9 @@ class Form_Field_Upload extends Form_Field {
             // this won't be called in post unfortunatelly, because ajaxec does not send POST data
             // This is JavaScript upload. We do not want to trigger form submission event
             if($c=$this->model){
-                $c->loadData($id);
+                $c->tryLoad($id);
                 $f=$c;
-                $mime = $f->getRef('filestore_type_id')->get('mime_type');
+                $mime = $f->ref('filestore_type_id')->get('mime_type');
                 $path = $f->getPath();
                 $name = $f->get("original_filename");
                 $len = $f->get("filesize");

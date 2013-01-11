@@ -5,23 +5,16 @@
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 class Page_EntityManager extends Page {
     public $controller=null;
     public $model=null;
@@ -75,7 +68,7 @@ class Page_EntityManager extends Page {
         if($this->allow_delete){
             $g->addColumn('confirm','delete');
             if(@$_GET['delete']){
-                $c->loadData($_GET['delete']);
+                $c->tryLoad($_GET['delete']);
                 $c->delete();
                 $g->js(null,$g->js()->univ()->successMessage('Record deleted'))->reload()->execute();
             }
@@ -107,7 +100,7 @@ class Page_EntityManager extends Page {
             unset($f->elements['Save']);
         }
 
-        if($_GET['id'])$c->loadData($_GET['id']);
+        if($_GET['id'])$c->tryLoad($_GET['id']);
 
         if($f->isSubmitted() && !$this->read_only){
             $f->update();

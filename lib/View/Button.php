@@ -3,21 +3,21 @@
   Implements a simple button 
 *//*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class View_Button extends View_HtmlElement {
 
-    /** @obsolete */
-    private $link=null;
-
     /** use setIcon() to change icon displayed on the button */
     private $icon=null;
+
+    public $options=array();
     function defaultTemplate(){
         return array('button','button');
     }
@@ -25,33 +25,24 @@ class View_Button extends View_HtmlElement {
     // {{ Management of button 
     /** Button management */
     function setIcon($icon, $colour='blue'){
-        // TODO: implment thorugh Icon
+        // TODO: implement through Icon
         $this->icon=$icon;
         //$this->template->set('icon',$icon);
         //$this->template->set('colour',$colour);
         return $this;
     }
     function setLabel($label){
-        return $this->setText($label);
+        return $this->setText($this->api->_($label));
     }
     /** Adds CSS of the news  */
     function setButtonStyle($n){
         $this->template->set('button_style',$n);
         return $this;
     }
-    function setStyle($key,$value=null){
-        return parent::setStyle($key,$value);
-        //$this->style[]="$key: $value";
-        //return $this;
-    }
-    function setClass($class){
-        $this->class=$class;
-        return $this;
-    }
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
-        $opt=array();
-        if($this->icon)$opt['icons']['primary']='ui-icon-'.$this->icon;
+        $opt=$this->options;
+        if($this->icon)$opt['icons']['primary']=$this->icon;
         if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
     }
     function render(){
@@ -90,7 +81,7 @@ class View_Button extends View_HtmlElement {
     // {{{ Obsolete
     /** @obsolete */
     function setAction($js=null,$page=null){
-        throw $this->exception('setAction is not obsolete. use onClick or redirect method');
+        throw $this->exception('setAction() is now obsolete. use onClick() or redirect() method');
 
         return $this;
     }

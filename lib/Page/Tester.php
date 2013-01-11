@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /** Tester page is a basic implementation of a testing environment for Agile Toolkit.
     See Documentation for testing */
 class Page_Tester extends Page {
@@ -82,11 +97,11 @@ class Page_Tester extends Page {
                 $ms=microtime(true);
 
                 $this->cnt=0;
-                declare(ticks=10);
+                declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
 
                 try{
-                    $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                     $ms=microtime(true)-$ms;
                     $me=($mend=memory_get_peak_usage())-$me;
 
@@ -107,7 +122,7 @@ class Page_Tester extends Page {
 
                 unregister_tick_function(array($this,'ticker'));
 
-                $speed+=$this->cnt*10;
+                $speed+=$this->cnt*1;
                 $memory+=$me;
             }
         }
@@ -161,10 +176,10 @@ class Page_Tester extends Page {
                 $me=memory_get_peak_usage();
                 $ms=microtime(true);
                 $this->cnt=0;
-                declare(ticks=10);
+                declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
                 try{
-                    $result=(string)$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                 }catch (Exception $e){
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
@@ -176,7 +191,7 @@ class Page_Tester extends Page {
                         $e->getText():
                         $e->getMessage());
 
-                    $ll=$this->add('P');
+                    $ll=$this->add('P',$row['name']);
                     $v=$ll->add('View')
                         ->setElement('a')
                         ->setAttr('href','#')
@@ -191,7 +206,7 @@ class Page_Tester extends Page {
                 $me=($mend=memory_get_peak_usage())-$me;
                 unregister_tick_function(array($this,'ticker'));
 
-                $row[$key.'_inf']='Ticks: '.($this->cnt*10).'<br/>Memory: '.$me;
+                $row[$key.'_inf']='Ticks: '.($this->cnt*1).'<br/>Memory: '.$me;
 
                 $result=$this->formatResult($row,$key,$result);
 
@@ -213,7 +228,7 @@ class Page_Tester extends Page {
     }
     function formatResult(&$row,$key,$result){
         $row[$key.'_res']=$result;
-        return $result;
+        return (string)$result;
     }
     function expect($value,$expectation){
         return $value==$expectation?'OK':'ERR';

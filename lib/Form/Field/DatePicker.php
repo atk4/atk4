@@ -5,23 +5,16 @@
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 /**
  * Text input with Javascript Date picker
  * It draws date in locale format (taken from $config['locale']['date'] setting) and stores it in
@@ -31,9 +24,9 @@ class Form_Field_DatePicker extends Form_Field_Line {
     public $options=array();
     function init(){
         parent::init();
-        $this->addButton('')
+        $this->addButton('',array('options'=>array('text'=>false)))
             ->setHtml('&nbsp;')
-            ->setIcon('calendar')
+            ->setIcon('ui-icon-calendar')
             ->js('click',$this->js()->datepicker('show'));
 
     }
@@ -59,7 +52,7 @@ class Form_Field_DatePicker extends Form_Field_Line {
     }
     function set($value){
         // value can be valid date format, as in config['locale']['date']
-        if(!$value)return parent::set($value);
+        if(!$value)return parent::set(null);
         @list($d,$m,$y)=explode('/',$value);
         if($y)$value=join('/',array($m,$d,$y));
         elseif($m)$value=join('/',array($m,$d));

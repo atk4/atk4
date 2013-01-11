@@ -9,16 +9,18 @@
  */
 /*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-define('undefined','_atk4_undefined_value');
+define('undefined', '_atk4_undefined_value');
+define('UNDEFINED', '_atk4_undefined_value');
 
 if(!function_exists('lowlevel_error')){
     function lowlevel_error($error,$lev=null){
@@ -86,14 +88,6 @@ if(!function_exists('lowlevel_error')){
 echo $e->getMessage()."<br>\n";
 }
      */
-};if(!function_exists('safe_array_merge')){
-    // array_merge gives us an error when one of arguments is null. This function
-    // acts the same as array_merge, but without warnings
-    function safe_array_merge($a,$b=null){
-        if(is_null($a))return $b;
-        if(is_null($b))return $a;
-        return array_merge($a,$b);
-    }
 };if(!function_exists('hash_filter')){
     // array_merge gives us an error when one of arguments is null. This function
     // acts the same as array_merge, but without warnings
@@ -157,8 +151,4 @@ echo $e->getMessage()."<br>\n";
     function htmlentities_utf8($string, $quote_style = ENT_COMPAT, $charset='UTF-8'){
         return htmlentities($string,$quote_style,$charset);
     }
-};if(!function_exists('__')){
-    function __($string){
-        return $string;
-    }
-}
+};

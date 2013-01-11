@@ -1,36 +1,26 @@
 <?php
-/***********************************************************
-  ..
+/*
+  PathFinder will help you to maintain consistent structure of files. This
+  controller is used by many other parts of Agile Toolkit
+
+  PathFinder concerns itself only with relative paths. It relies on PageManager
+  ($api->pm) to convert relative paths into absolute.
 
   Reference:
   http://agiletoolkit.org/doc/ref
 
- **ATK4*****************************************************
- This file is part of Agile Toolkit 4 
- http://agiletoolkit.org
+  *//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
 
- (c) 2008-2011 Agile Technologies Ireland Limited
- Distributed under Affero General Public License v3
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
 
- If you are using this file in YOUR web software, you
- must make your make source code for YOUR web software
- public.
-
- See LICENSE.txt for more information
-
- You can obtain non-public copy of Agile Toolkit 4 at
- http://agiletoolkit.org/commercial
-
- *****************************************************ATK4**/
+   See LICENSE or LICENSE_COM for more information
+=====================================================ATK4=*/
 class PathFinder extends AbstractController {
-    /*
-       PathFinder will help you to maintain consistent structure of files. This
-       controller is used by many other parts of Agile Toolkit
-
-       PathFinder concerns itself only with relative paths. It relies on PageManager
-       ($api->pm) to convert relative paths into absolute.
-     */
-
     public $base_location=null;
     // Object referencing base location. You might want to add more content here
 
@@ -71,9 +61,12 @@ class PathFinder extends AbstractController {
                     'js'=>'templates/js',
                     'banners'=>'banners',
                     'logs'=>'logs',
-                    'dbupdates'=>'docs/dbupdates',
+                    'dbupdates'=>'doc/dbupdates',
                     ))->setBasePath($base_directory)
             ;
+
+
+        if(method_exists($this->api,'addSharedLocations'))$this->api->addSharedLocations($this,$base_directory);
 
         // Files not found in webroot - will be looked for in library dir
         // We are assuming that we are located as atk4/lib/PathFinder.php
@@ -171,14 +164,85 @@ class PathFinder extends AbstractController {
         }
         return $files;
     }
-    function loadClass($class_name){
+    function loadClass($className){
+        $origClassName = str_replace('-','',$className);
+
         /**/$this->api->pr->start('pathfinder/loadClass ');
+
+        /**/$this->api->pr->next('pathfinder/loadClass/convertpath ');
+        $className = ltrim($className, '\\');
+        $nsPath = '';
+        $namespace = '';
+        if ($lastNsPos = strripos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $nsPath  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace)
+                . DIRECTORY_SEPARATOR;
+        }
+        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className) .
+            '.php';
+
+        /**/$this->api->pr->next('pathfinder/loadClass/locate ');
+        try {
+            if ($namespace){
+                if (strpos($className,'page_')===0) {
+                    $path=$this->api->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR.$classPath
+                    );
+                } else {
+                    $path=$this->api->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR
+                        .'lib'.DIRECTORY_SEPARATOR.$classPath
+                    );
+                }
+            } else {
+                if (strpos($className,'page_')===0) {
+                    $path=$this->api->locatePath(
+                        'page',
+                        substr($classPath,5)
+                    );
+                } else {
+                    $path=$this->api->locatePath(
+                        'php',
+                        $classPath
+                    );
+                }
+            }
+        }catch(PathFinder_Exception $e){
+            $e
+                ->addMoreInfo('class',$className)
+                ->addMoreInfo('namespace',$namespace)
+                ->addMoreInfo('orig_class',$origClassName)
+                ;
+            throw $e;
+        }
+
+        if(!is_readable($path)){
+            throw new PathFinder_Exception('addon',$path,$prefix);
+        }
+
+
+        /**/$this->api->pr->next('pathfinder/loadClass/include ');
+        /**/$this->api->pr->start('php parsing');
+        include_once($path);
+        /**/$this->api->pr->stop();
+        if(!class_exists($origClassName ,false))throw $this->exception('Class is not defined in file')
+            ->addMoreInfo('file',$path)
+            ->addMoreInfo('class',$className);
+        /**/$this->api->pr->stop();
+    }
+
+
+
+
+    /*
         list($namespace,$file)=explode('\\',$class_name);
         if (!$file && $namespace){
             $file = $namespace;
             $namespace=null;
         }else $class_name_nonn=$file;
-        /**/$this->api->pr->next('pathfinder/loadClass/convertpath ');
         // Include class file directly, do not rely on auto-load functionality
         if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
             $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
@@ -189,27 +253,16 @@ class PathFinder extends AbstractController {
                     $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
                 }
 
-                if(!is_readable($path)){
-                    throw new PathFinder_Exception('addon',$path,$prefix);
                 }
             }else{
-                /**/$this->api->pr->next('pathfinder/loadClass/locate ');
                 if(substr($class_name,0,5)=='page_'){
                     $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
                 }else $path=$this->api->pathfinder->locate('php',$file,'path');
 
             }
 
-            /**/$this->api->pr->next('pathfinder/loadClass/include ');
-            /**/$this->api->pr->start('php parsing');
-            include_once($path);
-            /**/$this->api->pr->stop();
-            if(!class_exists($class_name))throw $this->exception('Class is not defined in file')
-                ->addMoreInfo('file',$path)
-                ->addMoreInfo('class',$class_name);
         }
-        /**/$this->api->pr->stop();
-    }
+     */
 }
 
 class PathFinder_Exception extends BaseException {
@@ -286,11 +339,12 @@ class PathFinder_Location extends AbstractModel {
             }else
                 throw new BaseException('Unable to determine URL');
 
-            if($file_path){
-                if(substr($url,-1)!='/')$url.='/';
-                $url.=$file_path;
-            }
-            return $url;
+        if($file_path){
+            if(substr($url,-1)!='/')$url.='/';
+            $url.=$file_path;
+        }
+        $url=str_replace('/./','/',$url);
+        return $url;
     }
 
     function getPath($file_path=null){

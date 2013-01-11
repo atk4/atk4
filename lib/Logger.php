@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class Logger extends AbstractController {
     /**
      * Logger class is implemented a more sophisticated and usable error handling.
@@ -272,6 +287,7 @@ class Logger extends AbstractController {
         }
     }
     function logCaughtException($e){
+        if(!$this->log_output)return;
         if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
         else $trace=$e->getTrace();
 
@@ -287,11 +303,7 @@ class Logger extends AbstractController {
         }
     }
     function caughtException($caller,$e){
-        $e->shift-=1;
-        if($this->log_output){
-            //$frame=$this->findFrame('warning',$shift);
-            $this->logCaughtException($e);
-        }
+        $this->logCaughtException($e);
         if(!$this->web_output){
             echo $this->public_error_message;
             exit;
@@ -307,10 +319,8 @@ class Logger extends AbstractController {
             }
         }
 
-
-        echo "<h2>".get_class($e)."</h2>\n";
-        echo '<p><font color=red>' . $e->getMessage() . '</font></p>';
-        if(method_exists($e,'getAdditionalMessage'))echo '<p><font color=red>' . $e->getAdditionalMessage() . '</font></p>';
+        echo "<h2>Application Error: ". htmlspecialchars($e->getMessage()) ."</h2>\n";
+        echo '<p><font color=red>' . get_class($e) . ', code: '.$e->getCode().'</font></p>';
         if($e->more_info){
             echo '<p>Additional information:';
             echo $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
@@ -325,8 +335,10 @@ class Logger extends AbstractController {
         }
         if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
-        if(method_exists($e,'getMyTrace'))echo $this->backtrace($e->shift,$e->getMyTrace());
+        if(method_exists($e,'getMyTrace'))echo $this->backtrace(3,$e->getMyTrace());
         else echo $this->backtrace($e->shift,$e->getTrace());
+
+        echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
 
         exit;
     }
@@ -341,7 +353,7 @@ class Logger extends AbstractController {
             $o.=$ge;
 
         }else{
-            $o.=$key;
+            $o.=$gs?htmlspecialchars($key):$key;
         }
         return $o;
     }
@@ -500,7 +512,9 @@ class Logger extends AbstractController {
     }
     function backtrace($sh=null,$backtrace=null){
         $output = "<div >\n";
+        // TODO: allow extending backtrace option, so that 
         $output .= "<b>Stack trace:</b><br /><table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
+        $output .= "<tr><th align='right'>File</th><th>&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>";
         if(!isset($backtrace)) $backtrace=debug_backtrace();
 
         $n=0;
@@ -545,8 +559,8 @@ class Logger extends AbstractController {
                 $sh=$n;
             }
 
-            $output .= "<tr><td valign=top align=right><font color=".($sh==$n?'red':'blue').">".dirname($bt['file'])."/".
-                "<b>".basename($bt['file'])."</b></font></td>";
+            $output .= "<tr><td valign=top align=right><font color=".($sh==$n?'red':'blue').">".htmlspecialchars(dirname($bt['file']))."/".
+                "<b>".htmlspecialchars(basename($bt['file']))."</b></font></td>";
             $output .= "<td valign=top nowrap><font color=".($sh==$n?'red':'blue').">:{$bt['line']}</font>&nbsp;</td>";
             $name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
             if($bt['object'])$output .= "<td>".$name."</td>";else $output.="<td></td>";

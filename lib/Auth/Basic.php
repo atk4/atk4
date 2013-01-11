@@ -7,13 +7,14 @@
  * @link http://agiletoolkit.org/doc/auth
 *//*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2011 Romans Malinovskis <atk@agiletech.ie>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 /*
  * Use:
@@ -175,14 +176,16 @@ class Auth_Basic extends AbstractController {
             $e=$this->password_encryption;
             return $e($password,$salt);
         }
-        if($this->password_encryption)$this->debug("Encrypting password: '$password'");
+        if($this->password_encryption)$this->debug("Encrypting password: '$password' with ".$this->password_encryption.' salt='.$salt);
         switch($this->password_encryption){
             case null: return $password;
             case'sha256/salt':
                        if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
+                       $key=$this->api->getConfig('auth/key',$this->api->name);
+                       if($this->password_encryption)$this->debug("Using key ".$key);
                        return hash_hmac('sha256',
                                  $password.$salt,
-                                 $this->api->getConfig('auth/key',$this->api->name));
+                                 $key);
             case'sha1':return sha1($password);
             case'md5':return md5($password);
             case'rot13':return str_rot13($password);
@@ -253,15 +256,22 @@ class Auth_Basic extends AbstractController {
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
     function verifyCredentials($user,$password){
+        $this->debug('verifying credentials for '.$user.' '.$password);
         if($this->model->hasMethod('verifyCredentials'))return $this->model->verifyCredentials($user,$password);
         if(!$this->model->hasElement($this->password_field)){
             $this->model->addField($this->password_field);
         }
         $data = $this->model->getBy($this->login_field,$user);
         if(!$data)return false;
-        if($data[$this->password_field]==$this->encryptPassword($password,$user)){
+        $this->debug('data says password is '.$data[$this->password_field]);
+        $ep=$this->encryptPassword($password,$user);
+        if($data[$this->password_field]==$ep){
+            $this->debug('Matched to encrypted password is '.$ep);
             return $data[$this->model->id_field];
-        }else return false;
+        }else{
+            $this->debug('Missmatch to '.$ep);
+            return false;
+        }
     }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
     function memorizeURL(){

@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 /**
  * Paginator needs to have source set (which can be either Model,
  * DSQL or Array). It will render itself into parent.
@@ -7,6 +22,8 @@ class Paginator_Basic extends CompleteLister {
     public $ipp=30;
     public $skip=0;
     public $range=4;
+
+    public $ajax_reload=true;
 
     public $source=null;
 
@@ -98,7 +115,9 @@ class Paginator_Basic extends CompleteLister {
             );
         } 
 
-        $this->js('click',$this->owner->js()->reload(array($this->name.'_skip'=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
+        if($this->ajax_reload){
+            $this->js('click',$this->owner->js()->reload(array($this->name.'_skip'=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
+        }
 
 
         parent::setSource($data);

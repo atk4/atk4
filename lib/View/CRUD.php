@@ -1,4 +1,19 @@
-<?php
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/*
+ * Undocumented
+ *
+ * @link http://agiletoolkit.org/
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class View_CRUD extends View {
     public $form=null;
     public $grid=null;
@@ -73,7 +88,7 @@ class View_CRUD extends View {
         if($this->allow_edit)$this->grid->addColumn('button','edit');
         if($this->allow_del)$this->grid->addColumn('delete','delete');
         if($id=@$_GET[$this->grid->name.'_edit']){
-            $this->js()->univ()->frameURL('Edit',$this->api->url(null,array($this->name=>$id)))->execute();
+            $this->js()->univ()->frameURL('Edit',$this->api->url(null,array($this->name=>$id)),$this->frame_options)->execute();
         }
         return $this;
     }

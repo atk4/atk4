@@ -1,38 +1,13 @@
-/* ==============================================
-	Settings
-    http://agiletoolkit.org/doc/css
-   ============================================== */
-@gridColumns:       12;			// Column count
-@gridColumnWidth:   6%;			// Column width
-@gridGutterWidth:   2.5%;		// Gutter width
-@margin:			2em;		// Global margin
-@padding:			2em;		// Global padding
-@label:				7em;		// Label width for form/dl
-@labelMargin:		2em;		// Label margin
-@footerSticky:		true;		// Footer sticked to the bottom of the page
-@footerHeight:		3em;		// Footer height needs to be specific if sticky footer is applied
-@dialogMargin:		120px;		// Dialog top margin
-@link:				#0053b3;	// Link color
-@shadowColor:		#000;		// Global shadow color (used in dialogs, dropmenus, etc.)
-@thborder:			#002d5e;	// Table header border color
-@border:			#e5e5e5;	// Global border color (used in tables, hr, forms, etc.)
-@even:				#f0f5fa;	// Color for even row
-@inputBorder:		#ccc;		// Input Border
-@focused: 			#00aaff;	// Color on input focus
-@error:				#e51717;	// Error
-@white:				#fff;		// White color
-@black:				#000;		// Black color
-@lightGray:			lighten(@black,60%);							// Used for comments
-@fontFamily:		"Helvetica Neue", "Helvetica", sans-serif;		// Global font family
-@fontSize:			12px;											// Global font size
-@fontColor:			lighten(@black,10%);							// Global font color
-@lineHeight:		1.6;											// Global line height
+@import "atk-settings.less";
+@import "atk-mixins.less";
+
 
 /* Custom jQueryUI States  */
-.defaultBg(#ECF3F9,#C8D3DE);	// Default State (.ui-state-default)
-.hoverBg(#F5F9FC,#D5E1ED);		// Hover State (.ui-state-hover)
-.activeBg(#ECF3F9,#FFFFFF);		// Active State (.ui-state-active)
-.headerBg(#00070F,#002D5E);		// Widget Header (.ui-widget-header)
+.defaultBg(@defaultBgGradientTop,@defaultBgGradientBottom);	// Default State (.ui-state-default)
+.hoverBg(@hoverBgGradientTop,@hoverBgGradientBottom);		// Hover State (.ui-state-hover)
+.activeBg(@activeBgGradientTop,@activeBgGradientBottom);    // Active State (.ui-state-active)
+.headerBg(@headerBgGradientTop,@headerBgGradientBottom);	// Widget Header (.ui-widget-header)
+
 
 /* Additional Effects */
 .ui-dialog {.box-shadow(0 25px 50px fadeout(@shadowColor,50%));}
@@ -74,64 +49,8 @@ q:before, q:after {content:'';content:none;}
 table {border-collapse:collapse;border-spacing:0;}
 
 
-/* ==============================================
-	Mixins
-   ============================================== */
-.clearfix() {
-  zoom: 1;
-  &:before,
-  &:after {
-    display: table;
-    content: "";
-    zoom: 1;
-  }
-  &:after {
-    clear: both;
-  }
-}
 
-/* Input placeholder text */
-.placeholder(@color: @lightGray) {
-  :-moz-placeholder {
-    color: @color;
-  }
-  ::-webkit-input-placeholder {
-    color: @color;
-  }
-}
-
-/* Border Radius */
-.border-radius(@radius: 5px) {
-  -webkit-border-radius: @radius;
-     -moz-border-radius: @radius;
-          border-radius: @radius;
-}
-
-/* Drop shadows */
-.box-shadow(@shadow: 0 1px 3px fadeout(@shadowColor,25%)) {
-  -webkit-box-shadow: @shadow;
-     -moz-box-shadow: @shadow;
-          box-shadow: @shadow;
-}
-
-.box-sizing (@boxtype: border-box) {
-	box-sizing: @boxtype;
-	-moz-box-sizing: @boxtype;
-	-webkit-box-sizing: @boxtype;
-	-ms-box-sizing: @boxtype;
-	box-sizing: @boxtype;
-}
-
-/* Transitions */
-.transition(@transition) {
-     -webkit-transition: @transition;
-        -moz-transition: @transition;
-         -ms-transition: @transition;
-          -o-transition: @transition;
-             transition: @transition;
-}
-
-/* Add an alphatransparency value to any background or border color (via Elyse Holladay) */
+// Add an alphatransparency value to any background or border color (via Elyse Holladay)
 #translucent {
   .background(@color: @white, @alpha: 1) {
     background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
@@ -142,17 +61,9 @@ table {border-collapse:collapse;border-spacing:0;}
   }
 }
 
-/* Reset filters for IE */
+// Reset filters for IE
 .reset-filter() {
   filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
-}
-
-/* Opacity */
-.opacity(@opacity: 100) {
-  filter: e(%("alpha(opacity=%d)", @opacity));
-  -khtml-opacity: @opacity / 100;
-    -moz-opacity: @opacity / 100;
-         opacity: @opacity / 100;
 }
 
 
@@ -277,47 +188,48 @@ table {border-collapse:collapse;border-spacing:0;}
 .clearwrap {overflow:hidden;}
 
 /* ==============================================
-	Loader
+   Loader
    ============================================== */
+// http://radiatingstar.com/css-keyframes-animations-with-less
+.clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(360deg));}
+}
+.anti-clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(-360deg));}
+}
 
-@-webkit-keyframes rotate-i1 {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
-}
-@-webkit-keyframes rotate-i2 {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(-360deg); }
-}
+@-webkit-keyframes rotate-i1 {.clockwise;}
+   @-moz-keyframes rotate-i1 {.clockwise;}
+    @-ms-keyframes rotate-i1 {.clockwise;}
+     @-o-keyframes rotate-i1 {.clockwise;}
+        @keyframes rotate-i1 {.clockwise;}
+
+@-webkit-keyframes rotate-i2 {.anti-clockwise;}
+   @-moz-keyframes rotate-i2 {.anti-clockwise;}
+    @-ms-keyframes rotate-i2 {.anti-clockwise;}
+     @-o-keyframes rotate-i2 {.anti-clockwise;}
+        @keyframes rotate-i2 {.anti-clockwise;}
+
 .loading {
   position: absolute;
   margin: auto;
-  background: gray;
-  opacity: 0.7;
-}
-.loading.centred {
-  background: white;
-}
-.loading i:first-child {
-  -webkit-animation-name: rotate-i1;
-  -webkit-animation-duration: 5s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-transition-timing-function: linear;
-  margin: 10px 10px;
-  position: absolute;
-  background: url(../images/gear-32x32.png);
-  width: 32px;
-  height: 32px;
-}
-.loading i:last-child {
-  -webkit-animation-name: rotate-i2;
-  -webkit-animation-duration: 5s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-transition-timing-function: linear;
-  margin: 35px 27px;
-  position: absolute;
-  background: url(../images/gear-32x32.png);
-  width: 32px;
-  height: 32px;
+  z-index: 9999;
+  .opacity(70);
+  i {
+    position: absolute;
+    background: url(../images/gear-32x32.png);
+    width: 32px;
+    height: 32px;
+    .transition(linear);
+    margin: 35px 27px;
+    .animation(rotate-i2 5s infinite);
+    &:first-child {
+      margin: 10px 10px;
+      .animation(rotate-i1 5s infinite);
+    }
+  }
 }
 /* ==============================================
 	Typography
@@ -372,36 +284,8 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 .atk-box p:last-child {margin-bottom:0;}
 
 
-/* ==============================================
-	Backgrounds
-   ============================================== */
-#gradient {
-  .vertical (@startColor: #555, @endColor: #333) {
-    background-color: @endColor;
-    background-repeat: repeat-x;
-    background-image: -khtml-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); /* Konqueror */
-    background-image: -moz-linear-gradient(top, @startColor, @endColor); /* FF 3.6+ */
-    background-image: -ms-linear-gradient(top, @startColor, @endColor); /* IE10 */
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @startColor), color-stop(100%, @endColor)); /* Safari 4+, Chrome 2+ */
-    background-image: -webkit-linear-gradient(top, @startColor, @endColor); /* Safari 5.1+, Chrome 10+ */
-    background-image: -o-linear-gradient(top, @startColor, @endColor); /* Opera 11.10 */
-    background-image: linear-gradient(top, @startColor, @endColor); /* The standard */
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); /* IE9 and down */
-  }
-  .horizontal(@startColor: #555, @endColor: #333) {
-    background-color: @endColor;
-    background-image: -moz-linear-gradient(left, @startColor, @endColor); // FF 3.6+
-    background-image: -ms-linear-gradient(left, @startColor, @endColor); // IE10
-    background-image: -webkit-gradient(linear, 0 0, 100% 0, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
-    background-image: -webkit-linear-gradient(left, @startColor, @endColor); // Safari 5.1+, Chrome 10+
-    background-image: -o-linear-gradient(left, @startColor, @endColor); // Opera 11.10
-    background-image: linear-gradient(left, @startColor, @endColor); // Le standard
-    background-repeat: repeat-x;
-    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",@startColor,@endColor)); // IE9 and down
-  }
-}
 
-/* Custom jQueryUI States */
+// Custom jQueryUI States
 .defaultBg(@colorStop1,@colorStop2) {
 	.ui-state-default,
 	.ui-widget-content .ui-state-default,
@@ -556,24 +440,20 @@ textarea:focus {
 		width:100%;
 		line-height:@lineHeight;
 		&:first-child input {
-			border-top-right-radius:0px;
-			border-bottom-right-radius:0px;
+			.border-right-radius(0);
 		}
 		+.input-cell .ui-button {
-			border-top-left-radius:0px;
-			border-bottom-left-radius:0px;
-			margin-left:-1px;
+			.border-left-radius(0);
+            margin-left:-1px;
 		}
 	}
 	&:first-child:not(.expanded) {
 		.ui-button {
-			border-top-right-radius:0px;
-			border-bottom-right-radius:0px;
+			.border-right-radius(0);
 			margin-right:-1px;
 		}
 		+.expanded input {
-			border-top-left-radius:0px;
-			border-bottom-left-radius:0px;
+			.border-left-radius(0);
 		}
 	}
 }
@@ -609,7 +489,10 @@ textarea:focus {
 .atk-wrapper {.fixed-container();}
 
 .atk-grid {
-	>.atk-grid-panel { margin:0 0 @margin/3 0; }
+	>.atk-grid-panel {
+    clear:both;
+        >.ui-buttonset,>.atk-quicksearch {margin:@margin/12 0 @margin/4 0;}
+    }
 	>table {
 		border-collapse:separate;
 		width:100%;
@@ -717,12 +600,7 @@ textarea:focus {
 		right:auto;
 	}
 	&.ui-state-active {
-		-webkit-border-bottom-right-radius:0;
-		-webkit-border-bottom-left-radius:0;
-		-moz-border-radius-bottomright:0;
-		-moz-border-radius-bottomleft:0;
-		border-bottom-right-radius:0;
-		border-bottom-left-radius:0;
+        .border-bottom-radius(0);
 	}
 }
 
@@ -751,13 +629,13 @@ textarea:focus {
 .ui-helper-reset {line-height:@lineHeight;}
 
 .ui-tabs.ui-widget-content {background:none;filter:none;border:none;padding:0;}
-.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;filter:none;border-width:0px 0px 1px 0;padding:0;.border-radius(0px);}
+.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;filter:none;border-width:0px 0px 1px 0;padding:0;.border-radius(0);}
 .ui-tabs .ui-tabs-panel {padding:@padding/1.5 0 0 0;color:@fontColor;}
 
 .ui-widget-overlay {position:fixed !important;top:0;left:0;}
 .ui-dialog {padding:0;}
 
-/* .ui-selected {background:#2e8ae5;color:@white;} */
+// .ui-selected {background:#2e8ae5;color:@white;}
 
 
 /* Relative Paddings  */

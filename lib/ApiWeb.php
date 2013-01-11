@@ -7,13 +7,14 @@
  * @link http://agiletoolkit.org/learn/template
 *//*
 ==ATK4===================================================
-   This file is part of Agile Toolkit 4 
+   This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
-  
-   (c) 2008-2012 Romans Malinovskis <romans@agiletoolkit.org>
-   Distributed under Affero General Public License v3
-   
-   See http://agiletoolkit.org/about/license
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class ApiWeb extends ApiCLI {
 
@@ -46,6 +47,7 @@ class ApiWeb extends ApiCLI {
     function init(){
         // Do not initialize unless requsetd
         //$this->initializeSession();
+        $this->getLogger();
 
         // find out which page is to display
         //$this->calculatePageName();
@@ -62,7 +64,6 @@ class ApiWeb extends ApiCLI {
         parent::init();
 
         /** In addition to default initialization, set up logger and template */
-        $this->getLogger();
         $this->initializeTemplate();
 
 
@@ -187,7 +188,7 @@ class ApiWeb extends ApiCLI {
     /** This method is called when exception was caught in the application */
     function caughtException($e){
         $this->hook('caught-exception',array($e));
-        echo "<font color=red>",$e,"</font>";
+        echo "<font color=red>Problem with your request.</font>";
         echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
         exit;
     }
@@ -220,7 +221,9 @@ class ApiWeb extends ApiCLI {
 
         if($this->_is_session_initialized)return;
 
-        if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
+        // Temporary commented. If nothing breaks, will remove
+        // Romans / bob's suggestion 28 Dec 2012
+        //if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
 
 
         // Change settings if defined in settings file
@@ -359,6 +362,7 @@ class ApiWeb extends ApiCLI {
 
         // We are using new capability of SMlite to process tags individually
         $t->eachTag('template',array($this,'_locateTemplate'));
+        $t->eachTag('js',array($this,'_locateJS'));
         $t->eachTag('page',array($this,'_locatePage'));
 
         $this->hook('set-tags',array($t));
@@ -366,11 +370,14 @@ class ApiWeb extends ApiCLI {
     /** Returns true if browser is going to EVAL output. */
     function isAjaxOutput(){
         // TODO: rename into isJSOutput();
-        return isset($_POST['ajax_submit']);
+        return isset($_POST['ajax_submit']) || ($_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest');
     }
     /** @private */
     function _locateTemplate($path){
         return $this->locateURL('template',$path);
+    }
+    function _locateJS($path){
+        return $this->locateURL('js',$path);
     }
     /** @private */
     function _locatePage($path){

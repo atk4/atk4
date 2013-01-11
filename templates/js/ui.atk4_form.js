@@ -182,13 +182,17 @@ jQuery.widget("ui.atk4_form", {
 
 		f.val(value).change();
 	},
-	reloadField: function(field_name,url,fn,notrigger){
-		var field_id=this.id+'_'+field_name;
-		if(!url)url=this.base_url;
-		console.log('Field reloading: ',field_name);
-
+	reloadField: function(field_name,url,fn,notrigger,arg){
+		var field_id = $("#"+this.id+' [data-shortname="'+field_name+'"]').first().attr("id");
+		if(!url) url=this.form.attr('action');
+        if(arg){
+            $.each(arg,function(key,value){
+                url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
+            });
+        }
 		url=$.atk4.addArgument(url,this.id+'_cut_field',field_id);
 		var f=$("#"+field_id);
+		console.log('Field found: ',field_id,'->',f);
 
 		if(!notrigger)f.trigger('reload_field');
 
@@ -210,10 +214,10 @@ jQuery.widget("ui.atk4_form", {
 			return this.options.error_handler(field_name,error);
 		}
 
-		var field=
-			typeof(field_name)=='string'?
-				$('#'+this.id+'_'+field_name):
-				field_name;
+        var field=
+            typeof(field_name)=='string'?
+                $('[data-shortname="'+field_name+'"]','#'+this.id):
+                    field_name;
 
 		if(!field.length){
 			field=this.form.find('[name="'+field_name+'"]');

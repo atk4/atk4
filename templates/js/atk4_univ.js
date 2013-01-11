@@ -16,6 +16,12 @@ $.each({
 	setTimeout: function(code,delay){
 		setTimeout(code,delay);
 	},
+	setInterval: function(code,delay){
+		return setInterval(code,delay);
+	},
+	clearInterval: function(a){
+		clearInterval(a);
+	},
 	displayAlert: function(a){
 		alert(a);
 	},
@@ -23,15 +29,11 @@ $.each({
 		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
 			$.univ.page(url,fn);
 		}else{
-			document.location=url;
+			$.univ.location(url);
 		}
 	},
-	redirectURL: function(page,fn){
-		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
-			$.univ.page(page,fn);
-		}else{
-			document.location=page;
-		}
+	redirectURL: function(url,fn){
+		$.univ.redirect(url,fn);
 	},
 	location: function(url){
 		if(!url)document.location.reload(true);else
@@ -288,11 +290,12 @@ dialogBox: function(options){
 				$(this).dialog('close');
 			}
 		},
-		open: function(){
+		open: function(x){
 			$("body").css({ overflow: 'hidden' });
+            $(x.target).css({'max-height': $(window).height()-180});
 		},
 		close: function(){
-			$("body").css({ overflow: 'inherit' });
+			$("body").css({ overflow: 'auto' });
 			$(this).dialog('destroy');
 			$(this).remove();
 		}
