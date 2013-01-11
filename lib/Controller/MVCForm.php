@@ -87,13 +87,15 @@ class Controller_MVCForm extends AbstractController {
 
         return $this;
     }
-    function importField($field){
+    function importField($field, $field_name=null){
 
         $field=$this->model->hasElement($field);
         if(!$field)return;
         if(!$field->editable())return;
 
-        $field_name=$this->_unique($this->owner->elements,$field->short_name);
+        if (!$field_name){
+            $field_name=$this->_unique($this->owner->elements,$field->short_name);
+        }
         $field_type=$this->getFieldType($field);
         $field_caption=$field->caption();
 
