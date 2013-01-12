@@ -219,6 +219,10 @@ class Model_Table extends Model {
         if(!$our_field){
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                /* bug - does not address namespace conversion properly.
+                 * fix by jancha */
+                $tmp=str_replace('/', '\\', $tmp);
+                /* */
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
