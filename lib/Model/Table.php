@@ -74,7 +74,11 @@ class Model_Table extends Model {
             unset($this->entity_code);
         }
     }
-    function init(){
+    /**
+     * {@inheritdoc}
+     */
+    function init()
+    {
         parent::init();
 
         if(!$this->db)$this->db=$this->api->db;
