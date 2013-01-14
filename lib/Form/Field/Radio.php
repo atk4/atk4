@@ -16,7 +16,7 @@
  =====================================================ATK4=*/
 class Form_Field_Radio extends Form_Field_ValueList {
     function validate(){
-        if(!isset($this->value_list[$this->value])){
+        if(!isset($this->value_list[$this->value]) && (!$this->value && $this->empty_value)){
             /*
                if($this->api->isAjaxOutput()){
                echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
@@ -35,6 +35,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
                             array(
                                 'id'=>$this->name.'_'.$value,
                                 'name'=>$this->name,
+                                'data-shortname'=>$this->short_name,
                                 'type'=>'radio',
                                 'value'=>$value,
                                 'checked'=>$value == $this->value
