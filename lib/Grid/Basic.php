@@ -272,9 +272,13 @@ class Grid_Basic extends CompleteLister {
 
     function format_shorttext($field){
         $text=$this->current_row[$field];
-        //TODO counting words, tags and trimming so that tags are not garbaged
-        if(strlen($text)>60)$text=substr($text,0,28).' ~~~ '.substr($text,-28);;
-        $this->current_row[$field]=$text;
+         if(strlen($text)>60) {
+            // Not sure about multi-byte support and execution speed for this
+            $a = explode(PHP_EOL,wordwrap($text,28,PHP_EOL,true),2);
+            $b = explode(PHP_EOL,wordwrap(strrev($text),28,PHP_EOL,true),2);
+            $text = $a[0] . ' ~~~ ' . strrev($b[0]);
+        }
+       $this->current_row[$field]=$text;
         $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
 
