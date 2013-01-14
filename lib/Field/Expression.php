@@ -55,8 +55,11 @@ class Field_Expression extends Field {
         return $this;
     }
     function getExpr(){
-        if(!is_string($this->expr) && is_callable($this->expr))
-            return '('.call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this).')';
+        if(!is_string($this->expr) && is_callable($this->expr)){
+            $q = call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this);
+            if($q instanceof DB_dsql)$q=$q->render();
+            return '('.$q.')';
+        }
         
         if($this->expr instanceof DB_dsql)return $this->expr;
 

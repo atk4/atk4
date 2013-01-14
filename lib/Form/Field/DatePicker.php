@@ -28,7 +28,7 @@ class Form_Field_DatePicker extends Form_Field_Line {
             ->setHtml('&nbsp;')
             ->setIcon('ui-icon-calendar')
             ->js('click',$this->js()->datepicker('show'));
-
+        $this->js('focus', $this->js()->datepicker('show'));
     }
     function getInput($attr=array()){
         // $this->value contains date in MySQL format

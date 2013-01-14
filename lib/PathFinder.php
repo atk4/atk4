@@ -1,15 +1,5 @@
 <?php
-/*
-  PathFinder will help you to maintain consistent structure of files. This
-  controller is used by many other parts of Agile Toolkit
-
-  PathFinder concerns itself only with relative paths. It relies on PageManager
-  ($api->pm) to convert relative paths into absolute.
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-  *//*
+/**
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -20,108 +10,205 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class PathFinder extends AbstractController {
+/**
+  PathFinder is responsible for locating resources in Agile
+  Toolkit. One of the most significant principles it implements
+  is ability for any resource (PHP, JS, HTML, IMG) to be
+  located under several locations. Pathfinder will look for
+  the location containing the resource you ask for and will
+  provide you with either a relative path, URL or absolute
+  path to a file.
+
+  To make this possible, PathFinder relies on a class
+  PathFinder_Location, which describes each individual
+  location and it's contents.
+
+  You may add additional locations in your application,
+  add-on or elsewhere. Some locations may be activated only
+  in certain circumstances, for example add-on will be able
+  to add it's location only if add-on have been added to
+  a page.
+
+  Here is a list of resource categories:
+  php, page, addons, template, mail, js, css
+
+  Resources which are planned or under development:
+  dbupdates, logs, public
+
+  @link http://agiletoolkit.org/pathfinder
+*/
+class PathFinder extends AbstractController
+{
+    /**
+     * Base location is where your application files are located. Normally
+     * this location is added first and all the requests are checked here
+     * before elsewhere.
+     */
     public $base_location=null;
-    // Object referencing base location. You might want to add more content here
 
+    /**
+     * Agile Toolkit comes with some assets: lib, js, template, css. This
+     * location describes those resources.
+     */
     public $atk_location=null;
-    // Referencing to location of a shared library
 
-    function init(){
+
+    /** {@inheritdoc} */
+    public $default_exception='Exception_PathFinder';
+
+    /**
+     * {@inheritdoc}
+     */
+    function init()
+    {
         parent::init();
         $this->api->pathfinder=$this;
-        $GLOBALS['atk_pathfinder']=$this;   // used by autoload
 
+        // TODO: get rid of this, we don't use autoloader anymore
+        $GLOBALS['atk_pathfinder']=$this;   // used by autoload
 
         $this->addDefaultLocations();
     }
 
-
-
-    function addDefaultLocations(){
-        // Typically base directory is good for includes,
-        // but atk4/ can also contain some data
-
-        // Primary search point is the webroot directory. We are defining
-        // those so you don't have to
+    /**
+     * Agile Toolkit-based application comes with a structure as described
+     * in documentation. For new users it's easier if they see consistent
+     * structure they are used to.
+     *
+     * As a more advanced developer (since you reading this text!) you
+     * may know that it's possible to completely redefine locations
+     * of resources to suit your own preferences. You might want to do
+     * this if you are integrating with your existing application or
+     * another framework or building multi-tiered project with extensive
+     * structure.
+     *
+     * Usually it's enough to add additional resources by creating one or
+     * both methods in your API class:
+     *
+     * * addDefaultLocations() - will be checked first (overrides)
+     * *  base_location is checked after
+     * * addSharedLocations() - add your secondary location (shared/lib)
+     * *  atk_location is checked Here
+     * * api->init() executes after where you can add more fall-back locations
+     *
+     * Add-ons would typically be added during init() so they would have low
+     * precedence. PathPinder does not support priority handling.
+     *
+     * As each location must know both physical path and URL, for custom
+     * configuration you will need to define both - base path and base url.
+     *
+     * By default the following things are assumed:
+     *  * path of base location is same as the front-controller (index.php)
+     *  * URL of base location is same as dirname(request url)
+     *  * path to ATK location determined by 2 directories up from this file
+     *  * URL of ATK location is ./atk4/ or $config['atk_location'], if set
+     *
+     * @return void
+     */
+    function addDefaultLocations()
+    {
         $base_directory=dirname(@$_SERVER['SCRIPT_FILENAME']);
 
         // Compatibility with command-line
-        if(!$base_directory)$base_directory=realpath($GLOBALS['argv'][0]);
+        if (!$base_directory) {
+            $base_directory=realpath($GLOBALS['argv'][0]);
+        }
 
-        if(method_exists($this->api,'addDefaultLocations'))$this->api->addDefaultLocations($this,$base_directory);
+        if ($this->api->hasMethod('addDefaultLocations')) {
+            $this->api->addDefaultLocations($this, $base_directory);
+        }
 
-        $this->base_location=$this->addLocation('/',array(
-                    'php'=>'lib',
-                    'page'=>'page',
-                    'addons'=>'atk4-addons',
-                    'template'=>'templates/'.$this->api->skin,
-                    'xslt'=>'templates/xslt',
-                    'mail'=>'templates/mail',
-                    'js'=>'templates/js',
-                    'banners'=>'banners',
-                    'logs'=>'logs',
-                    'dbupdates'=>'doc/dbupdates',
-                    ))->setBasePath($base_directory)
-            ;
+        $this->base_location=$this->addLocation('/', array(
+            'php'=>'lib',
+            'page'=>'page',
+            'addons'=>'atk4-addons',
+            'template'=>'templates/'.$this->api->skin,
+            'mail'=>'templates/mail',
+            'js'=>'templates/js',
+            'logs'=>'logs',
+            'dbupdates'=>'doc/dbupdates',
+        ))->setBasePath($base_directory);
 
 
-        if(method_exists($this->api,'addSharedLocations'))$this->api->addSharedLocations($this,$base_directory);
+        if ($this->api->hasMethod('addSharedLocations')) {
+            $this->api->addSharedLocations($this, $base_directory);
+        }
 
-        // Files not found in webroot - will be looked for in library dir
-        // We are assuming that we are located as atk4/lib/PathFinder.php
         $atk_directory=dirname(dirname(__FILE__));
         $atk_url=basename($atk_directory);
 
-        $this->atk_location=$this->addLocation('atk4',array(
-                    'php'=>'lib',
-                    // page: for security reasons no pages are allowed
-                    'docs'=>'', // files like README, COPYING etc
-                    'template'=>array('templates/'.$this->api->skin,'templates'=>'templates/shared'),
-                    'xslt'=>'templates/xslt',
-                    'mail'=>'templates/mail',
-                    'js'=>'templates/js',
-
-                    // TODO: check that the folowing two are actually being used
-                    'images'=>'img',
-                    'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
-                    ))
+        $this->atk_location=$this->addLocation('atk4', array(
+            'php'=>'lib',
+            'template'=>array(
+                'templates/'.$this->api->skin,
+                'templates/shared'
+            ),
+            'mail'=>'templates/mail',
+            'js'=>'templates/js',
+            'css'=>array(
+                'templates/js',
+                'templates/'.$this->api->skin.'/css',
+                'templates/shared/css'
+            ),
+        ))
             ->setBasePath(dirname(dirname(__FILE__)))
-            ->setBaseURL($this->api->getConfig('atk/base_path','./atk4/'))
+            ->setBaseURL($this->api->getConfig('atk/base_path', './atk4/'))
             ;
     }
 
-    function addLocation($path,$contents=array()){
+    /**
+     * Cretes new PathFinder_Location object and specifies it's contents.
+     * You can subsequentially add more contents by calling 
+     *
+     *   $location->defineContents
+     *
+     * @param string $path     UNCLEAR!!! TODO: FIX
+     * @param array  $contents Array describing contents
+     *
+     * @return PathFinder_Location New Location
+     */
+    function addLocation($path, $contents=array())
+    {
         $location=$this
-            ->add('PathFinder_Location',$path)
+            ->add('PathFinder_Location', $path)
             ->defineContents($contents)
             ;
         return $location;
     }
 
-    function locate($type,$filename='',$return='relative'){
-        /*
-           Search for filename inside multiple locations, which contain
-           resources of $type
-
-           if filename is not defined, the location of the first available resource is defined
-         */
-
+    /**
+     * Search for a file inside multiple locations, associated with resource
+     * $type. By default will return relative path, but 3rd argument can
+     * change that
+     *
+     * @param string $type     Type of resource to search surch as "php"
+     * @param string $filename Name of the file to search for
+     * @param string $return   'relative','url','path' or 'location'
+     *
+     * @return string|object as specified by $return
+     */
+    function locate($type, $filename='', $return='relative')
+    {
         $attempted_locations=array();
-        foreach($this->elements as $location){
-            if(!($location instanceof PathFinder_Location))continue;
+        foreach ($this->elements as $location) {
+            if (!($location instanceof PathFinder_Location)) {
+                continue;
+            }
 
-            $path=$location->locate($type,$filename,$return);
+            $path=$location->locate($type, $filename, $return);
 
-            if(is_string($path) || is_object($path)){
-                // file found!
+            if (is_string($path) || is_object($path)) {
                 return $path;
-            }elseif(is_array($path)){
-                $attempted_locations=array_merge($attempted_locations,$path);
+            } elseif (is_array($path)) {
+                $attempted_locations=array_merge($attempted_locations, $path);
             }
         }
 
-        throw new PathFinder_Exception($type,$filename,$attempted_locations);
+        throw $this->exception('File not found')
+            ->addMoreInfo('file', $filename)
+            ->addMoreInfo('type', $type)
+            ->addMoreInfo('attempted_locations', $attempted_locations)
+            ;
     }
     function search($type,$filename='',$return='relative'){
         /*
@@ -235,8 +322,6 @@ class PathFinder extends AbstractController {
     }
 
 
-
-
     /*
         list($namespace,$file)=explode('\\',$class_name);
         if (!$file && $namespace){
@@ -264,15 +349,12 @@ class PathFinder extends AbstractController {
         }
      */
 }
-
-class PathFinder_Exception extends BaseException {
-    function __construct($type,$filename,$attempted_locations,$message=null){
-        parent::__construct("Unable to include $filename".($message?':'.$message:''));
-        $this->addMoreInfo('type',$type);
-        $this->addMoreInfo('attempted_locations',$attempted_locations);
-    }
+class PathFinder_Exception extends BaseException
+{
 }
-
+class Exception_PathFinder extends Pathfinder_Exception
+{
+}
 class PathFinder_Location extends AbstractModel {
     /*
        Represents a location, which contains number of sub-locations. Each

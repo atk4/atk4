@@ -19,24 +19,10 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-define('undefined','_atk4_undefined_value');
+define('undefined', '_atk4_undefined_value');
+define('UNDEFINED', '_atk4_undefined_value');
 
-if(!function_exists('lowlevel_error')){
-    function lowlevel_error($error,$lev=null){
-        /*
-         * This function will be called for low level fatal errors
-         */
-        echo "<font color=red>Low level error:</font> $error in <b>".caller_lookup()."()</b><br><br>Backtrace:<pre>";
-        $backtrace="backtrace disabled, it cashes browser";
-        //$backtrace=print_r(debug_backtrace(),true);
-        // restricting output by X symbols
-        $x=4096; //4k
-        if(strlen($backtrace)>$x)$backtrace=substr($backtrace,0,$x).
-            "<br>... Backtrace is too long, trimmed to first $x symbols ...";
-        echo $backtrace;
-        exit;
-    }
-};if(!function_exists('error_handler')){
+if(!function_exists('error_handler')){
     function error_handler($errno, $errstr, $errfile, $errline){
         $errorType = Array (
                 E_ERROR               => "Error",
@@ -80,43 +66,6 @@ if(!function_exists('lowlevel_error')){
     }
     set_error_handler("error_handler");
 
-    /*
-       };if(!function_exists('htmlize_exception')){
-       function htmlize_exception($e,$msg){
-//$e->HTMLize();
-echo $e->getMessage()."<br>\n";
-}
-     */
-};if(!function_exists('hash_filter')){
-    // array_merge gives us an error when one of arguments is null. This function
-    // acts the same as array_merge, but without warnings
-    function hash_filter($hash,$allowed_keys){
-        // This function will filter only keys/values from hash which are
-        // in allowed_keys as well.
-        $result = array();
-        foreach($allowed_keys as $key=>$newkey){
-            if(is_int($key))$key=$newkey;
-            if(isset($hash[$key])){
-                $result[$newkey]=$hash[$key];
-            }
-        }
-        return $result;
-    }
-};if(!function_exists('caller_lookup')){
-    // sometimes i wonder, who called some specific function. Now you can find out
-    // caller_lookup relies on backtrack info to pull out into about caller class
-    function caller_lookup($shift=0,$file=false){
-        // This function will filter only keys/values from hash which are
-        // in allowed_keys as well.
-        $bt=debug_backtrace();
-        $shift+=3;
-        @$r=(
-                ($file?$bt[$shift]['file'].":".$bt[$shift]['line'].":":"").
-                $bt[$shift]['class'].
-                $bt[$shift]['type'].
-                $bt[$shift]['function']);
-        return $r;
-    }
 };if(!function_exists('__autoload')){
     function loadClass($class){
         if(isset($GLOBALS['atk_pathfinder'])){
@@ -139,19 +88,4 @@ echo $e->getMessage()."<br>\n";
         if(class_exists($class) || interface_exists($class))return;
         lowlevel_error("Class $class is not defined in included file");
     }
-};if(!function_exists('unix_dirname')){
-    function unix_dirname($path){
-        $chunks=explode('/',$path);
-        array_pop($chunks);
-        if(!$chunks)return '/';
-        return implode('/',$chunks);
-    }
-};if(!function_exists('htmlentities_utf8')){
-    function htmlentities_utf8($string, $quote_style = ENT_COMPAT, $charset='UTF-8'){
-        return htmlentities($string,$quote_style,$charset);
-    }
-};if(!function_exists('__')){
-    function __($string){
-        return $string;
-    }
-}
+};

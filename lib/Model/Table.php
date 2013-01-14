@@ -74,7 +74,11 @@ class Model_Table extends Model {
             unset($this->entity_code);
         }
     }
-    function init(){
+    /**
+     * {@inheritdoc}
+     */
+    function init()
+    {
         parent::init();
 
         if(!$this->db)$this->db=$this->api->db;
@@ -219,6 +223,10 @@ class Model_Table extends Model {
         if(!$our_field){
             if(!is_object($model)){
                 $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                /* bug - does not address namespace conversion properly.
+                 * fix by jancha */
+                $tmp=str_replace('/', '\\', $tmp);
+                /* */
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
@@ -310,7 +318,7 @@ class Model_Table extends Model {
                 if(!is_null($desc))
                     throw $this->exception('If first argument is array, second argument must not be used');
 
-                foreach($field as $o)$this->setOrder($o);
+                foreach(array_reverse($field) as $o)$this->setOrder($o);
                 return $this;
             }
 

@@ -174,11 +174,6 @@ class ApiCLI extends AbstractView {
         exit;
     }
     /** @obsolete */
-    function outputFatal($msg,$shift){
-        $this->hook('output-fatal',array($msg,$shift+1));
-        echo "Fatal: $msg\n";exit;
-    }
-    /** @obsolete */
     function outputWarning($msg,$shift=0){
         if($this->hook('output-warning',array($msg,$shift)))return true;
         echo "warning: $msg\n";
@@ -187,24 +182,6 @@ class ApiCLI extends AbstractView {
     function outputDebug($msg,$shift=0){
         if($this->hook('output-debug',array($msg,$shift)))return true;
         echo "debug: $msg\n";
-    }
-    /** @obsolete */
-    function outputInfo($msg,$shift=0){
-        if($this->hook('output-info',array($msg,$shift)))return true;
-        echo "info: $msg\n";
-    }
-    /** @obsolete */
-    function upCall($type,$args=array()){
-        /**
-         * Uncaught call default handler.
-         *
-         * In your application you should handle your own calls. If you do not,
-         * the call will be forwarded to API and finaly this method will be
-         * executed displaying error message about uncaught call
-         */
-        if(($x=parent::upCall($type,$args))===false){
-            throw new BaseException("Uncaught upCall");
-        }
     }
     // }}}
 

@@ -193,21 +193,15 @@ class ApiWeb extends ApiCLI {
         exit;
     }
 
-    /** @obsolete */
     function outputWarning($msg,$shift=0){
         if($this->hook('output-warning',array($msg,$shift)))return true;
         echo "<font color=red>",$msg,"</font>";
     }
-    /** @obsolete */
     function outputDebug($msg,$shift=0){
         if($this->hook('output-debug',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font><br>";
+        echo "<font color=blue>",$msg,"</font><br>";
     }
-    /** @obsolete */
-    function outputInfo($msg,$shift=0){
-        if($this->hook('output-info',array($msg,$shift)))return true;
-        echo "<font color=red>",$msg,"</font>";
-    }
+
     // }}}
 
     // {{{ Session Initialization
