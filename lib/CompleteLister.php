@@ -103,8 +103,8 @@ class CompleteLister extends Lister {
         $this->template->del($this->container_tag);
 
         foreach($this->getIterator() as $this->current_id=>$this->current_row){
-            // if specific fields are not specified with addTotals, then try to
-            // calculate totals for all available fields
+            // if totals enabled, but specific fields are not specified with
+            // addTotals, then calculate totals for all available fields
             if($this->totals===array()) {
                 foreach($this->current_row as $k=>$v)
                     $this->totals[$k]=0;
