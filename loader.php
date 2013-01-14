@@ -5,5 +5,4 @@ if (version_compare(PHP_VERSION, '5.3.0') < 0) {
     echo 'PHP 5.3.0 is required';
     exit;
 }
-
-include 'static.php';
+require'static.php';

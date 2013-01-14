@@ -237,7 +237,6 @@ class Form_Basic extends View {
             }
             throw new BaseException("Trying to set value for non-existant field $field_or_array");
         }
-        //if($this->elements[$field_or_array] instanceof Form_Button)echo caller_lookup(0);
         if($this->elements[$field_or_array] instanceof Form_Field)
             $this->elements[$field_or_array]->set($value);
         else{

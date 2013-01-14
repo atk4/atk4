@@ -100,13 +100,13 @@ class PageManager extends AbstractController {
     }
 
     function parseRequestedURL(){
-        $this->base_path=unix_dirname($_SERVER['SCRIPT_NAME']);
+        $this->base_path=$this->unix_dirname($_SERVER['SCRIPT_NAME']);
         // for windows
         if(substr($this->base_path,-1)=='\\')$this->base_path=substr($this->base_path,1,-1).'/';
         if(substr($this->base_path,-1)!='/')$this->base_path.='/';
 
         // We are assuming that all requests are being redirected though a single file
-        $this->base_directory=unix_dirname($_SERVER['SCRIPT_FILENAME']).'/';
+        $this->base_directory=$this->unix_dirname($_SERVER['SCRIPT_FILENAME']).'/';
 
         // This is the re-constructions of teh proper URL.
         // 1. Schema
@@ -133,8 +133,8 @@ class PageManager extends AbstractController {
 
         // 3. Next we need a base_part of our URL. There are many different
         // variables and approaches we tried it, REDIRECT_URL_ROOT, REDIRECT_URL,
-        // etc, however most reliable is unix_dirname(SCRIPT_NAME)
-        $path=unix_dirname($_SERVER['SCRIPT_NAME']);
+        // etc, however most reliable is $this->unix_dirname(SCRIPT_NAME)
+        $path=$this->unix_dirname($_SERVER['SCRIPT_NAME']);
         if(substr($path,-1)!='/')$path.='/';
 
         // We have now arrived at base_path as defined
@@ -194,6 +194,15 @@ class PageManager extends AbstractController {
         $request_uri=explode('?',$request_uri,2);
         return $request_uri[0];
     }
+
+    function unix_dirname($path){
+        $chunks=explode('/',$path);
+        array_pop($chunks);
+        if(!$chunks)return '/';
+        return implode('/',$chunks);
+    }
+
+
 
     function getUrlRoot(){
         if($r=='')$r='/';
