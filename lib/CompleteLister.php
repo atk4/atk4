@@ -73,7 +73,7 @@ class CompleteLister extends Lister {
         return $this;
     }
 
-    /** Update totals on rows. Called at the start of formatRow() */
+    /** Update totals on rows. Called before each formatRow() call */
     function updateTotals(){
         foreach($this->totals as $key=>$val)
             $this->totals[$key]=$val+$this->current_row[$key];
@@ -103,8 +103,18 @@ class CompleteLister extends Lister {
         $this->template->del($this->container_tag);
 
         foreach($this->getIterator() as $this->current_id=>$this->current_row){
-            @$this->totals['row_count']++;
-            if($this->totals!==false)$this->updateTotals();
+            // if totals enabled, but specific fields are not specified with
+            // addTotals, then calculate totals for all available fields
+            if($this->totals===array()) {
+                foreach($this->current_row as $k=>$v)
+                    $this->totals[$k]=0;
+            }
+            // if totals enabled, then execute 
+            if($this->totals!==false) {
+                $this->totals['row_count']++;
+                $this->updateTotals();
+            }
+            // do row formatting
             $this->formatRow();
             $this->template->appendHTML($this->container_tag,$this->rowRender($this->row_t));
         }
