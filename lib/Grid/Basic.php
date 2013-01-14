@@ -235,7 +235,7 @@ class Grid_Basic extends CompleteLister {
 
         foreach($this->columns as $tmp=>$column){ 
             $this->current_row[$tmp.'_original']=@$this->current_row[$tmp];
-
+            
             // if model field has listData structure, then get value instead of key
             if($this->model && $f=$this->model->hasElement($tmp)){
                 if($values=$f->listData())
@@ -261,9 +261,9 @@ class Grid_Basic extends CompleteLister {
     function renderRows(){
         $this->precacheTemplate();
         parent::renderRows();
-
+        
+        // if no rows, then remove totals, otherwise remove not_found message
         if(!$this->totals['row_count']){
-            $def_template = $this->defaultTemplate();
             $this->totals=false;
         }else{
             $this->template->del('not_found');
@@ -272,13 +272,13 @@ class Grid_Basic extends CompleteLister {
 
     function format_shorttext($field){
         $text=$this->current_row[$field];
-         if(strlen($text)>60) {
+        if(strlen($text)>60) {
             // Not sure about multi-byte support and execution speed for this
             $a = explode(PHP_EOL,wordwrap($text,28,PHP_EOL,true),2);
             $b = explode(PHP_EOL,wordwrap(strrev($text),28,PHP_EOL,true),2);
             $text = $a[0] . ' ~~~ ' . strrev($b[0]);
         }
-       $this->current_row[$field]=$text;
+        $this->current_row[$field]=$text;
         $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
 
