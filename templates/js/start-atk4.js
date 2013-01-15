@@ -390,6 +390,7 @@ $.extend($.atk4,{
 // would produce error in other browers. If method is not present,
 // we define a blank one to avoid errors.
 if(!window.console){
+    window.region=$;
 	window.console={
 		log: function(){
 		},
