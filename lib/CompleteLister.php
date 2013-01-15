@@ -48,6 +48,8 @@ class CompleteLister extends Lister {
     /** Will contain accumulated totals for all fields */
     public $totals=false;
 
+    public $total_rows=false;
+
     /** Will be initialized to "totals" template when addTotals() is called */
     public $totals_t=false;
 
@@ -101,6 +103,7 @@ class CompleteLister extends Lister {
     function renderRows(){
         $this->odd_even='';
         $this->template->del($this->container_tag);
+        $this->total_rows=0;
 
         foreach($this->getIterator() as $this->current_id=>$this->current_row){
             // if totals enabled, but specific fields are not specified with
@@ -109,9 +112,10 @@ class CompleteLister extends Lister {
                 foreach($this->current_row as $k=>$v)
                     $this->totals[$k]=0;
             }
+            // Calculate rows so far
+            $this->total_rows++;
             // if totals enabled, then execute 
             if($this->totals!==false) {
-                $this->totals['row_count']++;
                 $this->updateTotals();
             }
             // do row formatting
