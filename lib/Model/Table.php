@@ -674,9 +674,15 @@ class Model_Table extends Model {
         $this->hook('afterUnload');
         return $this;
     }
+    /** Tries to delete record, but does nothing if not found */
+    function tryDelete($id=null){
+        if(!is_null($id))$this->tryLoad($id);
+        if($this->loaded())$this->delete();
+        return $this;
+    }
     /** Deletes record matching the ID */
     function delete($id=null){
-        if($id)$this->load($id);
+        if(!is_null($id))$this->load($id);
         if(!$this->loaded())throw $this->exception('Unable to determine which record to delete');
 
         $tmp=$this->dsql;
