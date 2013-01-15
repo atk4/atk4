@@ -36,7 +36,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      * You can switch mode with select(), insert(), update() commands.
      * Mode is initialized to "select" by default
      */
-    public $mode=null;
+    public $mode='select';
 
     /** Used to determine main table. */
     public $main_table=null;
@@ -87,7 +87,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     function __toString()
     {
         try {
-            if ($this->output_mode=='render') {
+            if ($this->output_mode==='render') {
                 return $this->render();
             } else {
                 return (string)$this->getOne();
@@ -194,7 +194,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         $dsql->params = &$this->params;
         $ret = $dsql->_render();
-        if ($dsql->mode=='select') {
+        if ($dsql->mode==='select') {
             $ret='('.$ret.')';
         }
         unset($dsql->params);
@@ -682,7 +682,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 if (is_array($value)) {
                     $cond='in';
                 }
-                if (is_object($value) && @$value->mode=='select') {
+                if (is_object($value) && @$value->mode==='select') {
                     $cond='in';
                 }
             } else {
@@ -694,7 +694,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             }
 
 
-            if ($cond=='in' && is_string($value)) {
+            if ($cond==='in' && is_string($value)) {
                 $value=explode(',', $value);
             }
 
@@ -997,7 +997,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
         if (is_bool($desc)) {
             $desc=$desc?'desc':'';
-        } elseif (strtolower($desc)=='asc') {
+        } elseif (strtolower($desc)==='asc') {
             $desc='';
         } elseif ($desc && strtolower($desc)!='desc') {
             throw $this->exception('Incorrect ordering keyword')
@@ -1338,7 +1338,7 @@ class DB_dsql extends AbstractModel implements Iterator {
 
         if (!$this->bt
             || is_object($s)
-            || $s=='*'
+            || $s==='*'
             || strpos($s, '.')!==false
             || strpos($s, '(')!==false
             || strpos($s, $this->bt)!==false
