@@ -325,6 +325,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     function rewind(){
         $this->reset();
         $this->controller->rewind($this);
+        if($this->loaded())$this->hook('afterLoad');
     }
     function next(){
         $this->controller->next($this);
@@ -339,6 +340,22 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     function valid(){
         return $this->loaded();
+    }
+
+    function getRows($fields=null){
+        $result=array();
+        foreach($this as $row){
+            if (is_null($fields)) {
+                $result[]=$row;
+            } else {
+                $tmp=array();
+                foreach($fields as $field){
+                    $tmp[$field]=$row[$field];
+                }
+                $result[]=$tmp;
+            }
+        }
+        return $result;
     }
 
     /**
