@@ -64,7 +64,7 @@ class Page_Tester extends Page {
     function silentTest($test_obj=null){
         if(!$test_obj)$test_obj=$this;
 
-        $total=$success=$fail=$exceptions=0;
+        $total=$success=$fail=$exception=0;
         $speed=$memory=0;
 
         $tested=array();
@@ -96,6 +96,7 @@ class Page_Tester extends Page {
                 $me=memory_get_peak_usage();
                 $ms=microtime(true);
 
+
                 $this->cnt=0;
                 declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
@@ -114,7 +115,7 @@ class Page_Tester extends Page {
                         $fail++;
                     }
                 }catch (Exception $e){
-                    $exceptions++;
+                    $exception++;
 
                     $ms=microtime(true)-$ms;
                     $me=($mend=memory_get_peak_usage())-$me;
@@ -129,7 +130,7 @@ class Page_Tester extends Page {
         return array(
             'total'=>$total,
             'success'=>$success,
-            'exceptions'=>$exceptions,
+            'exception'=>$exception,
             'fail'=>$fail,
             'speed'=>$speed,
             'memory'=>$memory
