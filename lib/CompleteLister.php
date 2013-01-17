@@ -114,6 +114,9 @@ class CompleteLister extends Lister {
             }
             // Calculate rows so far
             $this->total_rows++;
+
+            //Compatibility
+            $this->totals['row_count']=$this->total_rows;
             // if totals enabled, then execute 
             if($this->totals!==false) {
                 $this->updateTotals();
