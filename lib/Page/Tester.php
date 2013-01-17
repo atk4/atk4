@@ -27,21 +27,29 @@ class Page_Tester extends Page {
 
     function setVariance($arr){
         $this->variances=$arr;
-        foreach($arr as $key=>$item){
-            if(is_numeric($key))$key=$item;
-            $this->grid->addColumn('html',$key.'_inf',$key.' info');
-            $this->grid->addColumn('html,wrap',$key.'_res',$key.' result');
+        if(isset($this->grid)){
+            foreach($arr as $key=>$item){
+                if(is_numeric($key))$key=$item;
+                $this->grid->addColumn('html',$key.'_inf',$key.' info');
+                $this->grid->addColumn('html,wrap',$key.'_res',$key.' result');
+            }
         }
     }
     function init(){
         parent::init();
+
+
+        if(!$this->auto_test){
+            $this->setVariance(array('Test'));
+            return;    // used for multi-page testing
+        }
         $this->grid=$this->add('Grid');
         $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->api->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
 
-        //$this->setVariance(array('GiTemplate','SMlite'));
         $this->setVariance(array('Test'));
 
-        if(!$this->auto_test)return;    // used for multi-page testing
+        //$this->setVariance(array('GiTemplate','SMlite'));
+
         
         $this->runTests();
 
