@@ -317,11 +317,22 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterLoad');
         return $this;
     }
-
-
     // }}}
 
-    // {{{ Iterator support 
+    // {{{ Ordering and limiting support
+    function setLimit($a,$b=null){
+        if($this->controller && $this->controller->hasMethod('setLimit'))
+            $this->controller->setLimit($this,$field,$desc);
+        return $this;
+    }
+    function setOrder($field,$desc=null){
+        if($this->controller && $this->controller->hasMethod('setOrder'))
+            $this->controller->setOrder($this,$field,$desc);
+        return $this;
+    }
+    // }}}
+
+   // {{{ Iterator support 
     function rewind(){
         $this->reset();
         $this->controller->rewind($this);
