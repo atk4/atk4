@@ -26,8 +26,16 @@ class View_CRUD extends View {
     public $allow_del=true;
 
     public $add_button;
-    
     public $frame_options=null;
+
+    // for localization
+    public $msg_bt_add='Add';
+    public $msg_bt_edit='Edit';
+    public $msg_bt_delete='Delete';
+    public $msg_dlg_new='New';
+    public $msg_dlg_edit='Edit';
+    public $msg_bt_save='Save';
+
     function init(){
         parent::init();
 
@@ -44,15 +52,15 @@ class View_CRUD extends View {
         $this->grid=$this->add($this->grid_class);
         $this->js('reload',$this->grid->js()->reload());
         if($this->allow_add){
-            $this->add_button = $this->grid->addButton('Add');
+            $this->add_button = $this->grid->addButton($this->msg_bt_add);
             $this->add_button->js('click')->univ()
-                ->frameURL('New',$this->api->url(null,array($this->name=>'new')),$this->frame_options);
+                ->frameURL($this->msg_dlg_new,$this->api->url(null,array($this->name=>'new')),$this->frame_options);
         }
     }
     function setController($controller){
         if($this->form){
             $this->form->setController($controller);
-            $this->form->addSubmit('Save');
+            $this->form->addSubmit($this->msg_bt_save);
         }elseif($this->grid){
             $this->grid->setController($controller);
         }
@@ -85,10 +93,10 @@ class View_CRUD extends View {
         }
         $m=$this->grid->getModel();
         if(!$this->allow_add && $this->add_button)$this->add_button->destroy();
-        if($this->allow_edit)$this->grid->addColumn('button','edit');
-        if($this->allow_del)$this->grid->addColumn('delete','delete');
+        if($this->allow_edit)$this->grid->addColumn('button','edit',$this->msg_bt_edit);
+        if($this->allow_del)$this->grid->addColumn('delete','delete',$this->msg_bt_delete);
         if($id=@$_GET[$this->grid->name.'_edit']){
-            $this->js()->univ()->frameURL('Edit',$this->api->url(null,array($this->name=>$id)),$this->frame_options)->execute();
+            $this->js()->univ()->frameURL($this->msg_dlg_edit,$this->api->url(null,array($this->name=>$id)),$this->frame_options)->execute();
         }
         return $this;
     }
