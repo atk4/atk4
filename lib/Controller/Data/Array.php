@@ -145,13 +145,16 @@ class Controller_Data_Array extends Controller_Data {
         unset($model->_table[$this->short_name][$id?:$model->id]);
         return $this;
     }
-
     function deleteAll($model){
-        $model->_table=array();
+        //$model->_table=array();
+        //$t =& $model->_table[$this->short_name];
+        $model->_table[$this->short_name]=array();
         return $this;
     }
     function getRows($model){
-        return $model->_table;
+        //return $model->_table;
+        //$t =& $model->_table[$this->short_name];
+        return $model->_table[$this->short_name];
     }
     function setOrder($model,$field,$desc=false){
         // TODO: sort array
