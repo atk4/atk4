@@ -431,13 +431,6 @@ class Grid_Advanced extends Grid_Basic {
     function format_image($field){
         $this->current_row_html[$field]='<img src="'.$this->current_row[$field].'"/>';
     }
-    function addRecordOrder($field,$table=''){
-        if(!$this->record_order){
-            $this->record_order=$this->add('RecordOrder');
-            $this->record_order->setField($field,$table);
-        }
-        return $this;
-    }
     function staticSortCompare($row1,$row2){
         if($this->sortby[0]=='-'){
             return strcmp($row2[substr($this->sortby,1)],$row1[substr($this->sortby,1)]);
