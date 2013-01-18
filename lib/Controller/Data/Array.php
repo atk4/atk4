@@ -148,12 +148,10 @@ class Controller_Data_Array extends Controller_Data {
 
     function deleteAll($model){
         $model->_table=array();
-        $t =& $model->_table[$this->short_name];
         return $this;
     }
     function getRows($model){
         return $model->_table;
-        $t =& $model->_table[$this->short_name];
     }
     function setOrder($model,$field,$desc=false){
         // TODO: sort array
