@@ -332,7 +332,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     // }}}
 
-   // {{{ Iterator support 
+    // {{{ Iterator support 
     function rewind(){
         $this->reset();
         $this->controller->rewind($this);
