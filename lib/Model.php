@@ -234,7 +234,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
         if(!$this->loaded())$this->controller->load($this,$id);
-        if(!$this->loaded())throw $this->exception('Record ID must be specified, otherwise use tryLoad()')
+        if(!$this->loaded())throw $this->exception('Record ID must be specified, otherwise use tryLoad()');
         $this->hook('afterLoad');
         return $this;
     }
