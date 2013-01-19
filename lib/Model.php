@@ -243,7 +243,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->id_field && $id!==undefined && $id!==null){
             $this->data[$this->id_field]=$id;
         }
-        if($id!=undefined)$this->id=$id;
+        if($id!==undefined)$this->id=$id;
 
 
         $this->hook('beforeSave',array($this->id));
