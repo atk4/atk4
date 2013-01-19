@@ -359,6 +359,7 @@ class Auth_Basic extends AbstractController {
 
         $this->model->unload();
 
+        // maybe can use $this->api->destroySession() here instead?
         $this->forget('info');
         $this->forget('id');
 
