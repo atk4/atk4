@@ -237,10 +237,10 @@ class Model_Table extends Model {
         return $r;
     }
     /** Defines many to one association */
-    function hasMany($model,$their_field=null,$our_field=null){
+    function hasMany($model,$their_field=null,$our_field=null,$as_field=null){
         if(!$our_field)$our_field=$this->id_field;
         if(!$their_field)$their_field=($this->table).'_id';
-        $rel=$this->add('SQL_Many',$model)
+        $rel=$this->add('SQL_Many',$as_field?:$model)
             ->set($model,$their_field,$our_field);
         return $rel;
     }
