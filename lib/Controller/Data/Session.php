@@ -28,7 +28,9 @@ class Controller_Data_Session extends Controller_Data_Array {
         if(!$_SESSION['ctl_data'][$data]){
             $_SESSION['ctl_data'][$data]=array();
         }
-
+        if(!$_SESSION['ctl_data'][$data][$model->table]){
+            $_SESSION['ctl_data'][$data][$model->table]=array();
+        }
 
         $model->_table[$this->short_name] =& $_SESSION['ctl_data'][$data][$model->table];
     }
