@@ -128,7 +128,11 @@ class Controller_Data_Array extends Controller_Data {
                 //end($model->_table[$this->short_name]);
                 //list($id)=each($model->_table[$this->short_name]);
                 //$id++;
-                $id = max(array_keys($model->_table[$this->short_name])) + 1;
+                if(!empty($model->_table[$this->short_name])) {
+                    $id = max(array_keys($model->_table[$this->short_name])) + 1;
+                } else {
+                    $id = 1;
+                }
             }else{
                 $id=uniqid();
             }
