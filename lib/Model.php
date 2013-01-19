@@ -229,11 +229,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
-    /** Attempt to load record with specified ID. If this fails, no error is produced */
+    /** Attempt to load record with specified ID. If this fails, exception is thrown */
     function load($id=null){
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
         if(!$this->loaded())$this->controller->load($this,$id);
+        if(!$this->loaded())throw $this->exception('Record ID must be specified, otherwise use tryLoad()')
         $this->hook('afterLoad');
         return $this;
     }
