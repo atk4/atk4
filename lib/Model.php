@@ -253,13 +253,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->loaded())$this->hook('afterSave',array($this->id));
         return $this;
     }
-    /** Save model into database and don't try to load it back */
-    function saveAndUnload(){
-        $this->hook('beforeSave',$id);
-
-        $id=$this->controller->save($this,$id);
-        $this->unload();     // clean if there is anything loaded
-
+    /** Save model and don't try to load it back */
+    function saveAndUnload($id=undefined){
+        $this->save($id)
+        $this->unload();
         return $this;
     }
     /** Will save model later, when it's being destructed by Garbage Collector */
