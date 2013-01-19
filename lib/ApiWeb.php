@@ -204,7 +204,7 @@ class ApiWeb extends ApiCLI {
 
     // }}}
 
-    // {{{ Session Initialization
+    // {{{ Sessions
     /** Initializes existing or new session */
     public $_is_session_initialized=false;
     function initializeSession($create=true){
@@ -218,7 +218,6 @@ class ApiWeb extends ApiCLI {
         // Temporary commented. If nothing breaks, will remove
         // Romans / bob's suggestion 28 Dec 2012
         //if(isset($_GET['SESSION_ID']))session_id($_GET['SESSION_ID']);
-
 
         // Change settings if defined in settings file
         $params=session_get_cookie_params();
@@ -240,6 +239,16 @@ class ApiWeb extends ApiCLI {
         );
         session_name($this->name);
         session_start();
+    }
+    /** Completely destroy existing session */
+    function destroySession(){
+        if($this->_is_session_initialized){
+            $_SESSION=array();
+            if(isset($_COOKIE[$this->name]))
+               setcookie($this->name/*session_name()*/, '', time()-42000, '/');
+            session_destroy();
+            $this->_is_session_initialized=false;
+        }
     }
     // }}}
 
