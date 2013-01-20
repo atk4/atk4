@@ -444,9 +444,10 @@ class Grid_Advanced extends Grid_Basic {
         }
         return strcmp($row1[$this->sortby],$row2[$this->sortby]);
     }
-    function applySorting($i,$order,$desc){
-        if($i instanceof DB_dsql)$i->order($order,$desc);
-        elseif($i instanceof Model_Table)$i->setOrder($order,$desc);
+    function applySorting($i,$field,$desc){
+        if($i instanceof DB_dsql)$i->order($field,$desc);
+        elseif($i instanceof Model_Table)$i->setOrder($field,$desc);
+        elseif($i instanceof Model)$i->setOrder($field,$desc);
     }
     function getIterator(){
         $i=parent::getIterator();

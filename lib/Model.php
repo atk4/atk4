@@ -244,7 +244,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->id_field && $id!==undefined && $id!==null){
             $this->data[$this->id_field]=$id;
         }
-        if($id!=undefined)$this->id=$id;
+        if($id!==undefined)$this->id=$id;
 
 
         $this->hook('beforeSave',array($this->id));
@@ -315,8 +315,19 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterLoad');
         return $this;
     }
+    // }}}
 
-
+    // {{{ Ordering and limiting support
+    function setLimit($a,$b=null){
+        if($this->controller && $this->controller->hasMethod('setLimit'))
+            $this->controller->setLimit($this,$field,$desc);
+        return $this;
+    }
+    function setOrder($field,$desc=null){
+        if($this->controller && $this->controller->hasMethod('setOrder'))
+            $this->controller->setOrder($this,$field,$desc);
+        return $this;
+    }
     // }}}
 
     // {{{ Iterator support 
