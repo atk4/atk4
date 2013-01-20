@@ -256,7 +256,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Save model and don't try to load it back */
     function saveAndUnload($id=undefined){
-        $this->save($id)
+        $this->save($id);
         $this->unload();
         return $this;
     }
