@@ -31,7 +31,7 @@
 
 class Controller_Data_Array extends Controller_Data {
 
-    /* By default new records are added with the ID being sequetnial. If you set this to false, then model IDs will be assigned using unique identifiers */
+    /* By default new records are added with the ID being sequential. If you set this to false, then model IDs will be assigned using unique identifiers */
     public $sequential_id=true;
 
     /* If your model is using id_field and the record with key==id was not found, controller will scan array for a matching record based on the field. 
@@ -122,12 +122,16 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function save($model,$id=null){
-        if(is_null($model->id)){
+        if(is_null($id)){
             if($this->sequential_id){
-                if(is_null($id)){
-                    end($model->_table[$this->short_name]);
-                    list($id)=each($model->_table[$this->short_name]);
-                    $id++;
+                // Imants: This fail if array is not sorted in ascending order by its keys
+                //end($model->_table[$this->short_name]);
+                //list($id)=each($model->_table[$this->short_name]);
+                //$id++;
+                if(!empty($model->_table[$this->short_name])) {
+                    $id = max(array_keys($model->_table[$this->short_name])) + 1;
+                } else {
+                    $id = 1;
                 }
             }else{
                 $id=uniqid();
@@ -145,18 +149,27 @@ class Controller_Data_Array extends Controller_Data {
         unset($model->_table[$this->short_name][$id?:$model->id]);
         return $this;
     }
-
     function deleteAll($model){
-        $model->_table=array();
-        $t =& $model->_table[$this->short_name];
+        $model->_table[$this->short_name]=array();
         return $this;
     }
     function getRows($model){
-        return $model->_table;
-        $t =& $model->_table[$this->short_name];
+        return $model->_table[$this->short_name];
     }
     function setOrder($model,$field,$desc=false){
-        // TODO: sort array
+        if (is_bool($desc)) {
+            $desc=$desc?'desc':'';
+        } elseif (strtolower($desc)==='asc') {
+            $desc='';
+        } elseif ($desc && strtolower($desc)!='desc') {
+            throw $this->exception('Incorrect ordering keyword')
+                ->addMoreInfo('order by', $desc);
+        }
+        // this physically change order of array elements, so be aware of that !
+        uasort($model->_table[$this->short_name], function($a,$b)use($field,$desc){
+            $r = strtolower($a[$field]) < strtolower($b[$field]) ? -1 : 1;
+            return $desc==='desc' ? -$r : $r;
+        });
     }
     function setLimit($model,$count,$offset=0){
         // TODO: splice

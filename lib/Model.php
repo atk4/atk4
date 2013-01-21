@@ -229,11 +229,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
-    /** Attempt to load record with specified ID. If this fails, no error is produced */
+    /** Attempt to load record with specified ID. If this fails, exception is thrown */
     function load($id=null){
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
         if(!$this->loaded())$this->controller->load($this,$id);
+        if(!$this->loaded())throw $this->exception('Record ID must be specified, otherwise use tryLoad()');
         $this->hook('afterLoad');
         return $this;
     }
@@ -243,7 +244,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->id_field && $id!==undefined && $id!==null){
             $this->data[$this->id_field]=$id;
         }
-        if($id!=undefined)$this->id=$id;
+        if($id!==undefined)$this->id=$id;
 
 
         $this->hook('beforeSave',array($this->id));
@@ -253,13 +254,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->loaded())$this->hook('afterSave',array($this->id));
         return $this;
     }
-    /** Save model into database and don't try to load it back */
-    function saveAndUnload(){
-        $this->hook('beforeSave',$id);
-
-        $id=$this->controller->save($this,$id);
-        $this->unload();     // clean if there is anything loaded
-
+    /** Save model and don't try to load it back */
+    function saveAndUnload($id=undefined){
+        $this->save($id);
+        $this->unload();
         return $this;
     }
     /** Will save model later, when it's being destructed by Garbage Collector */
@@ -317,14 +315,26 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterLoad');
         return $this;
     }
+    // }}}
 
-
+    // {{{ Ordering and limiting support
+    function setLimit($a,$b=null){
+        if($this->controller && $this->controller->hasMethod('setLimit'))
+            $this->controller->setLimit($this,$field,$desc);
+        return $this;
+    }
+    function setOrder($field,$desc=null){
+        if($this->controller && $this->controller->hasMethod('setOrder'))
+            $this->controller->setOrder($this,$field,$desc);
+        return $this;
+    }
     // }}}
 
     // {{{ Iterator support 
     function rewind(){
         $this->reset();
         $this->controller->rewind($this);
+        if($this->loaded())$this->hook('afterLoad');
     }
     function next(){
         $this->controller->next($this);
@@ -339,6 +349,22 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     function valid(){
         return $this->loaded();
+    }
+
+    function getRows($fields=null){
+        $result=array();
+        foreach($this as $row){
+            if (is_null($fields)) {
+                $result[]=$row;
+            } else {
+                $tmp=array();
+                foreach($fields as $field){
+                    $tmp[$field]=$row[$field];
+                }
+                $result[]=$tmp;
+            }
+        }
+        return $result;
     }
 
     /**

@@ -97,7 +97,7 @@ class ApiFrontend extends ApiWeb{
                         if($in=='page_')$in='page_index';
                         try {
                             loadClass($in);
-                        }catch(PathFinder_Exception $e2){
+                        }catch(PathFinder_Exception $e3){
                             continue;
                         }
                         // WorkAround for PHP5.2.12+ PHP bug #51425
@@ -113,6 +113,7 @@ class ApiFrontend extends ApiWeb{
                         return;
                     }
 
+                    $e->addMoreInfo('static_page_error',$e2->getText());
 
                     // throw original error
                     $this->pageNotFound($e);

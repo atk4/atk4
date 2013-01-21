@@ -176,11 +176,7 @@ class Grid_Advanced extends Grid_Basic {
     function format_money($field){
         $m=(float)$this->current_row[$field];
         $this->current_row[$field]=number_format($m,2);
-        if($m<0){
-            $this->setTDParam($field,'style/color','red');
-        }else{
-            $this->setTDParam($field,'style/color',null);
-        }
+        $this->setTDParam($field,'style/color',$m<0?'red':null);
         $this->setTDParam($field,'align','right');
     }
     function format_totals_number($field){
@@ -435,22 +431,16 @@ class Grid_Advanced extends Grid_Basic {
     function format_image($field){
         $this->current_row_html[$field]='<img src="'.$this->current_row[$field].'"/>';
     }
-    function addRecordOrder($field,$table=''){
-        if(!$this->record_order){
-            $this->record_order=$this->add('RecordOrder');
-            $this->record_order->setField($field,$table);
-        }
-        return $this;
-    }
     function staticSortCompare($row1,$row2){
         if($this->sortby[0]=='-'){
             return strcmp($row2[substr($this->sortby,1)],$row1[substr($this->sortby,1)]);
         }
         return strcmp($row1[$this->sortby],$row2[$this->sortby]);
     }
-    function applySorting($i,$order,$desc){
-        if($i instanceof DB_dsql)$i->order($order,$desc);
-        elseif($i instanceof Model_Table)$i->setOrder($order,$desc);
+    function applySorting($i,$field,$desc){
+        if($i instanceof DB_dsql)$i->order($field,$desc);
+        elseif($i instanceof Model_Table)$i->setOrder($field,$desc);
+        elseif($i instanceof Model)$i->setOrder($field,$desc);
     }
     function getIterator(){
         $i=parent::getIterator();
@@ -573,8 +563,9 @@ class Grid_Advanced extends Grid_Basic {
     }
     function updateTotals(){
         parent::updateTotals();
+        // set title
         foreach($this->current_row as $key=>$val){
-            if ((!empty($this->totals_title_field)) and ($key==$this->totals_title_field)) {
+            if (!empty($this->totals_title_field) && $key==$this->totals_title_field) {
                 $this->totals[$key]=$this->totals_title;
             }
         }

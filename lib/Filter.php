@@ -41,13 +41,12 @@ class Filter extends Form {
                 if(!$field->get())continue;
 
                 // also apply the condition
-                if($this->view->model){
+                if($this->view->model && $this->view->model->hasElement($x) ){
                     if($this->view->model->addCondition($x,$field->get())); // take advantage of field normalization
-                }elseif($this->view->dq){
-                    if($this->view->dq->where($x,$field->get()));
                 }
             }
         }
+        $this->hook('applyFilter',array($this->view->model));
     }
     function memorizeAll(){
         //by Camper: memorize() method doesn't memorize anything if value is null
@@ -58,14 +57,18 @@ class Filter extends Form {
             }
         }
     }
+    function addButtons(){
+        $this->save=$this->addSubmit('Save');
+        $this->reset=$this->addSubmit('Reset');
+    }
     function submitted(){
         if(parent::submitted()){
-            /* Imants: These rows are useless because forgetting is done inside memorizeAll
-            if($this->isClicked('Clear')){
-                $this->clearData();
+            if(isset($this->reset) && $this->isClicked($this->reset)){
+                $this->forget();
+                $this->js(null,$this->view->js()->reload())->reload()->execute();
+            }else{
+                $this->memorizeAll();
             }
-            */
-            $this->memorizeAll();
             $this->view->js()->reload()->execute();
         }
     }

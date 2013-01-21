@@ -33,8 +33,6 @@ class Page extends AbstractView {
                 ->addMoreInfo('api',$this->api->name)
                 ;
         }
-        if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
-            $_GET['cut_object']=$this->short_name;
         $this->template->trySet('_page',$this->short_name);
 
         if(method_exists($this,get_class($this))){
@@ -58,5 +56,10 @@ class Page extends AbstractView {
     }
     function getTitle(){
         return $this->title;
+    }
+    function recursiveRender(){
+        if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
+            $_GET['cut_object']=$this->short_name;
+        parent::recursiveRender();
     }
 }

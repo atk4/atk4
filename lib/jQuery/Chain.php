@@ -46,6 +46,12 @@ class jQuery_Chain extends AbstractModel {
     function __toString(){
         return $this->_render();
     }
+
+    /* Some methods shouldn't be special! */
+    function each(){
+        return $this->__call('each',func_get_args());
+    }
+
     /* Chain binds to parent object by default. Use this to use other selector $('selector') */
     function _selector($selector=null){
         $this->selector=$selector;

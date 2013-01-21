@@ -237,10 +237,10 @@ class Model_Table extends Model {
         return $r;
     }
     /** Defines many to one association */
-    function hasMany($model,$their_field=null,$our_field=null){
+    function hasMany($model,$their_field=null,$our_field=null,$as_field=null){
         if(!$our_field)$our_field=$this->id_field;
         if(!$their_field)$their_field=($this->table).'_id';
-        $rel=$this->add('SQL_Many',$model)
+        $rel=$this->add('SQL_Many',$as_field?:$model)
             ->set($model,$their_field,$our_field);
         return $rel;
     }
@@ -277,7 +277,7 @@ class Model_Table extends Model {
             }
         }
 
-        if($cond=='=' || $value===undefined){
+        if($cond==='=' || $value===undefined){
             $v=$value===undefined?$cond:$value;
             if($v===undefined)throw $this->exception('Incorrect condition. Please specify value');
 
@@ -674,9 +674,15 @@ class Model_Table extends Model {
         $this->hook('afterUnload');
         return $this;
     }
+    /** Tries to delete record, but does nothing if not found */
+    function tryDelete($id=null){
+        if(!is_null($id))$this->tryLoad($id);
+        if($this->loaded())$this->delete();
+        return $this;
+    }
     /** Deletes record matching the ID */
     function delete($id=null){
-        if($id)$this->load($id);
+        if(!is_null($id))$this->load($id);
         if(!$this->loaded())throw $this->exception('Unable to determine which record to delete');
 
         $tmp=$this->dsql;
