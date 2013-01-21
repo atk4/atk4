@@ -85,28 +85,21 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->short_name];
+        $this->tryLoadBy($model,$field,$cond,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
-            ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
-        foreach($t as $row){
-            if($row[$field]==$value){
-                $model->data=$row;
-                $model->dirty=array();
-                $model->id=$row[$model->id_field];
-                return $this;
-            }
-        }
+            ->addMoreInfo('field',$field)
+            ->addMoreInfo('condition',$cond)
+            ->addMoreInfo('value',$value);
         return $this;
     }
     function tryLoad($model,$id){
-
         if(is_object($id))return;
 
         if(@$model->id_field){
             if( !isset($model->_table[$this->short_name][$id]) || $model->_table[$this->short_name][$id][$model->id_field]!=$id){
                 return $this->tryLoadBy($model,$model->id_field,$id);
             }
-            // ID key exists and it points to record witch a matching id_field. Lucky! Can save some time loading it.
+            // ID key exists and it points to record with a matching id_field. Lucky! Can save some time loading it.
         }
         if(!isset($model->_table[$this->short_name][$id]))return $this;
         $model->data=$model->_table[$this->short_name][$id];
