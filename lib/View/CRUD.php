@@ -416,7 +416,7 @@ class View_CRUD extends View
 
         $this
             ->virtual_page
-            ->addColumn('edit', null, null, $this->grid)
+            ->addColumn('edit', 'Editing '.$this->entity_name, 'Edit', $this->grid)
             ;
     }
 

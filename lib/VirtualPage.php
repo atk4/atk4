@@ -193,7 +193,7 @@ class VirtualPage extends AbstractController
             $grid=$this->owner;
         }
 
-        $grid->addColumn('template', $name, $title)
+        $grid->addColumn('template', $name, $buttontext?:$title)
             ->setTemplate(
                 '<button type="button" class="pb_'.$name.'">'.
                 htmlspecialchars(
