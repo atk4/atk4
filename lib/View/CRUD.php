@@ -222,7 +222,7 @@ class View_CRUD extends View
      */
     function setModel($model, $fields = null, $grid_fields = null)
     {
-        parent::setModel($model);
+        $model=parent::setModel($model);
 
         if ($this->entity_name === null) {
 
@@ -254,6 +254,7 @@ class View_CRUD extends View
             $this->configureDel();
         }
 
+        return $model;
     }
 
     /**
