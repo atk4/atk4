@@ -184,12 +184,10 @@ class VirtualPage extends AbstractController
      * @param string $title      Header for the column
      * @param string $buttontext Text to put on the button
      * @param string $grid       Specify grid to use, other than $owner
-     * @param string $dtitle     Dialogue title, when editing records 
-     *
      *
      * @return VirtualPage $this
      */
-    function addColumn($name, $title = null, $buttontext = null, $grid = null, $dtitle = null)
+    function addColumn($name, $title = null, $buttontext = null, $grid = null)
     {
         if (!$grid) {
             $grid=$this->owner;
@@ -211,7 +209,7 @@ class VirtualPage extends AbstractController
         $grid->js(true)->_selector('#'.$grid->name.' .pb_'.$name)->button();
         $t=$this->type;
         $grid->js('click')->_selector('#'.$grid->name.' .pb_'.$name)->univ()
-            ->$t($dtitle?$dtitle:$title, array($this->getURL($name),
+            ->$t($title, array($this->getURL($name),
                 $name=>$grid->js()->_selectorThis()->closest('tr')->attr('data-id')
             ), $this->frame_options);
         return $this;
