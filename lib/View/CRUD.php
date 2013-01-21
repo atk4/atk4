@@ -272,7 +272,7 @@ class View_CRUD extends View
      *
      * @return View_CRUD|null Returns crud object, when expanded page is rendered
      */
-    function addRef($name, $view_class = null)
+    function addRef($name, $label = null, $view_class = null)
     {
         if (!$this->model) {
             throw $this->exception('Must set CRUD model first');
@@ -282,6 +282,7 @@ class View_CRUD extends View
 
             if ($_GET['id']) {
                 $this->id = $_GET[$this->name.'_id'] = $_GET['id'];
+                $this->api->stickyGET($this->name.'_id');
             }
 
             if (is_null($view_class)) {
@@ -293,8 +294,12 @@ class View_CRUD extends View
             return $subview;
         }
 
+        if ($this->isEditing()) {
+            return;
+        }
 
-        $this->grid->addColumn('expander', 'ex_'.$name, $name);
+
+        $this->grid->addColumn('expander', 'ex_'.$name, $label?:$name);
         $this->grid->columns['ex_'.$name]['page']
             = $this->virtual_page->getURL('ex_'.$name);
     }
