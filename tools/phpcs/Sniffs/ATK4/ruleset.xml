@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<ruleset name="ATK4">
+ <description>The coding standard for Agile Toolkit.</description>
+ <exclude-pattern>*/Tests/*</exclude-pattern>
+
+ <!-- Most of PSR2 are good -->
+ <rule ref="PSR2">
+  <exclude name="PSR1.Classes.ClassDeclaration"/>
+  <exclude name="Squiz.Scope.MethodScope"/>
+ </rule>
+
+ <rule ref="PEAR">
+  <!-- 
+       file typically contains single class, why do we still need to specify file comment
+       -->
+  <exclude name="PEAR.Commenting.FileComment"/>
+  <!-- 
+       class comments are silly and contain only garbage making files less readable. 
+       Keep them free of garbage such as @category PHP
+       -->
+  <exclude name="PEAR.Commenting.ClassComment"/>
+  <!--
+       unfliendly with DB_dsql and few other classes we keep in lowercase (for some reason)
+       -->
+  <exclude name="Generic.NamingConventions.CamelCapsFunctionName"/>
+  <!-- 
+       blocks our prefixed MethodScope
+
+        page_xx
+        render_blah
+        etc
+        -->
+  <exclude name="PEAR.NamingConventions.ValidFunctionName"/>
+  <!-- 
+       blocks our single-line semicolon
+
+       dsql()
+         ->where()
+         ;
+
+       -->
+  <exclude name="PEAR.Functions.FunctionCallSignature"/>
+ </rule>
+
+</ruleset>

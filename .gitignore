@@ -4,4 +4,7 @@
 *.bak
 *.sql.fail
 *.sql.ok
-/nbproject/private/
+/nbproject
+.project
+.buildpath
+.settings
