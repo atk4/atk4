@@ -649,7 +649,7 @@ abstract class AbstractObject
             }
             return $this;
         }
-        if (!is_callable($callable) && !$callable->hasMethod($hook_spot)) {
+        if (!is_callable($callable) && ($callable instanceof AbstractObject && !$callable->hasMethod($hook_spot))) {
             throw $this->exception('Hook does not exist');
         }
         if (is_object($callable) && !is_callable($callable)) {
