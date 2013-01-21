@@ -309,7 +309,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     function loadBy($field,$cond=undefined,$value=undefined){
         if($this->loaded())$this->unload();
-        $this->hook('beforeLoadBy',array($id));
+        $this->hook('beforeLoadBy',array($field,$cond,$value));
         if(!$this->loaded())$this->controller->loadBy($this,$field,$cond,$value);
         if(!$this->loaded())return $this;
         $this->hook('afterLoad');
