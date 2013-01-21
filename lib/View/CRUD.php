@@ -325,6 +325,46 @@ class View_CRUD extends View
     }
 
     /**
+     * Adds button to the crud, which opens a new frame and returns page to
+     * you. Add anything into the page as you see fit. The ID of the record
+     * will be inside $crud->id
+     *
+     * @param string $name    Unique name, also button and title default
+     * @param array  $options Options
+     *
+     * @return Page|null Returns object if clicked on popup.
+     */
+    function addFrame($name, $options = array())
+    {
+        if (!$this->model) {
+            throw $this->exception('Must set CRUD model first');
+        }
+
+        if (!is_array($options)) {
+            throw $this->exception('Must be array');
+        }
+
+        if ($this->isEditing('fr_'.$name)) {
+
+            if ($_GET['fr_'.$name]) {
+                $this->id = $_GET[$this->name.'_id'] = $_GET['fr_'.$name];
+                $this->api->stickyGET($this->name.'_id');
+            }
+
+            return $this->virtual_page->getPage();
+        }
+
+        if ($this->isEditing()) {
+            return;
+        }
+
+        $this
+            ->virtual_page
+            ->addColumn('fr_'.$name, $options['title']?:$name, $options['label'], $this->grid)
+            ;
+    }
+
+    /**
      * Configures necessary components when CRUD is in the adding mode
      *
      * @param array $fields List of fields for add form
