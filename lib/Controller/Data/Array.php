@@ -86,7 +86,6 @@ class Controller_Data_Array extends Controller_Data {
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
         $t =& $model->_table[$this->short_name];
-        $this->loadBy($model,$field,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)->addMoreInfo('value',$value);
         foreach($t as $row){
