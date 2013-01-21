@@ -267,15 +267,28 @@ class View_CRUD extends View
      * Adds expander to the crud, which edits references under the specified
      * name. Returns object of nested CRUD when active, or null
      *
-     * @param string $name       Name of the reference. If you leave blank adds all
-     * @param string $view_class Specify a different View class, other then CRUD
+     * The format of $options is the following:
+     * array (
+     *   'view_class' => 'CRUD',  // Which View to use inside expander
+     *   'view_options' => ..     // Second arg when adding view.
+     *   'fields' => array()      // Used as second argument for setModel()
+     *   'extra_fields' => array() // Third arguments to setModel() used by CRUDs
+     *   'label'=> 'Click Me'     // Label for a button inside a grid
+     * )
+     *
+     * @param string $name    Name of the reference. If you leave blank adds all
+     * @param array  $options Customizations, see above
      *
      * @return View_CRUD|null Returns crud object, when expanded page is rendered
      */
-    function addRef($name, $label = null, $view_class = null)
+    function addRef($name, $options = array())
     {
         if (!$this->model) {
             throw $this->exception('Must set CRUD model first');
+        }
+
+        if (!is_array($options)) {
+            throw $this->exception('Must be array');
         }
 
         if ($this->isEditing('ex_'.$name)) {
@@ -285,12 +298,20 @@ class View_CRUD extends View
                 $this->api->stickyGET($this->name.'_id');
             }
 
-            if (is_null($view_class)) {
-                $view_class=get_class($this);
-            }
-            $subview=$this->virtual_page->getPage()->add($view_class);
+            $view_class = (is_null($options['view_class']))?
+                get_class($this):
+                $options['view_class'];
 
-            $subview->setModel($this->model->load($this->id)->ref($name));
+            $subview=$this->virtual_page->getPage()->add(
+                $view_class,
+                $options['view_options']
+            );
+
+            $subview->setModel(
+                $this->model->load($this->id)->ref($name),
+                $options['fields'],
+                $options['extra_fields']
+            );
             return $subview;
         }
 
@@ -298,8 +319,7 @@ class View_CRUD extends View
             return;
         }
 
-
-        $this->grid->addColumn('expander', 'ex_'.$name, $label?:$name);
+        $this->grid->addColumn('expander', 'ex_'.$name, $options['label']?:$name);
         $this->grid->columns['ex_'.$name]['page']
             = $this->virtual_page->getURL('ex_'.$name);
     }
