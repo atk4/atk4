@@ -180,7 +180,7 @@ class Grid_Basic extends CompleteLister {
             $col->del('content');
             $col->setHTML('content','<?$'.$name.'?>');
 
-            if(isset($t_row)){
+            if(isset($t_row) && isset($t_col)){
                 $t_col->del('content');
                 $t_col->setHTML('content','<?$'.$name.'?>');
                 $t_col->trySetHTML('tdparam','<?tdparam_'.$name.'?>style="white-space: nowrap"<?/?>');
@@ -226,7 +226,7 @@ class Grid_Basic extends CompleteLister {
         $this->row_t = $this->api->add('SMlite');
         $this->row_t->loadTemplateFromString($row->render());
 
-        if(isset($t_row)){
+        if(isset($t_row) && $this->totals_t){
             $this->totals_t = $this->api->add('SMlite');
             $this->totals_t->loadTemplateFromString($t_row->render());
         }
@@ -264,6 +264,7 @@ class Grid_Basic extends CompleteLister {
         $this->hook('formatRow');
         return $this->current_row;
     }
+    function applyTDParams(){}
     function renderRows(){
         $this->precacheTemplate();
         parent::renderRows();
@@ -275,16 +276,7 @@ class Grid_Basic extends CompleteLister {
         }
     }
 
-    function format_shorttext($field){
-        $text=$this->current_row[$field];
-        if(strlen($text)>60) {
-            // Not sure about multi-byte support and execution speed for this
-            $a = explode(PHP_EOL,wordwrap($text,28,PHP_EOL,true),2);
-            $b = explode(PHP_EOL,wordwrap(strrev($text),28,PHP_EOL,true),2);
-            $text = $a[0] . ' ~~~ ' . strrev($b[0]);
-        }
-        $this->current_row[$field]=$text;
-        $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
+    function format_text($field){
     }
 
 }

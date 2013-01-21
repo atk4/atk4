@@ -157,9 +157,18 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_number($field){
     }
-    function format_text($field){
-        $this->current_row[$field] = $this->current_row[$field];
+    function format_shorttext($field){
+        $text=$this->current_row[$field];
+        if(strlen($text)>60) {
+            // Not sure about multi-byte support and execution speed for this
+            $a = explode(PHP_EOL,wordwrap($text,28,PHP_EOL,true),2);
+            $b = explode(PHP_EOL,wordwrap(strrev($text),28,PHP_EOL,true),2);
+            $text = $a[0] . ' ~~~ ' . strrev($b[0]);
+        }
+        $this->current_row[$field]=$text;
+        $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
     }
+
     function format_html($field){
         $this->current_row_html[$field] = $this->current_row[$field];
     }
