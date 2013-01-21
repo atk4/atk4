@@ -107,7 +107,7 @@ class Grid_Basic extends CompleteLister {
 
         return $this;
     }
-    function addFormatter($field,$formatter){
+    function addFormatter($field,$formatter,$options=null){
         /*
          * add extra formatter to existing field
          */
@@ -120,6 +120,12 @@ class Grid_Basic extends CompleteLister {
             $this->columns[$field]['type']=$formatter;
         }
 
+        if($options){
+            $this->columns[$field]=array_merge($this->columns[$field],$options);
+        }
+        $descr = $this->columns[$field];
+
+
         if(strpos($formatter,'/')){
 
             if(!$this->elements[$formatter.'_'.$field]){
@@ -129,10 +135,10 @@ class Grid_Basic extends CompleteLister {
             }
 
             $addon = $this->getElement($formatter.'_'.$field);
-            $addon->initField($field,$this->columns[$field]['descr']);
+            $addon->initField($field,$descr);
             return $addon;
 
-        }elseif($this->hasMethod($m='init_'.$formatter))$this->$m($field);
+        }elseif($this->hasMethod($m='init_'.$formatter))$this->$m($field, $descr);
         return $this;
     }
     function setFormatter($field,$formatter){
