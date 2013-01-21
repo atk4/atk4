@@ -425,7 +425,7 @@ class PathFinder_Location extends AbstractModel {
             if(substr($url,-1)!='/')$url.='/';
             $url.=$file_path;
         }
-        $url=str_replace('/./','/',$url);
+        $url=str_replace(array('\\','/./','/./'),'/',$url);
         return $url;
     }
 
