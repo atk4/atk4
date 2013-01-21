@@ -258,6 +258,42 @@ class View_CRUD extends View
     }
 
     /**
+     * Adds expander to the crud, which edits references under the specified
+     * name. Returns object of nested CRUD when active, or null
+     *
+     * @param string $name       Name of the reference. If you leave blank adds all
+     * @param string $view_class Specify a different View class, other then CRUD
+     *
+     * @return View_CRUD|null Returns crud object, when expanded page is rendered
+     */
+    function addRef($name, $view_class = null)
+    {
+        if (!$this->model) {
+            throw $this->exception('Must set CRUD model first');
+        }
+
+        if ($this->isEditing('ex_'.$name)) {
+
+            if ($_GET['id']) {
+                $this->id = $_GET[$this->name.'_id'] = $_GET['id'];
+            }
+
+            if (is_null($view_class)) {
+                $view_class=get_class($this);
+            }
+            $subview=$this->virtual_page->getPage()->add($view_class);
+
+            $subview->setModel($this->model->load($this->id)->ref($name));
+            return $subview;
+        }
+
+
+        $this->grid->addColumn('expander', 'ex_'.$name, $name);
+        $this->grid->columns['ex_'.$name]['page']
+            = $this->virtual_page->getURL('ex_'.$name);
+    }
+
+    /**
      * Configures necessary components when CRUD is in the adding mode
      *
      * @param array $fields List of fields for add form
