@@ -305,11 +305,9 @@ class View_CRUD extends View
             $this->form->onSubmit(array($this,'formSubmit'));
             return $m;
         } elseif ($this->isEditing()) return;
-
-
         $this
             ->virtual_page
-            ->addColumn('edit', null, null, $this->grid)
+            ->addColumn('edit', null, null, $this->grid, 'Editing '. $this->entity_name)
             ;
     }
 
