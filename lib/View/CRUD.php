@@ -61,20 +61,26 @@ class View_CRUD extends View
 
     /**
      * Grid will contain an "Add X" button and will allow user to add records
+     *
+     * $this->add('CRUD', array('allow_add'=>false')); // to disable
      */
-    public $allow_add=true;
+    protected $allow_add=true;
 
     /**
      * Grid will contain "EDIT" button for each row allowing usir to edit
      * records
+     *
+     * $this->add('CRUD', array('allow_edit'=>false')); // to disable
      */
-    public $allow_edit=true;
+    protected $allow_edit=true;
 
     /**
      * Grid will contain a "DELETE" button for each row. If you don't want
      * thes set this option to false
+     *
+     * $this->add('CRUD', array('allow_del'=>false')); // to disable
      */
-    public $allow_del=true;
+    protected $allow_del=true;
 
     /**
      * For ->setModel('User'), your add button would contain "Add User". If
