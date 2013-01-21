@@ -50,7 +50,7 @@ class SQL_Many extends AbstractModel {
     }
     function restoreConditions(){
         if(!$this->model){
-            $this->model=$this->add($this->model_name);
+            $this->model=$this->add($this->model_name); // adding new model
             $this->saveConditions();
         }
         $this->model->_dsql()->args['where']=$this->orig_conditions;

@@ -46,6 +46,10 @@ class Controller_MVCGrid extends AbstractController {
         'file'=>'referenece',
     );
 
+    function addTypeAssociation($k, $v){
+        $this->type_associations[$k] = $v;
+    }
+
     function setActualFields($fields){
         if($this->owner->model->hasMethod('getActualFields'))
             $this->importFields($this->owner->model,$fields);
