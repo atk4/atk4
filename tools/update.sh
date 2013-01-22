@@ -27,13 +27,18 @@ for x in *.sql; do
 	echo -n " $x... "
 	
 	# user and password must be in ~/.my.cnf
-	if $mysql -B < $x 2> $x.fail; then
-		mv $x.fail $x.ok
+	if $mysql -BN < $x 2> $x.fail > $x.out; then
+        cat $x.out | tr -d "\n"
+		mv $x.out $x.ok
+        rm -f $x.fail
 		echo 'ok'
 	else
+        cat $x.out | tr -d "\n"
+        rm -f $x.out
 		echo 'fail'
 		cat $x.fail
 		echo
+        break;
 	fi
 done
 cd ..
