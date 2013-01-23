@@ -36,7 +36,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      * You can switch mode with select(), insert(), update() commands.
      * Mode is initialized to "select" by default
      */
-    public $mode='select';
+    public $mode=null;
 
     /** Used to determine main table. */
     public $main_table=null;
