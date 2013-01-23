@@ -355,7 +355,13 @@ textarea:focus {
 		&:first-child {margin-top:0;}
 		&.has-error>label {color:@error;}
 		&.has-error input {border-color:@error;}
-		>label {font-weight:bold;width:@label;margin-top:0.4em;float:left;}
+		>label {
+            font-weight:bold;
+            width:@label;
+            margin-top:0.4em;
+            float:left;
+            &.mandatory:after{content:'*';color:#e51e1e;margin-left:0.2em;}
+		}
 		>.atk-form-field {
 			margin-left:@label+@labelMargin;
 			input[type=text]:not([class*="span"]),
