@@ -873,6 +873,11 @@ textarea:focus {
   margin-top: 0.4em;
   float: left;
 }
+.atk-form fieldset .atk-form-row > label.mandatory:after {
+  content: '*';
+  color: #e51e1e;
+  margin-left: 0.2em;
+}
 .atk-form fieldset .atk-form-row > .atk-form-field {
   margin-left: 9em;
 }
@@ -1298,12 +1303,12 @@ textarea:focus {
   right: auto;
 }
 .atk-dropmenu.ui-state-active {
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-bottom-right-radius: 0;
-  border-bottom-right-radius: 0;
   -webkit-border-bottom-left-radius: 0;
   -moz-border-bottom-left-radius: 0;
   border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 .atk-growl {
   font-weight: bold;
