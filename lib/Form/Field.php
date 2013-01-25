@@ -248,7 +248,7 @@ abstract class Form_Field extends AbstractView {
     function _validateNotNull($field){
         if($field->get()==="" || is_null($field->get()))return false;
     }
-    /** Adds asterisk to the field and validation */
+    /** Adds "X is a mandatory field" message */
     function validateNotNULL($msg=null){
         $this->setMandatory();
         if($msg && $msg!==true){
@@ -563,17 +563,18 @@ class Form_Field_Text extends Form_Field {
 }
 
 class Form_Field_Number extends Form_Field_Line {
-    function normalize(){
-        $v=$this->get();
-
-        // get rid of  TODO
-
-        $this->set($v);
+    function validate(){
+        if(!is_numeric($this->value)) {
+            $this->displayFieldError('Not a valid number');
+        }
+        return parent::validate();
     }
 }
-class Form_Field_Money extends Form_Field_Line {
+class Form_Field_Money extends Form_Field_Number {
+    public $digits = 2;
     function getInput($attr=array()){
-        return parent::getInput(array_merge(array('value'=>number_format($this->value,2)),$attr));
+        return parent::getInput(array_merge(array(
+                'value'=>number_format($this->value,$this->digits)
+            ),$attr));
     }
 }
-
