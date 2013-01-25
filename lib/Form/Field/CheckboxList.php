@@ -14,70 +14,75 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Form_Field_CheckboxList extends Form_Field_ValueList {
-    /*
+class Form_Field_CheckboxList extends Form_Field_ValueList
+{
+    /**
      * This field will create 2 column of checkbox+labels from defived value
      * list. You may check as many as you like and when you save their ID
      * values will be stored coma-separated in varchar type field.
      *
-     $f->addField('CheckboxList','producers','Producers')->setValueList(array(
-     1=>'Mr John',
-     2=>'Piter ',
-     3=>'Michail Gershwin',
-     4=>'Bread and butter',
-     5=>'Alex',
-     6=>'Benjamin',
-     7=>'Rhino',
-     ));
-
+     * $f->addField('CheckboxList','producers','Producers')->setValueList(array(
+     * 1=>'Mr John',
+     * 2=>'Piter ',
+     * 3=>'Michail Gershwin',
+     * 4=>'Bread and butter',
+     * 5=>'Alex',
+     * 6=>'Benjamin',
+     * 7=>'Rhino',
+     * ));
      */
-
     var $columns=2;
-    function validate(){
+    
+    function validate()
+    {
         return true;
     }
-    function getInput($attr=array()){
-        $output='<table class="atk-checkboxlist" border=0 id="'.$this->name.'"><tbody>';
-        $column=0;
+    
+    function getInput($attr=array())
+    {
+        $output='<table class="atk-checkboxlist" border="0" id="'.$this->name.'"><tbody>';
         $current_values=explode(',',$this->value);
-        $i=0;//Skai
+        $column=0;
+        $i=0;
         foreach($this->getValueList() as $value=>$descr){
-            if($column==0){
-                $output.="<tr><td align=\"left\">";
-            }else{
-                $output.="</td><td align=\"left\">";
-            }
-
-            $output.=
-                $this->getTag('input',array(
-                            'type'=>'checkbox',
-                            'value'=>$value,
-                            'name'=>$this->name.'['.$i++.']',//Skai
-                            'checked'=>in_array($value,$current_values)
-                            )).htmlspecialchars($descr);
+            if($column==$this->columns) $column=0;
+            if($column==0) $output.='<tr>';
+            $output .=
+                '<td align="left">' .
+                $this->getTag('input',array_merge(array(
+                        'id'=>$this->name.'_'.$value,
+                        'name'=>$this->name.'['.$i.']',
+                        'data-shortname'=>$this->short_name,
+                        'type'=>'checkbox',
+                        'value'=>$value,
+                        'checked'=>in_array($value,$current_values)
+                    ),$this->attr,$attr)) .
+                '<label for="'.$this->name.'_'.$value.'">'.htmlspecialchars($descr).'</label>' .
+                '</td>';
+            $i++;
             $column++;
-            if($column==$this->columns){
-                $output.="</td></tr>";
-                $column=0;
-            }
+            if($column==$this->columns) $output.='</tr>';
         }
-        $output.="</tbody></table>";
+        // fill empty cells in last row if needed
+        if($column>0 && $column<$this->columns) {
+            for($i=$column;$i<$this->columns;$i++)
+                $output.='<td></td>';
+            $output.='</tr>';
+        }
+        $output.='</tbody></table>';
+        
         return $output;
     }
 
-    function loadPOST(){
+    function loadPOST()
+    {
         $data=$_POST[$this->name];
-        if(is_array($data))
-            $data=join(',',$data);
-        else
-            $data='';
+        $data = is_array($data) ? join(',',$data) : '';
 
-        $gpc = get_magic_quotes_gpc();
-        if ($gpc){
+        if (get_magic_quotes_gpc()){
             $this->set(stripslashes($data));
         } else {
             $this->set($data);
         }
     }
 }
-
