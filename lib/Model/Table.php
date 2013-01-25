@@ -260,40 +260,44 @@ class Model_Table extends Model {
     function addCondition($field,$cond=undefined,$value=undefined){
 
         // You may pass plain "dsql" expressions as a first argument
-        if($field instanceof DB_dsql && $cond==undefined && $value==undefined){
+        if($field instanceof DB_dsql && $cond===undefined && $value===undefined){
             $this->_dsql()->where($field);
             return $this;
         }
+        
+        // value should be specified
+        if($cond===undefined && $value===undefined)
+            throw $this->exception('Incorrect condition. Please specify value');
 
+        // get model field object
         if(!$field instanceof Field){
             $field=$this->getElement($field);
         }
-        if($field->type() == 'boolean'){
-            $res=$field->getBooleanValue($value===undefined?$cond:$value);
+
+        if($field->type()=='boolean'){
             if($value===undefined){
-                $cond=$res;
+                $cond=$field->getBooleanValue($cond);
             }else{
-                $value=$res;
+                $value=$field->getBooleanValue($value);
             }
         }
 
         if($cond==='=' || $value===undefined){
             $v=$value===undefined?$cond:$value;
-            if($v===undefined)throw $this->exception('Incorrect condition. Please specify value');
-
             $field->defaultValue($v)->system(true)->editable(false);
         }
 
+        $f = $field->actual_field?:$field->short_name;
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->_dsql()->having($field->actual_field?:$field->short_name,$cond,$value);
+            $this->_dsql()->having($f,$cond,$value);
             $field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
-            $this->_dsql()->where($field->relation->short_name.'.'.($field->actual_field?:$field->short_name),$cond,$value);
+            $this->_dsql()->where($field->relation->short_name.'.'.$f,$cond,$value);
         }elseif($this->relations){
-            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.($field->actual_field?:$field->short_name),$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.$f,$cond,$value);
         }else{
-            $this->_dsql()->where(($this->table_alias?:$this->table).".".($field->actual_field?:$field->short_name),$cond,$value);
+            $this->_dsql()->where(($this->table_alias?:$this->table).".".$f,$cond,$value);
         }
         return $this;
     }
