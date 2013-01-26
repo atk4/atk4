@@ -430,7 +430,4 @@ class Form_Basic extends View {
         }
         $this->errors[$field] = $existing . $name;
     }
-    /**
-     * Makes field's value set to null if empty value has been specified
-     */
 }
