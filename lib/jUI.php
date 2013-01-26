@@ -61,12 +61,6 @@ class jUI extends jQuery {
         return $this;
     }
     function addStylesheet($file,$ext='.css',$template=false){
-        /*
-           if(file_exists($try[]=BASEDIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext)){}   // do nothing, relative_path is set
-           elseif(file_exists($try[]=AMODULES3_DIR.'/'.($relative_path=$this->js_dir.'/'.$file).$ext))$relative_path=basename(AMODULES3_DIR).'/'.$relative_path;
-           elseif(file_exists($try[]=BASEDIR.'/'.($relative_path=$file).$ext));
-           else throw new BaseException("Can't find ($file$ext) (tried: ".join(', ',$try).")");
-         */
         $url=$this->api->locateURL('css',$file.$ext);
         if(!$this->atk4_initialised || $template){
             return parent::addStylesheet($file,$ext);

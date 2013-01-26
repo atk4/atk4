@@ -225,19 +225,19 @@ class jQuery_Chain extends AbstractModel {
         }
         return $ret;
     }
-    /* Returns HTML for a link with text $text. When clicked will execute this chain */
+    /* Returns HTML for a link with text $text. When clicked will execute this chain. */
     function getLink($text){
         return '<a href="javascript:void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
     function getString(){
         return $this->_render();
     }
-    /* Specify requirement for stylesheet. Will load dynamically. May not respect relative image URLs */
+    /* Specify requirement for stylesheet. Will load dynamically. */
     function _css($file){
         $this->api->jquery->addStylesheet($file);
         return $this;
     }
-    /* Specify requirement extra javascript include. Will load dynamically. */
+    /* Specify requirement for extra javascript include. Will load dynamically. */
     function _load($file){
         $this->api->jquery->addInclude($file);
         return $this;
