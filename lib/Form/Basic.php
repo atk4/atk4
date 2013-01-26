@@ -165,18 +165,12 @@ class Form_Basic extends View {
         $last_field->template->trySet('field_type',strtolower($type));
         if (is_array($attr)){
             foreach ($attr as $key => $value){
-                $this->last_field->setProperty($key, $value);
+                $last_field->setProperty($key, $value);
             }
         }
 
         return $last_field;
     }
-    function disable(){
-        // disables last field
-        $this->last_field->disable();
-        return $this;
-    }
-
     function importFields($model,$fields=undefined){
         $this->add('Controller_MVCForm')->importFields($model,$fields);
     }
