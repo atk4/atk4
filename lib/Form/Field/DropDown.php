@@ -16,24 +16,11 @@
  =====================================================ATK4=*/
 class Form_Field_DropDown extends Form_Field_ValueList {
 
-    function validate(){
-        if(!$this->value)return parent::validate();
-        $this->getValueList(); //otherwise not preloaded?
-        if(!isset($this->value_list[$this->value])){
-            /*
-               if($this->api->isAjaxOutput()){
-               $this->ajax()->displayAlert($this->short_name.": This is not one of the offered values")
-               ->execute();
-               }
-             */
-            $this->form->errors[$this->short_name]="This is not one of the offered values";
-        }
-        return parent::validate();
-    }
     function getInput($attr=array()){
+        $multi = isset($this->attr['multiple']);
         $output=$this->getTag('select',array_merge(array(
-                        'name'=>$this->name,
-			'data-shortname'=>$this->short_name,
+                        'name'=>$this->name . ($multi?'[]':''),
+                        'data-shortname'=>$this->short_name,
                         'id'=>$this->name,
                         ),
                     $attr,
