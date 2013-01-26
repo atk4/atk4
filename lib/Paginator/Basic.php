@@ -49,7 +49,7 @@ class Paginator_Basic extends CompleteLister {
             $source->_dsql()->calc_found_rows();
 
         }else{
-            $this->source &= $source;
+            $this->source =& $source;
         }
     }
     function recursiveRender(){
