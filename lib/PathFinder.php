@@ -263,11 +263,9 @@ class PathFinder extends AbstractController
         if ($lastNsPos = strripos($className, '\\')) {
             $namespace = substr($className, 0, $lastNsPos);
             $className = substr($className, $lastNsPos + 1);
-            $nsPath  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace)
-                . DIRECTORY_SEPARATOR;
+            $nsPath  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
         }
-        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className) .
-            '.php';
+        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
         /**/$this->api->pr->next('pathfinder/loadClass/locate ');
         try {
@@ -425,7 +423,7 @@ class PathFinder_Location extends AbstractModel {
             if(substr($url,-1)!='/')$url.='/';
             $url.=$file_path;
         }
-        $url=str_replace('/./','/',$url);
+        $url=str_replace(array('\\','/./','/./'),'/',$url);
         return $url;
     }
 
