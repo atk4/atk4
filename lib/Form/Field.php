@@ -25,10 +25,10 @@ abstract class Form_Field extends AbstractView {
     /**
      * Description of the field shown next to it on the form
      */
-    public $error_template;    // template used to put errors on the field line
-    public $error_mandatory;    // template used to mark mandatory fields
+    public $error_template;      // template used to put errors on the field line
+    public $mandatory_template;  // template used to mark mandatory fields
     public $caption;
-    protected $value=null;        // use $this->get(), ->set().
+    protected $value=null;       // use $this->get(), ->set().
     public $short_name=null;
     public $attr=array();
     public $no_save=null;
@@ -43,7 +43,6 @@ abstract class Form_Field extends AbstractView {
 
     // Field customization
     private $separator='';
-
     public $show_input_only;
     public $form=null;
 
@@ -116,8 +115,8 @@ abstract class Form_Field extends AbstractView {
         return $this->disabled;
     }
     function set($value){
-        // Use this function when you want to assign $this->value. If you use this function, your field will
-        // operate in AJAX mode
+        // Use this function when you want to assign $this->value.
+        // If you use this function, your field will operate in AJAX mode.
         $this->value=$value;
         return $this;
     }
@@ -134,7 +133,6 @@ abstract class Form_Field extends AbstractView {
         }else{
             return $this->beforeField()->add('Button',$options)->setLabel($label);
         }
-        return $this;
     }
     function beforeField(){
         if(!$this->template->hasTag('after_input')){
@@ -196,15 +194,6 @@ abstract class Form_Field extends AbstractView {
         call_user_func_array(array($hint,'set'), func_get_args());
         return $this;
     }
-    function setFieldTitle($text){
-        /* OBSOLETE 4.1 */
-        $this->template->trySet('field_title',$text);
-        return $this;
-    }
-    function clearFieldValue(){
-        /* OBSOLETE 4.1, use set(null) */
-        $this->value=null;
-    }
     function loadPOST(){
         if(isset($_POST[$this->name]))$this->set($_POST[$this->name]);
         else $this->set($this->default_value);
@@ -212,11 +201,11 @@ abstract class Form_Field extends AbstractView {
     }
     function normalize(){
         /* Normalization will make sure that entry conforms to the field type. 
-           Possible trimming, roudning or length enforcements may happen */
+           Possible trimming, rounding or length enforcements may happen. */
         $this->hook('normalize');
     }
     function validate(){
-        // NoSave fields should not be validated, disabled as well
+        // NoSave and disabled fields should not be validated
         if($this->disabled || $this->no_save)return true;
         // we define "validate" hook, so actual validators could hook it here
         // and perform their checks
@@ -234,8 +223,9 @@ abstract class Form_Field extends AbstractView {
         }
         return $this;
     }
-    /** Executes a callback. If callabck returns string, shows it as error message. If callback returns "false" shows either
-     * $msg or a standard error message about field being incorrect */
+    /** Executes a callback. If callback returns string, shows it as error message.
+     * If callback returns "false" shows either $msg or a standard error message
+     * about field being incorrect */
     function validateField($condition,$msg=null){
         if(is_callable($condition)){
             $this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
@@ -259,19 +249,9 @@ abstract class Form_Field extends AbstractView {
         $this->validateField(array($this,'_validateNotNull'),$msg);
         return $this;
     }
-    /** obsolete version of validateNotNULL */
-    function setDefault($default=null){
-        /* OBSOLETE 4.1, use set() */
-        $this->default_value=$default;
-        return $this;
-    }
-    function getDefault(){
-        /* OBSOLETE 4.1, use set() */
-        return $this->default_value;
-    }
     function getInput($attr=array()){
-        // This function returns HTML tag for the input field. Derived classes should inherit this and add
-        // new properties if needed
+        // This function returns HTML tag for the input field. Derived classes
+        // should inherit this and add new properties if needed
         return $this->getTag('input',
                 array_merge(array(
                         'name'=>$this->name,
@@ -295,7 +275,7 @@ abstract class Form_Field extends AbstractView {
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->trySet('field_comment',$this->comment);
-        // some fields may not have field_imput tag at all...
+        // some fields may not have field_input tag at all...
         if($this->button_prepend || $this->button_append){
             $this->field_prepend.='<div class="input-cell expanded">';
             $this->field_append='</div>'.$this->field_append;
@@ -378,7 +358,6 @@ abstract class Form_Field extends AbstractView {
          * getTag('a',array('href'=>'foo.html'),getTag('b','click here'));
          * --> <a href="foo.html"><b>click here</b></a>
          */
-
         if(is_string($attr)){
             $value=$attr;
             $attr=null;
@@ -409,8 +388,8 @@ abstract class Form_Field extends AbstractView {
     }
 }
 
-///////// Because many fields are really simple extenions of the base-line field, they are
-///////// defined here.
+///////// Because many fields are really simple extenions of the base-line field,
+///////// they are defined here.
 
 class Form_Field_Line extends Form_Field {
     function getInput($attr=array()){
@@ -419,7 +398,7 @@ class Form_Field_Line extends Form_Field {
 }
 // Visually different fields
 class Form_Field_Search extends Form_Field {
-    // WARNING: <input type=search> is safari extention and is will not validate as valid HTML
+    // WARNING: <input type=search> is safari extention and will not validate as valid HTML
     function getInput($attr=array()){
         return parent::getInput(array_merge(array('type'=>'search'),$attr));
     }
@@ -550,11 +529,7 @@ class Form_Field_Text extends Form_Field {
         $this->attr=array('rows'=>5);
         parent::init();
     }
-    function setFieldHint($text){
-        return parent::setFieldHint($text);
-    }
     function getInput($attr=array()){
-
         return
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
             htmlspecialchars($this->value,ENT_COMPAT,'ISO-8859-1',false).
