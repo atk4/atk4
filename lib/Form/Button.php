@@ -25,10 +25,6 @@
 class Form_Button extends Button {
     public $label;
 
-    public $onclick='';
-
-    protected $style = array();
-
     function setLabel($_label){
         $this->label=$_label;
         parent::setLabel($_label);
