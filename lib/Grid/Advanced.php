@@ -46,6 +46,8 @@ class Grid_Advanced extends Grid_Basic {
 
     public $title_col=array();
 
+    public $paginator=null;
+
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
      * This should be a hash: 'param_name'=>'param_value'
@@ -585,6 +587,9 @@ class Grid_Advanced extends Grid_Basic {
      */
     function addPaginator($ipp=25){
         // adding ajax paginator
+        if ($this->paginator) {
+            return $this->paginator;
+        }
         $this->paginator=$this->add('Paginator');
         $this->paginator->ipp($ipp);
         return $this;
