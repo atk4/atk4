@@ -23,7 +23,7 @@ class Field_Reference extends Field {
     function setModel($model,$display_field=null){
 
         $this->model_name=is_string($model)?$model:get_class($model);
-        $this->model_name=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model_name);
+        $this->model_name=$this->api->normalizeClassName($this->model_name,'Model');
         
         if($display_field)$this->display_field=$display_field;
 
