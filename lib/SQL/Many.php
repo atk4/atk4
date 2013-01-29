@@ -22,10 +22,9 @@ class SQL_Many extends AbstractModel {
     public $auto_track_element=true;
     public $relation=null;
     public $table_alias=null;
+    
     function set($model,$their_field=null,$our_field=null,$relation=null){
-
-        $this->model_name=is_string($model)?$model:get_class($model);
-        $this->model_name=$this->api->normalizeClassName($this->model_name,'Model');
+        $this->model_name=$this->api->normalizeClassName($model,'Model');
 
         if($relation){
             $this->relation=$relation;
