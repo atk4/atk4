@@ -344,7 +344,8 @@ class ApiCLI extends AbstractView {
     }
     /**
      * Normalize class name.
-     * This will add specified prefix to class name. Class name can contain namespaces.
+     * This will add specified prefix to class name if it's not already existing.
+     * Class name can have namespaces and they are treated prefectly.
      * 
      * @param string $name Name of class
      * @param string $type Prefix for class name
@@ -353,7 +354,12 @@ class ApiCLI extends AbstractView {
     function normalizeClassName($name,$type='Model')
     {
         if(strlen($type)==0) return $name;
-        return preg_replace('#^(.*[/\\\])?(.*)$#', '\1'.ucfirst($type).'_\2', $name);
+        $type = ucfirst($type);
+        if (is_string($name) && strpos($name,$type)!==0) {
+            return preg_replace('|^(.*[/\\\])?(.*)$|', '\1'.$type.'_\2', $name);
+        } else {
+            return $name;
+        }
     }
     // }}}
 }
