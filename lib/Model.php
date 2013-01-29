@@ -213,8 +213,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
     /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
     function setSource($controller, $table=null, $id=null){
-        if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
-        else if(!$controller instanceof Controller_Data)throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+        if(is_string($controller)){
+            $controller=$this->api->normalizeClassName($controller,'Data');
+        } elseif(!$controller instanceof Controller_Data){
+            throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+        }
         $this->controller=$this->setController($controller);
 
         $this->controller->setSource($this,$table);
@@ -224,7 +227,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /** Cache controller is used to attempt and load data a little faster then the primary controller */
     function addCache($controller, $table=null, $priority=5){
-        $controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        $controller=$this->api->normalizeClassName($controller,'Data');
         return $this->setController($controller)
             ->addHooks($this,$priority)
             ->setSource($this,$table);
@@ -424,7 +427,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($our_field===undefined){
             // determine the actual class of the other model
             if(!is_object($model)){
-                $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                $tmp=$this->api->normalizeClassName($model,'Model');
                 /* bug - does not address namespace conversion properly.
                  * fix by jancha */
                 $tmp=str_replace('/', '\\', $tmp);
@@ -444,9 +447,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
     function hasMany($model,$their_field=undefined,$our_field=undefined){
-        if(is_string($model)){
-            $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$this->model);
-        }
+        $model=$this->api->normalizeClassName($this->model,'Model');
         $this->_references[$model]=array($model,$our_field,$their_field);
         return null;
     }
