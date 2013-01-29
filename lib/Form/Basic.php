@@ -76,6 +76,9 @@ class Form_Basic extends View {
         $this->api->addHook('pre-render-output',array($this,'lateSubmit'));
         $this->api->addHook('submitted',$this);
 
+        $this->template_chunks['form']
+            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
+
     }
     protected function getChunks(){
         // commonly replaceable chunks
@@ -407,8 +410,6 @@ class Form_Basic extends View {
             }
             $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
-        $this->template_chunks['form']
-            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
         $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
     }
     function hasField($name){
