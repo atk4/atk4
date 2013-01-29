@@ -217,12 +217,12 @@ class Model_Table extends Model {
     /** Defines one to many association */
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
 
-        // register reference, but don't cerate any fields there
+        // register reference, but don't create any fields there
         parent::hasOne($model,null);
 
         if(!$our_field){
             if(!is_object($model)){
-                $tmp=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
+                $tmp=$this->api->normalizeClassName($model,'Model');
                 /* bug - does not address namespace conversion properly.
                  * fix by jancha */
                 $tmp=str_replace('/', '\\', $tmp);
@@ -567,9 +567,7 @@ class Model_Table extends Model {
     }
     function saveAs($model){
         if(is_string($model)){
-            if(strpos($model,'Model')!==0){
-                $model=preg_replace('|^(.*/)?(.*)$|','\1Model_\2',$model);
-            }
+            $model=$this->api->normalizeClassName($model,'Model');
             $model=$this->add($model);
         }
         $this->_save_as=$model;
