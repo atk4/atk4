@@ -17,12 +17,7 @@
 class Form_Field_Radio extends Form_Field_ValueList {
     function validate(){
         if(!isset($this->value_list[$this->value]) && (!$this->value && $this->empty_value)){
-            /*
-               if($this->api->isAjaxOutput()){
-               echo $this->ajax()->displayAlert($this->short_name.":"."This is not one of offered values")->execute();
-               }
-             */
-            $this->displayFieldError("This is not one of offered values");
+            $this->displayFieldError("Value ".$this->value." is not one of offered values");
         }
         return parent::validate();
     }
