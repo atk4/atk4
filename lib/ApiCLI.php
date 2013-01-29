@@ -342,5 +342,18 @@ class ApiCLI extends AbstractView {
         $name = preg_replace('|\\'.$s.'{2,}|',$s,$name);
         return $name;
     }
+    /**
+     * Normalize class name.
+     * This will add specified prefix to class name. Class name can contain namespaces.
+     * 
+     * @param string $name Name of class
+     * @param string $type Prefix for class name
+     * @return string Full class name
+     */
+    function normalizeClassName($name,$type='Model')
+    {
+        if(strlen($type)==0) return $name;
+        return preg_replace('#^(.*[/\\\])?(.*)$#', '\1'.ucfirst($type).'_\2', $name);
+    }
     // }}}
 }
