@@ -355,11 +355,11 @@ class ApiCLI extends AbstractView {
     {
         if(is_object($name)) $name = get_class($name);
         $prefix = ucfirst($prefix).'_';
+        $name = str_replace('/','\\',$name);
         if (strpos($name,$prefix)!==0) {
-            return preg_replace('|^(.*[/\\\])?(.*)$|', '\1'.$prefix.'\2', $name);
-        } else {
-            return $name;
+            $name = preg_replace('|^(.*\\\)?(.*)$|', '\1'.$prefix.'\2', $name);
         }
+        return $name;
     }
     // }}}
 }
