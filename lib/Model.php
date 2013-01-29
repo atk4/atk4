@@ -428,10 +428,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             // determine the actual class of the other model
             if(!is_object($model)){
                 $tmp=$this->api->normalizeClassName($model,'Model');
-                /* bug - does not address namespace conversion properly.
-                 * fix by jancha */
-                $tmp=str_replace('/', '\\', $tmp);
-                /* */
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
