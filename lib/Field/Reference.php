@@ -21,9 +21,7 @@ class Field_Reference extends Field {
     public $table_alias=null;
 
     function setModel($model,$display_field=null){
-
-        $this->model_name=is_string($model)?$model:get_class($model);
-        $this->model_name=$this->api->normalizeClassName($this->model_name,'Model');
+        $this->model_name=$this->api->normalizeClassName($model,'Model');
         
         if($display_field)$this->display_field=$display_field;
 
