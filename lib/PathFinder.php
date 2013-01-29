@@ -473,9 +473,12 @@ class PathFinder_Location extends AbstractModel {
 
     function locate($type,$filename,$return='relative'){
         // Locates the file and if found - returns location,
-        // otherwise returns array of attempted locations
+        // otherwise returns array of attempted locations.
+        // Specify empty filename to find location.
 
-        // specify empty filename to find location
+        // Imants: dirty fix for finding files with complex namespaces like
+        // Vendor\MyAddon otherwise these are not found on *Nix systems
+        $filename = str_replace('\\','/',$filename);
 
         $attempted_locations=array();
         $locations=array();
