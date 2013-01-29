@@ -11,52 +11,52 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 /**
- * Normal pages are added by Application and are tied to the certain URL as dictated
- * by the Application class. Sometimes, however, you would have a need to create
- * page within a page. That's when you are building your custom View or 
- * add-on - you want that page.
+ * Normal pages are added by Application and are tied to the certain URL as
+ * dictated by the Application class. Sometimes, however, you would have a need
+ * to create page within a page. That's when you are building your custom View
+ * or add-on - you want that page.
  *
  * VirtualPage gives you a unique URL to the page where you can add objects.
  *
- * $vp = $this->add('VirtualPage')
- * $this->js(true)->frameURL('MyPopup', $vp->getURL());
+ * VirtualPage is intelligent enough to act differently depending on where you
+ * add it.
+ * 
+ * This way you can create popup on page load.
+ *  $vp = $this->add('VirtualPage');
+ *  $this->js(true)->univ()->frameURL('MyPopup',$vp->getURL());
+ *  $vp->set(function($vp){
+ *      $vp->add('LoremIpsum'); // <-- will appear within a frame
+ *  });
  *
- * $vp->set(function($vp){
- *   // will appear within a frame
- *   $vp->add('LoremIpsum');
- * });
- *
- * VirtualPage is inteligent depending on where you add it. For example,
- * here is how you can add it. Here is how you can bind it to a button
- * or other view through JS element:
- *
+ * Here is how you can bind it to a button or other view through JS element.
+ * Calling "bindEvent" will automatically tie in frameURL for you.
  *  $b=$page->add('Button')->set('Open popup');
  *  $b->add('VirtualPage')
- *      ->bindEvent('click','My Cool Title')
+ *      ->bindEvent('My Cool Title','click')
  *      ->set(function($page){
  *          $page->add('LoremIpsum');
  *      });
  *
- * Calling "bindEvent" will automatically tie in frameURL for you. And there
- * are other uses!
- *
- * $grid->add('VirtualPage')
- *     ->addColumn('edit')
- *     ->set(function($page){
- *         $page->add('Text')->set('ID='.$_GET['edit']);
- *     });
- *
  * This would add a button into a Grid which would show you row's ID.
+ *  $grid->add('VirtualPage')
+ *      ->addColumn('edit')
+ *      ->set(function($page){
+ *          $page->add('Text')->set('ID='.$_GET['edit']);
+ *      });
  *
  * There are many other uses for VirtualPage, especially when you extract
  * it's URL.
  *
- * $this->location($this->add('VirtualPage')
- *      ->set(function($page){
- *          $page->add('Text')->set('Check your email for confirmation')
- *      })->getURL());
+ *  $b = $page->add('Button')->set('Request new password');
+ *  $b->js('click')->univ()->location(
+ *      $this->add('VirtualPage')
+ *          ->set(function($p){
+ *              $p->add('Text')->set('Check your email for confirmation');
+ *          })
+ *          ->getURL()
+ *  );
  *
- * (If you do thiss, be mindful of stickyGET arguments and don't call
+ * (If you do this, be mindful of stickyGET arguments and don't call
  *   from inside form's submit code
  */
 class VirtualPage extends AbstractController
@@ -144,7 +144,7 @@ class VirtualPage extends AbstractController
                 $self->api->cut($page);
                 $self->api->stickyGET($self->name);
                 call_user_func($method, $page);
-                $self->api->unstickyGET($self->name);
+                $self->api->stickyForget($self->name);
             });
             throw $this->exception('', 'StopInit');
         }
