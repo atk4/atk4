@@ -358,9 +358,7 @@ abstract class AbstractObject
      */
     function setController($controller, $name=null) 
     {
-        if (is_string($controller)) {
-            $controller=$this->api->normalizeClassName($controller,'Controller');
-        }
+        $controller=$this->api->normalizeClassName($controller,'Controller');
         return $this->add($controller, $name);
     }
     /**
@@ -372,9 +370,7 @@ abstract class AbstractObject
      */
     function setModel($model) 
     {
-        if (is_string($model)) {
-            $model = $this->api->normalizeClassName($model,'Model');
-        }
+        $model = $this->api->normalizeClassName($model,'Model');
         $this->model=$this->add($model);
         return $this->model;
     }
