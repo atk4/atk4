@@ -64,7 +64,7 @@ class Menu_Basic extends CompleteLister {
         return $this;
     }
     protected function getDefaultHref($label){
-        $href=preg_replace('/[^a-zA-Z0-9]/','',$label);
+        $href=$this->api->normalizeName($label,'');
         if($label[0]==';'){
             $label=substr($label,1);
             $href=';'.$href;

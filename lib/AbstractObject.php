@@ -205,21 +205,26 @@ abstract class AbstractObject
             $class->owner = $this;
 
             return $class;
-        } elseif ($class[0]=='.') {
-            $tmp=explode('\\', get_class($this));
-            if (!$tmp[1]) {
-                $ns='';
-            } else {
-                $ns=$tmp[0];
-            }
-            $class=$ns.'/'.substr($class, 2);
         }
-        if (!$short_name) {
-            $short_name=str_replace(
-                '\\', '_', str_replace('/', '_', strtolower($class))
-            );
+        
+        if (!is_string($class) || !$class) {
+            throw $this->exception("Class is not valid")
+                ->addMoreInfo('class', $class);
         }
+        
+        $class = str_replace('/','\\',$class);
 
+        if ($class[0]=='.') {
+            // Relative class name specified, extract current namespace
+            // and make new class name relative to this namespace
+            $ns = get_class($this);
+            $ns = substr($ns, 0, strrpos($ns, '\\'));
+            $class = $ns . '\\' . substr($class, 2);
+        }
+        
+        if (!$short_name) {
+            $short_name = str_replace('\\', '_', strtolower($class));
+        }
         $short_name=$this->_unique($this->elements, $short_name);
 
         if (isset ($this->elements[$short_name])) {
@@ -230,24 +235,18 @@ abstract class AbstractObject
                  * generate error. Obviously one of those wouldn't be
                  * displayed or other errors would occur
                  */
-                throw $this->exception("Element with name already exists")
+                throw $this->exception("Element with this name already exists")
                     ->addMoreInfo('name', $short_name)
                     ->addThis($this);
             }
         }
 
-        if (!is_string($class) || !$class) {
-            throw $this->exception("Class is not valid")
-                ->addMoreInfo('class', $class);
-        }
-
-        // Separate out namespace
-        $class_name=str_replace('/', '\\', $class);
-        $class_name_nodash=str_replace('-', '', $class_name);
+        // Separate out namespace ????????????????????
+        $class_name_nodash=str_replace('-', '', $class);
         if (!class_exists($class_name_nodash, false)
             && isset($this->api->pathfinder)
         ) {
-            $this->api->pathfinder->loadClass($class_name);
+            $this->api->pathfinder->loadClass($class);
         }
         $element = new $class_name_nodash();
 
@@ -263,15 +262,16 @@ abstract class AbstractObject
 
         $element->owner = $this;
         $element->api = $this->api;
-        $this->elements[$short_name]=$element;
-        if (!$element->auto_track_element) {
-            $this->elements[$short_name]=true;  
-            // dont store extra reference to models and controlers
-            // for purposes of better garbage collection
-        }
-
         $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
+
+        if (!$element->auto_track_element) {
+            // dont store extra reference to models and controlers
+            // for purposes of better garbage collection
+            $this->elements[$short_name]=true;  
+        } else {
+            $this->elements[$short_name]=$element;
+        }
 
         // Initialize template before init() starts
         if ($element instanceof AbstractView) {
@@ -282,8 +282,8 @@ abstract class AbstractObject
         // so you'll get significantly slower code if you try to use this
         $this->api->hook('beforeObjectInit', array(&$element));
 
+        // Initialize element
         $element->init();
-
 
         // Make sure init()'s parent was called. Popular coder's mistake
         if (!$element->_initialized) {
@@ -338,9 +338,10 @@ abstract class AbstractObject
         unset($this->owner->elements[$this->short_name]);
         $this->name = $this->name . '_' . $short_name;
         $this->short_name = $short_name;
-        $this->owner->elements[$short_name]=$this;
         if (!$this->auto_track_element) {
             $this->owner->elements[$short_name]=true; 
+        } else {
+            $this->owner->elements[$short_name]=$this;
         }
         return $this;
     }
@@ -357,13 +358,7 @@ abstract class AbstractObject
      */
     function setController($controller, $name=null) 
     {
-        if (is_string($controller)
-            && strpos($controller, 'Controller') !== 0
-        ) {
-            $controller=preg_replace(
-                '|^(.*/)?(.*)$|', '\1Controller_\2', $controller
-            );
-        }
+        $controller=$this->api->normalizeClassName($controller,'Controller');
         return $this->add($controller, $name);
     }
     /**
@@ -375,9 +370,7 @@ abstract class AbstractObject
      */
     function setModel($model) 
     {
-        if (is_string($model)&&strpos($model, 'Model')!==0) {
-            $model=preg_replace('|^(.*/)?(.*)$|', '\1Model_\2', $model);
-        }
+        $model = $this->api->normalizeClassName($model,'Model');
         $this->model=$this->add($model);
         return $this->model;
     }
@@ -649,7 +642,10 @@ abstract class AbstractObject
             }
             return $this;
         }
-        if (!is_callable($callable) && ($callable instanceof AbstractObject && !$callable->hasMethod($hook_spot))) {
+        if (!is_callable($callable)
+            && ($callable instanceof AbstractObject
+                && !$callable->hasMethod($hook_spot))
+        ) {
             throw $this->exception('Hook does not exist');
         }
         if (is_object($callable) && !is_callable($callable)) {

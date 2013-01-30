@@ -158,10 +158,7 @@ class Form_Basic extends View {
             case'slider':$type='Slider';break;
             case'checkboxlist':$type='CheckboxList';break;
         }
-        $class=$type;
-        if(is_string($class)&&strpos($class,'Form_Field_')!==0){
-            $class=preg_replace('|^(.*/)?(.*)$|','\1Form_Field_\2',$class);
-        }
+        $class=$this->api->normalizeClassName($type,'Form_Field');
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);

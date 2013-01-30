@@ -24,7 +24,7 @@ class Controller_Data_Dumper extends Controller_Data {
         $this->log[]=$model->table.":".@$this->sh->short_name." :: ".$s;
     }
     function setPrimarySource($model,$controller,$data=undefined){
-        if(is_string($controller))$controller=preg_replace('|^(.*/)?(.*)$|','\1Data_\2',$controller);
+        $controller=$this->api->normalizeClassName($controller,'Data');
         $this->sh=$model->setController($controller);
         if($data)$this->sh->setSource($model,$data);
     }
