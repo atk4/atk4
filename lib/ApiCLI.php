@@ -357,8 +357,8 @@ class ApiCLI extends AbstractView {
      */
     function normalizeClassName($name,$prefix)
     {
+        if(is_string($name)) $name = str_replace('/','\\',$name);
         if(is_object($name)) $name = get_class($name);
-        $name = str_replace('/','\\',$name);
         
         if($prefix) {
             $class = ltrim(strrchr($name,'\\'),'\\')?:$name;
