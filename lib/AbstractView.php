@@ -74,7 +74,8 @@ abstract class AbstractView extends AbstractObject
      *
      * @return void
      */
-    function __clone(){
+    function __clone()
+    {
         throw $this->exception('Can\'t clone Views');
     }
     /**
@@ -86,7 +87,7 @@ abstract class AbstractView extends AbstractObject
      *
      * @return AbstractModel object
      */
-    function setModel($model, $actual_fields = undefined)
+    function setModel($model, $actual_fields = UNDEFINED)
     {
         parent::setModel($model);
 
@@ -484,8 +485,11 @@ abstract class AbstractView extends AbstractObject
      * This approach is compatible with jQuerry UI Widget factory and will keep
      * your code clean
      *
-     * @link http://agiletoolkit.org/doc/js
+     * @param string|true|null   $when     Event when chain will be executed
+     * @param array|chain|string $code     JavaScript chain(s) or code
+     * @param string             $instance Obsolete
      *
+     * @link http://agiletoolkit.org/doc/js
      * @return jQuery_Chain
      */
     function js($when = null, $code = null, $instance = null)

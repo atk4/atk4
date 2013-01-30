@@ -21,5 +21,6 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class AbstractController extends AbstractObject {
+class AbstractController extends AbstractObject
+{
 }

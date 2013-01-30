@@ -19,5 +19,6 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class AbstractModel extends AbstractObject {
+class AbstractModel extends AbstractObject
+{
 }
