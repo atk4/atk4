@@ -287,7 +287,7 @@ class Grid_Advanced extends Grid_Basic {
                 $this->current_row[$field].'</label>';
     }
     function prepareIdField($val){
-        return preg_replace("/[^a-zA-Z0-9_]/", "_", $val);
+        return $this->api->normalizeName($val);
     }
     function init_expander_widget($field){
         @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';

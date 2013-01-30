@@ -89,8 +89,8 @@ class Grid_Basic extends CompleteLister {
             if(strpos($subtype,'/')){
 
                 if(!$this->elements[$subtype.'_'.$name]){
-                // add-on functionality
-                    $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$subtype);
+                    // add-on functionality
+                    $addon=$this->api->normalizeClassName($subtype,'Controller_Grid_Format');
                     $this->elements[$subtype.'_'.$name]=$this->add($addon);
                 }
 
@@ -130,7 +130,7 @@ class Grid_Basic extends CompleteLister {
 
             if(!$this->elements[$formatter.'_'.$field]){
                 // add-on functionality
-                $addon=preg_replace('|^(.*/)?(.*)$|','\1Controller_Grid_Format_\2',$formatter);
+                $addon=$this->api->normalizeClassName($formatter,'Controller_Grid_Format');
                 $this->elements[$formatter.'_'.$field]=$this->add($addon,$formatter);
             }
 
