@@ -1,13 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * Base class for Command-Line Applications. If you need to share
- * code between multiple APIs, create a controller.
- *
- * More Info
- *  @link http://agiletoolkit.org/learn/learn/understand/api
- *  @link http://agiletoolkit.org/doc/apicli
- */
-/*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -18,81 +10,204 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class ApiCLI extends AbstractView {
-
-    /** Default database connection.
-     * @see dbConnect()  */
+/**
+ * Base class for Command-Line Applications. The purpose of Application class
+ * is to initialize all the other classes and aid their connectivity. API
+ * class can be accessed from any object through $this->api property. 
+ *
+ * API classes are derrived from AbstractView because normally they would have
+ * a template and will be able to render themselves consistently to any other
+ * view in the system. Although ApiCLI does not do any rendering, it's descendants
+ * do
+ *
+ * @link http://agiletoolkit.org/doc/api
+ */
+class ApiCLI extends AbstractView
+{
+    /**
+     * In a typical application, one connection to the database is enough for
+     * majority of applications. Calling $api->dbConnect will read Database
+     * data from config file and store it in $db property. If you requires
+     * a more advanced connectivity or multiple connections, you can manually
+     * initialize more database connections.
+     *
+     * @see dbConnect()  
+     */
     public $db=null;
-    
-    /** Configuration loaded from config.php and config-defaults.php files. Use getConfig() to access */
+
+    /**
+     * ApiCLI implements a API for accessing your application configuration.
+     * Once configuration file is read, data is saved inside this property.
+     * 
+     * @see getConfig()
+     * @see readConfig()
+     */
     protected $config = null;
 
-    /** Points to the instance of system logger (lib/Logger.php) for enriching error logging */
+    /**
+     * Without logger, API will dump out errors and exceptions in a very brief
+     * and straigtforward way. Logger is a controller which enhances error
+     * output and in most cases you do need one. Logger can be further configured
+     * to either output detailed errors or show brief message instead.
+     *
+     * @see Logger
+     */
     public $logger=null;
 
-    /** Points to the instance of PathFinder class, which is used to locate resource files. PathFinder
-     * is the first class to be initialized after API. */
-    public $pathfinder=null;
-    protected $pathfinder_class='PathFinder';
-
-    /** Skin for web application templates */
-    public $skin;
-
-    /** For fast compatibility checks. To be more specific use $api->requires() */
-    public $atk_version=4.2;
-
-    /** $pr points to profiler. All lines referencing $pr myst be prefixed with the
-     * 4-symbol sequence "/ ** /" (no spaces). When deploying to production, you can
-     * remove all lines from all files starting with the sequence without affecting
-     * how your application works, but slightly improving performance */
-    /**/public $pr;
-
-    /** Maximum length of the name arguments (for SUHOSIN) */
-    public $max_name_length=60;
-
-    /** Contains list of hashes which used for name shortening */
-    public $unique_hashes=array();
-
+    /**
+     * If you want to use your own logger class, redefine this property
+     */
     public $logger_class='Logger';
 
+    /**
+     * PathFinder is a controller which is responsible for locating resources,
+     * such as PHP includes, JavaScript files, templates, etc. API Initializes
+     * PathFinder as soon as possible, then defines "Locations" which describe
+     * type of data found in different folders.
+     */
+    public $pathfinder=null;
+
+    /**
+     * If you would want to use your own PathFinder class, you must change
+     * this property and include it.
+     */
+    protected $pathfinder_class='PathFinder';
+
+    /**
+     * This is a major version of Agile Toolkit. The API of Agile Toolkit is
+     * very well established and changes rarely. Your application would generally
+     * be compatible throughout the same major version of Agile Tooolkit.
+     *
+     * @see requires();
+     */
+    public $atk_version=4.2;
+
+    /**
+     * Some Agile Toolkit classes contain references to profiler. Profiler
+     * would be initialized early and reference would be kept in this variable.
+     * Profiler measures relative time it took in certain parts of your
+     * application to help you find a slow-perfoming parts of application.
+     *
+     * By default $pr points to empty profiler object, which implements empty
+     * methods. All the lines referencing $pr myst be prefixed with the
+     * 4-symbol sequence "/ ** /" (no spaces). If you want to speed up Agile
+     * Toolkit further, you can eliminate all lines started with this sequence
+     * from your source code. 
+     */
+    /**/public $pr;
+
+    /**
+     * Object in Agile Toolkit contain $name property which is derrived from
+     * the owher object and keeps extending as you add objects deeper into
+     * run-time tree. Sometimes that may generate long names. Long names are
+     * difficult to read, they increase HTML output size but most importantly
+     * they may be restricted by security extensions such as SUHOSIN.
+     *
+     * Agile Toolkit implements a mechanism which will replace common beginning
+     * of objects with an abbreviation thus keeping object name length under
+     * control. This variable defines the maximum length of the object's $name.
+     * Be mindful that some objects will concatinate theri name with fields,
+     * so the maximum letgth of GET argument names can exceed this value by
+     * the length of your field. 
+     *
+     * We recommend you to increase SUHOSIN get limits if you encounter any
+     * problems. Set this value to "false" to turn off name shortening.
+     */
+    public $max_name_length=60;
+
+    /**
+     * As more names are shortened, the substituted part is being placed into
+     * this hash and the value contains the new key. This helps to avoid creating
+     * many sequential prefixes for the same character sequenece.
+     */
+    public $unique_hashes=array();
+
     // {{{ Start-up of application
-    /** Initializes properties of the application. Redefine init() instead of this */
-    function __construct($realm=null){
-        if(!$realm)$realm=get_class($this);
+    /**
+     * Regular objects in Agile Toolkit use init() and are added through add().
+     * Application class is differente, you use "new" keyword because it's the
+     * first class to be created. That's why constructor will perform quite a
+     * bit of initialization.
+     *
+     * Do not redefine constructor but instead use init();
+     *
+     * $realm defines a top-level name of your application. This impacts all
+     * id= prefixes in your HTML code, form field names and many other things,
+     * such as session name. If you have two application classes which are part
+     * of same web app and may want to use same realm, but in other cases it's
+     * preferably that you keep realm unique on your domain in the interests
+     * of security.
+     *
+     * @param string $realm Will become $api->name
+     */
+    function __construct($realm = null)
+    {
+        if (!$realm) {
+            $realm=get_class($this);
+        }
         $this->owner = $this;
         $this->name  = $realm;
         $this->api   = $this;
 
-        // Profiler is a class for benchmarking your application. All calls to pr 
+        // Profiler is a class for benchmarking your application. All calls to pr
         /**/$this->pr=new Dummy();
 
         try {
             $this->add($this->pathfinder_class);
             $this->init();
-
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             // This exception is used to abort initialisation of the objects but when
             // normal rendering is still required
-            if($e instanceof Exception_StopInit)return;
+            if ($e instanceof Exception_StopInit) {
+                return;
+            }
 
+            // Handles output of the exception
             $this->caughtException($e);
         }
     }
     // }}}
 
     // {{{ Management of Global Methods 
-    /** Register method with all objects in Agile Toolkit. 
+    /**
+     * Agile Toolkit objects allow method injection. This is quite similar
+     * to technique used in JavaScript:
+     *
+     *     obj.test = function() { .. }
+     *
+     * All non-existant method calls on all Agile Toolkit objects will be
+     * tried against local table of registered methods and then against 
+     * global registered methods.
+     *
+     * addGlobalmethod allows you to register a globally-recognized for all
+     * agile toolkit object. PHP is not particularly fast about executing
+     * methods like that, but this technique can be used for adding
+     * backward-compatibility or debugging, etc.
+     *
+     * @param string   $name     Name of the method
+     * @param callable $callable Calls your function($object, $arg1, $arg2)
+     *
      * @see AbstractObject::hasMethod()
      * @see AbstractObject::__call()
+     *
+     * @return void
      */
-    function addGlobalMethod($name,$callable){
-        if($this->hasMethod($name))
-            throw $this->exception('Registering method twice');
-        $this->addHook('global-method-'.$name,$callable);
+    function addGlobalMethod($name, $callable)
+    {
+        if ($this->hasMethod($name)) {
+            throw $this->exception('Registering method twice')
+                ->addMoreInfo('name', $name);
+        }
+        $this->addHook('global-method-'.$name, $callable);
     }
-    /** Returns if a global method with such name was defined */
+    /** 
+     * Returns if a global method with such name was defined
+     *
+     * @param string $name Name of the method
+     *
+     * @return boolean if registered
+     */
     function hasGlobalMethod($name){
         return isset($this->hooks['global-method-'.$name]);
     }

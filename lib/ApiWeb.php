@@ -27,6 +27,9 @@ class ApiWeb extends ApiCLI {
     /** recorded time when execution has started */
     public $start_time=null;
 
+    /** Skin for web application templates */
+    public $skin;
+
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();

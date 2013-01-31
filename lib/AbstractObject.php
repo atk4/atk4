@@ -931,7 +931,8 @@ abstract class AbstractObject
      */
     function _shorten($desired)
     {
-        if (strlen($desired)>$this->api->max_name_length) {
+        if (strlen($desired)>$this->api->max_name_length
+            && $this->api->max_name_length!==false) {
 
             $len=$this->api->max_name_length-10;
             if ($len<5) {
