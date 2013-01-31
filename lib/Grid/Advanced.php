@@ -272,18 +272,18 @@ class Grid_Advanced extends Grid_Basic {
         //  ->
         //
         @$this->current_row_html[$field]='<input type="checkbox" class="button_'.$field.' '.$class.'"
-            id="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'"
+            id="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->model->id).'"
             rel="'.$this->api->url($column['page']?$column['page']:'./'.$field,
             array('expander'=>$field,
                     'cut_page'=>1,
                     'expanded'=>$this->name,
 
                     // TODO: id is obsolete
-                    'id'=>$this->current_row[$column['idfield']?$column['idfield']:'id'],
-                    $this->columns[$field]['refid'].'_id'=>$this->current_row[$column['idfield']?$column['idfield']:'id']
-                 )
+                    'id'=>$this->model->id,
+                    $this->columns[$field]['refid'].'_id'=>$this->model->id
+                )
                 ).'"
-                /><label for="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->current_row[$column['idfield']?$column['idfield']:'id']).'">'.
+                /><label for="'.$this->name.'_'.$field.'_'.$this->prepareIdField($this->model->id).'">'.
                 $this->current_row[$field].'</label>';
     }
     function prepareIdField($val){
@@ -348,6 +348,9 @@ class Grid_Advanced extends Grid_Basic {
     }
     function init_link($field){
         $this->setTemplate('<a href="<?'.'$_link?'.'>"><?'.'$'.$field.'?'.'></a>');
+    }
+    function format_password($field){
+        $this->current_row[$field]='***';
     }
     function format_link($field){
         $this->current_row['_link']=$this->api->url('./'.$field,array('id'=>$this->current_id));
@@ -508,30 +511,6 @@ class Grid_Advanced extends Grid_Basic {
             return "Row #".$this->current_id;
         }
         return substr($title,1);
-    }
-    function getFieldContent($field,$id){
-        /**
-         * Returns the properly formatted field content.
-         * Used firstly with Ajax::reloadExpandedField()
-         */
-
-        // *** Getting required record from DB ***
-        $idfield=$this->dq->args['fields'][0];
-        if($idfield=='*'||strpos($idfield,',')!==false)$idfield='id';
-        $this->dq->where($idfield,$id);
-        //we should switch off the limit or we won't get any value
-        $this->dq->limit(1);
-        $row_data=$this->api->db->getHash($this->dq->select());
-
-        // *** Initializing template ***
-        $this->precacheTemplate();
-
-        // *** Rendering row ***
-        $this->current_row=(array)$row_data;
-        $row=$this->formatRow();
-
-        // *** Returning required field value ***
-        return $row[$field];
     }
     function applyTDParams($field,$totals=false){
         // setting cell parameters (tdparam)
