@@ -193,6 +193,24 @@ class DB extends AbstractController
     }
 
     /**
+     * Executes query and returns first column of first row. This is a
+     * quick and speedy way to get the results of simple queries. Consider
+     * using DSQL:
+     *
+     * echo $this->api->db->dsql()->expr('select now()');
+     *
+     * @param string $query  SQL Qurey
+     * @param arary  $params PDO-params
+     *
+     * @return string first row, first column
+     */
+    function getOne($query, $params = array())
+    {
+        $res=$this->query($query, $params)->fetch();
+        return $res[0];
+    }
+
+    /**
      * Returns last ID after insert. Driver-dependant. Redefine if needed, 
      * but avoid using.
      *
