@@ -45,8 +45,11 @@ class DB extends AbstractController
      *
      * @return DB this
      */
-    function connect($dsn = 'dsn')
+    function connect($dsn = null)
     {
+        if ($dsn === null) {
+            $dsn='dsn';
+        }
         if (is_string($dsn)) {
             $new_dsn=$this->api->getConfig($dsn, 'no_config');
             if ($new_dsn != 'no_config') {
