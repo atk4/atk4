@@ -44,6 +44,7 @@ class Controller_MVCGrid extends AbstractController {
         'readonly'=>'text',
         'image'=>'text',
         'file'=>'referenece',
+        'password'=>'password',
     );
 
     function addTypeAssociation($k, $v){
