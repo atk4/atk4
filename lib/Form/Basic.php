@@ -55,7 +55,7 @@ class Form_Basic extends View {
     public $js_widget_arguments=array();
 
     public $default_exception='Exception_ValidityCheck';
-    public $default_controller='MVCForm';
+    public $default_controller='Controller_MVCForm';
 
     public $dq = null;
     function init(){
@@ -172,7 +172,7 @@ class Form_Basic extends View {
         return $last_field;
     }
     function importFields($model,$fields=undefined){
-        $this->add('Controller_MVCForm')->importFields($model,$fields);
+        $this->add($this->default_controller)->importFields($model,$fields);
     }
 
     function addComment($comment){

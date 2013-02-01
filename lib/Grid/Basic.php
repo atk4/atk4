@@ -55,7 +55,7 @@ class Grid_Basic extends CompleteLister {
     }
 
     function importFields($model,$fields=undefined){
-        $this->add('Controller_MVCGrid')->importFields($model,$fields);
+        $this->add($this->default_controller)->importFields($model,$fields);
     }
 
     function addColumn($formatters,$name=null,$descr=null){
