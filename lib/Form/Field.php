@@ -175,7 +175,7 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     function addClass($class){
-        $this->attr['class'].=(!empty($this->attr['class'])?' ':'').$class;
+        $this->attr['class']=($this->attr['class']?:' ').$class;
         return $this;
     }
     function setAttr($attr,$value=undefined){
