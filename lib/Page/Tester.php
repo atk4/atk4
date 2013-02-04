@@ -233,7 +233,7 @@ class Page_Tester extends Page {
 
             $data[]=$row;
         }
-        $this->grid->setStaticSource($data);
+        $this->grid->setSource($data);
     }
     function formatResult(&$row,$key,$result){
         $row[$key.'_res']=$result;
