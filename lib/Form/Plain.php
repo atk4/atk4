@@ -24,8 +24,7 @@ class Form_Plain extends HtmlElement {
     function addInput($type,$name,$value,$tag='Content'){
         $f=$this->add('HtmlElement',$name,$tag);
         $f->setElement('input');
-        $f->setAttr('type',$type);
-        $f->setAttr('value',$value);
+        $f->setAttr(array('type'=>$type,'value'=>$value));
         $f->set('');
         return $f;
     }
