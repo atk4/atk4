@@ -178,15 +178,15 @@ abstract class Form_Field extends AbstractView {
         $this->attr['class'].=(!empty($this->attr['class'])?' ':'').$class;
         return $this;
     }
-    function setAttr($property,$value='true'){
-        if(is_array($property)){
-            foreach($property as $k=>$v)
-                $this->attr[$k]=$v;
-        }elseif($property)
-            $this->attr[$property]=$value;
+    function setAttr($attribute,$value='true'){
+        if(is_array($attribute)){
+            foreach($attribute as $k=>$v) $this->setAttr($k,$v);
+            return $this;
+        }
+        $this->attr[$attribute]=$value;
         return $this;
     }
-    function setProperty($property,$value){ // synonym, setAttr is preffered
+    function setProperty($property,$value){ // synonym, setAttr is preferred
         return $this->setAttr($property,$value);
     }
     function setFieldHint($var_args=null){
