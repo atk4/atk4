@@ -39,7 +39,7 @@ class Form_Field_Slider extends Form_Field {
                         )->change()
                     ));
 
-        $this->setProperty('style','display: none');
+        $this->setAttr('style','display: none');
         return '<table width=200 border=0><tr>'.
             '<td align="left">'.$this->left.'</td>'.
             '<td align="right">'.$this->right.'</td>'.
