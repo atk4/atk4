@@ -106,7 +106,7 @@ abstract class Form_Field extends AbstractView {
     }
     function disable(){
         // sets 'disabled' property and setNoSave()
-        $this->setAttr('disabled',true);
+        $this->setAttr('disabled');
         $this->setNoSave();
         $this->disabled=true;
         return $this;
@@ -170,20 +170,24 @@ abstract class Form_Field extends AbstractView {
     function get(){
         return $this->value;
     }
-    function setProperty($property,$value){
-        return $this->setAttr($property,$value);
-    }
-    function addClass($class){
-        $this->attr['class'].=' '.$class;
-        return $this;
-    }
     function setClass($class){
         $this->attr['class']=$class;
         return $this;
     }
-    function setAttr($property,$value='true'){
-        $this->attr[$property]=$value;
+    function addClass($class){
+        $this->attr['class'].=(!empty($this->attr['class'])?' ':'').$class;
         return $this;
+    }
+    function setAttr($property,$value='true'){
+        if(is_array($property)){
+            foreach($property as $k=>$v)
+                $this->attr[$k]=$v;
+        }elseif($property)
+            $this->attr[$property]=$value;
+        return $this;
+    }
+    function setProperty($property,$value){ // synonym, setAttr is preffered
+        return $this->setAttr($property,$value);
     }
     function setFieldHint($var_args=null){
         /* Adds a hint after this field. Thes will call Field_Hint->set()
