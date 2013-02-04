@@ -28,27 +28,30 @@ if(!class_exists('Form_Field',false))include_once'Form/Field.php';
 class Form_Basic extends View {
     protected $form_template = null;
     protected $form_tag = null;
+    
+    // Here we will have a list of errors occured in the form, when we tried to
+    // submit it. field_name => error
     public $errors=array();
-    // Here we will have a list of errors occured in the form, when we tried to submit it.
-    //  field_name => error
 
-    public $template_chunks=array();
     // Those templates will be used when rendering form and fields
+    public $template_chunks=array();
 
-    public $data = array(); // This array holds list of values prepared for fields before their initialization. When fields
-    // are initialized they will look into this array to see if there are default value for them.
-    // Afterwards fields will link to $this->data, so changing $this->data['fld_name'] would actually
-    // affect field's value.
-    //  You should use $this->set() and $this->get() to read/write individual field values. You
-    //  should use $this->setStaticSource() to load values from hash
-    //  AAAAAAAAAA: this array is no more!
+    // This array holds list of values prepared for fields before their
+    // initialization. When fields are initialized they will look into this
+    // array to see if there are default value for them.
+    // Afterwards fields will link to $this->data, so changing
+    // $this->data['fld_name'] would actually affect field's value.
+    // You should use $this->set() and $this->get() to read/write individual
+    // field values. You should use $this->setStaticSource() to load values from
+    // hash, BUT - AAAAAAAAAA: this array is no more!!!
+    public $data = array();
 
     public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
-    protected $loaded_from_db = false;     // if true, update() will try updating existing row. if false - it would insert new
+    protected $loaded_from_db = false;  // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
     protected $ajax_submits=array();    // contains AJAX instances assigned to buttons
-    protected $get_field=null;          // if condition was passed to a form throough GET, contains a GET field name
+    protected $get_field=null;          // if condition was passed to a form through GET, contains a GET field name
     protected $conditions=array();
 
     public $js_widget='ui.atk4_form';
@@ -60,18 +63,21 @@ class Form_Basic extends View {
     public $dq = null;
     function init(){
         /**
-         * During form initialization it will go through it's own template and search for lots of small template
-         * chunks it will be using. If those chunk won't be in template, it will fall back to default values. This way
-         * you can re-define how form will look, but only what you need in particular case. If you don't specify template
-         * at all, form will work with default look.
+         * During form initialization it will go through it's own template and
+         * search for lots of small template chunks it will be using. If those
+         * chunk won't be in template, it will fall back to default values.
+         * This way you can re-define how form will look, but only what you need
+         * in particular case. If you don't specify template at all, form will
+         * work with default look.
          */
         parent::init();
 
         $this->getChunks();
 
-        // After init method have been executed, it's safe for you to add controls on the form. BTW, if
-        // you want to have default values such as loaded from the table, then intialize $this->data array
-        // to default values of those fields.
+        // After init method have been executed, it's safe for you to add
+        // controls on the form. BTW, if you want to have default values such as
+        // loaded from the table, then intialize $this->data array to default
+        // values of those fields.
         $this->api->addHook('pre-exec',array($this,'loadData'));
         $this->api->addHook('pre-render-output',array($this,'lateSubmit'));
         $this->api->addHook('submitted',$this);
@@ -88,17 +94,12 @@ class Form_Basic extends View {
         if($this->template->is_set('hidden_form_line'))
             $this->grabTemplateChunk('hidden_form_line');
         $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
-        //$this->grabTemplateChunk('form');           // template for whole form, must contain Content, form_buttons, form_action,
-        //  and form_name
-        $this->grabTemplateChunk('field_mandatory'); // template for marking mandatory fields
+        $this->grabTemplateChunk('field_mandatory');// template for marking mandatory fields
 
-        // ok, other grabbing will be done by field themselves as you will add them to the form.
-        // They will try to look into this template, and if you don't have apropriate templates
-        // for them, they will use default ones.
+        // other grabbing will be done by field themselves as you will add them
+        // to the form. They will try to look into this template, and if you
+        // don't have apropriate templates for them, they will use default ones.
         $this->template_chunks['form']=$this->template;
-        if(!$this->template_chunks['form']->is_set('Content')){
-            throw new BaseException('Your form template needs to be upgraded for use with 4.1 version. Rename "form_body" tag into "Content". See http://agiletoolkit.org/upgrade_4_1 for more information');
-        }
         $this->template_chunks['form']->del('Content');
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->set('form_name',$this->name.'_form');
@@ -107,8 +108,8 @@ class Form_Basic extends View {
     }
 
     function initializeTemplate($tag, $template){
-        $template = $this->form_template?$this->form_template:$template;
-        $tag = $this->form_tag?$this->form_tag:$tag;
+        $template = $this->form_template?:$template;
+        $tag = $this->form_tag?:$tag;
         return parent::initializeTemplate($tag, $template);
     }
     function defaultTemplate($template = null, $tag = null){
@@ -118,7 +119,7 @@ class Form_Basic extends View {
         if ($tag){
             $this->form_tag = $tag;
         }
-        return array($this->form_template?$this->form_template:"form", $this->form_tag?$this->form_tag:"form");
+        return array($this->form_template?:"form", $this->form_tag?:"form");
     }
     function grabTemplateChunk($name){
         if($this->template->is_set($name)){
@@ -129,12 +130,12 @@ class Form_Basic extends View {
         }
     }
     /**
-     * Should show error in field. Override this method to change from default alert
+     * Should show error in field. Override this method to change form default alert
      * @param object $field Field instance that caused error
      * @param string $msg message to show
      */
     function showAjaxError($field,$msg){
-        // Avoid depricated function use in reference field, line 246
+        // Avoid deprecated function use in reference field, line 246
         return $this->displayError($field,$msg);
     }
 
@@ -142,7 +143,7 @@ class Form_Basic extends View {
         if(!$field){
             // Field is not defined
             // TODO: add support for error in template
-            $this->js()->univ()->alert($msg?$msg:'Error in form')->execute();
+            $this->js()->univ()->alert($msg?:'Error in form')->execute();
         }
         if(!is_object($field))$field=$this->getElement($field);
         $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
@@ -151,14 +152,15 @@ class Form_Basic extends View {
         if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
         switch(strtolower($type)){
-            case'dropdown':$type='DropDown';break;
-            case'line':$type='Line';break;
-            case'upload':$type='Upload';break;
-            case'radio':$type='Radio';break;
-            case'slider':$type='Slider';break;
-            case'checkboxlist':$type='CheckboxList';break;
+            case'dropdown':$class='DropDown';break;
+            case'line':$class='Line';break;
+            case'upload':$class='Upload';break;
+            case'radio':$class='Radio';break;
+            case'slider':$class='Slider';break;
+            case'checkboxlist':$class='CheckboxList';break;
+            default:$class=$type;
         }
-        $class=$this->api->normalizeClassName($type,'Form_Field');
+        $class=$this->api->normalizeClassName($class,'Form_Field');
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);
@@ -176,7 +178,8 @@ class Form_Basic extends View {
     }
 
     function addComment($comment){
-        if(!isset($this->template_chunks['form_comment']))throw new BaseException('This form\'s template ('.$this->template->loaded_template.') does not support comments');
+        if(!isset($this->template_chunks['form_comment']))
+            throw new BaseException('Form\'s template ('.$this->template->loaded_template.') does not support comments');
         return $this->add('Html')->set(
                 $this->template_chunks['form_comment']->set('comment',$comment)->render()
                 );
@@ -193,9 +196,6 @@ class Form_Basic extends View {
     function get($field=null){
         if(!$field)return $this->data;
         return $this->data[$field];
-
-        //if(!$f=$this->hasField($field))throw new BaseException('Trying to get value of not-existing field: '.$field);
-        //return ($f instanceof Form_Field)?$f->get():null;
     }
     function setSource($table,$db_fields=null){
         if(is_null($db_fields)){
@@ -217,7 +217,8 @@ class Form_Basic extends View {
         if($value===undefined){
             if(is_array($field_or_array)){
                 foreach($field_or_array as $key=>$val){
-                    if(isset($this->elements[$key]) and $this->elements[$key] instanceof Form_Field)$this->set($key,$val);
+                    if(isset($this->elements[$key])&&($this->elements[$key] instanceof Form_Field))
+                        $this->set($key,$val);
                 }
                 return $this;
             }else{
@@ -241,19 +242,6 @@ class Form_Basic extends View {
     function getAllFields(){
         return $this->get();
     }
-    /*
-    function get(){
-        var_dump($this->data);
-        return $this->data;
-        $data=array();
-        foreach($this->elements as $key=>$val){
-            if($val instanceof Form_Field){
-                if($include_nosave||$val->no_save!==true)$data[$key]=$val->get();
-            }
-        }
-        return $data;
-    }
-     */
     function addSubmit($label='Save',$name=null){
         $submit = $this->add('Form_Submit',$name,'form_buttons')
             ->setLabel($label)
@@ -297,8 +285,8 @@ class Form_Basic extends View {
         /**
          * Default down-call submitted will automatically call this method if form was submitted
          */
-        // We want to give flexibility to our controls and grant them a chance to
-        // hook to those spots here.
+        // We want to give flexibility to our controls and grant them a chance
+        // to hook to those spots here.
         // On Windows platform mod_rewrite is lowercasing all the urls.
         if($_GET['submit']!=$this->name)return;
         if(!is_null($this->bail_out))return $this->bail_out;
@@ -323,7 +311,7 @@ class Form_Basic extends View {
                         return true;
                     }
                 }
-                /* TODO: need logic re-check here + test scirpts */
+                /* TODO: need logic re-check here + test scripts */
                 //if(!is_array($output))$output=array($output);
                 // already array
                 if($has_output)$this->js(null,$output)->execute();
@@ -346,12 +334,16 @@ class Form_Basic extends View {
         if(@$_GET['submit']!=$this->name)return;
 
         if($this->bail_out===null || $this->isSubmitted()){
-            $this->js()->univ()->consoleError('Form '.$this->name.' submission is not handled. See: http://agiletoolkit.org/doc/form/submit')->execute();
+            $this->js()->univ()
+                ->consoleError('Form '.$this->name.' submission is not handled.'.
+                    ' See: http://agiletoolkit.org/doc/form/submit')
+                ->execute();
         }
     }
     function isSubmitted(){
-        // This is alternative way for form submission. After  form is initialized you can call this method. It will
-        // hurry up all the steps, but you will have ready-to-use form right away and can make submission handlers
+        // This is alternative way for form submission. After form is initialized
+        // you can call this method. It will hurry up all the steps, but you will
+        // have ready-to-use form right away and can make submission handlers
         // easier
         if($this->bail_out!==null)return $this->bail_out;
 
@@ -374,8 +366,6 @@ class Form_Basic extends View {
     }
     function setFormClass($class){
         return $this->setClass($class);
-        //$this->template->trySet('form_class',$class);
-        return $this;
     }
     function render(){
         // Assuming, that child fields already inserted their HTML code into 'form'/Content using 'form_line'
@@ -401,7 +391,8 @@ class Form_Basic extends View {
 
                     if($this->errors[$key]){
                         $this->template_chunks['custom_layout']
-                            ->trySet($key.'_error',$val->error_template->set('field_error_str',$this->errors[$key])->render());
+                            ->trySet($key.'_error',$val->error_template
+                                ->set('field_error_str',$this->errors[$key])->render());
                     }
                 }
             }
@@ -414,18 +405,13 @@ class Form_Basic extends View {
     }
     function isClicked($name){
         if(is_object($name))$name=$name->short_name;
-        return ($_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]));
+        return $_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]);
     }
     function error($field,$text){
         $this->getElement($field)->displayFieldError($text);
     }
     /* external error management */
     function setFieldError($field, $name){
-        if (isset($this->errors[$field])){
-            $existing = $this->errors[$field];
-        } else {
-            $existing = null;
-        }
-        $this->errors[$field] = $existing . $name;
+        $this->errors[$field] = (isset($this->errors[$field])?$this->errors[$field]:'') . $name;
     }
 }
