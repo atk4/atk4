@@ -41,12 +41,12 @@ class Paginator_Basic extends CompleteLister {
             $source = $source->_preexec();
 
             $source->limit($this->ipp,$this->skip);
-            $source->calc_found_rows();
+            $source->calcFoundRows();
 
             $this->source=$source;
 
         }elseif($source instanceof DB_dsql){
-            $source->_dsql()->calc_found_rows();
+            $source->_dsql()->calcFoundRows();
 
         }else{
             $this->source =& $source;

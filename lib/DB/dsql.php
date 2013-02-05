@@ -211,8 +211,18 @@ class DB_dsql extends AbstractModel implements Iterator {
      *
      * @return DB_dsql $this
      */
-    function setCustom($template, $value)
+    function setCustom($template, $value=null)
     {
+        /*
+        if (is_array($template)) {
+            foreach($template as $key=>$val){
+                $this->args['custom']=array_merge(
+                    $htis->args['custom'],
+                    $template
+                );
+            }
+        }
+         */
         $this->args['custom'][$template]=$value;
         return $this;
     }
@@ -1705,13 +1715,20 @@ class DB_dsql extends AbstractModel implements Iterator {
      *
      * @return DB_dsql $this
      */
+    function calcFoundRows(){
+        return $this;
+    }
+
+    /**
+     * Obsolete - naming bug
+     */
     function calc_found_rows()
     {
-        return $this;
+        return $this->calcFoundRows();
     }
     /**
      * After fetching data, call this to find out how many rows there were in
-     * total. Call calc_found_rows() for better performance
+     * total. Call calcFoundRows() for better performance
      *
      * @return string number of results
      */

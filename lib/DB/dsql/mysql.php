@@ -24,7 +24,7 @@ class DB_dsql_mysql extends DB_dsql {
         parent::init();
         $this->sql_templates['update']="update [table] set [set] [where]";
     }
-    function calc_found_rows(){
+    function calcFoundRows(){
         return $this->option('SQL_CALC_FOUND_ROWS');
     }
 }
