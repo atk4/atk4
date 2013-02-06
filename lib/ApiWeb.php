@@ -369,6 +369,7 @@ class ApiWeb extends ApiCLI {
         // We are using new capability of SMlite to process tags individually
         $t->eachTag('template',array($this,'_locateTemplate'));
         $t->eachTag('js',array($this,'_locateJS'));
+        $t->eachTag('css',array($this,'_locateCSS'));
         $t->eachTag('page',array($this,'_locatePage'));
 
         $this->hook('set-tags',array($t));
@@ -384,6 +385,9 @@ class ApiWeb extends ApiCLI {
     }
     function _locateJS($path){
         return $this->locateURL('js',$path);
+    }
+    function _locateCSS($path){
+        return $this->locateURL('css',$path);
     }
     /** @private */
     function _locatePage($path){
