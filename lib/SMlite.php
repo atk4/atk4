@@ -367,8 +367,8 @@ class SMlite extends AbstractModel {
     }
     function trySet($tag,$value=null,$encode=true){
         /*
-         * Check if tag is present inside template. If it does, execute set(); See documentation
-         * for set()
+         * Check if tag is present inside template. If it does, execute set();
+         * See documentation for set()
          */
         if(is_array($tag))return $this->set($tag,$value,$encode);
         return $this->hasTag($tag)?$this->set($tag,$value,$encode):$this;
@@ -546,21 +546,57 @@ class SMlite extends AbstractModel {
         return $this->renderRegion($this->template);
     }
     function renderRegion(&$chunk){
-        $result = '';
+        $result = ''; // you can replace this with array() for debug purposes
         if(!is_array($chunk))return $chunk;
         foreach($chunk as $key=>$_chunk){
+            $tmp=$this->renderRegion($_chunk);
             if(is_array($result)){
-                $result[]=$this->renderRegion($_chunk);
+                $result[]=$tmp;
             }else{
-                $tmp=$this->renderRegion($_chunk);
                 if(is_array($tmp)){
-                    $result=array($result);
-                    $result[]=$tmp;
+                    $result=array($result,$tmp);
                 }else{
                     $result.=$tmp;
                 }
             }
         }
+        return $result;
+    }
+    
+    // For debuging of template. Only allow to debug initial template.
+    // In future should be extended somehow with recursiveRender to also allow
+    // debugging of templates of entire object tree.
+    function debugRender(){
+        return $this->debugRenderRegion($this->template);
+    }
+    function debugRenderRegion(&$chunk){
+        // output templates
+        $t = array(
+            'tag-html' =>'<span class="tag-html" style="color:black;">%s</span>',
+            'tag-open' =>
+                '<span class="tag-container" onmouseover="$(this).css(\'background\',\'lightgray\');" onmouseout="$(this).css(\'background\',\'transparent\');">'.
+                    '<span style="color:blue;cursor:pointer;" title="Start tag" onclick="$(this).next().toggle();">[%s]</span>'.
+                    '<span>',
+            'tag-close' =>
+                    '</span>'.
+                    '<span style="color:blue;cursor:pointer;" title="End tag" onclick="$(this).prev().toggle();">[/%s]</span>'.
+                '</span>'
+        );
+        $result = '';
+        
+        // simple HTML
+        if(!is_array($chunk)){
+            $s = preg_replace('/[\n|\r]{1,}/','<br>',htmlentities($chunk));
+            return sprintf($t['tag-html'],$s);
+        }
+        // recursion
+        foreach($chunk as $key=>$_chunk){
+            $tag = substr($key,0,strpos($key,'#'));
+            if(!is_numeric($key)) $result.=sprintf($t['tag-open'],$tag);
+            $result .= $this->debugRenderRegion($_chunk);
+            if(!is_numeric($key)) $result.=sprintf($t['tag-close'],$tag);
+        }
+
         return $result;
     }
 
