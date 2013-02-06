@@ -85,6 +85,10 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
+        if($value===undefined){
+            $value=$cond;
+            $cond='=';
+        }
         $this->tryLoadBy($model,$field,$cond,$value);
         if(!$model->loaded())throw $this->exception('Unable to load data')
             ->addMoreInfo('field',$field)
