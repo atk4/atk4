@@ -46,13 +46,15 @@ class Form_Basic extends View {
     // hash, BUT - AAAAAAAAAA: this array is no more!!!
     public $data = array();
 
-    public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
+    public $bail_out = null;            // if this is true, we won't load data or submit or validate anything.
     protected $loaded_from_db = false;  // if true, update() will try updating existing row. if false - it would insert new
     public $onsubmit = null;
     public $onload = null;
     protected $ajax_submits=array();    // contains AJAX instances assigned to buttons
     protected $get_field=null;          // if condition was passed to a form through GET, contains a GET field name
-    protected $conditions=array();
+    protected $conditions=array();      // Imants: used in atk-addons/mvc/MVCForm, but I'm not sure is this still needed and/or what's its purpose
+
+    protected $fieldsets=array();       // array of all fieldsets used in this form
 
     public $js_widget='ui.atk4_form';
     public $js_widget_arguments=array();
@@ -84,27 +86,36 @@ class Form_Basic extends View {
 
         $this->template_chunks['form']
             ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
-
     }
     protected function getChunks(){
         // commonly replaceable chunks
-        $this->grabTemplateChunk('form_comment');
-        $this->grabTemplateChunk('form_separator');
         $this->grabTemplateChunk('form_line');      // template for form line, must contain field_caption,field_input,field_error
-        if($this->template->is_set('hidden_form_line'))
-            $this->grabTemplateChunk('hidden_form_line');
+        $this->grabTemplateChunk('form_separator'); // template for form separator
+        $this->grabTemplateChunk('form_comment');   // template for form comment
         $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
         $this->grabTemplateChunk('field_mandatory');// template for marking mandatory fields
 
+        // fieldset template
+        $this->grabTemplateChunk('form_fieldset');
+        $this->template_chunks['form_fieldset']->del('Content');
+
         // other grabbing will be done by field themselves as you will add them
         // to the form. They will try to look into this template, and if you
-        // don't have apropriate templates for them, they will use default ones.
+        // don't have appropriate templates for them, they will use default ones.
         $this->template_chunks['form']=$this->template;
         $this->template_chunks['form']->del('Content');
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->set('form_name',$this->name.'_form');
 
         return $this;
+    }
+    function grabTemplateChunk($name){
+        if($this->template->is_set($name)){
+            $this->template_chunks[$name] = $this->template->cloneRegion($name);
+        }else{
+            //return $this->fatal('missing form tag: '.$name);
+            // hmm.. i wonder what ? :)
+        }
     }
 
     function initializeTemplate($tag, $template){
@@ -121,21 +132,18 @@ class Form_Basic extends View {
         }
         return array($this->form_template?:"form", $this->form_tag?:"form");
     }
-    function grabTemplateChunk($name){
-        if($this->template->is_set($name)){
-            $this->template_chunks[$name] = $this->template->cloneRegion($name);
-        }else{
-            //return $this->fatal('missing form tag: '.$name);
-            // hmm.. i wonder what ? :)
-        }
-    }
+
     /**
      * Should show error in field. Override this method to change form default alert
+     * 
+     * @deprecated function which was used in Reference field, line 246 in past
+     * 
      * @param object $field Field instance that caused error
      * @param string $msg message to show
+     * 
+     * @return $this
      */
     function showAjaxError($field,$msg){
-        // Avoid deprecated function use in reference field, line 246
         return $this->displayError($field,$msg);
     }
 
@@ -148,6 +156,7 @@ class Form_Basic extends View {
         if(!is_object($field))$field=$this->getElement($field);
         $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
     }
+
     function addField($type,$name,$caption=null,$attr=null){
         if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
 
@@ -165,7 +174,11 @@ class Form_Basic extends View {
             ->setCaption($caption);
         $last_field->setForm($this);
         $last_field->template->trySet('field_type',strtolower($type));
-        $last_field->setAttr($attr);
+        if (is_array($attr)){
+            foreach ($attr as $key => $value){
+                $last_field->setProperty($key, $value);
+            }
+        }
 
         return $last_field;
     }
@@ -175,18 +188,35 @@ class Form_Basic extends View {
 
     function addComment($comment){
         if(!isset($this->template_chunks['form_comment']))
-            throw new BaseException('Form\'s template ('.$this->template->loaded_template.') does not support comments');
+            throw new BaseException('Form\'s template does not support comments');
         return $this->add('Html')->set(
                 $this->template_chunks['form_comment']->set('comment',$comment)->render()
                 );
     }
-    function addSeparator($fieldset_class=''){
+    /** Changed in 4.2.4: now this will not create new fieldset. Instead use addFieldset() method.  */
+    function addSeparator($class=''){
         if(!isset($this->template_chunks['form_separator']))return $this;
         $c=$this->template_chunks['form_separator'];
-        $c->trySet('fieldset_class',$fieldset_class);
+        $c->trySet('separator_class',$class);
 
         return $this->add('Html')->set($c->render());
     }
+
+    /** NEW METHOD !!!!!!!!!!!!!!!!! */
+    function addFieldset($class=''){
+        if(!isset($this->template_chunks['form_fieldset']))return $this;
+        $c=$this->template_chunks['form_fieldset'];
+        $c->trySet('fieldset_class',$class);
+
+        // adds new fieldset at the end of form (after last fieldset)
+        $this->fieldsets[] = $last_fieldset = $this->add('View',null,'form_after');
+        $last_fieldset->template = $c;
+
+        return $last_fieldset;
+    }
+
+
+
 
     // Operating with field values
     function get($field=null){
@@ -375,10 +405,11 @@ class Form_Basic extends View {
         if(isset($this->template_chunks['custom_layout'])){
             foreach($this->elements as $key=>$val){
                 if($val instanceof Form_Field){
-                    $attr=$this->template_chunks['custom_layout']->get($key);
-                    if(is_array($attr))$attr=join(' ',$attr);
-                    if($attr)$val->setAttr('style',$attr);
-                    
+                    $prop=$this->template_chunks['custom_layout']->get($key);
+                    if(is_array($prop))$prop=join(' ',$prop);
+                    if($prop){
+                        $val->setProperty('style',$prop);
+                    }
                     if(!$this->template_chunks['custom_layout']->is_set($key)){
                         $this->js(true)->univ()->log('No field in layout: '.$key);
                     }
