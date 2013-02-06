@@ -275,18 +275,16 @@ class DB_dsql extends AbstractModel implements Iterator {
      */
     function useExpr($expr, $tags = array())
     {
-        if ($tags) {
-            // Temporary check, in case someone is using this argument
-            list($key,$junk)=each($tags);
+        foreach ($tags as $key => $value) {
             if ($key[0] == ':') {
-                throw $this->exception(
-                    'You must not pass :aa parameters to useExpr / expr anymore. '.
-                    'Second arguments is used for custom tags'
-                )->addMoreInfo('param', $key);
+                $this->extra_params[$key] = $value;
+                continue;
             }
+
+            $this->args['custom'][$key]=$value;
         }
+
         $this->template=$expr;
-        //$this->extra_params=$tags;
         if ($tags) {
             $this->setCustom($tags);
         }
