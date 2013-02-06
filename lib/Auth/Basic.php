@@ -258,7 +258,8 @@ class Auth_Basic extends AbstractController {
         if(!$this->model->hasElement($this->password_field)){
             $this->model->addField($this->password_field);
         }
-        $data = $this->model->loadBy($this->login_field,$user)->get();
+        $data = $this->model->tryLoadBy($this->login_field,$user)->get();
+        $this->model->unload();  // just to be sure, we don't leave it there
         if(!$data)return false;
         $this->debug('data says password is '.$data[$this->password_field]);
         $ep=$this->encryptPassword($password,$user);
