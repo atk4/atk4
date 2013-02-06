@@ -575,11 +575,11 @@ class SMlite extends AbstractModel {
             'tag-html' =>'<span class="tag-html" style="color:black;">%s</span>',
             'tag-open' =>
                 '<span class="tag-container" onmouseover="$(this).css(\'background\',\'lightgray\');" onmouseout="$(this).css(\'background\',\'transparent\');">'.
-                    '<span style="color:blue;cursor:pointer;" title="Simple tag" onclick="$(this).next().toggle();">[%s]</span>'.
+                    '<span style="color:blue;cursor:pointer;" title="Start tag" onclick="$(this).next().toggle();">[%s]</span>'.
                     '<span>',
             'tag-close' =>
                     '</span>'.
-                    '<span style="color:blue;cursor:pointer;" title="Simple tag end" onclick="$(this).prev().toggle();">[/%s]</span>'.
+                    '<span style="color:blue;cursor:pointer;" title="End tag" onclick="$(this).prev().toggle();">[/%s]</span>'.
                 '</span>'
         );
         $result = '';
