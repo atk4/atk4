@@ -174,11 +174,7 @@ class Form_Basic extends View {
             ->setCaption($caption);
         $last_field->setForm($this);
         $last_field->template->trySet('field_type',strtolower($type));
-        if (is_array($attr)){
-            foreach ($attr as $key => $value){
-                $last_field->setProperty($key, $value);
-            }
-        }
+        $last_field->setAttr($attr);
 
         return $last_field;
     }
@@ -408,7 +404,7 @@ class Form_Basic extends View {
                     $prop=$this->template_chunks['custom_layout']->get($key);
                     if(is_array($prop))$prop=join(' ',$prop);
                     if($prop){
-                        $val->setProperty('style',$prop);
+                        $val->setAttr('style',$prop);
                     }
                     if(!$this->template_chunks['custom_layout']->is_set($key)){
                         $this->js(true)->univ()->log('No field in layout: '.$key);
