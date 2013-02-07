@@ -153,13 +153,10 @@ class Form_Basic extends View {
 
         switch(strtolower($type)){
             case'dropdown':$class='DropDown';break;
-            case'line':$class='Line';break;
-            case'upload':$class='Upload';break;
-            case'radio':$class='Radio';break;
-            case'slider':$class='Slider';break;
             case'checkboxlist':$class='CheckboxList';break;
             default:$class=$type;
         }
+	$class[0]=strtoupper($class[0]);
         $class=$this->api->normalizeClassName($class,'Form_Field');
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
