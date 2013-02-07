@@ -182,7 +182,7 @@ class Form_Basic extends View {
     }
     function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this;
-        $c=$this->template_chunks['form_separator'];
+        $c = clone $this->template_chunks['form_separator'];
         $c->trySet('fieldset_class',$class);
         
         if(is_array($attr) && !empty($attr))
