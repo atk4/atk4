@@ -26,7 +26,7 @@
  * 
 **/
 class View extends AbstractView {
-    /** Change which element is used. 'div' by default, but change with this funciton */
+    /** Change which element is used. 'div' by default, but can be changed with this function */
     function setElement($element){
         $this->template->trySet('element',$element);
         return $this;
@@ -40,7 +40,7 @@ class View extends AbstractView {
         $this->template->appendHTML('attributes',' '.$attribute.'="'.$value.'"');
         return $this;
     }
-    /** Add class to element. */
+    /** Add class to element */
     function addClass($class){
         if(is_array($class)){
             foreach($class as $c)$this->addClass($class);
@@ -49,12 +49,14 @@ class View extends AbstractView {
         $this->template->append('class'," ".$class);
         return $this;
     }
+    /** Remove class from element */
     function removeClass($class){
         $cl=' '.$this->template->get('class').' ';
         $cl=str_replace($cl,' '.$class.' ',' ');
         $this->template->set('class',trim($cl));
         return $this;
     }
+    /** Set class for element */
     function setClass($class){
         $this->template->trySet('class', $class);
         return $this;
@@ -77,7 +79,7 @@ class View extends AbstractView {
         $this->template->trySet('Content',$text);
         return $this;
     }
-    /** Alias for setText. Escapes HTML characters. */
+    /** Alias for setText */
     function set($text){
         return $this->setText($text);
     }
