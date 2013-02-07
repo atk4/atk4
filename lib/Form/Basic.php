@@ -16,7 +16,7 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 // Field bundle
-if(!class_exists('Form_Field',false))include_once'Form/Field.php';
+//if(!class_exists('Form_Field',false))include_once'Form/Field.php';
 /**
  * This class implements generic form, which you can actually use without
  * redeclaring it. Just add fields, buttons and use execute method.
