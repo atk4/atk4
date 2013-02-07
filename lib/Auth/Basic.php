@@ -250,9 +250,6 @@ class Auth_Basic extends AbstractController {
          */
         return $this->model->loaded();
     }
-    function verifyCredintials($user,$password){
-        throw $this->exception('please use verifyCredentials (not verifyCredinteals)');
-    }
     /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
      * logged in user */
     function verifyCredentials($user,$password){
@@ -261,7 +258,8 @@ class Auth_Basic extends AbstractController {
         if(!$this->model->hasElement($this->password_field)){
             $this->model->addField($this->password_field);
         }
-        $data = $this->model->getBy($this->login_field,$user);
+        $data = $this->model->tryLoadBy($this->login_field,$user)->get();
+        $this->model->unload();  // just to be sure, we don't leave it there
         if(!$data)return false;
         $this->debug('data says password is '.$data[$this->password_field]);
         $ep=$this->encryptPassword($password,$user);

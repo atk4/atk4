@@ -1,11 +1,11 @@
 {
     "name": "atk4/atk4",
     "type": "library",
-    "version": "4.2.3",
+    "version": "4.2.4",
     "keywords": ["framework","atk4"],
     "homepage": "https://agiletoolkit.org/",
     "dist": {
-        "url": "http://agiletoolkit.org/distfiles/agiletoolkit-4.2.3.zip",
+        "url": "http://agiletoolkit.org/distfiles/agiletoolkit-4.2.4.zip",
         "type": "zip"
     },
     "source": {

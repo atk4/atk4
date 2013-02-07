@@ -203,27 +203,23 @@ class DB_dsql extends AbstractModel implements Iterator {
     }
 
     /** 
-     * Defines a custom template variable. WARNING: always backtick / escaped
+     * Defines a custom tag variable. WARNING: always backtick / escaped
      * argument if it's unsafe
      *
-     * @param string        $template Corresponds to [tag] inside template
-     * @param string|object $value    Value for the template tag
+     * @param string        $tag   Corresponds to [tag] inside template
+     * @param string|object $value Value for the template tag
      *
      * @return DB_dsql $this
      */
-    function setCustom($template, $value=null)
+    function setCustom($tag, $value = null)
     {
-        /*
-        if (is_array($template)) {
-            foreach($template as $key=>$val){
-                $this->args['custom']=array_merge(
-                    $htis->args['custom'],
-                    $template
-                );
+        if (is_array($tag)) {
+            foreach ($tag as $key => $val) {
+                $this->setCustom($key, $val);
             }
+            return $this;
         }
-         */
-        $this->args['custom'][$template]=$value;
+        $this->args['custom'][$tag]=$value;
         return $this;
     }
 
@@ -258,14 +254,42 @@ class DB_dsql extends AbstractModel implements Iterator {
     /** 
      * Returns new dynamic query and initializes it to use specific template.
      *
-     * @param string $expr   SQL Expression. Don't pass unverified input
-     * @param array  $params Obsolete, use template and setCustom()
+     * @param string $expr SQL Expression. Don't pass unverified input
+     * @param array  $tags Array of tags and values. @see setCustom()
      *
      * @return DB_dsql New dynamic query, won't affect $this
      */
-    function expr($expr, $params = array())
+    function expr($expr, $tags = array())
     {
-        return $this->dsql()->useExpr($expr, $params);
+        return $this->dsql()->useExpr($expr, $tags);
+    }
+
+    /**
+     * Change template of existing query instead of creating new one. If unsure
+     * use expr()
+     *
+     * @param string $expr SQL Expression. Don't pass unverified input
+     * @param array  $tags Obsolete, use templates / setCustom()
+     *
+     * @return DB_dsql $this
+     */
+    function useExpr($expr, $tags = array())
+    {
+        foreach ($tags as $key => $value) {
+            if ($key[0] == ':') {
+                $this->extra_params[$key] = $value;
+                continue;
+            }
+
+            $this->args['custom'][$key]=$value;
+        }
+
+        $this->template=$expr;
+        if ($tags) {
+            $this->setCustom($tags);
+        }
+        $this->output_mode='render';
+        return $this;
     }
 
     /** 
@@ -290,22 +314,6 @@ class DB_dsql extends AbstractModel implements Iterator {
         return $this->expr('([andwhere])');
     }
 
-    /**
-     * Change template of existing query instead of creating new one. If unsure
-     * use expr()
-     *
-     * @param string $expr   SQL Expression. Don't pass unverified input
-     * @param array  $params Obsolete, use templates / setCustom()
-     *
-     * @return DB_dsql $this
-     */
-    function useExpr($expr, $params = array())
-    {
-        $this->template=$expr;
-        $this->extra_params=$params;
-        $this->output_mode='render';
-        return $this;
-    }
     /**
      * Return expression containing a properly escaped field. Use make 
      * subquery condition reference parent query 
