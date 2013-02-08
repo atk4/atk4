@@ -47,4 +47,11 @@ class Form_Field_Slider extends Form_Field_Number {
             parent::getInput().
             '<div id="'.$s.'"></div></td></tr></table>';
     }
+    function validate(){
+        parent::validate();
+        if($this->value && ($this->value < $this->min || $this->value > $this->max)){
+            $this->displayFieldError('Number not in valid range');
+        }
+        return true;
+    }
 }
