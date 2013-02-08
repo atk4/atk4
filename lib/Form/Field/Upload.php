@@ -46,12 +46,12 @@
 
  * Example1: Simple use with model
 
- $upl=$form->addField('upload','myfile_id')
+ $upl=$form->addField('Upload','myfile_id')
      ->setModel('filestore/File');
 
  * Example2: Customizing field
 
- $upl=$form->addField('upload','photo_id','Photo')
+ $upl=$form->addField('Upload','photo_id','Photo')
      ->setController('filestore/Image')
      ->allowMultiple(false)
        ;
@@ -70,7 +70,7 @@ $this->add('Form')->setModel($model);
 $this->api->stickyGET('user_id');
 $myfile=$this->add('filestore/Image');
 $myfile->join('user_images.file_id')->setMasterField('user_id',$_GET['user_id']);
-$form->addField('upload','photo')
+$form->addField('Upload','photo')
     ->setNoSave()->setModel($myfile);
 
 This last example will implement many-to-many relationship between file object

@@ -55,7 +55,7 @@ class Page_Tester extends Page {
 
         if(!$_GET['testonly']){
             $f=$this->add('Form');
-            $ff=$f->addField('text','responses');
+            $ff=$f->addField('Text','responses');
             $this->responses=
     '    public $proper_responses=array(
             '.join(',
