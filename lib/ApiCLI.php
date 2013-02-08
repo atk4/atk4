@@ -461,16 +461,16 @@ class ApiCLI extends AbstractView
         return $name;
     }
     /**
-     * Normalize class name.
-     * This will add specified prefix to class name if it's not already added.
+     * First normalize class name, then add specified prefix to
+     * class name if it's passed and not already added.
      * Class name can have namespaces and they are treated prefectly.
      * 
      * @param string|object $name   Name of class or object
-     * @param string        $prefix Prefix for class name
+     * @param string        $prefix Optional prefix for class name
      * 
-     * @return string|object Full class name or received object
+     * @return string|object Full, normalized class name or received object
      */
-    function normalizeClassName($name,$prefix)
+    function normalizeClassName($name,$prefix=null)
     {
         if(!is_string($name)) return $name;
 
