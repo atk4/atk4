@@ -80,6 +80,7 @@ class Form_Field_ValueList extends Form_Field {
         if(isset($_POST[$this->name])){
             $data=$_POST[$this->name];
             if(is_array($data))$data=implode(',',$data);
+            $data = trim($data,',');
             
             if (get_magic_quotes_gpc()){
                 $this->set(stripslashes($data));
