@@ -156,7 +156,9 @@ class Form_Basic extends View {
             case'checkboxlist':$class='CheckboxList';break;
             default:$class=$type;
         }
-	$class[0]=strtoupper($class[0]);
+	    // $class[0]=strtoupper($class[0]);
+        // /\--- this is wrong, makes namespaces capitalized
+        // capitalized should be only the classname..
         $class=$this->api->normalizeClassName($class,'Form_Field');
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
