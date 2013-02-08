@@ -33,6 +33,10 @@ class Form_Field_CheckboxList extends Form_Field_ValueList
      */
     var $columns=2;
     
+    function setColumns($n)
+    {
+        $this->columns = $n;
+    }
     function getInput($attr=array())
     {
         $output='<table class="atk-checkboxlist" border="0" id="'.$this->name.'"><tbody>';
