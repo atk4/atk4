@@ -15,7 +15,7 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class Form_Field_Slider extends Form_Field {
+class Form_Field_Slider extends Form_Field_Number {
     public $left='Min',$right='Max';
     public $min=0,$max=10;
     function setRange($min,$max){
@@ -46,5 +46,12 @@ class Form_Field_Slider extends Form_Field {
             '</tr><tr><td colspan=2>'.
             parent::getInput().
             '<div id="'.$s.'"></div></td></tr></table>';
+    }
+    function validate(){
+        parent::validate();
+        if($this->value && ($this->value < $this->min || $this->value > $this->max)){
+            $this->displayFieldError('Number not in valid range');
+        }
+        return true;
     }
 }
