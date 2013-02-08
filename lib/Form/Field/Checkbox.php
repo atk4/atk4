@@ -6,6 +6,11 @@ class Form_Field_Checkbox extends Form_Field {
         parent::init();
         $this->default_value='';
     }
+    function setValues($true,$false){
+        $this->true_value = $true;
+        $this->false_value = $false;
+        return $this;
+    }
     function getInput($attr=array()){
         $this->template->trySet('field_caption','');
         $this->template->tryDel('label_container');
