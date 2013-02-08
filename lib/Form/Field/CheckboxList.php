@@ -36,6 +36,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList
     function setColumns($n)
     {
         $this->columns = $n;
+        return $this;
     }
     function getInput($attr=array())
     {
