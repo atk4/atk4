@@ -28,12 +28,23 @@ class jQuery_Chain extends AbstractModel {
     public $enclose=false;
     public $preventDefault=false;
     public $base='';
+    public $debug=false;
     function __call($name,$arguments){
         if($arguments){
             $a2=$this->_flattern_objects($arguments,true);
             $this->str.=".$name(".$a2.")";
         }else{
             $this->str.=".$name()";
+        }
+        return $this;
+    }
+    function __get($property){
+        /* this enables you  to have syntax like this:
+         *
+         * $this->js()->offset()->top <-- access object items, if object is 
+         * returned by chained method call */
+        if (!property_exists($this, $property)){
+            $this->str.=".$property";
         }
         return $this;
     }
