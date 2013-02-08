@@ -101,16 +101,16 @@ class Controller_MVCForm extends AbstractController {
 
         $this->field_associations[$field_name]=$field;
 
-        if($field_type=='checkbox'){
+        if($field_type=='Checkbox'){
             if(!$field->listData)$field->enum(array(1,0));
         }elseif($field->listData() || $field instanceof Field_Reference){
-            if($field_type=='line')$field_type='dropdown';
+            if($field_type=='Line')$field_type='Dropdown';
         }
 
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
-        if($field_type=='checkbox'){
+        if($field_type=='Checkbox'){
             reset($field->listData);
             list($form_field->true_value,$junk)=each($field->listData);
             list($form_field->false_value,$junk)=each($field->listData);
@@ -148,10 +148,10 @@ class Controller_MVCForm extends AbstractController {
     }
     /** Redefine this to add special handling of your own fields */
     function getFieldType($field){
-        $type='line';
+        $type='Line';
 
         if(isset($this->type_associations[$field->type()]))$type=$this->type_associations[$field->type()];
-        if($field instanceof Model_Field_Reference)$type='dropdown';
+        if($field instanceof Model_Field_Reference)$type='Dropdown';
 
         if($field->display()){
             $tmp=$field->display();
