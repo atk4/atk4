@@ -18,9 +18,14 @@
 class Form_Field_Slider extends Form_Field_Number {
     public $min = 0;
     public $max = 10;
+    public $step = 1;
     public $left = 'Min';
     public $right = 'Max';
     
+    function setStep($n){
+        $this->step = $n;
+        return $this;
+    }
     function setLabels($left,$right){
         $this->left = $left;
         $this->right = $right;
@@ -31,6 +36,7 @@ class Form_Field_Slider extends Form_Field_Number {
         $this->js(true)->_selector('#'.$s)->slider(array(
                     'min' => $this->min,
                     'max' => $this->max,
+                    'step' => $this->step,
                     'value' => $this->js()->val(),
                     'change' => $this->js()->_enclose()->val(
                         $this->js()->_selector('#'.$s)->slider('value')
