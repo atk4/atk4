@@ -53,9 +53,9 @@ class Controller_MVCForm extends AbstractController {
         'daytime'=>'Timepicker',
         'boolean'=>'Checkbox',
         'reference'=>'Readonly',
-        'reference_id'=>'Dropdown',
+        'reference_id'=>'DropDown',
         'password'=>'Password',
-        'list'=>'Dropdown',
+        'list'=>'DropDown',
         'radio'=>'Radio',
         'readonly'=>'Readonly',
         'image'=>'Image',
@@ -104,7 +104,7 @@ class Controller_MVCForm extends AbstractController {
         if($field_type=='Checkbox'){
             if(!$field->listData)$field->enum(array(1,0));
         }elseif($field->listData() || $field instanceof Field_Reference){
-            if($field_type=='Line')$field_type='Dropdown';
+            if($field_type=='Line')$field_type='DropDown';
         }
 
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
@@ -151,7 +151,7 @@ class Controller_MVCForm extends AbstractController {
         $type='Line';
 
         if(isset($this->type_associations[$field->type()]))$type=$this->type_associations[$field->type()];
-        if($field instanceof Model_Field_Reference)$type='Dropdown';
+        if($field instanceof Model_Field_Reference)$type='DropDown';
 
         if($field->display()){
             $tmp=$field->display();
