@@ -80,12 +80,11 @@ if(!function_exists('error_handler')){
                 return;
             }
         }
-        lowlevel_error("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
-        return false;
+        die("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
     }
     function __autoload($class){
         loadClass($class);
         if(class_exists($class) || interface_exists($class))return;
-        lowlevel_error("Class $class is not defined in included file");
+        die("Class $class is not defined in included file");
     }
 };

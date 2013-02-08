@@ -122,7 +122,7 @@ class PathFinder extends AbstractController
             'php'=>'lib',
             'page'=>'page',
             'addons'=>'atk4-addons',
-            'template'=>'templates/'.$this->api->skin,
+            'template'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
             'mail'=>'templates/mail',
             'js'=>'templates/js',
             'logs'=>'logs',
@@ -140,14 +140,14 @@ class PathFinder extends AbstractController
         $this->atk_location=$this->addLocation('atk4', array(
             'php'=>'lib',
             'template'=>array(
-                'templates/'.$this->api->skin,
+                isset($this->api->skin)?'templates/'.$this->api->skin:null,
                 'templates/shared'
             ),
             'mail'=>'templates/mail',
             'js'=>'templates/js',
             'css'=>array(
                 'templates/js',
-                'templates/'.$this->api->skin.'/css',
+                isset($this->api->skin)?'templates/'.$this->api->skin.'/css':null,
                 'templates/shared/css'
             ),
         ))
