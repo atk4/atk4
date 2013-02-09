@@ -42,13 +42,13 @@ class Form_Field_Slider extends Form_Field_Number {
                         $this->js()->_selector('#'.$s)->slider('value')
                         )->change()
                     ));
-
         $this->setAttr('style','display: none');
-        return '<table width=200 border=0><tr>'.
+        
+        return '<table width="100%" border="0"><tr>'.
             '<td align="left">'.$this->left.'</td>'.
             '<td align="right">'.$this->right.'</td>'.
-            '</tr><tr><td colspan=2>'.
-            parent::getInput().
-            '<div id="'.$s.'"></div></td></tr></table>';
+            '</tr><tr>'.
+            '<td colspan=2>'.parent::getInput().'<div id="'.$s.'"></div></td>'.
+            '</tr></table>';
     }
 }
