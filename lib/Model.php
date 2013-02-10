@@ -123,12 +123,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
             ->addMoreInfo('name',$name);
 
-        if($value!==undefined && (
-            is_null($value)!=is_null($this->data[$name]) || 
-            is_object($value) ||
-            is_object($this->data[$name]) || 
-            (string)$value!=(string)$this->data[$name]
-        )){
+        if($value!==undefined 
+            && (
+                is_object($value) 
+                || is_object($this->data[$name]) 
+                || (string)$value!=(string)$this->data[$name]
+            )
+        ) {
             $this->data[$name]=$value;
             $this->setDirty($name);
         }
