@@ -20,6 +20,7 @@
  * Use:
  *
  * $auth=$this->add('Auth');
+ * $auth->usePasswordEncryption();
  * $auth->setModel('User');
  * $auth->check();
  *
@@ -166,7 +167,7 @@ class Auth_Basic extends AbstractController {
     }
     /** Specifies how password will be encrypted when stored. Some values are "sha256/salt", "md5", "rot13". If you
      * don't call this, passwords will be stored in plain-text */
-    function usePasswordEncryption($method){
+    function usePasswordEncryption($method='php'){
         $this->password_encryption=$method;
         return $this;
     }
@@ -179,6 +180,8 @@ class Auth_Basic extends AbstractController {
         if($this->password_encryption)$this->debug("Encrypting password: '$password' with ".$this->password_encryption.' salt='.$salt);
         switch($this->password_encryption){
             case null: return $password;
+            case'php':
+                return password_hash($password,PASSWORD_DEFAULT);
             case'sha256/salt':
                        if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
                        $key=$this->api->getConfig('auth/key',$this->api->name);
@@ -262,8 +265,14 @@ class Auth_Basic extends AbstractController {
         $this->model->unload();  // just to be sure, we don't leave it there
         if(!$data)return false;
         $this->debug('data says password is '.$data[$this->password_field]);
-        $ep=$this->encryptPassword($password,$user);
-        if($data[$this->password_field]==$ep){
+
+        if($this->password_encryption=='php'){
+            $result=password_verify($password,$data[$this->password_field]);
+        }else{
+            $ep=$this->encryptPassword($password,$user);
+            $result=$data[$this->password_field]==$ep;
+        }
+        if($result){
             $this->debug('Matched to encrypted password is '.$ep);
             return $data[$this->model->id_field];
         }else{

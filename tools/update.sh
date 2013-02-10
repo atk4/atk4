@@ -3,7 +3,9 @@
 set -e	 # exit if anything fails
 
 config='../config.php';
+[ -f $config ] || config='../config-default.php';
 [ -f $config ] || config='../../config.php';
+[ -f $config ] || config='../../config-default.php';
 [ -f $config ] || config='../../../config.php';
 
 dsn=`cat $config | grep "config\['dsn'\]" | cut -d= -f2 | sed "s/'/\"/g" | cut -d\" -f2 | sed 's|mysql://||'`

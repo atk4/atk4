@@ -168,22 +168,25 @@ abstract class AbstractObject
      * Creates new object and adds it as a child. Returns new object.
      *
      * @param string       $class           Name of the new class
-     * @param array|string $short_name      Short name or array of properties
+     * @param array|string $options         Short name or array of properties
      * @param string       $template_spot   Tag where output will appear
      * @param array|string $template_branch Redefine template
      *
      * @link http://agiletoolkit.org/learn/understand/base/adding 
      * @return \AbstractObject
      */
-    function add($class, $short_name = null, 
-        $template_spot = null, $template_branch = null
+    function add(
+        $class,
+        $options = null,
+        $template_spot = null,
+        $template_branch = null
     ) {
-        if (is_array($short_name)) {
-            $di_config=$short_name;
-            $short_name=@$di_config['name'];
-            unset($di_config['name']);
-        } else {
-            $di_config=array();
+
+        if (is_string($options)) {
+            $options=array('name'=>$options);
+        }
+        if (!is_array($options)) {
+            $options=array();
         }
 
         if (is_object($class)) {
@@ -225,26 +228,30 @@ abstract class AbstractObject
             $class = $ns . '\\' . substr($class, 2);
         }
         
-        if (!$short_name) {
-            $short_name = str_replace('\\', '_', strtolower($class));
-        }
-        $short_name=$this->_unique($this->elements, $short_name);
+        $short_name = isset(
+            $options['name'])
+            ? $options['name']
+            : str_replace('\\', '_', strtolower($class));
 
+
+        // Adding same controller twice will return existing one.
         if (isset ($this->elements[$short_name])) {
-            if ($this->elements[$short_name] instanceof AbstractView) {
-                /*
-                 * AbstractView classes shouldn't be created with the same
                  * name. If someone would still try to do that, it should
-                 * generate error. Obviously one of those wouldn't be
                  * displayed or other errors would occur
-                 */
-                throw $this->exception("Element with this name already exists")
-                    ->addMoreInfo('name', $short_name)
-                    ->addThis($this);
+            if ($this->elements[$short_name] instanceof AbstractController) {
+                return $this->elements[$short_name];
             }
         }
 
-        // Separate out namespace ????????????????????
+        $short_name = $this->_unique($this->elements, $short_name);
+
+        if (isset ($this->elements[$short_name])) {
+            throw $this->exception($class." with requested name already exists")
+                ->addMoreInfo('class', $class)
+                ->addMoreInfo('name', $short_name)
+                ->addThis($this);
+        }
+
         $class_name_nodash=str_replace('-', '', $class);
         if (!class_exists($class_name_nodash, false)
             && isset($this->api->pathfinder)
@@ -259,8 +266,10 @@ abstract class AbstractObject
             );
         }
 
-        foreach ($di_config as $key=>$val) {
-            $element->$key=$val;
+        foreach ($options as $key => $val) {
+            if ($key!=='name') {
+                $element->$key=$val;
+            }
         }
 
         $element->owner = $this;
