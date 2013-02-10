@@ -53,6 +53,9 @@ class Auth_Basic extends AbstractController {
     public $login_field='email';
     public $password_field='password';
 
+    public $hash_algo=PASSWORD_DEFAULT;
+    public $hash_options=array();
+
     function init(){
         parent::init();
 
@@ -181,7 +184,7 @@ class Auth_Basic extends AbstractController {
         switch($this->password_encryption){
             case null: return $password;
             case'php':
-                return password_hash($password,PASSWORD_DEFAULT);
+                return password_hash($password,$this->hash_algo,$this->hash_options);
             case'sha256/salt':
                        if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
                        $key=$this->api->getConfig('auth/key',$this->api->name);
@@ -253,31 +256,127 @@ class Auth_Basic extends AbstractController {
          */
         return $this->model->loaded();
     }
-    /** This function verifies username and password. Password must be supplied in plain text. Does not affect currently 
-     * logged in user */
-    function verifyCredentials($user,$password){
+    /**
+     * This function verifies credibility of supplied authenication data.
+     * It will search based on user and verify the password. It's also
+     * possible that the function will re-hash user password with 
+     * updated hash.
+     *
+     * if default authentication method is used, the function will
+     * automatically determine hash used for password generation and will
+     * upgrade to a new php5.5-compatible syntax.
+     */
+    function verifyCredentials($user, $password)
+    {
         $this->debug('verifying credentials for '.$user.' '.$password);
-        if($this->model->hasMethod('verifyCredentials'))return $this->model->verifyCredentials($user,$password);
-        if(!$this->model->hasElement($this->password_field)){
-            $this->model->addField($this->password_field);
-        }
-        $data = $this->model->tryLoadBy($this->login_field,$user)->get();
-        $this->model->unload();  // just to be sure, we don't leave it there
-        if(!$data)return false;
-        $this->debug('data says password is '.$data[$this->password_field]);
 
-        if($this->password_encryption=='php'){
-            $result=password_verify($password,$data[$this->password_field]);
-        }else{
-            $ep=$this->encryptPassword($password,$user);
-            $result=$data[$this->password_field]==$ep;
+        // First, perhaps model has a method for verifying credentials.
+        if ($this->model->hasMethod('verifyCredentials')) {
+            return $this->model->verifyCredentials($user, $password);
         }
-        if($result){
-            $this->debug('Matched to encrypted password is '.$ep);
-            return $data[$this->model->id_field];
-        }else{
-            $this->debug('Missmatch to '.$ep);
+
+        // If password field is not defined in the model for security
+        // reasons, let's add it for authentication purpose.
+        $pasword_existed=true;
+        if (!$this->model->hasElement($this->password_field)) {
+            $this->model->addField($this->password_field)->type('password');
+            $pasword_existed=false;
+        }
+
+        // Attempt to load user data by username. If not found, return
+        // false
+        $data = $this->model->tryLoadBy($this->login_field, $user);
+        if (!$data->loaded()) {
+            $this->debug('user with login '.$user.' could not be loaded');
+            if (!$password_existed) {
+                $data->getElement($this->password_field)->destroy();
+            }
             return false;
+        }
+
+        $hash=$data[$this->password_field];
+
+        $this->debug('loaded user entry with hash: '.$hash);
+
+        // Verify password first
+        $result=false;
+        $rehash=false;
+
+        if ($this->password_encryption=='php') {
+
+            // Get information about the hash
+            $info=password_get_info($hash);
+
+            // Backwards-compatibility with older ATK encryption methods
+            if ($info['algo']==0) {
+
+                // Determine type of hash by length
+                if (strlen($hash)==64) {
+                    $this->password_encryption='sha256/salt';
+                } elseif (strlen($hash)==32) {
+                    $this->password_encryption='md5';
+                } elseif (strlen($hash)==40) {
+                    $this->password_encryption='sha1';
+                } else {
+                    $this->debug('Unable to identify password hash');
+                    $this->password_encryption='php';
+                    $data->unload();
+                    if (!$password_existed) {
+                        $data->getElement($this->password_field)->destroy();
+                    }
+                    return false;
+                }
+
+                // Convert password hash
+                $this->debug('Old password found with algo='.$this->password_encryption);
+                $ep=$this->encryptPassword($password,$user);
+                $this->password_encryption='sha1';
+
+                $rehash=true;
+                $result=$hash==$ep;
+            } else {
+                $result=password_verify($password,$ep=$data[$this->password_field]);
+                $this->debug('Native password hash with info: '.json_encode($info));
+                $rehash=password_needs_rehash(
+                    $hash,
+                    $this->hash_algo,
+                    $this->hash_options
+                );
+            }
+
+            if ($result) {
+                $this->debug('Verify is a SUCCESS');
+
+                if ($rehash) {
+                    $hash=$data[$this->password_field]=$password;
+                    $data->save();
+                    $this->debug('Rehashed into '.$data[$this->password_field]);
+                }
+            }
+
+        } else {
+            $ep=$this->encryptPassword($password,$user);
+            $result=$hash==$ep;
+            $this->debug('Attempting algo='.$this->password_encryption.' hash='.$hash.' newhash='.$ep);
+        }
+
+        if (!$result) {
+            $this->debug('Verify is a FAIL');
+            $data->unload();
+            if (!$password_existed) {
+                $data->getElement($this->password_field)->destroy();
+            }
+            return false;
+        }
+
+        // Leave record loaded, but hide password
+        $data[$this->password_field]='';
+        $data->dirty[$this->password_field]=false;
+
+        return $data[$this->model->id_field];
+
+        if (!$password_existed) {
+            $data->getElement($this->password_field)->destroy();
         }
     }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
