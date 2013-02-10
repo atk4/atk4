@@ -41,7 +41,7 @@ abstract class AbstractObject
     /** Name of the object in owner's element array */
     public $short_name;
 
-    /** short_name => object hash of children objects */ 
+    /** short_name => object hash of children objects */
     public $elements = array ();
 
     /** Link to object into which we added this object */
@@ -63,7 +63,7 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function init() 
+    function init()
     {
         /**
          * This method is called for initialization
@@ -92,7 +92,7 @@ abstract class AbstractObject
      *
      * @return string
      */
-    function __toString() 
+    function __toString()
     {
         return "Object " . get_class($this) . "(" . $this->name . ")";
     }
@@ -116,7 +116,7 @@ abstract class AbstractObject
             $this->model->destroy();
             unset($this->model);
         }
-        if (@$this->controller 
+        if (@$this->controller
             && $this->controller instanceof AbstractObject
         ) {
             $this->controller->destroy();
@@ -160,7 +160,7 @@ abstract class AbstractObject
      *
      * @return \AbstractObject
      */
-    function newInstance($properties=null)
+    function newInstance($properties = null)
     {
         return $this->owner->add(get_class($this), $properties);
     }
@@ -818,7 +818,7 @@ abstract class AbstractObject
      *
      * @return AbstractObject $this
      */
-    function addMethod($name,$callable)
+    function addMethod($name, $callable)
     {
         if (is_string($name) && strpos($name, ',')!==false) {
             $name=explode(',', $name);
@@ -863,7 +863,7 @@ abstract class AbstractObject
     }
     // }}}
 
-    // {{{ Logger: to be moved out 
+    // {{{ Logger: to be moved out
     /**
      * Output string into log file
      *
@@ -873,7 +873,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete 
      */
-    function logVar($var, $msg="")
+    function logVar($var, $msg = "")
     {
         $this->api->getLogger()->logVar($var, $msg);
     }
@@ -886,7 +886,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete 
      */
-    function logInfo($info, $msg="")
+    function logInfo($info, $msg = "")
     {
         $this->api->getLogger()->logLine($msg.' '.$info."\n");
     }
@@ -899,7 +899,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete 
      */
-    function logError($error,$msg="")
+    function logError($error,$msg = "")
     {
         if (is_object($error)) {
             // we got exception object obviously
@@ -942,8 +942,8 @@ abstract class AbstractObject
     function _shorten($desired)
     {
         if (strlen($desired)>$this->api->max_name_length
-            && $this->api->max_name_length!==false) {
-
+            && $this->api->max_name_length!==false
+        ) {
             $len=$this->api->max_name_length-10;
             if ($len<5) {
                 $len=$this->api->max_name_length;
@@ -972,7 +972,7 @@ abstract class AbstractObject
      *
      * @return string unique key for new object
      */
-    function _unique(&$array,$desired=null)
+    function _unique(&$array, $desired = null)
     {
         $postfix=1;
         $attempted_key=$desired;
