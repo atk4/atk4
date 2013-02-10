@@ -218,7 +218,7 @@ abstract class AbstractObject
                 ->addMoreInfo('class', $class);
         }
         
-        $class = str_replace('/','\\',$class);
+        $class = str_replace('/', '\\', $class);
 
         if ($class[0]=='.') {
             // Relative class name specified, extract current namespace
@@ -236,8 +236,6 @@ abstract class AbstractObject
 
         // Adding same controller twice will return existing one.
         if (isset ($this->elements[$short_name])) {
-                 * name. If someone would still try to do that, it should
-                 * displayed or other errors would occur
             if ($this->elements[$short_name] instanceof AbstractController) {
                 return $this->elements[$short_name];
             }
@@ -280,7 +278,7 @@ abstract class AbstractObject
         if (!$element->auto_track_element) {
             // dont store extra reference to models and controlers
             // for purposes of better garbage collection
-            $this->elements[$short_name]=true;  
+            $this->elements[$short_name]=true;
         } else {
             $this->elements[$short_name]=$element;
         }
@@ -316,7 +314,7 @@ abstract class AbstractObject
      *
      * @return AbstractObject
      */
-    function getElement($short_name) 
+    function getElement($short_name)
     {
         if (!isset ($this->elements[$short_name])) {
             throw $this->exception("Child element not found")
@@ -331,7 +329,7 @@ abstract class AbstractObject
      * @param string $short_name Short name of the child element
      *
      * @return AbstractModel
-     */ 
+     */
     function hasElement($short_name)
     {
         return isset($this->elements[$short_name])?
@@ -351,13 +349,13 @@ abstract class AbstractObject
         $this->name = $this->name . '_' . $short_name;
         $this->short_name = $short_name;
         if (!$this->auto_track_element) {
-            $this->owner->elements[$short_name]=true; 
+            $this->owner->elements[$short_name]=true;
         } else {
             $this->owner->elements[$short_name]=$this;
         }
         return $this;
     }
-    // }}} 
+    // }}}
 
     // {{{ Model and Controller handling
     /**
@@ -368,9 +366,9 @@ abstract class AbstractObject
      *
      * @return AbstractController Newly added controller
      */
-    function setController($controller, $name=null) 
+    function setController($controller, $name = null)
     {
-        $controller=$this->api->normalizeClassName($controller,'Controller');
+        $controller=$this->api->normalizeClassName($controller, 'Controller');
         return $this->add($controller, $name);
     }
     /**
@@ -380,9 +378,9 @@ abstract class AbstractObject
      *
      * @return AbstractModel Newly added Model
      */
-    function setModel($model) 
+    function setModel($model)
     {
-        $model = $this->api->normalizeClassName($model,'Model');
+        $model = $this->api->normalizeClassName($model, 'Model');
         $this->model=$this->add($model);
         return $this->model;
     }
@@ -406,7 +404,7 @@ abstract class AbstractObject
      *
      * @return AbstractObject $this
      */
-    function memorize($key, $value) 
+    function memorize($key, $value)
     {
         if (!isset ($value)) {
             return $this->recall($key);
@@ -442,7 +440,7 @@ abstract class AbstractObject
      *
      * @return AbstractObject $this
      */
-    function forget($key = null) 
+    function forget($key = null)
     {
         $this->api->initializeSession();
         if (isset ($key)) {
@@ -483,7 +481,7 @@ abstract class AbstractObject
      *
      * @return BaseException
      */
-    function exception($message,$type=null,$code=null)
+    function exception($message, $type = null, $code = null)
     {
         if (!$type) {
             $type=$this->default_exception;
@@ -556,7 +554,7 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function debug($msg=true, $file = null, $line = null)
+    function debug($msg = true, $file = null, $line = null)
     {
         if ($msg===true) {
             $this->debug=true;
@@ -564,7 +562,7 @@ abstract class AbstractObject
         }
 
         // The rest of this method is obsolete
-        if ((isset ($this->debug) && $this->debug) 
+        if ((isset ($this->debug) && $this->debug)
             || (isset ($this->api->debug) && $this->api->debug)
         ) {
             $this->upCall(
@@ -585,7 +583,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete
      */
-    function warning($msg, $shift = 0) 
+    function warning($msg, $shift = 0)
     {
         $this->upCall(
             'outputWarning', array (
@@ -605,7 +603,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete
      */
-    function upCall($type, $args = array ()) 
+    function upCall($type, $args = array ())
     {
         /**
          * Try to handle something on our own and in case we are not
@@ -625,7 +623,7 @@ abstract class AbstractObject
         }
         return $this->owner->upCall($type, $args);
     }
-    // }}} 
+    // }}}
 
     // {{{ Hooks: http://agiletoolkit.org/doc/hooks
     public $hooks = array ();
@@ -640,7 +638,7 @@ abstract class AbstractObject
      *
      * @return AbstractObject $this
      */
-    function addHook($hook_spot, $callable, $arguments=array(), $priority = 5)
+    function addHook($hook_spot, $callable, $arguments = array(), $priority = 5)
     {
         if (!is_array($arguments)) {
             throw $this->exception('Incorrect arguments');
@@ -656,12 +654,12 @@ abstract class AbstractObject
         }
         if (!is_callable($callable)
             && ($callable instanceof AbstractObject
-                && !$callable->hasMethod($hook_spot))
+            && !$callable->hasMethod($hook_spot))
         ) {
             throw $this->exception('Hook does not exist');
         }
         if (is_object($callable) && !is_callable($callable)) {
-            $callable=array($callable,$hook_spot);  
+            $callable=array($callable, $hook_spot);
             // short for addHook('test',$this); to call $this->test();
         }
         if ($priority>=0) {
@@ -705,17 +703,17 @@ abstract class AbstractObject
             );
         }
         $return=array();
-        if ($arg===undefined) {
+        if ($arg===UNDEFINED) {
             $arg=array();
         }
-        try{
+        try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
                     foreach ($this->hooks[$hook_spot] as $prio => $_data) {
                         foreach ($_data as $data) {
 
                             // Our extentsion.
-                            if (is_string($data[0]) 
+                            if (is_string($data[0])
                                 && !preg_match(
                                     '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
                                     $data[0]
@@ -724,7 +722,7 @@ abstract class AbstractObject
                                 $result = eval ($data[0]);
                             } elseif (is_callable($data[0])) {
                                 $result = call_user_func_array(
-                                    $data[0], 
+                                    $data[0],
                                     array_merge(
                                         array($this),
                                         $arg,
@@ -750,7 +748,7 @@ abstract class AbstractObject
                     }
                 }
             }
-        }catch(Exception_Hook $e){
+        } catch (Exception_Hook $e) {
             return $e->return_value;
         }
         return $return;
@@ -782,7 +780,7 @@ abstract class AbstractObject
      *
      * @return mixed
      */
-    function __call($method,$arguments)
+    function __call($method, $arguments)
     {
         if (($ret=$this->tryCall($method, $arguments))) {
             return $ret[0];
@@ -802,7 +800,7 @@ abstract class AbstractObject
      *
      * @return mixed
      */
-    function tryCall($method,$arguments)
+    function tryCall($method, $arguments)
     {
         if ($ret=$this->hook('method-'.$method, $arguments)) {
             return $ret;
