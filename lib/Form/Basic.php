@@ -153,12 +153,13 @@ class Form_Basic extends View {
 
         switch(strtolower($type)){
             case'dropdown':$class='DropDown';break;
+            case'line':$class='Line';break;
+            case'upload':$class='Upload';break;
+            case'radio':$class='Radio';break;
+            case'slider':$class='Slider';break;
             case'checkboxlist':$class='CheckboxList';break;
             default:$class=$type;
         }
-	    // $class[0]=strtoupper($class[0]);
-        // /\--- this is wrong, makes namespaces capitalized
-        // capitalized should be only the classname..
         $class=$this->api->normalizeClassName($class,'Form_Field');
         $last_field=$this->add($class,$name,null,'form_line')
             ->setCaption($caption);
@@ -179,14 +180,10 @@ class Form_Basic extends View {
                 $this->template_chunks['form_comment']->set('comment',$comment)->render()
                 );
     }
-    function addSeparator($class='',$attr=array()){
+    function addSeparator($fieldset_class=''){
         if(!isset($this->template_chunks['form_separator']))return $this;
-        $c = clone $this->template_chunks['form_separator'];
-        $c->trySet('fieldset_class',$class);
-        
-        if(is_array($attr) && !empty($attr))
-            foreach($attr as $k=>$v)
-                $c->appendHTML('fieldset_attributes',' '.$k.'="'.$v.'"');
+        $c=$this->template_chunks['form_separator'];
+        $c->trySet('fieldset_class',$fieldset_class);
 
         return $this->add('Html')->set($c->render());
     }
