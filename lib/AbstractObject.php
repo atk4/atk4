@@ -413,23 +413,23 @@ abstract class AbstractObject
         return $_SESSION['o'][$this->name][$key] = $value;
     }
     /** 
-     * Similar to memorize, but will associate first non-nul argument
+     * Similar to memorize, but if value for key exist, will return Iterator
+     * instead.
      *
-     * @param string $key    Key for the data
-     * @param mixed  $value1 Possible value for data
-     * @param mixed  $value2 Possible value for data
-     * @param mixed  $value3 Possible value for data
+     * @param string $key     Data Key
+     * @param mixed  $default Default value
      *
      * @return AbstractObject $this
      */
-    function learn($key, $value1 = null, $value2 = null, $value3 = null)
+    function learn($key, $default = null)
     {
-        if (isset ($value1)) {
-            return $this->memorize($key, $value1);
-        } elseif (isset ($value2)) {
-            return $this->memorize($key, $value2);
+        $this->api->initializeSession(false);
+        if (!isset ($_SESSION['o'][$this->name][$key])
+            || is_null($_SESSION['o'][$this->name][$key])
+        ) {
+            return $this->memorize($key, $default);
         } else {
-            return $this->memorize($key, $value3);
+            return $_SESSION['o'][$this->name][$key];
         }
     }
     /** 

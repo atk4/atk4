@@ -277,10 +277,10 @@ class Auth_Basic extends AbstractController {
 
         // If password field is not defined in the model for security
         // reasons, let's add it for authentication purpose.
-        $pasword_existed=true;
+        $password_existed=true;
         if (!$this->model->hasElement($this->password_field)) {
             $this->model->addField($this->password_field)->type('password');
-            $pasword_existed=false;
+            $password_existed=false;
         }
 
         // Attempt to load user data by username. If not found, return

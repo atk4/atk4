@@ -39,7 +39,7 @@ class ApiFrontend extends ApiWeb{
     }
     function routePages($prefix,$ns=null){
         if(!$ns)$ns=$prefix;
-        $this->namespace_routes[$prefix]=$ns;
+        $this->namespace_routes[$prefix]=str_replace('/','\\',$ns);
     }
     function layout_Content(){
         // required class prefix depends on the content_type
