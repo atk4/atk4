@@ -180,7 +180,7 @@ class Form_Basic extends View {
                 $this->template_chunks['form_comment']->set('comment',$comment)->render()
                 );
     }
-    function addSeparator($fieldset_class=''){
+    function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this;
         $c = clone $this->template_chunks['form_separator'];
         $c->trySet('fieldset_class',$class);
