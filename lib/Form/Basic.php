@@ -182,8 +182,14 @@ class Form_Basic extends View {
     }
     function addSeparator($fieldset_class=''){
         if(!isset($this->template_chunks['form_separator']))return $this;
-        $c=$this->template_chunks['form_separator'];
-        $c->trySet('fieldset_class',$fieldset_class);
+        $c = clone $this->template_chunks['form_separator'];
+        $c->trySet('fieldset_class',$class);
+
+        if (is_array($attr) && !empty($attr)) {
+            foreach($attr as $k => $v) {
+                $c->appendHTML('fieldset_attributes',' '.$k.'="'.$v.'"');
+            }
+        }
 
         return $this->add('Html')->set($c->render());
     }
