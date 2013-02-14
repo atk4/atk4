@@ -403,7 +403,10 @@ getjQuery: function(){
 ajaxec: function(url,data,fn){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	region=this.jquery;
+    if(region.data('ajaxec_loading'))return this.successMessage('Please Wait');
+    region.data('ajaxec_loading',true);
 	$.atk4.get(url,data,function(ret){
+        region.data('ajaxec_loading',false);
 		/*
 		 // error handling goes away from here
 		if(ret.substr(0,5)=='ERROR'){
