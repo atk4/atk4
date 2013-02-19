@@ -154,7 +154,7 @@ class TMail_Part extends AbstractModel {
     }
     function render(){
         $c=$this->content;
-        if($c instanceof SMLite){
+        if($c instanceof SMlite){
             $c->set($this->owner->args);
             $c=$c->render();
         }
@@ -182,7 +182,7 @@ class TMail_Part_Both extends TMail_Part {
         $html=parent::render();
         $this->template->set('contenttype','text/plain');
         $c=$this->content;
-        if($this->content instanceof SMLite)$this->content=$this->content->render();
+        if($this->content instanceof SMlite)$this->content=$this->content->render();
         $this->content=strip_tags($this->content);
         $plain=parent::render();
         $this->content=$c;
@@ -252,7 +252,7 @@ class TMail_Transport_DBStore extends TMail_Transport {
     }
 }
 
-class TMail_Template extends SMLite {
+class TMail_Template extends SMlite {
     public $template_type='mail';
     function init(){
         parent::init();
