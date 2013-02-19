@@ -153,11 +153,15 @@ class Form_Basic extends View {
 
         switch(strtolower($type)){
             case'dropdown':$class='DropDown';break;
+            case'checkboxlist':$class='CheckboxList';break;
+            case'hidden':$class='Hidden';break;
+            case'text':$class='Text';break;
             case'line':$class='Line';break;
             case'upload':$class='Upload';break;
             case'radio':$class='Radio';break;
-            case'slider':$class='Slider';break;
-            case'checkboxlist':$class='CheckboxList';break;
+            case'checkbox':$class='Checkbox';break;
+            case'password':$class='Password';break;
+            case'timepickr':$class='TimePicker';break;
             default:$class=$type;
         }
         $class=$this->api->normalizeClassName($class,'Form_Field');
