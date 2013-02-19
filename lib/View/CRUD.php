@@ -291,7 +291,9 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        if ($this->isEditing('ex_'.$name)) {
+        $s = $this->api->normalizeName($name);
+        
+        if ($this->isEditing('ex_'.$s)) {
 
             if ($_GET['id']) {
                 $this->id = $_GET[$this->name.'_id'] = $_GET['id'];
@@ -319,9 +321,9 @@ class View_CRUD extends View
             return;
         }
 
-        $this->grid->addColumn('expander', 'ex_'.$name, $options['label']?:$name);
-        $this->grid->columns['ex_'.$name]['page']
-            = $this->virtual_page->getURL('ex_'.$name);
+        $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
+        $this->grid->columns['ex_'.$s]['page']
+            = $this->virtual_page->getURL('ex_'.$s);
     }
 
     /**
