@@ -441,48 +441,55 @@ class ApiCLI extends AbstractView
      * This will replace all non alpha-numeric characters with separator.
      * Multiple separators in a row is replaced with one.
      * Separators in beginning and at the end of name are removed.
+     *
+     * Sample input:  "Hello, Dear Jon!"
+     * Sample output: "Hello_Dear_Jon"
      * 
      * @param string $name      String to process
      * @param string $separator Character acting as separator
      * 
      * @return string           Normalized string
      */
-    function normalizeName($name,$separator='_')
+    function normalizeName($name, $separator = '_')
     {
-        if(strlen($separator)==0) {
-            return preg_replace('|[^a-z0-9]|i','',$name);
+        // TODO: should we worry about separator such as dot?
+        if (strlen($separator)==0) {
+            return preg_replace('|[^a-z0-9]|i', '', $name);
         }
-        
+
         $s = $separator[0];
-        $name = preg_replace('|[^a-z0-9\\'.$s.']|i',$s,$name);
-        $name = trim($name,$s);
-        $name = preg_replace('|\\'.$s.'{2,}|',$s,$name);
-        
+        $name = preg_replace('|[^a-z0-9\\'.$s.']|i', $s, $name);
+        $name = trim($name, $s);
+        $name = preg_replace('|\\'.$s.'{2,}|', $s, $name);
+
         return $name;
     }
     /**
      * First normalize class name, then add specified prefix to
      * class name if it's passed and not already added.
      * Class name can have namespaces and they are treated prefectly.
+     *
+     * Example: normalizeClassName('User','Model') == 'Model_User';
      * 
      * @param string|object $name   Name of class or object
      * @param string        $prefix Optional prefix for class name
      * 
      * @return string|object Full, normalized class name or received object
      */
-    function normalizeClassName($name,$prefix=null)
+    function normalizeClassName($name, $prefix = null)
     {
-        if(!is_string($name)) return $name;
+        if (!is_string($name)) {
+            return $name;
+        }
 
-        $name = str_replace('/','\\',$name);
-        if($prefix) {
-            $class = ltrim(strrchr($name,'\\'),'\\')?:$name;
+        $name = str_replace('/', '\\', $name);
+        if ($prefix) {
+            $class = ltrim(strrchr($name, '\\'), '\\')?:$name;
             $prefix = ucfirst($prefix);
-            if (strpos($class,$prefix)!==0) {
+            if (strpos($class, $prefix)!==0) {
                 $name = preg_replace('|^(.*\\\)?(.*)$|', '\1'.$prefix.'_\2', $name);
             }
         }
-        
         return $name;
     }
     // }}}
