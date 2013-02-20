@@ -318,13 +318,16 @@ class Auth_Basic extends AbstractController {
                 } elseif (strlen($hash)==40) {
                     $this->password_encryption='sha1';
                 } else {
-                    $this->debug('Unable to identify password hash');
+                    $this->password_encryption=false;
+                    $this->debug('Unable to identify password hash type, using plain-text matching');
+                    /*
                     $this->password_encryption='php';
                     $data->unload();
                     if (!$password_existed) {
                         $data->getElement($this->password_field)->destroy();
                     }
                     return false;
+                     */
                 }
 
                 // Convert password hash
