@@ -201,21 +201,6 @@ class View_CRUD extends View
     }
 
     /**
-     * Obsolete YEEE
-     *
-     * @obsolete
-     */
-    function setController($controller){
-        if($this->form){
-            $this->form->setController($controller);
-            $this->form->addSubmit('Save');
-        }elseif($this->grid){
-            $this->grid->setController($controller);
-        }
-        $this->initComponents();
-    }
-
-    /**
      * Assign model to your CRUD and specify list of fields to use from model
      *
      * {@inheritdoc}
@@ -360,8 +345,12 @@ class View_CRUD extends View
 
         $this
             ->virtual_page
-            ->addColumn('fr_'.$name, $options['title']?:$name, $options['label'], $this->grid)
-            ;
+            ->addColumn(
+                'fr_'.$name,
+                $options['title']?:$name,
+                $options['label'],
+                $this->grid
+            );
     }
 
     /**
@@ -371,7 +360,7 @@ class View_CRUD extends View
      *
      * @return void|Model If model, then bail out, no greed needed
      */
-    function configureAdd($fields)
+    protected function configureAdd($fields)
     {
         // We are actually in the frame!
         if ($this->isEditing('add')) {
@@ -402,7 +391,7 @@ class View_CRUD extends View
      *
      * @return void|Model If model, then bail out, no greed needed
      */
-    function configureEdit($fields)
+    protected function configureEdit($fields)
     {
         // We are actually in the frame!
         if ($this->isEditing('edit')) {
@@ -427,7 +416,7 @@ class View_CRUD extends View
      *
      * @return void
      */
-    function configureGrid($fields)
+    protected function configureGrid($fields)
     {
         $this->grid->setModel($this->model, $fields);
     }
@@ -437,7 +426,7 @@ class View_CRUD extends View
      *
      * @return void
      */
-    function configureDel()
+    protected function configureDel()
     {
         $this->grid->addColumn('delete', 'delete');
     }
@@ -450,7 +439,7 @@ class View_CRUD extends View
      *
      * @return void
      */
-    function formSubmit($form)
+    protected function formSubmit($form)
     {
         try {
             $form->update();
