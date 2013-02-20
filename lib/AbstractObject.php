@@ -924,6 +924,10 @@ abstract class AbstractObject
             throw $this->exception('Calling each() on non-iterative object');
         }
 
+        if (is_string($callable)) {
+            $callable=array($this,$callable);
+        }
+
         foreach ($this as $value) {
             if (call_user_func($callable, $value) === false) {
                 break;

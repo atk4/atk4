@@ -396,6 +396,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             throw $this->exception('Calling each() on non-iterative model');
         }
 
+        if (is_string($callable)) {
+            $callable=array($this,$callable);
+        }
+
         foreach ($this as $value) {
             if (call_user_func($callable, $this) === false) {
                 break;
