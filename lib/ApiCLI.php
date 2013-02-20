@@ -452,7 +452,6 @@ class ApiCLI extends AbstractView
      */
     function normalizeName($name, $separator = '_')
     {
-        // TODO: should we worry about separator such as dot?
         if (strlen($separator)==0) {
             return preg_replace('|[^a-z0-9]|i', '', $name);
         }
