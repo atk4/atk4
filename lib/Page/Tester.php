@@ -91,7 +91,9 @@ class Page_Tester extends Page {
                 if(method_exists($test_obj,'prepare_'.$m)){
                     $input=$test_obj->{'prepare_'.$m}($vari,$method);
                 }else{
-                    $input=$test_obj->prepare($vari,$method);
+                    if($test_obj->hasMethod('prepare')){
+                        $input=$test_obj->prepare($vari,$method);
+                    }else $input=null;
                 }
 
                 $this->input=$input;
@@ -173,7 +175,9 @@ class Page_Tester extends Page {
                 if(method_exists($test_obj,'prepare_'.$m)){
                     $input=$test_obj->{'prepare_'.$m}($vari,$method);
                 }else{
-                    $input=$test_obj->prepare($vari,$method);
+                    if($test_obj->hasMethod('prepare')){
+                        $input=$test_obj->prepare($vari,$method);
+                    }else $input=null;
                 }
 
                 $this->input=$input;
