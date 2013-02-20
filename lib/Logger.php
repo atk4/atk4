@@ -171,7 +171,7 @@ class Logger extends AbstractController {
 
     private $header_sent=0;
 
-    private $debug_log='';          // Will be outputed at the end of the page
+    public $debug_log='';           // Will be outputed at the end of the page
     private $debug_added=false;     // no debug messages added yet
 
 
