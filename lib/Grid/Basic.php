@@ -269,9 +269,8 @@ class Grid_Basic extends CompleteLister {
         $this->precacheTemplate();
         parent::renderRows();
 
-        // if no rows, then remove totals, otherwise remove not_found message
-        if(!$this->total_rows) {
-        }else{
+        // if totals, then remove not_found message
+        if($this->total_rows) {
             $this->template->del('not_found');
         }
     }
