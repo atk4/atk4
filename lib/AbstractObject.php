@@ -427,6 +427,9 @@ abstract class AbstractObject
         if (!isset ($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
+            if (is_callable($default)) {
+                $default=call_user_func($default);
+            }
             return $this->memorize($key, $default);
         } else {
             return $_SESSION['o'][$this->name][$key];
