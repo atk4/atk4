@@ -83,6 +83,25 @@ class Order extends AbstractController {
                     array_splice($this->array,floor(count($this->array)/2),0,array($name=>$v));
                     break;
 
+                case 'middleof':  // in the middle of objects of specified class
+                    $cnt=$cnt2=$mid=0;
+                    foreach($this->array as $el) {
+                        if ($el instanceof $relative) {
+                            $cnt++;
+                        }
+                    }
+                    $cnt=ceil($cnt/2);
+                    foreach($this->array as $el) {
+                        if ($el instanceof $relative) {
+                            $cnt--;
+                        }
+
+                        $mid++;
+                        if(!$cnt)break;
+                    }
+                    array_splice($this->array,$mid,0,array($name=>$v));
+                    break;
+
 
             }
         }
