@@ -38,7 +38,7 @@ class jUI extends jQuery {
 
         /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
         if($v=$this->api->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
-        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.9.2.min'));  // bundled jQueryUI version
+        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.10.1.min'));  // bundled jQueryUI version
 
         $this->addInclude($v);
 

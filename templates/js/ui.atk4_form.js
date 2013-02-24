@@ -72,12 +72,15 @@ jQuery.widget("ui.atk4_form", {
 				}
 		});
 
+        /*
+         * TODO: check if new MSIE supports this correctly
 		if($.browser.msie){
 			this.form.find('input:radio,input:checkbox').click(function(){
 				this.blur();	// this will call onchange event, like it should
 				this.focus();
 			});
 		}
+       */
 
 		this.form.find(':input').each(function(){
 			if($(this).attr('type')=='checkbox')

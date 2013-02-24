@@ -590,9 +590,7 @@ bindConditionalShow: function(conditions,tag){
 	}else if(f.hasClass('atk-checkboxlist')){
 		f.find('input[type=checkbox]').bind('change',ch);
 	}else{
-		if (f.is(':checkbox') && (jQuery.browser.msie && parseInt(jQuery.browser.version) <= 7)) {
-			f.click(ch)
-		}else f.change(ch);
+		f.change(ch);
 	}
 	ch();
 	//console.log(conditions);
