@@ -23,7 +23,7 @@
  * @version     $Id$
  */
 class Menu_Basic extends CompleteLister {
-    protected $items=array();
+    public $items=array();
     protected $class_tag='class';
     protected $item_tag='MenuItem';
     protected $container_tag='Item';
