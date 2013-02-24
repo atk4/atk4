@@ -157,7 +157,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
      */
     function getActualFields($group=undefined){
         if($group===undefined && $this->actual_fields)return $this->actual_fields;
+
         $fields=array();
+
+        if (strpos($group,',')!==false){
+            $groups=explode(',',$group);
+
+            foreach($groups as $group){
+                if($group[0]=='-'){
+                    $el=$this->getActualFields(substr($group,1));
+                    $fields=array_diff($fields,$el);
+                }else{
+                    $el=$this->getActualFields($group);
+                    $fields=array_merge($fields,$el);
+                }
+            }
+        }
+
         foreach($this->elements as $el)if($el instanceof Field){
             if($el->hidden())continue;
             if($group===undefined || $el->group()==$group ||
