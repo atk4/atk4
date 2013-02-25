@@ -34,7 +34,7 @@ class Paginator_Basic extends CompleteLister {
     }
     /** Set a custom source. Must be an object with foundRows() method */
     function setSource($source){
-        $this->skip=$this->learn('skip', @$_GET[$this->name.'_skip'])+0;
+        $this->skip=$this->memorize('skip', @$_GET[$this->name.'_skip'])+0;
         if($source instanceof Model_Table){
 
             // Start iterating early
@@ -76,7 +76,7 @@ class Paginator_Basic extends CompleteLister {
 
         if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
-            $this->learn('skip',$this->skip=0);
+            $this->memorize('skip',$this->skip=0);
             $this->source->limit($this->ipp,$this->skip);
             $this->source->rewind();                 // re-execute the query
         }
