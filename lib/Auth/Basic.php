@@ -333,7 +333,7 @@ class Auth_Basic extends AbstractController {
                 // Convert password hash
                 $this->debug('Old password found with algo='.$this->password_encryption);
                 $ep=$this->encryptPassword($password,$user);
-                $this->password_encryption='sha1';
+                $this->password_encryption='php';
 
                 $rehash=true;
                 $result=$hash==$ep;
