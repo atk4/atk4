@@ -981,7 +981,7 @@ abstract class AbstractObject
      */
     function _unique(&$array, $desired = null)
     {
-        $postfix=1;
+        $postfix=count($array);
         $attempted_key=$desired;
         if (!is_array($array)) {
             throw $this->exception('not array');
