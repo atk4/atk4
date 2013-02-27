@@ -17,9 +17,9 @@
 /**
  * This is a Basic Grid implementation, which produces fully
  * functional HTML grid capable of filtering, sorting, paginating
- * and using multiple column formatters. Basic Grid no longer
- * implements the column formatters, instead they have been
- * moved into Grid_Advanced
+ * and using multiple column formatters.
+ * Basic Grid no longer implements the column formatters, instead
+ * they have been moved into Grid_Advanced.
  * 
  * @link http://agiletoolkit.org/doc/grid
  *
@@ -269,9 +269,8 @@ class Grid_Basic extends CompleteLister {
         $this->precacheTemplate();
         parent::renderRows();
 
-        // if no rows, then remove totals, otherwise remove not_found message
-        if(!$this->total_rows) {
-        }else{
+        // if totals, then remove not_found message
+        if($this->total_rows) {
             $this->template->del('not_found');
         }
     }
