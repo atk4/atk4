@@ -83,7 +83,7 @@ class Grid_Advanced extends Grid_Basic {
         //$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
         if(isset($_GET[$this->name.'_sort'])){
-            $this->sortby=$this->memorize('sortby',@$_GET[$this->name.'_sort']);
+            $this->sortby=$this->memorize('sortby',$_GET[$this->name.'_sort']);
         }
     }
     function importFields($model,$fields=undefined){
