@@ -50,8 +50,8 @@ class SQL_Relation extends AbstractModel {
     function hasOne($model,$our_field=null,$display_field=null){
         return $this->owner->hasOne($model,$our_field,$display_field)->from($this);
     }
-    function hasMany($model,$their_field=null,$our_field=null){
-        return $this->owner->hasMany($model,$their_field,$our_field)->from($this);
+    function hasMany($model,$their_field=null,$our_field=null,$as_field=null){
+        return $this->owner->hasMany($model,$their_field,$our_field,$as_field)->from($this);
     }
     // TODO: hasMany()
 
