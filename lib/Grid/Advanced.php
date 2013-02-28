@@ -82,7 +82,9 @@ class Grid_Advanced extends Grid_Basic {
         //$this->add('Reloadable');
         //$this->api->addHook('pre-render',array($this,'precacheTemplate'));
 
-        $this->sortby=$this->learn('sortby',@$_GET[$this->name.'_sort']);
+        if(isset($_GET[$this->name.'_sort'])){
+            $this->sortby=$this->memorize('sortby',@$_GET[$this->name.'_sort']);
+        }
     }
     function importFields($model,$fields=undefined){
         $this->add('Controller_MVCGrid')->importFields($model,$fields);
