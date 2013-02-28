@@ -369,14 +369,11 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_delete($field){
         if(!$this->model)throw new BaseException('delete column requires $dq to be set');
-        if($id=@$_GET[$this->name.'_'.$field]){
-            // this was clicked
-            $this->_performDelete($id);
-            $this->js()->univ()->successMessage('Deleted Successfully')->getjQuery()->reload()->execute();
-        }
         return $this->format_confirm($field);
     }
+    public $_url=array();
     function init_button($field){
+        $this->_url[$field]=$this->api->url();
         @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
         $this->js(true)->find('.button_'.$field)->button();
     }
@@ -386,6 +383,13 @@ class Grid_Advanced extends Grid_Basic {
     function init_delete($field){
         $this->columns[$field]['button_class']='red';
         $g=$this;
+
+        if($id=@$_GET[$this->name.'_'.$field]){
+            // this was clicked
+            $this->_performDelete($id);
+            $this->js()->univ()->successMessage('Deleted Successfully')->getjQuery()->reload()->execute();
+        }
+
         $this->api->addHook('post-init',array($this,'_move_delete'),array($field));
         /*function() use($g,$field){
           });
@@ -396,6 +400,7 @@ class Grid_Advanced extends Grid_Basic {
         if($this->hasColumn($field))$this->addOrder()->move($field,'last')->now();
     }
     function init_confirm($field){
+        $this->_url[$field]=$this->api->url();
         @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
         $this->js(true)->find('.button_'.$field)->button();
     }
@@ -404,16 +409,20 @@ class Grid_Advanced extends Grid_Basic {
         $this->js(true)->find('.button_'.$field)->button();
     }
     function format_button($field){
+        $url=clone $this->_url[$field];
+
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].'button_'.$field.'" '.
-            'onclick="$(this).univ().ajaxec(\''.$this->api->url(null,
+            'onclick="$(this).univ().ajaxec(\''.$url->set(
             array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
     function format_confirm($field){
+        $url=clone $this->_url[$field];
+
         $this->current_row_html[$field]='<button type="button" class="'.$this->columns[$field]['button_class'].' button_'.$field.'" '.
-            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.$this->api->url(null,
-            array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id)).'\')">'.
+            'onclick="$(this).univ().confirm(\'Are you sure?\').ajaxec(\''.($u=$url->set(
+            array($field=>$this->current_id,$this->name.'_'.$field=>$this->current_id))).'\')">'.
                 (isset($this->columns[$field]['icon'])?$this->columns[$field]['icon']:'').
                 $this->columns[$field]['descr'].'</button>';
     }
