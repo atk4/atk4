@@ -192,6 +192,11 @@ class Grid_Advanced extends Grid_Basic {
         $this->setTDParam($field,'style/color',$m<0?'red':null);
         $this->setTDParam($field,'align','right');
     }
+    function format_real($field){
+        $m=(float)$this->current_row[$field];
+        $this->current_row[$field]=number_format($m,2);
+        $this->setTDParam($field,'align','right');
+    }
     function format_totals_number($field){
         return $this->format_number($field);
     }
