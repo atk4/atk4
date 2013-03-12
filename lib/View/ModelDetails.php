@@ -12,23 +12,40 @@ class View_ModelDetails extends Grid_Basic
         $this->addColumn('text', 'name');
         $this->addColumn('text', 'value');
     }
-
-    function render(){
-        if (!$this->model->loaded()) {
-            throw $this->exception('Specified model must be loaded');
-        }
-        $data = array();
-        foreach ($this->model->elements as $key => $field) {
-            if ($field instanceof Field) {
-                $data[]=array(
+    public $source_set=false;
+    function setSource($data){
+        if(!isset($data[0]) && !is_array($data[0])){
+            // associative array
+            $newdata=array();
+            foreach($data as $key=>$value){
+                $newdata[]=array(
                     'id'=>$key,
-                    'name'=>$field->caption(),
-                    'value'=>$field->get()
+                    'value'=>$value
                 );
             }
+            $data=$newdata;
         }
+        $this->source_set=true;
+        return parent::setSource($data);
+    }
+    function render(){
+        if(!$this->source_set){
+            if (!$this->model->loaded()) {
+                throw $this->exception('Specified model must be loaded');
+            }
+            $data = array();
+            foreach ($this->model->elements as $key => $field) {
+                if ($field instanceof Field) {
+                    $data[]=array(
+                        'id'=>$key,
+                        'name'=>$field->caption(),
+                        'value'=>$field->get()
+                    );
+                }
+            }
 
-        $this->setSource($data);
+            parent::setSource($data);
+        }
 
         return parent::render();
     }
