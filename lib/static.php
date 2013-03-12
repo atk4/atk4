@@ -66,7 +66,7 @@ if(!function_exists('error_handler')){
     }
     set_error_handler("error_handler");
 
-};if(!function_exists('__autoload')){
+};if(!function_exists('atk4_autoload')){
     function loadClass($class){
         if(isset($GLOBALS['atk_pathfinder'])){
             return $GLOBALS['atk_pathfinder']->loadClass($class);
@@ -80,13 +80,11 @@ if(!function_exists('error_handler')){
                 return;
             }
         }
-        die("Class is not defined and couldn't be loaded: $class. Consult documentation on __autoload()");
     }
-    function __autoload($class){
+    spl_autoload_register(function ($class){
         loadClass($class);
         if(class_exists($class) || interface_exists($class))return;
-        die("Class $class is not defined in included file");
-    }
+    });
 };
 
 
