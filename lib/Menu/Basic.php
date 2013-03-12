@@ -64,9 +64,9 @@ class Menu_Basic extends CompleteLister {
         return $this;
     }
     function addSubMenu($label){
-        $f=$this->add('View_Flyout');
-        $fm=$f->add('Menu_jUI');
-        return $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($m->items)),$label);
+        $f = $this->add('View_Flyout',null,'MenuSeparator'); // we use MenuSeparator tag here just to put View_Flyout outside of UL list. Otherwise it breaks correct HTML and CSS.
+        $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($this->items)),$label);
+        return $f->add('Menu_jUI');
     }
     protected function getDefaultHref($label){
         $href=$this->api->normalizeName($label,'');
