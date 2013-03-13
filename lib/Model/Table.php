@@ -447,7 +447,7 @@ class Model_Table extends Model {
         if(!$this->loaded())throw $this->exception('Unable to load random entry');
         return $this;
     }
-    /** Try to load a record by specified ID. Will not raise exception if record is not fourd */
+    /** Try to load a record by specified ID. Will not raise exception if record is not found */
     function tryLoad($id){
         if(is_null($id))throw $this->exception('Record ID must be specified, otherwise use loadAny()');
         return $this->_load($id,true);
