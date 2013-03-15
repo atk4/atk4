@@ -217,12 +217,18 @@ class View_CRUD extends View
 
         if ($this->entity_name === null) {
 
-            // Calculates entity name
-            $this->entity_name = str_replace(
-                array('Model_', '_'),
-                array('', ' '),
-                get_class($this->model)
-            );
+            if ($model->caption === null ) {
+
+
+                // Calculates entity name
+                $this->entity_name = str_replace(
+                    array('Model_', '_'),
+                    array('', ' '),
+                    get_class($this->model)
+                );
+            } else {
+                $this->entity_name = $model->caption;
+            }
         }
 
         if (!$this->isEditing()) {
