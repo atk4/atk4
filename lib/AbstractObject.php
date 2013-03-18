@@ -486,7 +486,7 @@ abstract class AbstractObject
      */
     function exception($message, $type = null, $code = null)
     {
-        if (!$type) {
+        if (!$type || $type==$this->default_exception) {
             $type=$this->default_exception;
         } elseif ($type[0]=='_') {
             $type=$this->default_exception.'_'.substr($type, 1);
