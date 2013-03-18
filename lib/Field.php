@@ -188,7 +188,7 @@ class Field extends AbstractModel
      */
     function required($t = UNDEFINED)
     {
-        throw $this->exception('required() is obsolete, use mandatory()');
+        return $this->mandatory($t);
     }
 
     /**

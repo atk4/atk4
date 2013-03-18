@@ -64,6 +64,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** If true, model will now allow to set values for non-existant fields */
     public $strict_fields=false;
 
+    /** Caption is used on buttons of CRUD and other views which operate with this model.
+     * If not defined, will use class name. Use singular */
+    public $caption=null;
+
     /** Contains name of table, session key, collection or file, depending on a driver */
     public $table=null;
 
