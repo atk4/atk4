@@ -250,7 +250,9 @@ $.widget('ui.atk4_loader', {
                 if(!f.hasClass('nofocus'))f.focus();
 			});
 		},function(){	// second callback, which is always called, when loading is completed
-            		self.loader.hide();
+            if (!!self.loader){
+                self.loader.hide();
+            }
 			self.loading=false;
             		el.trigger('after_html_loaded');
 		});
