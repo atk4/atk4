@@ -313,7 +313,7 @@ class PathFinder extends AbstractController
         /**/$this->api->pr->start('php parsing');
         include_once($path);
         /**/$this->api->pr->stop();
-        if(!class_exists($origClassName ,false))throw $this->exception('Class is not defined in file')
+        if(!class_exists($origClassName ,false) && !interface_exists($origClassName, false))throw $this->exception('Class is not defined in file')
             ->addMoreInfo('file',$path)
             ->addMoreInfo('class',$className);
         /**/$this->api->pr->stop();

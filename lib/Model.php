@@ -131,7 +131,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             && (
                 is_object($value) 
                 || is_object($this->data[$name]) 
-                || (string)$value!=(string)$this->data[$name]
+                || (string)$value!=(string)$this->data[$name] // this is not nice.. 
+                || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
             )
         ) {
             $this->data[$name]=$value;
