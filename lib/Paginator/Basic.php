@@ -26,6 +26,7 @@ class Paginator_Basic extends CompleteLister {
     public $ajax_reload=true;
 
     public $source=null;
+    public $base_page=null; // let's redefine page nicely
 
     /** Set number of items displayed per page */
     function ipp($ipp){
@@ -86,7 +87,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page>1){
             $this->add('View',null,'prev')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url(null,$u=array($this->name.'_skip'=>
+                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->name.'_skip'=>
                     $pn=max(0,$this->skip-$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
@@ -96,7 +97,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url(null,$u=array($this->name.'_skip'=>
+                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->name.'_skip'=>
                     $pn=$this->skip+$this->ipp
                 )))
                 ->setAttr('data-skip',$pn)
@@ -108,7 +109,7 @@ class Paginator_Basic extends CompleteLister {
         $data=array();
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
             $data[]=array(
-                'href'=>$this->api->url(null,array($this->name.'_skip'=>$pn=($p-1)*$this->ipp)),
+                'href'=>$this->api->url($this->base_page,array($this->name.'_skip'=>$pn=($p-1)*$this->ipp)),
                 'pn'=>$pn,
                 'cur'=>$p==$this->cur_page?$this->template->get('cur'):'',
                 'label'=>$p
