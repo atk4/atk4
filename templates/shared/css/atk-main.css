@@ -87,7 +87,7 @@
   box-shadow: 0 0 0;
 }
 /* ==============================================
-	CSS Reset
+    CSS Reset
    ============================================== */
 html,
 body,
@@ -358,7 +358,7 @@ table {
   margin-left: 104.5%;
 }
 /* ==============================================
-	Features
+    Features
    ============================================== */
 .atk-wrapper {
   -webkit-box-sizing: border-box;
@@ -616,7 +616,7 @@ body #atk-layout #atk-footer-guard {
   animation: rotate-i1 5s infinite;
 }
 /* ==============================================
-	Typography
+    Typography
    ============================================== */
 body {
   font: 12px "Helvetica Neue", "Helvetica", sans-serif;
@@ -783,7 +783,7 @@ h6:first-child {
   margin-bottom: 0;
 }
 /* ==============================================
-	Forms
+    Forms
    ============================================== */
 button::-moz-focus-inner,
 input[type="button"]::-moz-focus-inner,
@@ -794,7 +794,9 @@ input[type="reset"]::-moz-focus-inner {
 }
 input[type=text],
 input[type=password],
-textarea {
+input[readonly],
+textarea,
+div.atk-form-field-readonly {
   font-size: 12px;
   font-family: "Helvetica Neue", "Helvetica", sans-serif;
   line-height: 1.4;
@@ -818,6 +820,10 @@ textarea {
   -ms-transition: border linear 0.15s, box-shadow linear 0.15s;
   -o-transition: border linear 0.15s, box-shadow linear 0.15s;
   transition: border linear 0.15s, box-shadow linear 0.15s;
+}
+input[readonly],
+div.atk-form-field-readonly {
+  background: #e6e6e6;
 }
 input[type=text]:focus,
 input[type=password]:focus,
@@ -878,12 +884,13 @@ textarea:focus {
 }
 .atk-form fieldset .atk-form-row > .atk-form-field input[type=text]:not([class*="span"]),
 .atk-form fieldset .atk-form-row > .atk-form-field input[type=password]:not([class*="span"]),
+.atk-form fieldset .atk-form-row > .atk-form-field input[readonly]:not([class*="span"]),
 .atk-form fieldset .atk-form-row > .atk-form-field textarea:not([class*="span"]),
+.atk-form fieldset .atk-form-row > .atk-form-field div.atk-form-field-readonly:not([class*="span"]),
 .atk-form fieldset .atk-form-row > .atk-form-field select {
   width: 100%;
 }
 .atk-form fieldset .atk-form-row > .atk-form-field select {
-  width: 100%;
   margin-top: 0.5em;
 }
 .atk-form fieldset .atk-form-row > .atk-form-field textarea {
@@ -1068,7 +1075,7 @@ textarea:focus {
   margin-top: 0;
 }
 /* ==============================================
-	Various ATK Objects
+    Various ATK Objects
    ============================================== */
 .atk-wrapper {
   width: 99.5%;
@@ -1298,12 +1305,12 @@ textarea:focus {
   right: auto;
 }
 .atk-dropmenu.ui-state-active {
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-bottom-right-radius: 0;
-  border-bottom-right-radius: 0;
   -webkit-border-bottom-left-radius: 0;
   -moz-border-bottom-left-radius: 0;
   border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -moz-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 .atk-growl {
   font-weight: bold;
@@ -1342,7 +1349,7 @@ textarea:focus {
   opacity: 1;
 }
 /* ==============================================
-	jQueryUI Tweaks
+    jQueryUI Tweaks
    ============================================== */
 .ui-widget {
   font-family: "Helvetica Neue", "Helvetica", sans-serif;
