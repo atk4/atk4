@@ -62,7 +62,7 @@ class DB extends AbstractController
                 // Backward-compatible DSN parsing
                 preg_match(
                     '|([a-z]+)://([^:]*)(:(.*))?@([A-Za-z0-9\.-]*)'.
-                    '(/([0-9a-zA-Z_/\.]*))|',
+                    '(/([0-9a-zA-Z_/\.-]*))|',
                     $dsn,
                     $matches
                 );
