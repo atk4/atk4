@@ -23,14 +23,22 @@ class QuickSearch extends Filter
     public $submit_icon = 'ui-icon-search';
     public $cancel_icon = 'ui-icon-cancel';
     
+    // field
+    protected $search_field;
+    
     // buttonset
     public $bset_class = 'ButtonSet';
     public $bset_position = 'after'; // after|before
     protected $bset;
     
     // cancel button
-    public $show_cancel = false; // show cancel button true|false ?
+    public $show_cancel = false; // show cancel button? (true|false)
 
+    /**
+     * Initialization
+     * 
+     * @return void
+     */
     function init()
     {
         parent::init();
@@ -44,24 +52,20 @@ class QuickSearch extends Filter
         $this->search_field = $this->addField('Line', 'q', '')->setNoSave();
         
         // add buttonset
-        if($this->bset_position=='after'){
-            $this->bset = $this->search_field->afterField();
-        }else{
-            $this->bset = $this->search_field->beforeField();
-        }
+        $this->bset = $this->bset_position=='after'
+                    ? $this->search_field->afterField()
+                    : $this->search_field->beforeField();
         $this->bset = $this->bset->add($this->bset_class);
 
         // add buttons
-        $this->bset
-            ->addButton('', array('options'=>array('text'=>false)))
+        $this->bset->addButton('', array('options'=>array('text'=>false)))
                 ->setHtml('&nbsp;')
                 ->setIcon($this->submit_icon)
                 ->js('click', $this->js()->submit());
         
         if($this->show_cancel && $this->recall($this->search_field->short_name))
         {
-            $this->bset
-                ->addButton('', array('options'=>array('text'=>false)))
+            $this->bset->addButton('', array('options'=>array('text'=>false)))
                     ->setHtml('&nbsp;')
                     ->setIcon($this->cancel_icon)
                     ->js('click', array(
@@ -71,15 +75,26 @@ class QuickSearch extends Filter
         }
     }
     
+    /**
+     * Set fields on which filtering will be done
+     * 
+     * @param string|array $fields
+     * @return QuickSearch $this
+     */
     function useFields($fields)
     {
         if(is_string($fields)) {
-            $fields = explode(',',$fields);
+            $fields = explode(',', $fields);
         }
         $this->fields = $fields;
         return $this;
     }
     
+    /**
+     * Process received filtering parameters after init phase
+     * 
+     * @return void
+     */
     function postInit()
     {
         parent::postInit();
