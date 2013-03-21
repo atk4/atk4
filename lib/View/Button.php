@@ -43,7 +43,10 @@ class View_Button extends View_HtmlElement {
     function jsButton(){
         $opt=$this->options;
         if($this->icon)$opt['icons']['primary']=$this->icon;
-        if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
+        
+        // commented out because we still need to style buttons even if they are inside buttonset
+        //if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
+        $this->js(true)->button($opt);
     }
     function render(){
         $this->jsButton();
