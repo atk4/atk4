@@ -1,0 +1,13 @@
+===============================================================================
+    Agile Toolkit 4.2.4
+===============================================================================
+    Agile Toolkit is a PHP framework for developing Web User Interfaces.
+Inspired by desktop GUI it provides a full object-oriented foundation for
+Business and Presentation logic of your web software. Compared to other
+frameworks, Agile Toolkit offers a completely new experience
+
+    http://agiletoolkit.org
+
+    Copyright (c) 1999-2012 Romans Malinovskis
+===============================================================================
+
