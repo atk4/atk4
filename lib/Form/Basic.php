@@ -25,7 +25,7 @@
  * @copyright   See file COPYING
  * @version     $Id$
  */
-class Form_Basic extends View {
+class Form_Basic extends View implements ArrayAccess {
     protected $form_template = null;
     protected $form_tag = null;
     
@@ -199,10 +199,28 @@ class Form_Basic extends View {
     }
 
     // Operating with field values
+    //
+    // {{{ ArrayAccess support 
+    function offsetExists($name){
+        return $f=$this->hasElement($name) && $f instanceof Form_Field;
+    }
+    function offsetGet($name){
+        return $this->get($name);
+    }
+    function offsetSet($name,$val){
+        $this->set($name,$val);
+    }
+    function offsetUnset($name){
+        $this->set($name,null);
+    }
+    // }}}
+    //
     function get($field=null){
         if(!$field)return $this->data;
         return $this->data[$field];
     }
+    /*
+     * temporarily disabled. TODO: will be implemented with abstract datatype
     function setSource($table,$db_fields=null){
         if(is_null($db_fields)){
             $db_fields=array();
@@ -218,18 +236,15 @@ class Form_Basic extends View {
             ->limit(1);
         return $this;
     }
+     */
     function set($field_or_array,$value=undefined){
         // We use undefined, because 2nd argument of "null" is meaningfull
-        if($value===undefined){
-            if(is_array($field_or_array)){
-                foreach($field_or_array as $key=>$val){
-                    if(isset($this->elements[$key])&&($this->elements[$key] instanceof Form_Field))
-                        $this->set($key,$val);
-                }
-                return $this;
-            }else{
-                throw new ObsoleteException('Please specify 2 arguments to $form->set()');
+        if(is_array($field_or_array)){
+            foreach($field_or_array as $key=>$val){
+                if(isset($this->elements[$key])&&($this->elements[$key] instanceof Form_Field))
+                    $this->set($key,$val);
             }
+            return $this;
         }
 
         if(!isset($this->elements[$field_or_array])){
