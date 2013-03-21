@@ -16,7 +16,8 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class QuickSearch extends Filter {
+class QuickSearch extends Filter
+{
     
     // icons
     public $submit_icon = 'ui-icon-search';
@@ -30,7 +31,8 @@ class QuickSearch extends Filter {
     // cancel button
     public $show_cancel = false; // show cancel button true|false ?
 
-    function init(){
+    function init()
+    {
         parent::init();
 
         // template fixes
@@ -56,7 +58,8 @@ class QuickSearch extends Filter {
                 ->setIcon($this->submit_icon)
                 ->js('click', $this->js()->submit());
         
-        if($this->show_cancel) {
+        if($this->show_cancel && $this->recall($this->search_field->short_name))
+        {
             $this->bset
                 ->addButton('', array('options'=>array('text'=>false)))
                     ->setHtml('&nbsp;')
@@ -68,7 +71,8 @@ class QuickSearch extends Filter {
         }
     }
     
-    function useFields($fields){
+    function useFields($fields)
+    {
         if(is_string($fields)) {
             $fields = explode(',',$fields);
         }
@@ -76,17 +80,20 @@ class QuickSearch extends Filter {
         return $this;
     }
     
-    function postInit(){
+    function postInit()
+    {
         parent::postInit();
-        if(!($v = $this->get('q')))return;
+        if(!($v = $this->get('q'))) {
+            return;
+        }
 
-        if($this->view->model){
+        if($this->view->model) {
             $q = $this->view->model->_dsql();
-        }else{
+        } else {
             $q = $this->view->dq;
         }
         $or = $q->orExpr();
-        foreach($this->fields as $field){
+        foreach($this->fields as $field) {
             $or->where($field, 'like', '%'.$v.'%');
         }
         $q->having($or);
