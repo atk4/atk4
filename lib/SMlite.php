@@ -474,7 +474,7 @@ class SMlite extends AbstractModel {
         // TODO when we go into sublevel, we should set the number of
         // the tag so that there is NO double numbers in template COMPLETELY
         // May be this way is dirty, need to look for better solution...
-        $c=pow(10,$level)+$pc;
+        $c=pow(100,$level)+$pc;
         while(strlen($this->tmp_template)){
             $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
             if($text!=='')$template[]=$text;
