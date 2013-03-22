@@ -1,8 +1,15 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
+/**
+ * Adds a support for subtitles for <h1>, <h2>, <h3>, <h4> and <h5>
+ * elements
  *
- * @link http://agiletoolkit.org/
+ * $this->add('H1')->set('Welcome')
+ *      ->sub('we really mean it!');
+ * $this->add('P')->set('Your balance is: '.$balance);
+ *
+ * Syntactically, subtitle appears inside the <h1> element:
+ *
+ * <h1>Hello<sub>world</sub></h1>
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -14,20 +21,31 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class HX extends HtmlElement {
+class HX extends HtmlElement
+{
     public $text=null;
     public $sub=null;
-    function set($text){
-        $this->text=$text;
-        return parent::set($text);
-    }
-    /** Adds subtitle */
-    function sub($text){
+    /**
+     * Adds subtitle to your header.
+     *
+     * @param string $text Subheader
+     *
+     * @return $this
+     */
+    function sub($text)
+    {
         $this->sub=$text;
         return $this;
     }
-    function recursiveRender(){
-        if(!is_null($this->sub)){
+    // {{{ Inherited Methods
+    function set($text)
+    {
+        $this->text=$text;
+        return parent::set($text);
+    }
+    function recursiveRender()
+    {
+        if (!is_null($this->sub)) {
             $this->add('Text')->set($this->text);
             $this->add('HtmlElement')->setElement('small')->set($this->sub);
         }
