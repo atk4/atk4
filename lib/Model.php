@@ -155,63 +155,109 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this->data[$name];
     }
     /**
-     * Returs list of fields which belong to specific group. You can add fields into groups when you
-     * define them and it can be used by the front-end to determine which fields needs to be displayed.
+     * Returns list of fieldnames which belong to specific group.
+     * You can add fields into groups when you define them and it can be used by
+     * the front-end to determine which fields needs to be displayed.
      * 
-     * If no group is specified, then all non-system fields are displayed for backwards compatibility.
+     * If no group is specified, then all non-system fieldnames are returned
+     * for backwards compatibility.
+     * 
+     * You can pass multiple groups as CSV and add "-" prefix to groupname to
+     * exclude all fields from this specific group in result set.
+     * 
+     * @param string $group Name of field group or CSV of them
+     * @return array
      */
-    function getActualFields($group=undefined){
-        if($group===undefined && $this->actual_fields)return $this->actual_fields;
+    function getActualFields($group = undefined)
+    {
+        if($group===undefined && $this->actual_fields) {
+            return $this->actual_fields;
+        }
 
-        $fields=array();
+        $fields = array();
 
-        if (strpos($group,',')!==false){
-            $groups=explode(',',$group);
+        if (strpos($group, ',')!==false) {
+            $groups = explode(',', $group);
 
-            foreach($groups as $group){
-                if($group[0]=='-'){
-                    $el=$this->getActualFields(substr($group,1));
-                    $fields=array_diff($fields,$el);
-                }else{
-                    $el=$this->getActualFields($group);
-                    $fields=array_merge($fields,$el);
+            foreach($groups as $group) {
+                if($group[0]=='-') {
+                    $el = $this->getActualFields(substr($group, 1));
+                    $fields = array_diff($fields, $el);
+                } else {
+                    $el = $this->getActualFields($group);
+                    $fields = array_merge($fields, $el);
                 }
             }
         }
 
-        foreach($this->elements as $el)if($el instanceof Field){
-            if($el->hidden())continue;
-            if($group===undefined || $el->group()==$group ||
-                ($group=='visible' && $el->visible()) ||
-                ($group=='editable' && $el->editable())
-            ){
-                $fields[]=$el->short_name;
+        foreach($this->elements as $el) {
+            if($el instanceof Field && !$el->hidden()) {
+                if( $group===undefined ||
+                    $el->group()==$group ||
+                    (strtolower($group=='visible') && $el->visible()) ||
+                    (strtolower($group=='editable') && $el->editable())
+                ) {
+                    $fields[] = $el->short_name;
+                }
             }
         }
+        
         return $fields;
     }
-    /** Default set of fields which will be included into further queries */
-    function setActualFields(array $fields){
-        $this->actual_fields=$fields;
+    /**
+     * Default set of fields which will be included into further queries
+     * 
+     * @param array $fields Array of fieldnames
+     * @return $this
+     */
+    function setActualFields(array $fields)
+    {
+        $this->actual_fields = $fields;
         return $this;
     }
-    /** When fields are changed, they are marked dirty. Only dirty fields are saved when save() is called */
-    function setDirty($name){
-        $this->dirty[$name]=true;
+    /**
+     * When fields are changed, they are marked dirty.
+     * Only dirty fields are saved when save() is called
+     * 
+     * @param string $name Name of field
+     * @return $this
+     */
+    function setDirty($name)
+    {
+        $this->dirty[$name] = true;
+        return $this;
     }
-    /** Returns if the records has been loaded successfully */
-    function loaded(){
+    /**
+     * Returns true if the records has been loaded successfully
+     * 
+     * @return boolean
+     */
+    function loaded()
+    {
         return !is_null($this->id);
     }
-    /** Forget loaded data */
-    function unload(){
-        if($this->loaded())$this->hook('beforeUnload');
-        $this->data=$this->dirty=array();
-        $this->id=null;
+    /**
+     * Forget loaded data
+     * 
+     * @return $this
+     */
+    function unload()
+    {
+        if($this->loaded()) {
+            $this->hook('beforeUnload');
+        }
+        $this->data = $this->dirty = array();
+        $this->id = null;
         $this->hook('afterUnload');
         return $this;
     }
-    function reset(){
+    /**
+     * Same as unload() method
+     * 
+     * @return $this
+     */
+    function reset()
+    {
         return $this->unload();
     }
     // }}}
