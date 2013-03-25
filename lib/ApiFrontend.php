@@ -39,7 +39,7 @@ class ApiFrontend extends ApiWeb{
     }
     function routePages($prefix,$ns=null){
         if(!$ns)$ns=$prefix;
-        $this->namespace_routes[$prefix]=str_replace('/','\\',$ns);
+        $this->namespace_routes[$prefix]=$this->normalizeClassName($ns);
     }
     function layout_Content(){
         // required class prefix depends on the content_type
@@ -58,7 +58,8 @@ class ApiFrontend extends ApiWeb{
         }else{
 
             $class_parts=explode('_',$page);
-            $funct_parts=array();$ns='';
+            $funct_parts=array();
+            $ns='';
             if($this->namespace_routes[$page]){
                 $ns=$this->namespace_routes[$page].'\\';
                 $class='page_index';
