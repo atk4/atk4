@@ -15,12 +15,18 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class View_ButtonSet extends HtmlElement {
-    function addButton($label){
-        return $this->add('Button')->setLabel($label);
+class View_ButtonSet extends HtmlElement
+{
+    public $options = array();
+    
+    function addButton($label, $options = array())
+    {
+        return $this->add('Button', $options)->setLabel($label);
     }
-    function render(){
-        $this->js(true)->buttonset();
+    
+    function render()
+    {
+        $this->js(true)->buttonset($this->options);
         parent::render();
     }
 }

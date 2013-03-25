@@ -15,58 +15,102 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class Filter extends Form {
-    public $limiters=array();
-    public $memorize=true;
+class Filter extends Form
+{
     public $view;
-    function init(){
+    
+    function init()
+    {
         parent::init();
 
         // set default values on non-yet initialized fields
-        $this->api->addHook('post-init',array($this,'postInit'));
+        $this->api->addHook('post-init', array($this, 'postInit'));
     }
-    function useWith($view){
+    
+    /**
+     * Set view on which conditions will be applied
+     * 
+     * @param object $view
+     * @return Filter $this
+     */
+    function useWith($view)
+    {
         // Apply our condition on the view
-        $this->view=$view;
+        $this->view = $view;
         return $this;
     }
-    /** Remembers values and uses them as condition */
-    function postInit(){
-        foreach($this->elements as $x=>$field){
-            if($field instanceof Form_Field){
+    
+    /**
+     * Remembers values and uses them as condition
+     * 
+     * @return void
+     */
+    function postInit()
+    {
+        foreach($this->elements as $x=>$field)
+        {
+            if($field instanceof Form_Field)
+            {
+                $field->set($val = $this->recall($x));
 
-                $field->set($val=$this->recall($x));
-
-                if($field->no_save)continue;
-                if(!$field->get())continue;
+                if($field->no_save || !$field->get()) {
+                    continue;
+                }
 
                 // also apply the condition
-                if($this->view->model && $this->view->model->hasElement($x) ){
-                    if($this->view->model->addCondition($x,$field->get())); // take advantage of field normalization
+                if($this->view->model && $this->view->model->hasElement($x)) {
+                    // take advantage of field normalization
+                    $this->view->model->addCondition($x, $field->get());
                 }
             }
         }
         $this->hook('applyFilter',array($this->view->model));
     }
-    function memorizeAll(){
-        //by Camper: memorize() method doesn't memorize anything if value is null
-        foreach($this->elements as $x=>$field){
-            if($field instanceof Form_Field){
-                if($this->isClicked('Clear')||is_null($this->get($x)))$this->forget($x);
-                else $this->memorize($x,$this->get($x));
+    
+    /**
+     * Memorize filtering parameters
+     * 
+     * @return void
+     */
+    function memorizeAll()
+    {
+        //by Camper:memorize() method doesn't memorize anything if value is null
+        foreach($this->elements as $x=>$field)
+        {
+            if($field instanceof Form_Field) {
+                if($this->isClicked('Clear') || is_null($this->get($x))) {
+                    $this->forget($x);
+                } else {
+                    $this->memorize($x, $this->get($x));
+                }
             }
         }
     }
-    function addButtons(){
-        $this->save=$this->addSubmit('Save');
-        $this->reset=$this->addSubmit('Reset');
+    
+    /**
+     * Add Save and Reset buttons
+     * 
+     * @return void
+     */
+    function addButtons()
+    {
+        $this->save = $this->addSubmit('Save');
+        $this->reset = $this->addSubmit('Reset');
     }
-    function submitted(){
-        if(parent::submitted()){
-            if(isset($this->reset) && $this->isClicked($this->reset)){
+    
+    /**
+     * On form submit memorize or forget filtering parameters
+     * 
+     * @return void
+     */
+    function submitted()
+    {
+        if(parent::submitted())
+        {
+            if(isset($this->reset) && $this->isClicked($this->reset)) {
                 $this->forget();
-                $this->js(null,$this->view->js()->reload())->reload()->execute();
-            }else{
+                $this->js(null, $this->view->js()->reload())->reload()->execute();
+            } else {
                 $this->memorizeAll();
             }
             $this->view->js()->reload()->execute();

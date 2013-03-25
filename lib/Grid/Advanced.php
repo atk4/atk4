@@ -118,8 +118,8 @@ class Grid_Advanced extends Grid_Basic {
             ->add('Button','gbtn'.count($this->elements))
             ->setLabel($label);
     }
-    function addQuickSearch($fields,$class='QuickSearch'){
-        return $this->add($class,null,'quick_search')
+    function addQuickSearch($fields,$class='QuickSearch',$options=null){
+        return $this->add($class,$options,'quick_search')
             ->useWith($this)
             ->useFields($fields);
     }
