@@ -328,7 +328,7 @@ abstract class AbstractObject
      *
      * @param string $short_name Short name of the child element
      *
-     * @return AbstractModel
+     * @return AbstractObject
      */
     function hasElement($short_name)
     {
@@ -341,7 +341,7 @@ abstract class AbstractObject
      *
      * @param string $short_name Short name of the child element
      *
-     * @return AbstractModel $this
+     * @return AbstractObject $this
      */
     function rename($short_name)
     {
