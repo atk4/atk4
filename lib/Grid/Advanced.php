@@ -589,7 +589,6 @@ class Grid_Advanced extends Grid_Basic {
         $this->paginator->ipp($ipp);
         return $this;
     }
-
     public function setWidth( $width ){
         $this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
         return $this;

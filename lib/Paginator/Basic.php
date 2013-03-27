@@ -91,9 +91,10 @@ class Paginator_Basic extends CompleteLister {
                     $pn=max(0,$this->skip-$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
-                ->set('← Prev')
+                ->set('<')
                 ;
         }
+        
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
                 ->setElement('a')
@@ -101,12 +102,49 @@ class Paginator_Basic extends CompleteLister {
                     $pn=$this->skip+$this->ipp
                 )))
                 ->setAttr('data-skip',$pn)
-                ->set('Next →')
+                ->set('>')
                 ;
         }
 
+        // First page
+        if($this->cur_page>$this->range+1){
+            $this->add('View',null,'first')
+                ->setElement('a')
+                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->name.'_skip'=>
+                    $pn=max(0,0)
+                )))
+                ->setAttr('data-skip',$pn)
+                ->set('1')
+                ;
+            if($this->cur_page>$this->range+2){
+                $this->add('View',null,'points_left')
+                    ->setElement('span')
+                    ->set('...')
+                    ;
+            }
+        }
+
+        // Last page
+        if($this->cur_page<$this->total_pages-$this->range){
+            $this->add('View',null,'last')
+                ->setElement('a')
+                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->name.'_skip'=>
+                    $pn=max(0,0)
+                )))
+                ->setAttr('data-skip',$pn)
+                ->set($this->total_pages)
+                ;
+            if($this->cur_page<$this->total_pages-$this->range-1){
+                $this->add('View',null,'points_right')
+                    ->setElement('span')
+                    ->set('...')
+                    ;
+            }
+        }
+        
         // generate our source now
         $data=array();
+
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
             $data[]=array(
                 'href'=>$this->api->url($this->base_page,array($this->name.'_skip'=>$pn=($p-1)*$this->ipp)),
