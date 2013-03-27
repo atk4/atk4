@@ -210,6 +210,16 @@ class PathFinder extends AbstractController
             ->addMoreInfo('attempted_locations', $attempted_locations)
             ;
     }
+    /**
+     * Search is similar to locate, but will return array of all matching
+     * files.
+     *
+     * @param string $type     Type of resource to search surch as "php"
+     * @param string $filename Name of the file to search for
+     * @param string $return   'relative','url','path' or 'location'
+     *
+     * @return string|object as specified by $return
+     */
     function search($type,$filename='',$return='relative'){
         /*
            Similar to locate but returns array with all matches for the specified file
