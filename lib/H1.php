@@ -1,10 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * Adds a <h1> element
- *
- * $this->add('H1')->set('Welcome');
- * $this->add('P')->set('Your balance is: '.$balance);
-*//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -14,7 +9,13 @@
    commercial license.
 
    See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+=====================================================ATK4=*/
+/**
+ * Adds a <h1> element
+ *
+ * $this->add('H1')->set('Welcome');
+ * $this->add('P')->set('Your balance is: '.$balance);
+*/
 class H1 extends HX
 {
     function init()
