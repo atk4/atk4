@@ -69,6 +69,9 @@ class Page_Tester extends Page {
     function ticker(){
         $this->cnt++;
     }
+    function executeTest($test_obj,$test_func,$input){
+        return call_user_func_array(array($test_obj,$test_func),$input);
+    }
     function silentTest($test_obj=null){
         if(!$test_obj)$test_obj=$this;
 
@@ -112,7 +115,7 @@ class Page_Tester extends Page {
                 register_tick_function(array($this,'ticker'));
 
                 try{
-                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$this->executeTest($test_obj,$test_func,$input);
                     $ms=microtime(true)-$ms;
                     $me=($mend=memory_get_peak_usage())-$me;
 
@@ -192,7 +195,8 @@ class Page_Tester extends Page {
                 declare(ticks=1);
                 register_tick_function(array($this,'ticker'));
                 try{
-                    $result=$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    //$result=$test_obj->$test_func($input[0],$input[1],$input[2]);
+                    $result=$this->executeTest($test_obj,$test_func,$input);
                 }catch (Exception $e){
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
