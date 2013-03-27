@@ -32,6 +32,9 @@ abstract class AbstractObject
     /** Default controller to initialize when calling setModel() */
     public $default_controller=null;
 
+    /** Setting this to true will output additional debug info about object */
+    public $debug=null;
+
 
     // {{{ Object hierarchy management
 
