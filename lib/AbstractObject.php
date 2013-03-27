@@ -489,18 +489,20 @@ abstract class AbstractObject
      */
     function exception($message, $type = null, $code = null)
     {
-        if (!$type) {
+        if (! $type) {
             $type=$this->default_exception;
         } elseif ($type[0]=='_') {
             $type=$this->default_exception.'_'.substr($type, 1);
-        } elseif($type=='Exception' || $type=='BaseException') {
-            $type='BaseException';
-        } elseif(strpos($type,'Exception_')!==0) {
+        } elseif ($type!='BaseException' && strpos($type,'Exception_')!==0) {
             $type='Exception_'.$type;
         }
-
+        
         // Localization support
         $message=$this->api->_($message);
+
+        if ($type=='Exception') {
+            $type='BaseException';
+        }
 
         $e=new $type($message,$code);
         $e->owner=$this;
