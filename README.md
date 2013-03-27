@@ -33,7 +33,7 @@ To help you understand some key principles of Agile Toolkit, copy the following 
 Source:
 
     $form = $this->add('Form');
-    $form->addField('line', 'subject');
+    $form->addField('line', 'subject')->validateNotNull();
     $form->addField('password','password');
     $form->addSubmit();
     
@@ -121,6 +121,11 @@ You are done. Refresh your browser. You should now see that the menu is initiali
 
 For most web frameworks this is as far as you get, but with Agile Toolkit this is only a beginning. 
 
+## Further Reading
+
+ * [http://agiletoolkit.org/](http://agiletoolkit.org) - Official website
+ * [http://stackoverflow.com/questions/tagged/atk4?sort=newest&pagesize=50](#atk4 on Stack Overflow) - Questions and Answers
+ * [https://groups.google.com/forum/?fromgroups#!forum/agile-toolkit-devel](Discussion group on Google Groups)
 
 ## License
 
