@@ -167,7 +167,7 @@ class Form_Basic extends View implements ArrayAccess {
             case 'checkbox':     $class = 'Checkbox';     break;
             case 'password':     $class = 'Password';     break;
             case 'timepickr':    $class = 'TimePicker';   break;
-            default:            $class = $type;
+            default:             $class = $type;
         }
         $class = $this->api->normalizeClassName($class, 'Form_Field');
         $last_field = $this->add($class, $name, null, 'form_line')
