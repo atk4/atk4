@@ -18,9 +18,9 @@
  */
 class Controller_PatternRouter extends AbstractController {
 
-    protected $links;
+    protected $links=array();
 
-    protected $rules;
+    protected $rules=array();
 
     function init(){
         parent::init();
@@ -33,7 +33,13 @@ class Controller_PatternRouter extends AbstractController {
             // start consuming arguments
 
             $args=$this->links[$url->page];
-            foreach ($args as $key) {
+            foreach ($args as $key=>$match) {
+
+
+                if(is_numeric($key)){
+                    $key=$match;
+                }
+
                 if (isset($url->arguments[$key])) {
                     $url->page.='/'.$url->arguments[$key];
                     unset($url->arguments[$key]);
@@ -110,7 +116,12 @@ class Controller_PatternRouter extends AbstractController {
 
                 reset($args);
                 foreach($rest as $arg){
-                    list($junk,$key)=each($args);
+                    list($key,$match)=each($args);
+                    if(is_numeric($key)){
+                        $key=$match;
+                    }else{
+                        if(!preg_match($match,$arg))break 2;
+                    }
                     $_GET[$key]=$arg;
                 }
 
