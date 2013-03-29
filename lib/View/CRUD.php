@@ -140,14 +140,15 @@ class View_CRUD extends View
             'frame_options'=>$this->frame_options
         ));
 
+        $name_id = $this->name.'_id';
 
-        if ($_GET['edit']) {
-            $_GET[$this->name.'_id'] = $_GET['edit'];
+        if ($_GET['edit'] && !isset($_GET[$name_id])) {
+            $_GET[$name_id] = $_GET['edit'];
         }
 
-        if (isset($_GET[$this->name.'_id'])) {
-            $this->api->stickyGET($this->name.'_id');
-            $this->id=$_GET[$this->name.'_id'];
+        if (isset($_GET[$name_id])) {
+            $this->api->stickyGET($name_id);
+            $this->id = $_GET[$name_id];
         }
 
         if ($this->isEditing()) {
@@ -159,7 +160,7 @@ class View_CRUD extends View
             return;
         }
 
-        $this->grid=$this->add($this->grid_class);
+        $this->grid = $this->add($this->grid_class);
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
@@ -337,10 +338,12 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        if ($this->isEditing('fr_'.$name)) {
+        $s = $this->api->normalizeName($name);
 
-            if ($_GET['fr_'.$name]) {
-                $this->id = $_GET[$this->name.'_id'] = $_GET['fr_'.$name];
+        if ($this->isEditing('fr_'.$s)) {
+
+            if ($_GET['fr_'.$s]) {
+                $this->id = $_GET[$this->name.'_id'] = $_GET['fr_'.$s];
                 $this->api->stickyGET($this->name.'_id');
             }
 
@@ -354,7 +357,7 @@ class View_CRUD extends View
         $this
             ->virtual_page
             ->addColumn(
-                'fr_'.$name,
+                'fr_'.$s,
                 $options['title']?:$name,
                 $options['label'],
                 $this->grid
