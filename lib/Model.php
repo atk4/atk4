@@ -56,7 +56,7 @@
  **/
 class Model extends AbstractModel implements ArrayAccess,Iterator {
 
-    public $default_exception='Exception';
+    public $default_exception='BaseException';
 
     /** The class prefix used by addField */
     public $field_class='Field';
@@ -376,7 +376,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     function tryLoadAny(){
         if($this->loaded())$this->unload();
-        if(!$this->loaded())$this->controller->tryLoadAny($this,$id);
+        if(!$this->loaded())$this->controller->tryLoadAny($this);
         if(!$this->loaded())return $this;
         $this->hook('afterLoad');
         return $this;
