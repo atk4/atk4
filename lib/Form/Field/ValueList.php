@@ -62,7 +62,7 @@ class Form_Field_ValueList extends Form_Field {
                 $res = array();
             }
             foreach($this->model as $row){
-                $res[$row[$id]]=$row[$title];
+                $res[(string)$row[$id]]=$row[$title];
             }
             return $this->value_list=$res;
         }

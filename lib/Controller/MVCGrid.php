@@ -35,6 +35,7 @@ class Controller_MVCGrid extends AbstractController {
         'money'=>'money',
         'text'=>'shorttext',
         'reference'=>'text',
+        'reference_id'=>'text',
         'datetime'=>'timestamp',
         'date'=>'date',
         'daytime'=>'daytime',

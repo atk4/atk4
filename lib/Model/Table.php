@@ -170,11 +170,6 @@ class Model_Table extends Model {
         /**/$this->api->pr->stop();
         return $select;
     }
-    /** Returns field which should be used as a title */
-    function getTitleField(){
-        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
-        return $this->id_field;
-    }
     /** Return query for a specific field. All other fields are ommitted. */
     function fieldQuery($field){
         $query=$this->dsql()->del('fields');

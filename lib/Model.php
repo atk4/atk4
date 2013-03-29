@@ -204,6 +204,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         
         return $fields;
     }
+    /** Returns field which should be used as a title */
+    function getTitleField(){
+        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
+        return $this->id_field;
+    }
     /**
      * Default set of fields which will be included into further queries
      * 
@@ -496,7 +501,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     public $_references;
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=undefined,$field_class='Field'){
+    function hasOne($model,$our_field=undefined,$field_class='Mongo_Field'){
 
         // if our_field is not specified, let's try to guess it from other model's table
         if($our_field===undefined){
@@ -511,7 +516,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->_references[$our_field]=$model;
 
         if($our_field !== null && $our_field!=='_id' && !$this->hasElement($our_field)){
-            return $this->add($this->field_class,$our_field);
+            $f=$this->add($field_class,$our_field);
+            $f->setModel($model);
+            return $f;
         }
 
         return null; // no field added

@@ -122,7 +122,7 @@ class Controller_MVCForm extends AbstractController {
             $form_field->validateNotNULL($msg);
         }
 
-        if($field instanceof Field_Reference)$form_field->setModel($field->getModel());
+        if($field instanceof Field_Reference || $field_type=='reference')$form_field->setModel($field->getModel());
         if($field->theModel){
             $form_field->setModel($field->theModel);
         }
