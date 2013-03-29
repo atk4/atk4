@@ -19,9 +19,9 @@
 class URL extends AbstractModel {
 
     // Page is a location of destination page. It have to be absolute and relative to project root
-    protected $page=null;
+    public $page=null;
 
-    protected $arguments=array();
+    public $arguments=array();
 
     protected $extension='.html';
 
@@ -181,6 +181,10 @@ http://mysite:123/install/dir/my/page.html
     function getURL(){
         if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
 
+        // Optional hook, which can change properties for page and arguments
+        // based on some routing logic
+        $url=$this->api->hook('buildURL',array($this));
+        if(is_string($url))return $url;
 
         $url=$this->getBaseURL();
         if($this->page && $this->page!='index'){

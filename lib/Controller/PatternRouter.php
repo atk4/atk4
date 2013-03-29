@@ -17,11 +17,50 @@
  * Authors: j@agiletech.ie, r@agiletech.ie.
  */
 class Controller_PatternRouter extends AbstractController {
+
+    protected $links;
+
     protected $rules;
+
     function init(){
         parent::init();
         $this->api->router = $this;
+        $this->api->addHook('buildURL',$this);
     }
+
+    function buildURL($junk,$url){
+        if ($this->links[$url->page]) {
+            // start consuming arguments
+
+            $args=$this->links[$url->page];
+            foreach ($args as $key) {
+                if (isset($url->arguments[$key])) {
+                    $url->page.='/'.$url->arguments[$key];
+                    unset($url->arguments[$key]);
+                }
+            }
+        }
+    }
+    /**
+     * Link method creates a bi-directional link between a URL and
+     * a page along with some GET parameters. This method is 
+     * entirely tranpsarent and can be added for pages which
+     * are already developed at any time.
+     *
+     * Example: 
+     *
+     * $this->link('profile',array('user_id'));
+     */
+    function link($page, $args=array()){
+        if ($this->links[$page]) {
+            throw $this->exception('This page is already linked')
+                ->addMoreInfo($page);
+        }
+
+        $this->links[$page]=$args;
+        return $this;
+    }
+
     /**
      * Add new rule to the pattern router. If $regexp is matched, then
      * page is changed to $target and arguments returned by preg_match
@@ -31,6 +70,8 @@ class Controller_PatternRouter extends AbstractController {
         $this->rules[] = array($regex, $target, $params);
         return $this;
     }
+
+
     /**
      * Allows use of models. Define a model with fields:
      *  - rule
@@ -53,6 +94,35 @@ class Controller_PatternRouter extends AbstractController {
      */
     function route(){
         $this->api->page_orig = $this->api->page;
+
+        foreach ($this->links as $page=>$args) {
+
+
+            $page=str_replace('/','_',$page);
+
+            // Exact match, no more routing needed
+            if($this->api->page==$page)return $this;
+
+            $page.='_';
+
+            if (substr($this->api->page, 0, strlen($page)) == $page) {
+                $rest = explode('_',substr($this->api->page,strlen($page)));
+
+                reset($args);
+                foreach($rest as $arg){
+                    list($junk,$key)=each($args);
+                    $_GET[$key]=$arg;
+                }
+
+                $this->api->page=substr($page,0,-1);
+                return $this;
+            }
+
+            //$misc=explode()$this->api->page = substr
+        }
+
+
+
         $r=$_SERVER["REQUEST_URI"];
         foreach ($this->rules as $rule){
             if (preg_match("/" . $rule[0] . "/", $r, $t)){
