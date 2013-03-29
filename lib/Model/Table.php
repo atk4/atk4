@@ -147,7 +147,7 @@ class Model_Table extends Model {
 
         /**/$this->api->pr->start('selectQuery/getActualF');
 
-        $actual_fields=$fields?:$this->actual_fields?:$this->getActualFields();
+        $actual_fields=$fields?:$this->getActualFields();
 
         $this->_selectQuery=$select=$this->_dsql()->del('fields');
 
