@@ -84,18 +84,19 @@ class VirtualPage extends AbstractController
     }
 
     /**
-     * Returns if the URL is requesting the page to be shown
+     * Returns if the URL is requesting the page to be shown.
+     * If no parameter is passed, then return active page mode.
      *
      * @param string $arg Optionally ask for specific argument
      *
-     * @return boolean 
+     * @return boolean|string 
      */
     function isActive($arg = null)
     {
         if ($arg && isset($_GET[$this->name])) {
             return $_GET[$this->name] == $arg;
         }
-        return @$_GET[$this->name];
+        return isset($_GET[$this->name]) ? $_GET[$this->name] : false;
     }
 
     /**
