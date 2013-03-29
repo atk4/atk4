@@ -505,9 +505,13 @@ abstract class AbstractObject
         }
 
         $e=new $type($message,$code);
+        if (!($e instanceof BasicException)) {
+            throw $e;
+        }
         $e->owner=$this;
         $e->api=$this->api;
         $e->init();
+
         return $e;
     }
     // }}}
