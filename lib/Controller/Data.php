@@ -75,7 +75,10 @@ abstract class Controller_Data extends AbstractController {
     /* must implement in underlying layer */
     abstract function setLimit($model,$count,$offset=0);
 
-	abstract function rewind($model);
-	abstract function next($model);
+    /** Create a new cursor and load model with the first entry */
+    abstract function rewind($model);
+
+    /** Provided that rewind  was called before, load next data entry */
+    abstract function next($model);
 }
 
