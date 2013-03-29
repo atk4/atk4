@@ -84,7 +84,9 @@ class Grid_Advanced extends Grid_Basic {
 
         if(isset($_GET[$this->name.'_sort'])){
             $this->sortby=$this->memorize('sortby',$_GET[$this->name.'_sort']);
-        }
+        }else{
+            $this->sortby=$this->recall('sortby','0');
+	}
     }
     function importFields($model,$fields=undefined){
         $this->add('Controller_MVCGrid')->importFields($model,$fields);
