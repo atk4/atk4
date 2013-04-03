@@ -505,7 +505,7 @@ abstract class AbstractObject
         }
 
         $e=new $type($message,$code);
-        if (!($e instanceof BasicException)) {
+        if (!($e instanceof BaseException)) {
             throw $e;
         }
         $e->owner=$this;
