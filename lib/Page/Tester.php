@@ -70,6 +70,7 @@ class Page_Tester extends Page {
         $this->cnt++;
     }
     function executeTest($test_obj,$test_func,$input){
+        if($input === null)$input=array();
         return call_user_func_array(array($test_obj,$test_func),$input);
     }
     function silentTest($test_obj=null){
