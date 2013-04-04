@@ -33,8 +33,12 @@ class Controller_PatternRouter extends AbstractController {
             // start consuming arguments
 
             $args=$this->links[$url->page];
+            $count = 0;
             foreach ($args as $key=>$match) {
 
+                if ($count == 0 && $key == 'page') {
+                    $url->page = $match;
+                }
 
                 if(is_numeric($key)){
                     $key=$match;
@@ -44,6 +48,7 @@ class Controller_PatternRouter extends AbstractController {
                     $url->page.='/'.$url->arguments[$key];
                     unset($url->arguments[$key]);
                 }
+                $count++;
             }
         }
     }
