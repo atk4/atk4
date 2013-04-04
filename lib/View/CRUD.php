@@ -384,10 +384,11 @@ class View_CRUD extends View
         // Configure Add Button on Grid and JS
         $this->add_button->js('click')->univ()
             ->frameURL(
-                $this->api->_($this->entity_name===false?
-                'New Record':
-                'Adding new '.$this->entity_name),
-                $this->virtual_page->getURL('add')
+                $this->api->_($this->entity_name===false
+                    ?'New Record'
+                    :'Adding new '.$this->entity_name),
+                $this->virtual_page->getURL('add'),
+                $this->frame_options
             );
 
         if ($this->entity_name !== false) {
@@ -412,7 +413,6 @@ class View_CRUD extends View
             $this->form->onSubmit(array($this,'formSubmit'));
             return $m;
         } elseif ($this->isEditing()) return;
-
 
         $this
             ->virtual_page
