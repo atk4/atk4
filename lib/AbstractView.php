@@ -223,7 +223,7 @@ abstract class AbstractView extends AbstractObject
 
         // Cool, now let's set _name of this template
         if ($this->template) {
-            $this->template->trySet('_name', str_replace('/', '_', $this->name));
+            $this->template->trySet('_name', $this->getJSID());
         }
     }
 
@@ -524,6 +524,9 @@ abstract class AbstractView extends AbstractObject
             $this->js[$when][]=$js;
         }
         return $js;
+    }
+    function getJSID(){
+        return str_replace('/', '_', $this->name);
     }
     // }}}
 }

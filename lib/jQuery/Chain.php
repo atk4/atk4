@@ -144,7 +144,7 @@ class jQuery_Chain extends AbstractModel {
                 if(substr($r,-1)==';')$r=substr($r,0,-1);
                 return $r;
             }elseif($arg instanceof AbstractView){
-                return "'#".str_replace('/','_',$arg->name)."'";
+                return "'#".$arg->getJSID()."'";
             }else{
                 return "'".$this->_safe_js_string((string)$arg)."'";    // indirectly call toString();
             }
@@ -217,7 +217,7 @@ class jQuery_Chain extends AbstractModel {
         }elseif($this->selector==='__atk_selector_region'){
             $ret.="$(region)";
         }else{
-            if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.str_replace('/','_',$this->owner->name))."')";
+            if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->getJSID())."')";
         }
         $ret.=$this->str;
         if($this->enclose===true){
@@ -227,7 +227,7 @@ class jQuery_Chain extends AbstractModel {
                 $ret="function(){ ".$ret." }";
             }
         }elseif($this->enclose){
-            $ret="$('".($this->selector?$this->selector:'#'.$this->owner->name)."')".
+            $ret="$('".($this->selector?$this->selector:'#'.$this->owner->getJSID())."')".
                 ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
         }
         if(@$this->debug){
