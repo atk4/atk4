@@ -387,7 +387,8 @@ class View_CRUD extends View
                 $this->api->_($this->entity_name===false?
                 'New Record':
                 'Adding new '.$this->entity_name),
-                $this->virtual_page->getURL('add')
+                $this->virtual_page->getURL('add'),
+                $this->frame_options
             );
 
         if ($this->entity_name !== false) {
