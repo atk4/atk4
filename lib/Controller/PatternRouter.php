@@ -30,25 +30,25 @@ class Controller_PatternRouter extends AbstractController {
 
     function buildURL($junk,$url){
         if ($this->links[$url->page]) {
+            $base_url = $url->page;
             // start consuming arguments
-
             $args=$this->links[$url->page];
-            $count = 0;
-            foreach ($args as $key=>$match) {
 
-                if ($count == 0 && $key == 'page') {
-                    $url->page = $match;
-                }
+            foreach ($args as $key=>$match) {
 
                 if(is_numeric($key)){
                     $key=$match;
                 }
 
                 if (isset($url->arguments[$key])) {
-                    $url->page.='/'.$url->arguments[$key];
+                    if ($key == 'base_page') {
+                        $url->page = str_replace($base_url,$url->arguments[$key],$url->page);
+                    } else {
+                        $url->page.='/'.$url->arguments[$key];
+                    }
                     unset($url->arguments[$key]);
                 }
-                $count++;
+
             }
         }
     }
