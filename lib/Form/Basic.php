@@ -148,27 +148,32 @@ class Form_Basic extends View implements ArrayAccess {
         if(!is_object($field))$field=$this->getElement($field);
         $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
     }
-    function addField($type,$name,$caption=null,$attr=null){
-        if($caption===null)$caption=ucwords(str_replace('_',' ',$name));
-
-        switch(strtolower($type)){
-            case'dropdown':$class='DropDown';break;
-            case'checkboxlist':$class='CheckboxList';break;
-            case'hidden':$class='Hidden';break;
-            case'text':$class='Text';break;
-            case'line':$class='Line';break;
-            case'upload':$class='Upload';break;
-            case'radio':$class='Radio';break;
-            case'checkbox':$class='Checkbox';break;
-            case'password':$class='Password';break;
-            case'timepickr':$class='TimePicker';break;
-            default:$class=$type;
+    function addField($type, $name, $caption=null, $attr=null)
+    {
+        if ($caption===null) {
+            $caption = ucwords(str_replace('_',' ',$name));
         }
-        $class=$this->api->normalizeClassName($class,'Form_Field');
-        $last_field=$this->add($class,$name,null,'form_line')
+        
+        $name = $this->api->normalizeName($name);
+
+        switch (strtolower($type)) {
+            case 'dropdown':     $class = 'DropDown';     break;
+            case 'checkboxlist': $class = 'CheckboxList'; break;
+            case 'hidden':       $class = 'Hidden';       break;
+            case 'text':         $class = 'Text';         break;
+            case 'line':         $class = 'Line';         break;
+            case 'upload':       $class = 'Upload';       break;
+            case 'radio':        $class = 'Radio';        break;
+            case 'checkbox':     $class = 'Checkbox';     break;
+            case 'password':     $class = 'Password';     break;
+            case 'timepickr':    $class = 'TimePicker';   break;
+            default:             $class = $type;
+        }
+        $class = $this->api->normalizeClassName($class, 'Form_Field');
+        $last_field = $this->add($class, $name, null, 'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);
-        $last_field->template->trySet('field_type',strtolower($type));
+        $last_field->template->trySet('field_type', strtolower($type));
         $last_field->setAttr($attr);
 
         return $last_field;
