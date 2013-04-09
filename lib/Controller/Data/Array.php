@@ -143,6 +143,7 @@ class Controller_Data_Array extends Controller_Data {
     }
     function delete($model,$id=null){
         unset($model->_table[$this->short_name][$id?:$model->id]);
+        $model->unload();
         return $this;
     }
     function deleteAll($model){

@@ -366,6 +366,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         $this->hook('afterDeleteAll');
         return $this;
     }
+    /** Adds a new condition for this model */
+    function addCondition($field,$value){
+        $this->controller->addCondition($this,$field,$value);
+        return $this;
+    }
     // }}}
 
     // {{{ Load Wrappers
@@ -569,8 +574,21 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
      * if the submodel's ref() will return 
      */
     function ref($ref){
+        if(!$ref)return $this;
+
+        list($ref,$rest)=explode('/',$ref,2);
+
         $id=$this->get($ref);
-        return $this->_ref($ref,$id);
+        $class=$this->_references[$ref];
+        return $this->_ref($rest,$class,null,$id);
+    }
+    function _ref($ref,$class,$field,$val){
+        $m=$this
+            ->add($this->api->normalizeClassName($class,'Model'))
+            ->ref($ref);
+        $m->addCondition($field?:$m->id_field,$val);
+        $m->tryLoadAny();
+        return $m;
     }
     /* Join Binding
      * ============

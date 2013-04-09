@@ -12,6 +12,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
         parent::setSource($model,array(
             'db'=>$this->api->mongoclient->$table,
+            'conditions'=>array(),
             'collection'=>$model->table
         ));
 
@@ -27,6 +28,22 @@ class Controller_Data_Mongo extends Controller_Data {
     }
 
     function save($model,$id=null){
+
+        $data=$model->data;
+        unset($data[$model->id_field]);
+        foreach ($model->_references as $our_field=>$junk) {
+            if(isset($data[$our_field])){
+
+                $deref=str_replace('_id','',$our_field);
+                if($deref == $our_field)continue;
+
+                $m=$model->ref($our_field)->load($data[$our_field]);
+
+                $data[$deref]=$m[$m->title_field];
+
+            }
+        }
+
         $db=$this->_get($model,'db')->save($model->data);
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
@@ -50,12 +67,23 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->id;
     }
     function tryLoadAny($model){
-        $model->data=$this->_get($model,'db')->findOne();
+        $model->data=$this->_get($model,'db')->findOne(
+            $model->_table[$this->short_name]['conditions']
+        );
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
     }
-    function loadBy($model,$field,$cond=undefined,$value=undefined){}
-    function delete($model,$id=null){}
+    function loadBy($model,$field,$cond=undefined,$value=undefined){
+    }
+    function delete($model,$id=null){
+        $id=new MongoID($id?:$this->id);
+        $model->data=$this->_get($model,'db')->remove(
+            array($model->id_field=>$id),
+            array('justOne'=>true)
+        );
+        $model->unload();
+        return $this;
+    }
     function deleteAll($model){}
     function getRows($model){}
     function setOrder($model,$field,$desc=false){}
@@ -74,6 +102,11 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->data;
     }
 
-    function addCondition($model,$field,$cond=undefined,$value=undefined){
+    function addCondition($model,$field,$value){
+        if($model->_table[$this->short_name]['conditions'][$field]){
+            throw $this->exception('Multiple conditions on same field not supported yet')
+                ;
+        }
+        $model->_table[$this->short_name]['conditions'][$field]=$value;
     }
 }
