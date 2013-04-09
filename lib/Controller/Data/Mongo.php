@@ -41,11 +41,17 @@ class Controller_Data_Mongo extends Controller_Data {
 
                 $data[$deref]=$m[$m->title_field];
 
+                $data[$our_field]=new MongoID($data[$our_field]);
             }
+
         }
 
-        $db=$this->_get($model,'db')->save($model->data);
-        $model->id=(string)$model->data[$model->id_field]?:null;
+        if($model->loaded()){
+            $data[$model->id_field] = new MongoID($model->id);
+        }
+
+        $db=$this->_get($model,'db')->save($data);
+        $model->id=(string)$data[$model->id_field]?:null;
         return $model->id;
     }
     function tryLoad($model,$id){

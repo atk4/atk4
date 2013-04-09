@@ -7,7 +7,7 @@ class Mongo_Reference extends Mongo_Field {
         $this->type('reference_id');
 
         $this->owner->addField(str_replace('_id','',$this->short_name))
-            ->readonly(true);
+            ->editable(false);
 
     }
 }
