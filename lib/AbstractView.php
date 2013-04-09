@@ -531,6 +531,19 @@ abstract class AbstractView extends AbstractObject
     /** Experemental */
     function on($event, $selector, $js=null){
 
+        if(is_callable($js)){
+            $p=$this->add('VirtualPage');
+
+            $p->set(function($p)use($js){
+                // $js is an actual callable
+                $js2=$p->js()->_selectorRegion();
+                call_user_func($js,$js2,$_POST);
+                $js2->execute();
+            });
+
+            $js=$this->js()->_selectorThis()->univ()->ajaxec($p->getURL(),true);
+        }
+
         if($js){
             $ret_js=$this->js(null,$js)->_selectorThis();
         }else{
