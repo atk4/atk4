@@ -506,7 +506,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     public $_references;
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=undefined,$field_class='Mongo_Field'){
+    function hasOne($model,$our_field=undefined,$field_class='Field'){
 
         // if our_field is not specified, let's try to guess it from other model's table
         if($our_field===undefined){
