@@ -324,6 +324,7 @@ class ApiWeb extends ApiCLI {
     }
     /** Renders all objects inside applications and echo all output to the browser */
     function render(){
+        $this->hook('pre-js-collection');
         if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
 
         if(!($this->template)){
