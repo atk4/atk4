@@ -24,7 +24,7 @@ class QuickSearch extends Filter
     public $cancel_icon = 'ui-icon-cancel';
     
     // field
-    protected $search_field;
+    public $search_field;
     
     // buttonset
     public $bset_class = 'ButtonSet';
