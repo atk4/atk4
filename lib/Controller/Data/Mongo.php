@@ -32,7 +32,7 @@ class Controller_Data_Mongo extends Controller_Data {
         $data=$model->data;
         unset($data[$model->id_field]);
         foreach ($model->_references as $our_field=>$junk) {
-            if(isset($data[$our_field])){
+            if(isset($data[$our_field]) && $data[$our_field]){
 
                 $deref=str_replace('_id','',$our_field);
                 if($deref == $our_field)continue;
