@@ -86,8 +86,6 @@ $.widget("ui.atk4_uploader", {
 			.removeAttr('target')
 			.attr('action',oa);
 
-		g.remove();
-
 		// fool-proof way to clone element. Firefox will copy seelcted file, while safari will not
 		var el=this.element.clone().attr('id',this.name+'_');
 
