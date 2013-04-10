@@ -1,7 +1,7 @@
 <?php
 /***********************************************************
 
-  Quicksearch represents one-field filter which goes perfectly with a grid
+  Quicksearch represents one-field filter which works perfectly with a grid
 
   Reference:
   http://agiletoolkit.org/doc/ref
@@ -24,7 +24,7 @@ class QuickSearch extends Filter
     public $cancel_icon = 'ui-icon-cancel';
     
     // field
-    protected $search_field;
+    public $search_field;
     
     // buttonset
     public $bset_class = 'ButtonSet';
@@ -57,14 +57,8 @@ class QuickSearch extends Filter
                     : $this->search_field->beforeField();
         $this->bset = $this->bset->add($this->bset_class);
 
-        // add buttons
-        $this->bset->addButton('', array('options'=>array('text'=>false)))
-                ->setHtml('&nbsp;')
-                ->setIcon($this->submit_icon)
-                ->js('click', $this->js()->submit());
-        
-        if($this->show_cancel && $this->recall($this->search_field->short_name))
-        {
+        // cancel button
+        if($this->show_cancel && $this->recall($this->search_field->short_name)) {
             $this->bset->addButton('', array('options'=>array('text'=>false)))
                     ->setHtml('&nbsp;')
                     ->setIcon($this->cancel_icon)
@@ -73,6 +67,13 @@ class QuickSearch extends Filter
                         $this->js()->submit()
                     ));
         }
+
+        // search button
+        $this->bset->addButton('', array('options'=>array('text'=>false)))
+                ->setHtml('&nbsp;')
+                ->setIcon($this->submit_icon)
+                ->js('click', $this->js()->submit());
+        
     }
     
     /**
