@@ -466,7 +466,7 @@ class Model_Table extends Model {
         $q=$this->dsql;
         $this->dsql=$this->dsql();
         $this->addCondition($field,$cond,$value);
-        $this->tryloadAny();
+        $this->tryLoadAny();
         $this->dsql=$q;
         return $this;
     }
