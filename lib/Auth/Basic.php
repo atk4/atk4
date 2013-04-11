@@ -436,6 +436,8 @@ class Auth_Basic extends AbstractController {
         $this->memorize('info',$this->info);
         $this->memorize('class',get_class($this->model));
         $this->memorize('id',$this->model->id);
+
+        $this->hook('login');
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){
