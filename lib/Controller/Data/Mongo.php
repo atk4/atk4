@@ -68,7 +68,12 @@ class Controller_Data_Mongo extends Controller_Data {
             $cond='=';
         }
 
-        $model->data=$this->_get($model,'db')->findOne(array($field=>$value));
+        $model->data=$this->_get($model,'db')->findOne(
+            array_merge(
+                $model->_table[$this->short_name]['conditions'],
+                array($field=>$value)
+            )
+        );
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
     }
@@ -95,7 +100,9 @@ class Controller_Data_Mongo extends Controller_Data {
     function setOrder($model,$field,$desc=false){}
     function setLimit($model,$count,$offset=0){}
     function rewind($model){
-        $c=$this->_get($model,'db')->find();
+        $c=$this->_get($model,'db')->find(
+            $model->_table[$this->short_name]['conditions']
+        );
         $this->_set($model,'cur',$c);
         $model->data=$c->getNext();
         $model->id=(string)$model->data[$model->id_field]?:null;
@@ -112,6 +119,18 @@ class Controller_Data_Mongo extends Controller_Data {
         if($model->_table[$this->short_name]['conditions'][$field]){
             throw $this->exception('Multiple conditions on same field not supported yet')
                 ;
+        }
+        if ($f=$model->hasElement($field)) {
+            // TODO: properly convert to Mongo presentation
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(int)$value;
+            }
+
+            if($f->type()=='reference_id' && $value) {
+                $value = new MongoID($value);
+            }
+
+            $f->defaultValue($value);
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }

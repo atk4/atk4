@@ -530,8 +530,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
     function hasMany($model,$their_field=undefined,$our_field=undefined){
-        $model=$this->api->normalizeClassName($this->model,'Model');
-        $this->_references[$model]=array($model,$our_field,$their_field);
+        $class=$this->api->normalizeClassName($model,'Model');
+        $this->_references[$model]=array($class,$our_field,$their_field);
         return null;
     }
     /*
@@ -578,9 +578,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
         list($ref,$rest)=explode('/',$ref,2);
 
-        $id=$this->get($ref);
         $class=$this->_references[$ref];
-        return $this->_ref($rest,$class,null,$id);
+        if(is_array($class)){
+            return $this->_ref(
+                $rest,
+                $class[0],
+                $class[1] && $class[1]!=UNDEFINED ? $class[1] : $this->table.'_id',
+                $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id 
+            );
+        } else {
+            $id=$this->get($ref);
+            return $this->_ref(
+                $rest,
+                $class,
+                null,
+                $id
+            );
+        }
     }
     function _ref($ref,$class,$field,$val){
         $m=$this
