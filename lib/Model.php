@@ -289,7 +289,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if(is_string($controller)){
             $controller=$this->api->normalizeClassName($controller,'Data');
         } elseif(!$controller instanceof Controller_Data){
-            throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+            throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
         $this->controller=$this->setController($controller);
 
