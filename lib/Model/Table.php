@@ -140,11 +140,8 @@ class Model_Table extends Model {
         if($this->dsql)$this->dsql->debug();
         return $this;
     }
-    public $_selectQuery=null;
     /** Completes initialization of dsql() by adding fields and expressions. */
     function selectQuery($fields=null){
-        if($this->_selectQuery)return $this->_selectQuery;
-
         /**/$this->api->pr->start('selectQuery/getActualF');
 
         $actual_fields=$fields?:$this->getActualFields();
