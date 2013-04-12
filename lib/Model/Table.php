@@ -267,19 +267,19 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
+        if($cond!==undefined && $value===undefined) {
+            $value = $cond;
+            $cond = '=';
+        }
+        
         if($field->type()=='boolean'){
-            if($value===undefined){
-                $cond=$field->getBooleanValue($cond);
-            }else{
-                $value=$field->getBooleanValue($value);
-            }
+            $value=$field->getBooleanValue($value);
         }
 
-        if($cond==='=' || $value===undefined){
-            $v=$value===undefined?$cond:$value;
-            $field->defaultValue($v)->system(true)->editable(false);
+        if($cond==='='){
+            $field->defaultValue($value)->system(true)->editable(false);
         }
-
+        
         $f = $field->actual_field?:$field->short_name;
         if($field->calculated()){
             // TODO: should we use expression in where?
@@ -465,7 +465,7 @@ class Model_Table extends Model {
         $q=$this->dsql;
         $this->dsql=$this->dsql();
         $this->addCondition($field,$cond,$value);
-        $this->tryloadAny();
+        $this->tryLoadAny();
         $this->dsql=$q;
         return $this;
     }
