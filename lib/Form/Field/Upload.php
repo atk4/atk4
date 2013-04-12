@@ -260,7 +260,7 @@ class Form_Field_Upload extends Form_Field {
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
             }
         }
-        if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
+        if($_GET[$this->name.'_upload_action'])$this->uploadComplete(true);
         $o='';
 
         $options=array('size_limit'=>$this->max_file_size);

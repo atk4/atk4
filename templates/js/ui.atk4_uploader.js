@@ -68,27 +68,23 @@ $.widget("ui.atk4_uploader", {
 		var form=form_wrapper.find('form');
 		var oa=form.attr('action');
 
-
-
 		// add dynamically if it's missing
 		var i=$('<div style="display: inline"/>');
-		i.insertBefore(this.element);
 		i[0].innerHTML='<iframe id="'+this.name+'_iframe" name="'+this.name+'_iframe" src="about:blank" style="width:0;height:0;border:0px solid black;"></iframe>';
-			//insertBefore(this.element);
+		i.insertBefore(this.element);
 
-		var g=$('<div class="atk-loader" id="'+this.name+'_progress"><i></i>Uploading '+this.element.val()+'</div>').
-		insertBefore(this.element);
+		var g=$('<div class="atk-loader" id="'+this.name+'_progress"><i></i>Uploading '+this.element.val()+'</div>')
+			.insertBefore(this.element);
 
 		form
-		.attr('action',oa+'&'+this.element.attr('name')+'_upload_action='+this.name)
-		.attr('target',this.name+"_iframe");
+			.attr('action',oa+'&'+this.element.attr('name')+'_upload_action='+this.name)
+			.attr('target',this.name+"_iframe");
 
 		form_wrapper.atk4_form('submitPlain');
 
 		form
-		.removeAttr('target')
-		.attr('action',oa)
-		;
+			.removeAttr('target')
+			.attr('action',oa);
 
 		// fool-proof way to clone element. Firefox will copy seelcted file, while safari will not
 		var el=this.element.clone().attr('id',this.name+'_');
