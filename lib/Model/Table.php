@@ -253,12 +253,14 @@ class Model_Table extends Model {
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond=undefined,$value=undefined){
 
+        // TODO: refactor using parent:: conditions (through array)
+
         // You may pass plain "dsql" expressions as a first argument
         if($field instanceof DB_dsql && $cond===undefined && $value===undefined){
             $this->_dsql()->where($field);
             return $this;
         }
-        
+
         // value should be specified
         if($cond===undefined && $value===undefined)
             throw $this->exception('Incorrect condition. Please specify value');

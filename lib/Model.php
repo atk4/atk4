@@ -201,7 +201,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
                 }
             }
         }
-        
+
         return $fields;
     }
     /** Returns field which should be used as a title */
