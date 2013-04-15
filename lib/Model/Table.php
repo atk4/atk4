@@ -540,8 +540,7 @@ class Model_Table extends Model {
     // }}}
 
     // {{{ Saving Data
-
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    /** Save model into database and don't try to load it back */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
@@ -558,6 +557,7 @@ class Model_Table extends Model {
             $this->saveAndUnload();
         }
     }
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             $model=$this->api->normalizeClassName($model,'Model');
@@ -584,7 +584,10 @@ class Model_Table extends Model {
         $this->_dsql()->owner->commit();
         return $res;
     }
-    /** Internal function which performs insert of data. Use save() instead. OK to override. */
+    /**
+     * Internal function which performs insert of data. Use save() instead. OK to override.
+     *  Will return new object if saveAs() is used
+     */
     private function insert(){
 
         $insert = $this->dsql();
@@ -619,8 +622,10 @@ class Model_Table extends Model {
         if(!$res->loaded())throw $this->exception('Saved model did not match conditions. Save aborted.');
         return $res;
     }
-    /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
-        * object if saveAs() is used */
+    /**
+     * Internal function which performs modification of existing data. Use save() instead. OK to override.
+     * Will return new object if saveAs() is used
+     */
     private function modify(){
         $modify = $this->dsql()->del('where');
         $modify->where($this->id_field, $this->id);
