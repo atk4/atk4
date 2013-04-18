@@ -148,13 +148,23 @@ class Form_Basic extends View implements ArrayAccess {
         if(!is_object($field))$field=$this->getElement($field);
         $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
     }
-    function addField($type, $name, $caption=null, $attr=null)
+    function addField($type, $options, $caption=null, $attr=null)
     {
-        if ($caption===null) {
-            $caption = ucwords(str_replace('_',' ',$name));
+        if (is_array($options)){
+            $name = isset($options["name"])?$options["name"]:null;
+        } else {
+            $name = $options; // backward compatibility
         }
+        if($caption===null)
+            $caption=ucwords(str_replace('_',' ',$name));
         
         $name = $this->api->normalizeName($name);
+        /* put name back in options */
+        if (is_array($options)){
+            $options["name"] = $name;
+        } else {
+            $options = $name;
+        }
 
         switch (strtolower($type)) {
             case 'dropdown':     $class = 'DropDown';     break;
@@ -170,7 +180,7 @@ class Form_Basic extends View implements ArrayAccess {
             default:             $class = $type;
         }
         $class = $this->api->normalizeClassName($class, 'Form_Field');
-        $last_field = $this->add($class, $name, null, 'form_line')
+        $last_field = $this->add($class, $options, null, 'form_line')
             ->setCaption($caption);
         $last_field->setForm($this);
         $last_field->template->trySet('field_type', strtolower($type));
