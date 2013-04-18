@@ -137,7 +137,7 @@ class VirtualPage extends AbstractController
             $this->api->addHook('post-init', function () use ($method, $self) {
                 $page=$self->api->add(
                     $self->page_class,
-                    null,
+                    $this->name,
                     null,
                     $self->page_template
                 );
@@ -170,7 +170,7 @@ class VirtualPage extends AbstractController
 
         $this->api->page_object = $this->page = $this->api->add(
             $this->page_class,
-            null,
+            $this->name,
             null,
             $this->page_template
         );
@@ -211,7 +211,7 @@ class VirtualPage extends AbstractController
         $t=$this->type;
         $grid->js('click')->_selector('#'.$grid->name.' .pb_'.$name)->univ()
             ->$t($title, array($this->getURL($name),
-                $name=>$grid->js()->_selectorThis()->closest('tr')->attr('data-id')
+                $this->name.'_id'=>$grid->js()->_selectorThis()->closest('tr')->attr('data-id')
             ), $this->frame_options);
         return $this;
     }
