@@ -87,7 +87,7 @@ class Model_Table extends Model {
             $this->relations =& $this->owner->owner->relations;
         }
 
-        $this->addField($this->id_field)->system(true);
+        $this->addField($this->id_field)->type('int')->system(true);
     }
     function addField($name,$actual_field=null){
         if($this->hasElement($name))throw $this->exception('Field with this name is already defined')
