@@ -78,6 +78,7 @@ class TMail_Basic extends AbstractModel {
         }else{
             $this->set($t);
         }
+        return $this;
     }
     function setTag($arg,$val=null){
         return $this->set($arg,$val);
