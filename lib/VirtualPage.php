@@ -137,7 +137,7 @@ class VirtualPage extends AbstractController
             $this->api->addHook('post-init', function () use ($method, $self) {
                 $page=$self->api->add(
                     $self->page_class,
-                    $this->name,
+                    $self->name,
                     null,
                     $self->page_template
                 );
