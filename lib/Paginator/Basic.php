@@ -1,9 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -16,19 +12,21 @@
  =====================================================ATK4=*/
 /**
  * Paginator needs to have source set (which can be either Model,
- * DSQL or Array). It will render itself into parent.
+ * DSQL or Array). It will render itself into parent and will
+ * limit the source to display limited number of records per page
+ * with ability to travel back and forth
  */
 class Paginator_Basic extends CompleteLister {
-    public $ipp=30;
-    public $skip=0;
-    public $range=4;
+    public $ipp=30;         // By default, show 30 records per page
+    public $skip=0;         // By default, do not skip anything
+    public $range=4;        // Display 4 adjacent pages from current one
 
-    public $ajax_reload=true;
-    public $memorize=true;
-    public $skip_var=null;
+    public $ajax_reload=true;   // Reload parent with AJAX
+    public $memorize=true;      // Remember page, when user comes back
+    public $skip_var=null;      // Argument to use to specify page
 
-    public $source=null;
-    public $base_page=null; // let's redefine page nicely
+    public $source=null;        // Set with setSource()
+    public $base_page=null;     // let's redefine page nicely
 
     function init(){
         parent::init();
