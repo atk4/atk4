@@ -172,7 +172,7 @@ class Grid_Advanced extends Grid_Basic {
             $text = $a[0] . ' ~~~ ' . strrev($b[0]);
         }
         $this->current_row[$field]=$text;
-        $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
+        $this->tdparam[$this->getCurrentIndex()][$field]['title']=htmlspecialchars($this->current_row[$field.'_original']);
     }
 
     function format_html($field){
