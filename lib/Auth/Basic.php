@@ -171,7 +171,7 @@ class Auth_Basic extends AbstractController {
         return $this->allowed_pages;
     }
     function isPageAllowed($page){
-        if($this->hook('isPageAllowed')===true)return true;
+        if($this->hook('isPageAllowed',array($page))===true)return true;
         return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
     }
     /** Specifies how password will be encrypted when stored. Some values are "sha256/salt", "md5", "rot13". If you
