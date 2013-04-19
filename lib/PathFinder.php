@@ -193,9 +193,12 @@ class PathFinder extends AbstractController
      *
      * @return string|object as specified by $return
      */
-    function locate($type, $filename='', $return='relative')
+    function locate($type, $filename='', $return='relative', $throws_exception=true)
     {
         $attempted_locations=array();
+        if (!$return) {
+            $return='relative';
+        }
         foreach ($this->elements as $location) {
             if (!($location instanceof PathFinder_Location)) {
                 continue;
@@ -210,11 +213,13 @@ class PathFinder extends AbstractController
             }
         }
 
-        throw $this->exception('File not found')
-            ->addMoreInfo('file', $filename)
-            ->addMoreInfo('type', $type)
-            ->addMoreInfo('attempted_locations', $attempted_locations)
-            ;
+        if($throws_exception) {
+            throw $this->exception('File not found')
+                ->addMoreInfo('file', $filename)
+                ->addMoreInfo('type', $type)
+                ->addMoreInfo('attempted_locations', $attempted_locations)
+                ;
+        }
     }
     /**
      * Search is similar to locate, but will return array of all matching
