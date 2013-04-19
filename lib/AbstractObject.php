@@ -492,7 +492,11 @@ abstract class AbstractObject
         if (! $type) {
             $type=$this->default_exception;
         } elseif ($type[0]=='_') {
-            $type=$this->default_exception.'_'.substr($type, 1);
+            if ($this->default_exception='BaseException'){
+                $type='Exception_'.substr($type, 1);
+            } else {
+                $type=$this->default_exception.'_'.substr($type, 1);
+            }
         } elseif ($type!='BaseException' && strpos($type,'Exception_')!==0) {
             $type='Exception_'.$type;
         }
@@ -936,7 +940,10 @@ abstract class AbstractObject
         }
 
         if (is_string($callable)) {
-            $callable=array($this,$callable);
+            foreach ($this as $value) {
+                $this->$callable();
+            }
+            return $this;
         }
 
         foreach ($this as $value) {
