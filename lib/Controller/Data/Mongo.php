@@ -56,7 +56,7 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function tryLoad($model,$id){
     }
-    function load($model,$id=null){
+    function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
@@ -86,8 +86,8 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
     }
-    function delete($model,$id=null){
-        $id=new MongoID($id?:$this->id);
+    function delete($model,$id){
+        $id=new MongoID($id);
         $model->data=$this->_get($model,'db')->remove(
             array($model->id_field=>$id),
             array('justOne'=>true)

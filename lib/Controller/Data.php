@@ -56,9 +56,9 @@ abstract class Controller_Data extends AbstractController {
         $this->tryLoad($model,$id);
     }
 
-	abstract function load($model,$id=null);
+	abstract function load($model,$id);
 	abstract function save($model);
-	abstract function delete($model,$id=null);
+	abstract function delete($model,$id);
 
 	abstract function tryLoad($model,$id);
     abstract function loadBy($model,$field,$cond,$value);
@@ -69,16 +69,31 @@ abstract class Controller_Data extends AbstractController {
     abstract function getRows($model);
     abstract function getBy($model,$field,$cond,$value);
 
-    /* must implement in underlying layer */
-    abstract function setOrder($model,$field,$desc=false);
-
-    /* must implement in underlying layer */
-    abstract function setLimit($model,$count,$offset=0);
-
     /** Create a new cursor and load model with the first entry */
     abstract function rewind($model);
 
     /** Provided that rewind  was called before, load next data entry */
     abstract function next($model);
+
+    /** Optional function your driver migt support */
+    function addCondition($model,$field,$operator,$value){
+        throw $this->exception('addCondition is not supported by this data driver');
+    }
+
+    /** must implement in underlying layer */
+    function setOrder($model,$field,$desc=false){
+        throw $this->exception('setOrder is not supported by this data driver');
+    }
+
+    /** must implement in underlying layer */
+    function setLimit($model,$count,$offset=0){
+        throw $this->exception('setLimit is not supported by this data driver');
+    }
+
+    /** returns count of records matching model criteria */
+    function count($model){
+        throw $this->exception('count is not supported by this data driver');
+    }
+
 }
 
