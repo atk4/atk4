@@ -682,7 +682,11 @@ class DB_dsql extends AbstractModel implements Iterator {
             } else {
                 list($table, $field)=explode('.', $field, 2);
                 if ($field) {
-                    $field=$this->bt($table).'.'.$this->bt($field);
+                    if ($this->mode=='delete') {
+                        $field=$this->bt($field);
+                    } else {
+                        $field=$this->bt($table).'.'.$this->bt($field);
+                    }
                 } else {
                     $field=$this->bt($table);
                 }
