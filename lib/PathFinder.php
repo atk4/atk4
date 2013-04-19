@@ -123,11 +123,13 @@ class PathFinder extends AbstractController
             'page'=>'page',
             'addons'=>'atk4-addons',
             'template'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
+            'public'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
             'mail'=>'templates/mail',
             'js'=>'templates/js',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
-        ))->setBasePath($base_directory);
+        ))->setBasePath($base_directory)
+        ->setBaseURL($this->api->pm->base_path);
 
 
         if ($this->api->hasMethod('addSharedLocations')) {
@@ -140,6 +142,10 @@ class PathFinder extends AbstractController
         $this->atk_location=$this->addLocation('atk4', array(
             'php'=>'lib',
             'template'=>array(
+                isset($this->api->skin)?'templates/'.$this->api->skin:null,
+                'templates/shared'
+            ),
+            'public'=>array(
                 isset($this->api->skin)?'templates/'.$this->api->skin:null,
                 'templates/shared'
             ),

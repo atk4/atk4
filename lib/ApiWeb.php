@@ -36,6 +36,8 @@ class ApiWeb extends ApiCLI {
 
         $this->skin=$skin;
         try {
+
+
             parent::__construct($realm);
         }catch (Exception $e){
 
@@ -51,10 +53,6 @@ class ApiWeb extends ApiCLI {
         // Do not initialize unless requsetd
         //$this->initializeSession();
         $this->getLogger();
-
-        // find out which page is to display
-        //$this->calculatePageName();
-        $this->pm=$this->add('PageManager');
 
         // Verify Licensing
         $this->licenseCheck('atk4');
@@ -366,6 +364,7 @@ class ApiWeb extends ApiCLI {
 
         // We are using new capability of SMlite to process tags individually
         $t->eachTag('template',array($this,'_locateTemplate'));
+        $t->eachTag('public',array($this,'_locatePublic'));
         $t->eachTag('js',array($this,'_locateJS'));
         $t->eachTag('css',array($this,'_locateCSS'));
         $t->eachTag('page',array($this,'_locatePage'));
@@ -380,6 +379,9 @@ class ApiWeb extends ApiCLI {
     /** @private */
     function _locateTemplate($path){
         return $this->locateURL('template',$path);
+    }
+    function _locatePublic($path){
+        return $this->locateURL('public',$path);
     }
     function _locateJS($path){
         return $this->locateURL('js',$path);
