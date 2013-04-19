@@ -483,7 +483,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         }
 
         if (is_string($callable)) {
-            $callable=array($this,$callable);
+            foreach ($this as $value) {
+                $this->$callable();
+            }
+            return $this;
         }
 
         foreach ($this as $value) {
