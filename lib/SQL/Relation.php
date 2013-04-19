@@ -147,7 +147,7 @@ class SQL_Relation extends AbstractModel {
         if($this->owner->_dsql()->debug)$this->dsql->debug();
 
         if($this->delete_behaviour=='cascade'){
-            $this->dsql->del('field')->where($this->f2,$this->id)->debug()->delete();
+            $this->dsql->del('field')->where($this->f2,$this->id)->delete();
         }elseif($this->delete_behaviour=='ignore'){
             $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->debug()->update();
 
