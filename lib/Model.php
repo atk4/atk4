@@ -355,6 +355,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             $this->_save_later=false;
         }
     }
+    function __destruct(){
+        $this->saveDelayedModels();
+    }
     /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
     function delete($id=null){
         if($id===null)$id=$this->id;
