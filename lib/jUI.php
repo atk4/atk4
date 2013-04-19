@@ -27,7 +27,9 @@ class jUI extends jQuery {
     function init(){
 
         parent::init();
-        if($this->api->jui)throw $this->exception('Do not add jUI twice');
+        if (@$this->api->jui) {
+            throw $this->exception('Do not add jUI twice');
+        }
         $this->api->jui=$this;
 
         $this->addDefaultIncludes();
