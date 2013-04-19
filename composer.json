@@ -9,7 +9,7 @@
         "type": "zip"
     },
     "source": {
-        "url": "git@github.com:atk4/atk4.git",
+        "url": "https://github.com/atk4/atk4.git",
         "type": "git",
         "reference": "origin/master"
     },
