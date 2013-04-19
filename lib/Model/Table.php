@@ -547,16 +547,6 @@ class Model_Table extends Model {
         $this->_save_as=null;
         return $this;
     }
-    /** Will save model later, when it's being destructed by Garbage Collector */
-    function saveLater(){
-        $this->_save_later=true;
-        return $this;
-    }
-    function __destruct(){
-        if($this->_save_later){
-            $this->saveAndUnload();
-        }
-    }
     /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
@@ -667,6 +657,10 @@ class Model_Table extends Model {
 
     /** forget currently loaded record and it's ID. Will not affect database */
     function unload(){
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
         $this->hook('beforeUnload');
         $this->id=null;
         parent::unload();

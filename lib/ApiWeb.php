@@ -294,6 +294,7 @@ class ApiWeb extends ApiCLI {
         }catch(Exception $e){
             $this->caughtException($e);
         }
+        $this->hook('saveDelayedModels');
     }
     /** Main execution loop */ 
     function execute(){

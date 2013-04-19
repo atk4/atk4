@@ -248,7 +248,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
      */
     function unload()
     {
-        if($this->loaded()) {
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
+        if ($this->loaded()) {
             $this->hook('beforeUnload');
         }
         $this->data = $this->dirty = array();
@@ -342,11 +346,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Will save model later, when it's being destructed by Garbage Collector */
     function saveLater(){
         $this->_save_later=true;
+        $this->api->addHook('saveDelayedModels',$this);
         return $this;
     }
-    function __destruct(){
-        if($this->_save_later){
+    function saveDelayedModels(){
+        if($this->_save_later && $this->dirty){
             $this->saveAndUnload();
+            $this->_save_later=false;
         }
     }
     /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
@@ -367,8 +373,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this;
     }
     /** Adds a new condition for this model */
-    function addCondition($field,$value){
-        $this->controller->addCondition($this,$field,$value);
+    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED){
+        $this->controller->addCondition($this,$field,$operator,$value);
         return $this;
     }
     // }}}
