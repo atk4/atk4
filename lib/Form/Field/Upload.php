@@ -69,7 +69,7 @@ $this->add('Form')->setModel($model);
  
 $this->api->stickyGET('user_id');
 $myfile=$this->add('filestore/Image');
-$myfile->join('user_images.file_id')->setMasterField('user_id',$_GET['user_id']);
+$myfile->join('user_images.file_id')->addCondition('user_id',$_GET['user_id']);
 $form->addField('Upload','photo')
     ->setNoSave()->setModel($myfile);
 
