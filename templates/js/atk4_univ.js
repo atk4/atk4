@@ -520,7 +520,7 @@ bindConditionalShow: function(conditions,tag){
 	if(typeof tag == 'undefined')tag='div.atk-row';
 
 	var sel=function(name){
-		var s=[]
+		var s=[];
 		fid=n;
 		$.each(name,function(){
 			var dom=(this[0]=='#'?$(this+'')[0]:$(a='#'+fid+'_'+this)[0]);
@@ -538,7 +538,7 @@ bindConditionalShow: function(conditions,tag){
 	}
 
 	var ch=function(){
-		if(f.is('.atk-checkboxlist,.atk-radio')){
+		if(f.is('.atk-checkboxlist,.atk-form-options')){
 			var v=[];
 			f.find('input:checked').each(function(){
 				v.push(this.value);
@@ -580,7 +580,7 @@ bindConditionalShow: function(conditions,tag){
 			}
 		}
 
-        console.log(exact_match);
+		console.log(exact_match);
 
 		if(exact_match && exact_match.length){
 			if(exact_match instanceof Array){
@@ -600,7 +600,6 @@ bindConditionalShow: function(conditions,tag){
 		f.change(ch);
 	}
 	ch();
-	//console.log(conditions);
 },
 
 bindFillInFields: function(fields){
