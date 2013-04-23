@@ -223,7 +223,7 @@ class Auth_Basic extends AbstractController {
             // authentication, token or OpenID. In case of successful login, 
             // breakHook($user_id) must be used
             $user_id=$this->hook('check');
-            if(!is_array($user_id) && !is_bool($user_id)){
+            if(!is_array($user_id) && !is_bool($user_id) && $user_id){
                 $this->model->load($user_id);
                 //$this->loggedIn();
                 $this->memorizeModel();
