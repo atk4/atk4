@@ -59,7 +59,7 @@ class SQL_Many extends AbstractModel {
         $this->model->_dsql()->args['where']=$this->orig_conditions;
         return $this;
     }
-    function refSQL($options=array()){
+    function refSQL(){
         $this->restoreConditions();
         return $this->model->addCondition($this->their_field,$this->owner->getElement($this->our_field));
     }
