@@ -144,7 +144,7 @@ class VirtualPage extends AbstractController
 
                 $self->api->cut($page);
                 $self->api->stickyGET($self->name);
-                call_user_func($method, $page);
+                call_user_func($method, $page, $self);
                 $self->api->stickyForget($self->name);
             });
             throw $this->exception('', 'StopInit');
