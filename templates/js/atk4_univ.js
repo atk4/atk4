@@ -36,6 +36,7 @@ $.each({
 		$.univ.redirect(url,fn);
 	},
 	location: function(url){
+		url=$.atk4.addArgument(url);
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
