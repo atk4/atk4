@@ -314,7 +314,7 @@ class View_CRUD extends View
             $subview->setModel(
                 $this->model->load($this->id)->ref($name),
                 $options['fields'],
-                $options['extra_fields']
+                $options['grid_fields']?:$options['extra_fields']
             );
             return $subview;
         }
