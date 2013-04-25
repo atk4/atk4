@@ -394,8 +394,3 @@ abstract class Form_Field extends AbstractView {
     }
 }
 
-///////// Because many fields are really simple extenions of the base-line field,
-///////// they are defined here.
-
-// Visually different fields
-
