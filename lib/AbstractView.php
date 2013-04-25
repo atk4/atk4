@@ -551,11 +551,17 @@ abstract class AbstractView extends AbstractObject
         }
 
         $on_chain=$this->js(true);
+        $fired=false;
 
-        $this->api->addHook('pre-js-collection', function($api)
-            use($event,$selector,$ret_js,$on_chain){
-            $on_chain->on($event,$selector,$ret_js->_enclose(null,true));
-        });
+        $this->api->jui->addHook(
+            'pre-getJS', 
+            function($api) use($event,$selector,$ret_js,$on_chain,&$fired) {
+                if($fired)return;
+                $fired=true;
+
+                $on_chain->on($event,$selector,$ret_js->_enclose(null,true));
+            }
+        );
 
 
         return $ret_js;
