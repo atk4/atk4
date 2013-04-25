@@ -128,8 +128,10 @@ class PathFinder extends AbstractController
             'js'=>'templates/js',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
-        ))->setBasePath($base_directory)
-        ->setBaseURL($this->api->pm->base_path);
+        ))->setBasePath($base_directory);
+        if(@$this->api->pm){
+            $this->base_location->setBaseURL($this->api->pm->base_path);
+        }
 
 
         if ($this->api->hasMethod('addSharedLocations')) {
