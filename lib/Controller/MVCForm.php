@@ -110,6 +110,14 @@ class Controller_MVCForm extends AbstractController {
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
+        if($field->placeholder()){
+            $form_field->setAttr('placeholder',$field->placeholder());
+        }
+
+        if($field->hint()){
+            $form_field->setFieldHint($field->hint());
+        }
+
         if($field_type=='Checkbox'){
             reset($field->listData);
             list($form_field->true_value,$junk)=each($field->listData);

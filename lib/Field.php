@@ -29,6 +29,8 @@ class Field extends AbstractModel
     public $visible=true;
     public $display=null;
     public $caption=null;
+    public $placeholder=null;
+    public $hint=null;
     public $group=null;
     public $allowHTML=false;
     public $sortable=false;
@@ -133,6 +135,28 @@ class Field extends AbstractModel
             ));
         }
         return $this->setterGetter('caption', $t);
+    }
+    /**
+     * Sets field hint which will be used by forms
+     *
+     * @param string $t new value
+     *
+     * @return string current value if $t=UNDEFINED
+     */
+    function hint($t = UNDEFINED)
+    {
+        return $this->setterGetter('hint', $t);
+    }
+    /**
+     * Sets field placeholder (gray text inside input when it's empty)
+     *
+     * @param string $t new value
+     *
+     * @return string current value if $t=UNDEFINED
+     */
+    function placeholder($t = UNDEFINED)
+    {
+        return $this->setterGetter('placeholder', $t);
     }
 
     /**
