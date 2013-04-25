@@ -585,12 +585,12 @@ class Grid_Advanced extends Grid_Basic {
      * Adds paginator to the grid
      * @param $ipp row count per page
      */
-    function addPaginator($ipp=25){
+    function addPaginator($ipp=25,$args=null){
         // adding ajax paginator
         if ($this->paginator) {
             return $this->paginator;
         }
-        $this->paginator=$this->add('Paginator');
+        $this->paginator=$this->add('Paginator',$args);
         $this->paginator->ipp($ipp);
         return $this;
     }
