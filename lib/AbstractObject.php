@@ -996,11 +996,11 @@ abstract class AbstractObject
      */
     function _unique(&$array, $desired = null)
     {
-        $postfix=count($array);
-        $attempted_key=$desired;
         if (!is_array($array)) {
             throw $this->exception('not array');
         }
+        $postfix=count($array);
+        $attempted_key=$desired;
         while (array_key_exists($attempted_key, $array)) {
             // already used, move on
             $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
