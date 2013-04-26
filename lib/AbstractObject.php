@@ -984,26 +984,30 @@ abstract class AbstractObject
         return $desired;
     }
     /**
-     * This funcion given the associative $array and desired new key will return
-     * the best matching key which is not yet in the arary. For example if you have
-     * array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'.
-     * If 'foo_2' key also exists in that array, then 'foo_3' is returned and so on.
+     * This function given the associative $array and desired new key will
+     * return the best matching key which is not yet in the array.
+     * For example, if you have array('foo'=>x,'bar'=>x) and $desired_key is
+     * 'foo' function will return 'foo_2'. If 'foo_2' key also exists in that
+     * array, then 'foo_3' is returned and so on.
      * 
-     * @param array  &$array  Reference to array which stores key=>value pairs
-     * @param string $desired Desired key for new object
+     * @param array  &$array      Reference to array which stores key=>value pairs
+     * @param string $desired_key Desired key for new object
      *
      * @return string unique key for new object
      */
-    function _unique(&$array, $desired = null)
+    function _unique(&$array, $desired_key = null)
     {
         if (!is_array($array)) {
             throw $this->exception('not array');
         }
-        $postfix=count($array);
-        $attempted_key=$desired;
+        if (!$desired_key) {
+            $desired_key = 'undef';
+        }
+        $postfix = count($array);
+        $attempted_key = $desired_key;
         while (array_key_exists($attempted_key, $array)) {
             // already used, move on
-            $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
+            $attempted_key = $desired_key.'_'.(++$postfix);
         }
         return $attempted_key;
     }
