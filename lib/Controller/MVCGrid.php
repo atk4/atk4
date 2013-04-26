@@ -39,12 +39,12 @@ class Controller_MVCGrid extends AbstractController {
         'datetime'=>'timestamp',
         'date'=>'date',
         'daytime'=>'daytime',
-        'daytime_total'=>'daytime_total',
         'boolean'=>'boolean',
         'list'=>'text',
+        'radio'=>'text',
         'readonly'=>'text',
         'image'=>'text',
-        'file'=>'referenece',
+        'file'=>'reference',
         'password'=>'password',
     );
 
