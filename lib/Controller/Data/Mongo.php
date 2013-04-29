@@ -32,7 +32,7 @@ class Controller_Data_Mongo extends Controller_Data {
         $data=$model->data;
         unset($data[$model->id_field]);
         foreach ($model->_references as $our_field=>$junk) {
-            if(isset($data[$our_field])){
+            if(isset($data[$our_field]) && $data[$our_field]){
 
                 $deref=str_replace('_id','',$our_field);
                 if($deref == $our_field)continue;
@@ -50,13 +50,15 @@ class Controller_Data_Mongo extends Controller_Data {
             $data[$model->id_field] = new MongoID($model->id);
         }
 
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
         return $model->id;
     }
     function tryLoad($model,$id){
+        $this->tryLoadBy($model,$model->id_field,new MongoID($id)); // TODO thow exception
     }
-    function load($model,$id=null){
+    function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
@@ -68,7 +70,12 @@ class Controller_Data_Mongo extends Controller_Data {
             $cond='=';
         }
 
-        $model->data=$this->_get($model,'db')->findOne(array($field=>$value));
+        $model->data=$this->_get($model,'db')->findOne(
+            array_merge(
+                $model->_table[$this->short_name]['conditions'],
+                array($field=>$value)
+            )
+        );
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
     }
@@ -81,8 +88,8 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
     }
-    function delete($model,$id=null){
-        $id=new MongoID($id?:$this->id);
+    function delete($model,$id){
+        $id=new MongoID($id);
         $model->data=$this->_get($model,'db')->remove(
             array($model->id_field=>$id),
             array('justOne'=>true)
@@ -95,7 +102,10 @@ class Controller_Data_Mongo extends Controller_Data {
     function setOrder($model,$field,$desc=false){}
     function setLimit($model,$count,$offset=0){}
     function rewind($model){
-        $c=$this->_get($model,'db')->find();
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+        $c=$this->_get($model,'db')->find(
+            $model->_table[$this->short_name]['conditions']
+        );
         $this->_set($model,'cur',$c);
         $model->data=$c->getNext();
         $model->id=(string)$model->data[$model->id_field]?:null;
@@ -110,8 +120,20 @@ class Controller_Data_Mongo extends Controller_Data {
 
     function addCondition($model,$field,$value){
         if($model->_table[$this->short_name]['conditions'][$field]){
-            throw $this->exception('Multiple conditions on same field not supported yet')
-                ;
+            throw $this->exception('Multiple conditions on same field not supported yet');
+        }
+        if ($f=$model->hasElement($field)) {
+            // TODO: properly convert to Mongo presentation
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(int)$value;
+            }
+
+            if($f->type()=='reference_id' && $value && !is_array($value)) {
+                $value = new MongoID($value);
+            }
+
+            $f->defaultValue($value);
+            //$f->system(true);
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }
