@@ -135,6 +135,18 @@ class Controller_Data_Mongo extends Controller_Data {
             $f->defaultValue($value);
             //$f->system(true);
         }
+        if ($f=$model->hasElement($field)) {
+            // TODO: properly convert to Mongo presentation
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(int)$value;
+            }
+
+            if($f->type()=='reference_id' && $value) {
+                $value = new MongoID($value);
+            }
+
+            $f->defaultValue($value);
+        }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }
 }

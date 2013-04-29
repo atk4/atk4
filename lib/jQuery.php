@@ -101,6 +101,7 @@ class jQuery extends AbstractController {
     }
     /* [private] Collect JavaScript chains from specified object and add them into onReady section */
     function getJS($obj){
+        $this->hook('pre-getJS');
 
         $r='';
         foreach($obj->js as $key=>$chains){

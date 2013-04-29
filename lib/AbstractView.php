@@ -528,5 +528,43 @@ abstract class AbstractView extends AbstractObject
     function getJSID(){
         return str_replace('/', '_', $this->name);
     }
+    /** Experemental */
+    function on($event, $selector, $js=null){
+
+        if(is_callable($js)){
+            $p=$this->add('VirtualPage');
+
+            $p->set(function($p)use($js){
+                // $js is an actual callable
+                $js2=$p->js()->_selectorRegion();
+                call_user_func($js,$js2,$_POST);
+                $js2->execute();
+            });
+
+            $js=$this->js()->_selectorThis()->univ()->ajaxec($p->getURL(),true);
+        }
+
+        if($js){
+            $ret_js=$this->js(null,$js)->_selectorThis();
+        }else{
+            $ret_js=$this->js()->_selectorThis();
+        }
+
+        $on_chain=$this->js(true);
+        $fired=false;
+
+        $this->api->jui->addHook(
+            'pre-getJS', 
+            function($api) use($event,$selector,$ret_js,$on_chain,&$fired) {
+                if($fired)return;
+                $fired=true;
+
+                $on_chain->on($event,$selector,$ret_js->_enclose(null,true));
+            }
+        );
+
+
+        return $ret_js;
+    }
     // }}}
 }

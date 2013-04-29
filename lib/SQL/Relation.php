@@ -143,16 +143,15 @@ class SQL_Relation extends AbstractModel {
     }
     function beforeDelete($m,$id){
         // Let's hope that cascading sorts this 
-        /*
         $this->dsql=$this->owner->_dsql()->dsql()->table($this->f1);
         if($this->owner->_dsql()->debug)$this->dsql->debug();
 
         if($this->delete_behaviour=='cascade'){
-            $this->dsql->del('field')->where($this->f2,$this->id)->debug()->delete();
+            $this->dsql->del('field')->where($this->f2,$this->id)->delete();
         }elseif($this->delete_behaviour=='ignore'){
             $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->debug()->update();
 
-        }*/
+        }
     }
     function afterDelete($m){
         $this->dsql=$this->owner->_dsql()->dsql()->table($this->f1);

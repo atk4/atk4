@@ -170,7 +170,6 @@ class PageManager extends AbstractController {
         $this->template_filename=$this->page;
         if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
 
-        $this->api->pathfinder->base_location->setBaseURL($this->base_path);
 
         $this->debug("base_path=".$this->base_path);
         $this->debug("base_directory=".$this->base_directory);

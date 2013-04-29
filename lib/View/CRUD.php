@@ -140,11 +140,14 @@ class View_CRUD extends View
             'frame_options'=>$this->frame_options
         ));
 
-        $name_id = $this->name.'_id';
+        $name_id = $this->virtual_page->name.'_id';
 
+        /*
         if ($_GET['edit'] && !isset($_GET[$name_id])) {
             $_GET[$name_id] = $_GET['edit'];
         }
+         */
+
 
         if (isset($_GET[$name_id])) {
             $this->api->stickyGET($name_id);
@@ -283,13 +286,20 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
+        if(!$this->grid)return;
+
         $s = $this->api->normalizeName($name);
+
+        $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
+        $this->grid->columns['ex_'.$s]['page']
+            = $this->virtual_page->getURL('ex_'.$s);
         
         if ($this->isEditing('ex_'.$s)) {
 
-            if ($_GET['id']) {
-                $this->id = $_GET[$this->name.'_id'] = $_GET['id'];
-                $this->api->stickyGET($this->name.'_id');
+            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
+            if ($_GET[$idfield]) {
+                $this->id = $_GET[$idfield];
+                $this->api->stickyGET($idfield);
             }
 
             $view_class = (is_null($options['view_class']))?
@@ -304,7 +314,7 @@ class View_CRUD extends View
             $subview->setModel(
                 $this->model->load($this->id)->ref($name),
                 $options['fields'],
-                $options['extra_fields']
+                $options['grid_fields']?:$options['extra_fields']
             );
             return $subview;
         }
@@ -313,9 +323,6 @@ class View_CRUD extends View
             return;
         }
 
-        $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
-        $this->grid->columns['ex_'.$s]['page']
-            = $this->virtual_page->getURL('ex_'.$s);
     }
 
     /**
@@ -342,9 +349,11 @@ class View_CRUD extends View
 
         if ($this->isEditing('fr_'.$s)) {
 
-            if ($_GET['fr_'.$s]) {
-                $this->id = $_GET[$this->name.'_id'] = $_GET['fr_'.$s];
-                $this->api->stickyGET($this->name.'_id');
+            $n=$this->virtual_page->name.'_'.$name;
+
+            if ($_GET[$n]) {
+                $this->id = $_GET[$n];
+                $this->api->stickyGET($n);
             }
 
             return $this->virtual_page->getPage();

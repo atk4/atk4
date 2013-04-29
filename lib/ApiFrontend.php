@@ -42,6 +42,10 @@ class ApiFrontend extends ApiWeb{
         $this->namespace_routes[$prefix]=$this->normalizeClassName($ns);
     }
     function layout_Content(){
+
+        // TODO: refactor using pathfinders 4th argument to locate = null,
+        // to avoid exceptions as those might be expensive.
+
         // required class prefix depends on the content_type
         // This function initializes content. Content is page-dependant
         $page=str_replace('/','_',$this->page);

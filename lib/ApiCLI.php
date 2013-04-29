@@ -153,6 +153,14 @@ class ApiCLI extends AbstractView
         /**/$this->pr=new Dummy();
 
         try {
+
+            // find out which page is to display
+            //$this->calculatePageName();
+            if($this instanceof ApiWeb){
+                $this->pm=$this->add('PageManager');
+            }
+
+
             $this->add($this->pathfinder_class);
             $this->init();
         } catch (Exception $e) {

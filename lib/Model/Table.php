@@ -140,11 +140,8 @@ class Model_Table extends Model {
         if($this->dsql)$this->dsql->debug();
         return $this;
     }
-    public $_selectQuery=null;
     /** Completes initialization of dsql() by adding fields and expressions. */
     function selectQuery($fields=null){
-        if($this->_selectQuery)return $this->_selectQuery;
-
         /**/$this->api->pr->start('selectQuery/getActualF');
 
         $actual_fields=$fields?:$this->getActualFields();
@@ -253,12 +250,14 @@ class Model_Table extends Model {
     /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
     function addCondition($field,$cond=undefined,$value=undefined){
 
+        // TODO: refactor using parent:: conditions (through array)
+
         // You may pass plain "dsql" expressions as a first argument
         if($field instanceof DB_dsql && $cond===undefined && $value===undefined){
             $this->_dsql()->where($field);
             return $this;
         }
-        
+
         // value should be specified
         if($cond===undefined && $value===undefined)
             throw $this->exception('Incorrect condition. Please specify value');
@@ -268,19 +267,19 @@ class Model_Table extends Model {
             $field=$this->getElement($field);
         }
 
+        if($cond!==undefined && $value===undefined) {
+            $value = $cond;
+            $cond = '=';
+        }
+        
         if($field->type()=='boolean'){
-            if($value===undefined){
-                $cond=$field->getBooleanValue($cond);
-            }else{
-                $value=$field->getBooleanValue($value);
-            }
+            $value=$field->getBooleanValue($value);
         }
 
-        if($cond==='=' || $value===undefined){
-            $v=$value===undefined?$cond:$value;
-            $field->defaultValue($v)->system(true)->editable(false);
+        if($cond==='='){
+            $field->defaultValue($value)->system(true)->editable(false);
         }
-
+        
         $f = $field->actual_field?:$field->short_name;
         if($field->calculated()){
             // TODO: should we use expression in where?
@@ -466,7 +465,7 @@ class Model_Table extends Model {
         $q=$this->dsql;
         $this->dsql=$this->dsql();
         $this->addCondition($field,$cond,$value);
-        $this->tryloadAny();
+        $this->tryLoadAny();
         $this->dsql=$q;
         return $this;
     }
@@ -541,24 +540,14 @@ class Model_Table extends Model {
     // }}}
 
     // {{{ Saving Data
-
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    /** Save model into database and don't try to load it back */
     function saveAndUnload(){
         $this->_save_as=false;
         $this->save();
         $this->_save_as=null;
         return $this;
     }
-    /** Will save model later, when it's being destructed by Garbage Collector */
-    function saveLater(){
-        $this->_save_later=true;
-        return $this;
-    }
-    function __destruct(){
-        if($this->_save_later){
-            $this->saveAndUnload();
-        }
-    }
+    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
             $model=$this->api->normalizeClassName($model,'Model');
@@ -585,7 +574,10 @@ class Model_Table extends Model {
         $this->_dsql()->owner->commit();
         return $res;
     }
-    /** Internal function which performs insert of data. Use save() instead. OK to override. */
+    /**
+     * Internal function which performs insert of data. Use save() instead. OK to override.
+     *  Will return new object if saveAs() is used
+     */
     private function insert(){
 
         $insert = $this->dsql();
@@ -620,8 +612,10 @@ class Model_Table extends Model {
         if(!$res->loaded())throw $this->exception('Saved model did not match conditions. Save aborted.');
         return $res;
     }
-    /** Internal function which performs modification of existing data. Use save() instead. OK to override. Will return new 
-        * object if saveAs() is used */
+    /**
+     * Internal function which performs modification of existing data. Use save() instead. OK to override.
+     * Will return new object if saveAs() is used
+     */
     private function modify(){
         $modify = $this->dsql()->del('where');
         $modify->where($this->id_field, $this->id);
@@ -663,6 +657,10 @@ class Model_Table extends Model {
 
     /** forget currently loaded record and it's ID. Will not affect database */
     function unload(){
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
         $this->hook('beforeUnload');
         $this->id=null;
         parent::unload();

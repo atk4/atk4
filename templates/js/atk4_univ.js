@@ -36,6 +36,7 @@ $.each({
 		$.univ.redirect(url,fn);
 	},
 	location: function(url){
+		url=$.atk4.addArgument(url);
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
@@ -403,8 +404,15 @@ getjQuery: function(){
 ajaxec: function(url,data,fn){
 	// Combination of ajax and exec. Will pull provided url and execute returned javascript.
 	region=this.jquery;
+
     if(region.data('ajaxec_loading'))return this.successMessage('Please Wait');
     region.data('ajaxec_loading',true);
+
+
+    if(data==true){
+        data=region.data();
+    }
+
 	$.atk4.get(url,data,function(ret){
         region.data('ajaxec_loading',false);
 		/*
@@ -513,10 +521,11 @@ bindConditionalShow: function(conditions,tag){
 	if(typeof tag == 'undefined')tag='div.atk-row';
 
 	var sel=function(name){
-		var s=[]
+		var s=[];
 		fid=n;
 		$.each(name,function(){
-			var dom=(this[0]=='#'?$(this+'')[0]:$(a='#'+fid+'_'+this)[0]);
+			var a = (this[0]=='#'?this+'':"[data-shortname='"+this+"']");
+			var dom = $(a, '#'+fid)[0];
 			if(dom){
 				s.push(dom);
 			}else{
@@ -531,7 +540,7 @@ bindConditionalShow: function(conditions,tag){
 	}
 
 	var ch=function(){
-		if(f.is('.atk-checkboxlist,.atk-radio')){
+		if(f.is('.atk-checkboxlist,.atk-form-options')){
 			var v=[];
 			f.find('input:checked').each(function(){
 				v.push(this.value);
@@ -573,7 +582,7 @@ bindConditionalShow: function(conditions,tag){
 			}
 		}
 
-        console.log(exact_match);
+		console.log(exact_match);
 
 		if(exact_match && exact_match.length){
 			if(exact_match instanceof Array){
@@ -593,7 +602,6 @@ bindConditionalShow: function(conditions,tag){
 		f.change(ch);
 	}
 	ch();
-	//console.log(conditions);
 },
 
 bindFillInFields: function(fields){

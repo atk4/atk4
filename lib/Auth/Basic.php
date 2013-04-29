@@ -171,7 +171,7 @@ class Auth_Basic extends AbstractController {
         return $this->allowed_pages;
     }
     function isPageAllowed($page){
-        if($this->hook('isPageAllowed')===true)return true;
+        if($this->hook('isPageAllowed',array($page))===true)return true;
         return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
     }
     /** Specifies how password will be encrypted when stored. Some values are "sha256/salt", "md5", "rot13". If you
@@ -223,7 +223,7 @@ class Auth_Basic extends AbstractController {
             // authentication, token or OpenID. In case of successful login, 
             // breakHook($user_id) must be used
             $user_id=$this->hook('check');
-            if(!is_array($user_id) && !is_bool($user_id)){
+            if(!is_array($user_id) && !is_bool($user_id) && $user_id){
                 $this->model->load($user_id);
                 //$this->loggedIn();
                 $this->memorizeModel();
@@ -436,6 +436,8 @@ class Auth_Basic extends AbstractController {
         $this->memorize('info',$this->info);
         $this->memorize('class',get_class($this->model));
         $this->memorize('id',$this->model->id);
+
+        $this->hook('login');
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){

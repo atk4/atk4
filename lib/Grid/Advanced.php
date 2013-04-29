@@ -172,7 +172,7 @@ class Grid_Advanced extends Grid_Basic {
             $text = $a[0] . ' ~~~ ' . strrev($b[0]);
         }
         $this->current_row[$field]=$text;
-        $this->tdparam[$this->getCurrentIndex()][$field]['title']=$this->current_row[$field.'_original'];
+        $this->tdparam[$this->getCurrentIndex()][$field]['title']=htmlspecialchars($this->current_row[$field.'_original']);
     }
 
     function format_html($field){
@@ -363,6 +363,9 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_link($field){
         $this->current_row['_link']=$this->api->url('./'.$field,array('id'=>$this->current_id));
+        if(!$this->current_row[$field]){
+            $this->current_row[$field]=$this->columns[$field]['descr'];
+        }
         return $this->format_template($field);
         /*
            $this->current_row[$field]='<a href="'.$this->api->url($field,
@@ -582,12 +585,12 @@ class Grid_Advanced extends Grid_Basic {
      * Adds paginator to the grid
      * @param $ipp row count per page
      */
-    function addPaginator($ipp=25){
+    function addPaginator($ipp=25,$args=null){
         // adding ajax paginator
         if ($this->paginator) {
             return $this->paginator;
         }
-        $this->paginator=$this->add('Paginator');
+        $this->paginator=$this->add('Paginator',$args);
         $this->paginator->ipp($ipp);
         return $this;
     }

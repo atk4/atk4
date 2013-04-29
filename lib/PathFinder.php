@@ -123,11 +123,15 @@ class PathFinder extends AbstractController
             'page'=>'page',
             'addons'=>'atk4-addons',
             'template'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
+            'public'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
             'mail'=>'templates/mail',
             'js'=>'templates/js',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
+        if(@$this->api->pm){
+            $this->base_location->setBaseURL($this->api->pm->base_path);
+        }
 
 
         if ($this->api->hasMethod('addSharedLocations')) {
@@ -140,6 +144,10 @@ class PathFinder extends AbstractController
         $this->atk_location=$this->addLocation('atk4', array(
             'php'=>'lib',
             'template'=>array(
+                isset($this->api->skin)?'templates/'.$this->api->skin:null,
+                'templates/shared'
+            ),
+            'public'=>array(
                 isset($this->api->skin)?'templates/'.$this->api->skin:null,
                 'templates/shared'
             ),
@@ -187,9 +195,12 @@ class PathFinder extends AbstractController
      *
      * @return string|object as specified by $return
      */
-    function locate($type, $filename='', $return='relative')
+    function locate($type, $filename='', $return='relative', $throws_exception=true)
     {
         $attempted_locations=array();
+        if (!$return) {
+            $return='relative';
+        }
         foreach ($this->elements as $location) {
             if (!($location instanceof PathFinder_Location)) {
                 continue;
@@ -204,11 +215,13 @@ class PathFinder extends AbstractController
             }
         }
 
-        throw $this->exception('File not found')
-            ->addMoreInfo('file', $filename)
-            ->addMoreInfo('type', $type)
-            ->addMoreInfo('attempted_locations', $attempted_locations)
-            ;
+        if($throws_exception) {
+            throw $this->exception('File not found')
+                ->addMoreInfo('file', $filename)
+                ->addMoreInfo('type', $type)
+                ->addMoreInfo('attempted_locations', $attempted_locations)
+                ;
+        }
     }
     /**
      * Search is similar to locate, but will return array of all matching

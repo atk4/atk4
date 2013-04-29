@@ -69,7 +69,7 @@ $this->add('Form')->setModel($model);
  
 $this->api->stickyGET('user_id');
 $myfile=$this->add('filestore/Image');
-$myfile->join('user_images.file_id')->setMasterField('user_id',$_GET['user_id']);
+$myfile->join('user_images.file_id')->addCondition('user_id',$_GET['user_id']);
 $form->addField('Upload','photo')
     ->setNoSave()->setModel($myfile);
 
@@ -87,6 +87,27 @@ class Form_Field_Upload extends Form_Field {
     public $multiple=false;
     public $debug=false;
     public $format_files_template="view/uploaded_files";
+
+    function init(){
+        parent::init();
+        $this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
+        $this->attr['type']='file';
+
+        $max_post=$this->convertToBytes(ini_get('post_max_size'))/2;
+        $max_upload=$this->convertToBytes(ini_get('upload_max_filesize'));
+
+        $this->max_file_size = min($max_upload, $max_post);
+
+        /*
+           if($_POST[$this->name.'_token']){
+           $t=json_decode(stripslashes($_POST[$this->name.'_token']));
+           $_FILES[$this->name]=array(
+           'name'=>$t->fileInfo->name,
+           'tmp_name'=>'upload/temp/'.$t->filename,
+           );
+           }
+         */
+    }
     function allowMultiple($multiple=50){
         // Allow no more than $multiple files to be present in the table
         $this->multiple=$multiple;
@@ -149,29 +170,6 @@ class Form_Field_Upload extends Form_Field {
         exit;
     }
 
-    function init(){
-        parent::init();
-        $this->owner->template->set('enctype', "enctype=\"multipart/form-data\"");
-        $this->attr['type']='file';
-
-        $max_post=$this->convertToBytes(ini_get('post_max_size'))/2;
-        $max_upload=$this->convertToBytes(ini_get('upload_max_filesize'));
-
-        $this->max_file_size=$max_upload<$max_post?$max_upload:$max_post;
-
-        /*
-         */
-
-        /*
-           if($_POST[$this->name.'_token']){
-           $t=json_decode(stripslashes($_POST[$this->name.'_token']));
-           $_FILES[$this->name]=array(
-           'name'=>$t->fileInfo->name,
-           'tmp_name'=>'upload/temp/'.$t->filename,
-           );
-           }
-         */
-    }
     function convertToBytes($val){
         $val = trim($val);
         $last = strtolower($val[strlen($val) - 1]);
@@ -260,7 +258,7 @@ class Form_Field_Upload extends Form_Field {
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
             }
         }
-        if($_GET[$this->name.'_upload_action'])$this->uploadComplete();
+        if($_GET[$this->name.'_upload_action'])$this->uploadComplete(true);
         $o='';
 
         $options=array('size_limit'=>$this->max_file_size);

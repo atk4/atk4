@@ -201,7 +201,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
                 }
             }
         }
-        
+
         return $fields;
     }
     /** Returns field which should be used as a title */
@@ -248,7 +248,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
      */
     function unload()
     {
-        if($this->loaded()) {
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
+        if ($this->loaded()) {
             $this->hook('beforeUnload');
         }
         $this->data = $this->dirty = array();
@@ -289,7 +293,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         if(is_string($controller)){
             $controller=$this->api->normalizeClassName($controller,'Data');
         } elseif(!$controller instanceof Controller_Data){
-            throw $this->exception('Inapropriate Controller. Must extend Controller_Data');
+            throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
         $this->controller=$this->setController($controller);
 
@@ -342,12 +346,17 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     /** Will save model later, when it's being destructed by Garbage Collector */
     function saveLater(){
         $this->_save_later=true;
+        $this->api->addHook('saveDelayedModels',$this);
         return $this;
     }
-    function __destruct(){
-        if($this->_save_later){
+    function saveDelayedModels(){
+        if($this->_save_later && $this->dirty){
             $this->saveAndUnload();
+            $this->_save_later=false;
         }
+    }
+    function __destruct(){
+        $this->saveDelayedModels();
     }
     /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
     function delete($id=null){
@@ -367,8 +376,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         return $this;
     }
     /** Adds a new condition for this model */
-    function addCondition($field,$value){
-        $this->controller->addCondition($this,$field,$value);
+    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED){
+        $this->controller->addCondition($this,$field,$operator,$value);
         return $this;
     }
     // }}}
@@ -474,7 +483,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
         }
 
         if (is_string($callable)) {
-            $callable=array($this,$callable);
+            foreach ($this as $value) {
+                $this->$callable();
+            }
+            return $this;
         }
 
         foreach ($this as $value) {
@@ -530,8 +542,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
     function hasMany($model,$their_field=undefined,$our_field=undefined){
-        $model=$this->api->normalizeClassName($this->model,'Model');
-        $this->_references[$model]=array($model,$our_field,$their_field);
+        $class=$this->api->normalizeClassName($model,'Model');
+        $this->_references[$model]=array($class,$our_field,$their_field);
         return null;
     }
     /*
@@ -578,9 +590,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
 
         list($ref,$rest)=explode('/',$ref,2);
 
-        $id=$this->get($ref);
         $class=$this->_references[$ref];
-        return $this->_ref($rest,$class,null,$id);
+        if(is_array($class)){
+            return $this->_ref(
+                $rest,
+                $class[0],
+                $class[1] && $class[1]!=UNDEFINED ? $class[1] : $this->table.'_id',
+                $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id 
+            );
+        } else {
+            $id=$this->get($ref);
+            return $this->_ref(
+                $rest,
+                $class,
+                null,
+                $id
+            );
+        }
     }
     function _ref($ref,$class,$field,$val){
         $m=$this
