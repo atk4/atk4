@@ -524,7 +524,8 @@ bindConditionalShow: function(conditions,tag){
 		var s=[];
 		fid=n;
 		$.each(name,function(){
-			var dom=(this[0]=='#'?$(this+'')[0]:$(a='#'+fid+'_'+this)[0]);
+			var a = (this[0]=='#'?this+'':"[data-shortname='"+this+"']");
+			var dom = $(a, '#'+fid)[0];
 			if(dom){
 				s.push(dom);
 			}else{
