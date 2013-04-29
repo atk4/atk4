@@ -50,11 +50,13 @@ class Controller_Data_Mongo extends Controller_Data {
             $data[$model->id_field] = new MongoID($model->id);
         }
 
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
         return $model->id;
     }
     function tryLoad($model,$id){
+        $this->tryLoadBy($model,$model->id_field,new MongoID($id)); // TODO thow exception
     }
     function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
@@ -100,6 +102,7 @@ class Controller_Data_Mongo extends Controller_Data {
     function setOrder($model,$field,$desc=false){}
     function setLimit($model,$count,$offset=0){}
     function rewind($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         $c=$this->_get($model,'db')->find(
             $model->_table[$this->short_name]['conditions']
         );
@@ -117,8 +120,20 @@ class Controller_Data_Mongo extends Controller_Data {
 
     function addCondition($model,$field,$value){
         if($model->_table[$this->short_name]['conditions'][$field]){
-            throw $this->exception('Multiple conditions on same field not supported yet')
-                ;
+            throw $this->exception('Multiple conditions on same field not supported yet');
+        }
+        if ($f=$model->hasElement($field)) {
+            // TODO: properly convert to Mongo presentation
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(int)$value;
+            }
+
+            if($f->type()=='reference_id' && $value && !is_array($value)) {
+                $value = new MongoID($value);
+            }
+
+            $f->defaultValue($value);
+            //$f->system(true);
         }
         if ($f=$model->hasElement($field)) {
             // TODO: properly convert to Mongo presentation
