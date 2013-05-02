@@ -80,7 +80,8 @@ class BaseException extends Exception {
     function getText(){
         $text='';$args=array();
         foreach($this->more_info as $key=>$value){
-            // $args[]=$key.'='.$value;
+            if(is_array($value))$value='Array()';
+            $args[]=$key.'='.$value;
         }
 
         $text.= get_class($this).': '.$this->getMessage().' ('.join(', ',$args).')';
