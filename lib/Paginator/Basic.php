@@ -98,7 +98,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page>1){
             $this->add('View',null,'prev')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->name.'_skip'=>
+                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
                     $pn=max(0,$this->skip-$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
