@@ -11,7 +11,7 @@ class Mongo_Model extends Model {
 
         $this->setSource('Mongo',$this->table);
 
-        $this->addField('id')->system(true)->visible(true);
+        $this->addField('_id')->system(true)->visible(true);
     }
     function hasOne($model,$our_field=undefined,$field_class='Mongo_Reference'){
         return parent::hasOne($model,$our_field,$field_class);
