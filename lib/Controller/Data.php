@@ -24,6 +24,8 @@ Additionally Model_Table can use data controllers for caching their data
 
 abstract class Controller_Data extends AbstractController {
 
+    public $auto_track_element=true;
+
     function setSource($model,$data=undefined){
         if($data===undefined)return $this;
 
