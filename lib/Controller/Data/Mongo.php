@@ -20,39 +20,51 @@ class Controller_Data_Mongo extends Controller_Data {
     }
 
     /** Implemetns access to our private storage inside model */
-    protected function _get($model,$key){
+    public function _get($model,$key){
         return $model->_table[$this->short_name][$key];
     }
-    protected function _set($model,$key,$val){
+    public function _set($model,$key,$val){
         $model->_table[$this->short_name][$key]=$val;
     }
 
     function save($model,$id=null){
 
-        $data=$model->data;
+        $data=array();
+
+        foreach($model->elements as $name=>$f)if($f instanceof Field){
+            if(!$f->editable() && !$f->system())continue;
+            if(!isset($model->dirty[$name]) && $f->defaultValue()===null)continue;
+
+            $data[$name]=$f->get();
+        }
+
         unset($data[$model->id_field]);
+
         foreach ($model->_references as $our_field=>$junk) {
-            if(isset($data[$our_field]) && $data[$our_field]){
+            if(isset($data[$our_field]) && $data[$our_field] && 
+                $our_field!=$model->id_field) {
 
                 $deref=str_replace('_id','',$our_field);
                 if($deref == $our_field)continue;
 
-                $m=$model->ref($our_field)->load($data[$our_field]);
+                $m=$model->ref($our_field);
+                if(!$m->loaded())continue;
 
                 $data[$deref]=$m[$m->title_field];
-
                 $data[$our_field]=new MongoID($data[$our_field]);
             }
-
         }
 
         if($model->loaded()){
-            $data[$model->id_field] = new MongoID($model->id);
+            if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.(new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
+            $db=$this->_get($model,'db')->update(array($model->id_field=>new MongoID($model->id)), array('$set'=>$data));
+            return $model->id;
         }
 
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
+        if ($model->debug) echo '<font style="color: blue">='.$model->id.'</font><br/>';
         return $model->id;
     }
     function tryLoad($model,$id){
@@ -70,26 +82,35 @@ class Controller_Data_Mongo extends Controller_Data {
             $cond='=';
         }
 
-        $model->data=$this->_get($model,'db')->findOne(
-            array_merge(
+        $cond=array_merge(
                 $model->_table[$this->short_name]['conditions'],
-                array($field=>$value)
-            )
-        );
+                array($field=>$value));
+
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.findOne('.json_encode($cond).')</font><br/>';
+        $model->data=$this->_get($model,'db')->findOne($cond);
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
     }
     function tryLoadAny($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.findOne('.
+            json_encode($model->_table[$this->short_name]['conditions']).')</font><br/>';
         $model->data=$this->_get($model,'db')->findOne(
             $model->_table[$this->short_name]['conditions']
         );
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->id;
     }
+    function loadAny($model){
+        $this->tryLoadAny($model);
+        if(!$model->loaded())throw $this->exception('No records for this model');
+        return $model->id;
+    }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
     }
     function delete($model,$id){
         $id=new MongoID($id);
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.remove('.
+            json_encode(array($model->id_field=>$id)).',{justOne:true})</font><br/>';
         $model->data=$this->_get($model,'db')->remove(
             array($model->id_field=>$id),
             array('justOne'=>true)
@@ -128,7 +149,10 @@ class Controller_Data_Mongo extends Controller_Data {
                 $value=(int)$value;
             }
 
-            if($f->type()=='reference_id' && $value && !is_array($value)) {
+            if(
+                ($f->type()=='reference_id' && $value && !is_array($value)) ||
+                $field == $model->id_field
+            ) {
                 $value = new MongoID($value);
             }
 
@@ -145,7 +169,7 @@ class Controller_Data_Mongo extends Controller_Data {
                 $value = new MongoID($value);
             }
 
-            $f->defaultValue($value);
+            $f->defaultValue($value)->system(true);
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }

@@ -310,11 +310,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             ->setSource($this,$table);
     }
     /** Attempt to load record with specified ID. If this fails, exception is thrown */
-    function load($id=null){
+    function load($id){
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
         if(!$this->loaded())$this->controller->load($this,$id);
-        if(!$this->loaded())throw $this->exception('Record ID must be specified, otherwise use tryLoad()');
+        if(!$this->loaded())throw $this->exception('Record with specified id was not found');
         $this->hook('afterLoad');
         return $this;
     }
@@ -329,7 +329,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
         $this->hook('beforeSave',array($this->id));
 
+        $is_update=$this->loaded();
+        if($is_update){
+            $this->hook('beforeUpdate');
+        }else{
+            $this->hook('beforeInsert');
+        }
+
         $this->id=$this->controller->save($this,$this->id);
+
+        if($is_update){
+            $this->hook('afterUpdate');
+        }else{
+            $this->hook('afterInsert');
+        }
 
         if($this->loaded())$this->hook('afterSave',array($this->id));
         return $this;
@@ -389,6 +402,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if($this->loaded())$this->unload();
         $this->hook('beforeLoad',array($id));
         if(!$this->loaded())$this->controller->tryLoad($this,$id);
+        if(!$this->loaded())return $this;
+        $this->hook('afterLoad');
+        return $this;
+    }
+    function loadAny(){
+        if($this->loaded())$this->unload();
+        if(!$this->loaded())$this->controller->loadAny($this);
         if(!$this->loaded())return $this;
         $this->hook('afterLoad');
         return $this;
@@ -541,9 +561,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return null; // no field added
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasMany($model,$their_field=undefined,$our_field=undefined){
+    function hasMany($model,$their_field=undefined,$our_field=undefined,$reference=null){
         $class=$this->api->normalizeClassName($model,'Model');
-        $this->_references[$model]=array($class,$our_field,$their_field);
+        if(is_null($reference))$reference=$model;
+        $this->_references[$reference]=array($class,$their_field,$our_field);
         return null;
     }
     /*
@@ -590,6 +611,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
         list($ref,$rest)=explode('/',$ref,2);
 
+        if(!isset($this->_references[$ref])){
+            throw $this->exception('Reference is not defined')
+                ->addMoreInfo('model',$this)
+                ->addMoreInfo('ref',$ref);
+        }
+
         $class=$this->_references[$ref];
         if(is_array($class)){
             return $this->_ref(
@@ -600,12 +627,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             );
         } else {
             $id=$this->get($ref);
-            return $this->_ref(
+            $m=$this->_ref(
                 $rest,
                 $class,
                 null,
                 $id
-            )->tryLoadAny();
+            );
+            if($id)$m->loadAny();
+            return $m;
         }
     }
     function _ref($ref,$class,$field,$val){
