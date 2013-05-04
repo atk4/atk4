@@ -68,6 +68,8 @@ abstract class AbstractView extends AbstractObject
 
     public $auto_track_element=true;
 
+    public $sticky_get_arguments = array();
+
     // {{{ Basic Operations
     /**
      * For safety, you can't clone views. Use $view->newInstance instead
@@ -567,4 +569,23 @@ abstract class AbstractView extends AbstractObject
         return $ret_js;
     }
     // }}}
+
+    // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
+    /** Make current get argument with specified name automatically appended to all generated URLs */
+    function stickyGET($name){
+        $this->sticky_get_arguments[$name]=@$_GET[$name];
+    }
+    /** Remove sticky GET which was set by stickyGET */
+    function stickyForget($name){
+        unset($this->sticky_get_arguments[$name]);
+    }
+    /** @ignore - used by URL class */
+    function getStickyArguments(){
+        return $this->sticky_get_arguments;
+    }
+
+    function url(){
+    }
+    // }}}
+
 }
