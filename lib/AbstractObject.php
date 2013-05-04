@@ -200,9 +200,10 @@ abstract class AbstractObject
                 );
             }
             if (!$class->short_name) {
-                throw $this->exception(
-                    'Cannot add existing object, without short_name'
-                );
+                $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
+            }
+            if (!$class->api) {
+                $class->api=$this->api;
             }
             $this->elements[$class->short_name] = $class;
             if ($class instanceof AbstractView) {
@@ -409,10 +410,20 @@ abstract class AbstractObject
      */
     function memorize($key, $value)
     {
+
+
         if (!isset ($value)) {
             return $this->recall($key);
         }
         $this->api->initializeSession();
+
+        if($value instanceof Model){
+            $_SESSION['s'][$this->name][$key] = serialize($value);
+            unset($_SESSION['o'][$this->name][$key]);
+            return $value;
+        }
+
+        unset($_SESSION['s'][$this->name][$key]);
         return $_SESSION['o'][$this->name][$key] = $value;
     }
     /** 
@@ -435,7 +446,7 @@ abstract class AbstractObject
             }
             return $this->memorize($key, $default);
         } else {
-            return $_SESSION['o'][$this->name][$key];
+            return $this->recall($key);
         }
     }
     /** 
@@ -451,8 +462,10 @@ abstract class AbstractObject
         $this->api->initializeSession();
         if (isset ($key)) {
             unset ($_SESSION['o'][$this->name][$key]);
+            unset ($_SESSION['s'][$this->name][$key]);
         } else {
             unset ($_SESSION['o'][$this->name]);
+            unset ($_SESSION['s'][$this->name]);
         }
     }
     /** 
@@ -470,10 +483,15 @@ abstract class AbstractObject
         if (!isset ($_SESSION['o'][$this->name][$key])
             ||is_null($_SESSION['o'][$this->name][$key])
         ) {
-            return $default;
-        } else {
-            return $_SESSION['o'][$this->name][$key];
+
+            if(!isset($_SESSION['s'][$this->name][$key])){
+                return $default;
+            }
+            $v=$this->add($xx=unserialize($x=$_SESSION['s'][$this->name][$key]));
+            $v->init();
+            return $v;
         }
+        return $_SESSION['o'][$this->name][$key];
     }
     // }}}
 
