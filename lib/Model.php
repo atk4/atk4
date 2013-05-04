@@ -54,7 +54,7 @@
  * @license See http://agiletoolkit.org/about/license
  * 
  **/
-class Model extends AbstractModel implements ArrayAccess,Iterator {
+class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
     public $default_exception='BaseException';
 
@@ -605,7 +605,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
                 $class,
                 null,
                 $id
-            );
+            )->tryLoadAny();
         }
     }
     function _ref($ref,$class,$field,$val){
@@ -613,7 +613,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             ->add($this->api->normalizeClassName($class,'Model'))
             ->ref($ref);
         $m->addCondition($field?:$m->id_field,$val);
-        $m->tryLoadAny();
         return $m;
     }
     /* Join Binding
@@ -702,5 +701,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator {
             $m=$m->newInstance();
         }
         return $m->load($this[$our_field]);
+    }
+
+
+
+    function serialize() {
+        return serialize(array(
+            'id'=>$this->id,
+            'data'=>$this->data
+        ));
+    }
+
+    function unserialize($data) {
+        $data=unserialize($data);
+        $this->id=$data['id'];
+        $this->data=$data['data'];
     }
 }
