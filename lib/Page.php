@@ -23,7 +23,7 @@
  * @version     $Id$
  */
 class Page extends AbstractView {
-    protected $title='Page';
+    public $title = 'Agile Toolkit';
     public $default_exception='Exception_ForUser';
     function init(){
         $this->api->page_object=$this;
@@ -36,7 +36,7 @@ class Page extends AbstractView {
         $this->template->trySet('_page',$this->short_name);
 
         if(method_exists($this,get_class($this))){
-            throw $this->exception('Your sub-page name matches your page cass name. PHP will assume that your method is constructor')
+            throw $this->exception('Your sub-page name matches your page class name. PHP will assume that your method is constructor.')
                 ->addMoreInfo('method and class',get_class($this))
                 ;
         }
@@ -54,12 +54,15 @@ class Page extends AbstractView {
         }
         return array($page_name,'_top');
     }
-    function getTitle(){
-        return $this->title;
+    function setTitle($title){
+        $this->title = $title;
+        return $this;
     }
     function recursiveRender(){
         if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
             $_GET['cut_object']=$this->short_name;
+        if($this->title && $this->owner instanceof Frontend)
+            $this->owner->template->trySet('page_title',$this->title);
         parent::recursiveRender();
     }
 }
