@@ -32,7 +32,7 @@ class QuickSearch extends Filter
     protected $bset;
     
     // cancel button
-    public $show_cancel = false; // show cancel button? (true|false)
+    public $show_cancel = true; // show cancel button? (true|false)
 
     /**
      * Initialization
