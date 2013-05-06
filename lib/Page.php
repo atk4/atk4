@@ -36,7 +36,7 @@ class Page extends AbstractView {
         $this->template->trySet('_page',$this->short_name);
 
         if(method_exists($this,get_class($this))){
-            throw $this->exception('Your sub-page name matches your page cass name. PHP will assume that your method is constructor')
+            throw $this->exception('Your sub-page name matches your page class name. PHP will assume that your method is constructor.')
                 ->addMoreInfo('method and class',get_class($this))
                 ;
         }
