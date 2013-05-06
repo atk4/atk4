@@ -487,7 +487,7 @@ abstract class AbstractObject
             if(!isset($_SESSION['s'][$this->name][$key])){
                 return $default;
             }
-            $v=$this->add($xx=unserialize($x=$_SESSION['s'][$this->name][$key]));
+            $v=$this->add(unserialize($_SESSION['s'][$this->name][$key]));
             $v->init();
             return $v;
         }
