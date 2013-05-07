@@ -441,7 +441,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     // {{{ Ordering and limiting support
     function setLimit($a,$b=null){
         if($this->controller && $this->controller->hasMethod('setLimit'))
-            $this->controller->setLimit($this,$field,$desc);
+            $this->controller->setLimit($this,$a,$b);
         return $this;
     }
     function setOrder($field,$desc=null){
