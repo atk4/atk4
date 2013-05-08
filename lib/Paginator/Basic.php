@@ -55,6 +55,8 @@ class Paginator_Basic extends CompleteLister {
 
             $this->source=$source;
 
+        }elseif($source instanceof Model){
+            $this->source=$source->setLimit($this->ipp,$this->skip);
         }elseif($source instanceof DB_dsql){
             $source->_dsql()->calcFoundRows();
 
@@ -77,6 +79,8 @@ class Paginator_Basic extends CompleteLister {
         if($this->source instanceof DB_dsql){
             $this->source->preexec();
             $this->found_rows=$this->source->foundRows();
+        }elseif($this->source instanceof Mongo_Model){
+            $this->found_rows=$this->source->count();
         }else{
             $this->found_rows=count($this->source);
         }
@@ -89,8 +93,12 @@ class Paginator_Basic extends CompleteLister {
             if($this->memorize){
                 $this->memorize('skip',$this->skip=0);
             }
-            $this->source->limit($this->ipp,$this->skip);
-            $this->source->rewind();                 // re-execute the query
+            if($this->source instanceof DB_dsql){
+                $this->source->limit($this->ipp,$this->skip);
+                $this->source->rewind();                 // re-execute the query
+            }else{
+                $this->source->setLimit($this->ipp,$this->skip);
+            }
         }
 
         if($this->total_pages<=1)return $this->destroy();

@@ -120,14 +120,39 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function deleteAll($model){}
     function getRows($model){}
-    function setOrder($model,$field,$desc=false){}
-    function setLimit($model,$count,$offset=0){}
-    function rewind($model){
-        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+    function setOrder($model,$field,$desc=false){
+        $this->_set($model,'order',array($field=>$desc?-1:1));
+        // TODO: allow setting order multiple times
+        // TODO: extend syntax to be compatible with model_table
+    }
+    function setLimit($model,$count,$offset=0){
+        $this->_set($model,'limit',array($count,$offset));
+    }
+    function selectQuery($model){
         $c=$this->_get($model,'db')->find(
             $model->_table[$this->short_name]['conditions']
         );
+
+        // sort
+        if($s=$this->_get($model,'order'))$c->sort($s);
         $this->_set($model,'cur',$c);
+
+        // skip
+        if($l=$this->_get($model,'limit')){
+            list($count,$skip)=$l;
+            if($skip)$c->skip($skip);
+            if($count)$c->limit($count);
+        }
+
+        return $c;
+    }
+    function count($model){
+        return $this->selectQuery($model)->count();
+    }
+    function rewind($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+        $c=$this->selectQuery($model);
+
         $model->data=$c->getNext();
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->data;
