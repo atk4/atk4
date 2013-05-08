@@ -505,7 +505,7 @@ abstract class AbstractObject
      *
      * @return BaseException
      */
-    function exception($message, $type = null, $code = null)
+    function exception($message='Undefined Exception', $type = null, $code = null)
     {
         if (! $type) {
             $type=$this->default_exception;
