@@ -744,6 +744,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $m->load($this[$our_field]);
     }
 
+    function db(){
+        return $this->_table[$this->controller->short_name]['db'];
+    }
 
 
     function serialize() {
