@@ -633,7 +633,16 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                 null,
                 $id
             );
-            if($id)$m->loadAny();
+            if($id){
+                $m->load($id);
+            }else{
+                $that=$this;
+                $that->debug();
+                $m->addHook('afterSave',function($m,$id)use($that,$ref){
+                    $that[$ref]=$id;
+                    $that->save();
+                });
+            }
             return $m;
         }
     }
