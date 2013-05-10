@@ -305,17 +305,31 @@ class Form_Basic extends View implements ArrayAccess {
     }
     function update(){
         // TODO: start transaction here
-        if($this->hook('update'))return $this;
+        try{
 
-        if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
-        if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
-        foreach($this->elements as $short_name => $element){
-            if($element instanceof Form_Field)if(!$element->no_save){
-                //if(is_null($element->get()))
-                $m->set($short_name, $element->get());
+            if($this->hook('update'))return $this;
+
+            if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
+            if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
+            foreach($this->elements as $short_name => $element){
+                if($element instanceof Form_Field)if(!$element->no_save){
+                    //if(is_null($element->get()))
+                    $m->set($short_name, $element->get());
+                }
             }
+            $m->save();
+        }catch (BaseException $e){
+            if($e instanceof Exception_ValidityCheck){
+                $f=$e->getField();
+                if($f && is_string($f) && $fld=$this->hasElement($f)){
+                    $fld->displayFieldError($e->getMessage());
+                } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+            }
+            if($e instanceof Exception_ForUser){
+                $this->js()->univ()->alert($e->getMessage())->execute();
+            }
+            throw $e;
         }
-        $m->save();
     }
     function submitted(){
         /**
