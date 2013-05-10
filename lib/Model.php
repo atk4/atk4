@@ -469,7 +469,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this->get();
     }
     function key(){
-        return $this->id;
+        return (string)$this->id;
     }
     function valid(){
         return $this->loaded();
