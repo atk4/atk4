@@ -106,6 +106,9 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->id;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
+        $this->tryLoadBy($model,$field,$cond,$value);
+        if(!$model->loaded())throw $this->exception('No records matching criteria');
+        return $model->id;
     }
     function delete($model,$id){
         $id=new MongoID($id);
