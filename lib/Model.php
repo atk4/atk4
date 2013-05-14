@@ -538,7 +538,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     }
 
     // Reference traversal for regular models
-    public $_references;
+    public $_references=array();
 
     /* defines relation between models. You can traverse the reference using ref() */
     function hasOne($model,$our_field=undefined,$field_class='Field'){
