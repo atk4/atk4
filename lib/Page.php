@@ -23,7 +23,7 @@
  * @version     $Id$
  */
 class Page extends AbstractView {
-    public $title = 'Agile Toolkit';
+    public $title = null;
     public $default_exception='Exception_ForUser';
     function init(){
         $this->api->page_object=$this;
