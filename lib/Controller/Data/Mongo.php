@@ -187,6 +187,7 @@ class Controller_Data_Mongo extends Controller_Data {
             $f->defaultValue($value);
             //$f->system(true);
         }
+        // TODO Why same code twice?
         if ($f=$model->hasElement($field)) {
             // TODO: properly convert to Mongo presentation
             if($f->type()=='boolean' && is_bool($value)) {
