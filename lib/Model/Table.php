@@ -237,6 +237,7 @@ class Model_Table extends Model {
     }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
+        if(!$name)return $this;
         return $this->getElement($name)->ref($load);
     }
     /** Returns Model with SQL join usable for subqueries. */
@@ -432,7 +433,7 @@ class Model_Table extends Model {
     /** Loads random entry into model */
     function tryLoadRandom(){
         // get ID first
-        $id=$this->dsql()->order('rand()')->limit(1)->field($this->id_field)->getOne();
+        $id=$this->dsql()->order('rand()')->limit(1)->field($this->getElement($this->id_field))->getOne();
         if($id)$this->load($id);
         return $this;
     }
