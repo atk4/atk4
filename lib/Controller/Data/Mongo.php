@@ -53,7 +53,9 @@ class Controller_Data_Mongo extends Controller_Data {
                 if(!$m->loaded())continue;
 
                 $data[$deref]=$m[$m->title_field];
-                $data[$our_field]=new MongoID($data[$our_field]);
+                if($m instanceof Mongo_Model){
+                    $data[$our_field]=new MongoID($data[$our_field]);
+                }
             }
         }
 
