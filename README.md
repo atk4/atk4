@@ -133,3 +133,5 @@ Agile Toolkit is distributed under Affero GNU Public License for personal, priva
 
 ** Your support will ensure the longevity of Agile Toolkit **
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8fd43ffe5d4a0d14183ea27487362660 "githalytics.com")](http://githalytics.com/atk4/atk4)
+
