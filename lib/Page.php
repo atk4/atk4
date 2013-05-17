@@ -61,8 +61,9 @@ class Page extends AbstractView {
     function recursiveRender(){
         if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
             $_GET['cut_object']=$this->short_name;
-        if($this->title && $this->owner instanceof Frontend)
+        if($this->title && $this->owner instanceof ApiFrontend){
             $this->owner->template->trySet('page_title',$this->title);
+        }
         parent::recursiveRender();
     }
 }
