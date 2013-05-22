@@ -143,14 +143,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     /** Return value of the field. If unspecified will return array of all fields.  */
     function get($name=null){
         if($name===null)return $this->data;
-        if($this->strict_fields && !$this->hasElement($name))
+
+        $f=$this->hasElement($name);
+
+        if($this->strict_fields && !$f)
             throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
-        if(!isset($this->data[$name]) && !$this->hasElement($name))
+
+        // See if we have data for the field
+        if(!$this->loaded() && !isset($this->data[$name])){ // && !$this->hasElement($name))
+
+            if($f && $f->has_default_value)return $f->defaultValue();
+
             throw $this->exception('Model field was not loaded')
-            ->addMoreInfo('id',$this->id)
-            ->addMoreinfo('field',$name);
-        if(@!array_key_exists($name,$this->data)){
-            return $this->getElement($name)->defaultValue();
+                ->addMoreInfo('id',$this->id)
+                ->addMoreinfo('field',$name);
         }
         return $this->data[$name];
     }
