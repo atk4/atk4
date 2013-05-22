@@ -181,7 +181,10 @@ class Controller_Data_Mongo extends Controller_Data {
                 $value=(bool)$value;
             }
 
-            if($f->type()=='reference_id' && $value) {
+            if(
+                ($f->type()=='reference_id' && $value && !is_array($value)) ||
+                $field == $model->id_field
+            ) {
                 $value = new MongoID($value);
             }
             $f->defaultValue($value)->system(true);
