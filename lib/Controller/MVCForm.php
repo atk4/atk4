@@ -101,9 +101,7 @@ class Controller_MVCForm extends AbstractController {
 
         $this->field_associations[$field_name]=$field;
 
-        if($field_type=='Checkbox'){
-            if(!$field->listData)$field->enum(array(1,0));
-        }elseif($field->listData() || $field instanceof Field_Reference){
+        if ($field->listData() || $field instanceof Field_Reference) {
             if($field_type=='Line')$field_type='DropDown';
         }
 
@@ -118,11 +116,7 @@ class Controller_MVCForm extends AbstractController {
             $form_field->setFieldHint($field->hint());
         }
 
-        if($field_type=='Checkbox'){
-            reset($field->listData);
-            list($form_field->true_value,$junk)=each($field->listData);
-            list($form_field->false_value,$junk)=each($field->listData);
-        }elseif($field->listData()){
+        if($field->listData()){
             $a=$field->listData();
             $form_field->setValueList($a);
         }

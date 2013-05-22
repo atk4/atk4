@@ -178,30 +178,12 @@ class Controller_Data_Mongo extends Controller_Data {
         if ($f=$model->hasElement($field)) {
             // TODO: properly convert to Mongo presentation
             if($f->type()=='boolean' && is_bool($value)) {
-                $value=(int)$value;
-            }
-
-            if(
-                ($f->type()=='reference_id' && $value && !is_array($value)) ||
-                $field == $model->id_field
-            ) {
-                $value = new MongoID($value);
-            }
-
-            $f->defaultValue($value);
-            //$f->system(true);
-        }
-        // TODO Why same code twice?
-        if ($f=$model->hasElement($field)) {
-            // TODO: properly convert to Mongo presentation
-            if($f->type()=='boolean' && is_bool($value)) {
-                $value=(int)$value;
+                $value=(bool)$value;
             }
 
             if($f->type()=='reference_id' && $value) {
                 $value = new MongoID($value);
             }
-
             $f->defaultValue($value)->system(true);
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;

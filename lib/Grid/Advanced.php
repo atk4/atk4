@@ -449,9 +449,11 @@ class Grid_Advanced extends Grid_Basic {
         @$this->columns[$field]['thparam'].=' style="text-align: center"';
     }
     function format_boolean($field){
-        if($this->current_row[$field] && $this->current_row[$field]!='N' && $this->current_row[$field]){
+        if ($this->current_row[$field] && $this->current_row[$field]!=='N') {
             $this->current_row_html[$field]='<div align=center><span class="ui-icon ui-icon-check">yes</span></div>';
-        }else $this->current_row_html[$field]='';
+        } else {
+            $this->current_row_html[$field]='';
+        }
     }
     function format_checkbox($field){
         $this->current_row_html[$field] = '<input type="checkbox" id="cb_'.
