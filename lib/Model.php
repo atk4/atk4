@@ -154,9 +154,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
             if($f && $f->has_default_value)return $f->defaultValue();
 
-            throw $this->exception('Model field was not loaded')
+
+            if($this->strict_fields)throw $this->exception('Model field was not loaded')
                 ->addMoreInfo('id',$this->id)
                 ->addMoreinfo('field',$name);
+
+            return null;
         }
         return $this->data[$name];
     }
