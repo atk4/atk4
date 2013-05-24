@@ -1,0 +1,65 @@
+// ========================================================
+//   ATK settings / variables
+// ========================================================
+//   Documentation: http://agiletoolkit.org/doc/css
+// 
+// Settings can be inherited from JUI theme (jui-variables.less file).
+// ========================================================
+
+@gridColumns:       12;         // Column count
+@gridColumnWidth:   6%;         // Column width
+@gridGutterWidth:   2.5%;       // Gutter width
+@margin:            2em;        // Global margin
+@padding:           2em;        // Global padding
+@label:             7em;        // Label width for form/dl
+@labelMargin:       2em;        // Label margin
+@dialogMargin:      120px;      // Dialog top margin
+@link:              #0053b3;    // Link color
+@shadowColor:       #000000;    // Global shadow color (used in dialogs, dropmenus, etc.) TODO: probably this should be related with @jui-bgColorShadow;
+@thborder:          #002d5e;    // Table header border color
+@border:            #e5e5e5;    // Global border color (used in tables, hr, forms, etc.)
+@even:              #f0f5fa;    // Color for even row
+@inputBorder:       #cccccc;    // Input Border
+@focused:           #00aaff;    // Color on input focus
+@error:             #e51717;    // Error color
+@lightGray:         lighten(@black,60%);    // Used for comments
+@lightestGray:      lighten(@black,90%);    // Used for background of readonly fields
+@cornerRadius:      @jui-cornerRadius;      // Global corner radius
+
+// Typography
+// ----------
+@fontFamily:        "Helvetica Neue", "Helvetica", @jui-ffDefault; // Global font family
+@fontSize:          12px;                   // Global font size
+@fontColor:         lighten(@black,10%);    // Global font color
+@lineHeight:        1.6;                    // Global line height
+
+// Helpers
+// -------
+@white:             #ffffff;    // White color
+@black:             #000000;    // Black color
+
+// Sticky footer
+// -------------
+@footerSticky:      true;       // Footer sticked to the bottom of the page
+@footerHeight:      3em;        // Footer height needs to be specific if sticky footer is applied
+
+// Gradient colors - these should somehow be calculated from @jui-... variables of JUI theme by default
+// ---------------
+// For example:
+// @headerBgGradientTop:    #gradient > .getMaxColor(@jui-bgColorHeader);
+// @headerBgGradientBottom: #gradient > .getMinColor(@jui-bgColorHeader);
+// These can also be calculated for example like this, because LESS knows how to calculate colors:
+// @headerBgGradientTop:    @jui-bgColorHeader + #101010;
+// @headerBgGradientBottom: @jui-bgColorHeader - #101010;
+
+@defaultBgGradientTop:      #f0f3f5;
+@defaultBgGradientBottom:   #dce2e5;
+
+@hoverBgGradientTop:        #ffffff;
+@hoverBgGradientBottom:     #dce2e5;
+
+@activeBgGradientTop:       #f0f3f5;
+@activeBgGradientBottom:    #ffffff;
+
+@headerBgGradientTop:       #282e33;
+@headerBgGradientBottom:    #282e33;

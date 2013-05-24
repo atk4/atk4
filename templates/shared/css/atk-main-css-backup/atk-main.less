@@ -1,0 +1,679 @@
+@import "atk-settings.less";
+@import "atk-mixins.less";
+
+
+/* Custom jQueryUI States  */
+.defaultBg(@defaultBgGradientTop,@defaultBgGradientBottom); // Default State (.ui-state-default)
+.hoverBg(@hoverBgGradientTop,@hoverBgGradientBottom);       // Hover State (.ui-state-hover)
+.activeBg(@activeBgGradientTop,@activeBgGradientBottom);    // Active State (.ui-state-active)
+.headerBg(@headerBgGradientTop,@headerBgGradientBottom);    // Widget Header (.ui-widget-header)
+
+
+/* Additional Effects */
+.ui-dialog {.box-shadow(0 25px 50px fadeout(@shadowColor,50%));}
+.atk-notification {.box-shadow(0 10px 20px @white inset);}
+.atk-growl>.atk-notification {
+    @shadow: 0 5px 10px fadeout(@shadowColor,60%),0 10px 20px @white inset;
+    .box-shadow(@shadow);
+
+}
+.ui-state-default {text-shadow:0 1px 0 @white;.box-shadow(0 1px 0 @white inset);}
+.ui-state-default {.box-shadow(0 1px 1px fadeout(@black,90%))}
+.ui-state-default.ui-state-active {.box-shadow(0 0 0);}
+
+
+/* ==============================================
+    CSS Reset
+   ============================================== */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {display:block;}
+body {line-height:1;}
+ol, ul {list-style:none;}
+blockquote, q {quotes:none;}
+blockquote:before, blockquote:after,
+q:before, q:after {content:'';content:none;}
+table {border-collapse:collapse;border-spacing:0;}
+
+
+
+// Add an alphatransparency value to any background or border color (via Elyse Holladay)
+#translucent {
+  .background(@color: @white, @alpha: 1) {
+    background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+  }
+  .border(@color: @white, @alpha: 1) {
+    border-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+    background-clip: padding-box;
+  }
+}
+
+// Reset filters for IE
+.reset-filter() {
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
+}
+
+
+/* ==============================================
+	Grid System
+    http://agiletoolkit.org/doc/css/layout
+   ============================================== */
+@extraSpace:        (@gridGutterWidth * 2); /* For our grid calculations */
+@siteWidth:         (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+
+.fixed-container() {
+  width: @siteWidth;
+  margin-left: auto;
+  margin-right: auto;
+  .clearfix();
+}
+
+.columns(@columnSpan: 1) {
+  width: (@gridColumnWidth * @columnSpan) + (@gridGutterWidth * (@columnSpan - 1));
+}
+
+.offset(@columnOffset: 1) {
+  margin-left: (@gridColumnWidth * @columnOffset) + (@gridGutterWidth * (@columnOffset - 1)) + @extraSpace;
+}
+
+.gridColumn() {
+  display: inline;
+  float: left;
+  margin-left: @gridGutterWidth;
+}
+
+/* makeColumn can be used to mark any element (e.g., .content-primary) as a column without changing markup to .span something */
+.makeColumn(@columnSpan: 1) {
+  .gridColumn();
+  .columns(@columnSpan);
+}
+
+.atk-row {
+    .clearfix();
+    +.atk-row {margin-top:@margin;}
+}
+.atk-row>*:first-child:not([class*="offset"]),
+.atk-row>form>*:first-child[class*="span"],
+.atk-row>form>*[class*="span"]>*:first-child[class*="span"] {
+    margin-left:0 !important;
+}
+.atk-row > [class*="span"],
+.atk-row > form > [class*="span"],
+.atk-row > form > [class*="span"] > [class*="span"] {
+    .gridColumn();
+}
+
+/* Default columns */
+.span1     { .columns(1); }
+.span2     { .columns(2); }
+.span3     { .columns(3); }
+.span4     { .columns(4); }
+.span5     { .columns(5); }
+.span6     { .columns(6); }
+.span7     { .columns(7); }
+.span8     { .columns(8); }
+.span9     { .columns(9); }
+.span10    { .columns(10); }
+.span11    { .columns(11); }
+.span12    { .columns(12); }
+.span13    { .columns(13); }
+.span14    { .columns(14); }
+.span15    { .columns(15); }
+.span16    { .columns(16); }
+
+/* For optional 24-column grid */
+.span17    { .columns(17); }
+.span18    { .columns(18); }
+.span19    { .columns(19); }
+.span20    { .columns(20); }
+.span21    { .columns(21); }
+.span22    { .columns(22); }
+.span23    { .columns(23); }
+.span24    { .columns(24); }
+
+/* Offset column options */
+.atk-row {
+  > .offset1   { .offset(1); }
+  > .offset2   { .offset(2); }
+  > .offset3   { .offset(3); }
+  > .offset4   { .offset(4); }
+  > .offset5   { .offset(5); }
+  > .offset6   { .offset(6); }
+  > .offset7   { .offset(7); }
+  > .offset8   { .offset(8); }
+  > .offset9   { .offset(9); }
+  > .offset10  { .offset(10); }
+  > .offset11  { .offset(11); }
+  > .offset12  { .offset(12); }
+}
+
+
+/* ==============================================
+    Features
+   ============================================== */
+.layout() when(ispercentage(@gridColumnWidth)) {
+    .atk-wrapper {.box-sizing();min-width:980px;padding-left:@gridGutterWidth;padding-right:@gridGutterWidth;}
+}
+.layout() {}
+.layout();
+
+.footerSticky() when (@footerSticky = true) {
+    html {height:100%;}
+    body {min-height:100%;height:100%;}
+    body #atk-layout {height:auto !important;height:100%;min-height:100%;}
+    body #atk-layout #atk-footer-guard {clear:both;}
+    #footer {height:@footerHeight;margin-top:-@footerHeight;}
+    #atk-footer-guard {height:@footerHeight+@margin;}
+}
+.footerSticky() when (@footerSticky = false) { }
+.footerSticky();
+
+.float-left {float:left !important;}
+.float-right {float:right !important;}
+.clear {clear:both;font-size:0;line-height:0;}
+.clearafter {.clearfix();}
+.clearwrap {overflow:hidden;}
+
+/* ==============================================
+   Loader
+   ============================================== */
+// http://radiatingstar.com/css-keyframes-animations-with-less
+.clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(360deg));}
+}
+.anti-clockwise () {
+  from {.transform(rotate(0deg));}
+  to {.transform(rotate(-360deg));}
+}
+
+@-webkit-keyframes rotate-i1 {.clockwise;}
+   @-moz-keyframes rotate-i1 {.clockwise;}
+    @-ms-keyframes rotate-i1 {.clockwise;}
+     @-o-keyframes rotate-i1 {.clockwise;}
+        @keyframes rotate-i1 {.clockwise;}
+
+@-webkit-keyframes rotate-i2 {.anti-clockwise;}
+   @-moz-keyframes rotate-i2 {.anti-clockwise;}
+    @-ms-keyframes rotate-i2 {.anti-clockwise;}
+     @-o-keyframes rotate-i2 {.anti-clockwise;}
+        @keyframes rotate-i2 {.anti-clockwise;}
+
+.loading {
+  position: absolute;
+  margin: auto;
+  z-index: 9999;
+  .opacity(70);
+  i {
+    position: absolute;
+    background: url(../images/gear-32x32.png);
+    width: 32px;
+    height: 32px;
+    .transition(linear);
+    margin: 35px 27px;
+    .animation(rotate-i2 5s infinite);
+    &:first-child {
+      margin: 10px 10px;
+      .animation(rotate-i1 5s infinite);
+    }
+  }
+}
+/* ==============================================
+    Typography
+   ============================================== */
+body {font:@fontSize @fontFamily;line-height:@lineHeight;color:@fontColor;}
+
+h1, h2, h3, h4, h5, h6 {line-height:1.3;margin:@margin/1.4 0 @margin/3 0;font-weight:bold;}
+h1 {font-size:2em;margin:0.67em 0 0.5em 0;}
+h2 {font-size:1.75em;}
+h3 {font-size:1.5em;}
+h4 {font-size:1.25em;}
+h5 {font-size:1.125em;}
+h6 {font-size:1em;}
+
+h1 small, h2 small, h3 small, h4 small, h5 small {font-size:0.75em;font-weight:normal;color:@lightGray;display:block;}
+
+p,blockquote, ul, ol, dir, menu {margin:0 0 @margin/1.8 0;}
+
+ol, ul {margin-left:2em;}
+ol {list-style-type:decimal}
+ul {list-style-type:disc;}
+ol ul, ul ol, ul ul, ol ol {margin-bottom:@margin*0.5;}
+ul li, ol li {margin-bottom:@margin/2.5;}
+ul.simple, ul.simple ul {list-style-type:none;}
+ul.simple {margin-left:0;}
+
+dl {
+    dt {width:@label;font-weight:bold;float:left;}
+    dd {margin-left:@label+@labelMargin;}
+    dd:after {width:100%;height:0px;display:block;clear:both;content:'';}
+    dd+dt {margin-top:@margin/4;}
+    dt:not(:first-child)+dd {margin-top:@margin/4;}
+    &.stacked dt {float:none;width:auto;margin-bottom:@margin/10;}
+    &.stacked dd {margin-left:0;}
+    &.stacked dt+dd {margin-top:0;}
+    &.wider-labels dt {width:@label+(@label*0.6);}
+    &.wider-labels dd {margin-left:@label+(@label*0.6)+@labelMargin;}
+    &.labels-right dt {text-align:right;}
+}
+
+a {color:@link;}
+a:hover {color:darken(@link,20%);}
+strong, b {font-weight:bold;}
+em {font-weight:normal;}
+big, .big, .ui-button.big {font-size:1.25em;}
+small, .small, .ui-button.small {font-size:0.85em;}
+.hr {border-top:1px solid @border;margin-top:@margin;padding-top:@margin;}
+
+.hr+h1, .hr+h2, .hr+h3, .hr+h4, .hr+h5,
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {margin-top:0;}
+
+.atk-box p:last-child {margin-bottom:0;}
+
+
+
+// Custom jQueryUI States
+.defaultBg(@colorStop1,@colorStop2) {
+    .ui-state-default,
+    .ui-widget-content .ui-state-default,
+    .ui-widget-header .ui-state-default
+    { #gradient > .vertical(@colorStop1,@colorStop2); }
+}
+.hoverBg(@colorStop1,@colorStop2) {
+    .ui-state-hover,
+    .ui-widget-content .ui-state-hover,
+    .ui-state-focus,
+    .ui-widget-content .ui-state-focus
+    { #gradient > .vertical(@colorStop1,@colorStop2); }
+}
+.activeBg(@colorStop1,@colorStop2) {
+    .ui-state-active,
+    .ui-widget-content .ui-state-active,
+    .ui-widget-header .ui-state-active
+    { #gradient > .vertical(@colorStop1,@colorStop2); }
+}
+.headerBg(@colorStop1,@colorStop2) {
+    .ui-widget-header { #gradient > .vertical(@colorStop1,@colorStop2); }
+}
+
+
+/* ==============================================
+    Forms
+   ============================================== */
+button::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner { padding: 0 !important;border: 0 !important;}
+
+input[type=text],
+input[type=password],
+input[readonly],
+textarea,
+div.atk-form-field-readonly {
+    font-size:@fontSize;
+    font-family:@fontFamily;
+    line-height:1.4;
+    background:@white;
+    .box-shadow(0 1px 3px rgba(0,0,0,0.1) inset);
+    border:1px solid @inputBorder;
+    .border-radius(5px);
+    padding:@padding/5;
+    .box-sizing();
+    resize:none;
+    @transition: border linear .15s, box-shadow linear .15s;
+    .transition(@transition);}
+input[readonly],
+div.atk-form-field-readonly {background:@lightestGray;}
+
+input[type=text]:focus,
+input[type=password]:focus,
+textarea:focus {
+    @shadow: 0 0 3px fadeout(@focused,30%), 0 0 10px fadeout(@focused,70%);
+    border-color:@focused;
+    .box-shadow(@shadow);
+    outline:none;}
+
+.atk-form {
+    fieldset+fieldset {margin-top:@margin;padding-top:@margin;border-top:1px solid @border;}
+    fieldset {
+        &.atk-row {
+            .atk-form-row {margin-top:0;}
+        }
+    }
+    fieldset .atk-form-row {
+        .clearafter();
+        margin-top:@margin/2;
+        &:first-child {margin-top:0;}
+        &.has-error>label {color:@error;}
+        &.has-error input {border-color:@error;}
+        >label {font-weight:bold;width:@label;margin-top:0.4em;float:left;}
+        >.atk-form-field {
+            margin-left:@label+@labelMargin;
+            input[type=text]:not([class*="span"]),
+                input[type=password]:not([class*="span"]),
+                input[readonly]:not([class*="span"]),
+                textarea:not([class*="span"]),
+                div.atk-form-field-readonly:not([class*="span"]),
+                select {width:100%;}
+            select {margin-top:0.5em;}
+            textarea {display:block;margin-bottom:@margin/5;}
+            input+input {margin-left:0.4em;}
+            .atk-form-error {margin:@margin/5 0 0;color:@error;}
+        }
+    }
+    .atk-buttons {border-top:1px solid @border;margin-top:@margin/1.5;padding-top:@margin/1.5;}
+    .atk-buttons, .legend {padding-left:@label+@labelMargin;}
+    &.stacked { 
+        fieldset {
+            margin-bottom:@margin/2;
+            .atk-form-row {
+                > label {float:none;width:auto;display:block;margin:0 0 @margin/6 0;}
+                > .atk-form-field {margin-left:0;}
+            }
+        }
+        .atk-buttons, .legend {padding-left:0;}
+        &.atk-row .atk-buttons[class*=span] {
+            &:before {content:'-';margin-bottom:@margin/6;display:block;visibility:hidden;}
+        }
+    }
+    &.atk-row {
+        fieldset {
+            padding-top:0;
+            margin-top:0;
+            border:none;
+            &[class*=span] {
+                >*[class*=span] {
+                    margin-top:0;
+                }
+                +.atk-buttons[class*=span] {
+                    border:none;
+                    margin-top:0;
+                    padding:0;
+                    text-align:left;
+                    clear:none;
+                    *.big {margin-top:-0.3em;}
+                }
+            }
+        }
+        .atk-buttons {clear:both;text-align:right;}
+    }
+    &.wider-labels { 
+        fieldset .atk-form-row {
+            >label {width:@label+(@label*0.6);float:left;}
+            >.atk-form-field {margin-left:@label+(@label*0.6)+@labelMargin;}
+        }
+        &.stacked {
+            fieldset .atk-form-row {
+                >label {width:auto;float:none;}
+                >.atk-form-field {margin-left:0;}
+            }
+        }
+        .atk-buttons, .legend {padding-left:@label+(@label*0.6)+@labelMargin;}
+    }
+    &.labels-right fieldset .atk-form-row>label {text-align:right;}
+}
+
+.input-row {
+    display:table;
+    .input-cell {
+        display:table-cell;
+        vertical-align:middle;
+        &.expanded input {width:100%;}
+        .ui-buttonset {white-space:nowrap;}
+        >.ui-button {margin-left:0;margin-right:0;}
+        .ui-button * {line-height:normal;}
+    }
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .input-row .input-cell .ui-button,
+    .input-row .input-cell .ui-button * {line-height:1.4;}
+}
+.input-row .input-cell {
+    &.expanded {
+        width:100%;
+        line-height:@lineHeight;
+        &:first-child input {
+            .border-right-radius(0);
+        }
+        +.input-cell .ui-button {
+            .border-left-radius(0);
+            margin-left:-1px;
+        }
+    }
+    &:first-child:not(.expanded) {
+        .ui-button {
+            .border-right-radius(0);
+            margin-right:-1px;
+        }
+        +.expanded input {
+            .border-left-radius(0);
+        }
+    }
+}
+.atk-form .atk-form-field ins {text-decoration:none;color:@lightGray;display:block;margin-top:@margin/8;}
+
+.atk-form .atk-form-options {
+    position:relative;
+    left:-1em;
+    top:-@margin/3;
+    margin-top:@margin/16+0.3em;
+    div {
+        padding:@margin/3 0 0 1em;
+        margin-top:0;
+        display:inline-block;
+        >input {margin-right:0.4em;}
+    }
+    &.stacked {
+        margin-top:@margin/16+0.3em;
+        position:static;
+        div {
+            margin-top:@margin/3;
+            padding:0;
+            display:block;
+            &:first-child {margin-top:0;}
+        }
+    }
+}
+
+
+/* ==============================================
+    Various ATK Objects
+   ============================================== */
+.atk-wrapper {.fixed-container();}
+
+.atk-grid {
+    >.atk-grid-panel {
+    clear:both;
+        >.ui-buttonset,>.atk-quicksearch {margin:@margin/12 0 @margin/4 0;}
+    }
+    >table {
+        border-collapse:separate;
+        width:100%;
+        >thead>tr>th {border:none;text-align:left;padding:@padding/5 @padding/3;}
+        >tbody>tr>td {border-bottom:1px solid @border;padding:@padding/3;}
+        >tbody>tr>td>img {vertical-align: middle;}
+        >tbody>tr>td .atk-dropmenu {.opacity(0);}
+        >tbody>tr:hover>td .atk-dropmenu {
+            .transition(opacity @transition);
+            @transition: opacity .2s;
+            .transition(@transition);
+            .opacity(100);
+        }
+    }
+    >.atk-paginator {text-align:center;padding-top:@margin;}
+    &.bordered {
+        >table {
+            >thead>tr>th {border:1px solid @thborder;border-width:1px 1px 1px 0;}
+            >thead>tr>th:first-child, >tbody>tr>td:first-child {border-left-width:1px;}
+            >tbody>tr>td {border:1px solid @border;border-width:0 1px 1px 0;}
+        }
+    }
+    &.zebra {
+        > table>tbody>tr:nth-child(2n)>td {background:@even;}
+    }
+}
+
+.atk-menu {.clearfix();position:relative;}
+.atk-menu ul, .atk-menu ul li {margin:0;padding:0;list-style-type:none;}
+.atk-menu ul li a {display:block;}
+.atk-menu-horizontal ul li {
+    float:left;
+    border-width:1px 0px 1px 1px;
+    &:last-child {border-width:1px;border-right-width:1px !important;}
+    &.ui-state-active {border-width:1px;}
+    &.ui-state-active+li {border-width:1px 0px 1px 0;}
+}
+.atk-menu-vertical ul li {
+    border-width:1px 1px 0px 1px;
+    &:last-child {border-width:1px;border-bottom-width:1px !important;}
+    &.ui-state-active {border-width:1px;}
+    &.ui-state-active+li {border-width:0px 1px;}
+}
+
+.atk-flexy {
+    display:table;
+    >div {display:table-cell;vertical-align:top;.box-sizing();}
+}
+
+.atk-box {
+    padding:@padding;
+    +.atk-box {margin-top:@margin;}
+}
+.atk-block {margin-bottom:@margin;}
+
+.atk-buttons>* {margin-left:0.4em;}
+.atk-buttons>*:first-child {margin-left:0;}
+.atk-sep {color:@lightGray;margin:0 1em;}
+.atk-paginator {
+    a, span {font-size:0.9em;text-decoration:none;padding:@padding/4 @padding/2;margin:0;display:inline-block;}
+    a.disabled {color:@lightGray;cursor:default;}
+    a:hover {color:;}
+}
+.atk-notification {
+    padding:@padding/2;
+    position:relative;
+    .atk-notification-text {
+        padding:0 20px;
+        >.ui-icon {position:absolute;top:@padding/1.8;left:@padding/2;}
+    }
+    >a.ui-icon-closethick {position:absolute;top:@padding/4;right:@padding/4;}
+}
+
+.atk-dropmenu {
+    position:relative;
+    .ui-widget-content {
+        .box-shadow(0 5px 5px fadeout(@shadowColor,80%));
+        outline:none;
+        padding:0;
+        display:none;
+        position:absolute;
+        top:100%;
+        right:-1px;
+        z-index:99;
+        span {
+            border:0;
+            color:@link;
+            font-size:0.9em;
+            line-height:1;
+            text-indent:10px;
+            text-align:left;
+            white-space:nowrap;
+            padding:@padding/3 @padding;
+            display:block;
+            position:relative;
+            .ui-icon {
+                left:@padding;
+                margin-left:-8px;
+                margin-right:0;
+            }
+        }
+    }
+    &.right .ui-widget-content {
+        left:-1px;
+        right:auto;
+    }
+    &.ui-state-active {
+        .border-bottom-radius(0);
+    }
+}
+
+.atk-growl {
+    font-weight:bold;
+    position:fixed;
+    top:@margin*2;
+    right:@margin*2;
+    z-index:9999;
+    .opacity(80);
+    >div {
+        width:180px;
+        margin-top:@margin;
+        position:relative;
+        &:first-child {margin-top:0;}
+        .ui-icon-closethick {.opacity(0);@transition: opacity .2s;.transition(@transition);}
+        &:hover {.ui-icon-closethick {.opacity(100);}}
+    }
+}
+
+
+/* ==============================================
+    jQueryUI Tweaks
+   ============================================== */
+.ui-widget {font-family:@fontFamily;font-size:@fontSize;line-height:@lineHeight;}
+.ui-helper-reset {line-height:@lineHeight;}
+
+.ui-tabs.ui-widget-content {background:none;filter:none;border:none;padding:0;}
+.ui-tabs .ui-tabs-nav.ui-widget-header {background:none;filter:none;border-width:0px 0px 1px 0;padding:0;.border-radius(0);}
+.ui-tabs .ui-tabs-panel {padding:@padding/1.5 0 0 0;color:@fontColor;}
+
+.ui-widget-overlay {position:fixed !important;top:0;left:0;}
+.ui-dialog {padding:0;}
+
+// .ui-selected {background:#2e8ae5;color:@white;}
+
+
+/* Relative Paddings  */
+.ui-accordion .ui-accordion-header a {padding:@padding/4 @padding/4 @padding/4 @padding/6.5; }
+.ui-accordion-icons .ui-accordion-header a {padding-left:@padding/3+1.4;}
+.ui-accordion .ui-accordion-content { padding:@padding/2 @padding;}
+.ui-accordion .ui-accordion-header .ui-icon {left: @padding/4;}
+.ui-button-text-only .ui-button-text { padding:@padding/5 @padding/2; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding:@padding/5;}
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding:@padding/5 @padding/2 @padding/5 @padding/3+1.4; }
+.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { padding:@padding/5 @padding/3+1.4 @padding/5 @padding/2; }
+.ui-button-text-icons .ui-button-text { padding-left:@padding/3+1.4; padding-right:@padding/3+1.4; }
+.ui-button-icons-only .ui-button-icon-primary {left:.5em !important;}
+.ui-button-icons-only .ui-button-icon-secondary {right:.5em !important;}
+/* no icon support for input elements, provide padding by default */
+input.ui-button,
+.atk-menu ul li a {padding:@padding/5 @padding/2;}
+.ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary { left:@padding/4; }
+.ui-button-text-icon-secondary .ui-button-icon-secondary, .ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right:@padding/4; }
+.ui-button-text-icons .ui-button-icon-secondary, .ui-button-icons-only .ui-button-icon-secondary { right:@padding/4; }
+
+.ui-dialog .ui-dialog-titlebar {padding:@padding/5 @padding/3;}
+.ui-dialog .ui-dialog-content {padding:@padding/2;}
+.ui-tabs .ui-tabs-nav li a {padding:@padding/4 @padding/2;}
+
+.ui-datepicker {padding:@padding/10 @padding/10 0;}
+
+.ui-datepicker table {margin:0 0 @padding/5; }
+.ui-datepicker th { padding:@padding/3 @padding/7;}
+.ui-datepicker td span, .ui-datepicker td a {padding:@padding/10;}
+.ui-datepicker .ui-datepicker-buttonpane {margin:@padding/3 0 0; padding:0 @padding/10;}
+.ui-datepicker .ui-datepicker-buttonpane button {margin:@padding/4 @padding/10 @padding/5;padding:@padding/5 @padding/3 @padding/7 @padding/3;}
+
+/* with multiple calendars */
+.ui-datepicker-multi .ui-datepicker-group table {margin:0 auto @padding/5;}

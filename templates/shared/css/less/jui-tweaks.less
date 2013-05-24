@@ -1,0 +1,100 @@
+/* ==============================================
+    jQueryUI Tweaks
+   ============================================== */
+
+/* Custom jQueryUI States  */
+#jui > .defaultBg( @defaultBgGradientTop, @defaultBgGradientBottom ); // Default (.ui-state-default)
+#jui > .hoverBg  ( @hoverBgGradientTop,   @hoverBgGradientBottom   ); // Hover   (.ui-state-hover)
+#jui > .activeBg ( @activeBgGradientTop,  @activeBgGradientBottom  ); // Active  (.ui-state-active)
+#jui > .headerBg ( @headerBgGradientTop,  @headerBgGradientBottom  ); // Widget  (.ui-widget-header)
+
+/* Additional Effects */
+.ui-state-default { text-shadow: 0 1px 0 @white; .box-shadow(0 1px 0 @white inset); }
+.ui-state-default { .box-shadow(0 1px 1px fadeout(@black,90%)); } // BUG: this is overwriting previous row !!!
+.ui-state-default.ui-state-active { .box-shadow(0 0 0); }
+
+/* JUI Tweaks */
+.ui-widget { font-family: @fontFamily; font-size: @fontSize; line-height: @lineHeight; }
+.ui-helper-reset { line-height: @lineHeight;}
+.ui-widget-overlay { position: fixed !important; top: 0; left: 0; }
+// .ui-selected {background:#2e8ae5;color:@white;} // @focused ?
+
+/* Relative Paddings  */
+.ui-accordion .ui-accordion-header a { padding: @padding/4 @padding/4 @padding/4 @padding/6.5; }
+.ui-accordion-icons .ui-accordion-header a { padding-left: @padding/3+1.4; }
+.ui-accordion .ui-accordion-content { padding: @padding/2 @padding; }
+.ui-accordion .ui-accordion-header .ui-icon { left: @padding/4; }
+.ui-button-text-only .ui-button-text { padding: @padding/5 @padding/2; }
+.ui-button-icon-only .ui-button-text,
+.ui-button-icons-only .ui-button-text { padding: @padding/5; }
+.ui-button-text-icon-primary .ui-button-text,
+.ui-button-text-icons .ui-button-text { padding: @padding/5 @padding/2 @padding/5 @padding/3+1.4; }
+
+.ui-button-text-icon-secondary .ui-button-text,
+.ui-button-text-icons .ui-button-text { padding: @padding/5 @padding/3+1.4 @padding/5 @padding/2; }
+.ui-button-text-icons .ui-button-text { padding-left: @padding/3+1.4; padding-right: @padding/3+1.4; }
+
+.ui-button-icons-only {
+    .ui-button-icon-primary { left: .5em !important; }
+    .ui-button-icon-secondary { right: .5em !important; }
+}
+
+/* no icon support for input elements, provide padding by default */
+input.ui-button,
+.atk-menu ul li a { padding: @padding/5 @padding/2; }
+
+.ui-button-text-icon-primary .ui-button-icon-primary,
+.ui-button-text-icons .ui-button-icon-primary,
+.ui-button-icons-only .ui-button-icon-primary { left: @padding/4; }
+
+.ui-button-text-icon-secondary .ui-button-icon-secondary,
+.ui-button-text-icons .ui-button-icon-secondary,
+.ui-button-icons-only .ui-button-icon-secondary { right: @padding/4; }
+
+.ui-button-text-icons .ui-button-icon-secondary,
+.ui-button-icons-only .ui-button-icon-secondary { right: @padding/4; }
+
+/* Tabs */
+.ui-tabs {
+    &.ui-widget-content { background: none; filter: none; border: none; padding: 0;}
+    .ui-tabs-panel { padding: @padding/1.5 0 0 0; color: @fontColor; }
+    .ui-tabs-nav{
+        &.ui-widget-header {
+            background: none;
+            filter: none;
+            border-width: 0px 0px 1px 0;
+            padding: 0;
+            .border-radius(0);
+        }
+        li a { padding: @padding/4 @padding/2; }
+    }
+}
+
+/* Dialog */
+.ui-dialog {
+    padding: 0;
+    .box-shadow(0 25px 50px fadeout(@shadowColor,50%));
+    .ui-dialog-titlebar { padding: @padding/5 @padding/3; }
+    .ui-dialog-content { padding: @padding/2; }
+}
+
+/* Date picker */
+.ui-datepicker {
+    padding: @padding/10 @padding/10 0;
+    table {
+        margin: 0 0 @padding/5;
+        th { padding: @padding/3 @padding/7; }
+        td span, td a { padding: @padding/10; }
+    }
+    .ui-datepicker-buttonpane {
+        margin: @padding/3 0 0;
+        padding: 0 @padding/10;
+        button {
+            margin: @padding/4 @padding/10 @padding/5;
+            padding: @padding/5 @padding/3 @padding/7 @padding/3;
+        }
+    }
+}
+
+/* Datepicker with multiple calendars */
+.ui-datepicker-multi .ui-datepicker-group table { margin: 0 auto @padding/5; }
