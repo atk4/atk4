@@ -28,6 +28,8 @@
 class Form_Basic extends View implements ArrayAccess {
     protected $form_template = null;
     protected $form_tag = null;
+
+    public $layout=null; // template of layout if form has one
     
     // Here we will have a list of errors occured in the form, when we tried to
     // submit it. field_name => error
@@ -409,7 +411,7 @@ class Form_Basic extends View implements ArrayAccess {
     function setLayout($template){
         // Instead of building our own Content we will take it from
         // pre-defined template and insert fields into there
-        $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
+        $this->layout = $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
         $this->template_chunks['custom_layout']->trySet('_name',$this->name);
         $this->template->trySet('form_class_layout',$c='form_'.basename($template));
         return $this;
