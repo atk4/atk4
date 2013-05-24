@@ -1,0 +1,45 @@
+/* ==============================================
+	Grid System
+    http://agiletoolkit.org/doc/css/layout
+   ============================================== */
+
+.atk-grid {
+    
+    // Grid panel
+    > .atk-grid-panel {
+        clear: both;
+        > .ui-buttonset,
+        > .atk-quicksearch { margin: @margin/12 0 @margin/4 0; }
+    }
+  
+    // Grid table itself
+    > table {
+        border-collapse: separate;
+        width: 100%;
+        > thead {
+            > tr > th { border: none; text-align: left; padding:@padding/5 @padding/3; }
+        }
+        > tbody > tr {
+            > td {
+                border-bottom: 1px solid @border;
+                padding: @padding/3;
+                > img { vertical-align: middle; }
+            }
+        }
+    }
+
+    // Grid with borders
+    &.bordered {
+        > table {
+            > thead > tr > th { border: 1px solid @thborder; border-width:1px 1px 1px 0; }
+            > thead > tr > th:first-child,
+            > tbody > tr > td:first-child { border-left-width: 1px; }
+            > tbody > tr > td { border: 1px solid @border; border-width: 0 1px 1px 0; }
+        }
+    }
+
+    // "Zebra" grid
+    &.zebra {
+        > table > tbody > tr:nth-child(2n) > td { background: @even; }
+    }
+}
