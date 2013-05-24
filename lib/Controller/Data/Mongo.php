@@ -69,6 +69,7 @@ class Controller_Data_Mongo extends Controller_Data {
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
         if ($model->debug) echo '<font style="color: blue">='.$model->id.'</font><br/>';
+        $model->dirty=array();
         return $model->id;
     }
     function tryLoad($model,$id){
