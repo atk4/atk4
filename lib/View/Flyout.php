@@ -37,7 +37,7 @@ class View_Flyout extends View {
 
         $this->js(true)->dialog(array(
             'modal'=>true,
-            'dialogClass'=>'flyout',
+            'dialogClass'=>'popover',
             'dragable'=>false,
             'resizable'=>false,
             'autoOpen'=>false,
