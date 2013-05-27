@@ -325,7 +325,7 @@ class Form_Basic extends View implements ArrayAccess {
                 $f=$e->getField();
                 if($f && is_string($f) && $fld=$this->hasElement($f)){
                     $fld->displayFieldError($e->getMessage());
-                } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+                } else $this->js()->univ()->alert($e->getMessage())->execute();
             }
             if($e instanceof Exception_ForUser){
                 $this->js()->univ()->alert($e->getMessage())->execute();
@@ -373,7 +373,7 @@ class Form_Basic extends View implements ArrayAccess {
                 $f=$e->getField();
                 if($f && is_string($f) && $fld=$this->hasElement($f)){
                     $fld->displayFieldError($e->getMessage());
-                } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+                } else $this->js()->univ()->alert($e->getMessage())->execute();
             }
             if($e instanceof Exception_ForUser){
                 $this->js()->univ()->alert($e->getMessage())->execute();
