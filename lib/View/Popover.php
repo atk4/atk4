@@ -14,23 +14,13 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-/* Flyout is a handy view which can be used to display content in 
+/* Popover is a handy view which can be used to display content in 
 * frames.The flayout will automatically hide itself and position itself 
 * relative to your element */
-class View_Flyout extends View {
+class View_Popover extends View {
 
     public $position='top';
     // can be top, bottom, left or right
-
-    public $offset='';
-
-    function useArrow(){
-        $this->addStyle('display','none');
-        $this->offset='+10';
-        /*
-         */
-        return $this;
-    }
 
     /* Returns JS which will position this element and show it */
     function showJS($element=null,$options=array()){
