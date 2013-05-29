@@ -177,6 +177,9 @@ class Controller_Data_Array extends Controller_Data{
     function getRows($model){
         return $model->_table[$this->short_name];
     }
+    function count(){
+        return count($model->_table[$this->short_name]);
+    }
     function setOrder($model,$field,$desc=false){
         if (is_bool($desc)) {
             $desc=$desc?'desc':'';
