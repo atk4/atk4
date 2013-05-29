@@ -1,6 +1,6 @@
 Agile Toolkit - Web UI Toolkit
 ====
-Agile Toolkit is a Web UI framework and collection of usable widgets. It allows you to develop rich web application by writ in only PHP code. Agile Toolkit is inspired by Desktop GUI Toolkits and is a fully-object oriented development environment.
+Agile Toolkit is a Web UI framework and collection of usable widgets. It allows you to develop rich web applications by writing only PHP code. Agile Toolkit is inspired by Desktop GUI Toolkits and is a fully-object oriented development environment.
 
 Overview
 ----
