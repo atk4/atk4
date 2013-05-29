@@ -129,6 +129,9 @@ class Controller_Data_Memcached extends Controller_Data {
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
     }
+    /*
+    // Imants: I believe this is useless method, because $this->array_data is not used anywhere.
+    // Maybe its because we now have Controller_Data_ArrayAssoc for such purpose?
     function setAssoc($data){
         $this->array_data=array();
         foreach($data as $id=>$name){
@@ -136,6 +139,7 @@ class Controller_Data_Memcached extends Controller_Data {
         }
         return $this;
     }
+    */
     function getActualFields(){
         return array();
     }
