@@ -29,24 +29,26 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-class Controller_Data_Array extends Controller_Data {
+class Controller_Data_Array extends Controller_Data{
 
-    /* By default new records are added with the ID being sequential. If you set this to false, then model IDs will be assigned using unique identifiers */
-    public $sequential_id=true;
+    /**
+     * By default new records are added with the ID being sequential. If you set
+     * this to false, then model IDs will be assigned using unique identifiers.
+     */
+    public $sequential_id = true;
+    
+    /**
+     * Maximum ID value. Used when $sequential_id = true.
+     */
+    protected $max_id = 0;
 
-    /* If your model is using id_field and the record with key==id was not found, controller will scan array for a matching record based on the field. 
-     * When you are using data blob from external source which does not have key associations, you should keep this "true". If you save records using
-     * save() only, it will maintain keys automatically and you can set this to false for extra speed.
-     *
-     * This setting have no effect on models without id_field property, as those would always rely on keys */
-    public $search_on_load=true;
+
 
     function setSource($model,$data=undefined){
         if(!$data || $data===undefined)$data=array();
         parent::setSource($model,$data);
 
         if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
-
 
         return $this;
     }
@@ -100,10 +102,13 @@ class Controller_Data_Array extends Controller_Data {
         if(is_object($id))return;
 
         if(@$model->id_field){
-            if( !isset($model->_table[$this->short_name][$id]) || $model->_table[$this->short_name][$id][$model->id_field]!=$id){
+            if ( !isset($model->_table[$this->short_name][$id]) 
+                || $model->_table[$this->short_name][$id][$model->id_field]!=$id) {
+                
                 return $this->tryLoadBy($model,$model->id_field,$id);
             }
-            // ID key exists and it points to record with a matching id_field. Lucky! Can save some time loading it.
+            // ID key exists and it points to record with a matching id_field.
+            // Lucky! Can save some time loading it.
         }
         if(!isset($model->_table[$this->short_name][$id]))return $this;
         $model->data=$model->_table[$this->short_name][$id];
@@ -113,41 +118,52 @@ class Controller_Data_Array extends Controller_Data {
     }
     function load($model,$id=null){
         $this->tryLoad($model,$id);
-        if(!$model->loaded())throw $this->exception('Unable to load data')
-            ->addMoreInfo('id',$id);
+        if (! $model->loaded()) {
+            throw $this->exception('Unable to load data')
+                ->addMoreInfo('id',$id);
+        }
         return $this;
     }
     function save($model,$id=null){
+        $id = $id?:$model->id;
+        
         if(is_null($id)){
             if($this->sequential_id){
-                // Imants: This fail if array is not sorted in ascending order by its keys
-                //end($model->_table[$this->short_name]);
-                //list($id)=each($model->_table[$this->short_name]);
-                //$id++;
-                if(!empty($model->_table[$this->short_name])) {
-                    $id = max(array_keys($model->_table[$this->short_name])) + 1;
-                } else {
-                    $id = 1;
-                }
+                $id = ++$this->max_id;
             }else{
-                $id=uniqid();
+                $id = uniqid();
             }
             if($model->id_field){
                 $model->data[$model->id_field]=$id;
             }
-            $model->_table[$this->short_name][$id]=$model->data;
-        }else{
-            $model->_table[$this->short_name][$id]=$model->data;
         }
+        $model->_table[$this->short_name][$id]=$model->data;
+        
         return $id;
     }
     function delete($model,$id=null){
-        unset($model->_table[$this->short_name][$id?:$model->id]);
+        $id = $id?:$model->id;
+        
+        unset($model->_table[$this->short_name][$id]);
         $model->unload();
+        
+        // Imants: if we delete last element, then roll back sequence ID by one.
+        // Disabled because sequence should only go forward and no backwards.
+        // It's like AutoIncrement in MySQL, or Sequence in Oracle.
+        // if ($this->sequential_id && $this->max_id == $id) {
+        //     $this->max_id--;
+        // }
+        
         return $this;
     }
     function deleteAll($model){
         $model->_table[$this->short_name]=array();
+        
+        // Reset max id. Works like Truncate in MySQL or Oracle.
+        if ($this->sequential_id) {
+            $this->max_id = 0;
+        }
+        
         return $this;
     }
     function getRows($model){
@@ -176,21 +192,18 @@ class Controller_Data_Array extends Controller_Data {
         reset($model->_table[$this->short_name]);
 
         list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
+        if(@$model->id_field && isset($model->data[$model->id_field])) {
+            $model->id=$model->data[$model->id_field];
+        }
         return $model->data;
     }
     function next($model){
         list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
+        if(@$model->id_field && isset($model->data[$model->id_field])) {
+            $model->id=$model->data[$model->id_field];
+        }
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
-    }
-    function setAssoc($data){
-        $this->array_data=array();
-        foreach($data as $id=>$name){
-            $this->array_data[]=array('id'=>$id,'name'=>$name);
-        }
-        return $this;
     }
     function getActualFields(){
         return array();
