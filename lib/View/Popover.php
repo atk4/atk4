@@ -15,7 +15,7 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 /* Popover is a handy view which can be used to display content in 
-* frames.The flayout will automatically hide itself and position itself 
+* frames.The popover will automatically hide itself and position itself 
 * relative to your element */
 class View_Popover extends View {
 
