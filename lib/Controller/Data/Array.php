@@ -48,7 +48,9 @@ class Controller_Data_Array extends Controller_Data{
         if(!$data || $data===undefined)$data=array();
         parent::setSource($model,$data);
 
-        if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
+        if(!$model->hasElement($model->id_field)) {
+            $model->addField($model->id_field)->system(true);
+        }
 
         return $this;
     }
@@ -129,6 +131,12 @@ class Controller_Data_Array extends Controller_Data{
         
         if(is_null($id)){
             if($this->sequential_id){
+                // calculate initial max_id in case we already have some initial
+                // data somehow set, but not with save().
+                if (!$this->max_id && !empty($model->_table[$this->short_name])) {
+                    $this->max_id = max(array_keys($model->_table[$this->short_name]));
+                }
+                
                 $id = ++$this->max_id;
             }else{
                 $id = uniqid();
