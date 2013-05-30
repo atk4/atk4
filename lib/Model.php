@@ -135,6 +135,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                 || is_array($this->data[$name])
                 || (string)$value!=(string)$this->data[$name] // this is not nice.. 
                 || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
+                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
             )
         ) {
             $this->data[$name]=$value;
