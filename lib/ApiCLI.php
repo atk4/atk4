@@ -278,6 +278,10 @@ class ApiCLI extends AbstractView
         else $url->setPage($page);
         return $url->setArguments($arguments);
     }
+
+    function getStickyArguments(){
+        return array();
+    }
     /** @obsolete use url() */
     function getDestinationURL($page=null,$arguments=array()){ return $this->url($page,$arguments); }
     // }}}
