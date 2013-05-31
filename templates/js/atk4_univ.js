@@ -429,7 +429,7 @@ ajaxec: function(url,data,fn){
 		}catch(e){
 			w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
 			if(w){
-				w.document.write('<h2>Error in AJAXec response: '+e+'</h2>');
+				w.document.write('<h5>Error in AJAXec response: '+e+'</h5>');
 				w.document.write(ret);
 				w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 			}else{
