@@ -227,8 +227,13 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_datetime($field){
         if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-            $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+            if($this->current_row[$field] instanceof MongoDate){
+                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+                    $this->current_row[$field]->sec);
+            }else{
+                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
                     strtotime($this->current_row[$field]));
+            }
     }
     function format_timestamp($field){
         if(!$this->current_row[$field])$this->current_row[$field]='-';
