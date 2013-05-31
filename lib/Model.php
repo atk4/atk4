@@ -135,6 +135,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                 || is_array($this->data[$name])
                 || (string)$value!=(string)$this->data[$name] // this is not nice.. 
                 || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
+                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
             )
         ) {
             $this->data[$name]=$value;
@@ -461,7 +462,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this;
     }
     function count(){
-        return $this->controller->count($this);
+        if($this->controller && $this->controller->hasMethod('count')) {
+            return $this->controller->count($this);
+        } else {
+            throw $this->exception('Model do not have controller or count() method not implemented in controller')
+                ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
+        }
     }
     // }}}
 

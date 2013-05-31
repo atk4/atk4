@@ -74,7 +74,7 @@ abstract class Controller_Data extends AbstractController {
     /** Create a new cursor and load model with the first entry */
     abstract function rewind($model);
 
-    /** Provided that rewind  was called before, load next data entry */
+    /** Provided that rewind was called before, load next data entry */
     abstract function next($model);
 
     /** Optional function your driver migt support */
