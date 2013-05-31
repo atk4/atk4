@@ -319,28 +319,30 @@ class Logger extends AbstractController {
             }
         }
 
-        echo "<h2>Application Error: ". htmlspecialchars($e->getMessage()) ."</h2>\n";
-        echo '<p><font color=red>' . get_class($e) . ', code: '.$e->getCode().'</font></p>';
-        if($e->more_info){
-            echo '<p>Additional information:';
-            echo $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
-            echo '</p>';
-        }
-        if($e->actions){
-            echo '<p>Possible Actions: <ul>';
-            foreach($e->actions as $key=>$val){
-                echo '<li><a href="'.$this->api->url(null,$val).'">'.$key.'</a></li>';
-            }
-            echo '</ul></p>';
-        }
-        if(method_exists($e,'getMyFile'))echo '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
-        if(method_exists($e,'getMyTrace'))echo $this->backtrace(3,$e->getMyTrace());
-        else echo $this->backtrace($e->shift,$e->getTrace());
+        $o='';
+        $o.= "<h2>Application Error: ". htmlspecialchars($e->getMessage()) ."</h2>\n";
+        $o.= '<p><font color=red>' . get_class($e) . ', code: '.$e->getCode().'</font></p>';
+        if($e->more_info){
+            $o.= '<p>Additional information:';
+            $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
+            $o.= '</p>';
+        }
+        if(method_exists($e,'getMyFile'))$o.= '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
+
+        if(method_exists($e,'getMyTrace'))$o.= $this->backtrace(3,$e->getMyTrace());
+        else $o.= $this->backtrace($e->shift,$e->getTrace());
+
+        if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
+            $this->displayError($o);
+        }else echo $o;
 
         echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
 
         exit;
+    }
+    function displayError($o){
+        $this->api->js()->univ()->dialogError($o,array('width'=>900,'height'=>500))->execute();
     }
     function print_r($key,$gs,$ge,$ls,$le,$ind=' '){
         $o='';
