@@ -55,6 +55,11 @@ class View_Button extends View_HtmlElement {
 
         return parent::render();
     }
+    function link($page,$args=array()){
+        $this->setElement('a');
+        $this->setAttr('href',$this->api->url($page,$args));
+        return $this;
+    }
     // }}}
 
     // {{{ Click handlers
