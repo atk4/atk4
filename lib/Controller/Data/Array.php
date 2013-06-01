@@ -185,8 +185,12 @@ class Controller_Data_Array extends Controller_Data{
         return $this;
     }
     function getRows($model){
-        // Imants: not sure, but maybe this should take in account setLimit too if it's enabled?
-        return $model->_table[$this->short_name];
+        $t =& $model->_table[$this->short_name];
+        if ($this->limited) {
+            return array_slice($t, $this->limit_offset, $this->limit_count, true);
+        } else {
+            return $t;
+        }
     }
     function count($model){
         return count($model->_table[$this->short_name]);
