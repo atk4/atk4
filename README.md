@@ -16,7 +16,7 @@ Installing
 ----
 To start a new web application in Agile Toolkit, create a new folder anywhere in your web-root and execute there:
 
-    curl -sS http://agiletoolkit.org/install | sh
+    curl -sS https://agiletoolkit.org/install | sh
 
 This will install [Composer](http://getcomposer.org) and configure your secure installations. You can now preview your installation of Agile Toolkit:
 
