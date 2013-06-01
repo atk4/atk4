@@ -303,6 +303,10 @@ dialogBox: function(options){
 	},options));
 },
 dialogURL: function(title,url,options,callback){
+    if(typeof url == 'undefined'){
+        url=title;
+        title='Untitled Dialog';
+    }
 	var dlg=this.dialogBox($.extend(options,{title: title,autoOpen: true}));
     dlg.closest('.ui-dialog').hide().fadeIn('slow');
 	dlg.atk4_load(url,callback);
