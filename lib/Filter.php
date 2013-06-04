@@ -66,7 +66,7 @@ class Filter extends Form
             }
         }
 
-        // call applyFilter method of model of associated view if such exist
+        // call applyFilter hook if such exist, pass model of associated view as parameter
         $this->hook('applyFilter',array($this->view->model));
     }
     
