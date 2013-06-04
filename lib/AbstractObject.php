@@ -406,18 +406,13 @@ abstract class AbstractObject
      * @param string $key   Key for the data
      * @param mixed  $value Value
      *
-     * @return AbstractObject $this
+     * @return mixed $value
      */
     function memorize($key, $value)
     {
-
-
-        if (!isset ($value)) {
-            return $this->recall($key);
-        }
         $this->api->initializeSession();
 
-        if($value instanceof Model){
+        if ($value instanceof Model) {
             $_SESSION['s'][$this->name][$key] = serialize($value);
             unset($_SESSION['o'][$this->name][$key]);
             return $value;
@@ -427,17 +422,17 @@ abstract class AbstractObject
         return $_SESSION['o'][$this->name][$key] = $value;
     }
     /** 
-     * Similar to memorize, but if value for key exist, will return Iterator
-     * instead.
+     * Similar to memorize, but if value for key exist, will return it
      *
      * @param string $key     Data Key
      * @param mixed  $default Default value
      *
-     * @return AbstractObject $this
+     * @return mixed Previously memorized data or $default
      */
     function learn($key, $default = null)
     {
         $this->api->initializeSession(false);
+        
         if (!isset ($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
@@ -451,7 +446,7 @@ abstract class AbstractObject
     }
     /** 
      * Forget session data for arg $key. If $key is omitted will forget
-     * all associated session data
+     * all associated session data.
      *
      * @param string $key Optional key for data to forget
      *
@@ -460,17 +455,20 @@ abstract class AbstractObject
     function forget($key = null)
     {
         $this->api->initializeSession();
-        if (isset ($key)) {
-            unset ($_SESSION['o'][$this->name][$key]);
-            unset ($_SESSION['s'][$this->name][$key]);
-        } else {
+        
+        if ($key === null) {
             unset ($_SESSION['o'][$this->name]);
             unset ($_SESSION['s'][$this->name]);
+        } else {
+            unset ($_SESSION['o'][$this->name][$key]);
+            unset ($_SESSION['s'][$this->name][$key]);
         }
+        
+        return $this;
     }
     /** 
      * Returns session data for this object. If not previously set, then
-     * $default is returned 
+     * $default is returned
      * 
      * @param string $key     Data Key
      * @param mixed  $default Default value
@@ -480,14 +478,15 @@ abstract class AbstractObject
     function recall($key, $default = null)
     {
         $this->api->initializeSession(false);
+        
         if (!isset ($_SESSION['o'][$this->name][$key])
-            ||is_null($_SESSION['o'][$this->name][$key])
+            || is_null($_SESSION['o'][$this->name][$key])
         ) {
 
-            if(!isset($_SESSION['s'][$this->name][$key])){
+            if (!isset($_SESSION['s'][$this->name][$key])) {
                 return $default;
             }
-            $v=$this->add(unserialize($_SESSION['s'][$this->name][$key]));
+            $v = $this->add(unserialize($_SESSION['s'][$this->name][$key]));
             $v->init();
             return $v;
         }
