@@ -46,40 +46,42 @@ class Paginator_Basic extends CompleteLister {
             $this->skip=@$_GET[$this->skip_var]+0;
         }
         
+        // Start iterating early ($source = DSQL of model)
         if($source instanceof Model_Table){
-
-            // Start iterating early
             $source = $source->_preexec();
-
-            $source->limit($this->ipp,$this->skip);
+        }
+        
+        if($source instanceof DB_dsql){
+            $source->limit($this->ipp, $this->skip);
             $source->calcFoundRows();
-
-            $this->source=$source;
+            $this->source = $source;
 
         }elseif($source instanceof Model){
-            $this->source=$source->setLimit($this->ipp,$this->skip);
+            $this->source = $source->setLimit($this->ipp,$this->skip);
             
-        }elseif($source instanceof DB_dsql){
-            $source->_dsql()->calcFoundRows();
-
         }else{
+            // NOTE: no limiting enabled for unknown data source
             $this->source =& $source;
         }
     }
     function recursiveRender(){
 
         // get data source
-        if(!$this->source){
-            if($this->owner->model){
-                if($this->owner instanceof Grid_Advanced) {
-                    $this->owner->getIterator(); // force grid->model sorting implemented in Grid_Advanced
-                }
-                $this->setSource($this->owner->model);
+        if (! $this->source) {
+            
+            // force grid sorting implemented in Grid_Advanced
+            if($this->owner instanceof Grid_Advanced) {
+                $this->owner->getIterator();
             }
-        }
-
-        if(!isset($this->source)) {
-            throw $this->exception('Unable to find source for Paginator');
+            
+            // set data source for Paginator
+            if ($this->owner->model) {
+                $this->setSource($this->owner->model);
+            } elseif ($this->owner->dq) {
+                $this->setSource($this->owner->dq);
+            } else {
+                throw $this->exception('Unable to find source for Paginator');
+            }
         }
 
         // calculate found rows
