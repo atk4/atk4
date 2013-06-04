@@ -223,7 +223,7 @@ class ApiWeb extends ApiCLI {
             $params[$key]=$this->api->getConfig('session/'.$key,$default);
         }
 
-        if($create==false && !isset($_COOKIE[$this->name]))return;
+        if($create===false && !isset($_COOKIE[$this->name]))return;
         $this->_is_session_initialized=true;
         session_set_cookie_params(
             $params['lifetime'],
