@@ -37,7 +37,6 @@ class ApiWeb extends ApiCLI {
         $this->skin=$skin;
         try {
 
-
             parent::__construct($realm);
         }catch (Exception $e){
 
@@ -50,8 +49,6 @@ class ApiWeb extends ApiCLI {
     }
     /** Redifine this function instead of default constructor */
     function init(){
-        // Do not initialize unless requsetd
-        //$this->initializeSession();
         $this->getLogger();
 
         // Verify Licensing
