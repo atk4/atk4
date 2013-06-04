@@ -47,7 +47,7 @@ class Filter extends Form
      */
     function postInit()
     {
-        foreach($this->elements as $x=>$field)
+        foreach ($this->elements as $x=>$field)
         {
             if($field instanceof Form_Field)
             {
@@ -59,11 +59,14 @@ class Filter extends Form
 
                 // also apply the condition
                 if($this->view->model && $this->view->model->hasElement($x)) {
+                    
                     // take advantage of field normalization
                     $this->view->model->addCondition($x, $field->get());
                 }
             }
         }
+
+        // call applyFilter method of model of associated view if such exist
         $this->hook('applyFilter',array($this->view->model));
     }
     
@@ -74,15 +77,12 @@ class Filter extends Form
      */
     function memorizeAll()
     {
-        //by Camper:memorize() method doesn't memorize anything if value is null
-        foreach($this->elements as $x=>$field)
-        {
-            if($field instanceof Form_Field) {
-                if($this->isClicked('Clear') || is_null($this->get($x))) {
-                    $this->forget($x);
-                } else {
-                    $this->memorize($x, $this->get($x));
-                }
+        // memorize() method doesn't memorize anything if value is null
+        foreach ($this->get() as $field=>$value) {
+            if ($this->isClicked('Clear') || is_null($value)) {
+                $this->forget($field);
+            } else {
+                $this->memorize($field, $value);
             }
         }
     }
