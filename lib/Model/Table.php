@@ -612,8 +612,7 @@ class Model_Table extends Model {
         if($res===false)return $this;
 
         if($this->_save_as===false){
-            $this->unload();
-            return $id;
+            return $this->unload();
         }
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
