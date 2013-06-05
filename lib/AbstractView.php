@@ -298,7 +298,7 @@ abstract class AbstractView extends AbstractObject
     function recursiveRender()
     {
 
-        if($this->hook('pre-render')){
+        if($this->hook('pre-recursive-render')){
             return;
         }
 
