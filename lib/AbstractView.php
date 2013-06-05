@@ -297,6 +297,11 @@ abstract class AbstractView extends AbstractObject
      */
     function recursiveRender()
     {
+
+        if($this->hook('pre-render')){
+            return;
+        }
+
         $cutting_here=false;
         $this->initTemplateTags();
 
