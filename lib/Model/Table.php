@@ -618,7 +618,7 @@ class Model_Table extends Model {
         $o=$this->_save_as?:$this;
 
         if($this->fast && !$this->_save_as){
-            $this[$this->id_field]=$this->id->$id;
+            $this[$this->id_field]=$this->id=$id;
             return $this;
         }
         $res=$o->tryLoad($id);
