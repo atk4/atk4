@@ -605,7 +605,10 @@ class Model_Table extends Model {
         $res=$this->hook('afterInsert',array($id));
         if($res===false)return $this;
 
-        if($this->_save_as===false)return $this->unload();
+        if($this->_save_as===false){
+            $this->unload();
+            return $id;
+        }
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
