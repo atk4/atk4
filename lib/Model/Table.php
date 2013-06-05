@@ -65,6 +65,8 @@ class Model_Table extends Model {
 
     public $db=null;            // Set to use different database connection
 
+    public $fast=null;          // set this to true to speed up model, but sacrifice some of the consistency
+
     // {{{ Basic Functionality, query initialization and actual field handling
    
     /** Initialization of ID field, which must always be defined */
@@ -145,6 +147,10 @@ class Model_Table extends Model {
         /**/$this->api->pr->start('selectQuery/getActualF');
 
         $actual_fields=$fields?:$this->getActualFields();
+
+        if($this->fast && $this->_selectQuery) {
+            return $this->_selectQuery();
+        }
 
         $this->_selectQuery=$select=$this->_dsql()->del('fields');
 
@@ -612,6 +618,10 @@ class Model_Table extends Model {
         if($this->_save_as)$this->unload();
         $o=$this->_save_as?:$this;
 
+        if($this->fast && !$this->_save_as){
+            $this[$this->id_field]=$this->id->$id;
+            return $this;
+        }
         $res=$o->tryLoad($id);
         if(!$res->loaded())throw $this->exception('Saved model did not match conditions. Save aborted.');
         return $res;
