@@ -148,7 +148,9 @@ class Form_Basic extends View implements ArrayAccess {
             $this->js()->univ()->alert($msg?:'Error in form')->execute();
         }
         if(!is_object($field))$field=$this->getElement($field);
-        $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
+
+        $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
+        $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
     function addField($type, $options, $caption=null, $attr=null)
     {

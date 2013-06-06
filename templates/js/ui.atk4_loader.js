@@ -25,13 +25,9 @@
    .atk4_loader({url: '/page.html'})
    .atk4_loader({})
 
-
  THE STRUCTURE OF THIS WIDGET MIGHT BE REWRITTEN
 
-
 */
-
-
 
 $.widget('ui.atk4_loader', {
 
@@ -61,6 +57,13 @@ $.widget('ui.atk4_loader', {
     */
     helper: undefined,
     loader: undefined,
+    
+    showLoader: function(){
+        if(!!this.loader) this.loader.show();
+    },
+    hideLoader: function(){
+        if(!!this.loader) this.loader.hide();
+    },
 
 	_create: function(){
 
@@ -82,8 +85,8 @@ $.widget('ui.atk4_loader', {
         if(this.options.cogs){
             var l=$(this.options.cogs);
 			l.prependTo(self.element);
-            l.hide();
             self.loader=l;
+            self.hideLoader();
         }
 
         if(this.options.history){
@@ -127,11 +130,7 @@ $.widget('ui.atk4_loader', {
 	},
 	destroy: function(){
 		var self=this;
-		/*
-		if(self.parent_loader){
-			self.parent_loader.unbind('atk4_loaderbeforeclose.'+self.element.attr('id'));
-		}
-		*/
+
 		this.element.removeClass('atk4_loader');
 		if(this.helper){
 			this.helper.remove();
@@ -172,7 +171,7 @@ $.widget('ui.atk4_loader', {
 		var m;
 
 		self.loading=true;
-        self.loader.show();
+        self.showLoader();
         $.atk4.get(url,null,function(res){
 			/*
 			if(res.substr(0,13)=='SESSION OVER:'){
@@ -184,7 +183,6 @@ $.widget('ui.atk4_loader', {
             if(self.options.history)window.history.pushState({path: self.base_url}, 'foobar', self.base_url);
 
             var scripts=[], source=res;
-
 
             while((s=source.indexOf("<script"))>=0){
                 s2=source.indexOf(">",s);
@@ -226,7 +224,6 @@ $.widget('ui.atk4_loader', {
 				});
 			}
 
-
 			el.atk4_loader({'base_url':url});
 
 			/*
@@ -250,11 +247,9 @@ $.widget('ui.atk4_loader', {
                 if(!f.hasClass('nofocus'))f.focus();
 			});
 		},function(){	// second callback, which is always called, when loading is completed
-            if (!!self.loader){
-                self.loader.hide();
-            }
+            self.hideLoader();
 			self.loading=false;
-            		el.trigger('after_html_loaded');
+            el.trigger('after_html_loaded');
 		});
     },
 	/*
@@ -325,7 +320,7 @@ $.extend($.ui.atk4_loader, {
 
 $.fn.extend({
 	atk4_load: function(url,fn){
-        this.atk4_loader().atk4_loader('loadURL',url,fn) ;
+        this.atk4_loader().atk4_loader('loadURL',url,fn);
 	},
 	atk4_reload: function(url,arg,fn){
         if(arg){
@@ -334,7 +329,6 @@ $.fn.extend({
             });
         }
 		this.atk4_loader()
-			.atk4_loader('loadURL',url,fn,true)
-			;
+			.atk4_loader('loadURL',url,fn,true);
 	}
 });
