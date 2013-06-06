@@ -24,7 +24,7 @@ $(function(){
 
  $.atk4.includeJS('js/mylib.js');
 
- $.atk4(funciton(){
+ $.atk4(function(){
 	mylib();
  });
 
@@ -196,10 +196,6 @@ $.extend($.atk4,{
 	_stillLoading: function(url){
 		if(this.loading){
 			console.log('Slow loading of: ',url,'remaining:',this.loading);
-			$('#loading_screen1,#loading_screen2').fadeIn('fast');
-			$.atk4(function(){
-				$('#loading_screen1,#loading_screen2').stop().hide();
-			});
 		}
 	},
 	/*
