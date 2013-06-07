@@ -21,6 +21,11 @@ class View_Popover extends View {
 
     public $position='top';
     // can be top, bottom, left or right
+    //
+    function init(){
+        parent::init();
+        $this->addStyle('display','none');
+    }
 
     /* Returns JS which will position this element and show it */
     function showJS($element=null,$options=array()){
@@ -30,6 +35,7 @@ class View_Popover extends View {
             'dialogClass'=>$options['class']?:'popover',
             'dragable'=>false,
             'resizable'=>false,
+            'minHeight'=>'auto',
             'autoOpen'=>false,
             'width'=>$options['width']?:250,
             'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar:last')->hide())->click(
