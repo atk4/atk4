@@ -30,6 +30,7 @@ class Menu_Basic extends CompleteLister {
     protected $last_item=null;
     public $current_menu_class="ui-state-active";
     public $inactive_menu_class="ui-state-default";
+
     function init(){
         if($this->template->is_set('current')){
             $this->current_menu_class=$this->template->get('current');
@@ -41,6 +42,16 @@ class Menu_Basic extends CompleteLister {
     }
     function defaultTemplate(){
         return array('menu','Menu');
+    }
+
+    /**
+     * This will add a new behaviour for clicking on the menu items. For 
+     * example setTarget('frameURL') will show menu links inside a frame
+     * instead of just linking to them
+     */
+    function setTarget($js_func){
+        $this->on('click','a')->univ()->frameURL($this->js()->_selectorThis()->attr('href'));
+        return $this;
     }
     function addMenuItem($page,$label=null){
         if(!$label){
