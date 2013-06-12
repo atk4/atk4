@@ -302,8 +302,8 @@ class Model_Table extends Model {
         return $this;
     }
     /** Sets limit on query */
-    function setLimit($a,$b=null){
-        $this->_dsql()->limit($a,$b);
+    function setLimit($count,$offset=null){
+        $this->_dsql()->limit($count,$offset);
         return $this;
     }
     /** Sets an order on the field. Field must be properly defined */
