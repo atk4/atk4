@@ -110,6 +110,11 @@ class Auth_Basic extends AbstractController {
             }
         }
 
+        if($id=$this->hook('tryLogin',array($model,$login_field,$password_field))){
+            $this->model->tryLoad($id);
+            $this->memorizeModel();
+        }
+
         $t=$this;
 
         // If model is saved, update our cache too, but don't store password
