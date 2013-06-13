@@ -11,6 +11,14 @@ class Form_Field_Checkbox extends Form_Field {
         $this->false_value = $false;
         return $this;
     }
+    function setValueList($list){
+        /* otherwise type("boolean")->enum(array("Y","N")) won't work */
+        if (count($list) != 2){
+            throw $this->exception("Invalid value list for Checkbox");
+        }
+        $this->setValues(array_shift($list), array_shift($list));
+        return $this;
+    }
     function getInput($attr=array()){
         $this->template->trySet('field_caption','');
         $this->template->tryDel('label_container');
