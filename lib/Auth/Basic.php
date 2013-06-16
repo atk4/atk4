@@ -110,7 +110,9 @@ class Auth_Basic extends AbstractController {
             }
         }
 
-        if($id=$this->hook('tryLogin',array($model,$login_field,$password_field))){
+        $id=$this->hook('tryLogin',array($model,$login_field,$password_field));
+
+        if($id && is_numeric($id)){
             $this->model->tryLoad($id);
             $this->memorizeModel();
         }
@@ -446,7 +448,7 @@ class Auth_Basic extends AbstractController {
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){
-        $this->model->tryLoad($id);
+        $this->model->load($id);
         $this->memorizeModel();
         return $this;
     }
