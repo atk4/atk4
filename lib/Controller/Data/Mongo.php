@@ -39,7 +39,6 @@ class Controller_Data_Mongo extends Controller_Data {
 
             $data[$name]=$f->get();
         }
-
         unset($data[$model->id_field]);
 
         foreach ($model->_references as $our_field=>$junk) {
@@ -59,7 +58,7 @@ class Controller_Data_Mongo extends Controller_Data {
             }
         }
 
-        if($model->loaded() && $data){
+        if($model->loaded()){
             if (!$data){
                 if ($model->debug) echo '<font style="color: blue">db.'.$model->table.' is not dirty</font>';
                 return $model->id;
@@ -72,6 +71,7 @@ class Controller_Data_Mongo extends Controller_Data {
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
+        $model->data=$data;  // will grab defaults here
         if ($model->debug) echo '<font style="color: blue">='.$model->id.'</font><br/>';
         $model->dirty=array();
         return $model->id;
