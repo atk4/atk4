@@ -90,7 +90,7 @@ class Menu_Basic extends CompleteLister {
     function isCurrent($href){
         // returns true if item being added is current
         if(!is_object($href))$href=str_replace('/','_',$href);
-        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
+        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page||(string)$href==(string)$this->api->url();
     }
     function render(){
         $this->setSource($this->items);
