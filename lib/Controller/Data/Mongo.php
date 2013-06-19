@@ -39,7 +39,6 @@ class Controller_Data_Mongo extends Controller_Data {
 
             $data[$name]=$f->get();
         }
-
         unset($data[$model->id_field]);
 
         foreach ($model->_references as $our_field=>$junk) {
@@ -60,6 +59,10 @@ class Controller_Data_Mongo extends Controller_Data {
         }
 
         if($model->loaded()){
+            if (!$data){
+                if ($model->debug) echo '<font style="color: blue">db.'.$model->table.' is not dirty</font>';
+                return $model->id;
+            }
             if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.(new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
             $db=$this->_get($model,'db')->update(array($model->id_field=>new MongoID($model->id)), array('$set'=>$data));
             return $model->id;
@@ -68,6 +71,7 @@ class Controller_Data_Mongo extends Controller_Data {
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
+        $model->data=$data;  // will grab defaults here
         if ($model->debug) echo '<font style="color: blue">='.$model->id.'</font><br/>';
         $model->dirty=array();
         return $model->id;
@@ -126,7 +130,16 @@ class Controller_Data_Mongo extends Controller_Data {
         $model->unload();
         return $this;
     }
-    function deleteAll($model){}
+    function deleteAll($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.remove('.
+            json_encode($model->_table[$this->short_name]['conditions']).')</font><br/>';
+
+        $model->data=$this->_get($model,'db')->remove(
+            $model->_table[$this->short_name]['conditions']
+        );
+        $model->unload();
+        return $this;
+    }
     function getRows($model){}
     function setOrder($model,$field,$desc=false){
         $this->_set($model,'order',array($field=>$desc?-1:1));
@@ -189,6 +202,13 @@ class Controller_Data_Mongo extends Controller_Data {
                 $value = new MongoID($value);
             }
             $f->defaultValue($value)->system(true);
+        }else{
+            if($field[0]!='$'){
+                throw $this->exception('Condition on undefined field. Does not '.
+                    'look like expression either')
+                    ->addMoreInfo('model',$model)
+                    ->addMoreInfo('field',$field);
+            }
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }
