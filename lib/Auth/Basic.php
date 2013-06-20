@@ -124,7 +124,7 @@ class Auth_Basic extends AbstractController {
             // after this model is saved, re-cache the info
             $tmp=$m->get();
             unset($tmp[$t->password_field]);
-            $t->memorize('info',$tmp);
+            if($t->api instanceof ApiWeb)$t->memorize('info',$tmp);
         });
 
         $this->addEncryptionHook($this->model);
