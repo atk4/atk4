@@ -5,10 +5,10 @@ class Controller_Data_Mongo extends Controller_Data {
         if(@!$this->api->mongoclient){
             $m=new MongoClient();
 
-            $collection=$this->api->getConfig('mongo/db');
+            $db=$this->api->getConfig('mongo/db');
 
 
-            $this->api->mongoclient=$m->$collection;
+            $this->api->mongoclient=$m->$db;
 
         }
 
