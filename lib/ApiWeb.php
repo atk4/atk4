@@ -278,14 +278,17 @@ class ApiWeb extends ApiCLI {
 
         try{
             $this->hook('post-init');
+            $this->hook('postInit');
 
             $this->hook('pre-exec');
+            $this->hook('preExec');
 
             if(isset($_GET['submit']) && $_POST){
                 $this->hook('submitted');
             }
 
             $this->hook('post-submit');
+            $this->hook('postSubmit');
 
             $this->execute();
         }catch(Exception $e){
