@@ -244,6 +244,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->dirty[$name] = true;
         return $this;
     }
+    function isDirty($name){
+        return $this->dirty[$name] || 
+            (!$this->loaded() && $this->getElement($name)->has_default_value);
+    }
     /**
      * Returns true if the records has been loaded successfully
      * 
