@@ -18,6 +18,8 @@ class Controller_Data_Mongo extends Controller_Data {
             'collection'=>$model->table
         ));
 
+        $model->addMethod('incr,decr',$this);
+
         //$model->data=$model->_table[$this->short_name]['db']->get($id);
     }
 
@@ -29,6 +31,11 @@ class Controller_Data_Mongo extends Controller_Data {
         $model->_table[$this->short_name][$key]=$val;
     }
 
+    function incr($m,$field,$amount){
+        if(!$m->loaded())throw $this->exception('Can only increment loaded model');
+        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>$amount)));
+    }
+
     function save($model,$id=null){
 
         $data=array();
@@ -37,7 +44,20 @@ class Controller_Data_Mongo extends Controller_Data {
             if(!$f->editable() && !$f->system())continue;
             if(!isset($model->dirty[$name]) && $f->defaultValue()===null)continue;
 
-            $data[$name]=$f->get();
+            $value=$f->get();
+
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(bool)$value;
+            }
+            if($f->type()=='int'){
+                $value=(int)$value;
+            }
+            if($f->type()=='money' || $f->type()=='float'){
+                $value=(float)$value;
+            }
+
+            $data[$name]=$value;
+
         }
         unset($data[$model->id_field]);
 
@@ -193,6 +213,12 @@ class Controller_Data_Mongo extends Controller_Data {
             // TODO: properly convert to Mongo presentation
             if($f->type()=='boolean' && is_bool($value)) {
                 $value=(bool)$value;
+            }
+            if($f->type()=='int'){
+                $value=(int)$value;
+            }
+            if($f->type()=='money' || $f->type()=='float'){
+                $value=(float)$value;
             }
 
             if(
