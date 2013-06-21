@@ -323,7 +323,7 @@ class Logger extends AbstractController {
         $o='';
         $o.= "<h2>Application Error: ". htmlspecialchars($e->getMessage()) ."</h2>\n";
         $o.= '<p><font color=red>' . get_class($e) . ', code: '.$e->getCode().'</font></p>';
-        if($e->more_info){
+        if(@$e->more_info){
             $o.= '<p>Additional information:';
             $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
             $o.= '</p>';
@@ -331,7 +331,7 @@ class Logger extends AbstractController {
         if(method_exists($e,'getMyFile'))$o.= '<p><font color=blue>' . $e->getMyFile() . ':' . $e->getMyLine() . '</font></p>';
 
         if(method_exists($e,'getMyTrace'))$o.= $this->backtrace(3,$e->getMyTrace());
-        else $o.= $this->backtrace($e->shift,$e->getTrace());
+        else $o.= $this->backtrace(@$e->shift,$e->getTrace());
 
         if(
             (isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest') &&
