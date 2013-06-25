@@ -298,7 +298,7 @@ jQuery.widget("ui.atk4_form", {
 			$.univ().loadingInProgress();
 			return false;
 		}
-
+		this.form.trigger('beforesubmit');
 		// btn is clicked
 		var richtext=form.element.find('.atk4_richtext');
 		if(richtext.length)richtext.atk4_richtext('changeHTML');
