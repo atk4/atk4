@@ -1,6 +1,6 @@
 <?php
 class Form_Field_Checkbox extends Form_Field {
-    public $true_value=1;
+    public $true_value=true;
     public $false_value=false;
     function init(){
         parent::init();
@@ -31,7 +31,7 @@ class Form_Field_Checkbox extends Form_Field {
         return parent::getInput(array_merge(
                     array(
                         'type'=>'checkbox',
-                        'value'=>$this->true_value,
+                        'value'=>'1',
                         'checked'=>(boolean)($this->true_value==$this->value)
                          ),$attr
                     )).$label;
