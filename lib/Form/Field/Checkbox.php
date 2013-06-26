@@ -1,6 +1,6 @@
 <?php
 class Form_Field_Checkbox extends Form_Field {
-    public $true_value=true;
+    public $true_value=1;
     public $false_value=false;
     function init(){
         parent::init();
