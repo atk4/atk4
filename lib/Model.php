@@ -452,6 +452,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->hook('afterLoad');
         return $this;
     }
+    /** Unloads then loads current record back. Use this if you have added new fields */
+    function reload(){
+        return $this->load($this->id);
+    }
     // }}}
 
     // {{{ Ordering and limiting support

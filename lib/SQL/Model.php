@@ -490,10 +490,6 @@ class SQL_Model extends Model {
 
         return $row;
     }
-    /** Unloads then loads current record back. Use this if you have added new fields */
-    function reload(){
-        return $this->load($this->id);
-    }
     /** Internal loading funciton. Do not use. OK to override. */
     protected function _load($id,$ignore_missing=false){
         /**/$this->api->pr->start('load/selectQuery');
