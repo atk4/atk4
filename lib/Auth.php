@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
+/**
  * Undocumented
  *
  * @link http://agiletoolkit.org/

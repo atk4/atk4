@@ -1,16 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/**
  * Base class for Command-Line Applications. The purpose of Application class
  * is to initialize all the other classes and aid their connectivity. API
  * class can be accessed from any object through $this->api property. 
@@ -21,7 +10,17 @@
  * do
  *
  * @link http://agiletoolkit.org/doc/api
- */
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class ApiCLI extends AbstractView
 {
     /**

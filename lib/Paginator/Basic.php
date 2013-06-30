@@ -47,7 +47,7 @@ class Paginator_Basic extends CompleteLister {
         }
         
         // Start iterating early ($source = DSQL of model)
-        if($source instanceof Model_Table){
+        if($source instanceof SQL_Model){
             $source = $source->_preexec();
         }
         
