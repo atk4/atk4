@@ -447,6 +447,9 @@ ajaxec: function(url,data,fn){
 newWindow: function(url,name,options){
 	window.open(url,name,options);
 },
+expr: function(str){
+    return eval("(" + str + ")");
+},
 loadingInProgress: function(){
 	this.successMessage('Loading is in progress. Please wait');
 },
