@@ -103,8 +103,8 @@ class QuickSearch extends Filter
             return;
         }
 
-        if($this->view->model->hasMethod('like')){
-            return $this->view->model->like($v);
+        if($this->view->model->hasMethod('addConditionLike')){
+            return $this->view->model->addConditionLike($v);
         }
         if($this->view->model) {
             $q = $this->view->model->_dsql();
