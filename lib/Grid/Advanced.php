@@ -304,7 +304,6 @@ class Grid_Advanced extends Grid_Basic {
         return $this->api->normalizeName($val);
     }
     function init_expander_widget($field){
-        @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
         return $this->init_expander($field);
     }
     function init_expander($field){
