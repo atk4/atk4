@@ -164,7 +164,7 @@ class Controller_Data_Mongo extends Controller_Data {
     function setOrder($model,$field,$desc=false){
         $this->_set($model,'order',array($field=>$desc?-1:1));
         // TODO: allow setting order multiple times
-        // TODO: extend syntax to be compatible with model_table
+        // TODO: extend syntax to be compatible with SQL_Model
     }
     function setLimit($model,$count,$offset=0){
         $this->_set($model,'limit',array($count,$offset));

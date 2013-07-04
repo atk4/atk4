@@ -18,7 +18,7 @@
 Reference implementation for data controller
 
 Data controllers are used by "Model" class to access their data source.
-Additionally Model_Table can use data controllers for caching their data
+Additionally SQL_Model can use data controllers for caching their data
 
 */
 
