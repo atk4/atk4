@@ -41,7 +41,8 @@
  *  $grid->add('VirtualPage')
  *      ->addColumn('edit')
  *      ->set(function($page){
- *          $page->add('Text')->set('ID='.$_GET['edit']);
+ *          $id = $_GET[$page->short_name.'_id'];
+ *          $page->add('Text')->set('ID='.$id);
  *      });
  *
  * There are many other uses for VirtualPage, especially when you extract
