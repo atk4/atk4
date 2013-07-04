@@ -1,7 +1,8 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * This is the most appropriate API file for your web application. It builds on top of ApiWeb
- * and introduces concept of "Pages" on top of "Layout" concept defined in ApiWeb.
+ * This is the most appropriate API file for your web application. It builds on
+ * top of ApiWeb and introduces concept of "Pages" on top of "Layout" concept
+ * defined in ApiWeb.
  *
  * @link http://agiletoolkit.org/learn/understand/api
  * @link http://agiletoolkit.org/learn/template

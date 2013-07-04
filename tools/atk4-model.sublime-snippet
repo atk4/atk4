@@ -1,7 +1,7 @@
 <snippet>
 	<content><![CDATA[
 <?php
-class Model_${1:${TM_FILENAME/\.php//}} extends ${2:Model_Table} {
+class Model_${1:${TM_FILENAME/\.php//}} extends ${2:SQL_Model} {
 	public \$table="${1/(.*)/\L$1\E/g}";
 	function init(){
 		parent::init();

@@ -481,7 +481,7 @@ class Grid_Advanced extends Grid_Basic {
     }
     function applySorting($i,$field,$desc){
         if($i instanceof DB_dsql)$i->order($field,$desc);
-        elseif($i instanceof Model_Table)$i->setOrder($field,$desc);
+        elseif($i instanceof SQL_Model)$i->setOrder($field,$desc);
         elseif($i instanceof Model)$i->setOrder($field,$desc);
     }
     function getIterator(){

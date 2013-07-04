@@ -18,6 +18,7 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
+    /** Undocumented (used only in GiTemplate class) */
     public $settings=array('extension'=>'.html');
 
     /** Reference to the current model. Read only. Use setModel() */
@@ -35,7 +36,6 @@ abstract class AbstractObject
     /** Setting this to true will output additional debug info about object */
     public $debug=null;
 
-
     // {{{ Object hierarchy management
 
     /** Unique object name */
@@ -49,6 +49,7 @@ abstract class AbstractObject
 
     /** Link to object into which we added this object */
     public $owner;
+    
     /** Always points to current API */
     public $api;
 
@@ -56,13 +57,13 @@ abstract class AbstractObject
      * When this object is added, owner->elements[$this->short_name] 
      * will be == $this; 
      */
-    public $auto_track_element=false;
+    public $auto_track_element = false;
 
     /** To make sure you have called parent::init() properly */
-    public $_initialized=false;
+    public $_initialized = false;
 
     /** 
-     * Initialize object. Always call parent  Do not call directly
+     * Initialize object. Always call parent::init(). Do not call directly.
      *
      * @return void
      */
@@ -71,25 +72,26 @@ abstract class AbstractObject
         /**
          * This method is called for initialization
          */
-        $this->_initialized=true;
+        $this->_initialized = true;
     }
 
     /* \section Object Management Methods */
     /** 
      * Clones associated controller and model. If cloning views, add them to
-     * the owner 
+     * the owner.
      *
-     * @return AbstractObject Copy this object 
+     * @return AbstractObject Copy of this object
      */
     function __clone()
     {
         if ($this->model && is_object($this->model)) {
-            $this->model=clone $this->model;
+            $this->model = clone $this->model;
         }
         if ($this->controller && is_object($this->controller)) {
-            $this->controller=clone $this->controller;
+            $this->controller = clone $this->controller;
         }
     }
+
     /** 
      * Converts into string "Object View(myapp_page_view)"
      *
@@ -99,8 +101,9 @@ abstract class AbstractObject
     {
         return "Object " . get_class($this) . "(" . $this->name . ")";
     }
+
     /**
-     * Removes object from parent and prevents it from renedring 
+     * Removes object from parent and prevents it from rendering
      * \code
      * $view = $this->add('View');
      * $view -> destroy();
@@ -119,16 +122,15 @@ abstract class AbstractObject
             $this->model->destroy();
             unset($this->model);
         }
-        if (@$this->controller
-            && $this->controller instanceof AbstractObject
-        ) {
+        if (@$this->controller && $this->controller instanceof AbstractObject) {
             $this->controller->destroy();
             unset($this->controller);
         }
         $this->owner->_removeElement($this->short_name);
     }
+
     /**
-     * Remove child element if it exists 
+     * Remove child element if it exists
      *
      * @param string $short_name short name of the element
      *
@@ -143,6 +145,7 @@ abstract class AbstractObject
         }
         return $this;
     }
+
     /**
      * Actually removes the element
      *
@@ -156,6 +159,7 @@ abstract class AbstractObject
         unset($this->elements[$short_name]);
         return $this;
     }
+
     /** 
      * Creates one more instance of $this object
      *
@@ -167,8 +171,10 @@ abstract class AbstractObject
     {
         return $this->owner->add(get_class($this), $properties);
     }
+
     /** 
-     * Creates new object and adds it as a child. Returns new object.
+     * Creates new object and adds it as a child of current object.
+     * Returns new object.
      *
      * @param string       $class           Name of the new class
      * @param array|string $options         Short name or array of properties
@@ -186,10 +192,10 @@ abstract class AbstractObject
     ) {
 
         if (is_string($options)) {
-            $options=array('name'=>$options);
+            $options = array('name' => $options);
         }
         if (!is_array($options)) {
-            $options=array();
+            $options = array();
         }
 
         if (is_object($class)) {
@@ -203,11 +209,11 @@ abstract class AbstractObject
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
             if (!$class->api) {
-                $class->api=$this->api;
+                $class->api = $this->api;
             }
             $this->elements[$class->short_name] = $class;
             if ($class instanceof AbstractView) {
-                $class->owner->elements[$class->short_name]=true;
+                $class->owner->elements[$class->short_name] = true;
             }
             $class->owner = $this;
             if ($class instanceof AbstractView && !$this->template) {
@@ -224,7 +230,7 @@ abstract class AbstractObject
         
         $class = str_replace('/', '\\', $class);
 
-        if ($class[0]=='.') {
+        if ($class[0] == '.') {
             // Relative class name specified, extract current namespace
             // and make new class name relative to this namespace
             $ns = get_class($this);
@@ -232,14 +238,12 @@ abstract class AbstractObject
             $class = $ns . '\\' . substr($class, 2);
         }
         
-        $short_name = isset(
-            $options['name'])
+        $short_name = isset($options['name'])
             ? $options['name']
             : str_replace('\\', '_', strtolower($class));
 
-
-        // Adding same controller twice will return existing one.
-        if (isset ($this->elements[$short_name])) {
+        // Adding same controller twice will return existing one
+        if (isset($this->elements[$short_name])) {
             if ($this->elements[$short_name] instanceof AbstractController) {
                 return $this->elements[$short_name];
             }
@@ -247,14 +251,14 @@ abstract class AbstractObject
 
         $short_name = $this->_unique($this->elements, $short_name);
 
-        if (isset ($this->elements[$short_name])) {
+        if (isset($this->elements[$short_name])) {
             throw $this->exception($class." with requested name already exists")
                 ->addMoreInfo('class', $class)
                 ->addMoreInfo('name', $short_name)
                 ->addThis($this);
         }
 
-        $class_name_nodash=str_replace('-', '', $class);
+        $class_name_nodash = str_replace('-', '', $class);
         if (!class_exists($class_name_nodash, false)
             && isset($this->api->pathfinder)
         ) {
@@ -269,8 +273,8 @@ abstract class AbstractObject
         }
 
         foreach ($options as $key => $val) {
-            if ($key!=='name') {
-                $element->$key=$val;
+            if ($key !== 'name') {
+                $element->$key = $val;
             }
         }
 
@@ -282,9 +286,9 @@ abstract class AbstractObject
         if (!$element->auto_track_element) {
             // dont store extra reference to models and controlers
             // for purposes of better garbage collection
-            $this->elements[$short_name]=true;
+            $this->elements[$short_name] = true;
         } else {
-            $this->elements[$short_name]=$element;
+            $this->elements[$short_name] = $element;
         }
 
         // Initialize template before init() starts
@@ -299,7 +303,7 @@ abstract class AbstractObject
         // Initialize element
         $element->init();
 
-        // Make sure init()'s parent was called. Popular coder's mistake
+        // Make sure init()'s parent was called. It's a popular coder's mistake.
         if (!$element->_initialized) {
             throw $element->exception(
                 'You should call parent::init() when you override it'
@@ -310,9 +314,10 @@ abstract class AbstractObject
 
         return $element;
     }
+
     /** 
-     * Find child element by their short name. Use in chaining. Exception
-     * if not found. 
+     * Find child element by its short name. Use in chaining.
+     * Exception if not found.
      *
      * @param string $short_name Short name of the child element
      *
@@ -320,13 +325,14 @@ abstract class AbstractObject
      */
     function getElement($short_name)
     {
-        if (!isset ($this->elements[$short_name])) {
+        if (!isset($this->elements[$short_name])) {
             throw $this->exception("Child element not found")
                 ->addMoreInfo('element', $short_name);
         }
 
         return $this->elements[$short_name];
     }
+
     /** 
      * Find child element. Use in condition. 
      *
@@ -336,12 +342,13 @@ abstract class AbstractObject
      */
     function hasElement($short_name)
     {
-        return isset($this->elements[$short_name])?
-            $this->elements[$short_name]
-            :false;
+        return isset($this->elements[$short_name])
+            ? $this->elements[$short_name]
+            : false;
     }
+
     /** 
-     * Names object accordingly. May not work on some objects 
+     * Names object accordingly. May not work on some objects.
      *
      * @param string $short_name Short name of the child element
      *
@@ -352,11 +359,13 @@ abstract class AbstractObject
         unset($this->owner->elements[$this->short_name]);
         $this->name = $this->name . '_' . $short_name;
         $this->short_name = $short_name;
+        
         if (!$this->auto_track_element) {
-            $this->owner->elements[$short_name]=true;
+            $this->owner->elements[$short_name] = true;
         } else {
-            $this->owner->elements[$short_name]=$this;
+            $this->owner->elements[$short_name] = $this;
         }
+        
         return $this;
     }
     // }}}
@@ -372,9 +381,10 @@ abstract class AbstractObject
      */
     function setController($controller, $name = null)
     {
-        $controller=$this->api->normalizeClassName($controller, 'Controller');
+        $controller = $this->api->normalizeClassName($controller, 'Controller');
         return $this->add($controller, $name);
     }
+
     /**
      * Associate model with object.
      *
@@ -385,9 +395,10 @@ abstract class AbstractObject
     function setModel($model)
     {
         $model = $this->api->normalizeClassName($model, 'Model');
-        $this->model=$this->add($model);
+        $this->model = $this->add($model);
         return $this->model;
     }
+
     /**
      * Return current model
      *
@@ -413,16 +424,18 @@ abstract class AbstractObject
         $this->api->initializeSession();
 
         if ($value instanceof Model) {
-            $_SESSION['s'][$this->name][$key] = serialize($value);
             unset($_SESSION['o'][$this->name][$key]);
+            $_SESSION['s'][$this->name][$key] = serialize($value);
             return $value;
         }
 
         unset($_SESSION['s'][$this->name][$key]);
-        return $_SESSION['o'][$this->name][$key] = $value;
+        $_SESSION['o'][$this->name][$key] = $value;
+        return $value;
     }
+
     /** 
-     * Similar to memorize, but if value for key exist, will return it
+     * Similar to memorize, but if value for key exist, will return it.
      *
      * @param string $key     Data Key
      * @param mixed  $default Default value
@@ -433,22 +446,23 @@ abstract class AbstractObject
     {
         $this->api->initializeSession(false);
         
-        if (!isset ($_SESSION['o'][$this->name][$key])
+        if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
             if (is_callable($default)) {
-                $default=call_user_func($default);
+                $default = call_user_func($default);
             }
             return $this->memorize($key, $default);
         } else {
             return $this->recall($key);
         }
     }
+
     /** 
-     * Forget session data for arg $key. If $key is omitted will forget
-     * all associated session data.
+     * Forget session data for arg $key. If $key is omitted will forget all
+     * associated session data.
      *
-     * @param string $key Optional key for data to forget
+     * @param string $key Optional key of data to forget
      *
      * @return AbstractObject $this
      */
@@ -456,7 +470,7 @@ abstract class AbstractObject
     {
         $this->api->initializeSession();
         
-        if ($key === null) {
+        if (is_null($key)) {
             unset ($_SESSION['o'][$this->name]);
             unset ($_SESSION['s'][$this->name]);
         } else {
@@ -466,9 +480,10 @@ abstract class AbstractObject
         
         return $this;
     }
+
     /** 
      * Returns session data for this object. If not previously set, then
-     * $default is returned
+     * $default is returned.
      * 
      * @param string $key     Data Key
      * @param mixed  $default Default value
@@ -479,10 +494,9 @@ abstract class AbstractObject
     {
         $this->api->initializeSession(false);
         
-        if (!isset ($_SESSION['o'][$this->name][$key])
+        if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
-
             if (!isset($_SESSION['s'][$this->name][$key])) {
                 return $default;
             }
@@ -490,13 +504,14 @@ abstract class AbstractObject
             $v->init();
             return $v;
         }
+        
         return $_SESSION['o'][$this->name][$key];
     }
     // }}}
 
     // {{{ Exception handling: http://agiletoolkit.org/doc/exception
     /**
-     * Returns relevant exception class. Use this method with "throw"
+     * Returns relevant exception class. Use this method with "throw".
      *
      * @param string $message Static text of exception.
      * @param string $type    Exception class or class postfix
@@ -504,42 +519,42 @@ abstract class AbstractObject
      *
      * @return BaseException
      */
-    function exception($message='Undefined Exception', $type = null, $code = null)
+    function exception($message = 'Undefined Exception', $type = null, $code = null)
     {
         if (! $type) {
-            $type=$this->default_exception;
-        } elseif ($type[0]=='_') {
-            if ($this->default_exception='BaseException'){
-                $type='Exception_'.substr($type, 1);
+            $type = $this->default_exception;
+        } elseif ($type[0] == '_') {
+            if ($this->default_exception == 'BaseException') {
+                $type = 'Exception_'.substr($type, 1);
             } else {
-                $type=$this->default_exception.'_'.substr($type, 1);
+                $type = $this->default_exception.'_'.substr($type, 1);
             }
-        } elseif ($type!='BaseException' && strpos($type,'Exception_')!==0) {
-            $type='Exception_'.$type;
+        } elseif ($type != 'BaseException' && strpos($type, 'Exception_') !== 0) {
+            $type = 'Exception_'.$type;
         }
-        
+
         // Localization support
-        $message=$this->api->_($message);
+        $message = $this->api->_($message);
 
-        if ($type=='Exception') {
-            $type='BaseException';
+        if ($type == 'Exception') {
+            $type = 'BaseException';
         }
 
-        $e=new $type($message,$code);
-        if (!($e instanceof BaseException)) {
+        $e = new $type($message, $code);
+        if (! ($e instanceof BaseException) ) {
             throw $e;
         }
-        $e->owner=$this;
-        $e->api=$this->api;
+        $e->owner = $this;
+        $e->api = $this->api;
         $e->init();
 
         return $e;
     }
     // }}}
 
-    // {{{ Code which can be potentially obsoleted
+    // {{{ Code which can be potentially obsoleted.
     /**
-     * Reports fatal error. Use ->exception instead
+     * Reports fatal error. Use ->exception instead.
      *
      * @param string $error error text
      * @param int    $shift relative offset in backtrace
@@ -556,8 +571,9 @@ abstract class AbstractObject
             )
         );
     }
+
     /**
-     * Records debug information
+     * Records debug information.
      *
      * @param string $msg information
      *
@@ -571,14 +587,14 @@ abstract class AbstractObject
          *
          * $this->info("User tried buying traffic without enough money in bank");
          */
-
         if (!$this->api->hook('outputInfo', array($msg, $this))) {
             $this->upCall('outputInfo', $msg);
         }
     }
+
     /**
      * Turns on debug mode for this object. Using first argument as string
-     * is obsolete
+     * is obsolete.
      *
      * @param bool|string $msg  "true" to start debugging
      * @param string      $file obsolete
@@ -588,14 +604,14 @@ abstract class AbstractObject
      */
     function debug($msg = true, $file = null, $line = null)
     {
-        if ($msg===true) {
-            $this->debug=true;
+        if ($msg === true) {
+            $this->debug = true;
             return $this;
         }
 
         // The rest of this method is obsolete
-        if ((isset ($this->debug) && $this->debug)
-            || (isset ($this->api->debug) && $this->api->debug)
+        if ((isset($this->debug) && $this->debug)
+            || (isset($this->api->debug) && $this->api->debug)
         ) {
             $this->upCall(
                 'outputDebug', array (
@@ -606,8 +622,9 @@ abstract class AbstractObject
             );
         }
     }
+
     /**
-     * Records warning 
+     * Records warning.
      *
      * @param string $msg   information
      * @param int    $shift relative offset in backtrace
@@ -625,9 +642,8 @@ abstract class AbstractObject
         );
     }
 
-    /////////////// C r o s s   c a l l s ///////////////////////
     /**
-     * Call specified method for this class and all parents up to api
+     * Call specified method for this class and all parents up to api.
      *
      * @param string $type information
      * @param array  $args relative offset in backtrace
@@ -638,9 +654,9 @@ abstract class AbstractObject
     function upCall($type, $args = array ())
     {
         /**
-         * Try to handle something on our own and in case we are not
-         * able, pass to parent. Such as messages, notifications and request
-         * for additional info or descriptions are passed this way.
+         * Try to handle something on our own and in case we are not able,
+         * pass to parent. Such as messages, notifications and request for
+         * additional info or descriptions are passed this way.
          */
         if (method_exists($this, $type)) {
             return call_user_func_array(
@@ -661,7 +677,7 @@ abstract class AbstractObject
     public $hooks = array ();
 
     /** 
-     * If priority is negative, then hooks will be executed in reverse order 
+     * If priority is negative, then hooks will be executed in reverse order.
      *
      * @param string   $hook_spot Hook identifier to bind on
      * @param callable $callable  Will be called on hook()
@@ -675,8 +691,8 @@ abstract class AbstractObject
         if (!is_array($arguments)) {
             throw $this->exception('Incorrect arguments');
         }
-        if (is_string($hook_spot) && strpos($hook_spot, ',')!==false) {
-            $hook_spot=explode(',', $hook_spot);
+        if (is_string($hook_spot) && strpos($hook_spot, ',') !== false) {
+            $hook_spot = explode(',', $hook_spot);
         }
         if (is_array($hook_spot)) {
             foreach ($hook_spot as $h) {
@@ -691,22 +707,25 @@ abstract class AbstractObject
             throw $this->exception('Hook does not exist');
         }
         if (is_object($callable) && !is_callable($callable)) {
-            $callable=array($callable, $hook_spot);
-            // short for addHook('test',$this); to call $this->test();
+            $callable = array($callable, $hook_spot);
+            // short for addHook('test', $this); to call $this->test();
         }
-        if ($priority>=0) {
+
+        if ($priority >= 0) {
             $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
         } else {
             if (!$this->hooks[$hook_spot][$priority]) {
-                $this->hooks[$hook_spot][$priority]=array();
+                $this->hooks[$hook_spot][$priority] = array();
             }
             array_unshift(
                 $this->hooks[$hook_spot][$priority],
-                array($callable,$arguments)
+                array($callable, $arguments)
             );
         }
+
         return $this;
     }
+
     /**
      * Delete all hooks for specified spot
      *
@@ -719,6 +738,7 @@ abstract class AbstractObject
         unset($this->hooks[$hook_spot]);
         return $this;
     }
+
     /** 
      * Execute all callables assigned to $hook_spot
      *
@@ -734,17 +754,18 @@ abstract class AbstractObject
                 'Incorrect arguments, or hook does not exist'
             );
         }
-        $return=array();
-        if ($arg===UNDEFINED) {
-            $arg=array();
+        $return = array();
+        if ($arg === UNDEFINED) {
+            $arg = array();
         }
+        
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
                     foreach ($this->hooks[$hook_spot] as $prio => $_data) {
                         foreach ($_data as $data) {
 
-                            // Our extentsion.
+                            // Our extension
                             if (is_string($data[0])
                                 && !preg_match(
                                     '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
@@ -769,13 +790,13 @@ abstract class AbstractObject
                                     );
                                 }
                                 throw $this->exception(
-                                    "Cannot call hook. Function might not exist"
+                                    "Cannot call hook. Function might not exist."
                                 )
                                     ->addMoreInfo('hook', $hook_spot)
                                     ->addMoreInfo('arg1', $data[0][0])
                                     ->addMoreInfo('arg2', $data[0][1]);
                             }
-                            $return[]=$result;
+                            $return[] = $result;
                         }
                     }
                 }
@@ -785,19 +806,20 @@ abstract class AbstractObject
         }
         return $return;
     }
+
     /**
      * When called from inside a hook callable, will stop execution of other
      * callables on same hook. The passed argument will be returned by the
-     * hook method
+     * hook method.
      *
      * @param mixed $return What would hook() return?
      *
-     * @return void Never returns
+     * @return void
      */
     function breakHook($return)
     {
-        $e=$this->exception(null, 'Hook');
-        $e->return_value=$return;
+        $e = $this->exception(null, 'Hook');
+        $e->return_value = $return;
         throw $e;
     }
     // }}}
@@ -805,7 +827,7 @@ abstract class AbstractObject
     // {{{ Dynamic Methods: http://agiletoolkit.org/learn/dynamic
     /**
      * Call method is used to display exception for non-existant methods and
-     * provides ability to extend objects with addMethod()
+     * provides ability to extend objects with addMethod().
      *
      * @param string $method    Name of the method
      * @param array  $arguments Arguments
@@ -814,7 +836,7 @@ abstract class AbstractObject
      */
     function __call($method, $arguments)
     {
-        if (($ret=$this->tryCall($method, $arguments))) {
+        if (($ret = $this->tryCall($method, $arguments))) {
             return $ret[0];
         }
         throw $this->exception(
@@ -824,8 +846,9 @@ abstract class AbstractObject
             ->addMoreInfo("method", $method)
             ->addMoreInfo("arguments", $arguments);
     }
+
     /** 
-     * attempts to call dynamic method, returns array containing result or false
+     * Attempts to call dynamic method. Returns array containing result or false
      *
      * @param string $method    Name of the method
      * @param array  $arguments Arguments
@@ -834,16 +857,17 @@ abstract class AbstractObject
      */
     function tryCall($method, $arguments)
     {
-        if ($ret=$this->hook('method-'.$method, $arguments)) {
+        if ($ret = $this->hook('method-'.$method, $arguments)) {
             return $ret;
         }
         array_unshift($arguments, $this);
-        if (($ret=$this->api->hook('global-method-'.$method, $arguments))) {
+        if (($ret = $this->api->hook('global-method-'.$method, $arguments))) {
             return $ret;
         }
     }
+
     /** 
-     * Add new method for this object
+     * Add new method for this object.
      *
      * @param string|array $name     Name of new method of $this object
      * @param callable     $callable Callback
@@ -852,8 +876,8 @@ abstract class AbstractObject
      */
     function addMethod($name, $callable)
     {
-        if (is_string($name) && strpos($name, ',')!==false) {
-            $name=explode(',', $name);
+        if (is_string($name) && strpos($name, ',') !== false) {
+            $name = explode(',', $name);
         }
         if (is_array($name)) {
             foreach ($name as $h) {
@@ -862,15 +886,16 @@ abstract class AbstractObject
             return $this;
         }
         if (is_object($callable) && !is_callable($callable)) {
-            $callable=array($callable,$name);
+            $callable = array($callable, $name);
         }
         if ($this->hasMethod($name)) {
             throw $this->exception('Registering method twice');
         }
         $this->addHook('method-'.$name, $callable);
     }
+
     /** 
-     * Return if this object have specified method (either native or dynamic)
+     * Return if this object has specified method (either native or dynamic).
      *
      * @param string $name Name of the method
      *
@@ -882,8 +907,9 @@ abstract class AbstractObject
             || isset($this->hooks['method-'.$name])
             || isset($this->api->hooks['global-method-'.$name]);
     }
+
     /**
-     * Remove dynamically registered method
+     * Remove dynamically registered method.
      *
      * @param string $name Name of the method
      *
@@ -897,7 +923,7 @@ abstract class AbstractObject
 
     // {{{ Logger: to be moved out
     /**
-     * Output string into log file
+     * Output string into log file.
      *
      * @param string $var var
      * @param string $msg msg
@@ -909,8 +935,9 @@ abstract class AbstractObject
     {
         $this->api->getLogger()->logVar($var, $msg);
     }
+
     /**
-     * Output string into info file
+     * Output string into info file.
      *
      * @param string $info info
      * @param string $msg  msg
@@ -922,8 +949,9 @@ abstract class AbstractObject
     {
         $this->api->getLogger()->logLine($msg.' '.$info."\n");
     }
+
     /**
-     * Output string into error file
+     * Output string into error file.
      *
      * @param string $error error
      * @param string $msg   msg
@@ -931,11 +959,11 @@ abstract class AbstractObject
      * @return void
      * @obsolete 
      */
-    function logError($error,$msg = "")
+    function logError($error, $msg = "")
     {
         if (is_object($error)) {
             // we got exception object obviously
-            $error=$error->getMessage();
+            $error = $error->getMessage();
         }
         $this->api->getLogger()->logLine($msg.' '.$error."\n", null, 'error');
     }
@@ -946,25 +974,27 @@ abstract class AbstractObject
      * A handy shortcut for foreach(){ .. } code. Make your callable return
      * "false" if you would like to break the loop.
      *
-     * @param callable $callable will be executed for each member
+     * @param string|callable $callable will be executed for each member
      *
      * @return AbstractObject $this
      */
     function each($callable)
     {
-        if (!($this instanceof Iterator)) {
+        if (! ($this instanceof Iterator)) {
             throw $this->exception('Calling each() on non-iterative object');
         }
 
         if (is_string($callable)) {
-            foreach ($this as $value) {
-                $this->$callable();
+            foreach ($this as $obj) {
+                if($obj->$callable() === false) {
+                    break;
+                }
             }
             return $this;
         }
 
-        foreach ($this as $value) {
-            if (call_user_func($callable, $value) === false) {
+        foreach ($this as $obj) {
+            if (call_user_func($callable, $obj) === false) {
                 break;
             }
         }
@@ -974,37 +1004,39 @@ abstract class AbstractObject
     /**
      * Method used internally for shortening object names.
      *
-     * @param string $desired Desired name of new objects
+     * @param string $desired Desired name of new object.
      *
-     * @return string shortened name of new object.
+     * @return string Shortened name of new object.
      */
     function _shorten($desired)
     {
-        if (strlen($desired)>$this->api->max_name_length
-            && $this->api->max_name_length!==false
+        if (strlen($desired) > $this->api->max_name_length
+            && $this->api->max_name_length !== false
         ) {
-            $len=$this->api->max_name_length-10;
-            if ($len<5) {
-                $len=$this->api->max_name_length;
+            $len = $this->api->max_name_length - 10;
+            if ($len < 5) {
+                $len = $this->api->max_name_length;
             }
 
-            $key=substr($desired, 0, $len);
-            $rest=substr($desired, $len);
+            $key = substr($desired, 0, $len);
+            $rest = substr($desired, $len);
 
             if (!$this->api->unique_hashes[$key]) {
                 $this->api->unique_hashes[$key]
-                    =count($this->api->unique_hashes)+1;
+                    = count($this->api->unique_hashes) + 1;
             }
-            $desired=$this->api->unique_hashes[$key].'__'.$rest;
+            $desired = $this->api->unique_hashes[$key].'__'.$rest;
         };
 
         return $desired;
     }
+
     /**
      * This funcion given the associative $array and desired new key will return
-     * the best matching key which is not yet in the arary. For example if you have
-     * array('foo'=>x,'bar'=>x) and $desired is 'foo' function will return 'foo_2'.
-     * If 'foo_2' key also exists in that array, then 'foo_3' is returned and so on.
+     * the best matching key which is not yet in the array.
+     * For example, if you have array('foo'=>x,'bar'=>x) and $desired is 'foo'
+     * function will return 'foo_2'. If 'foo_2' key also exists in that array,
+     * then 'foo_3' is returned and so on.
      * 
      * @param array  &$array  Reference to array which stores key=>value pairs
      * @param string $desired Desired key for new object
@@ -1016,22 +1048,26 @@ abstract class AbstractObject
         if (!is_array($array)) {
             throw $this->exception('not array');
         }
-        $postfix=count($array);
-        $attempted_key=$desired;
+        $postfix = count($array);
+        $attempted_key = $desired;
         while (array_key_exists($attempted_key, $array)) {
             // already used, move on
-            $attempted_key=($desired?$desired:'undef').'_'.(++$postfix);
+            $attempted_key = ($desired ?: 'undef').'_'.(++$postfix);
         }
         return $attempted_key;
     }
 
-
-    /** Always call parent if you redefine this */
+    /**
+     * Always call parent if you redefine this/
+     * 
+     * @return void
+     */
     function __destruct()
     {
     }
+
     /** 
-     * Do not serialize objects 
+     * Do not serialize objects/
      *
      * @return mixed
      */

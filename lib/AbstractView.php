@@ -111,7 +111,7 @@ abstract class AbstractView extends AbstractObject
             }
         }
 
-        if ($this->model instanceof Model_Table) {
+        if ($this->model instanceof SQL_Model) {
             $this->dq=$this->model->_dsql();    // compatibility
         }
 

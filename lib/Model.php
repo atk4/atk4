@@ -22,7 +22,7 @@
  * You can also load and save model through different storage controllers.
  *
  * This model is designed to work with linear, non-SQL resources, if you are looking
- * to have support for joins, ordering, advanced SQL syntax, look into Model_Table
+ * to have support for joins, ordering, advanced SQL syntax, look into SQL_Model
  *
  * It's recommended that you create your own model class based on generic model where
  * you define fields, but you may also use instance of generic model.
@@ -686,7 +686,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
      * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
      * first subquery to complete before starting working on the next query. 
      *
-     * Join binding exists as an extension in Model_Table::_ref(). It will iterate through array of models and load
+     * Join binding exists as an extension in SQL_Model::_ref(). It will iterate through array of models and load
      * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
      * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
      * have field_in same as field_out.

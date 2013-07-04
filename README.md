@@ -73,7 +73,7 @@ That's a preferred way to perform database migrations, although you may use some
 Model describes logical data source for your Views:
 
     <?php   
-    class Model_User extends Model_Table 
+    class Model_User extends SQL_Model
     {
         public $table='user';
         
