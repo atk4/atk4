@@ -414,7 +414,11 @@ ajaxec: function(url,data,fn){
 
 
     if(data==true){
-        data=region.data();
+        data={};
+        $.each(region.data(), function(k, v) {
+            if(typeof v !== "object") data[k]=v;
+        });
+
     }
 
 	$.atk4.get(url,data,function(ret){
