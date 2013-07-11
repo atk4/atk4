@@ -140,7 +140,7 @@ class PageManager extends AbstractController {
         // We have now arrived at base_path as defined
         $this->base_path=$path;
 
-        // 4. We now look at RequestURI and extract base_path from the beggining
+        // 4. We now look at RequestURI and extract base_path from the beginning
         if(isset($_GET['page'])){
             $page=$_GET['page'];
         }else{
