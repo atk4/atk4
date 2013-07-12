@@ -16,11 +16,6 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class jUI extends jQuery {
-    /*
-       ATK4 system for javascript file management
-     */
-    public $dir=null;
-    private $theme=false;
 
     private $atk4_initialised=false;
 
