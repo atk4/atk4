@@ -503,6 +503,11 @@ class PathFinder_Location extends AbstractModel {
         // Vendor\MyAddon otherwise these are not found on *Nix systems
         $filename = str_replace('\\','/',$filename);
 
+        // Imants: remove query parameters if any
+        if (($p = strpos($filename, '?')) !== false) {
+            $filename = substr($filename, 0, $p);
+        }
+
         $attempted_locations=array();
         $locations=array();
         $location=null;
