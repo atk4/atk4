@@ -40,6 +40,15 @@ $.each({
 		if(!url)document.location.reload(true);else
 		document.location=url;
 	},
+        fieldRedirect: function(field_id,var_name,url,fn){
+            var val = $('#'+field_id).val();
+            var redirUrl =
+                (url.indexOf("?") === -1)?
+                    url + '?'+var_name+'='+val:
+                    url + '&'+var_name+'='+val;
+            $.univ.redirect(redirUrl,fn);
+            //document.location.href=redirUrl;
+        },
     page: function(page,fn){
         $c=$('#Content');
         if(!$c.length)$c=this.jquery;
