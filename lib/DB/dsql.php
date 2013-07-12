@@ -68,7 +68,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])",
         'update'=>"update [table_noalias] set [set] [where]",
         'delete'=>"delete from  [table_noalias] [where]",
-        'truncate'=>'truncate table [table_noalias]'
+        'truncate'=>'truncate table [table_noalias]',
+        'describe'=>'desc [table_noalias]',
     );
     /** required for non-id based tables */
     public $id_field;
@@ -1439,10 +1440,11 @@ class DB_dsql extends AbstractModel implements Iterator {
      * 
      * @return DB_dsql clone of $this
      */
-    function describe($table)
+    function describe($table = null)
     {
-        return $this->expr('desc [desc_table]')
-            ->setCustom('desc_table', $this->bt($table));
+        $q = clone $this;
+        if ($table !== null) $q->table($table);
+        return $q->SQLTemplate('describe');
     }
 
     /**
