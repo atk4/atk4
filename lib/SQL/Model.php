@@ -61,7 +61,8 @@ class SQL_Model extends Model {
 
     public $relations=array();  // Joins
 
-    public $debug=false;
+    // Call $model->debug(true|false) to turn on|off debug mode
+    public $debug = false;
 
     public $db=null;            // Set to use different database connection
 
@@ -112,7 +113,7 @@ class SQL_Model extends Model {
     function initQuery(){
         if(!$this->table)throw $this->exception('$table property must be defined');
         $this->dsql=$this->db->dsql();
-        if($this->debug)$this->dsql->debug();
+        $this->dsql->debug($this->debug);
         $this->dsql->table($this->table,$this->table_alias);
         $this->dsql->default_field=$this->dsql->expr('*,'.
             $this->dsql->bt($this->table_alias?:$this->table).'.'.
@@ -136,10 +137,10 @@ class SQL_Model extends Model {
     function dsql(){
         return clone $this->_dsql();
     }
-    /** Turns on debugging mode for this model. All database operations will be outputed */
-    function debug(){
-        $this->debug=true;
-        if($this->dsql)$this->dsql->debug();
+    /** Turns debugging mode on|off for this model. All database operations will be outputed */
+    function debug($enabled = true){
+        $this->debug = $enabled;
+        if($this->dsql)$this->dsql->debug($enabled);
         return $this;
     }
     /** Completes initialization of dsql() by adding fields and expressions. */
