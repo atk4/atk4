@@ -23,7 +23,10 @@
 
 class GiTemplate extends AbstractModel {
 
+    public $settings=array('extension'=>'.html');
+
     public $template=array();
+    
     // Parsed template consists of String, String, String, String, String.
     //   If there is tag on any of those, it will have reference from $tags array
     public $tags=array();

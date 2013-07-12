@@ -18,9 +18,6 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
-    /** Undocumented (used only in GiTemplate class) */
-    public $settings=array('extension'=>'.html');
-
     /** Reference to the current model. Read only. Use setModel() */
     public $model;
 
@@ -814,7 +811,7 @@ abstract class AbstractObject
      *
      * @param mixed $return What would hook() return?
      *
-     * @return void
+     * @return void Never returns
      */
     function breakHook($return)
     {
@@ -986,9 +983,7 @@ abstract class AbstractObject
 
         if (is_string($callable)) {
             foreach ($this as $obj) {
-                if($obj->$callable() === false) {
-                    break;
-                }
+                $obj->$callable();
             }
             return $this;
         }
@@ -1067,7 +1062,7 @@ abstract class AbstractObject
     }
 
     /** 
-     * Do not serialize objects/
+     * Do not serialize objects
      *
      * @return mixed
      */
