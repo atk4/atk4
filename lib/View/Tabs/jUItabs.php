@@ -28,19 +28,30 @@
 **/
 class View_Tabs_jUItabs extends View_Tabs {
     public $tab_template=null;
-    public $options=array('cache'=>false);
+    public $options=array();
+
+    // should we show loader indicator while loading tabs
+    public $show_loader = true;
 
     function init(){
         parent::init();
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
     }
-    /* Set tabs option, for example, 'selected'=>'zero-based index of tab */
+    /* Set tabs option, for example, 'active'=>'zero-based index of tab */
     function setOption($key,$value){
         $this->options[$key]=$value;
         return $this;
     }
     function render(){
+        // add loader to JS events
+        if ($this->show_loader) {
+            $this->options['beforeLoad'] = $this->js()->_enclose()->_selectorThis()
+                ->atk4_loader()->atk4_loader('showLoader');
+            $this->options['load'] = $this->js()->_enclose()->_selectorThis()
+                ->atk4_loader()->atk4_loader('hideLoader');
+        }
+        // render JUI tabs
         $this->js(true)
             ->tabs($this->options);
 
