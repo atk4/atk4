@@ -46,8 +46,8 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     public $default_exception='Exception_DB';
 
-    /** call $q->debug() to turn on debugging. */
-    public $debug=false;
+    /** call $q->debug() to turn on debugging or $q->debug(false) to turn ir off. */
+    public $debug = false;
 
     /** prefix for all parameteric variables: a, a_2, a_3, etc */
     public $param_base='a';
@@ -1808,11 +1808,13 @@ class DB_dsql extends AbstractModel implements Iterator {
     /**
      * Will set a flag which will output query (echo) as it is being rendered.
      *
+     * @param boolean $enable Optional flag value
+     *
      * @return DB_dsql $this
      */
-    function debug()
+    function debug($enable = true)
     {
-        $this->debug=1;
+        $this->debug = $enable;
         return $this;
     }
     /**
