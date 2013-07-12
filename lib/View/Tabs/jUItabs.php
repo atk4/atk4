@@ -28,14 +28,14 @@
 **/
 class View_Tabs_jUItabs extends View_Tabs {
     public $tab_template=null;
-    public $options=array('cache'=>false);
+    public $options=array();
 
     function init(){
         parent::init();
         $this->tab_template=$this->template->cloneRegion('tabs');
         $this->template->del('tabs');
     }
-    /* Set tabs option, for example, 'selected'=>'zero-based index of tab */
+    /* Set tabs option, for example, 'active'=>'zero-based index of tab' */
     function setOption($key,$value){
         $this->options[$key]=$value;
         return $this;
