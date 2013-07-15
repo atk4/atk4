@@ -18,6 +18,12 @@
 class View_ButtonSet extends HtmlElement
 {
     public $options = array();
+    public $vertical = false;
+
+    function setVertical($true=true) {
+        $this->vertical = $true;
+        return $this;
+    }
     
     function addButton($label, $options = array())
     {
@@ -26,7 +32,12 @@ class View_ButtonSet extends HtmlElement
     
     function render()
     {
-        $this->js(true)->buttonset($this->options);
+        if ($this->vertical) {
+            $this->js(true)->_load('jquery-ui.buttonset-vertical');
+            $this->js(true)->buttonsetv($this->options);
+        } else {
+            $this->js(true)->buttonset($this->options);
+        }
         parent::render();
     }
 }
