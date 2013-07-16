@@ -151,3 +151,15 @@ $.each({
         this.successMessage('Loading is in progress. Please wait');
     }
 },$.univ._import);
+
+var oldcr = $.ui.dialog.prototype._create;
+$.ui.dialog.prototype._create = function(){
+    var self=this;
+    $('<div/>').insertBefore(this.element).on('remove',function(){
+        self.element.remove();
+    });
+    oldcr.apply(this,arguments);
+};
+
+
+

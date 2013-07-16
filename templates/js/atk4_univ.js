@@ -593,17 +593,6 @@ $.extend($.univ,{
 // Fix annoying behaviour of dialog, where it removes itself from
 // parent
 
-var oldcr = $.ui.dialog.prototype._create;
-$.ui.dialog.prototype._create = function(){
-    var self=this;
-    $('<div/>').insertBefore(this.element).on('remove',function(){
-        self.element.remove();
-    });
-    oldcr.apply(this,arguments);
-};
-
-
-
 ////// Define deprecated functions ////////////
 $.each([
        'openExpander'
@@ -614,11 +603,4 @@ $.each([
     }
 });
 
-$.fn.extend({
-    univ: function(){
-        var u=new $.univ;
-        u.jquery=this;
-        return u;
-    }
-});
 })(jQuery);
