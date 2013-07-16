@@ -16,12 +16,6 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class jUI extends jQuery {
-    /*
-       ATK4 system for javascript file management
-     */
-    public $dir=null;
-    private $theme=false;
-
     private $atk4_initialised=false;
 
     function init(){
@@ -79,16 +73,5 @@ class jUI extends jQuery {
 
         $this->api->template->append('document_ready', "$.atk4(function(){ ".$js."; });\n");
         return $this;
-    }
-    function addWidget($name){
-        // if we can we should load jUI_widget_name <-- TODO
-        if(class_exists($n='jUI_widget_'.$name,false)){
-            return $this->add('jUI_widget_'.$name,$name);
-        }
-        return $this->add('jUI_widget',$name);
-    }
-    function addStdWidget($name){
-        // if we can we should load jUI_widget_name <-- TODO
-        return $this->add('jUI_stdWidget',$name);
     }
 }
