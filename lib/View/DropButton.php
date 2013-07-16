@@ -26,7 +26,7 @@ class View_DropButton extends Button {
     }
     /* Show menu when clicked */
     function useMenu($width=3){
-        $flyout=$this->owner->add('View_Flyout',null,$this->spot);
+        $flyout=$this->owner->add('View_Popover',null,$this->spot);
         $flyout->useArrow();
 
         $this->menu=$flyout->add('Menu_jUI');
