@@ -42,6 +42,7 @@ class jUI extends jQuery {
         $this->addInclude('ui.atk4_loader');
         $this->addInclude('ui.atk4_notify');
         $this->addInclude('atk4_univ');
+        $this->addInclude('atk4_univ_jui');
     }
     function addInclude($file,$ext='.js'){
         if(strpos($file,'http')===0){

@@ -54,6 +54,13 @@ $.univ._import=function(name,fn){
 		return ret?ret:$.univ;
 	}
 }
+$.fn.extend({
+    univ: function(){
+        var u=new $.univ;
+        u.jquery=this;
+        return u;
+    }
+});
 
 /*
  ATK4 Library initialisation
