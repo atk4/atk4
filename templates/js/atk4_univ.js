@@ -510,115 +510,115 @@ $.each({
     }
 },$.univ._import);
 
-      $.extend($.univ,{
+$.extend($.univ,{
 
-          // Function with custom return value
+    // Function with custom return value
 
-          toJSON: function (value, whitelist) {
-              var m = {
-                  '\b': '\\b',
-                  '\t': '\\t',
-                  '\n': '\\n',
-                  '\f': '\\f',
-                  '\r': '\\r',
-                  '"' : '\\"',
-                  '\\': '\\\\'
-              };
+    toJSON: function (value, whitelist) {
+        var m = {
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        };
 
-              var a,          // The array holding the partial texts.
-              i,          // The loop counter.
-              k,          // The member key.
-              l,          // Length.
-              r = /["\\\x00-\x1f\x7f-\x9f]/g,
-              v;          // The member value.
-              switch (typeof value) {
-                  case 'string':
-                      return r.test(value) ?
-                      '"' + value.replace(r, function (a) {
-                      var c = m[a];
-                      if (c) {
-                          return c;
-                      }
-                      c = a.charCodeAt();
-                      return '\\u00' + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
-                  }) + '"' :
-                      '"' + value + '"';
-                  case 'number':
-                      return isFinite(value) ? String(value) : 'null';
-                  case 'boolean':
-                      case 'null':
-                      return String(value);
-                  case 'object':
-                      if (!value) {
-                      return 'null';
-                  }
-                  if (typeof value.toJSON === 'function') {
-                      return this.toJSON(value.toJSON());
-                  }
-                  a = [];
-                  if (typeof value.length === 'number' &&
-                      !(value.propertyIsEnumerable('length'))) {
-                      l = value.length;
-                  for (i = 0; i < l; i += 1) {
-                      a.push(this.toJSON(value[i], whitelist) || 'null');
-                  }
-                  return '[' + a.join(',') + ']';
-                  }
-                  if (whitelist) {
-                      l = whitelist.length;
-                      for (i = 0; i < l; i += 1) {
-                          k = whitelist[i];
-                          if (typeof k === 'string') {
-                              v = this.toJSON(value[k], whitelist);
-                              if (v) {
-                                  a.push(this.toJSON(k) + ':' + v);
-                              }
-                          }
-                      }
-                  } else {
-                      for (k in value) {
-                          if (typeof k === 'string') {
-                              v = this.toJSON(value[k], whitelist);
-                              if (v) {
-                                  a.push(this.toJSON(k) + ':' + v);
-                              }
-                          }
-                      }
-                  }
-                  return '{' + a.join(',') + '}';
-              }
-          }
-      });
+        var a,          // The array holding the partial texts.
+        i,          // The loop counter.
+        k,          // The member key.
+        l,          // Length.
+        r = /["\\\x00-\x1f\x7f-\x9f]/g,
+        v;          // The member value.
+        switch (typeof value) {
+            case 'string':
+                return r.test(value) ?
+                '"' + value.replace(r, function (a) {
+                var c = m[a];
+                if (c) {
+                    return c;
+                }
+                c = a.charCodeAt();
+                return '\\u00' + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
+            }) + '"' :
+                '"' + value + '"';
+            case 'number':
+                return isFinite(value) ? String(value) : 'null';
+            case 'boolean':
+                case 'null':
+                return String(value);
+            case 'object':
+                if (!value) {
+                return 'null';
+            }
+            if (typeof value.toJSON === 'function') {
+                return this.toJSON(value.toJSON());
+            }
+            a = [];
+            if (typeof value.length === 'number' &&
+                !(value.propertyIsEnumerable('length'))) {
+                l = value.length;
+            for (i = 0; i < l; i += 1) {
+                a.push(this.toJSON(value[i], whitelist) || 'null');
+            }
+            return '[' + a.join(',') + ']';
+            }
+            if (whitelist) {
+                l = whitelist.length;
+                for (i = 0; i < l; i += 1) {
+                    k = whitelist[i];
+                    if (typeof k === 'string') {
+                        v = this.toJSON(value[k], whitelist);
+                        if (v) {
+                            a.push(this.toJSON(k) + ':' + v);
+                        }
+                    }
+                }
+            } else {
+                for (k in value) {
+                    if (typeof k === 'string') {
+                        v = this.toJSON(value[k], whitelist);
+                        if (v) {
+                            a.push(this.toJSON(k) + ':' + v);
+                        }
+                    }
+                }
+            }
+            return '{' + a.join(',') + '}';
+        }
+    }
+});
 
-      // Fix annoying behaviour of dialog, where it removes itself from
-      // parent
+// Fix annoying behaviour of dialog, where it removes itself from
+// parent
 
-      var oldcr = $.ui.dialog.prototype._create;
-      $.ui.dialog.prototype._create = function(){
-          var self=this;
-          $('<div/>').insertBefore(this.element).on('remove',function(){
-              self.element.remove();
-          });
-          oldcr.apply(this,arguments);
-      };
+var oldcr = $.ui.dialog.prototype._create;
+$.ui.dialog.prototype._create = function(){
+    var self=this;
+    $('<div/>').insertBefore(this.element).on('remove',function(){
+        self.element.remove();
+    });
+    oldcr.apply(this,arguments);
+};
 
 
 
-      ////// Define deprecated functions ////////////
-      $.each([
-             'openExpander'
-      ],function(name,val){
-          $.univ[val]=function(){
-              console.error('Function is deprecated:',val);
-              return $.univ;
-          }
-      });
+////// Define deprecated functions ////////////
+$.each([
+       'openExpander'
+],function(name,val){
+    $.univ[val]=function(){
+        console.error('Function is deprecated:',val);
+        return $.univ;
+    }
+});
 
-      $.fn.extend({
-          univ: function(){
-              var u=new $.univ;
-              u.jquery=this;
-              return u;
-          }
-      });
+$.fn.extend({
+    univ: function(){
+        var u=new $.univ;
+        u.jquery=this;
+        return u;
+    }
+});
 })(jQuery);
