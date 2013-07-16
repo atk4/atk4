@@ -126,6 +126,9 @@ textarea {
   overflow: auto;
   vertical-align: top;
 }
+fieldset {
+  border: 0;
+}
 @media print {
   * {
     text-shadow: none !important;
