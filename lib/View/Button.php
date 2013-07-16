@@ -60,49 +60,6 @@ class View_Button extends View_HtmlElement {
         $this->setAttr('href',$this->api->url($page,$args));
         return $this;
     }
-    function addMenu($menu) {
-        // TODO user options support
-        $menu_button_options = array(
-            'text'=>false,
-            'icons'=>array(
-                'primary'=>'ui-icon-triangle-1-s',
-            ),
-        );
-
-        $this->createMenu($menu);
-
-        $this->js(true)->after('<button id="'.$this->name.'_menu'.'">Select an action</button>')->button()
-            ->next()
-            ->button($menu_button_options)->click(
-                $this->js(null,'function() {
-                    var menu = $( this ).parent().next().show().position({
-                      my: "left top",
-                      at: "left bottom",
-                      of: this
-                    });
-                    $( document ).one( "click", function() {
-                      menu.hide();
-                    });
-                    return false;
-                  }')
-            )
-            ->parent()
-            ->buttonset()
-            ->next()
-            ->hide()
-            ->menu()
-            ->css('position','absolute')
-            ->css('width','100px')
-        ;
-    }
-    protected function createMenu($menu) {
-        $menu_html = '<ul>';
-        foreach ($menu as $url=>$name) {
-            $menu_html = $menu_html . '<li><a href="'.$this->api->url($url).'">'.$name.'</a></li>';
-        }
-        $menu_html .= '</ul>';
-        $this->js(true)->parent()->after($menu_html);
-    }
     // }}}
 
     // {{{ Click handlers
