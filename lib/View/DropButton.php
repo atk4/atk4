@@ -26,10 +26,10 @@ class View_DropButton extends Button {
         parent::render();
     }
     /* Show menu when clicked */
-    function useMenu($options = null, $spot = null){
+    function useMenu($class = null, $options = null, $spot = null){
         $popover = $this->owner->add('View_Popover', null, $this->spot);
 
-        $this->menu = $popover->add($this->menu_class, $options, $spot);
+        $this->menu = $popover->add($class ?: $this->menu_class, $options, $spot);
 
         $this->js('click', $popover->showJS($this));
 
