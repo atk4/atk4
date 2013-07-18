@@ -27,7 +27,9 @@ class View_ButtonSet extends HtmlElement
     
     function addButton($label, $options = array())
     {
-        return $this->add('Button', $options)->setLabel($label);
+        $but = $this->add('Button', $options)->setLabel($label);
+        $but->js(true)->css('margin-top','-3px');
+        return $but;
     }
     
     function render()
