@@ -19,8 +19,8 @@ class View_ButtonSet extends HtmlElement
 {
     public $options = array();
     public $vertical = false;
-    
-    function addButton($label, $options = array())
+
+    function addButton($label=null, $options = array())
     {
         $but = $this->add('Button', $options)->setLabel($label);
         if ($this->vertical) {
@@ -28,7 +28,7 @@ class View_ButtonSet extends HtmlElement
         }
         return $but;
     }
-    
+
     function render()
     {
         if ($this->vertical) {
@@ -40,3 +40,4 @@ class View_ButtonSet extends HtmlElement
         parent::render();
     }
 }
+
