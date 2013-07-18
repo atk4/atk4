@@ -25,9 +25,11 @@ class View_ButtonSet extends HtmlElement
         return $this;
     }
     
-    function addButton($label, $options = array())
+    function addButton($label=null, $options = array())
     {
-        return $this->add('Button', $options)->setLabel($label);
+        $button=$this->add('Button', $options);
+        if($label)$button->setLabel($label);
+        return $button;
     }
     
     function render()
