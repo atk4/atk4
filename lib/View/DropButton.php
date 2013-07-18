@@ -17,6 +17,7 @@
 class View_DropButton extends Button {
 
     public $menu = null;
+    public $menu_class = 'Menu_jUI';
 
     function render(){
         if(!isset($this->options['icons']['secondary'])){
@@ -25,10 +26,10 @@ class View_DropButton extends Button {
         parent::render();
     }
     /* Show menu when clicked */
-    function useMenu(){
+    function useMenu($class = null, $options = null, $spot = null){
         $popover = $this->owner->add('View_Popover', null, $this->spot);
 
-        $this->menu = $popover->add('Menu_jUI');
+        $this->menu = $popover->add($class ?: $this->menu_class, $options, $spot);
 
         $this->js('click', $popover->showJS($this));
 
