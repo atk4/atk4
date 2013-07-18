@@ -16,13 +16,13 @@
  =====================================================ATK4=*/
 class View_ButtonMenuButton extends Button {
 
-    public $menu=null;
+    public $up = false;
     /* Show menu when clicked */
     function addButtonMenu() {
         $menu_button_options = array(
             'text'=>false,
             'icons'=>array(
-                'primary'=>'ui-icon-triangle-1-s',
+                'primary'=>( ($this->up)?'ui-icon-triangle-1-n':'ui-icon-triangle-1-s'),
             ),
         );
 
@@ -34,11 +34,9 @@ class View_ButtonMenuButton extends Button {
         $but->js('click',
             $menu->js()->show()
                     ->css('position','absolute')
-                    ->position(array(
-                          'my' => "left top",
-                          'at' => "left bottom",
-                          'of' => $this->js(null,"'#".$but->name."'")
-                    ))
+                    ->position(
+                        $this->setPosition($but)
+                    )
         );
 
         $this->js(true)->_selectorDocument()->bind('click',
@@ -51,5 +49,20 @@ class View_ButtonMenuButton extends Button {
         $this->js(true)->css('margin-right','-2px');
 
         return $menu;
+    }
+    function setPosition($but) {
+        if ($this->up) {
+            return array(
+              'my' => "left bottom",
+              'at' => "left top",
+              'of' => $this->js(null,"'#".$but->name."'")
+            );
+        } else {
+            return array(
+              'my' => "left top",
+              'at' => "left bottom",
+              'of' => $this->js(null,"'#".$but->name."'")
+            );
+        }
     }
 }

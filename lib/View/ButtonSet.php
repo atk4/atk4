@@ -19,16 +19,13 @@ class View_ButtonSet extends HtmlElement
 {
     public $options = array();
     public $vertical = false;
-
-    function setVertical($true=true) {
-        $this->vertical = $true;
-        return $this;
-    }
     
     function addButton($label, $options = array())
     {
         $but = $this->add('Button', $options)->setLabel($label);
-        $but->js(true)->css('margin-top','-3px');
+        if ($this->vertical) {
+            $but->js(true)->css('margin-top','-3px');
+        }
         return $but;
     }
     
