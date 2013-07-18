@@ -290,6 +290,32 @@ class SMlite extends AbstractModel {
     function setHTML($tag,$value=null){
         return $this->set($tag,$value,false);
     }
+    /**
+     * Provided that the HTML tag contains ICU-compatible message format
+     * string, it will be localized then integrated with passed arguments
+     */
+    function setMessage($tag,$args=array()){
+        if(!is_array($args))$args=array($args);
+        $fmt=$this->api->_($this->get($tag));
+
+        // Try to analyze format and see which formatter to use
+        if (class_exists('MessageFormatter',false) && strpos($fmt,'{')!==null) {
+            $fmt=new MessageFormatter($this->api->locale,$fmt);
+            $str=$fmt->format($args);
+        }
+        // Else, perhaps it's a sprintf?
+        elseif (strpos($fmt,'%')!==null) {
+            array_unshift($args,$fmt);
+            $str=call_user_func_array('sprintf',$args);
+        }
+        else {
+            throw $this->exception('Unclear how to format this')
+                ->addMoreInfo('fmt',$fmt)
+                ;
+        }
+
+        return $this->set($tag,$str);
+    }
     function set($tag,$value=null,$encode=true){
         /*
          * This function will replace region refered by $tag to a new content.
