@@ -9,7 +9,7 @@ class Mongo_Model extends Model {
 
         parent::init();
 
-        $this->setSource('Mongo',$this->table);
+        $this->setSource('Mongo');
 
         $this->addField('_id')->system(true)->visible(true);
     }

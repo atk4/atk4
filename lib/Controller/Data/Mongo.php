@@ -1,9 +1,11 @@
 <?php
 class Controller_Data_Mongo extends Controller_Data {
-    function setSource($model,$table){
+    function setSource($model,$table=null){
+
+        if(!$table)$table=$model->table;
 
         if(@!$this->api->mongoclient){
-            $m=new MongoClient();
+            $m=new MongoClient($this->api->getConfig('mongo/url',null));
 
             $db=$this->api->getConfig('mongo/db');
 
@@ -15,7 +17,7 @@ class Controller_Data_Mongo extends Controller_Data {
         parent::setSource($model,array(
             'db'=>$this->api->mongoclient->$table,
             'conditions'=>array(),
-            'collection'=>$model->table
+            'collection'=>$table
         ));
 
         $model->addMethod('incr,decr',$this);
