@@ -41,9 +41,9 @@ class View_ButtonMenuButton extends Button {
                     ))
         );
 
-        $this->js('click',
-            $menu->js()->hide()
-        )->_selector('#atk-layout');
+        $this->js(true)->_selectorDocument()->bind('click',
+            $this->js(null,'function(ev){'.$menu->js()->hide().'}')
+        );
 
         $but->js(true)->button($menu_button_options)->removeClass('ui-corner-all')->addClass('ui-corner-right');
         $but->js(true)->css('margin-left','-2px');
