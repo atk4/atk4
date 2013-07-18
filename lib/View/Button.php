@@ -18,26 +18,31 @@ class View_Button extends View_HtmlElement {
     private $icon=null;
 
     public $options=array();
+    
+    // do we show button as toggle button based on checkbox?
+    public $as_toggle_button = false;
+    
+    // spots for button template chunks from template file
+    public $spot_default = 'button';
+    public $spot_toggle = 'button_toggle';
+    
     function defaultTemplate(){
-        return array('button','button');
+        return array('button', $this->as_toggle_button
+            ? $this->spot_toggle
+            : $this->spot_default);
     }
 
     // {{ Management of button 
     /** Button management */
-    function setIcon($icon, $colour='blue'){
+    function setIcon($icon){
         // TODO: implement through Icon
         $this->icon=$icon;
         //$this->template->set('icon',$icon);
-        //$this->template->set('colour',$colour);
+
         return $this;
     }
     function setLabel($label){
         return $this->setText($this->api->_($label));
-    }
-    /** Adds CSS of the news  */
-    function setButtonStyle($n){
-        $this->template->set('button_style',$n);
-        return $this;
     }
     /** redefine this method with empty one if you DONT want buttons to use jQuery UI */
     function jsButton(){
@@ -48,6 +53,7 @@ class View_Button extends View_HtmlElement {
         //         parameters to buttons even if they are inside buttonset.
         //         Not sure why this exceptional case was created before.
         //if(!($this->owner instanceof ButtonSet))$this->js(true)->button($opt);
+        
         $this->js(true)->button($opt);
     }
     function render(){
@@ -103,6 +109,11 @@ class View_Button extends View_HtmlElement {
     function submitForm($form){
         throw $this->exception('submitForm() is obsolete, use button->js("click",$form->js()->submit());');
         return $this->js('click',$form->js()->submit());
+    }
+    /** @obsolete Adds CSS of the news */
+    function setButtonStyle($n){
+        $this->template->set('button_style',$n);
+        return $this;
     }
     // }}}
 }
