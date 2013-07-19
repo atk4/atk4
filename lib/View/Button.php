@@ -133,6 +133,9 @@ class View_Button extends View_HtmlElement {
                 'of'=>$this
             )),
         ));
+        $this->js(true)->_selectorDocument()->bind('click',
+            $this->js(null,'function(ev){'.$this->menu->js()->hide().'}')
+        );
 
         return $this->menu;
     }
