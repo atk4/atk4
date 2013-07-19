@@ -16,16 +16,6 @@
  =====================================================ATK4=*/
 class View_DropButton extends Button {
 
-<<<<<<< HEAD
-    public $menu = null;
-    public $menu_class = 'Menu_jUI';
-=======
-
-    /**
-     * if you specify separate as true, then two buttons will actually be
-     * created
-     */
->>>>>>> Integrate DropButton functionality into Button
 
     function render(){
         if(!isset($this->options['icons']['secondary'])){
@@ -33,17 +23,4 @@ class View_DropButton extends Button {
         }
         parent::render();
     }
-<<<<<<< HEAD
-    /* Show menu when clicked */
-    function useMenu($class = null, $options = null, $spot = null){
-        $popover = $this->owner->add('View_Popover', null, $this->spot);
-
-        $this->menu = $popover->add($class ?: $this->menu_class, $options, $spot);
-
-        $this->js('click', $popover->showJS($this));
-
-        return $this->menu;
-    }
-=======
->>>>>>> Integrate DropButton functionality into Button
 }
