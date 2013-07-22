@@ -15,26 +15,24 @@
  * by default <div>
  *
  * Most other views would contain a template with many HTML elements,
- * but "View" is for those cases when you need to add an image,
- * div or video tag.
+ * but "View" is for those cases when you need to add an image, simple
+ * div or video tag, for example.
  *
  *  $this->add('View')
  *      ->setElement('a')
- *      ->setAttr('href',$this->api->url('reminder'))
+ *      ->setAttr('href', $this->api->url('reminder'))
  *      ->addClass('password_reminder')
  *      ->set('Forgot your password?');
  *
- * For a commonly used elements such as "P", "H1" etc
+ * For a commonly used elements such as "P", "H1" etc.
  * you will find dedicated classes inherited from View.
- * 
-*/
+ */
 class View extends AbstractView
 {
     /**
-     * Change which element is used. 'div' by default, but
-     * can be changed with this function
+     * Change which HTML element is used. 'div' will be used by default.
      *
-     * @param string $element Any HTML elment
+     * @param string $element Any HTML element
      *
      * @return $this
      */
@@ -44,29 +42,46 @@ class View extends AbstractView
         return $this;
     }
     /**
-     * Add attribute to element. Previously added attributes are not affected
+     * Add attribute to element. Previously added attributes are not affected.
      *
-     * @param string,array $attribute Name of the attribute, or hash
+     * @param string|array $attribute Name of the attribute, or hash
      * @param string       $value     New value of the attribute
      *
      * @return $this
      */
     function setAttr($attribute, $value = null)
     {
-        if (is_array($attribute)&&is_null($value)) {
-            foreach ($attribute as $a => $b) {
-                $this->setAttr($a, $b);
+        if (is_array($attribute) && is_null($value)) {
+            foreach ($attribute as $k => $v) {
+                $this->setAttr($k, $v);
             }
             return $this;
         }
         $this->template->appendHTML('attributes', ' '.$attribute.'="'.$value.'"');
         return $this;
     }
+    
     /** 
-     * Add class to element. Previously added classes are not affected. 
-     * Multiple classes can also be separated by a space.
+     * Replace all CSS classes with new ones.
+     * Multiple CSS classes can also be set if passed as space separated
+     * string or array of class names.
      *
-     * @param string $class HTML class or array of classes
+     * @param string|array $class CSS class name or array of class names
+     *
+     * @return $this
+     */
+    function setClass($class)
+    {
+        $this->template->del('class');
+        $this->addClass($class);
+        return $this;
+    }
+    /**
+     * Add CSS class to element. Previously added classes are not affected. 
+     * Multiple CSS classes can also be added if passed as space separated
+     * string or array of class names.
+     *
+     * @param string|array $class CSS class name or array of class names
      *
      * @return $this
      */
@@ -82,81 +97,94 @@ class View extends AbstractView
         return $this;
     }
     /** 
-     * Remove class from element, if it was added with addClass or setClass.
+     * Remove CSS class from element, if it was added with setClass
+     * or addClass.
      *
-     * @param string $class Single class to remove (no spaces)
+     * @param string $class Single CSS class name to remove
      *
      * @return $this
      */
     function removeClass($class)
     {
-        $cl=' '.$this->template->get('class').' ';
-        $cl=str_replace($cl, ' '.$class.' ', ' ');
+        $cl = ' '.$this->template->get('class').' ';
+        $cl = str_replace(' '.trim($class).' ', ' ', $cl);
         $this->template->set('class', trim($cl));
-        return $this;
-    }
-    /** 
-     * Replace all classes with a new ones.
-     *
-     * @param string $class New class (can contain spaces)
-     *
-     * @return $this
-     */
-    function setClass($class)
-    {
-        $this->template->trySet('class', $class);
         return $this;
     }
 
     /** 
-     * Add inline style to element.
+     * Set inline CSS style of element. Old styles will be removed.
+     * Multiple CSS styles can also be set if passed as array.
      *
-     * @param string $property CSS Property
-     * @param string $style    CSS Style definition
+     * @param string|array $property CSS Property or hash
+     * @param string       $style    CSS Style definition
+     *
+     * @return $this
+     */
+    function setStyle($property, $style = null)
+    {
+        $this->template->del('style');
+        $this->addStyle($property, $style);
+        return $this;
+    }
+
+    /** 
+     * Add inline CSS style to element.
+     * Multiple CSS styles can also be set if passed as array.
+     *
+     * @param string|array $property CSS Property or hash
+     * @param string       $style    CSS Style definition
      *
      * @return $this
      */
     function addStyle($property, $style = null)
     {
-        return $this->setStyle($property, $style);
-    }
-
-    /** 
-     * Same as addStyle
-     *
-     * @param string $property CSS Property
-     * @param string $style    CSS Style definition
-     *
-     * @return $this
-     * @TODO: Align functionality with addClass / setClass
-     */
-    function setStyle($property, $style = null)
-    {
-        if (is_null($style) && is_array($property)) {
+        if (is_array($property) && is_null($style)) {
             foreach ($property as $k => $v) {
-                $this->setStyle($k, $v);
+                $this->addStyle($k, $v);
             }
             return $this;
         }
-        $this->template->append('style', ";".$property.':'.$style);
+        $this->template->append('style', ';'.$property.':'.$style);
         return $this;
     }
-    /**
-     * Sets text to appear inside element. Automatically escapes
-     * HTML characters.See also setHTML()
+    /** 
+     * Remove inline CSS style from element, if it was added with setStyle
+     * or addStyle.
      *
-     * @param string $text Text
+     * @param string $property CSS Property to remove
      *
      * @return $this
      */
-    function setText($text)
+    function removeStyle($property)
     {
-        $this->template->trySet('Content', $text);
+        // get string or array of style tags added
+        $st = $this->template->get('style');
+
+        // if no style, do nothing
+        if (!$st) {
+            return $this;
+        }
+        
+        // if only one style, then put it in array
+        if (!is_array($st)) {
+            $st = array($st);
+        }
+        
+        // remove all styles and set back the ones which don't match property
+        $this->template->del('style');
+        foreach ($st as $k=>$rule) {
+            if (strpos($rule, ';'.$property.':') === false) {
+                $this->template->append('style', $rule);
+            }
+        }
+
         return $this;
     }
+
     /**
      * Sets text to appear inside element. Automatically escapes
-     * HTML characters.See also setHTML(). Same as setText()
+     * HTML characters. See also setHTML(). Same as setText().
      *
      * @param string $text Text
      *
@@ -167,11 +195,26 @@ class View extends AbstractView
         return $this->setText($text);
     }
     /**
-     * Sets HTML to appear inside element. 
+     * Sets text to appear inside element. Automatically escapes
+     * HTML characters. See also setHTML().
      *
-     * @param string $html HTML
+     * @param string $text Text
      *
      * @return $this
+     * @TODO: Imants: I believe we should use set() here not trySet()
+     */
+    function setText($text)
+    {
+        $this->template->trySet('Content', $text);
+        return $this;
+    }
+    /**
+     * Sets HTML to appear inside element. Don't escape HTML characters.
+     *
+     * @param string $html HTML markup
+     *
+     * @return $this
+     * @TODO: Imants: I believe we should use setHTML() here not trySetHTML()
      */
     function setHTML($html)
     {
@@ -180,6 +223,11 @@ class View extends AbstractView
     }
 
     // {{{ Inherited Methods
+    /**
+     * Set default template to htmlelement.html
+     *
+     * @return array
+     */
     function defaultTemplate(){
         return array('htmlelement');
     }
