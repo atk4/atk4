@@ -108,8 +108,9 @@ class Controller_MVCForm extends AbstractController {
         $form_field = $this->owner->addField($field_type,$field_name,$field_caption);
         $form_field->set($field->get());
 
-        if($field->placeholder()){
-            $form_field->setAttr('placeholder',$field->placeholder());
+        $field_placeholder = $field->placeholder() ?: $field->emptyText() ?: null;
+        if ($field_placeholder) {
+            $form_field->setAttr('placeholder', $field_placeholder);
         }
 
         if($field->hint()){
