@@ -35,6 +35,7 @@ class View extends AbstractView
      * @param string $element Any HTML element
      *
      * @return $this
+     * @TODO: Imants: I believe we should use set() here not trySet()
      */
     function setElement($element)
     {
