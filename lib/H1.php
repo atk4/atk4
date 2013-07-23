@@ -1,5 +1,9 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
+ * Shortcut class for using HTML heading.
+ *
+ * @link http://agiletoolkit.org/
+*//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -9,18 +13,15 @@
    commercial license.
 
    See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
-/**
- * Adds a <h1> element
- *
- * $this->add('H1')->set('Welcome');
- * $this->add('P')->set('Your balance is: '.$balance);
-*/
+ =====================================================ATK4=*/
 class H1 extends HX
 {
+    /**
+     * Initialization
+     */
     function init()
     {
         parent::init();
-        $this->setElement('h1');
+        $this->setElement('H1');
     }
 }

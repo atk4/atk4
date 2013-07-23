@@ -1463,10 +1463,11 @@ body #atk-layout #atk-footer-guard {
   top: 1.1111111111111112em;
   left: 1em;
 }
-.atk-notification > a.ui-icon-closethick {
+.atk-notification > .ui-icon-closethick {
   position: absolute;
   top: 0.5em;
   right: 0.5em;
+  cursor: pointer;
 }
 .atk-notification {
   -webkit-box-shadow: 0 10px 20px #ffffff inset;
@@ -1533,4 +1534,7 @@ body #atk-layout #atk-footer-guard {
 }
 .float-right {
   float: right !important;
+}
+.hidden {
+    display: none;
 }

@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
+/**
+ * Shortcut class for using HTML heading.
  *
  * @link http://agiletoolkit.org/
 *//*
@@ -14,13 +14,14 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-/**
- * Shortcut class for using Heading style
- *
- * Use: 
- *  $this->add('H3')->set('Header');
- *
- * @license See http://agiletoolkit.org/about/license
- * 
-**/
-class H3 extends HX { function init(){ parent::init(); $this->setElement('H3'); } }
+class H3 extends HX
+{
+    /**
+     * Initialization
+     */
+    function init()
+    {
+        parent::init();
+        $this->setElement('H3');
+    }
+}
