@@ -1,6 +1,6 @@
 <?php
 /***********************************************************
-  ..
+  Add HTML horizontal-ruler <hr> element
 
   Reference:
   http://agiletoolkit.org/doc/ref
@@ -15,4 +15,14 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class HR extends HtmlElement { function init(){ parent::init(); $this->addClass('hr')->set(''); } }
+class HR extends HtmlElement
+{
+    /**
+     * Initialization
+     */
+    function init()
+    {
+        parent::init();
+        $this->addClass('hr')->set('');
+    }
+}
