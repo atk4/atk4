@@ -16,9 +16,9 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class LoremIpsum extends AbstractView {
-    private $message;
-    private $paragraphs=3;
-    private $words=200;
+    public $message;
+    public $paragraphs=3;
+    public $words=200;
 
     function create_greeking($words, $min_words = 3, $max_words = 10) {
         $punctuation = array(". ", ". ", ". ", ". ", ". ", ". ", ". ", ". ", "... ", "! ", "? ");

@@ -19,8 +19,6 @@ Implements connectivity between Model and Session
 */
 class Controller_Data_Session extends Controller_Data_Array {
 
-    public $search_on_load=false;
-
     function setSource($model,$data=undefined){
         $this->api->initializeSession();
         if($data===undefined || $data === null)$data='-';

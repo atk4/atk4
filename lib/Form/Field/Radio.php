@@ -24,6 +24,13 @@ class Form_Field_Radio extends Form_Field_ValueList {
     function getInput($attr=array()){
         $output = '<div id="'.$this->name.'" class="atk-form-options">';
         foreach($this->getValueList() as $value=>$descr){
+
+            if($descr instanceof AbstractView){
+                $descr=$descr->getHTML();
+            }else{
+                $descr=htmlspecialchars($descr);
+            }
+
             $output.=
                 "<div>".$this->getTag('input',
                         array_merge(
@@ -38,7 +45,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
                             $this->attr,
                             $attr
                             ))
-                ."<label for='".$this->name.'_'.$value."'>".htmlspecialchars($descr)."</label></div>";
+                ."<label for='".$this->name.'_'.$value."'>".$descr."</label></div>";
         }
         $output .= '</div>';
         return $output;

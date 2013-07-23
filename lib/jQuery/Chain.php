@@ -105,6 +105,12 @@ class jQuery_Chain extends AbstractModel {
         if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
             //if($this->api->jquery)$this->api->jquery->getJS($this->owner);
 
+            if(headers_sent($file,$line)){
+                echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
+                    ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
+            }
+
+
             $x=$this->api->template->get('document_ready');
             if(is_array($x))$x=join('',$x);
             echo $this->_render();

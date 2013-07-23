@@ -45,55 +45,77 @@ class Paginator_Basic extends CompleteLister {
         }else{
             $this->skip=@$_GET[$this->skip_var]+0;
         }
-        if($source instanceof Model_Table){
-
-            // Start iterating early
+        
+        // Start iterating early ($source = DSQL of model)
+        if($source instanceof SQL_Model){
             $source = $source->_preexec();
-
-            $source->limit($this->ipp,$this->skip);
+        }
+        
+        if($source instanceof DB_dsql){
+            $source->limit($this->ipp, $this->skip);
             $source->calcFoundRows();
+            $this->source = $source;
 
-            $this->source=$source;
-
-        }elseif($source instanceof DB_dsql){
-            $source->_dsql()->calcFoundRows();
-
+        }elseif($source instanceof Model){
+            $this->source = $source->setLimit($this->ipp,$this->skip);
+            
         }else{
+            // NOTE: no limiting enabled for unknown data source
             $this->source =& $source;
         }
     }
     function recursiveRender(){
 
-        if(!$this->source){
-            if($this->owner->model){
-                if($this->owner instanceof Grid_Advanced) $this->owner->getIterator(); // force grid->model sorting implemented in Grid_Advanced
+        // get data source
+        if (! $this->source) {
+            
+            // force grid sorting implemented in Grid_Advanced
+            if($this->owner instanceof Grid_Advanced) {
+                $this->owner->getIterator();
+            }
+            
+            // set data source for Paginator
+            if ($this->owner->model) {
                 $this->setSource($this->owner->model);
+            } elseif ($this->owner->dq) {
+                $this->setSource($this->owner->dq);
+            } else {
+                throw $this->exception('Unable to find source for Paginator');
             }
         }
 
-        if(!isset($this->source))
-            throw $this->exception('Unable to find source for Paginator');
-
+        // calculate found rows
         if($this->source instanceof DB_dsql){
             $this->source->preexec();
             $this->found_rows=$this->source->foundRows();
+        }elseif($this->source instanceof Model){
+            $this->found_rows=$this->source->count();
         }else{
             $this->found_rows=count($this->source);
         }
 
+        // calculate current page and total pages
         $this->cur_page=floor($this->skip / $this->ipp) +1;
         $this->total_pages = ceil($this->found_rows / $this->ipp);
 
+        // no need for paginator if there is only one page
+        if($this->total_pages<=1)return $this->destroy();
+        
         if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
             if($this->memorize){
                 $this->memorize('skip',$this->skip=0);
             }
-            $this->source->limit($this->ipp,$this->skip);
-            $this->source->rewind();                 // re-execute the query
+            if($this->source instanceof DB_dsql){
+                $this->source->limit($this->ipp,$this->skip);
+                $this->source->rewind();                 // re-execute the query
+            }elseif($this->source instanceof Model){
+                $this->source->setLimit($this->ipp,$this->skip);
+            }else{
+                // Imants: not sure if this is correct, but it was like this before
+                $this->source->setLimit($this->ipp,$this->skip);
+            }
         }
-
-        if($this->total_pages<=1)return $this->destroy();
 
         if($this->cur_page>1){
             $this->add('View',null,'prev')
@@ -153,7 +175,7 @@ class Paginator_Basic extends CompleteLister {
             }
         }
         
-        // generate our source now
+        // generate source for Paginator Lister (pages, links, labels etc.)
         $data=array();
 
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
@@ -166,13 +188,12 @@ class Paginator_Basic extends CompleteLister {
         } 
 
         if($this->ajax_reload){
-            $this->js('click',$this->owner->js()->reload(array($this->skip_var=>$this->js()->_selectorThis()->attr('data-skip'))))->_selector('#'.$this->name.' a');
+            $this->js('click',$this->owner->js()->reload(array($this->skip_var=>$this->js()->_selectorThis()->attr('data-skip'))))
+                ->_selector('#'.$this->name.' a');
         }
-
 
         parent::setSource($data);
         return parent::recursiveRender();
-
     }
     function defaultTemplate(){
         return array('paginator42','paginator');

@@ -116,6 +116,9 @@ class Field_Reference extends Field {
         $f=preg_replace('/_id$/','',$this->short_name);
         if($f!=$this->short_name)return $f;
 
+        $f=$this->short_name.'_text';
+        if($this->owner->hasElement($f))return $f;
+
         $f=$this->_unique($this->owner->elements,$f);
         $this->dereferenced_field=$f;
         return $f;

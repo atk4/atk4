@@ -1,20 +1,26 @@
 <?php
 class Controller_Data_Mongo extends Controller_Data {
-    function setSource($model,$table){
+    function setSource($model,$table=null){
+
+        if(!$table)$table=$model->table;
 
         if(@!$this->api->mongoclient){
-            $m=new MongoClient();
+            $m=new MongoClient($this->api->getConfig('mongo/url',null));
+
+            $db=$this->api->getConfig('mongo/db');
 
 
-            $this->api->mongoclient=$m->ven;
+            $this->api->mongoclient=$m->$db;
 
         }
 
         parent::setSource($model,array(
             'db'=>$this->api->mongoclient->$table,
             'conditions'=>array(),
-            'collection'=>$model->table
+            'collection'=>$table
         ));
+
+        $model->addMethod('incr,decr',$this);
 
         //$model->data=$model->_table[$this->short_name]['db']->get($id);
     }
@@ -27,6 +33,11 @@ class Controller_Data_Mongo extends Controller_Data {
         $model->_table[$this->short_name][$key]=$val;
     }
 
+    function incr($m,$field,$amount){
+        if(!$m->loaded())throw $this->exception('Can only increment loaded model');
+        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>$amount)));
+    }
+
     function save($model,$id=null){
 
         $data=array();
@@ -35,9 +46,21 @@ class Controller_Data_Mongo extends Controller_Data {
             if(!$f->editable() && !$f->system())continue;
             if(!isset($model->dirty[$name]) && $f->defaultValue()===null)continue;
 
-            $data[$name]=$f->get();
-        }
+            $value=$f->get();
 
+            if($f->type()=='boolean' && is_bool($value)) {
+                $value=(bool)$value;
+            }
+            if($f->type()=='int'){
+                $value=(int)$value;
+            }
+            if($f->type()=='money' || $f->type()=='float'){
+                $value=(float)$value;
+            }
+
+            $data[$name]=$value;
+
+        }
         unset($data[$model->id_field]);
 
         foreach ($model->_references as $our_field=>$junk) {
@@ -51,11 +74,17 @@ class Controller_Data_Mongo extends Controller_Data {
                 if(!$m->loaded())continue;
 
                 $data[$deref]=$m[$m->title_field];
-                $data[$our_field]=new MongoID($data[$our_field]);
+                if($m instanceof Mongo_Model){
+                    $data[$our_field]=new MongoID($data[$our_field]);
+                }
             }
         }
 
         if($model->loaded()){
+            if (!$data){
+                if ($model->debug) echo '<font style="color: blue">db.'.$model->table.' is not dirty</font>';
+                return $model->id;
+            }
             if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.(new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
             $db=$this->_get($model,'db')->update(array($model->id_field=>new MongoID($model->id)), array('$set'=>$data));
             return $model->id;
@@ -64,7 +93,9 @@ class Controller_Data_Mongo extends Controller_Data {
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         $db=$this->_get($model,'db')->save($data);
         $model->id=(string)$data[$model->id_field]?:null;
+        $model->data=$data;  // will grab defaults here
         if ($model->debug) echo '<font style="color: blue">='.$model->id.'</font><br/>';
+        $model->dirty=array();
         return $model->id;
     }
     function tryLoad($model,$id){
@@ -106,6 +137,9 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->id;
     }
     function loadBy($model,$field,$cond=undefined,$value=undefined){
+        $this->tryLoadBy($model,$field,$cond,$value);
+        if(!$model->loaded())throw $this->exception('No records matching criteria');
+        return $model->id;
     }
     function delete($model,$id){
         $id=new MongoID($id);
@@ -118,16 +152,50 @@ class Controller_Data_Mongo extends Controller_Data {
         $model->unload();
         return $this;
     }
-    function deleteAll($model){}
+    function deleteAll($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.remove('.
+            json_encode($model->_table[$this->short_name]['conditions']).')</font><br/>';
+
+        $model->data=$this->_get($model,'db')->remove(
+            $model->_table[$this->short_name]['conditions']
+        );
+        $model->unload();
+        return $this;
+    }
     function getRows($model){}
-    function setOrder($model,$field,$desc=false){}
-    function setLimit($model,$count,$offset=0){}
-    function rewind($model){
-        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+    function setOrder($model,$field,$desc=false){
+        $this->_set($model,'order',array($field=>$desc?-1:1));
+        // TODO: allow setting order multiple times
+        // TODO: extend syntax to be compatible with SQL_Model
+    }
+    function setLimit($model,$count,$offset=0){
+        $this->_set($model,'limit',array($count,$offset));
+    }
+    function selectQuery($model){
         $c=$this->_get($model,'db')->find(
             $model->_table[$this->short_name]['conditions']
         );
+
+        // sort
+        if($s=$this->_get($model,'order'))$c->sort($s);
         $this->_set($model,'cur',$c);
+
+        // skip
+        if($l=$this->_get($model,'limit')){
+            list($count,$skip)=$l;
+            if($skip)$c->skip($skip);
+            if($count)$c->limit($count);
+        }
+
+        return $c;
+    }
+    function count($model){
+        return $this->selectQuery($model)->count();
+    }
+    function rewind($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+        $c=$this->selectQuery($model);
+
         $model->data=$c->getNext();
         $model->id=(string)$model->data[$model->id_field]?:null;
         return $model->data;
@@ -146,7 +214,13 @@ class Controller_Data_Mongo extends Controller_Data {
         if ($f=$model->hasElement($field)) {
             // TODO: properly convert to Mongo presentation
             if($f->type()=='boolean' && is_bool($value)) {
+                $value=(bool)$value;
+            }
+            if($f->type()=='int'){
                 $value=(int)$value;
+            }
+            if($f->type()=='money' || $f->type()=='float'){
+                $value=(float)$value;
             }
 
             if(
@@ -155,21 +229,14 @@ class Controller_Data_Mongo extends Controller_Data {
             ) {
                 $value = new MongoID($value);
             }
-
-            $f->defaultValue($value);
-            //$f->system(true);
-        }
-        if ($f=$model->hasElement($field)) {
-            // TODO: properly convert to Mongo presentation
-            if($f->type()=='boolean' && is_bool($value)) {
-                $value=(int)$value;
-            }
-
-            if($f->type()=='reference_id' && $value) {
-                $value = new MongoID($value);
-            }
-
             $f->defaultValue($value)->system(true);
+        }else{
+            if($field[0]!='$'){
+                throw $this->exception('Condition on undefined field. Does not '.
+                    'look like expression either')
+                    ->addMoreInfo('model',$model)
+                    ->addMoreInfo('field',$field);
+            }
         }
         $model->_table[$this->short_name]['conditions'][$field]=$value;
     }

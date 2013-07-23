@@ -28,6 +28,8 @@
 class Form_Basic extends View implements ArrayAccess {
     protected $form_template = null;
     protected $form_tag = null;
+
+    public $layout=null; // template of layout if form has one
     
     // Here we will have a list of errors occured in the form, when we tried to
     // submit it. field_name => error
@@ -146,7 +148,9 @@ class Form_Basic extends View implements ArrayAccess {
             $this->js()->univ()->alert($msg?:'Error in form')->execute();
         }
         if(!is_object($field))$field=$this->getElement($field);
-        $this->js()->atk4_form('fieldError',$field->short_name,$msg)->execute();
+
+        $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
+        $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
     function addField($type, $options, $caption=null, $attr=null)
     {
@@ -305,17 +309,31 @@ class Form_Basic extends View implements ArrayAccess {
     }
     function update(){
         // TODO: start transaction here
-        if($this->hook('update'))return $this;
+        try{
 
-        if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
-        if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
-        foreach($this->elements as $short_name => $element){
-            if($element instanceof Form_Field)if(!$element->no_save){
-                //if(is_null($element->get()))
-                $m->set($short_name, $element->get());
+            if($this->hook('update'))return $this;
+
+            if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
+            if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
+            foreach($this->elements as $short_name => $element){
+                if($element instanceof Form_Field)if(!$element->no_save){
+                    //if(is_null($element->get()))
+                    $m->set($short_name, $element->get());
+                }
             }
+            $m->save();
+        }catch (BaseException $e){
+            if($e instanceof Exception_ValidityCheck){
+                $f=$e->getField();
+                if($f && is_string($f) && $fld=$this->hasElement($f)){
+                    $fld->displayFieldError($e->getMessage());
+                } else $this->js()->univ()->alert($e->getMessage())->execute();
+            }
+            if($e instanceof Exception_ForUser){
+                $this->js()->univ()->alert($e->getMessage())->execute();
+            }
+            throw $e;
         }
-        $m->save();
     }
     function submitted(){
         /**
@@ -357,7 +375,7 @@ class Form_Basic extends View implements ArrayAccess {
                 $f=$e->getField();
                 if($f && is_string($f) && $fld=$this->hasElement($f)){
                     $fld->displayFieldError($e->getMessage());
-                } else $this->js()->univ()->alert($e->getMessage().' in undefined field')->execute();
+                } else $this->js()->univ()->alert($e->getMessage())->execute();
             }
             if($e instanceof Exception_ForUser){
                 $this->js()->univ()->alert($e->getMessage())->execute();
@@ -395,7 +413,7 @@ class Form_Basic extends View implements ArrayAccess {
     function setLayout($template){
         // Instead of building our own Content we will take it from
         // pre-defined template and insert fields into there
-        $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
+        $this->layout = $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
         $this->template_chunks['custom_layout']->trySet('_name',$this->name);
         $this->template->trySet('form_class_layout',$c='form_'.basename($template));
         return $this;

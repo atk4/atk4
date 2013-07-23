@@ -30,6 +30,7 @@ class Menu_Basic extends CompleteLister {
     protected $last_item=null;
     public $current_menu_class="ui-state-active";
     public $inactive_menu_class="ui-state-default";
+
     function init(){
         if($this->template->is_set('current')){
             $this->current_menu_class=$this->template->get('current');
@@ -41,6 +42,16 @@ class Menu_Basic extends CompleteLister {
     }
     function defaultTemplate(){
         return array('menu','Menu');
+    }
+
+    /**
+     * This will add a new behaviour for clicking on the menu items. For 
+     * example setTarget('frameURL') will show menu links inside a frame
+     * instead of just linking to them
+     */
+    function setTarget($js_func){
+        $this->on('click','a')->univ()->frameURL($this->js()->_selectorThis()->attr('href'));
+        return $this;
     }
     function addMenuItem($page,$label=null){
         if(!$label){
@@ -64,7 +75,7 @@ class Menu_Basic extends CompleteLister {
         return $this;
     }
     function addSubMenu($label){
-        $f = $this->add('View_Flyout',null,'MenuSeparator'); // we use MenuSeparator tag here just to put View_Flyout outside of UL list. Otherwise it breaks correct HTML and CSS.
+        $f = $this->add('View_Popover',null,'MenuSeparator'); // we use MenuSeparator tag here just to put View_Popover outside of UL list. Otherwise it breaks correct HTML and CSS.
         $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($this->items)),$label);
         return $f->add('Menu_jUI');
     }
@@ -79,7 +90,7 @@ class Menu_Basic extends CompleteLister {
     function isCurrent($href){
         // returns true if item being added is current
         if(!is_object($href))$href=str_replace('/','_',$href);
-        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
+        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page||(string)$href==(string)$this->api->url();
     }
     function render(){
         $this->setSource($this->items);

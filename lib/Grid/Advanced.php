@@ -227,8 +227,13 @@ class Grid_Advanced extends Grid_Basic {
     }
     function format_datetime($field){
         if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-            $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+            if($this->current_row[$field] instanceof MongoDate){
+                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+                    $this->current_row[$field]->sec);
+            }else{
+                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
                     strtotime($this->current_row[$field]));
+            }
     }
     function format_timestamp($field){
         if(!$this->current_row[$field])$this->current_row[$field]='-';
@@ -299,7 +304,6 @@ class Grid_Advanced extends Grid_Basic {
         return $this->api->normalizeName($val);
     }
     function init_expander_widget($field){
-        @$this->columns[$field]['thparam'].=' style="width: 40px; text-align: center"';
         return $this->init_expander($field);
     }
     function init_expander($field){
@@ -449,9 +453,11 @@ class Grid_Advanced extends Grid_Basic {
         @$this->columns[$field]['thparam'].=' style="text-align: center"';
     }
     function format_boolean($field){
-        if($this->current_row[$field] && $this->current_row[$field]!='N' && $this->current_row[$field]){
+        if ($this->current_row[$field] && $this->current_row[$field]!=='N') {
             $this->current_row_html[$field]='<div align=center><span class="ui-icon ui-icon-check">yes</span></div>';
-        }else $this->current_row_html[$field]='';
+        } else {
+            $this->current_row_html[$field]='';
+        }
     }
     function format_checkbox($field){
         $this->current_row_html[$field] = '<input type="checkbox" id="cb_'.
@@ -474,7 +480,7 @@ class Grid_Advanced extends Grid_Basic {
     }
     function applySorting($i,$field,$desc){
         if($i instanceof DB_dsql)$i->order($field,$desc);
-        elseif($i instanceof Model_Table)$i->setOrder($field,$desc);
+        elseif($i instanceof SQL_Model)$i->setOrder($field,$desc);
         elseif($i instanceof Model)$i->setOrder($field,$desc);
     }
     function getIterator(){
@@ -594,6 +600,7 @@ class Grid_Advanced extends Grid_Basic {
         $this->paginator->ipp($ipp);
         return $this;
     }
+    /** OBSOLETE, simply put grid inside a container */
     public function setWidth( $width ){
         $this->template->set('container_style', 'margin: 0 auto; width:'.$width.((!is_numeric($width))?'':'px'));
         return $this;

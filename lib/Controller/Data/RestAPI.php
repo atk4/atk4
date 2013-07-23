@@ -44,4 +44,18 @@ class Controller_Data_RestAPI extends Controller_Data {
         curl_close($ch);
         return json_decode($result);
     }
+
+    /* Methods below are not implemented !!! */
+    function load($model,$id){throw $this->exception('Method not implemented!');}
+    function save($model){throw $this->exception('Method not implemented!');}
+    function delete($model,$id){throw $this->exception('Method not implemented!');}
+    function tryLoad($model,$id){throw $this->exception('Method not implemented!');}
+    function loadBy($model,$field,$cond,$value){throw $this->exception('Method not implemented!');}
+    function tryLoadBy($model,$field,$cond,$value){throw $this->exception('Method not implemented!');}
+    function tryLoadAny($model){throw $this->exception('Method not implemented!');}
+    function deleteAll($model){throw $this->exception('Method not implemented!');}
+    function getRows($model){throw $this->exception('Method not implemented!');}
+    function getBy($model,$field,$cond,$value){throw $this->exception('Method not implemented!');}
+    function rewind($model){throw $this->exception('Method not implemented!');}
+    function next($model){throw $this->exception('Method not implemented!');}
 }

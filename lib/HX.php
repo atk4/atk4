@@ -5,7 +5,6 @@
  *
  * $this->add('H1')->set('Welcome')
  *      ->sub('we really mean it!');
- * $this->add('P')->set('Your balance is: '.$balance);
  *
  * Syntactically, subtitle appears inside the <h1> element:
  *
@@ -23,26 +22,33 @@
  =====================================================ATK4=*/
 class HX extends HtmlElement
 {
-    public $text=null;
-    public $sub=null;
+    // Heading text
+    public $text = null;
+    
+    // Subtitle text
+    public $sub = null;
+    
+    
     /**
      * Adds subtitle to your header.
      *
-     * @param string $text Subheader
+     * @param string $text Subheader text
      *
      * @return $this
      */
     function sub($text)
     {
-        $this->sub=$text;
+        $this->sub = $text;
         return $this;
     }
+
     // {{{ Inherited Methods
     function set($text)
     {
-        $this->text=$text;
+        $this->text = $text;
         return parent::set($text);
     }
+
     function recursiveRender()
     {
         if (!is_null($this->sub)) {
@@ -51,4 +57,5 @@ class HX extends HtmlElement
         }
         parent::recursiveRender();
     }
+    //}}}
 }

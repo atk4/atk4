@@ -29,30 +29,41 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-class Controller_Data_Array extends Controller_Data {
+class Controller_Data_Array extends Controller_Data{
 
-    /* By default new records are added with the ID being sequential. If you set this to false, then model IDs will be assigned using unique identifiers */
-    public $sequential_id=true;
+    /**
+     * By default new records are added with the ID being sequential. If you set
+     * this to false, then model IDs will be assigned using unique identifiers.
+     */
+    public $sequential_id = true;
+    
+    /**
+     * Maximum ID value. Used when $sequential_id = true.
+     */
+    protected $max_id = 0;
+    
+    /**
+     * Variables to hold record count and offset for setLimit functionality
+     */
+    protected $limited = false;
+    protected $limit_count;
+    protected $limit_offset;
+    protected $current_offset;
 
-    /* If your model is using id_field and the record with key==id was not found, controller will scan array for a matching record based on the field. 
-     * When you are using data blob from external source which does not have key associations, you should keep this "true". If you save records using
-     * save() only, it will maintain keys automatically and you can set this to false for extra speed.
-     *
-     * This setting have no effect on models without id_field property, as those would always rely on keys */
-    public $search_on_load=true;
+
 
     function setSource($model,$data=undefined){
         if(!$data || $data===undefined)$data=array();
         parent::setSource($model,$data);
 
-        if(!$model->hasElement($model->id_field))$model->addField($model->id_field)->system(true);
-
+        if(!$model->hasElement($model->id_field)) {
+            $model->addField($model->id_field)->system(true);
+        }
 
         return $this;
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
-        $t =& $model->_table[$this->short_name];
-        foreach($t as $row){
+        foreach($model->_table[$this->short_name] as $row){
             if($row[$field]==$value){
                 return $row;
             }
@@ -74,9 +85,10 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoadAny($model){
-        if(!is_array($model->_table[$this->short_name]))return null;
-        reset($model->_table[$this->short_name]);
-        list($id,$row)=each($model->_table[$this->short_name]);
+        $t =& $model->_table[$this->short_name];
+        if(!is_array($t))return null;
+        reset($t);
+        list($id,$row)=each($t);
 
         $model->data=$row;
         $model->dirty=array();
@@ -97,61 +109,91 @@ class Controller_Data_Array extends Controller_Data {
         return $this;
     }
     function tryLoad($model,$id){
+        $t =& $model->_table[$this->short_name];
         if(is_object($id))return;
 
         if(@$model->id_field){
-            if( !isset($model->_table[$this->short_name][$id]) || $model->_table[$this->short_name][$id][$model->id_field]!=$id){
+            if ( !isset($t[$id]) 
+                || $t[$id][$model->id_field]!=$id) {
+                
                 return $this->tryLoadBy($model,$model->id_field,$id);
             }
-            // ID key exists and it points to record with a matching id_field. Lucky! Can save some time loading it.
+            // ID key exists and it points to record with a matching id_field.
+            // Lucky! Can save some time loading it.
         }
-        if(!isset($model->_table[$this->short_name][$id]))return $this;
-        $model->data=$model->_table[$this->short_name][$id];
+        if(!isset($t[$id]))return $this;
+        $model->data=$t[$id];
         $model->dirty=array();
         $model->id=$id;
         return $this;
     }
     function load($model,$id=null){
         $this->tryLoad($model,$id);
-        if(!$model->loaded())throw $this->exception('Unable to load data')
-            ->addMoreInfo('id',$id);
+        if (! $model->loaded()) {
+            throw $this->exception('Unable to load data')
+                ->addMoreInfo('id',$id);
+        }
         return $this;
     }
     function save($model,$id=null){
+        $t =& $model->_table[$this->short_name];
+        $id = $id?:$model->id;
+        
         if(is_null($id)){
             if($this->sequential_id){
-                // Imants: This fail if array is not sorted in ascending order by its keys
-                //end($model->_table[$this->short_name]);
-                //list($id)=each($model->_table[$this->short_name]);
-                //$id++;
-                if(!empty($model->_table[$this->short_name])) {
-                    $id = max(array_keys($model->_table[$this->short_name])) + 1;
-                } else {
-                    $id = 1;
+                // calculate initial max_id in case we already have some initial
+                // data somehow set, but not with save().
+                if (!$this->max_id && !empty($t)) {
+                    $this->max_id = max(array_keys($t));
                 }
+                
+                $id = ++$this->max_id;
             }else{
-                $id=uniqid();
+                $id = uniqid();
             }
             if($model->id_field){
                 $model->data[$model->id_field]=$id;
             }
-            $model->_table[$this->short_name][$id]=$model->data;
-        }else{
-            $model->_table[$this->short_name][$id]=$model->data;
         }
+        $t[$id]=$model->data;
+        
         return $id;
     }
     function delete($model,$id=null){
-        unset($model->_table[$this->short_name][$id?:$model->id]);
+        $id = $id?:$model->id;
+        
+        unset($model->_table[$this->short_name][$id]);
         $model->unload();
+        
+        // Imants: if we delete last element, then roll back sequence ID by one.
+        // Disabled because sequence should only go forward and no backwards.
+        // It's like AutoIncrement in MySQL, or Sequence in Oracle.
+        // if ($this->sequential_id && $this->max_id == $id) {
+        //     $this->max_id--;
+        // }
+        
         return $this;
     }
     function deleteAll($model){
         $model->_table[$this->short_name]=array();
+        
+        // Reset max id. Works like Truncate in MySQL or Oracle.
+        if ($this->sequential_id) {
+            $this->max_id = 0;
+        }
+        
         return $this;
     }
     function getRows($model){
-        return $model->_table[$this->short_name];
+        $t =& $model->_table[$this->short_name];
+        if ($this->limited) {
+            return array_slice($t, $this->limit_offset, $this->limit_count, true);
+        } else {
+            return $t;
+        }
+    }
+    function count($model){
+        return count($model->_table[$this->short_name]);
     }
     function setOrder($model,$field,$desc=false){
         if (is_bool($desc)) {
@@ -168,29 +210,72 @@ class Controller_Data_Array extends Controller_Data {
             return $desc==='desc' ? -$r : $r;
         });
     }
+    
     function setLimit($model,$count,$offset=0){
-        // TODO: splice
+        if ($count!==null) {
+            $this->limited = true;
+            $this->limit_count = $count;
+            $this->limit_offset = $offset;
+        } else {
+            $this->limited = false;
+        }
     }
-
+    
     function rewind($model){
-        reset($model->_table[$this->short_name]);
+        $t =& $model->_table[$this->short_name];
+        
+        if ($this->limited) {
+            // Imants: probably some kind of magic can be used here to move
+            // array internal pointer instantly to specific offset.
+            // Maybe something with ArrayIterator->seek($pos) or
+            // LimitIterator(ArrayIterator)->getInnerIterator()->seek($pos)
+            
+            // Following if just a simple implementation with looping.
+            // if limit_offset is closer to beginning of array then loop from
+            // start else loop from the end of array till we reach it.
+            // That way we offset as fast as possible.
+            $cnt = $this->count($model);
+            if ($this->limit_offset < $cnt/50) {
+                $this->current_offset = 0;
+                reset($t);
+                while($this->current_offset < $this->limit_offset && next($t)) {
+                    $this->current_offset++;
+                }
+            } else {
+                $this->current_offset = $cnt-1;
+                end($t);
+                while($this->current_offset > $this->limit_offset && prev($t)) {
+                    $this->current_offset--;
+                }
+            }
+        } else {
+            reset($t);
+        }
 
-        list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
+        list($model->id,$model->data) = each($t);
+        if (@$model->id_field && isset($model->data[$model->id_field])) {
+            $model->id = $model->data[$model->id_field];
+        }
+        
         return $model->data;
     }
     function next($model){
-        list($model->id,$model->data)=each($model->_table[$this->short_name]);
-        if(@$model->id_field && isset($model->data[$model->id_field]))$model->id=$model->data[$model->id_field];
+        $t =& $model->_table[$this->short_name];
+        
+        list($model->id,$model->data) = each($t);
+        
+        if ($this->limited) {
+            $this->current_offset++;
+            if($this->current_offset >= $this->limit_offset + $this->limit_count) {
+                $model->id = $model->data = null;
+            }
+        }
+        
+        if (@$model->id_field && isset($model->data[$model->id_field])) {
+            $model->id = $model->data[$model->id_field];
+        }
         $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
-    }
-    function setAssoc($data){
-        $this->array_data=array();
-        foreach($data as $id=>$name){
-            $this->array_data[]=array('id'=>$id,'name'=>$name);
-        }
-        return $this;
     }
     function getActualFields(){
         return array();

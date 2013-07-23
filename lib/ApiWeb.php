@@ -37,7 +37,6 @@ class ApiWeb extends ApiCLI {
         $this->skin=$skin;
         try {
 
-
             parent::__construct($realm);
         }catch (Exception $e){
 
@@ -50,8 +49,6 @@ class ApiWeb extends ApiCLI {
     }
     /** Redifine this function instead of default constructor */
     function init(){
-        // Do not initialize unless requsetd
-        //$this->initializeSession();
         $this->getLogger();
 
         // Verify Licensing
@@ -226,7 +223,7 @@ class ApiWeb extends ApiCLI {
             $params[$key]=$this->api->getConfig('session/'.$key,$default);
         }
 
-        if($create==false && !isset($_COOKIE[$this->name]))return;
+        if($create===false && !isset($_COOKIE[$this->name]))return;
         $this->_is_session_initialized=true;
         session_set_cookie_params(
             $params['lifetime'],
@@ -255,6 +252,7 @@ class ApiWeb extends ApiCLI {
     /** Make current get argument with specified name automatically appended to all generated URLs */
     function stickyGET($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
+        return $_GET[$name];
     }
     /** Remove sticky GET which was set by stickyGET */
     function stickyForget($name){
@@ -281,14 +279,17 @@ class ApiWeb extends ApiCLI {
 
         try{
             $this->hook('post-init');
+            $this->hook('postInit');
 
             $this->hook('pre-exec');
+            $this->hook('preExec');
 
             if(isset($_GET['submit']) && $_POST){
                 $this->hook('submitted');
             }
 
             $this->hook('post-submit');
+            $this->hook('postSubmit');
 
             $this->execute();
         }catch(Exception $e){

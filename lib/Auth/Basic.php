@@ -110,6 +110,13 @@ class Auth_Basic extends AbstractController {
             }
         }
 
+        $id=$this->hook('tryLogin',array($model,$login_field,$password_field));
+
+        if($id && is_numeric($id)){
+            $this->model->tryLoad($id);
+            $this->memorizeModel();
+        }
+
         $t=$this;
 
         // If model is saved, update our cache too, but don't store password
@@ -117,7 +124,7 @@ class Auth_Basic extends AbstractController {
             // after this model is saved, re-cache the info
             $tmp=$m->get();
             unset($tmp[$t->password_field]);
-            $t->memorize('info',$tmp);
+            if($t->api instanceof ApiWeb)$t->memorize('info',$tmp);
         });
 
         $this->addEncryptionHook($this->model);
@@ -136,7 +143,7 @@ class Auth_Basic extends AbstractController {
         $t=$this;
         $model->has_encryption_hook=true;
         $model->addHook('beforeSave',function($m)use($t){
-            if(isset($m->dirty[$t->password_field])){
+            if($m->isDirty($t->password_field)&&$m[$t->password_field]){
                 $m[$t->password_field]=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
             }
         });
@@ -441,7 +448,7 @@ class Auth_Basic extends AbstractController {
     }
     /** Manually Log in as specified users. Will not perform password check or redirect */
     function loginByID($id){
-        $this->model->tryLoad($id);
+        $this->model->load($id);
         $this->memorizeModel();
         return $this;
     }

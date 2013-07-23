@@ -41,7 +41,8 @@
  *  $grid->add('VirtualPage')
  *      ->addColumn('edit')
  *      ->set(function($page){
- *          $page->add('Text')->set('ID='.$_GET['edit']);
+ *          $id = $_GET[$page->short_name.'_id'];
+ *          $page->add('Text')->set('ID='.$id);
  *      });
  *
  * There are many other uses for VirtualPage, especially when you extract
@@ -141,10 +142,13 @@ class VirtualPage extends AbstractController
                     null,
                     $self->page_template
                 );
+                $page->id=$_GET[$self->name.'_id'];
 
                 $self->api->cut($page);
                 $self->api->stickyGET($self->name);
+                $self->api->stickyGET($self->name.'_id');
                 call_user_func($method, $page, $self);
+                $self->api->stickyForget($self->name.'_id');
                 $self->api->stickyForget($self->name);
             });
             throw $this->exception('', 'StopInit');

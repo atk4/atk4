@@ -1,7 +1,7 @@
 <?php
 class Form_Field_Checkbox extends Form_Field {
-    public $true_value=1;
-    public $false_value=0;
+    public $true_value=true;
+    public $false_value=false;
     function init(){
         parent::init();
         $this->default_value='';
@@ -9,6 +9,14 @@ class Form_Field_Checkbox extends Form_Field {
     function setValues($true,$false){
         $this->true_value = $true;
         $this->false_value = $false;
+        return $this;
+    }
+    function setValueList($list){
+        /* otherwise type("boolean")->enum(array("Y","N")) won't work */
+        if (count($list) != 2){
+            throw $this->exception("Invalid value list for Checkbox");
+        }
+        $this->setValues(array_shift($list), array_shift($list));
         return $this;
     }
     function getInput($attr=array()){
@@ -23,7 +31,7 @@ class Form_Field_Checkbox extends Form_Field {
         return parent::getInput(array_merge(
                     array(
                         'type'=>'checkbox',
-                        'value'=>$this->true_value,
+                        'value'=>'1',
                         'checked'=>(boolean)($this->true_value==$this->value)
                          ),$attr
                     )).$label;

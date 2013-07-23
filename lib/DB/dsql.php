@@ -46,8 +46,8 @@ class DB_dsql extends AbstractModel implements Iterator {
 
     public $default_exception='Exception_DB';
 
-    /** call $q->debug() to turn on debugging. */
-    public $debug=false;
+    /** call $q->debug() to turn on debugging or $q->debug(false) to turn ir off. */
+    public $debug = false;
 
     /** prefix for all parameteric variables: a, a_2, a_3, etc */
     public $param_base='a';
@@ -68,7 +68,8 @@ class DB_dsql extends AbstractModel implements Iterator {
         'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])",
         'update'=>"update [table_noalias] set [set] [where]",
         'delete'=>"delete from  [table_noalias] [where]",
-        'truncate'=>'truncate table [table_noalias]'
+        'truncate'=>'truncate table [table_noalias]',
+        'describe'=>'desc [table_noalias]',
     );
     /** required for non-id based tables */
     public $id_field;
@@ -1439,10 +1440,11 @@ class DB_dsql extends AbstractModel implements Iterator {
      * 
      * @return DB_dsql clone of $this
      */
-    function describe($table)
+    function describe($table = null)
     {
-        return $this->expr('desc [desc_table]')
-            ->setCustom('desc_table', $this->bt($table));
+        $q = clone $this;
+        if ($table !== null) $q->table($table);
+        return $q->SQLTemplate('describe');
     }
 
     /**
@@ -1749,11 +1751,10 @@ class DB_dsql extends AbstractModel implements Iterator {
         if ($this->hasOption('SQL_CALC_FOUND_ROWS')) {
             return $this->owner->getOne('select found_rows()');
         }
-        /* db-compatibl way: */
+        /* db-compatible way: */
         $c=clone $this;
         $c->del('limit');
-        $c->fieldQuery('count(*)');
-        return $c->getOne();
+        return $c->fieldQuery('count(*)')->getOne();
     }
     // }}}
 
@@ -1809,11 +1810,13 @@ class DB_dsql extends AbstractModel implements Iterator {
     /**
      * Will set a flag which will output query (echo) as it is being rendered.
      *
+     * @param boolean $enable Optional flag value
+     *
      * @return DB_dsql $this
      */
-    function debug()
+    function debug($enable = true)
     {
-        $this->debug=1;
+        $this->debug = $enable;
         return $this;
     }
     /**

@@ -18,15 +18,26 @@
 class View_ButtonSet extends HtmlElement
 {
     public $options = array();
-    
-    function addButton($label, $options = array())
+    public $vertical = false;
+
+    function addButton($label=null, $options = array())
     {
-        return $this->add('Button', $options)->setLabel($label);
+        $but = $this->add('Button', $options)->setLabel($label);
+        if ($this->vertical) {
+            $but->js(true)->css('margin-top','-3px');
+        }
+        return $but;
     }
-    
+
     function render()
     {
-        $this->js(true)->buttonset($this->options);
+        if ($this->vertical) {
+            $this->js(true)->_load('jquery-ui.buttonset-vertical');
+            $this->js(true)->buttonsetv($this->options);
+        } else {
+            $this->js(true)->buttonset($this->options);
+        }
         parent::render();
     }
 }
+

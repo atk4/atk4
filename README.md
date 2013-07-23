@@ -1,6 +1,6 @@
 Agile Toolkit - Web UI Toolkit
 ====
-Agile Toolkit is a Web UI framework and collection of usable widgets. It allows you to develop rich web application by writ in only PHP code. Agile Toolkit is inspired by Desktop GUI Toolkits and is a fully-object oriented development environment.
+Agile Toolkit is a Web UI framework and collection of usable widgets. It allows you to develop rich web applications by writing only PHP code. Agile Toolkit is inspired by Desktop GUI Toolkits and is a fully-object oriented development environment.
 
 Overview
 ----
@@ -73,7 +73,7 @@ That's a preferred way to perform database migrations, although you may use some
 Model describes logical data source for your Views:
 
     <?php   
-    class Model_User extends Model_Table 
+    class Model_User extends SQL_Model
     {
         public $table='user';
         
@@ -132,4 +132,6 @@ For most web frameworks this is as far as you get, but with Agile Toolkit this i
 Agile Toolkit is distributed under Affero GNU Public License for personal, private and open-source projects. For commercial projects you should purchase an inexpensive life-time license.
 
 ** Your support will ensure the longevity of Agile Toolkit **
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8fd43ffe5d4a0d14183ea27487362660 "githalytics.com")](http://githalytics.com/atk4/atk4)
 

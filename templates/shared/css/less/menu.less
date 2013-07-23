@@ -1,0 +1,71 @@
+/* ==============================================
+    ATK unsorted styles
+   ============================================== */
+
+/* Menu */
+.atk-menu {.clearfix();position:relative;}
+.atk-menu ul, .atk-menu ul li {margin:0;padding:0;list-style-type:none;}
+.atk-menu ul li a {display:block;}
+.atk-menu-horizontal ul li {
+    float:left;
+    border-width:1px 0px 1px 1px;
+    &:last-child {border-width:1px;border-right-width:1px !important;}
+    &.ui-state-active {border-width:1px;}
+    &.ui-state-active+li {border-width:1px 0px 1px 0;}
+}
+.atk-menu-vertical ul li {
+    border-width:1px 1px 0px 1px;
+    &:last-child {border-width:1px;border-bottom-width:1px !important;}
+    &.ui-state-active {border-width:1px;}
+    &.ui-state-active+li {border-width:0px 1px;}
+}
+
+/* Dropmenu */
+.atk-dropmenu {
+    position:relative;
+    .ui-widget-content {
+        .box-shadow(0 5px 5px fadeout(@shadowColor,80%));
+        outline:none;
+        padding:0;
+        display:none;
+        position:absolute;
+        top:100%;
+        right:-1px;
+        z-index:99;
+        span {
+            border:0;
+            color:@link;
+            font-size:0.9em;
+            line-height:1;
+            text-indent:10px;
+            text-align:left;
+            white-space:nowrap;
+            padding:@padding/3 @padding;
+            display:block;
+            position:relative;
+            .ui-icon {
+                left:@padding;
+                margin-left:-8px;
+                margin-right:0;
+            }
+        }
+    }
+    &.right .ui-widget-content {
+        left:-1px;
+        right:auto;
+    }
+    &.ui-state-active {
+        .border-bottom-radius(0);
+    }
+}
+
+// Dropmenu (tweaks for grid)
+.atk-grid table > tbody > tr {
+    > td .atk-dropmenu { .opacity(0); }
+    &:hover > td .atk-dropmenu {
+        .transition(opacity @transition);
+        @transition: opacity .2s;
+        .transition(@transition);
+        .opacity(100);
+    }
+}

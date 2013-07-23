@@ -27,6 +27,7 @@ jQuery.widget("ui.atk4_form", {
 	submitted: undefined,
 	base_url: undefined,
 	loading: false,
+	show_loader: true,      // show loader indicator on ajax submit?
 	plain_submit: false,
 
 	template: {},
@@ -297,11 +298,11 @@ jQuery.widget("ui.atk4_form", {
 			$.univ().loadingInProgress();
 			return false;
 		}
-
+		this.form.trigger('beforesubmit');
 		// btn is clicked
-		var richtext=this.element.find('.atk4_richtext');
+		var richtext=form.element.find('.atk4_richtext');
 		if(richtext.length)richtext.atk4_richtext('changeHTML');
-		params=this.element.find(":input").serializeArray()
+		params=form.element.find(":input").serializeArray();
 		if(btn){
             for (var el in params){
                 if (params[el].name == 'ajax_submit'){
@@ -313,12 +314,23 @@ jQuery.widget("ui.atk4_form", {
 
 		var properties={
 			type: "POST",
-			url: this.form.attr('action')
+			url: form.form.attr('action')
 		};
 
 		form.loading=true;
+        if(form.show_loader){
+            form.element.atk4_loader().atk4_loader('showLoader');
+        }
+        
+        // disable all fields and buttons while submitting
+        form.element.find(":input:enabled")
+            .attr("disabled",true)
+            .attr("reenable",true);
+		
+		// do request
 		$.atk4.get(properties,params,function(res){
-			var c=form._getChanged();form._setChanged(false);
+			var c=form._getChanged();
+			form._setChanged(false);
 
 			if(!$.atk4._checkSession(res))return;
 			/*
@@ -333,17 +345,24 @@ jQuery.widget("ui.atk4_form", {
 				//while some browsers prevents popup we better use alert
 				w=window.open(null,null,'height=400,width=700,location=no,menubar=no,scrollbars=yes,status=no,titlebar=no,toolbar=no');
 				if(w){
-					w.document.write('<h2>Error in AJAX response: '+e+'</h2>');
+					w.document.write('<h5>Error in AJAX response: '+e+'</h5>');
 					w.document.write(res);
 					w.document.write('<center><input type=button onclick="window.close()" value="Close"></center>');
 				}else{
 					alert("Error in AJAX response: "+e+"\n"+res);
 				}
 			}
-			form.loading=false;
 			form._setChanged(c);
 		},function(){
 			form.loading=false;
+            if(form.show_loader){
+                form.element.atk4_loader().atk4_loader('hideLoader');
+            }
+
+            // reenable all fields and buttons which was previously enabled
+            form.element.find(":input[reenable]")
+                .removeAttr("disabled")
+                .removeAttr("reenable");
 		});
 	}
 });

@@ -36,6 +36,7 @@ class Field extends AbstractModel
     public $sortable=false;
     public $searchable=false;
     public $mandatory=false;
+    public $has_default_value=false;
     public $defaultValue=null;
     public $emptyText="Please, select";
     public $auto_track_element=true;
@@ -371,6 +372,7 @@ class Field extends AbstractModel
      */
     function defaultValue($t = UNDEFINED)
     {
+        if($t != UNDEFINED)$this->has_default_value=true;
         return $this->setterGetter('defaultValue', $t);
     }
 

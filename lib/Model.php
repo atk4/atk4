@@ -22,7 +22,7 @@
  * You can also load and save model through different storage controllers.
  *
  * This model is designed to work with linear, non-SQL resources, if you are looking
- * to have support for joins, ordering, advanced SQL syntax, look into Model_Table
+ * to have support for joins, ordering, advanced SQL syntax, look into SQL_Model
  *
  * It's recommended that you create your own model class based on generic model where
  * you define fields, but you may also use instance of generic model.
@@ -77,7 +77,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     /** Contains identifier of currently loaded record or null. Use load() and reset() */
     public $id=null;     // currently loaded record
 
-    /** The actual ID field of the table might now always be "id" */
+    /** The actual ID field of the table might not always be "id" */
     public $id_field='id';   // name of ID field
 
     public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
@@ -130,9 +130,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if($value!==undefined 
             && (
                 is_object($value) 
-                || is_object($this->data[$name]) 
+                || is_object($this->data[$name])
+                || is_array($value)
+                || is_array($this->data[$name])
                 || (string)$value!=(string)$this->data[$name] // this is not nice.. 
                 || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
+                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
             )
         ) {
             $this->data[$name]=$value;
@@ -143,14 +146,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     /** Return value of the field. If unspecified will return array of all fields.  */
     function get($name=null){
         if($name===null)return $this->data;
-        if($this->strict_fields && !$this->hasElement($name))
+
+        $f=$this->hasElement($name);
+
+        if($this->strict_fields && !$f)
             throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
-        if(!isset($this->data[$name]) && !$this->hasElement($name))
-            throw $this->exception('Model field was not loaded')
-            ->addMoreInfo('id',$this->id)
-            ->addMoreinfo('field',$name);
-        if(@!array_key_exists($name,$this->data)){
-            return $this->getElement($name)->defaultValue();
+
+        // See if we have data for the field
+        if(!$this->loaded() && !isset($this->data[$name])){ // && !$this->hasElement($name))
+
+            if($f && $f->has_default_value)return $f->defaultValue();
+
+
+            if($this->strict_fields)throw $this->exception('Model field was not loaded')
+                ->addMoreInfo('id',$this->id)
+                ->addMoreinfo('field',$name);
+
+            return null;
         }
         return $this->data[$name];
     }
@@ -231,6 +243,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     {
         $this->dirty[$name] = true;
         return $this;
+    }
+    function isDirty($name){
+        return $this->dirty[$name] || 
+            (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
     /**
      * Returns true if the records has been loaded successfully
@@ -436,18 +452,30 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->hook('afterLoad');
         return $this;
     }
+    /** Unloads then loads current record back. Use this if you have added new fields */
+    function reload(){
+        return $this->load($this->id);
+    }
     // }}}
 
     // {{{ Ordering and limiting support
-    function setLimit($a,$b=null){
+    function setLimit($count,$offset=null){
         if($this->controller && $this->controller->hasMethod('setLimit'))
-            $this->controller->setLimit($this,$field,$desc);
+            $this->controller->setLimit($this,$count,$offset);
         return $this;
     }
     function setOrder($field,$desc=null){
         if($this->controller && $this->controller->hasMethod('setOrder'))
             $this->controller->setOrder($this,$field,$desc);
         return $this;
+    }
+    function count(){
+        if($this->controller && $this->controller->hasMethod('count')) {
+            return $this->controller->count($this);
+        } else {
+            throw $this->exception('Model do not have controller or count() method not implemented in controller')
+                ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
+        }
     }
     // }}}
 
@@ -466,7 +494,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this->get();
     }
     function key(){
-        return $this->id;
+        return (string)$this->id;
     }
     function valid(){
         return $this->loaded();
@@ -535,7 +563,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     }
 
     // Reference traversal for regular models
-    public $_references;
+    public $_references=array();
 
     /* defines relation between models. You can traverse the reference using ref() */
     function hasOne($model,$our_field=undefined,$field_class='Field'){
@@ -633,7 +661,15 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                 null,
                 $id
             );
-            if($id)$m->loadAny();
+            if($id){
+                $m->load($id);
+            }else{
+                $that=$this;
+                $m->addHook('afterSave',function($m,$id)use($that,$ref){
+                    $that[$ref]=$id;
+                    $that->save();
+                });
+            }
             return $m;
         }
     }
@@ -650,7 +686,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
      * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
      * first subquery to complete before starting working on the next query. 
      *
-     * Join binding exists as an extension in Model_Table::_ref(). It will iterate through array of models and load
+     * Join binding exists as an extension in SQL_Model::_ref(). It will iterate through array of models and load
      * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
      * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
      * have field_in same as field_out.
@@ -732,6 +768,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $m->load($this[$our_field]);
     }
 
+    function db(){
+        return $this->_table[$this->controller->short_name]['db'];
+    }
 
 
     function serialize() {

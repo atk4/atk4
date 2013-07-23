@@ -1,16 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/**
  * Base class for Command-Line Applications. The purpose of Application class
  * is to initialize all the other classes and aid their connectivity. API
  * class can be accessed from any object through $this->api property. 
@@ -21,7 +10,17 @@
  * do
  *
  * @link http://agiletoolkit.org/doc/api
- */
+*//*
+==ATK4===================================================
+   This file is part of Agile Toolkit 4
+    http://agiletoolkit.org/
+
+   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
+   Distributed under Affero General Public License v3 and
+   commercial license.
+
+   See LICENSE or LICENSE_COM for more information
+ =====================================================ATK4=*/
 class ApiCLI extends AbstractView
 {
     /**
@@ -121,6 +120,14 @@ class ApiCLI extends AbstractView
      * many sequential prefixes for the same character sequenece.
      */
     public $unique_hashes=array();
+
+    /**
+     * This is the default locale for the application. You change this manually
+     * inside application API class or use some controller which will pull this
+     * variable out of the URL. This variable will be respected throughout the
+     * framework
+     */
+    public $locale='en_US';
 
     // {{{ Start-up of application
     /**
@@ -277,6 +284,10 @@ class ApiCLI extends AbstractView
         if(strpos($page,'http://')===0 || strpos($page,'https://')===0) $url->setURL($page);
         else $url->setPage($page);
         return $url->setArguments($arguments);
+    }
+
+    function getStickyArguments(){
+        return array();
     }
     /** @obsolete use url() */
     function getDestinationURL($page=null,$arguments=array()){ return $this->url($page,$arguments); }

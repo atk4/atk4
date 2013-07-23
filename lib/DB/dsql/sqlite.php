@@ -15,6 +15,11 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class DB_dsql_sqlite extends DB_dsql {
+    function init()
+    {
+        parent::init();
+        $this->sql_templates['describe']="pragma table_info([table_noalias])";
+    }
     function concat(){
         $t=clone $this;
         $t->template="([concat])";
@@ -32,9 +37,5 @@ class DB_dsql_sqlite extends DB_dsql {
     }
     function random(){
         return $this->expr('random()');
-    }
-    function describe($table){
-        return $this->expr('pragma table_info([desc_table])')
-            ->setCustom('desc_table',$table);
     }
 }

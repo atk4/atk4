@@ -113,7 +113,7 @@ abstract class AbstractView extends AbstractObject
             }
         }
 
-        if ($this->model instanceof Model_Table) {
+        if ($this->model instanceof SQL_Model) {
             $this->dq=$this->model->_dsql();    // compatibility
         }
 
@@ -299,6 +299,11 @@ abstract class AbstractView extends AbstractObject
      */
     function recursiveRender()
     {
+
+        if($this->hook('pre-recursive-render')){
+            return;
+        }
+
         $cutting_here=false;
         $this->initTemplateTags();
 
@@ -531,7 +536,7 @@ abstract class AbstractView extends AbstractObject
         return str_replace('/', '_', $this->name);
     }
     /** Experemental */
-    function on($event, $selector, $js=null){
+    function on($event, $selector=null, $js=null){
 
         if(is_callable($js)){
             $p=$this->add('VirtualPage');

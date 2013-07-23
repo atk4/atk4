@@ -32,7 +32,7 @@ class QuickSearch extends Filter
     protected $bset;
     
     // cancel button
-    public $show_cancel = false; // show cancel button? (true|false)
+    public $show_cancel = true; // show cancel button? (true|false)
 
     /**
      * Initialization
@@ -103,6 +103,9 @@ class QuickSearch extends Filter
             return;
         }
 
+        if($this->view->model->hasMethod('addConditionLike')){
+            return $this->view->model->addConditionLike($v);
+        }
         if($this->view->model) {
             $q = $this->view->model->_dsql();
         } else {

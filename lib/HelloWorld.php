@@ -1,6 +1,7 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * Why creating your own HelloWorld class? $this->add('HelloWorld'); will do the trick!
+ * Why creating your own HelloWorld class?
+ * $this->add('HelloWorld'); will do the trick!
  *
  * @link http://agiletoolkit.org/learn/understand/view/usage
  * @link http://agiletoolkit.org/learn/template
@@ -15,16 +16,39 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class HelloWorld extends AbstractView {
+class HelloWorld extends AbstractView
+{
+    // message text
     private $message;
-    function init(){
+
+    /**
+     * Initialization.
+     * Sets default message text.
+     */
+    function init()
+    {
         parent::init();
         $this->message = 'Hello world';
     }
-    function setMessage($msg){
-        $this->message=$msg;
+    /**
+     * Set custom message text
+     * 
+     * @param string $msg Message text
+     * 
+     * @return void
+     */
+    function setMessage($msg)
+    {
+        $this->message = $msg;
     }
-    function render(){
+    
+    /**
+     * Render message
+     * 
+     * @return void
+     */
+    function render()
+    {
         $this->output('<p>'.$this->message.'</p>');
     }
 }
