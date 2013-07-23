@@ -1,5 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
+/**
  * Undocumented
  *
  * @link http://agiletoolkit.org/
@@ -14,4 +14,6 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Controller extends AbstractController {}
+class Controller extends AbstractController
+{
+}
