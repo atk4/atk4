@@ -143,7 +143,16 @@ class Form_Field_Upload extends Form_Field {
                     $model->save();
                 }catch(Exception $e){
                     $this->api->logger->logCaughtException($e);
-                    $this->uploadFailed($e->getMessage().', error: '.$this->getFileError()); //more user friendly
+                    $e->addMoreInfo('upload_error',$this->getFileError());
+
+                    echo '<script>$=window.top.$;';
+                    $_POST['ajax_submit']=1;
+                    $this->api->addHook('post-js-execute',function(){ 
+                        echo ';</script>';
+                    });
+                    $this->api->caughtException($e);
+
+                    //$this->uploadFailed($e->getMessage().', error: '.$this->getFileError()); //more user friendly
                 }
 
                 $this->uploadComplete($model->get());
@@ -330,7 +339,7 @@ class Form_Field_Upload extends Form_Field {
         $error=$_FILES[$this->name]['error'];
         switch ($error) {
         case UPLOAD_ERR_OK:
-            $response = 'There is no error, the file uploaded with success.';
+            $response = 'File was uploaded properly.';
             break;
         case UPLOAD_ERR_INI_SIZE:
             $response = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
