@@ -143,6 +143,13 @@ class Form_Field_Upload extends Form_Field {
                     $model->save();
                 }catch(Exception $e){
                     $this->api->logger->logCaughtException($e);
+
+                    if($e instanceof Exception_ForUser){
+                        // nicer error for user
+                        $this->uploadFailed($e->getMessage());
+                        //.', error: '.$this->getFileError()); //more user friendly
+                    }
+
                     $e->addMoreInfo('upload_error',$this->getFileError());
 
                     echo '<script>$=window.top.$;';
@@ -152,7 +159,6 @@ class Form_Field_Upload extends Form_Field {
                     });
                     $this->api->caughtException($e);
 
-                    //$this->uploadFailed($e->getMessage().', error: '.$this->getFileError()); //more user friendly
                 }
 
                 $this->uploadComplete($model->get());
