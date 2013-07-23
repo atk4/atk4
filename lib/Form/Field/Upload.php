@@ -128,8 +128,13 @@ class Form_Field_Upload extends Form_Field {
             $_POST=array();
         }
         if($_GET[$this->name.'_upload_action'] || $this->isUploaded()){
+
             if($this->model){
                 try{
+
+                    if(!file_exists($this->getFilePath()))
+                        throw $this->exception('File upload was blocked by the webserver','ForUser');
+
                     $model=$this->model;
                     $model->set('filestore_volume_id',$model->getAvailableVolumeID());
                     $model->set('original_filename',$this->getOriginalName());
@@ -138,7 +143,7 @@ class Form_Field_Upload extends Form_Field {
                     $model->save();
                 }catch(Exception $e){
                     $this->api->logger->logCaughtException($e);
-                    $this->uploadFailed($e->getMessage()); //more user friendly
+                    $this->uploadFailed($e->getMessage().', error: '.$this->getFileError()); //more user friendly
                 }
 
                 $this->uploadComplete($model->get());
@@ -258,7 +263,10 @@ class Form_Field_Upload extends Form_Field {
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
             }
         }
-        if($_GET[$this->name.'_upload_action'])$this->uploadComplete(true);
+        if($_GET[$this->name.'_upload_action'] && !$_POST){
+            $this->uploadFailed('Webserver settings have blocked this file. Perhaps post_max_size should incleased ('.
+                $_SERVER['CONTENT_LENGTH'].' sent, '.ini_get('post_max_size').' max)');
+        }
         $o='';
 
         $options=array('size_limit'=>$this->max_file_size);
@@ -317,6 +325,39 @@ class Form_Field_Upload extends Form_Field {
     }
     function getFilePath(){
         return $_FILES[$this->name]['tmp_name'];
+    }
+    function getFileError(){
+        $error=$_FILES[$this->name]['error'];
+        switch ($error) {
+        case UPLOAD_ERR_OK:
+            $response = 'There is no error, the file uploaded with success.';
+            break;
+        case UPLOAD_ERR_INI_SIZE:
+            $response = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
+            break;
+        case UPLOAD_ERR_FORM_SIZE:
+            $response = 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.';
+            break;
+        case UPLOAD_ERR_PARTIAL:
+            $response = 'The uploaded file was only partially uploaded.';
+            break;
+        case UPLOAD_ERR_NO_FILE:
+            $response = 'No file was uploaded.';
+            break;
+        case UPLOAD_ERR_NO_TMP_DIR:
+            $response = 'Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.';
+            break;
+        case UPLOAD_ERR_CANT_WRITE:
+            $response = 'Failed to write file to disk. Introduced in PHP 5.1.0.';
+            break;
+        case UPLOAD_ERR_EXTENSION:
+            $response = 'File upload stopped by extension. Introduced in PHP 5.2.0.';
+            break;
+        default:
+            $response = 'Unknown error';
+            break;
+        }
+        return $response;
     }
     function getFile(){
         return file_get_contents($this->getFilePath());

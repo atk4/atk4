@@ -121,6 +121,14 @@ class ApiCLI extends AbstractView
      */
     public $unique_hashes=array();
 
+    /**
+     * This is the default locale for the application. You change this manually
+     * inside application API class or use some controller which will pull this
+     * variable out of the URL. This variable will be respected throughout the
+     * framework
+     */
+    public $locale='en_US';
+
     // {{{ Start-up of application
     /**
      * Regular objects in Agile Toolkit use init() and are added through add().

@@ -244,13 +244,9 @@ class SMlite extends AbstractModel {
          * This appends static content to region refered by a tag. This function
          * is useful when you are adding more rows to a list or table.
          *
-         * If you have specified $delim, it will be used as a separator
-         * between existing content and newly appended.
-         *
-         * If tag is used for several regions inide template, they all will be
+         * If tag is used for several regions inside template, they all will be
          * appended with new data.
          */
-        if(!is_bool($encode))throw $this->exception('$delim is depreciated. Now 3rd argument is boolean');
         if($value instanceof URL)$value=$value->__toString();
         // Temporary here until we finish testing
         if($encode && $value!=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8') && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through append()')
@@ -260,11 +256,6 @@ class SMlite extends AbstractModel {
             ;
         if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
         if($this->isTopTag($tag)){
-            /*
-            if ($this->template){
-                $this->template[]=$delim;
-            }
-             */
             $this->template[]=$value;
             return $this;
         }
@@ -278,17 +269,38 @@ class SMlite extends AbstractModel {
                 //throw new BaseException("Problem appending '".htmlspecialchars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
             }
-            /*
-            if ($this->tags[$tag][$key]){
-                $this->tags[$tag][$key][]=$delim;
-            }
-             */
             $this->tags[$tag][$key][]=$value;
         }
         return $this;
     }
     function setHTML($tag,$value=null){
         return $this->set($tag,$value,false);
+    }
+    /**
+     * Provided that the HTML tag contains ICU-compatible message format
+     * string, it will be localized then integrated with passed arguments
+     */
+    function setMessage($tag,$args=array()){
+        if(!is_array($args))$args=array($args);
+        $fmt=$this->api->_($this->get($tag));
+
+        // Try to analyze format and see which formatter to use
+        if (class_exists('MessageFormatter',false) && strpos($fmt,'{')!==null) {
+            $fmt=new MessageFormatter($this->api->locale,$fmt);
+            $str=$fmt->format($args);
+        }
+        // Else, perhaps it's a sprintf?
+        elseif (strpos($fmt,'%')!==null) {
+            array_unshift($args,$fmt);
+            $str=call_user_func_array('sprintf',$args);
+        }
+        else {
+            throw $this->exception('Unclear how to format this')
+                ->addMoreInfo('fmt',$fmt)
+                ;
+        }
+
+        return $this->set($tag,$str);
     }
     function set($tag,$value=null,$encode=true){
         /*
