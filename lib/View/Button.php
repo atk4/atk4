@@ -120,7 +120,7 @@ class View_Button extends View_HtmlElement {
         // depreciated, use addMenu
        return $this->addMenu();
     }
-    function addMenu(){
+    function addMenu($width='200px'){
         $this->options['icons']['secondary'] = 'ui-icon-triangle-1-s';
 
         $this->menu = $this->owner->add($this->menu_class, null, $this->spot);
@@ -133,6 +133,10 @@ class View_Button extends View_HtmlElement {
                 'of'=>$this
             )),
         ));
+        $this->menu->js(true)->width($width);
+        $this->js(true)->_selectorDocument()->bind('click',
+            $this->js(null,'function(ev){'.$this->menu->js()->hide().'}')
+        );
 
         return $this->menu;
     }
