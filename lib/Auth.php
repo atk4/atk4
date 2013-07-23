@@ -14,5 +14,6 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Auth extends Auth_Basic {
+class Auth extends Auth_Basic
+{
 }
