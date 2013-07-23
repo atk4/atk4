@@ -34,8 +34,6 @@ class View_Button extends View_HtmlElement {
     function setIcon($icon){
         // TODO: implement through Icon
         $this->icon=$icon;
-        //$this->template->set('icon',$icon);
-        //$this->template->set('colour',$colour);
         return $this;
     }
     function setLabel($label){
