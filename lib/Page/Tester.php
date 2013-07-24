@@ -58,9 +58,9 @@ class Page_Tester extends Page {
             $ff=$f->addField('Text','responses');
             $this->responses=
     '    public $proper_responses=array(
-            '.join(',
-            ',$this->responses).'
-        );';
+        '.join(',
+        ',$this->responses).'
+    );';
             $ff->set($this->responses);
             $ff->js('click')->select();
         }

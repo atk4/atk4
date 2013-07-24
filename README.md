@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/atk4/atk4.png?branch=master)](https://travis-ci.org/atk4/atk4)
 Agile Toolkit - Web UI Toolkit
 ====
 Agile Toolkit is a Web UI framework and collection of usable widgets. It allows you to develop rich web applications by writing only PHP code. Agile Toolkit is inspired by Desktop GUI Toolkits and is a fully-object oriented development environment.
+
+[![Build Status](https://travis-ci.org/atk4/atk4.png?branch=master)](https://travis-ci.org/atk4/atk4)
 
 Overview
 ----

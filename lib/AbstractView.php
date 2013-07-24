@@ -144,7 +144,7 @@ abstract class AbstractView extends AbstractObject
         $this->removeHook('output', array($this, '_tsBuffer'));
         $ret=$this->_tsBuffer;
         $this->_tsBuffer='';
-        if ($execute_js && $this->api->jquery) {
+        if ($execute_js && @$this->api->jquery) {
             $this->api->jquery->getJS($this);
         }
         if ($destroy) {

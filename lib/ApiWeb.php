@@ -212,7 +212,9 @@ class ApiWeb extends ApiCLI {
            session creation and placing cookies is to enhance user privacy. 
         Call to memorize() / recall() will automatically create session */
 
-        if($this->_is_session_initialized)return;
+
+
+        if($this->_is_session_initialized || session_id())return;
 
         // Change settings if defined in settings file
         $params=session_get_cookie_params();

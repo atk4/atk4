@@ -1,3 +1,4 @@
 #!/bin/bash
 
-echo "Tests passed OK"
+cd `pwd`
+php run_tests.php && echo "Tests passed OK" || echo "Some tests failed"
