@@ -26,8 +26,43 @@ class DB_dsql_firebird extends DB_dsql {
     function init(){
         parent::init();
         $this->sql_templates['update']="update [table] set [set] [where]";
-  $this->sql_templates['select']="select [limit] [options] [field] [from] [table] [join] [where] [group] [having] [order]";
+        $this->sql_templates['select']="select [limit] [options] [field] [from] [table] [join] [where] [group] [having] [order]";
     }
+    
+    
+    function SQLTemplate($mode){
+        $template=parent::SQLTemplate($mode);
+        switch($mode){
+            case 'insert':
+                if (empty($this->$id_field)!==FALSE) return $template." returning ". $this->$id_field ;
+        }
+        return $template;
+    }
+    
+    function execute()
+    {
+       if (empty($this->args['fields'])) $this->args['fields']=array('*');
+       return parent::execute();
+    }
+    
+    function concat(){
+        $t=clone $this;
+        $t->template="([concat])";
+        $t->args['concat']=func_get_args();
+        return $t;
+    }
+
+    function render_concat(){
+        $x=array();
+        foreach($this->args['concat'] as $arg){
+            $x[]=is_object($arg)?
+                $this->consume($arg):
+                $this->escape($arg);
+        }
+        return implode(' || ',$x);
+    }
+    
+
     function calcFoundRows(){
         return $this->foundRows();
     }
