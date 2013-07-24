@@ -10,3 +10,4 @@ notifications:
       - "chat.freenode.net#atk4"
     on_success: always
     on_failure: always
+  email: false
