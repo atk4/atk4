@@ -556,6 +556,9 @@ input.ui-button,
   text-align: left;
   padding: 0.4em 0.6666666666666666em;
 }
+.atk-grid > table > tbody > tr.atk-grid-totals td {
+  font-style: italic;
+}
 .atk-grid > table > tbody > tr > td {
   border-bottom: 1px solid #e5e5e5;
   padding: 0.6666666666666666em;
