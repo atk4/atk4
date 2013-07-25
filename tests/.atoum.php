@@ -4,7 +4,7 @@
 use mageekguy\atoum;
 use mageekguy\atoum\reports;
 
-$coveralls = new reports\asynchronous\coveralls('src', 'myCoverallsProjectToken');
+$coveralls = new reports\asynchronous\coveralls('src', 'tRlttWBh45WhcNznBSaUkYeR2cVLsWzKi');
 $defaultFinder = $coveralls->getBranchFinder();
 $coveralls
         ->setBranchFinder(function() use ($defaultFinder) {
