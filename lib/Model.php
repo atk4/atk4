@@ -469,7 +469,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             $this->controller->setOrder($this,$field,$desc);
         return $this;
     }
-    function count($alias = null){
+    /**
+     * Count records of model
+     * 
+     * @param string $alias Optional alias of count result
+     * 
+     * @return integer
+     */
+    function count($alias = null) {
         if($this->controller && $this->controller->hasMethod('count')) {
             return $this->controller->count($this, $alias);
         } else {
