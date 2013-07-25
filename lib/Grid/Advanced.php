@@ -226,21 +226,21 @@ class Grid_Advanced extends Grid_Basic {
                     strtotime($this->current_row[$field]));
     }
     function format_datetime($field){
-        if(!$this->current_row[$field])$this->current_row[$field]='-'; else
-            if($this->current_row[$field] instanceof MongoDate){
+        $d=$this->current_row[$field];
+        if(!$d)$this->current_row[$field]='-'; else
+            if($d instanceof MongoDate){
                 $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
-                    $this->current_row[$field]->sec);
+                    $d->sec);
+            }elseif(is_numeric($d)){
+                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),$d);
             }else{
-                $this->current_row[$field]=date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
-                    strtotime($this->current_row[$field]));
+                $d=strtotime($d);
+                $this->current_row[$field]=$d?date($this->api->getConfig('locale/datetime','d/m/Y H:i:s'),
+                    $d):'-';
             }
     }
     function format_timestamp($field){
-        if(!$this->current_row[$field])$this->current_row[$field]='-';
-        else{
-            $format=$this->api->getConfig('locale/timestamp',$this->api->getConfig('locale/datetime','d/m/Y H:i:s'));
-            $this->current_row[$field]=date($format,strtotime($this->current_row[$field]));
-        }
+        return $this->format_datetime($field);
     }
     function format_nowrap($field){
         $this->tdparam[$this->getCurrentIndex()][$field]['style']='white-space: nowrap';
