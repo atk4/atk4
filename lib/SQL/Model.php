@@ -416,8 +416,21 @@ class SQL_Model extends Model {
     }
     /** Returns dynamic query selecting sum of particular field */
     function sum($field){
+        if(is_array($field)){
+            // prepare new query
+            $q=$his->dsql();
+            $q->del('fields');
+            foreach($field as $f){
+                if(!is_object($f))$f=$this->getElement($f);
+
+                $q->field($f->getExpr(), $f->short_name);
+            }
+            return $q->getRow();
+        }
+
         if(!is_object($field))$field=$this->getElement($field);
 
+        // TODO: don't clone twice, fieldQuery already clones
         $q=$this->dsql();
         return $q->fieldQuery($q->sum( $field ));
     }
