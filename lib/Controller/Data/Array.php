@@ -198,17 +198,25 @@ class Controller_Data_Array extends Controller_Data{
     function setOrder($model,$field,$desc=false){
         if (is_bool($desc)) {
             $desc=$desc?'desc':'';
+        } elseif (is_callable($field)) {
+            // do nothinc
+            $model->_table[$this->short_name]['order']=$field;
         } elseif (strtolower($desc)==='asc') {
             $desc='';
         } elseif ($desc && strtolower($desc)!='desc') {
             throw $this->exception('Incorrect ordering keyword')
                 ->addMoreInfo('order by', $desc);
         }
+
+        $model->_table[$this->short_name.'__options']['order']=
+            function($a,$b)use($field,$desc){
+                $r = strtolower($a[$field]) < strtolower($b[$field]) ? -1 : 1;
+                return $desc==='desc' ? -$r : $r;
+            };
+
         // this physically change order of array elements, so be aware of that !
-        uasort($model->_table[$this->short_name], function($a,$b)use($field,$desc){
-            $r = strtolower($a[$field]) < strtolower($b[$field]) ? -1 : 1;
-            return $desc==='desc' ? -$r : $r;
-        });
+        //uasort($model->_table[$this->short_name], 
+        return $this;
     }
     
     function setLimit($model,$count,$offset=0){
@@ -220,9 +228,13 @@ class Controller_Data_Array extends Controller_Data{
             $this->limited = false;
         }
     }
-    
-    function rewind($model){
-        $t =& $model->_table[$this->short_name];
+
+    /**
+     * This method applies conditions, orders etc then returns
+     * a subset of records within the array
+     */
+    function createCursor($model){
+        $t = $model->_table[$this->short_name];
         
         if ($this->limited) {
             // Imants: probably some kind of magic can be used here to move
@@ -252,6 +264,22 @@ class Controller_Data_Array extends Controller_Data{
             reset($t);
         }
 
+
+        if($model->_table[$this->short_name.'__options']['order']){
+            uasort($t, $model->_table[$this->short_name.'__options']['order']);
+        }
+
+        return $t;
+
+    }
+    
+    function rewind($model){
+
+        $model->_table[$this->short_name.'__options']['cursor']
+            =$this->createCursor($model);
+
+        $t =& $model->_table[$this->short_name.'__options']['cursor'];
+
         list($model->id,$model->data) = each($t);
         if (@$model->id_field && isset($model->data[$model->id_field])) {
             $model->id = $model->data[$model->id_field];
@@ -260,7 +288,7 @@ class Controller_Data_Array extends Controller_Data{
         return $model->data;
     }
     function next($model){
-        $t =& $model->_table[$this->short_name];
+        $t =& $model->_table[$this->short_name.'__options']['cursor'];
         
         list($model->id,$model->data) = each($t);
         
