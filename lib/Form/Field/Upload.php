@@ -138,7 +138,7 @@ class Form_Field_Upload extends Form_Field {
                     $model=$this->model;
                     $model->set('filestore_volume_id',$model->getAvailableVolumeID());
                     $model->set('original_filename',$this->getOriginalName());
-                    $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType()));
+                    $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType(),$model->policy_add_new_type));
                     $model->import($this->getFilePath());
                     $model->save();
                 }catch(Exception $e){
