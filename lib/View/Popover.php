@@ -30,14 +30,14 @@ class View_Popover extends View {
     /* Returns JS which will position this element and show it */
     function showJS($element=null,$options=array()){
 
-        $this->js(true)->dialog(array(
+        $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
             'dialogClass'=>$options['class']?:'popover',
             'dragable'=>false,
             'resizable'=>false,
             'minHeight'=>'auto',
             'autoOpen'=>false,
-            'width'=>$options['width']?:250,
+            'width'=>250,
             'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar:last')->hide())->click(
                 $this->js()->dialog('close')->_enclose()
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
@@ -47,8 +47,24 @@ class View_Popover extends View {
                 'of'=>$element?:$this->owner
                 //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
             )
-        ))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>');
+        ),$options))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>');
 
         return $this->js()->dialog('open');
     }
+}
+
+// Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
+function array_extend($a, $b) {
+    foreach($b as $k=>$v) {
+        if( is_array($v) ) {
+            if( !isset($a[$k]) ) {
+                $a[$k] = $v;
+            } else {
+                $a[$k] = array_extend($a[$k], $v);
+            }
+        } else {
+            $a[$k] = $v;
+        }
+    }
+    return $a;
 }
