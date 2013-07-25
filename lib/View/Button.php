@@ -154,7 +154,7 @@ class View_Button extends View_HtmlElement
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
-        $this->js('click', $popover->showJS($this, $options));
+        $this->js('click', $popover->showJS($this, $js_options));
         
         return $popover;
     }
@@ -175,7 +175,7 @@ class View_Button extends View_HtmlElement
                     'primary' => $this->js_triangle_class
                 ),
             ),
-            $options
+            $options?:array()
         );
 
         $but = $this->owner->add('Button', array('options' => $options), $this->spot);
