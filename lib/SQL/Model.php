@@ -409,17 +409,48 @@ class SQL_Model extends Model {
         $this->api->pr->stop();
         return $a;
     }
-    /** Returns dynamic query selecting number of entries in the database */
-    function count(){
-        $q = $this->dsql();
-        return $q->fieldQuery($q->count());
-    }
-    /** Returns dynamic query selecting sum of particular field */
-    function sum($field){
-        if(!is_object($field))$field=$this->getElement($field);
+    /**
+     * Returns dynamic query selecting number of entries in the database
+     * 
+     * @param string $alias Optional alias of count expression
+     * 
+     * @return DSQL
+     */
+    function count($alias = null)
+    {
+        // prepare new query
+        $q = $this->dsql()->del('fields')->del('order');
 
-        $q=$this->dsql();
-        return $q->fieldQuery($q->sum( $field ));
+        // add expression field to query
+        return $q->field($q->count(), $alias);
+    }
+    /**
+     * Returns dynamic query selecting sum of particular field or fields
+     * 
+     * @param string|array|Field $field
+     * 
+     * @return DSQL
+     */
+    function sum($field)
+    {
+        // prepare new query
+        $q = $this->dsql()->del('fields')->del('order');
+
+        // put field in array if it's not already
+        if (!is_array($field)) {
+            $field = array($field);
+        }
+
+        // add all fields to query
+        foreach ($field as $f) {
+            if (!is_object($f)) {
+                $f = $this->getElement($f);
+            }
+            $q->field($q->sum($f), $f->short_name);
+        }
+
+        // return query
+        return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
     function isInstanceLoaded(){ 
