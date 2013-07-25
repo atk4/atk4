@@ -1464,7 +1464,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      *
      * @return DB_dsql clone of $this
      */
-    function sum($ar)
+    function sum($arg)
     {
         return $this->expr('sum([sum])')->setCustom('sum', $this->bt($arg));
     }
