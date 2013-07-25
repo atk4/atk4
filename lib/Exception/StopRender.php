@@ -14,7 +14,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Exception_StopRender extends BaseException{
+class Exception_StopRender extends Exception_Stop{
     public $result;
     function __construct($r){
         $this->result=$r;
