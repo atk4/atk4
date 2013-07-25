@@ -1460,22 +1460,19 @@ class DB_dsql extends AbstractModel implements Iterator {
     /**
      * Creates expression for SUM()
      *
-     * @param string|object $arg Typically an expression of a sub-query
+     * @param string|object $arg Typically fieldname or expression of a sub-query
      *
      * @return DB_dsql clone of $this
      */
-    function sum($arg = null)
+    function sum($ar)
     {
-        if (is_null($arg)) {
-            $arg='*';
-        }
         return $this->expr('sum([sum])')->setCustom('sum', $this->bt($arg));
     }
 
     /**
      * Creates expression for COUNT()
      *
-     * @param string|object $arg Typically an expression of a sub-query
+     * @param string|object $arg Typically fieldname or expression of a sub-query
      *
      * @return DB_dsql clone of $this
      */
