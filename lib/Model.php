@@ -469,9 +469,16 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             $this->controller->setOrder($this,$field,$desc);
         return $this;
     }
-    function count(){
+    /**
+     * Count records of model
+     * 
+     * @param string $alias Optional alias of count result
+     * 
+     * @return integer
+     */
+    function count($alias = null) {
         if($this->controller && $this->controller->hasMethod('count')) {
-            return $this->controller->count($this);
+            return $this->controller->count($this, $alias);
         } else {
             throw $this->exception('Model do not have controller or count() method not implemented in controller')
                 ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
