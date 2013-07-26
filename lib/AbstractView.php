@@ -542,8 +542,15 @@ abstract class AbstractView extends AbstractObject
             $p->set(function($p)use($js){
                 // $js is an actual callable
                 $js2=$p->js()->_selectorRegion();
-                call_user_func($js,$js2,$_POST);
-                $js2->execute();
+
+                $js3=call_user_func($js,$js2,$_POST);
+
+                // If method returns something, execute that instead
+                if($js3){
+                    $p->js(null,$js3)->execute();
+                }else{
+                    $js2->execute();
+                }
             });
 
             $js=$this->js()->_selectorThis()->univ()->ajaxec($p->getURL(),true);
