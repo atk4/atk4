@@ -6,7 +6,8 @@ php:
 before_script: 
   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar
   - (cd tests; composer install)
-script: (cd tests; php ../mageekguy.atoum.phar -f run_tests.php)
+#script: (cd tests; php ../mageekguy.atoum.phar -f run_tests.php)
+script: (cd tests; php run_tests.php)
 notifications:
   irc: 
     channels:
