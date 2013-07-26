@@ -54,6 +54,7 @@ class View_Popover extends View {
 }
 
 // Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
+// TODO: merge JS chains by putting them into combined chain.
 function array_extend($a, $b) {
     foreach($b as $k=>$v) {
         if( is_array($v) ) {
@@ -62,6 +63,7 @@ function array_extend($a, $b) {
             } else {
                 $a[$k] = array_extend($a[$k], $v);
             }
+        // } else if $v or $a[$k] instanceof jQuery_Chain, merge them!
         } else {
             $a[$k] = $v;
         }
