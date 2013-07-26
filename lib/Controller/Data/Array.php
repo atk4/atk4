@@ -192,7 +192,7 @@ class Controller_Data_Array extends Controller_Data{
             return $t;
         }
     }
-    function count($model){
+    function count($model, $alias = null){
         return count($model->_table[$this->short_name]);
     }
     function setOrder($model,$field,$desc=false){

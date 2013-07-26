@@ -93,7 +93,7 @@ abstract class Controller_Data extends AbstractController {
     }
 
     /** returns count of records matching model criteria */
-    function count($model){
+    function count($model, $alias = null){
         throw $this->exception('count is not supported by this data driver');
     }
 

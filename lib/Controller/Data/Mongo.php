@@ -189,7 +189,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
         return $c;
     }
-    function count($model){
+    function count($model, $alias = null){
         return $this->selectQuery($model)->count();
     }
     function rewind($model){
