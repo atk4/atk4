@@ -57,7 +57,7 @@ class jQuery extends AbstractController {
     function addStaticInclude($file,$ext='.js'){
         if(@$this->included['js-'.$file.$ext]++)return;
 
-        if(strpos($file,'http')!==0){
+        if(strpos($file,'http')!==0 && $file[0]!='/'){
             $url=$this->api->locateURL('js',$file.$ext);
         }else $url=$file;
 
