@@ -127,5 +127,6 @@ class jQuery extends AbstractController {
             }
         }
         if($r)$this->addOnReady($r);
+        return $r;
     }
 }
