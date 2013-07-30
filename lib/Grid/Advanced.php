@@ -178,26 +178,28 @@ class Grid_Advanced extends Grid_Basic {
     function format_html($field){
         $this->current_row_html[$field] = $this->current_row[$field];
     }
-    function init_money($field){
-        @$this->columns[$field]['thparam'].=' style="text-align: right"';
-    }
-    function init_real($field){
-        @$this->columns[$field]['thparam'].=' style="text-align: right"';
-    }
     function init_fullwidth($field){
         @$this->columns[$field]['thparam'].=' style="width: 100%"';
     }
     function format_fullwidth($field){}
-    function format_money($field){
-        $m=(float)$this->current_row[$field];
-        $this->current_row[$field]=number_format($m,2);
-        $this->setTDParam($field,'style/color',$m<0?'red':null);
-        $this->setTDParam($field,'align','right');
+    function init_real($field){
+        @$this->columns[$field]['thparam'].=' style="text-align: right"';
+    }
+    function init_money($field){
+        $this->init_real($field);
     }
     function format_real($field){
-        $m=(float)$this->current_row[$field];
-        $this->current_row[$field]=number_format($m,2);
-        $this->setTDParam($field,'align','right');
+        $m = (float)$this->current_row[$field];
+        $this->current_row[$field] =
+            is_null($this->current_row[$field])
+                ? '-'
+                : number_format($m,2);
+        $this->setTDParam($field, 'align', 'right');
+    }
+    function format_money($field){
+        $this->format_real($field);
+        $m = (float)$this->current_row[$field];
+        $this->setTDParam($field, 'style/color',$m < 0 ? 'red' : null);
     }
     function format_totals_number($field){
         return $this->format_number($field);
