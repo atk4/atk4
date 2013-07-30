@@ -91,7 +91,9 @@ class Controller_MVCGrid extends AbstractController {
 
         $column = $this->owner->addColumn($field_type,$field_name,$field_caption);
 
-        if($field->sortable())$column->makeSortable();
+        if ($field->sortable() && $column->hasMethod('makeSortable')) {
+            $column->makeSortable();
+        }
 
         return $column;
     }
