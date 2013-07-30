@@ -10,8 +10,8 @@ php:
 script: (cd tests; php run_tests.php)
 services: mongodb
 before_script:
-  - mysql -e 'create database myapp_test;'
-  - mysql myapp_test tests/test.sql
+  - mysql -e 'create database myapp_test'
+  - mysql myapp_test < tests/test.sql
 notifications:
   irc: 
     channels:

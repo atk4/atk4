@@ -684,7 +684,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $m=$this
             ->add($this->api->normalizeClassName($class,'Model'))
             ->ref($ref);
-        $m->addCondition($field?:$m->id_field,$val);
+
+        // For one to many relation, create condition, otherwise do nothing,
+        // as load will follow
+        if($field){
+            $m->addCondition($field,$val);
+        }
         return $m;
     }
     /* Join Binding

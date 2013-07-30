@@ -100,8 +100,6 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function tryLoad($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id)); // TODO thow exception
-        if(!$this->loaded())throw $this->exception('Record not found')
-            ->addMoreInfo('id',$id);
     }
     function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
@@ -115,7 +113,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
         $this->addCondition($model,$field,$cond,$value);
 
-        $this->tryLoadAny($model);
+        $this->loadAny($model);
 
         $result=$model->data;
 
