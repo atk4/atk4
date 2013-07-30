@@ -291,8 +291,13 @@ class SQL_Model extends Model {
         $f = $field->actual_field?:$field->short_name;
         if($field->calculated()){
             // TODO: should we use expression in where?
-            $this->_dsql()->having($f,$cond,$value);
-            $field->updateSelectQuery($this->dsql);
+
+
+            $this->_dsql()->where($field->getExpr(),$cond,$value);
+
+
+            //$this->_dsql()->having($f,$cond,$value);
+            //$field->updateSelectQuery($this->dsql);
         }elseif($field->relation){
             $this->_dsql()->where($field->relation->short_name.'.'.$f,$cond,$value);
         }elseif($this->relations){
