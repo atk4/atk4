@@ -12,6 +12,7 @@ services: mongodb
 before_script:
   - mysql -e 'create database myapp_test'
   - mysql myapp_test < tests/test.sql
+  - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 notifications:
   irc: 
     channels:
