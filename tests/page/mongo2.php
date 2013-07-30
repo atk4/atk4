@@ -8,9 +8,10 @@ class page_mongo2 extends page_mongo1 {
         parent::init();
     }
     function prepare(){
-        return array($this->mom->ref('Children')->debug());
+        return array($this->mom->ref('Children'));
     }
 
+    /*
     function test_final(){
         $x=array();
         foreach ($this->mom->ref('Children') as $row){
@@ -18,6 +19,7 @@ class page_mongo2 extends page_mongo1 {
         }
         return join(' ',$x);
     }
+     */
 }
 
 class Model_Mother extends Model_Person {

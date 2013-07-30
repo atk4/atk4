@@ -51,9 +51,6 @@ class page_mongo1 extends Page_Tester {
 
         return json_encode($m->tryLoad($id)->loaded());
     }
-    function test_final(){
-        return true;
-    }
 }
 
 
