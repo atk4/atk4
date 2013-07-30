@@ -8,6 +8,10 @@ php:
 #  - (cd tests; composer install)
 #script: (cd tests; php ../mageekguy.atoum.phar -f run_tests.php)
 script: (cd tests; php run_tests.php)
+services: mongodb
+before_script:
+  - mysql -e 'create database myapp_test;'
+  - mysql myapp_test tests/test.sql
 notifications:
   irc: 
     channels:
