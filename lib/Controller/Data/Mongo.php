@@ -100,27 +100,43 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function tryLoad($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id)); // TODO thow exception
+        if(!$this->loaded())throw $this->exception('Record not found')
+            ->addMoreInfo('id',$id);
     }
     function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
+        if(!$this->loaded())throw $this->exception('Record not found')
+            ->addMoreInfo('id',$id);
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
+        $condition_freeze = $model->_table[$this->short_name]['conditions'];
+        $data_freeze = $model->data;
+        $id_freeze = $model->id;
+
+        $this->addCondition($model,$field,$cond,$value);
+
+        $this->tryLoadAny($model);
+
+        $result=$model->data;
+
+        $model->_table[$this->short_name]['conditions']=$condition_freeze;
+        $model->data = $data_freeze;
+        $model->id = $id_freeze;
+
+        return $result;
     }
     function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
 
-        if ($value===undefined) {
-            $value=$cond;
-            $cond='=';
-        }
+        $condition_freeze = $model->_table[$this->short_name]['conditions'];
 
-        $cond=array_merge(
-                $model->_table[$this->short_name]['conditions'],
-                array($field=>$value));
+        $this->addCondition($model,$field,$cond,$value);
 
-        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.findOne('.json_encode($cond).')</font><br/>';
-        $model->data=$this->_get($model,'db')->findOne($cond);
-        $model->id=(string)$model->data[$model->id_field]?:null;
+        $this->tryLoadAny($model);
+
+
+        $model->_table[$this->short_name]['conditions']=$condition_freeze;
         return $model->id;
+
     }
     function tryLoadAny($model){
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.findOne('.
@@ -212,7 +228,6 @@ class Controller_Data_Mongo extends Controller_Data {
             throw $this->exception('Multiple conditions on same field not supported yet');
         }
         if ($f=$model->hasElement($field)) {
-            // TODO: properly convert to Mongo presentation
             if($f->type()=='boolean' && is_bool($value)) {
                 $value=(bool)$value;
             }
@@ -230,6 +245,7 @@ class Controller_Data_Mongo extends Controller_Data {
                 $value = new MongoID($value);
             }
             $f->defaultValue($value)->system(true);
+            // TODO: properly convert to Mongo presentation
         }else{
             if($field[0]!='$'){
                 throw $this->exception('Condition on undefined field. Does not '.
