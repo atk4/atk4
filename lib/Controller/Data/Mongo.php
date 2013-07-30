@@ -105,7 +105,7 @@ class Controller_Data_Mongo extends Controller_Data {
     }
     function load($model,$id){
         $this->tryLoadBy($model,$model->id_field,new MongoID($id));
-        if(!$this->loaded())throw $this->exception('Record not found')
+        if(!$model->loaded())throw $this->exception('Record not found')
             ->addMoreInfo('id',$id);
     }
     function getBy($model,$field,$cond=undefined,$value=undefined){
