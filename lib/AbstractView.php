@@ -487,7 +487,7 @@ abstract class AbstractView extends AbstractObject
      *
      *  $view->js(true)->_load('myfile')->myplugin('myfunc',array($arg,$arg));
      *
-     * This approach is compatible with jQuerry UI Widget factory and will keep
+     * This approach is compatible with jQuery UI Widget factory and will keep
      * your code clean
      *
      * @param string|true|null   $when     Event when chain will be executed
@@ -530,10 +530,11 @@ abstract class AbstractView extends AbstractObject
         }
         return $js;
     }
+    
     function getJSID(){
         return str_replace('/', '_', $this->name);
     }
-    /** Experemental */
+    /** Experimental */
     function on($event, $selector=null, $js=null){
 
         if(is_callable($js)){
