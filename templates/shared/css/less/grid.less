@@ -17,7 +17,17 @@
         border-collapse: separate;
         width: 100%;
         > thead {
-            > tr > th { border: none; text-align: left; padding:@padding/5 @padding/3; }
+            > tr > th {
+                border: none;
+                text-align: left;
+                padding: @padding/5 @padding/3;
+                white-space: nowrap;
+                cursor: pointer;
+                > .ui-icon {
+                    display: inline-table;
+                    vertical-align: middle;
+                }
+            }
         }
         > tbody > tr {
             &.atk-grid-totals td {
