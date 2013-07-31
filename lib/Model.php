@@ -562,9 +562,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     function hasField($name){
         return $this->hasElement($name);
     }
-    function getEntityCode(){
-        return $this->table?:$this->entity_code;
-    }
     function getField($f){
         return $this->getElement($f);
     }
