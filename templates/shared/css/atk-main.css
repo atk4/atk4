@@ -555,6 +555,12 @@ input.ui-button,
   border: none;
   text-align: left;
   padding: 0.4em 0.6666666666666666em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.atk-grid > table > thead > tr > th > .ui-icon {
+  display: inline-table;
+  vertical-align: middle;
 }
 .atk-grid > table > tbody > tr.atk-grid-totals td {
   font-style: italic;
@@ -1457,6 +1463,9 @@ body #atk-layout #atk-footer-guard {
 .atk-notification {
   padding: 1em;
   position: relative;
+  -webkit-box-shadow: 0 10px 20px #ffffff inset;
+  -moz-box-shadow: 0 10px 20px #ffffff inset;
+  box-shadow: 0 10px 20px #ffffff inset;
 }
 .atk-notification .atk-notification-text {
   padding: 0 20px;
@@ -1471,11 +1480,6 @@ body #atk-layout #atk-footer-guard {
   top: 0.5em;
   right: 0.5em;
   cursor: pointer;
-}
-.atk-notification {
-  -webkit-box-shadow: 0 10px 20px #ffffff inset;
-  -moz-box-shadow: 0 10px 20px #ffffff inset;
-  box-shadow: 0 10px 20px #ffffff inset;
 }
 .atk-growl > .atk-notification {
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4), 0 10px 20px #ffffff inset;
@@ -1539,5 +1543,5 @@ body #atk-layout #atk-footer-guard {
   float: right !important;
 }
 .hidden {
-    display: none;
+  display: none;
 }
