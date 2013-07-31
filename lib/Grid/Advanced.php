@@ -321,7 +321,7 @@ class Grid_Advanced extends Grid_Basic {
              */
             $refid=$this->model;
             //if($refid)$refid=$refid->entity_code;
-            if($refid)$refid=$refid->getEntityCode();//Get Protected property Model::entity_code
+            if($refid)$refid=$refid->table;//Get Protected property Model::entity_code
             if($refid){
                 $this->columns[$field]['refid']=$refid;
             }else{
