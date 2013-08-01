@@ -24,7 +24,7 @@
 class jQuery_Chain extends AbstractModel {
     public $str='';
     public $prepend='';
-    public $selector=null;
+    public $library=null;
     public $enclose=false;
     public $preventDefault=false;
     public $base='';
@@ -65,28 +65,50 @@ class jQuery_Chain extends AbstractModel {
 
     /* Chain binds to parent object by default. Use this to use other selector $('selector') */
     function _selector($selector=null){
-        $this->selector=$selector;
+        if($selector === false){
+            $this->library=null;
+        }elseif($selector instanceof jQuery_Chain){
+            $this->library='$('.$selector.')';
+        }else{
+            $this->library='$('.json_encode($selector).')';
+        }
+        return $this;
+    }
+
+    /**
+     * Allows to chain calls on different library 
+     *
+     * If you are using jQuery, then you can call _selector('blah')
+     * which will result in $('blah') prefix, however if you want
+     * to chain to any other library you can use this modifier instead:
+     *
+     * _library('window.player').play();
+     *
+     * will result in 
+     *
+     * window.player.play();
+     *
+     * You must be sure to properly escape the string!
+     */
+    function _library($library){
+        $this->library=$library;
         return $this;
     }
     /* Use this to bind chain to document $(document)... */
     function _selectorDocument(){
-        $this->selector='__atk_selector_document';
-        return $this;
+        return $this->_library('$(document)');
     }
     /* Use this to bind chain to window $(window)... */
     function _selectorWindow(){
-        $this->selector='__atk_selector_window';
-        return $this;
+        return $this->_library('$(window)');
     }
     /* Use this to bind chain to "this" $(this)... */
     function _selectorThis(){
-        $this->selector='__atk_selector_this';
-        return $this;
+        return $this->_library('$(this)');
     }
     /* Use this to bind chain to "region" $(region). Region is defined by ATK when reloading */
     function _selectorRegion(){
-        $this->selector='__atk_selector_region';
-        return $this;
+        return $this->_library('$(region)');
     }
     /* Execute more JavaScript code before chain. Avoid using. */
     function _prepend($code){
@@ -212,18 +234,10 @@ class jQuery_Chain extends AbstractModel {
     function _render(){
         $ret='';
         $ret.=$this->prepend;
-        if($this->selector===false){
-            $ret.="$";
-        }elseif($this->selector==='__atk_selector_this'){
-            $ret.="$(this)";
-        }elseif($this->selector==='__atk_selector_document'){
-            $ret.="$(document)";
-        }elseif($this->selector==='__atk_selector_window'){
-            $ret.="$(window)";
-        }elseif($this->selector==='__atk_selector_region'){
-            $ret.="$(region)";
+        if($this->library){
+            $ret.=$this->library;
         }else{
-            if($this->str)$ret.="$('".($this->selector?$this->selector:'#'.$this->owner->getJSID())."')";
+            if($this->str)$ret.="$('#".$this->owner->getJSID()."')";
         }
         $ret.=$this->str;
         if($this->enclose===true){
@@ -233,7 +247,7 @@ class jQuery_Chain extends AbstractModel {
                 $ret="function(){ ".$ret." }";
             }
         }elseif($this->enclose){
-            $ret="$('".($this->selector?$this->selector:'#'.$this->owner->getJSID())."')".
+            $ret=($this->library?:"$('#".$this->owner->getJSID()."')").
                 ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
         }
         if(@$this->debug){
