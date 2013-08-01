@@ -29,6 +29,7 @@
 class View_Tabs_jUItabs extends View_Tabs {
     public $tab_template=null;
     public $options=array();
+    public $position='top'; // can be 'top','left','right','bottom'
 
     // should we show loader indicator while loading tabs
     public $show_loader = true;
@@ -43,6 +44,15 @@ class View_Tabs_jUItabs extends View_Tabs {
         $this->options[$key]=$value;
         return $this;
     }
+    function toBottom() {
+    	$this->position='bottom';
+    }
+    function toLeft() {
+    	$this->position='left';
+    }
+    function toRight() {
+    	$this->position='right';
+    }
     function render(){
         // add loader to JS events
         if ($this->show_loader) {
@@ -55,6 +65,29 @@ class View_Tabs_jUItabs extends View_Tabs {
         $this->js(true)
             ->tabs($this->options);
 
+        if ($this->position=="bottom"){
+        	$this->js(true)->_selector('#'.$this->name)
+		        	->addClass("tabs-bottom")
+        	;
+        	$this->js(true)->_selector('.tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav *')
+		        	->removeClass("ui-corner-all ui-corner-top")
+		        	->addClass("ui-corner-bottom")
+        	;
+        	$this->js(true)->_selector(".tabs-bottom .ui-tabs-nav")
+        			->appendTo(".tabs-bottom")
+        	;
+        }
+        
+        if ( ($this->position=="left") || ($this->position=="right") ){
+        	$this->js(true)->_selector('#'.$this->name)
+		        	->addClass("ui-tabs-vertical ui-helper-clearfix")
+        	;
+        	$this->js(true)->_selector('#'.$this->name.' li')
+		        	->removeClass("ui-corner-top")
+		        	->addClass("ui-corner-".$this->position)
+        	;
+        }
+        
         return parent::render();
     }
     /* Add tab and returns it so that you can add static content */
