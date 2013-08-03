@@ -46,12 +46,15 @@ class View_Tabs_jUItabs extends View_Tabs {
     }
     function toBottom() {
     	$this->position='bottom';
+    	return $this;
     }
     function toLeft() {
     	$this->position='left';
+    	return $this;
     }
     function toRight() {
     	$this->position='right';
+    	return $this;
     }
     function render(){
         // add loader to JS events
