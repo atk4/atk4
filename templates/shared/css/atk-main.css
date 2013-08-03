@@ -572,6 +572,9 @@ input.ui-button,
 .atk-grid > table > tbody > tr > td > img {
   vertical-align: middle;
 }
+.atk-grid > table .atk-delete-button {
+  color: #e51717;
+}
 .atk-grid.bordered > table > thead > tr > th {
   border: 1px solid #002d5e;
   border-width: 1px 1px 1px 0;
