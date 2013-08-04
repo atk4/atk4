@@ -1,46 +1,56 @@
 <?$Misc?>
 <div id="<?$_name?>" class="atk-grid <?$class?>" style="<?$style?>">
+  
   <?$top_1?>
   <div class="atk-grid-panel"><?$quick_search?><?$grid_buttons?></div>
   <?$top_2?>
+  
   <table width="<?table_width?>100%<?/?>">
+
     <?header?>
     <thead class="ui-widget-header"><tr>
-        <?cols?>
+      <?cols?>
         <?col?>
-        <th id="<?$sortid?>" class="ui-widget-header" nowrap <?$thparam?>><?sort?><i style="float: left" class="ui-icon <?$sorticon?>"></i><?/?><?descr?>Customer<?/?></th>
+        <th id="<?$sortid?>" class="ui-widget-header" <?$thparam?>><?sort?><span class="ui-icon <?$sorticon?>"></span><?/?><?descr?>Customer<?/?></th>
         <?/col?>
-        <?/cols?>
+      <?/cols?>
     </tr></thead>
     <?/header?>
     <?$subheader?>
 
     <tbody class="grid_body">
       <?rows?>
+      
       <?row?>
       <tr class="<?$odd_even?>" data-id="<?$row_id?>" rel="<?$row_id?>">
-        <?cols?>
+      <?cols?>
         <?col?>
         <td <?$tdparam?>><?$content?></td>
         <?/col?>
-        <?/cols?>
+      <?/cols?>
       </tr>
       <?/row?>
 
       <?totals?>
       <tr class="atk-grid-totals">
-        <?cols?>
+      <?cols?>
         <?col?>
         <td <?$tdparam?>><?$content?></td>
         <?/col?>
-        <?/cols?>
+      <?/cols?>
       </tr>
       <?/totals?>
+      
       <?/rows?>
     </tbody>
+
     <?$footer?>
+
   </table>
-  <?not_found?><div class="atk-grid-notfound ui-state-highlight ui-corner-all"><i class="ui-icon ui-icon-alert float-left"></i>No Records Found</div><?/not_found?>
+  <?not_found?>
+    <div class="atk-grid-notfound ui-state-highlight ui-corner-all"><i class="ui-icon ui-icon-alert float-left"></i><?not_found_message?>No Records Found<?/?></div>
+  <?/not_found?>
+
   <?$bottom_1?>
   <?$paginator?>
   <?$bottom_2?>
