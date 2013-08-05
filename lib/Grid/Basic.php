@@ -140,15 +140,14 @@ class Grid_Basic extends CompleteLister
                 $addon->initField($name, $descr);
                 return $addon;
 
-            } elseif (
-                !$this->hasMethod($m = 'init_'.$subtype)
-                && !$this->hasMethod($m = 'format_'.$subtype)
-            ) {
-                // exception if formatter doesn't exist
-                throw $this->exception('No such formatter')
-                    ->addMoreInfo('formater', $subtype);
+            } elseif (!$this->hasMethod($m = 'init_'.$subtype)) {
+                if (!$this->hasMethod($m = 'format_'.$subtype)) {
+                    // exception if formatter doesn't exist
+                    throw $this->exception('No such formatter')
+                        ->addMoreInfo('formater', $subtype);
+                }
             } else {
-                // execute formatter
+                // execute formatter init_*
                 $this->$m($name, $descr);
             }
         }
