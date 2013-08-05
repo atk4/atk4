@@ -129,8 +129,9 @@ class Grid_Basic extends CompleteLister
         foreach ($subtypes as $subtype) {
             if (strpos($subtype, '/')) {
 
+                // add-on functionality:
+                // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
                 if (!$this->elements[$subtype.'_'.$name]) {
-                    // add-on functionality
                     $addon = $this->api->normalizeClassName($subtype, 'Controller_Grid_Format');
                     $this->elements[$subtype.'_'.$name] = $this->add($addon);
                 }
@@ -139,12 +140,15 @@ class Grid_Basic extends CompleteLister
                 $addon->initField($name, $descr);
                 return $addon;
 
-            } elseif (!$this->hasMethod($m = 'init_'.$subtype)) {
-                if (!$this->hasMethod($m = 'format_'.$subtype)) {
-                    throw $this->exception('No such formatter')
-                        ->addMoreInfo('formater', $subtype);
-                }
+            } elseif (
+                !$this->hasMethod($m = 'init_'.$subtype)
+                && !$this->hasMethod($m = 'format_'.$subtype)
+            ) {
+                // exception if formatter doesn't exist
+                throw $this->exception('No such formatter')
+                    ->addMoreInfo('formater', $subtype);
             } else {
+                // execute formatter
                 $this->$m($name, $descr);
             }
         }
@@ -215,9 +219,9 @@ class Grid_Basic extends CompleteLister
 
 
         if (strpos($formatter, '/')) {
-
+            // add-on functionality:
+            // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
             if (!$this->elements[$formatter.'_'.$field]) {
-                // add-on functionality
                 $addon = $this->api->normalizeClassName($formatter, 'Controller_Grid_Format');
                 $this->elements[$formatter.'_'.$field] = $this->add($addon, $formatter);
             }
@@ -227,6 +231,7 @@ class Grid_Basic extends CompleteLister
             return $addon;
 
         } elseif ($this->hasMethod($m = 'init_'.$formatter)) {
+            // execute formatter
             $this->$m($field, $descr);
         }
 
@@ -415,10 +420,11 @@ class Grid_Basic extends CompleteLister
      * @param string $field field name
      * @param array $column column configuration
      * @param string $formatter_prefix prefix of formatter methods
+     * @param boolean $silent don't throw exception if formatter not found
      *
      * @return void
      */
-    function executeFormatters($field, $column, $formatter_prefix = 'format_')
+    function executeFormatters($field, $column, $formatter_prefix = 'format_', $silent = false)
     {
         $formatters = explode(',', $column['type']);
         foreach ($formatters as $formatter) {
@@ -430,11 +436,14 @@ class Grid_Basic extends CompleteLister
                 // formatter method is included in this class
                 $this->$m($field, $column);
             } elseif (strpos($formatter, '/')) {
-                // @todo Imants: what is formatField method? Is this something obsolete or some missing add-on?
+                // add-on support:
+                // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
                 $this->getElement($formatter.'_'.$field)
                     ->formatField($field, $column);
             } else {
-                throw new BaseException("Grid does not know how to format type: ".$formatter);
+                if (! $silent) {
+                    throw new BaseException("Grid does not know how to format type: ".$formatter);
+                }
             }
         }
     }
