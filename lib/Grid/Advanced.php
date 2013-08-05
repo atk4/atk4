@@ -403,12 +403,15 @@ class Grid_Advanced extends Grid_Basic
         parent::formatTotalsRow();
 
         // additional formatting of totals row
+        $totals_columns = array_keys($this->totals) ?: array();
         foreach ($this->columns as $field=>$column) {
 
-            // process formatters
-            $this->executeFormatters($field, $column, 'format_totals_');
+            // process formatters only for columns included in totals calculation
+            if (in_array($field, $totals_columns)) {
+                $this->executeFormatters($field, $column, 'format_totals_');
+            }
 
-            // apply TD parameters
+            // apply TD parameters to all columns
             $this->applyTDParams($field, $this->totals_t);
         }
 
