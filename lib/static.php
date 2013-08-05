@@ -19,8 +19,8 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
-define('undefined', '_atk4_undefined_value');
-define('UNDEFINED', '_atk4_undefined_value');
+if(!defined('undefined'))define('undefined', '_atk4_undefined_value');
+if(!defined('UNDEFINED'))define('UNDEFINED', '_atk4_undefined_value');
 
 if(!function_exists('error_handler')){
     function error_handler($errno, $errstr, $errfile, $errline){
@@ -66,7 +66,7 @@ if(!function_exists('error_handler')){
     }
     set_error_handler("error_handler");
 
-};if(!function_exists('atk4_autoload')){
+};if(!function_exists('loadClass')){
     function loadClass($class){
         if(isset($GLOBALS['atk_pathfinder'])){
             return $GLOBALS['atk_pathfinder']->loadClass($class);
