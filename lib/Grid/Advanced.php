@@ -406,9 +406,12 @@ class Grid_Advanced extends Grid_Basic
         $totals_columns = array_keys($this->totals) ?: array();
         foreach ($this->columns as $field=>$column) {
 
-            // process formatters only for columns included in totals calculation
-            if (in_array($field, $totals_columns)) {
-                $this->executeFormatters($field, $column, 'format_totals_');
+            // process formatters (additional to default formatters)
+            $this->executeFormatters($field, $column, 'format_totals_', true);
+ 
+            // totals title displaying
+            if ($field == $this->totals_title_field) {
+                $this->setTDParam($field, 'style/font-weight', 'bold');
             }
 
             // apply TD parameters to all columns
@@ -590,18 +593,17 @@ class Grid_Advanced extends Grid_Basic
     function format_totals_real($field) {}
 
     /**
-     * Additional formatting of text fields for totals row
+     * Additional formatting of expander fields for totals row
+     *
+     * Basically we remove everything from such field
      * 
-     * @param string $field
+     * @param string $field field name
+     * @param array $column column configuration
      *
      * @return void
      */
-    function format_totals_text($field)
-    {
-        // This method is mainly for totals title displaying
-        if ($field == $this->totals_title_field) {
-            $this->setTDParam($field, 'style/font-weight', 'bold');
-        }
+    function format_totals_expander($field, $column) {
+        @$this->current_row_html[$field] = '';
     }
 
     // }}}
@@ -617,9 +619,8 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_expander($field)
     {
-        // set column style and initialize buttons on page load
+        // set column style
         @$this->columns[$field]['thparam'] .= ' style="width:40px; text-align:center"';
-        $this->js(true)->find('.button_'.$field)->button();
 
         // set column refid - referenced model table for example
         if (!isset($this->columns[$field]['refid'])) {
@@ -635,8 +636,11 @@ class Grid_Advanced extends Grid_Basic
             $this->columns[$field]['refid'] = $refid;
         }
 
-        // initialize expander
+        // initialize button widget on page load
         $class = $this->name.'_'.$field.'_expander';
+        $this->js(true)->find('.'.$class)->button();
+
+        // initialize expander
         $this->js(true)
             ->_selector('.'.$class)
             ->_load('ui.atk4_expander')
@@ -653,7 +657,6 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_expander($field, $column)
     {
-        $class = $this->name.'_'.$field.'_expander';
         if (!@$this->current_row[$field]) {
             $this->current_row[$field] = $column['descr'];
         }
@@ -662,19 +665,22 @@ class Grid_Advanced extends Grid_Basic
         // reformat this using Button, once we have more advanced system to
         // bypass rendering of sub-elements.
         // $this->current_row[$field] = $this->add('Button',null,false)
-        $id = $this->name.'_'.$field.'_'.$this->api->normalizeName($this->model->id);
+        $key   = $this->name . '_' . $field . '_';
+        $id    = $key . $this->api->normalizeName($this->model->id);
+        $class = $key . 'expander';
+
         @$this->current_row_html[$field] = 
             '<input type="checkbox" '.
-                'class="button_'.$field.' '.$class.'" '.
+                'class="'.$class.'" '.
                 'id="'.$id.'" '.
                 'rel="'.$this->api->url(
                     $column['page'] ?: './'.$field,
                     array(
                         'expander' => $field,
-                        'cut_page' => 1,
                         'expanded' => $this->name,
+                        'cut_page' => 1,
                         // TODO: id is obsolete
-                        'id'       => $this->model->id,
+                        //'id' => $this->model->id,
                         $this->columns[$field]['refid'].'_id' => $this->model->id
                     )
                 ).'" '.
