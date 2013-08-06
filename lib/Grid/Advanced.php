@@ -606,6 +606,34 @@ class Grid_Advanced extends Grid_Basic
         @$this->current_row_html[$field] = '';
     }
 
+    /**
+     * Additional formatting of expander fields for totals row
+     *
+     * Basically we remove everything from such field
+     * 
+     * @param string $field field name
+     * @param array $column column configuration
+     *
+     * @return void
+     */
+    function format_totals_template($field, $column) {
+        @$this->current_row_html[$field] = '';
+    }
+
+    /**
+     * Additional formatting of expander fields for totals row
+     *
+     * Basically we remove everything from such field
+     * 
+     * @param string $field field name
+     * @param array $column column configuration
+     *
+     * @return void
+     */
+    function format_totals_delete($field, $column) {
+        @$this->current_row_html[$field] = '';
+    }
+
     // }}}
 
     // {{{ Expander

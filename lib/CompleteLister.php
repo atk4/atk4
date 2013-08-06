@@ -345,6 +345,7 @@ class CompleteLister extends Lister
     function updateTotals()
     {
         foreach ($this->totals as $key => $val) {
+            if(is_object($this->current_row[$key]))continue;
             $this->totals[$key] = $val + $this->current_row[$key];
         }
     }
