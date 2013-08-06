@@ -607,7 +607,7 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Additional formatting of expander fields for totals row
+     * Additional formatting of custom template fields for totals row
      *
      * Basically we remove everything from such field
      * 
@@ -621,7 +621,7 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Additional formatting of expander fields for totals row
+     * Additional formatting of delete button fields for totals row
      *
      * Basically we remove everything from such field
      * 
