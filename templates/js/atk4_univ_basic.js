@@ -268,9 +268,11 @@ $.each({
 
         if(data==true){
             data={};
-            $.each(region.data(), function(k, v) {
-                if(typeof v !== "object") data[k]=v;
-            });
+            if(region.data()) {
+                $.each(region.data(), function(k, v) {
+                    if(typeof v !== "object") data[k]=v;
+                });
+            }
 
         }
 
