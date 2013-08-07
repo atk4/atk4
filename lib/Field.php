@@ -372,7 +372,7 @@ class Field extends AbstractModel
      */
     function defaultValue($t = UNDEFINED)
     {
-        if($t != UNDEFINED)$this->has_default_value=true;
+        if($t !== UNDEFINED)$this->has_default_value=true;
         return $this->setterGetter('defaultValue', $t);
     }
 
@@ -546,7 +546,7 @@ class Field extends AbstractModel
         if($this->type=='boolean'){
             $val=$this->getBooleanValue($val);
         }
-        if($val=='' && ($this->listData || $this instanceof Field_Reference) && $this->type!='boolean'){
+        if($val=='' && !$this->mandatory && ($this->listData || $this instanceof Field_Reference) && $this->type!='boolean'){
             $val=null;
         }
         return $val;
