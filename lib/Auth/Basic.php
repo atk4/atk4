@@ -278,6 +278,8 @@ class Auth_Basic extends AbstractController {
      * if default authentication method is used, the function will
      * automatically determine hash used for password generation and will
      * upgrade to a new php5.5-compatible syntax.
+     *
+     * This function return false OR the id of the record matching user
      */
     function verifyCredentials($user, $password)
     {
@@ -524,8 +526,9 @@ class Auth_Basic extends AbstractController {
         $this->hook('updateForm');
         $f=$this->form;
         if($f->isSubmitted()){
-            if($this->verifyCredentials($f->get('username'), $f->get('password'))){             
-                $this->login($f->get('username'));
+            $id = $this->verifyCredentials($f->get('username'), $f->get('password'));
+            if($id){             
+                $this->loginByID($id);
                 $this->loggedIn($f->get('username'),$f->get('password'));
                 exit;
             }

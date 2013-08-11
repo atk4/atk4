@@ -355,7 +355,15 @@ class ApiWeb extends ApiCLI {
          * Use this function instead of issuing header("Location") stuff
          */
         $url=$this->url($page,$args);
-        if($this->api->isAjaxOutput())$this->api->js()->univ()->redirect($url)->execute();
+         if($this->api->isAjaxOutput()) {
+             if($_GET['cut_page']) {
+                 echo "<script>".$this->api->js()->univ()->redirect($url)."</script>Redirecting page...";
+                 exit;
+             }
+             else {
+                 $this->api->js()->univ()->redirect($url)->execute();
+             }
+        }
         header("Location: ".$url);
         exit;
     }
