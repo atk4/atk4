@@ -1017,8 +1017,7 @@ abstract class AbstractObject
             $rest = substr($desired, $len);
 
             if (!$this->api->unique_hashes[$key]) {
-                $this->api->unique_hashes[$key]
-                    = count($this->api->unique_hashes) + 1;
+                $this->api->unique_hashes[$key] = dechex(crc32($key));
             }
             $desired = $this->api->unique_hashes[$key].'__'.$rest;
         };
