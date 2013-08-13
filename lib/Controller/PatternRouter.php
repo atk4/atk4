@@ -117,7 +117,7 @@ class Controller_PatternRouter extends AbstractController {
                 reset($args);
                 foreach($rest as $arg){
                     list($key,$match)=each($args);
-                    if(is_numeric($key)){
+                    if(is_numeric($key) || is_null($key)){
                         $key=$match;
                     }else{
                         if(!preg_match($match,$arg))break 2;
