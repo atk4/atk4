@@ -25,8 +25,6 @@
 class Menu_Basic extends CompleteLister {
     public $items=array();
     protected $class_tag='class';
-    protected $item_tag='MenuItem';
-    protected $container_tag='Item';
     protected $last_item=null;
     public $current_menu_class="ui-state-active";
     public $inactive_menu_class="ui-state-default";
@@ -75,7 +73,7 @@ class Menu_Basic extends CompleteLister {
         return $this;
     }
     function addSubMenu($label){
-        $f = $this->add('View_Popover',null,'MenuSeparator'); // we use MenuSeparator tag here just to put View_Popover outside of UL list. Otherwise it breaks correct HTML and CSS.
+        $f = $this->add('View_Popover'); // we use MenuSeparator tag here just to put View_Popover outside of UL list. Otherwise it breaks correct HTML and CSS.
         $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($this->items)),$label);
         return $f->add('Menu_jUI');
     }
