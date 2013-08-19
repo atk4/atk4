@@ -61,7 +61,7 @@ class Model_AgileTest extends Model {
             $this->set($res);
             $this['speed']=round($this['speed'],3);
             //list($this['total_tests'], $this['successful'], $this['time']) = 
-            $this['result']=$this['success']==$this['total']?'OK':'FAIL';
+            $this['result']=$this['success']==$this['total']?'OK':('FAIL'.join(', ',$res['failures']));
 
             $p->destroy();
         }catch(Exception $e){

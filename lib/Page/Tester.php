@@ -80,6 +80,7 @@ class Page_Tester extends Page {
         $speed=$memory=0;
 
         $tested=array();
+        $failures=array();
         foreach(get_class_methods($test_obj) as $method){
             if(strpos($method,'test_')===0){
                 $m=substr($method,5);
@@ -126,6 +127,7 @@ class Page_Tester extends Page {
                     if($this->proper_responses[$k]==$result && isset($this->proper_responses[$k])){
                         $success++;
                     }else{
+                        $failures[]=$method;
                         $fail++;
                     }
                 }catch (Exception $e){
@@ -143,6 +145,7 @@ class Page_Tester extends Page {
         }
         return array(
             'total'=>$total,
+            'failures'=>$failures,
             'success'=>$success,
             'exception'=>$exception,
             'fail'=>$fail,
