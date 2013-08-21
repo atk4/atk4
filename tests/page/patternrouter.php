@@ -78,4 +78,34 @@ class page_patternrouter extends Page_Tester {
 
             ,'hello/123/edit');
     }
+    function test_basic5($r){
+        return $this->r($r
+
+            ->link('hello/:id/edit')
+
+            ,'hello/123');
+    }
+    function test_output($r){
+        return $this->r($r
+
+            ->link('hello/:foo/:bar','hello/:bar/:foo')
+
+            ,'hello/xx/yy');
+    }
+    function test_rule_selection1($r){
+        return $this->r($r
+
+            ->link(':id/edit','first')
+            ->link(':id/view','second')
+
+            ,'123/edit');
+    }
+    function test_rule_selection2($r){
+        return $this->r($r
+
+            ->link(':id/edit','first')
+            ->link(':id/view','second')
+
+            ,'123/view');
+    }
 }
