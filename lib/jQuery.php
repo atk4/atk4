@@ -32,6 +32,8 @@ class jQuery extends AbstractController {
 
         $this->api->jquery=$this;
 
+        if(!$this->api->template)return;
+
         if(!$this->api->template->is_set('js_include'))
             throw $this->exception('Tag js_include must be defined in shared.html');
         if(!$this->api->template->is_set('document_ready'))

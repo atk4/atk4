@@ -20,7 +20,7 @@ require'../lib/Page.php';
 require'../lib/Page/Tester.php';
  */
 
-$api=new ApiCLI();
+$api=new ApiCLI('sample_project');
 
 $tests = $api->add('Model_AgileTest');
 
@@ -29,6 +29,7 @@ $result='OK';
 foreach($tests as $row){
     foreach($row as $key=>$val){
         if($key=='name')$val=str_pad($val,10);
+        if($key=='failures')continue;
         echo "$key: $val\t";
     }
     if($row['result']!='OK')$result='FAIL';
