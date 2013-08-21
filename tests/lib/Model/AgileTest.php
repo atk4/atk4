@@ -58,6 +58,13 @@ class Model_AgileTest extends Model {
 
             // This will execute the actual test
             $res=$p->silentTest();
+
+            if($res['skipped']){
+                $this['result']='Test was skiped ('.$res['skipped'].')';
+                return;
+            }
+
+
             $this->set($res);
             $this['speed']=round($this['speed'],3);
             //list($this['total_tests'], $this['successful'], $this['time']) = 

@@ -47,6 +47,11 @@ class Controller_PatternRouter extends AbstractController {
             }
         }
     }
+
+    function url(){
+    }
+
+
     /**
      * Link method creates a bi-directional link between a URL and
      * a page along with some GET parameters. This method is 

@@ -65,6 +65,9 @@ class Page_Tester extends Page {
             $ff->js('click')->select();
         }
     }
+    function skipTests($msg=null){
+        throw $this->exception($msg,'SkipTests');
+    }
     public $cnt;
     function ticker(){
         $this->cnt++;
@@ -131,6 +134,13 @@ class Page_Tester extends Page {
                         $fail++;
                     }
                 }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        return array(
+                            'skipped'=>$e->getMessage()
+                        );
+                    }
+
                     $exception++;
 
                     $ms=microtime(true)-$ms;
@@ -202,6 +212,12 @@ class Page_Tester extends Page {
                     //$result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                     $result=$this->executeTest($test_obj,$test_func,$input);
                 }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        $this->grid->destroy();
+                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+                    }
+
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
                         throw $e;
