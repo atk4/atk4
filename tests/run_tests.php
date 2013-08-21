@@ -32,7 +32,7 @@ foreach($tests as $row){
         if($key=='failures')continue;
         echo "$key: $val\t";
     }
-    if($row['result']!='OK')$result='FAIL';
+    if($row['fail'])$result='FAIL';
     echo "\n";
 }
 

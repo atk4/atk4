@@ -72,6 +72,7 @@ class Model_AgileTest extends Model {
 
             $p->destroy();
         }catch(Exception $e){
+            $this['fail']='!!';
             $this['result']='Exception: '.($e instanceof BaseException?$e->getText():$e->getMessage());
             return;
         }

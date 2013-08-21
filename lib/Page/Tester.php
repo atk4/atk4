@@ -96,12 +96,22 @@ class Page_Tester extends Page {
                 if(is_numeric($key))$key=$vari;
 
                 // Input is a result of preparation function
-                if(method_exists($test_obj,'prepare_'.$m)){
-                    $input=$test_obj->{'prepare_'.$m}($vari,$method);
-                }else{
-                    if($test_obj->hasMethod('prepare')){
-                        $input=$test_obj->prepare($vari,$method);
-                    }else $input=null;
+                try{
+                    if(method_exists($test_obj,'prepare_'.$m)){
+                        $input=$test_obj->{'prepare_'.$m}($vari,$method);
+                    }else{
+                        if($test_obj->hasMethod('prepare')){
+                            $input=$test_obj->prepare($vari,$method);
+                        }else $input=null;
+                    }
+                }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        return array(
+                            'skipped'=>$e->getMessage()
+                        );
+                    }
+                    throw $e;
                 }
 
                 $this->input=$input;
@@ -188,13 +198,21 @@ class Page_Tester extends Page {
             foreach($this->variances as $key=>$vari){
                 if(is_numeric($key))$key=$vari;
 
-                // Input is a result of preparation function
-                if(method_exists($test_obj,'prepare_'.$m)){
-                    $input=$test_obj->{'prepare_'.$m}($vari,$method);
-                }else{
-                    if($test_obj->hasMethod('prepare')){
-                        $input=$test_obj->prepare($vari,$method);
-                    }else $input=null;
+                try{
+                    // Input is a result of preparation function
+                    if(method_exists($test_obj,'prepare_'.$m)){
+                        $input=$test_obj->{'prepare_'.$m}($vari,$method);
+                    }else{
+                        if($test_obj->hasMethod('prepare')){
+                            $input=$test_obj->prepare($vari,$method);
+                        }else $input=null;
+                    }
+                }catch (Exception $e){
+                    if($e instanceof Exception_SkipTests) {
+                        $this->grid->destroy();
+                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+                        return;
+                    }
                 }
 
                 $this->input=$input;
@@ -217,6 +235,7 @@ class Page_Tester extends Page {
                         $this->grid->destroy();
                         $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
                     }
+                    return;
 
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
