@@ -308,3 +308,15 @@ if (!defined('PASSWORD_BCRYPT')) {
         return $status === 0;
     }
 }
+
+if(!function_exists('framewotk_backtrace')){
+    function framewotk_backtrace() {
+        foreach (debug_backtrace() as $k=>$v) {
+            echo 'File: '.$v['file']; echo '<br>';
+            echo 'line: '.$v['line']; echo '<br>';
+            echo 'function: '.$v['function']; echo '<br>';
+            echo 'class: '.$v['class']; echo '<br>';
+            echo '<hr>';
+        }
+    };
+}
