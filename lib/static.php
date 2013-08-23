@@ -309,14 +309,28 @@ if (!defined('PASSWORD_BCRYPT')) {
     }
 }
 
-if(!function_exists('framewotk_backtrace')){
-    function framewotk_backtrace() {
-        foreach (debug_backtrace() as $k=>$v) {
-            echo 'File: '.$v['file']; echo '<br>';
-            echo 'line: '.$v['line']; echo '<br>';
-            echo 'function: '.$v['function']; echo '<br>';
-            echo 'class: '.$v['class']; echo '<br>';
-            echo '<hr>';
+if(!function_exists('framewotk_backtrace')){function framework_backtrace($array=null) {
+        if (!is_array($array)) {
+            foreach (debug_backtrace() as $k=>$v) {
+                framework_backtrace($v);
+                echo '<hr>';
+            }
+        } else {
+            foreach ($array as $name => $value) {
+                if (!is_object($value)) {
+                    echo $name.': ';
+                    if (is_array($value)) {var_dump(
+                        $value['function']);
+                        if ($value['function'] !== null) {
+                            framework_backtrace($value);
+                        };
+                    } else {
+                        echo $value;
+                        echo '<br>';
+                    }
+                }
+            }
+    
         }
     };
 }
