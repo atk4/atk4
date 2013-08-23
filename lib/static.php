@@ -309,7 +309,8 @@ if (!defined('PASSWORD_BCRYPT')) {
     }
 }
 
-if(!function_exists('framewotk_backtrace')){function framework_backtrace($array=null) {
+if(!function_exists('framework_backtrace')){
+   function framework_backtrace($array=null) {
         if (!is_array($array)) {
             foreach (debug_backtrace() as $k=>$v) {
                 framework_backtrace($v);
