@@ -236,6 +236,7 @@ class Form_Basic extends View implements ArrayAccess {
     //
     function get($field=null){
         if(!$field)return $this->data;
+        if($field instanceof Form_Field)return $this->data[$field->short_name];
         return $this->data[$field];
     }
     /*
