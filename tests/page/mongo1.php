@@ -7,9 +7,12 @@ class page_mongo1 extends Page_Tester {
         "Test_notfound"=>'false'
     );
 
-
     function prepare(){
-        return array($this->add('Model_Person'));
+        try{ 
+            return array($this->add('Model_Person'));
+        }catch(MongoConnectionException $e){
+            $this->skipTests('Mongo failed to connect');
+        }
     }
     function test_load($m){
         $m['name']='John';

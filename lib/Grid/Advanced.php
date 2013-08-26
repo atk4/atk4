@@ -1266,6 +1266,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         $this->current_row_html[$field] = $t
+            ->trySet('id',$this->current_id)
             ->set($this->current_row)
             ->trySet('_value_', $this->current_row[$field])
             ->render();
