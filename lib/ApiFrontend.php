@@ -35,7 +35,6 @@ class ApiFrontend extends ApiWeb{
     /** Content in the global (shared.html) template is rendered by page object. This method loads either class or static file */
     function initLayout(){
         parent::initLayout();
-        $this->upgradeChecker();
         $this->addLayout('Content');
     }
     function routePages($prefix,$ns=null){

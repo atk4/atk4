@@ -168,18 +168,6 @@ class ApiWeb extends ApiCLI {
 
         return false;
     }
-    /** If version tag is defined in template, inserts current version of Agile Toolkit there.
-        When newer verison is available, it will be displayed. Override this with empty function
-        to disable. */
-    function upgradeChecker(){
-
-        try{
-            if($this->template && $this->template->is_set('version')){
-                $this->add('licensor/UpgradeChecker',null,'version');
-            }
-        }catch(PathFinder_Exception $e){}
-
-    }
     // }}}
 
     // {{{ Obsolete
@@ -338,8 +326,6 @@ class ApiWeb extends ApiCLI {
             echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
                 ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
         }
-    $this-> _showExecutionTime();
-        exit;
         echo $this->template->render();
         $this->hook('post-render-output');
     }

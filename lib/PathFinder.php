@@ -72,7 +72,7 @@ class PathFinder extends AbstractController
 
             // collect information about previusly loaded files
             foreach($GLOBALS['agile_toolkit_temporary_load_class_log'] as $class=>$path) {
-                $this->info('Previously class %s from file %',$class,$path);
+                $this->info('Loaded class %s from file %s',$class,$path);
             }
 
         }
@@ -82,16 +82,15 @@ class PathFinder extends AbstractController
         // Register preceeding autoload method. We want to get a first shot at
         // loading classes
         spl_autoload_register(function ($class)use($self){
-            echo 'atk1: '.$class.'<br>';
             try {
-                $self->loadClass($class);
+                $path = $self->loadClass($class);
+                if($path)$self->info('Loaded class %s from file %s',$class,$path);
             }catch(Exception $e) {
             }
         },true,true);
 
         // If we couldn't load the class, let's throw exception
         spl_autoload_register(function ($class)use($self){
-            echo 'atk2: '.$class.'<br>';
             try {
                 $self->loadClass($class);
             }catch(Exception $e) {
@@ -309,9 +308,10 @@ class PathFinder extends AbstractController
     /** 
      * Provided with a class name, this will attempt to 
      * find and load it
+     *
+     * @return String path from where the class was loaded
      */
     function loadClass($className){
-        echo 'ATK: looking up '.$className."<br>";
         $origClassName = str_replace('-','',$className);
 
         /**/$this->api->pr->start('pathfinder/loadClass ');
@@ -377,6 +377,7 @@ class PathFinder extends AbstractController
             ->addMoreInfo('file',$path)
             ->addMoreInfo('class',$className);
         /**/$this->api->pr->stop();
+        return $path;
     }
 
 

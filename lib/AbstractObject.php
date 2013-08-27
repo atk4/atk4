@@ -590,7 +590,9 @@ abstract class AbstractObject
          *
          * $this->info("User tried buying traffic without enough money in bank");
          */
-        $this->_info[]=$msg;
+        $args=func_get_args();
+        array_shift($args);
+        $this->_info[]=vsprintf($msg,$args);
     }
 
     /**
