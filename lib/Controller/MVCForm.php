@@ -50,7 +50,7 @@ class Controller_MVCForm extends AbstractController {
         'real'=>'Number',
         'date'=>'DatePicker',
         'datetime'=>'DatePicker',
-        'daytime'=>'Timepicker',
+        'daytime'=>'Time',
         'boolean'=>'Checkbox',
         'reference'=>'Readonly',
         'reference_id'=>'DropDown',

@@ -38,7 +38,7 @@ class Controller_MVCGrid extends AbstractController {
         'reference_id'=>'text',
         'datetime'=>'timestamp',
         'date'=>'date',
-        'daytime'=>'daytime',
+        'daytime'=>'time',
         'boolean'=>'boolean',
         'list'=>'text',
         'radio'=>'text',
