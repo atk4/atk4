@@ -23,7 +23,7 @@ class ApiWeb extends ApiCLI {
 
     /* Root page where URL will send when ('/') is encountered @todo: make this work properly */
     public $index_page='index';
-    
+
     /** recorded time when execution has started */
     public $start_time=null;
 
@@ -55,6 +55,7 @@ class ApiWeb extends ApiCLI {
     function _beforeInit()
     {
         $this->pm=$this->add($this->pagemanager_class, $this->pagemanager_options);
+        $this->pm->parseRequestedURL();
         parent::_beforeInit();
     }
     /** Redifine this function instead of default constructor */

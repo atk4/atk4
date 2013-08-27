@@ -82,26 +82,30 @@ class Controller_PageManager extends AbstractController {
         // URL which matches the one in the browser. Also e will need to
         // determine a relative path for the requested page
 
-        if ($_SERVER) {
-            $this->parseRequestedURL();
-        }
-
-        // This function will continue initialization of the page itself.
-        $this->calculatePageName();
-    }
-
-    function calculatePageName(){
-        // Now. We need to decide what will be the main page to
-        // to display the whole thing. This page will contain a
-        // main template and will be responsible for rendering the
-        // whole page. This function will initialize the object and
-        // return it
-
-        // Lastly we need a sub-class, which would worry only about
-        // the requested page. This is what we call - a page.
     }
 
     function setURL($url) {
+
+        $url=parse_url($url);
+
+        $scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : ''; 
+        $host     = isset($url['host']) ? $url['host'] : ''; 
+        $port     = isset($url['port']) ? ':' . $url['port'] : ''; 
+        $user     = isset($url['user']) ? $url['user'] : ''; 
+        $pass     = isset($url['pass']) ? ':' . $url['pass']  : ''; 
+        $pass     = ($user || $pass) ? "$pass@" : ''; 
+        $path     = isset($url['path']) ? $url['path'] : ''; 
+
+        if (substr($path,-1) != '/') {
+            $path.='/';
+        }
+
+        $this->base_url = $scheme.$user.$pass.$host.$port;
+        $this->base_path = $path;
+        $this->api->page = 'index';
+
+
+        $this->debug();
     }
 
     /**
@@ -181,11 +185,13 @@ class Controller_PageManager extends AbstractController {
         $this->template_filename=$this->api->page;
         if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
 
-
-        $this->debug("base_path=".$this->base_path);
-        $this->debug("base_directory=".$this->base_directory);
-        $this->debug("page=".$this->api->page);
-        $this->debug("template_filename=".$this->template_filename);
+    }
+    function debug(){
+        $this->debug=true;
+        parent::debug("base_path=".$this->base_path);
+        parent::debug("base_directory=".$this->base_directory);
+        parent::debug("page=".$this->api->page);
+        parent::debug("template_filename=".$this->template_filename);
     }
     function getRequestURI(){
         // WARNING. This function URI excludes query string

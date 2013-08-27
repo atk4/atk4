@@ -32,7 +32,15 @@ class URL extends AbstractModel {
 
     function init(){
         parent::init();
-        $this->setPage(null);
+
+        if (!isset($this->api->pm)) {
+            throw $this->exception('You must initialize PageManager first');
+        }
+
+        if (!$this->api->pm->base_url) {
+            throw $this->exception('PageManager is did not parse request URL. Use either parseRequestedURL or setURL (if you are in CLI application)');
+        }
+
         $this->addStickyArguments();
         $this->extension=$this->api->getConfig('url_postfix',$this->extension);
     }
