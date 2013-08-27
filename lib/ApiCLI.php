@@ -75,7 +75,7 @@ class ApiCLI extends AbstractView
     /**
      * Change a different Page Manager class
      */
-    protected $pagemanager_class='PageManager';
+    protected $pagemanager_class='Controller_PageManager';
 
     /**
      * Set to array('debug'=>true) to debug Page Manager
