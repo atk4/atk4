@@ -41,7 +41,7 @@ class ApiCLI extends AbstractView
      * @see getConfig()
      * @see readConfig()
      */
-    protected $config = null;
+    public $config = null;
 
     /**
      * Without logger, API will dump out errors and exceptions in a very brief
@@ -171,6 +171,12 @@ class ApiCLI extends AbstractView
         /**/$this->pr=new Dummy();
 
         try {
+
+            if(is_null($this->config)){
+                $this->readConfig('config-default.php');
+                $this->readConfig();
+            }
+
 
             $this->_beforeInit();
 
@@ -373,7 +379,8 @@ class ApiCLI extends AbstractView
 
     }
     /** Manually set configuration option */
-    function setConfig($config=array()){
+    function setConfig($config=array(),$val=UNDEFINED){
+        if($val!==UNDEFINED)return $this->setConfig(array($config=>$val));
         if(!$config)$config=array();
         if(!$this->config)$this->config=array();
         $this->config=array_merge($this->config,$config);
@@ -389,10 +396,6 @@ class ApiCLI extends AbstractView
          * $var_is_set=true;
          * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
          */
-        if(is_null($this->config)){
-            $this->readConfig('config-default.php');
-            $this->readConfig();
-        }
         $parts = explode('/',$path);
         $current_position = $this->config;
         foreach($parts as $part){

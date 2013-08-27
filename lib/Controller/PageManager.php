@@ -104,8 +104,7 @@ class Controller_PageManager extends AbstractController {
         $this->base_path = $path;
         $this->api->page = 'index';
 
-
-        $this->debug();
+        return $this;
     }
 
     /**
