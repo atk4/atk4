@@ -128,24 +128,24 @@ abstract class Form_Field_ValueList extends Form_Field
     }
 
     /**
-     * Load POSTed values
+     * Normalize POSTed data
      *
      * @return void
      */
-    function loadPOST()
+    function normalize()
     {
-        if (isset($_POST[$this->name])) {
-            $data = $_POST[$this->name];
-            if (is_array($data)) {
-                $data = join($this->separator, $data);
-            }
-            $data = trim($data, $this->separator);
-            
-            if (get_magic_quotes_gpc()) {
-                $this->set(stripslashes($data));
-            } else {
-                $this->set($data);
-            }
+        $data = $this->get();
+        if (is_array($data)) {
+            $data = join($this->separator, $data);
         }
+        $data = trim($data, $this->separator);
+        
+        if (get_magic_quotes_gpc()) {
+            $this->set(stripslashes($data));
+        } else {
+            $this->set($data);
+        }
+        
+        return parent::normalize();
     }
 }
