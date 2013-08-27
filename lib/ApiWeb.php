@@ -47,6 +47,16 @@ class ApiWeb extends ApiCLI {
             $this->caughtException($e);
         }
     }
+
+    /**
+     * Executed before init, this method will initialize PageManager and
+     * pathfinder
+     */
+    function _beforeInit()
+    {
+        $this->pm=$this->add($this->pagemanager_class, $this->pagemanager_options);
+        parent::_beforeInit();
+    }
     /** Redifine this function instead of default constructor */
     function init(){
         $this->getLogger();

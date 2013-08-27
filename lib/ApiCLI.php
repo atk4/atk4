@@ -172,14 +172,8 @@ class ApiCLI extends AbstractView
 
         try {
 
-            // find out which page is to display
-            //$this->calculatePageName();
-            if($this instanceof ApiWeb){
-                $this->pm=$this->add($this->pagemanager_class, $this->pagemanager_options);
-            }
+            $this->_beforeInit();
 
-
-            $this->add($this->pathfinder_class);
             $this->init();
         } catch (Exception $e) {
 
@@ -192,6 +186,15 @@ class ApiCLI extends AbstractView
             // Handles output of the exception
             $this->caughtException($e);
         }
+    }
+
+    /**
+     * Finds out which page is requested. We don't need this method
+     * for CLI, but others might need it
+     */
+    function _beforeInit()
+    {
+        $this->add($this->pathfinder_class);
     }
     // }}}
 
