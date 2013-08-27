@@ -582,6 +582,7 @@ abstract class AbstractObject
      * @return void
      * @obsolete
      */
+    public $_info=array();
     function info($msg)
     {
         /**
@@ -589,9 +590,9 @@ abstract class AbstractObject
          *
          * $this->info("User tried buying traffic without enough money in bank");
          */
-        if (!$this->api->hook('outputInfo', array($msg, $this))) {
-            $this->upCall('outputInfo', $msg);
-        }
+        $args=func_get_args();
+        array_shift($args);
+        $this->_info[]=vsprintf($msg,$args);
     }
 
     /**

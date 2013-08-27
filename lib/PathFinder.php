@@ -64,10 +64,41 @@ class PathFinder extends AbstractController
         parent::init();
         $this->api->pathfinder=$this;
 
-        // TODO: get rid of this, we don't use autoloader anymore
-        $GLOBALS['atk_pathfinder']=$this;   // used by autoload
-
         $this->addDefaultLocations();
+
+        // Unregister previously defined loader
+        if(function_exists('agile_toolkit_temporary_load_class')) {
+            spl_autoload_unregister('agile_toolkit_temporary_load_class');
+
+            // collect information about previusly loaded files
+            foreach($GLOBALS['agile_toolkit_temporary_load_class_log'] as $class=>$path) {
+                $this->info('Loaded class %s from file %s',$class,$path);
+            }
+
+        }
+
+        $self=$this;
+
+        // Register preceeding autoload method. We want to get a first shot at
+        // loading classes
+        spl_autoload_register(function ($class)use($self){
+            try {
+                $path = $self->loadClass($class);
+                if($path)$self->info('Loaded class %s from file %s',$class,$path);
+            }catch(Exception $e) {
+            }
+        },true,true);
+
+        // If we couldn't load the class, let's throw exception
+        spl_autoload_register(function ($class)use($self){
+            try {
+                $self->loadClass($class);
+            }catch(Exception $e) {
+                $self->api->caughtException($e);
+            }
+        });
+
+
     }
 
     /**
@@ -274,6 +305,12 @@ class PathFinder extends AbstractController
         }
         return $files;
     }
+    /** 
+     * Provided with a class name, this will attempt to 
+     * find and load it
+     *
+     * @return String path from where the class was loaded
+     */
     function loadClass($className){
         $origClassName = str_replace('-','',$className);
 
@@ -340,6 +377,7 @@ class PathFinder extends AbstractController
             ->addMoreInfo('file',$path)
             ->addMoreInfo('class',$className);
         /**/$this->api->pr->stop();
+        return $path;
     }
 
 

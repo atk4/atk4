@@ -19,6 +19,14 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 
+// Let's see if static is already loaded. It's a common problem when
+// We using old-style 'include.php' which includes both agile toolkit and
+// Composer
+if(defined('AGILE_TOOLKIT_STATIC_LOADED')) {
+    trigger_error('Please include either "atk4/loader.php" or "vendor/autoload.php" and only once.');
+}
+define('AGILE_TOOLKIT_STATIC_LOADED',true);
+
 if(!defined('undefined'))define('undefined', '_atk4_undefined_value');
 if(!defined('UNDEFINED'))define('UNDEFINED', '_atk4_undefined_value');
 
@@ -65,27 +73,8 @@ if(!function_exists('error_handler')){
         }
     }
     set_error_handler("error_handler");
-
-};if(!function_exists('loadClass')){
-    function loadClass($class){
-        if(isset($GLOBALS['atk_pathfinder'])){
-            return $GLOBALS['atk_pathfinder']->loadClass($class);
-        }
-        $file = str_replace('_',DIRECTORY_SEPARATOR,$class).'.php';
-        $file = str_replace('\\','/',$file);
-        foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
-            $fullpath = $path . DIRECTORY_SEPARATOR . $file;
-            if (file_exists($fullpath)) {
-                include_once($fullpath);
-                return;
-            }
-        }
-    }
-    spl_autoload_register(function ($class){
-        loadClass($class);
-        if(class_exists($class) || interface_exists($class))return;
-    });
 };
+
 
 
 // From: https://raw.github.com/ircmaxell/password_compat/master/lib/password.php
