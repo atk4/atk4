@@ -14,7 +14,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class PageManager extends AbstractController {
+class Controller_PageManager extends AbstractController {
     /*
      * This is a generic page manager. For web applications it calculates
      * base URI, sets up path manager with the URI locations, determines
@@ -75,14 +75,16 @@ class PageManager extends AbstractController {
 
     function init(){
         parent::init();
-        $this->page=&$this->api->page;      // link both variables
 
         $this->api->pm=$this;
         // Firstly, the original URL is retrieved. This function should
         // take care of all possible rewrite engines and bring up a real
         // URL which matches the one in the browser. Also e will need to
         // determine a relative path for the requested page
-        $this->parseRequestedURL();
+
+        if ($_SERVER) {
+            $this->parseRequestedURL();
+        }
 
         // This function will continue initialization of the page itself.
         $this->calculatePageName();
@@ -99,6 +101,15 @@ class PageManager extends AbstractController {
         // the requested page. This is what we call - a page.
     }
 
+    function setURL($url) {
+    }
+
+    /**
+     * Detect server environment and tries to guess absolute and relative
+     * URLs to your application.
+     *
+     * See docs: doc/application/routing/parsing
+     */
     function parseRequestedURL(){
         $this->base_path=$this->unix_dirname($_SERVER['SCRIPT_NAME']);
         // for windows
@@ -165,16 +176,15 @@ class PageManager extends AbstractController {
             ->addMoreInfo('page',$page);
 
         // We have now arrived at the page as per specification.
-        $this->page=str_replace('/','_',$page);
+        $this->api->page=str_replace('/','_',$page);
 
-        $this->template_filename=$this->page;
+        $this->template_filename=$this->api->page;
         if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
 
 
         $this->debug("base_path=".$this->base_path);
         $this->debug("base_directory=".$this->base_directory);
-        $this->debug("page=".$this->page);
-        $this->debug("api/page=".$this->api->page);
+        $this->debug("page=".$this->api->page);
         $this->debug("template_filename=".$this->template_filename);
     }
     function getRequestURI(){
