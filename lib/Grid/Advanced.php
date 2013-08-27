@@ -143,6 +143,19 @@ class Grid_Advanced extends Grid_Basic
 
         return $this;
     }
+    
+    /**
+     * Set caption of column
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    function setCaption($name)
+    {
+        $this->columns[$this->last_column]['descr'] = $name;
+        return $this;
+    }
 
     // }}}
 
