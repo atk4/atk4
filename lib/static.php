@@ -68,6 +68,7 @@ if(!function_exists('error_handler')){
 
 };if(!function_exists('loadClass')){
     function loadClass($class){
+        echo 'AT: looking up '.$class."<br>";
         if(isset($GLOBALS['atk_pathfinder'])){
             return $GLOBALS['atk_pathfinder']->loadClass($class);
         }

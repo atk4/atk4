@@ -338,6 +338,8 @@ class ApiWeb extends ApiCLI {
             echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
                 ."href='http://agiletoolkit.org/error/direct_output'>Use \$this->add('Text') instead</a>.<br/>";
         }
+    $this-> _showExecutionTime();
+        exit;
         echo $this->template->render();
         $this->hook('post-render-output');
     }
