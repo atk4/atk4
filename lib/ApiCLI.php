@@ -421,7 +421,7 @@ class ApiCLI extends AbstractView
         return $this->version_cache;
     }
     /** Verifies version. Should be used by addons. For speed improvement, redefine this into empty function */
-    function requires($addon='atk',$v,$return_only=false){
+    function requires($addon='atk',$v,$location = null){
         $cv=$this->getVersion($addon);
         if(version_compare($cv,$v)<0){
             if($addon=='atk'){
@@ -432,6 +432,7 @@ class ApiCLI extends AbstractView
             }
             $e->addMoreInfo('required',$v)
                 ->addMoreInfo('you have',$cv);
+            if($location)$e->addMoreInfo('download_location',$location);
             throw $e;
         }
 
@@ -448,8 +449,8 @@ class ApiCLI extends AbstractView
         return true;
     }
     /** @obsolete use @requires */
-    function versionRequirement($v,$return_only=false){
-        return $this->requires('atk',$v,$return_only);
+    function versionRequirement($v,$location = null){
+        return $this->requires('atk',$v,$location);
     }
     // }}}
 
