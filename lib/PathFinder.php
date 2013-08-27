@@ -64,10 +64,42 @@ class PathFinder extends AbstractController
         parent::init();
         $this->api->pathfinder=$this;
 
-        // TODO: get rid of this, we don't use autoloader anymore
-        $GLOBALS['atk_pathfinder']=$this;   // used by autoload
-
         $this->addDefaultLocations();
+
+        // Unregister previously defined loader
+        if(function_exists('agile_toolkit_temporary_load_class')) {
+            spl_autoload_unregister('agile_toolkit_temporary_load_class');
+
+            // collect information about previusly loaded files
+            foreach($GLOBALS['agile_toolkit_temporary_load_class_log'] as $class=>$path) {
+                $this->info('Previously class %s from file %',$class,$path);
+            }
+
+        }
+
+        $self=$this;
+
+        // Register preceeding autoload method. We want to get a first shot at
+        // loading classes
+        spl_autoload_register(function ($class)use($self){
+            echo 'atk1: '.$class.'<br>';
+            try {
+                $self->loadClass($class);
+            }catch(Exception $e) {
+            }
+        },true,true);
+
+        // If we couldn't load the class, let's throw exception
+        spl_autoload_register(function ($class)use($self){
+            echo 'atk2: '.$class.'<br>';
+            try {
+                $self->loadClass($class);
+            }catch(Exception $e) {
+                $self->api->caughtException($e);
+            }
+        });
+
+
     }
 
     /**
@@ -274,7 +306,12 @@ class PathFinder extends AbstractController
         }
         return $files;
     }
+    /** 
+     * Provided with a class name, this will attempt to 
+     * find and load it
+     */
     function loadClass($className){
+        echo 'ATK: looking up '.$className."<br>";
         $origClassName = str_replace('-','',$className);
 
         /**/$this->api->pr->start('pathfinder/loadClass ');

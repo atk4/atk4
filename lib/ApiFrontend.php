@@ -81,7 +81,7 @@ class ApiFrontend extends ApiWeb{
             }
 
             try{
-                loadClass($ns.$class);
+                //loadClass($ns.$class);
             }catch(PathFinder_Exception $e){
 
 
