@@ -38,7 +38,7 @@ class Field extends AbstractModel
     public $mandatory=false;
     public $has_default_value=false;
     public $defaultValue=null;
-    public $emptyText="Please, select";
+    public $emptyText=null;
     public $auto_track_element=true;
     public $listData=null;
     public $theModel=null;
