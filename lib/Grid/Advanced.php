@@ -433,7 +433,7 @@ class Grid_Advanced extends Grid_Basic
 
         // set title
         if ($this->totals_title_field && $this->totals) {
-            $this->current_row[$this->totals_title_field] = sprintf(
+            $this->current_row_html[$this->totals_title_field] = sprintf(
                 $this->totals_title,
                 $this->current_row['row_count'],
                 $this->current_row['plural_s']
