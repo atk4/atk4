@@ -24,9 +24,6 @@
  =====================================================ATK4=*/
 class Grid_Advanced extends Grid_Basic
 {
-    /** Pointer to last added grid column */
-    public $last_column;
-
     /** Sorting */
     public $sortby = '0';
     public $sortby_db = null;
@@ -99,65 +96,6 @@ class Grid_Advanced extends Grid_Basic
                 ? $this->memorize('sortby', $_GET[$this->name.'_sort'])
                 : $this->recall('sortby', '0');
     }
-
-    // {{{ Columns
-
-    /**
-     * Set column as "last column"
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    function getColumn($name)
-    {
-        $this->last_column = $name;
-        return $this;
-    }
-
-    /**
-     * Check if we have such column
-     *
-     * @param string $name
-     *
-     * @return boolean
-     */
-    function hasColumn($name)
-    {
-        return isset($this->columns[$name]);
-    }
-
-    /**
-     * Remove column from grid
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    function removeColumn($name)
-    {
-        unset($this->columns[$name]);
-        if ($this->last_column == $name) {
-            $this->last_column = null;
-        }
-
-        return $this;
-    }
-    
-    /**
-     * Set caption of column
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    function setCaption($name)
-    {
-        $this->columns[$this->last_column]['descr'] = $name;
-        return $this;
-    }
-
-    // }}}
 
     // {{{ Misc features
 
