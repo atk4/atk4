@@ -409,8 +409,6 @@ class Grid_Basic extends CompleteLister
             // setting cell parameters (tdparam)
             $this->applyTDParams($field);
         }
-        
-        return $this->current_row;
     }
 
     /**
