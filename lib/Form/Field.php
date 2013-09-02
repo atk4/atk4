@@ -35,6 +35,7 @@ abstract class Form_Field extends AbstractView {
 
     public $field_prepend='';
     public $field_append='';
+    public $field_class='';
 
     public $comment='&nbsp;';
     protected $disabled=false;
@@ -281,6 +282,7 @@ abstract class Form_Field extends AbstractView {
         $this->template->trySet('field_caption',$this->caption?($this->caption.$this->separator):'');
         $this->template->trySet('field_name',$this->name);
         $this->template->trySet('field_comment',$this->comment);
+        $this->template->trySetHTML('field_class',$this->field_class);
         // some fields may not have field_input tag at all...
         if($this->button_prepend || $this->button_append){
             $this->field_prepend.='<div class="input-cell expanded">';
