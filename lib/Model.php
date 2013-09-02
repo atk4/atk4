@@ -396,7 +396,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->hook('afterDelete',array($id));
         return $this;
     }
-    /** Deletes all records associated with this modle. */
+    /** Deletes all records associated with this model. */
     function deleteAll(){
         if($this->loaded())$this->unload();
         $this->hook('beforeDeleteAll');
