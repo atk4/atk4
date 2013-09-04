@@ -668,7 +668,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      *
      * @param string $kind 'where' or 'having'
      * 
-     * @return string Parsed chunk of query
+     * @return array Parsed chunks of query
      */
     function _render_where($kind)
     {
@@ -692,47 +692,57 @@ class DB_dsql extends AbstractModel implements Iterator {
                     $field=$this->bt($table);
                 }
             }
-
+            
+            // no value or condition passed, so this should be SQL chunk itself
             if ($value===UNDEFINED && $cond===UNDEFINED) {
                 $r=$field;
                 $ret[]=$r;
                 continue;
             }
 
+            // if no condition defined - set default condition
             if ($value===UNDEFINED) {
-                $value=$cond;
-                $cond='=';
+                $value = $cond;
                 if (is_array($value)) {
-                    $cond='in';
-                }
-                if (is_object($value) && @$value->mode==='select') {
-                    $cond='in';
+                    $cond = 'in';
+                } elseif (is_object($value) && @$value->mode==='select') {
+                    $cond = 'in';
+                } else {
+                    $cond = '=';
                 }
             } else {
-                $cond=trim($cond);
+                $cond = trim(strtolower($cond));
             }
 
-            if ($cond==='=' && $value===null) {
-                $cond='is';
+            // special conditions if value is null
+            if ($value === null) {
+                if ($cond === '=') {
+                    $cond = 'is';
+                } elseif ($cond === '!=' || $cond === '<>') {
+                    $cond = 'is not';
+                }
             }
 
-
-            if ($cond==='in' && is_string($value)) {
-                $value=explode(',', $value);
+            // value should be array for such conditions
+            if (($cond==='in' || $cond==='not in') && is_string($value)) {
+                $value = explode(',', $value);
             }
 
+            // if value is array, then us IN or NOT IN as condition
             if (is_array($value)) {
                 $v=array();
                 foreach ($value as $vv) {
                     $v[]=$this->escape($vv);
                 }
                 $value='('.join(',', $v).')';
-                $cond='in';
+                $cond = in_array($cond, array('!=','<>','not','not in')) ? 'not in' : 'in';
                 $r=$this->consume($field).' '.$cond.' '.$value;
                 $ret[]=$r;
                 continue;
             }
 
+            // if value is object, then it should be DSQL itself
+            // otherwise just escape value
             if (is_object($value)) {
                 $value=$this->consume($value);
             } else {
