@@ -223,12 +223,13 @@ class View_CRUD extends View
 
             if ($model->caption === null ) {
 
-
                 // Calculates entity name
+                $class = get_class($this->model);
+                $class = substr(strrchr($class, '\\')?:' '.$class, 1); // strip namespace
                 $this->entity_name = str_replace(
                     array('Model_', '_'),
                     array('', ' '),
-                    get_class($this->model)
+                    $class
                 );
             } else {
                 $this->entity_name = $model->caption;
