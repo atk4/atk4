@@ -46,7 +46,7 @@ class Grid_Basic extends CompleteLister
     public $show_header = true;
 
     /** No records message. See setNoRecords() */
-    protected $no_records_message = "No matching records to display";
+    protected $no_records_message = "No matching records found";
 
     /**
      * Initialization
@@ -327,6 +327,7 @@ class Grid_Basic extends CompleteLister
         if ($this->total_rows) {
             $this->template->del('not_found');
         } elseif ($this->no_records_message) {
+            $this->template->tryDel('all_table');
             $this->template->set('not_found_message', $this->no_records_message);
         }
     }
