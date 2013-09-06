@@ -33,16 +33,24 @@ $.each({
     dialogBox: function(options){
 
         if (!options.ok_label) options.ok_label = 'Ok';
+        if (!options.ok_class) options.ok_class = 'atk-effect-primary';
 
-        var buttons={};
+        var buttons=[];
 
-        buttons[options.ok_label] = function(){
-            var f=$(this).find('form');
-            if(f.length)f.eq(0).submit(); else $(this).dialog('close');
-        };
-        buttons['Cancel'] = function(){
-            $(this).dialog('close');
-        };
+        buttons.push({
+            text: options.ok_label,
+            class: options.ok_class,
+            click: function(){
+                var f=$(this).find('form');
+                if(f.length)f.eq(0).submit(); else $(this).dialog('close');
+            }
+        });
+        buttons.push({
+            text: 'Cancel',
+            click: function(){
+                $(this).dialog('close');
+            }
+        });
 
         return this.dialogPrepare($.extend({
             bgiframe: true,
