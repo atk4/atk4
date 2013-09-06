@@ -377,6 +377,18 @@ class View_CRUD extends View
             );
     }
 
+
+    /** 
+     * Assuming that your model contains a certain method, this allows
+     * you to create a frame which will pop you a new frame with
+     * a form representing model method arguments. Once the form
+     * is submitted, the action will be evaluated
+     */
+    function addAction($method_name, $options = array()) {
+        
+    }
+
+
     /**
      * Transparent method for adding buttons to a crud
      */
