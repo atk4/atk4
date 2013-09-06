@@ -29,6 +29,9 @@ class Grid_Basic extends CompleteLister
     /** Grid columns */
     public $columns = array();
 
+    /** Pointer to last added grid column */
+    public $last_column;
+
     /** Default grid controller */
     public $default_controller = 'Controller_MVCGrid';
 
@@ -43,7 +46,7 @@ class Grid_Basic extends CompleteLister
     public $show_header = true;
 
     /** No records message. See setNoRecords() */
-    protected $no_records_message = "No matching records to display";
+    protected $no_records_message = "No matching records found";
 
     /**
      * Initialization
@@ -64,29 +67,7 @@ class Grid_Basic extends CompleteLister
     {
     }
 
-    /**
-     * Default template
-     *
-     * @return array
-     */
-    function defaultTemplate()
-    {
-        return array('grid');
-    }
-
-    /**
-     * Import fields using controller
-     *
-     * @param Model $model
-     * @param array $fields
-     *
-     * @return void
-     */
-    function importFields($model, $fields = undefined)
-    {
-        $this->add($this->default_controller)
-            ->importFields($model, $fields);
-    }
+    // {{{ Columns
 
     /**
      * Add column to grid
@@ -156,6 +137,79 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
+     * Set column as "last column"
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    function getColumn($name)
+    {
+        $this->last_column = $name;
+        return $this;
+    }
+
+    /**
+     * Check if we have such column
+     *
+     * @param string $name
+     *
+     * @return boolean
+     */
+    function hasColumn($name)
+    {
+        return isset($this->columns[$name]);
+    }
+
+    /**
+     * Remove column from grid
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    function removeColumn($name)
+    {
+        unset($this->columns[$name]);
+        if ($this->last_column == $name) {
+            $this->last_column = null;
+        }
+
+        return $this;
+    }
+    
+    /**
+     * Set caption of column
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    function setCaption($name)
+    {
+        $this->columns[$this->last_column]['descr'] = $name;
+        return $this;
+    }
+
+    // }}}
+
+    // {{{ Misc
+    
+    /**
+     * Import fields using controller
+     *
+     * @param Model $model
+     * @param array $fields
+     *
+     * @return void
+     */
+    function importFields($model, $fields = undefined)
+    {
+        $this->add($this->default_controller)
+            ->importFields($model, $fields);
+    }
+    
+    /**
      * Set message to show when no records are retrieved
      *
      * @param string $message
@@ -167,6 +221,8 @@ class Grid_Basic extends CompleteLister
         $this->no_records_message = $message;
         return $this;
     }
+
+    // }}}
 
     // {{{ Formatters
 
@@ -271,6 +327,7 @@ class Grid_Basic extends CompleteLister
         if ($this->total_rows) {
             $this->template->del('not_found');
         } elseif ($this->no_records_message) {
+            $this->template->tryDel('all_table');
             $this->template->set('not_found_message', $this->no_records_message);
         }
     }
@@ -373,6 +430,16 @@ class Grid_Basic extends CompleteLister
         }
     }
 
+    /**
+     * Default template
+     *
+     * @return array
+     */
+    function defaultTemplate()
+    {
+        return array('grid');
+    }
+
     // }}}
 
     // {{{ Formatting
@@ -409,8 +476,6 @@ class Grid_Basic extends CompleteLister
             // setting cell parameters (tdparam)
             $this->applyTDParams($field);
         }
-        
-        return $this->current_row;
     }
 
     /**

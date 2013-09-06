@@ -58,6 +58,7 @@ class ApiWeb extends ApiCLI {
         $this->pm->parseRequestedURL();
         parent::_beforeInit();
     }
+
     /** Redifine this function instead of default constructor */
     function init(){
         $this->getLogger();
@@ -349,7 +350,7 @@ class ApiWeb extends ApiCLI {
     }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
-        /**
+        /*
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */

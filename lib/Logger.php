@@ -291,12 +291,17 @@ class Logger extends AbstractController {
         if(method_exists($e,'getMyTrace'))$trace=$e->getMyTrace();
         else $trace=$e->getTrace();
 
-        $frame=$e->my_backtrace[$e->shift];
+        if (isset($e->shift)){
+            $frame=$e->my_backtrace[$e->shift];
+        } else {
+            $frame = array("file" => "unknown", "line" => "unknown");
+        }
+
         $this->logLine($this->txtLine(get_class($e).": ".$e->getMessage(),$frame),2,'error',$trace);
         if(method_exists($e,'getAdditionalMessage'))
             $this->logLine($e->getAdditionalMessage(),2,'error');
 
-        if($e->more_info){
+        if(isset($e->more_info)){
             $this->logLine("Additional information:\n".
             $this->print_r(
                 $e->more_info,'','','* ',"\n",' '),2,'error');

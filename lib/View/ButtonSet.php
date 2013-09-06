@@ -42,6 +42,15 @@ class View_ButtonSet extends HtmlElement
         return $but;
     }
 
+    function jsButtonSet() {
+        if ($this->vertical) {
+            $this->js(true)->_load('jquery-ui.buttonset-vertical');
+            $this->js(true)->buttonsetv($this->options);
+        } else {
+            $this->js(true)->buttonset($this->options);
+        }
+    }
+
     /**
      * Render
      *
@@ -49,12 +58,7 @@ class View_ButtonSet extends HtmlElement
      */
     function render()
     {
-        if ($this->vertical) {
-            $this->js(true)->_load('jquery-ui.buttonset-vertical');
-            $this->js(true)->buttonsetv($this->options);
-        } else {
-            $this->js(true)->buttonset($this->options);
-        }
+        $this->jsButtonSet();
         parent::render();
     }
 }
