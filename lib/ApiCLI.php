@@ -41,7 +41,31 @@ class ApiCLI extends AbstractView
      * @see getConfig()
      * @see readConfig()
      */
-    public $config = null;
+    public $config = array();
+
+    /**
+     * This is config relative location to the initializing file. By default
+     * it's in the same folder, but you can move it one folder up ".." or
+     * inside "config" sub-folder by setting value to 'config' to better
+     * reflect your application layout.
+     */
+    public $config_location = '.';
+
+    /**
+     * Config files. If you have extra configuration files you want
+     * to be automatically loaded, please redefine this property. You must
+     * do this before Application class constructor is executed.
+     *
+     * If you are loading additional config later, use readConfig() instead
+     *
+     * Order of this array is important.
+     */
+    public $config_files = array('config-default','config');
+
+    /**
+     * Contains list of loaded config files
+     */
+    public $config_files_loaded = array();
 
     /**
      * Without logger, API will dump out errors and exceptions in a very brief
@@ -172,12 +196,6 @@ class ApiCLI extends AbstractView
 
         try {
 
-            if(is_null($this->config)){
-                $this->readConfig('config-default.php');
-                $this->readConfig();
-            }
-
-
             $this->_beforeInit();
 
             $this->init();
@@ -200,6 +218,8 @@ class ApiCLI extends AbstractView
      */
     function _beforeInit()
     {
+        // Loads all configuration files
+        $this->readAllConfig();
         $this->add($this->pathfinder_class);
     }
     // }}}
@@ -340,43 +360,56 @@ class ApiCLI extends AbstractView
     // }}}
 
     // {{{ Configuration File Handling 
-    /** Executed when trying to access config parameter which is not find in the file */
-    function configExceptionOrDefault($default,$exceptiontext){
-        if($default!='_config_get_false')return $default;
-        throw new BaseException($exceptiontext);
-    }
-    /** Read config file and store it in $this->config. Use getConfig() to access */
-    function readConfig($file='config.php'){
-        $orig_file = $file;
-        if(is_null($this->config))$this->config=array();
-        $config=array();
-        if(strpos($file,'/')===false){
-            $file=getcwd().'/'.$file;
-        }
-        if (!file_exists($file)){
-            foreach (explode(PATH_SEPARATOR, get_include_path()) as $path){
-                $fullpath = $path . DIRECTORY_SEPARATOR . $orig_file;
-                if (file_exists($fullpath)){
-                    $file = $fullpath;
-                    break;
-                }
-            }
-        }
-        if (file_exists($file)) {
-            // some tricky thing to make config be read in some cases it could not in simple way
-            if(!$config)global $config;
-            include_once $file;
-        }
 
-        $this->config = array_merge($this->config,$config);
+    /**
+     * readAllConfig - will include all files as they are defined in 
+     * $this->config_files from folder $config_location
+     */
+    function readAllConfig() {
+        // If configuration files are not there - will silently ignore
+        foreach ($this->config_files as $file) {
+            $this->readConfig ($file);
+        }
 
         $tz = $this->getConfig('timezone',null);
         if(!is_null($tz) && function_exists('date_default_timezone_set')){
             // with seting default timezone
             date_default_timezone_set($tz);
         }
+    }
 
+    /** Executed when trying to access config parameter which is not find in the file */
+    function configExceptionOrDefault($default,$exceptiontext){
+        if($default!='_config_get_false')return $default;
+        throw new BaseException($exceptiontext);
+    }
+    /**
+     * Read config file and store it in $this->config. Use getConfig() to access
+     */
+    function readConfig($file='config.php'){
+        $orig_file = $file;
 
+        if (strpos ($file,'.php') != strlen($file)-4 ) {
+            $file .= '.php';
+        }
+
+        if(strpos($file,'/')===false){
+            $file=getcwd().'/'.$this->config_location.'/'.$file;
+        }
+
+        if (file_exists($file)) {
+            // some tricky thing to make config be read in some cases it could not in simple way
+            unset($config);
+
+            $config=&$this->config;
+            $this->config_files_loaded[]=$file;
+            include $file;
+
+            unset($config);
+            return true;
+        }
+
+        return false;
     }
     /** Manually set configuration option */
     function setConfig($config=array(),$val=UNDEFINED){
@@ -402,6 +435,7 @@ class ApiCLI extends AbstractView
             if(!array_key_exists($part,$current_position)){
                 if($default_value!==undefined)return $default_value;
                 throw $this->exception("Configuration parameter is missing in config.php",'NotConfigured')
+                    ->addMoreInfo('config_files_loaded',$this->config_files_loaded)
                     ->addMoreInfo("missign_line"," \$config['".join("']['",explode('/',$path))."']");
             }else{
                 $current_position = $current_position[$part];

@@ -235,7 +235,6 @@ class Page_Tester extends Page {
                         $this->grid->destroy();
                         $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
                     }
-                    return;
 
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
