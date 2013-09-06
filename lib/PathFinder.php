@@ -138,7 +138,7 @@ class PathFinder extends AbstractController
      */
     function addDefaultLocations()
     {
-        $base_directory=dirname(@$_SERVER['SCRIPT_FILENAME']);
+        $base_directory=getcwd();//dirname(@$_SERVER['SCRIPT_FILENAME']);
 
         // Compatibility with command-line
         if (!$base_directory) {
@@ -153,8 +153,8 @@ class PathFinder extends AbstractController
             'php'=>'lib',
             'page'=>'page',
             'addons'=>'atk4-addons',
-            'template'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
-            'public'=>isset($this->api->skin)?'templates/'.$this->api->skin:null,
+            'template'=>'templates',
+            'public'=>'templates',
             'mail'=>'templates/mail',
             'js'=>'templates/js',
             'logs'=>'logs',
