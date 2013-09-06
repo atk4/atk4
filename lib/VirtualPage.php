@@ -105,15 +105,16 @@ class VirtualPage extends AbstractController
      * which would open a new frame (or dialog, depending on $type
      * property), and execute associated code inside it
      *
-     * @param string $title Title of the frame
-     * @param string $event JavaScript event
+     * @param string $title    Title of the frame
+     * @param string $event    JavaScript event
+     * @param string $selector Not all parent will respond to click but only a selector
      *
      * @return VirtualPage $this
      */
-    function bindEvent($title = '', $event = 'click')
+    function bindEvent($title = '', $event = 'click', $selector = null)
     {
         $t=$this->type;
-        $this->owner->js($event)->univ()->$t($title,$this->getURL(),$this->frame_options);
+        $this->owner->on($event, $selector)->univ()->$t($title,$this->getURL(),$this->frame_options);
         return $this;
     }
 
