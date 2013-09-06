@@ -114,6 +114,7 @@ class VirtualPage extends AbstractController
     function bindEvent($title = '', $event = 'click', $selector = null)
     {
         $t=$this->type;
+        if (is_null($event)) $event = 'click';
         $this->owner->on($event, $selector)->univ()->$t($title,$this->getURL(),$this->frame_options);
         return $this;
     }
