@@ -31,6 +31,19 @@ $.each({
         return $(this.getDialogData('opener'));
     },
     dialogBox: function(options){
+
+        if (!options.ok_label) options.ok_label = 'Ok';
+
+        var buttons={};
+
+        buttons[options.ok_label] = function(){
+            var f=$(this).find('form');
+            if(f.length)f.eq(0).submit(); else $(this).dialog('close');
+        };
+        buttons['Cancel'] = function(){
+            $(this).dialog('close');
+        };
+
         return this.dialogPrepare($.extend({
             bgiframe: true,
             modal: true,
@@ -42,15 +55,7 @@ $.each({
                     if(!$(this).atk4_loader('remove'))return false;
                 }
             },
-            buttons: {
-                'Ok': function(){
-                    var f=$(this).find('form');
-                    if(f.length)f.eq(0).submit(); else $(this).dialog('close');
-                },
-                'Cancel': function(){
-                    $(this).dialog('close');
-                }
-            },
+            buttons: buttons,
             open: function(x){
                 $("body").css({ overflow: 'hidden' });
                 $(x.target).css({'max-height': $(window).height()-180});
