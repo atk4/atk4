@@ -718,7 +718,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             if ($value === null) {
                 if ($cond === '=') {
                     $cond = 'is';
-                } elseif ($cond === '!=' || $cond === '<>') {
+                } elseif (in_array($cond, array('!=', '<>', 'not'))) {
                     $cond = 'is not';
                 }
             }
@@ -735,7 +735,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                     $v[]=$this->escape($vv);
                 }
                 $value='('.join(',', $v).')';
-                $cond = in_array($cond, array('!=','<>','not','not in')) ? 'not in' : 'in';
+                $cond = in_array($cond, array('!=', '<>', 'not', 'not in')) ? 'not in' : 'in';
                 $r=$this->consume($field).' '.$cond.' '.$value;
                 $ret[]=$r;
                 continue;
