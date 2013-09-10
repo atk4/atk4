@@ -31,6 +31,27 @@ $.each({
         return $(this.getDialogData('opener'));
     },
     dialogBox: function(options){
+
+        if (!options.ok_label) options.ok_label = 'Ok';
+        if (!options.ok_class) options.ok_class = 'atk-effect-primary';
+
+        var buttons=[];
+
+        buttons.push({
+            text: options.ok_label,
+            class: options.ok_class,
+            click: function(){
+                var f=$(this).find('form');
+                if(f.length)f.eq(0).submit(); else $(this).dialog('close');
+            }
+        });
+        buttons.push({
+            text: 'Cancel',
+            click: function(){
+                $(this).dialog('close');
+            }
+        });
+
         return this.dialogPrepare($.extend({
             bgiframe: true,
             modal: true,
@@ -42,15 +63,7 @@ $.each({
                     if(!$(this).atk4_loader('remove'))return false;
                 }
             },
-            buttons: {
-                'Ok': function(){
-                    var f=$(this).find('form');
-                    if(f.length)f.eq(0).submit(); else $(this).dialog('close');
-                },
-                'Cancel': function(){
-                    $(this).dialog('close');
-                }
-            },
+            buttons: buttons,
             open: function(x){
                 $("body").css({ overflow: 'hidden' });
                 $(x.target).css({'max-height': $(window).height()-180});
