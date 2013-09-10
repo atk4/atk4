@@ -718,7 +718,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             if ($value === null) {
                 if ($cond === '=') {
                     $cond = 'is';
-                } elseif (in_array($cond, array('!=', '<>', 'not')) {
+                } elseif (in_array($cond, array('!=', '<>', 'not'))) {
                     $cond = 'is not';
                 }
             }
