@@ -371,7 +371,7 @@ class ApiWeb extends ApiCLI {
     function setTags($t){
         // absolute path to base location
         $t->trySet('atk_path',$q=
-            $this->api->pathfinder->atk_location->getURL().'/');
+            $this->api->pathfinder->atk_public->getURL().'/');
         $t->trySet('base_path',$q=$this->api->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually

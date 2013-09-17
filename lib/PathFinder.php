@@ -423,6 +423,8 @@ class PathFinder_Location extends AbstractModel {
             throw new BaseException('Unable to determine URL');
         }
 
+        if (!$file_path) return $this->base_url;
+
         return $this->base_url.'/'.$file_path;
     }
 
@@ -430,6 +432,8 @@ class PathFinder_Location extends AbstractModel {
      * Returns how this location or file can be accessed through filesystem
      */
     function getPath($file_path=null){
+
+        if (!$file_path) return $this->base_path;
 
         return $this->base_path.'/'.$file_path;
     }
