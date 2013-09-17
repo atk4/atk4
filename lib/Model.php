@@ -130,7 +130,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if ($value !== undefined 
             && (
                 // if data[$name] is not initialized at all (for example, in model using array controller)
-                !isset($this->data[$name])
+                (is_array($this->data) && !array_key_exists($name, $this->data))
                 // value as object
                 || is_object($value)
                 || is_object($this->data[$name])
