@@ -156,7 +156,7 @@ class PathFinder extends AbstractController
             'php'=>'lib',
             'page'=>'page',
             'template'=>'templates',
-            'mail'=>'templates/mail',
+            'mail'=>'mail',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
