@@ -140,7 +140,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                 // if one and only one value is NULL
                 || (is_null($value) xor is_null($this->data[$name]))
                 // values converted to string loosly differ
-                || (string)$value != (string)$this->data[$name] // this is not nice
+                // need special treatment of [false] value because (string)false === "" not "0"
+                || ($value===false ? '0' : (string)$value) // this is not nice
+                   !=
+                   ($this->data[$name]===false ? '0' : (string)$this->data[$name])
             )
         ) {
             $this->data[$name]=$value;
