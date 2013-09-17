@@ -390,7 +390,7 @@ class ApiWeb extends ApiCLI {
     }
     /** @private */
     function _locateTemplate($path){
-        return $this->locateURL('template',$path);
+        return $this->locateURL('public',$path);
     }
     function _locatePublic($path){
         return $this->locateURL('public',$path);

@@ -22,9 +22,6 @@ class ApiFrontend extends ApiWeb{
     /** When page is determined, it's class instance is created and stored in here */
     public $page_object=null;
 
-    /** @depreciated (might be refactored) - type of returned content */
-    public $content_type='page';    // content type: rss/page/etc
-
     /** Class which is used for static pages */
     public $page_class='Page';
 
@@ -46,21 +43,17 @@ class ApiFrontend extends ApiWeb{
         // TODO: refactor using pathfinders 4th argument to locate = null,
         // to avoid exceptions as those might be expensive.
 
-        // required class prefix depends on the content_type
         // This function initializes content. Content is page-dependant
         $page=str_replace('/','_',$this->page);
         $page=str_replace('-','',$page);
-        $class=$this->content_type.'_'.$page;
+        $class='page_'.$page;
 
         if($this->api->page_object)return;   // page is already initialized;
 
         if(method_exists($this,$class)){
-            // for page we add Page class, for RSS - RSSchannel
-            // TODO - this place is suspicious. Can it call arbitary function from API?
-            $this->page_object=$this->add($this->content_type=='page'?$this->page_class:'RSSchannel',$this->page);
+            $this->page_object=$this->add($this->page_class,$page);
             $this->$class($this->page_object);
         }else{
-
             $class_parts=explode('_',$page);
             $funct_parts=array();
             $ns='';
@@ -80,7 +73,7 @@ class ApiFrontend extends ApiWeb{
             }
 
             try{
-                //loadClass($ns.$class);
+                $this->api->pathfinder->loadClass($ns.$class);
             }catch(PathFinder_Exception $e){
 
 

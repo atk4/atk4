@@ -11,32 +11,32 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 /**
-  PathFinder is responsible for locating resources in Agile
-  Toolkit. One of the most significant principles it implements
-  is ability for any resource (PHP, JS, HTML, IMG) to be
-  located under several locations. Pathfinder will look for
-  the location containing the resource you ask for and will
-  provide you with either a relative path, URL or absolute
-  path to a file.
+ * PathFinder is responsible for locating resources in Agile
+ * Toolkit. One of the most significant principles it implements
+ * is ability for any resource (PHP, JS, HTML, IMG) to be
+ * located under several locations. Pathfinder will look for
+ * the location containing the resource you ask for and will
+ * provide you with either a relative path, URL or absolute
+ * path to a file.
 
-  To make this possible, PathFinder relies on a class
-  PathFinder_Location, which describes each individual
-  location and it's contents.
+ * To make this possible, PathFinder relies on a class
+ * PathFinder_Location, which describes each individual
+ * location and it's contents.
 
-  You may add additional locations in your application,
-  add-on or elsewhere. Some locations may be activated only
-  in certain circumstances, for example add-on will be able
-  to add it's location only if add-on have been added to
-  a page.
+ * You may add additional locations in your application,
+ * add-on or elsewhere. Some locations may be activated only
+ * in certain circumstances, for example add-on will be able
+ * to add it's location only if add-on have been added to
+ * a page.
 
-  Here is a list of resource categories:
-  php, page, addons, template, mail, js, css
+ * Here is a list of resource categories:
+ * php, page, addons, template, mail, js, css
 
-  Resources which are planned or under development:
-  dbupdates, logs, public
+ * Resources which are planned or under development:
+ * dbupdates, logs, public
 
-  @link http://agiletoolkit.org/pathfinder
-*/
+ * @link http://agiletoolkit.org/pathfinder
+ */
 class PathFinder extends AbstractController
 {
     /**
@@ -47,8 +47,14 @@ class PathFinder extends AbstractController
     public $base_location=null;
 
     /**
-     * Agile Toolkit comes with some assets: lib, js, template, css. This
-     * location describes those resources.
+     * This is location where images, javascript files and some other
+     * public resources are located.
+     */
+    public $public_location=null;
+
+    /**
+     * Agile Toolkit comes with some assets: lib, template. This
+     * location describes those resources. It's not publicly available
      */
     public $atk_location=null;
 
@@ -138,61 +144,52 @@ class PathFinder extends AbstractController
      */
     function addDefaultLocations()
     {
-        $base_directory=getcwd();//dirname(@$_SERVER['SCRIPT_FILENAME']);
+        $base_directory=getcwd();
 
-        // Compatibility with command-line
-        if (!$base_directory) {
-            $base_directory=realpath($GLOBALS['argv'][0]);
-        }
 
+        /// Add base location - where our private files are
         if ($this->api->hasMethod('addDefaultLocations')) {
             $this->api->addDefaultLocations($this, $base_directory);
         }
 
-        $this->base_location=$this->addLocation('/', array(
+        $this->base_location=$this->addLocation(array(
             'php'=>'lib',
             'page'=>'page',
-            'addons'=>'atk4-addons',
             'template'=>'templates',
-            'public'=>'templates',
             'mail'=>'templates/mail',
-            'js'=>'templates/js',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
-        if(@$this->api->pm){
-            $this->base_location->setBaseURL($this->api->pm->base_path);
-        }
+
+        /// Add public location - assets
+        $this->public_location=$this->addLocation(array(
+            'public'=>'.',
+            'js'=>'js',
+            'css'=>'css',
+        ))
+            ->setBasePath($base_directory.'/public')
+            ->setBaseURL($this->api->pm->base_path);
 
 
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
         }
 
-        $atk_directory=dirname(dirname(__FILE__));
-        $atk_url=basename($atk_directory);
+        $atk_base_path=dirname(dirname(__FILE__));
 
-        $this->atk_location=$this->addLocation('atk4', array(
+        $this->atk_location=$this->addLocation(array(
             'php'=>'lib',
-            'template'=>array(
-                isset($this->api->skin)?'templates/'.$this->api->skin:null,
-                'templates/shared'
-            ),
-            'public'=>array(
-                isset($this->api->skin)?'templates/'.$this->api->skin:null,
-                'templates/shared'
-            ),
-            'mail'=>'templates/mail',
-            'js'=>'templates/js',
-            'css'=>array(
-                'templates/js',
-                isset($this->api->skin)?'templates/'.$this->api->skin.'/css':null,
-                'templates/shared/css'
-            ),
+            'template'=>'templates',
         ))
-            ->setBasePath(dirname(dirname(__FILE__)))
-            ->setBaseURL($this->api->getConfig('atk/base_path', './atk4/'))
+            ->setBasePath($atk_base_path)
             ;
+
+        $this->atk_public=$this->public_location->addRelativeLocation('atk4',array(
+            'public'=>'.',
+            'js'=>'js',
+            'css'=>'css',
+        ))
+        ;
     }
 
     /**
@@ -201,18 +198,20 @@ class PathFinder extends AbstractController
      *
      *   $location->defineContents
      *
-     * @param string $path     UNCLEAR!!! TODO: FIX
-     * @param array  $contents Array describing contents
+     * @param array  $contents     Array describing contents
+     * @param array  $old_contents Remains for backwards compatibility
      *
      * @return PathFinder_Location New Location
      */
-    function addLocation($path, $contents=array())
+    function addLocation($contents=array(), $old_contents=null)
     {
-        $location=$this
-            ->add('PathFinder_Location', $path)
+
+        if ($old_contents) $contents = $old_contents;
+
+        return $this
+            ->add('PathFinder_Location')
             ->defineContents($contents)
             ;
-        return $location;
     }
 
     /**
@@ -232,10 +231,11 @@ class PathFinder extends AbstractController
         if (!$return) {
             $return='relative';
         }
-        foreach ($this->elements as $location) {
+        foreach ($this->elements as $key=>$location) {
             if (!($location instanceof PathFinder_Location)) {
                 continue;
             }
+
 
             $path=$location->locate($type, $filename, $return);
 
@@ -381,32 +381,6 @@ class PathFinder extends AbstractController
     }
 
 
-    /*
-        list($namespace,$file)=explode('\\',$class_name);
-        if (!$file && $namespace){
-            $file = $namespace;
-            $namespace=null;
-        }else $class_name_nonn=$file;
-        // Include class file directly, do not rely on auto-load functionality
-        if(!class_exists($class_name,false) && isset($this->api->pathfinder) && $this->api->pathfinder){
-            $file = str_replace('_',DIRECTORY_SEPARATOR,$file).'.php';
-            if($namespace){
-                if(strpos($class_name_nonn,'page_')===0){
-                    $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.$file);
-                }else{
-                    $path=$this->api->locatePath('addons',$namespace.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$file);
-                }
-
-                }
-            }else{
-                if(substr($class_name,0,5)=='page_'){
-                    $path=$this->api->pathfinder->locate('page',substr($file,5),'path');
-                }else $path=$this->api->pathfinder->locate('php',$file,'path');
-
-            }
-
-        }
-     */
 }
 class PathFinder_Exception extends BaseException
 {
@@ -414,99 +388,55 @@ class PathFinder_Exception extends BaseException
 class Exception_PathFinder extends Pathfinder_Exception
 {
 }
+
+/**
+ * Represents a location, which contains number of sub-locations. Each
+ * of which may contain certain type of data
+ */
 class PathFinder_Location extends AbstractModel {
-    /*
-       Represents a location, which contains number of sub-locations. Each
-       of which may contain certain type of data
+
+    /**
+     * contains list of 'type'=>'subdir' which lists all the
+     * resources which can be found in this directory
      */
-
-
-    public $parent_location=null;
-
     public $contents=array();
-    // contains list of 'type'=>'subdir' which lists all the
-    // resources which can be found in this directory
 
-
-    public $relative_path=null;
-    // Path to relative file within this resource
-
+    /**
+     * Locations could have a URL defined, if location is exposed on-line.
+     */
     public $base_url=null;
+
+    /**
+     * All location would have a base_path defined
+     */
     public $base_path=null;
 
-    public $auto_track_element=true;
+    public $auto_track_element = true;
 
-
-    function init(){
-        parent::init();
-
-        $this->relative_path=$this->short_name;
-
-        if($this->short_name[0]=='/' || (strlen($this->short_name)>1 && $this->short_name[1]==':')){
-            // Absolute path. Independent from base_location
-
-        }else{
-            $this->setParent($this->owner->base_location);
-        }
-    }
-    function setRelativePath($path){
-        $this->relative_path = $path;
-        return $this;
-    }
-    function setParent($parent){
-        $this->parent_location=$parent;
-        return $this;
-    }
-
-    function __toString(){
-        // this is our path
-        $s=(isset($this->parent_location)?
-                ((string)$this->parent_location):'');
-        if($s && substr($s,-1)!='/' && $this->relative_path)$s.='/';
-        $s.=$this->relative_path;
-        return $s;
-    }
-
+    /**
+     * Returns how this location or file can be accessed through web
+     * base url + relative path + file_path
+     */
     function getURL($file_path=null){
-        // Returns how this location or file can be accessed through web
-        // base url + relative path + file_path
 
-        $url='';
-        if($this->base_url)$url=$this->base_url;else
-            if($this->parent_location){
-                $url=$this->parent_location->getURL();
-                if(substr($url,-1)!='/')$url.='/';
-                $url.=$this->relative_path;
-            }else
-                throw new BaseException('Unable to determine URL');
-
-        if($file_path){
-            if(substr($url,-1)!='/')$url.='/';
-            $url.=$file_path;
+        if (!$this->base_url) {
+            throw new BaseException('Unable to determine URL');
         }
-        $url=str_replace(array('\\','/./','/./'),'/',$url);
-        return $url;
+
+        return $this->base_url.'/'.$file_path;
     }
 
+    /**
+     * Returns how this location or file can be accessed through filesystem
+     */
     function getPath($file_path=null){
-        // Returns how this location or file can be accessed through filesystem
 
-        $path='';
-        if($this->base_path)$path=$this->base_path;else
-            if($this->parent_location){
-                $path=$this->parent_location->getPath();
-                if(substr($path,-1)!='/')$path.='/';
-                $path.=$this->relative_path;
-            }else
-                throw new BaseException('Unable to determine Path for '.$this.', parent='.$this->parent_location);
-
-            if($file_path){
-                if(substr($path,-1)!='/')$path.='/';
-                $path.=$file_path;
-            }
-            return $path;
+        return $this->base_path.'/'.$file_path;
     }
 
+    /**
+     * Set a new BaseURL
+     */
     function setBaseURL($url){
         /*
            something like /my/app
@@ -514,6 +444,10 @@ class PathFinder_Location extends AbstractModel {
         $this->base_url=$url;
         return $this;
     }
+
+    /**
+     * Set a new BaseURL
+     */
     function setBasePath($path){
         /*
            something like /home/web/public_html
@@ -521,15 +455,23 @@ class PathFinder_Location extends AbstractModel {
         $this->base_path=$path;
         return $this;
     }
+
     function defineContents($contents){
-        if($contents==='all'){
-            $contents=array('all'=>'all');
-        }
-        if(is_string($contents)){
-            $contents=array($contents=>'.');
-        }
         $this->contents=array_merge_recursive($this->contents,$contents);
         return $this;
+    }
+
+    function addRelativeLocation($relative_path, array $contents) {
+
+        $location = $this->newInstance();
+
+        $location->setBasePath($this->base_path.'/'.$relative_path);
+
+        if ($this->base_url) {
+            $location->setBaseURL($this->base_url.'/'.$relative_path);
+        }
+
+        return $location->defineContents($contents);
     }
 
     function locate($type,$filename,$return='relative'){
@@ -539,6 +481,8 @@ class PathFinder_Location extends AbstractModel {
 
         // Imants: dirty fix for finding files with complex namespaces like
         // Vendor\MyAddon otherwise these are not found on *Nix systems
+
+
         $filename = str_replace('\\','/',$filename);
 
         $attempted_locations=array();
