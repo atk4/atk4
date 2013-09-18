@@ -445,6 +445,7 @@ class PathFinder_Location extends AbstractModel {
         /*
            something like /my/app
          */
+        $url=preg_replace('|//|','/',$url);
         $this->base_url=$url;
         return $this;
     }
