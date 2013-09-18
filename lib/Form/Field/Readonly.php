@@ -13,14 +13,20 @@ class Form_Field_Readonly extends Form_Field_ValueList
 
     function getInput($attr = array())
     {
-        // get value from model if form field is based on model
-        // this works nicely for Form_Field_ValueList based fields like DropDown
         $v = $this->value;
-        if (($v || is_scalar($v)) && $this->model) {
-            // ignore errors, because this is just a readonly field after all :)
-            $this->model->tryLoad($v);
-            if ($this->model->loaded()) {
-                $v = $this->model->get($this->model->title_field);
+        
+        // this works nicely for Form_Field_ValueList based fields like DropDown
+        if ($v || is_scalar($v)) {
+            // get value from model if form field is based on model
+            if ($this->model) {
+                // ignore errors, because this is just a readonly field after all :)
+                $this->model->tryLoad($v);
+                if ($this->model->loaded()) {
+                    $v = $this->model->get($this->model->title_field);
+                }
+            } elseif (isset($this->value_list[$v])) {
+                // get value from value list
+                $v = $this->value_list[$v];
             }
         }
         
