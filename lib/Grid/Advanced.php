@@ -24,9 +24,6 @@
  =====================================================ATK4=*/
 class Grid_Advanced extends Grid_Basic
 {
-    /** Pointer to last added grid column */
-    public $last_column;
-
     /** Sorting */
     public $sortby = '0';
     public $sortby_db = null;
@@ -99,52 +96,6 @@ class Grid_Advanced extends Grid_Basic
                 ? $this->memorize('sortby', $_GET[$this->name.'_sort'])
                 : $this->recall('sortby', '0');
     }
-
-    // {{{ Columns
-
-    /**
-     * Set column as "last column"
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    function getColumn($name)
-    {
-        $this->last_column = $name;
-        return $this;
-    }
-
-    /**
-     * Check if we have such column
-     *
-     * @param string $name
-     *
-     * @return boolean
-     */
-    function hasColumn($name)
-    {
-        return isset($this->columns[$name]);
-    }
-
-    /**
-     * Remove column from grid
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    function removeColumn($name)
-    {
-        unset($this->columns[$name]);
-        if ($this->last_column == $name) {
-            $this->last_column = null;
-        }
-
-        return $this;
-    }
-
-    // }}}
 
     // {{{ Misc features
 
@@ -420,7 +371,7 @@ class Grid_Advanced extends Grid_Basic
 
         // set title
         if ($this->totals_title_field && $this->totals) {
-            $this->current_row[$this->totals_title_field] = sprintf(
+            $this->current_row_html[$this->totals_title_field] = sprintf(
                 $this->totals_title,
                 $this->current_row['row_count'],
                 $this->current_row['plural_s']
@@ -607,7 +558,7 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Additional formatting of expander fields for totals row
+     * Additional formatting of custom template fields for totals row
      *
      * Basically we remove everything from such field
      * 
@@ -621,7 +572,7 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Additional formatting of expander fields for totals row
+     * Additional formatting of delete button fields for totals row
      *
      * Basically we remove everything from such field
      * 
@@ -1266,6 +1217,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         $this->current_row_html[$field] = $t
+            ->trySet('id',$this->current_id)
             ->set($this->current_row)
             ->trySet('_value_', $this->current_row[$field])
             ->render();

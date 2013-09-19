@@ -50,7 +50,7 @@ class Controller_MVCForm extends AbstractController {
         'real'=>'Number',
         'date'=>'DatePicker',
         'datetime'=>'DatePicker',
-        'daytime'=>'Timepicker',
+        'daytime'=>'Time',
         'boolean'=>'Checkbox',
         'reference'=>'Readonly',
         'reference_id'=>'DropDown',
@@ -125,11 +125,15 @@ class Controller_MVCForm extends AbstractController {
             $form_field->validateNotNULL($msg);
         }
 
-        if($field instanceof Field_Reference || $field_type=='reference')$form_field->setModel($field->getModel());
+        if($field instanceof Field_Reference || $field_type=='reference') {
+            $form_field->setModel($field->getModel());
+        }
         if($field->theModel){
             $form_field->setModel($field->theModel);
         }
-        if($form_field instanceof Form_Field_ValueList)$form_field->setEmptyText($field->emptyText());
+        if($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
+            $form_field->setEmptyText($field->emptyText());
+        }
 
         return $form_field;
     }

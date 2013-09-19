@@ -256,11 +256,16 @@ abstract class AbstractObject
         }
 
         $class_name_nodash = str_replace('-', '', $class);
+        /*
+         * Even though this might break some applications,
+         * your loading must be configured properly instead
+         * of relying on this
+         *
         if (!class_exists($class_name_nodash, false)
             && isset($this->api->pathfinder)
         ) {
             $this->api->pathfinder->loadClass($class);
-        }
+        }*/
         $element = new $class_name_nodash();
 
         if (!($element instanceof AbstractObject)) {

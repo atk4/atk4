@@ -73,6 +73,17 @@ class ApiCLI extends AbstractView
     protected $pathfinder_class='PathFinder';
 
     /**
+     * Change a different Page Manager class
+     */
+    protected $pagemanager_class='PageManager';
+
+    /**
+     * Set to array('debug'=>true) to debug Page Manager
+     */
+    protected $pagemanager_options=null;
+
+
+    /**
      * This is a major version of Agile Toolkit. The API of Agile Toolkit is
      * very well established and changes rarely. Your application would generally
      * be compatible throughout the same major version of Agile Tooolkit.
@@ -164,7 +175,7 @@ class ApiCLI extends AbstractView
             // find out which page is to display
             //$this->calculatePageName();
             if($this instanceof ApiWeb){
-                $this->pm=$this->add('PageManager');
+                $this->pm=$this->add($this->pagemanager_class, $this->pagemanager_options);
             }
 
 

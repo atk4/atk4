@@ -3,10 +3,6 @@ php:
   - 5.5
   - 5.4
   - 5.3
-#before_script: 
-#  - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar
-#  - (cd tests; composer install)
-#script: (cd tests; php ../mageekguy.atoum.phar -f run_tests.php)
 script: (cd tests; php run_tests.php)
 services: mongodb
 before_script:
@@ -14,9 +10,11 @@ before_script:
   - mysql myapp_test < tests/test.sql
   - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 notifications:
-  irc: 
+  irc:
     channels:
-      - "chat.freenode.net#atk4"
+      - chat.freenode.net#atk4
     on_success: always
     on_failure: always
   email: false
+  flowdock:
+    - secure: Iyvr9KzrWbZ4CPoJA23+WzPrCLYo1QDll0Ka69qkma9E1YsoC/ysmdjFZvQBGM2odVk7AShfGiSWo3ndng+BbOIA8QsGfGQdydoLh4El1JBKm4oQbinDF9wbRHhNk4vJOkqIObUZcDZbQcO9Vm65jQQkyxmJ5RlbrpwnP4UsjXc=
