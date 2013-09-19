@@ -1127,7 +1127,7 @@ class Grid_Advanced extends Grid_Basic
     function init_delete($field)
     {
         // set special CSS class for delete buttons to add some styling
-        $this->columns[$field]['button_class'] = 'atk-delete-button';
+        $this->columns[$field]['button_class'] = 'atk-effect-danger atk-delete-button';
 
         // if this was clicked, then delete record
         if ($id = @$_GET[$this->name.'_'.$field]) {

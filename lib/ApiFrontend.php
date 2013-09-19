@@ -94,7 +94,7 @@ class ApiFrontend extends ApiWeb{
                         }
                         if($in=='page_')$in='page_index';
                         try {
-                            loadClass($in);
+                            $this->api->pathfinder->loadClass($in);
                         }catch(PathFinder_Exception $e3){
                             continue;
                         }

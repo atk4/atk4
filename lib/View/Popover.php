@@ -32,7 +32,7 @@ class View_Popover extends View {
 
         $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
-            'dialogClass'=>$options['class']?:'popover',
+            'dialogClass'=>$options['class']?:'atk-popover',
             'dragable'=>false,
             'resizable'=>false,
             'minHeight'=>'auto',
