@@ -494,13 +494,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         return $this;
     }
     /** Adds a new condition for this model */
-    function addCondition($field,$operator=undefined,$value=undefined) {
+    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED) {
         if (is_array($field)) {
             foreach ($field as $value) {
                 $this->addCondition($value[0], $value[1], $value[2]);
             }
         }
-        if ($value === undefined) {
+        if ($value === UNDEFINED) {
             $value = $condition;
             $operator = '=';
         }
