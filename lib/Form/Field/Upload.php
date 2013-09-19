@@ -136,9 +136,9 @@ class Form_Field_Upload extends Form_Field {
                         throw $this->exception('File upload was blocked by the webserver','ForUser');
 
                     $model=$this->model;
-                    $model->set('filestore_volume_id',$model->getAvailableVolumeID());
-                    $model->set('original_filename',$this->getOriginalName());
-                    $model->set('filestore_type_id',$model->getFiletypeID($this->getOriginalType(),$model->policy_add_new_type));
+                    $model->set($this->getVolumeIDFieldName(),$model->getAvailableVolumeID());
+                    $model->set($this->getOriginalFilenameFieldName(),$this->getOriginalName());
+                    $model->set($this->getTypeIDFieldName(),$model->getFiletypeID($this->getOriginalType(),$model->policy_add_new_type));
                     $model->import($this->getFilePath());
                     $model->save();
                 }catch(Exception $e){
@@ -224,7 +224,7 @@ class Form_Field_Upload extends Form_Field {
             $files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
             if($files){
                 $c->addCondition('id','in',($files?$files:0));
-                $data=$c->getRows(array('id','original_filename','filesize'));
+                $data=$c->getRows(array('id',$this->getOriginalFilenameFieldName(),$this->getFilesizeFieldName()));
             }else $data=array();
             return $this->formatFiles($data);
         }
@@ -258,10 +258,10 @@ class Form_Field_Upload extends Form_Field {
             if($c=$this->model){
                 $c->tryLoad($id);
                 $f=$c;
-                $mime = $f->ref('filestore_type_id')->get('mime_type');
+                $mime = $f->ref($this->getTypeIDFieldName())->get('mime_type');
                 $path = $f->getPath();
-                $name = $f->get("original_filename");
-                $len = $f->get("filesize");
+                $name = $f->get($this->getOriginalFilenameFieldName());
+                $len = $f->get($this->getFilesizeFieldName());
                 header("Content-type: $mime");
                 header("Content-legnth: $len");
                 if($_GET["redirect"]){
@@ -399,5 +399,19 @@ class Form_Field_Upload extends Form_Field {
     function debug(){
         $this->debug=true;
         return $this;
+    }
+
+    /*  reimplement these functions in your *_Upload class   */
+    function getVolumeIDFieldName() {
+        return 'filestore_volume_id';
+    }
+    function getTypeIDFieldName() {
+        return 'filestore_type_id';
+    }
+    function getOriginalFilenameFieldName() {
+        return 'original_filename';
+    }
+    function getFilesizeFieldName() {
+        return 'filesize';
     }
 }
