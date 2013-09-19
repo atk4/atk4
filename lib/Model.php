@@ -54,7 +54,7 @@
  * @license See http://agiletoolkit.org/about/license
  * 
  **/
-class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
+class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,Countable {
 
     public $default_exception='BaseException';
 
@@ -191,12 +191,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if (strpos($group, ',')!==false) {
             $groups = explode(',', $group);
 
-            foreach($groups as $group) {
-                if($group[0]=='-') {
-                    $el = $this->getActualFields(substr($group, 1));
+            foreach($groups as $g) {
+                if($g[0]==='-') { // ??? non ci entra mai... o se ci entra non fa nulla...
+                    $el = $this->getActualFields(substr($g, 1));
                     $fields = array_diff($fields, $el);
                 } else {
-                    $el = $this->getActualFields($group);
+                    $el = $this->getActualFields($g);
                     $fields = array_merge($fields, $el);
                 }
             }
@@ -205,9 +205,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         foreach($this->elements as $el) {
             if($el instanceof Field && !$el->hidden()) {
                 if( $group===undefined ||
-                    $el->group()==$group ||
-                    (strtolower($group=='visible') && $el->visible()) ||
-                    (strtolower($group=='editable') && $el->editable())
+                    $el->group()===$group ||
+                    (strtolower($group =='visible') && $el->visible()) ||
+                    (strtolower($group =='editable') && $el->editable())
                 ) {
                     $fields[] = $el->short_name;
                 }
@@ -248,44 +248,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this->dirty[$name] || 
             (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
-    /**
-     * Returns true if the records has been loaded successfully
-     * 
-     * @return boolean
-     */
-    function loaded()
-    {
-        return !is_null($this->id);
-    }
-    /**
-     * Forget loaded data
-     * 
-     * @return $this
-     */
-    function unload()
-    {
-        if ($this->_save_later) {
-            $this->_save_later=false;
-            $this->saveAndUnload();
-        }
-        if ($this->loaded()) {
-            $this->hook('beforeUnload');
-        }
-        $this->data = $this->dirty = array();
-        $this->id = null;
-        $this->hook('afterUnload');
-        return $this;
-    }
-    /**
-     * Same as unload() method
-     * 
-     * @return $this
-     */
-    function reset()
-    {
-        return $this->unload();
-    }
-    // }}}
+
 
     // {{{ ArrayAccess support 
     function offsetExists($name){
@@ -325,24 +288,130 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
-    /** Attempt to load record with specified ID. If this fails, exception is thrown */
+    // {{{ LOAD METHODS
     function load($id){
-        if($this->loaded())$this->unload();
+        if($this->loaded()) {
+            $this->unload();
+        }
         $this->hook('beforeLoad',array($id));
-        if(!$this->loaded())$this->controller->load($this,$id);
-        if(!$this->loaded())throw $this->exception('Record with specified id was not found');
+        if(!$this->loaded()) {
+            $this->controller->tryLoad($this,$id);
+        }
+        if(!$this->loaded()) {
+            throw $this->exception('Record with specified id was not found');
+        }
         $this->hook('afterLoad');
         return $this;
     }
+
+    function tryLoad($id){
+        if($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoad',array($id));
+        if(!$this->loaded()) {
+            $this->controller->tryLoad($this,$id);
+        }
+        if($this->loaded()) {
+            $this->hook('afterLoad');
+        }
+        return $this;
+    }
+
+    /* Attempt to load record with specified ID. If this fails, no error is produced */
+    function loadAny() {
+        if($this->loaded()) {
+            $this->unload();
+        }
+        if(!$this->loaded()) {
+            $this->controller->tryLoadAny($this);
+        }
+        if(!$this->loaded()) {
+            throw $this->exception('Record not found');
+        }
+        $this->hook('afterLoad');
+        return $this;
+    }
+    function tryLoadAny(){
+        if($this->loaded()) {
+            $this->unload();
+        }
+        if(!$this->loaded()) {
+            $this->controller->tryLoadAny($this);
+        }
+        if($this->loaded()) {
+            $this->hook('afterLoad');
+        }
+        return $this;
+    }
+    function loadBy($field,$cond=undefined,$value=undefined){
+        if($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoadBy',array($field,$cond,$value));
+        if(!$this->loaded()) {
+            $this->controller->tryLoadBy($this,$field,$cond,$value);
+        }
+        if(!$this->loaded()) {
+            throw $this->exception('Record not found');
+        }
+        $this->hook('afterLoad');
+        return $this;
+    }
+    function tryLoadBy($field,$cond=undefined,$value=undefined){
+        if($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoadBy',array($field,$cond,$value));
+        if(!$this->loaded()) {
+            $this->controller->tryLoadBy($this,$field,$cond,$value);
+        }
+        if($this->loaded()) {
+            $this->hook('afterLoad');
+        }
+        return $this;
+    }
+    // END LOAD METHODS }}}
+
+    /**
+     * Returns true if the records has been loaded successfully
+     * 
+     * @return boolean
+     */
+    function loaded() {
+        return !is_null($this->id);
+    }
+
+    /**
+     * Forget loaded data
+     * 
+     * @return $this
+     */
+    function unload() {
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
+        if ($this->loaded()) {
+            $this->hook('beforeUnload');
+        }
+        $this->data = $this->dirty = array();
+        $this->id = null;
+        $this->hook('afterUnload');
+        return $this;
+    }
+    /**
+     * Same as unload() method
+     * 
+     * @return $this
+     */
+    function reset() {
+        return $this->unload();
+    }
+
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
      * record with new ID. */
-    function save($id=undefined){
-        if($this->id_field && $id!==undefined && $id!==null){
-            $this->data[$this->id_field]=$id;
-        }
-        if($id!==undefined)$this->id=$id;
-
-
+    function save() {
         $this->hook('beforeSave',array($this->id));
 
         $is_update=$this->loaded();
@@ -352,7 +421,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
             $this->hook('beforeInsert');
         }
 
-        $this->id=$this->controller->save($this,$this->id);
+        $this->id=$this->controller->save($this, $this->id);
 
         if($is_update){
             $this->hook('afterUpdate');
@@ -363,6 +432,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if($this->loaded())$this->hook('afterSave',array($this->id));
         return $this;
     }
+
+
+
+
     /** Save model and don't try to load it back */
     function saveAndUnload($id=undefined){
         // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to 
@@ -387,13 +460,29 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     function __destruct(){
         $this->saveDelayedModels();
     }
-    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
-    function delete($id=null){
-        if($id===null)$id=$this->id;
-        if($this->loaded() && $this->id == $id)$this->unload();   // record we are about to delete is loaded, unload it.
+    
+    /*
+     * Delete a record. If the model is loaded, delete the current id. 
+     * If not loaded, load model through the $id parameter and delete
+     */
+    function delete($id=null) {
+        if ($this->loaded() && !is_null($id) && ($id !== $this->id)) {
+            throw $this->exception('Unable to determine which record to delete');
+        }
+        if(!is_null($id) && (!$this->loaded() || ($this->loaded() && $id !== $this->id))) {
+            $this->load($id);
+        }
+        if(!$this->loaded()) {
+            throw $this->exception('Unable to determine which record to delete');
+        }
+
+
         $this->hook('beforeDelete',array($id));
         $this->controller->delete($this,$id);
         $this->hook('afterDelete',array($id));
+
+        $this->unload();
+
         return $this;
     }
     /** Deletes all records associated with this modle. */
@@ -405,53 +494,21 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this;
     }
     /** Adds a new condition for this model */
-    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED){
+    function addCondition($field,$operator=undefined,$value=undefined) {
+        if (is_array($field)) {
+            foreach ($field as $value) {
+                $this->addCondition($value[0], $value[1], $value[2]);
+            }
+        }
+        if ($value === undefined) {
+            $value = $condition;
+            $operator = '=';
+        }
         $this->controller->addCondition($this,$field,$operator,$value);
         return $this;
     }
     // }}}
 
-    // {{{ Load Wrappers
-
-    /* Attempt to load record with specified ID. If this fails, no error is produced */
-    function tryLoad($id=null){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoad',array($id));
-        if(!$this->loaded())$this->controller->tryLoad($this,$id);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function loadAny(){
-        if($this->loaded())$this->unload();
-        if(!$this->loaded())$this->controller->loadAny($this);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function tryLoadAny(){
-        if($this->loaded())$this->unload();
-        if(!$this->loaded())$this->controller->tryLoadAny($this);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function tryLoadBy($field,$cond=undefined,$value=undefined){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded())$this->controller->tryLoadBy($this,$field,$cond,$value);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function loadBy($field,$cond=undefined,$value=undefined){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded())$this->controller->loadBy($this,$field,$cond,$value);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
     /** Unloads then loads current record back. Use this if you have added new fields */
     function reload(){
         return $this->load($this->id);

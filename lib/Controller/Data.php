@@ -58,18 +58,14 @@ abstract class Controller_Data extends AbstractController {
         $this->tryLoad($model,$id);
     }
 
-	abstract function load($model,$id);
-	abstract function save($model);
+	abstract function save($model, $id);
 	abstract function delete($model,$id);
 
 	abstract function tryLoad($model,$id);
-    abstract function loadBy($model,$field,$cond,$value);
     abstract function tryLoadBy($model,$field,$cond,$value);
     abstract function tryLoadAny($model);
 
     abstract function deleteAll($model);
-    abstract function getRows($model);
-    abstract function getBy($model,$field,$cond,$value);
 
     /** Create a new cursor and load model with the first entry */
     abstract function rewind($model);
