@@ -12,9 +12,10 @@ class page_jquerychain extends Page_Tester {
         "Test_enclose2"=>'function(){ $(\'#sample_project\').hi() }',
         "Test_enclose3"=>'function(ev){ev.preventDefault();ev.stopPropagation(); $(\'#sample_project\').hi() }',
         "Test_argument"=>'$(window).append($(\'#sample_project\').find(\'button\'))',
-        "Test_lib"=>'window.player["sample_project_jquerychain"].pause()'
+        "Test_lib"=>'window.player["sample_project_page_jquerychain"].pause()'
     );
     function prepare(){
+        $this->api->add('jQuery');
         return array($this->api->js());
     }
 
@@ -55,7 +56,7 @@ class page_jquerychain extends Page_Tester {
         $c->find('button');
         return $this->api->js()->_selectorWindow()->append($c);
     }
-    function test_lib(){
-        return $this->api->js()->_library('window.player['.json_encode($this->getJSID()).']')->pause();
+    function test_lib($c){
+        return $c->_library('window.player['.json_encode($this->getJSID()).']')->pause();
     }
 }

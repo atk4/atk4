@@ -32,6 +32,8 @@ class jQuery extends AbstractController {
 
         $this->api->jquery=$this;
 
+        if(!$this->api->template)return;
+
         if(!$this->api->template->is_set('js_include'))
             throw $this->exception('Tag js_include must be defined in shared.html');
         if(!$this->api->template->is_set('document_ready'))
@@ -73,8 +75,12 @@ class jQuery extends AbstractController {
         //$file=$this->api->locateURL('css',$file.$ext);
         if(@$this->included[$locate.'-'.$file.$ext]++)return;
 
+        if(strpos($file,'http')!==0 && $file[0]!='/'){
+            $url=$this->api->locateURL($locate,$file.$ext);
+        }else $url=$file;
+
         $this->api->template->appendHTML('js_include',
-                '<link type="text/css" href="'.$this->api->locateURL($locate,$file.$ext).'" rel="stylesheet" />'."\n");
+                '<link type="text/css" href="'.$url.'" rel="stylesheet" />'."\n");
         return $this;
     }
     /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */

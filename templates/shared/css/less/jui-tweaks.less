@@ -70,6 +70,26 @@ input.ui-button,
     }
 }
 
+/* Vertical Tabs */
+.ui-tabs-vertical {
+    width: 100%;
+    .ui-tabs-panel { padding: 1em; float: left; width: @padding * 20; margin: 0 @padding;}
+    .ui-tabs-nav {
+        padding: .2em .1em .2em .2em;
+        float: left;
+        width: 12em;
+        li {
+            clear: left;
+            width: 100%;
+            border-bottom-width: 1px !important;
+            border-right-width: 0 !important;
+            margin: 0 -1px .2em 0;
+            &.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+            a { display:block; }
+        }
+    }
+}
+
 /* Dialog */
 .ui-dialog {
     padding: 0;

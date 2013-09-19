@@ -65,6 +65,9 @@ class Page_Tester extends Page {
             $ff->js('click')->select();
         }
     }
+    function skipTests($msg=null){
+        throw $this->exception($msg,'SkipTests');
+    }
     public $cnt;
     function ticker(){
         $this->cnt++;
@@ -80,6 +83,7 @@ class Page_Tester extends Page {
         $speed=$memory=0;
 
         $tested=array();
+        $failures=array();
         foreach(get_class_methods($test_obj) as $method){
             if(strpos($method,'test_')===0){
                 $m=substr($method,5);
@@ -92,12 +96,22 @@ class Page_Tester extends Page {
                 if(is_numeric($key))$key=$vari;
 
                 // Input is a result of preparation function
-                if(method_exists($test_obj,'prepare_'.$m)){
-                    $input=$test_obj->{'prepare_'.$m}($vari,$method);
-                }else{
-                    if($test_obj->hasMethod('prepare')){
-                        $input=$test_obj->prepare($vari,$method);
-                    }else $input=null;
+                try{
+                    if(method_exists($test_obj,'prepare_'.$m)){
+                        $input=$test_obj->{'prepare_'.$m}($vari,$method);
+                    }else{
+                        if($test_obj->hasMethod('prepare')){
+                            $input=$test_obj->prepare($vari,$method);
+                        }else $input=null;
+                    }
+                }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        return array(
+                            'skipped'=>$e->getMessage()
+                        );
+                    }
+                    throw $e;
                 }
 
                 $this->input=$input;
@@ -126,9 +140,17 @@ class Page_Tester extends Page {
                     if($this->proper_responses[$k]==$result && isset($this->proper_responses[$k])){
                         $success++;
                     }else{
+                        $failures[]=$method;
                         $fail++;
                     }
                 }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        return array(
+                            'skipped'=>$e->getMessage()
+                        );
+                    }
+
                     $exception++;
 
                     $ms=microtime(true)-$ms;
@@ -143,6 +165,7 @@ class Page_Tester extends Page {
         }
         return array(
             'total'=>$total,
+            'failures'=>$failures,
             'success'=>$success,
             'exception'=>$exception,
             'fail'=>$fail,
@@ -175,13 +198,21 @@ class Page_Tester extends Page {
             foreach($this->variances as $key=>$vari){
                 if(is_numeric($key))$key=$vari;
 
-                // Input is a result of preparation function
-                if(method_exists($test_obj,'prepare_'.$m)){
-                    $input=$test_obj->{'prepare_'.$m}($vari,$method);
-                }else{
-                    if($test_obj->hasMethod('prepare')){
-                        $input=$test_obj->prepare($vari,$method);
-                    }else $input=null;
+                try{
+                    // Input is a result of preparation function
+                    if(method_exists($test_obj,'prepare_'.$m)){
+                        $input=$test_obj->{'prepare_'.$m}($vari,$method);
+                    }else{
+                        if($test_obj->hasMethod('prepare')){
+                            $input=$test_obj->prepare($vari,$method);
+                        }else $input=null;
+                    }
+                }catch (Exception $e){
+                    if($e instanceof Exception_SkipTests) {
+                        $this->grid->destroy();
+                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+                        return;
+                    }
                 }
 
                 $this->input=$input;
@@ -199,6 +230,13 @@ class Page_Tester extends Page {
                     //$result=$test_obj->$test_func($input[0],$input[1],$input[2]);
                     $result=$this->executeTest($test_obj,$test_func,$input);
                 }catch (Exception $e){
+
+                    if($e instanceof Exception_SkipTests) {
+                        $this->grid->destroy();
+                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+                    }
+                    return;
+
 
                     if($_GET['tester_details']==$row['name'] && $_GET['vari']==$vari){
                         throw $e;

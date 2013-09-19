@@ -56,10 +56,8 @@ if(!function_exists('error_handler')){
                 case 8192:
                     if(substr($errstr,-13)=='is deprecated')break;
                 default:
-                    if(ini_get('display_errors') == 1 || ini_get('display_errors') == 'ON')
-                        echo "$str<br />\n";
-                    if(ini_get('log_errors') == 1 || ini_get('log_errors') == 'ON')
-                        error_log(" $errfile:$errline\n[".$errorType[$errno]."] ".strip_tags($errstr),0);
+                    // throw consistently all errors into exceptions
+                    throw new ErrorException($errorType[$errno].': ['.$errfile.':'.$errline.']'. $errstr, 0, $errno, $errfile, $errline);
                     break;
             }
         }
