@@ -150,7 +150,9 @@ class Form_Field_Upload extends Form_Field {
                         //.', error: '.$this->getFileError()); //more user friendly
                     }
 
-                    $e->addMoreInfo('upload_error',$this->getFileError());
+                    if(is_subclass_of($e, 'BaseException')){
+                        $e->addMoreInfo('upload_error',$this->getFileError());
+                    }
 
                     echo '<script>$=window.top.$;';
                     $_POST['ajax_submit']=1;

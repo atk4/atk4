@@ -127,15 +127,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
             ->addMoreInfo('name',$name);
 
-        if($value!==undefined 
+        if ($value !== undefined 
             && (
-                is_object($value) 
+                // if data[$name] is not initialized at all (for example, in model using array controller)
+                (is_array($this->data) && !array_key_exists($name, $this->data))
+                // value as object
+                || is_object($value)
                 || is_object($this->data[$name])
+                // value as array
                 || is_array($value)
                 || is_array($this->data[$name])
-                || (string)$value!=(string)$this->data[$name] // this is not nice.. 
-                || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
-                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
+                // if one and only one value is NULL
+                || (is_null($value) xor is_null($this->data[$name]))
+                // values converted to string loosly differ
+                // need special treatment of [false] value because (string)false === "" not "0"
+                || ($value===false ? '0' : (string)$value) // this is not nice
+                   !=
+                   ($this->data[$name]===false ? '0' : (string)$this->data[$name])
             )
         ) {
             $this->data[$name]=$value;
