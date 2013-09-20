@@ -8,9 +8,9 @@ class page_jquerychain extends Page_Tester {
         "Test_region"=>'$(\'#sample_project\')._selectorRegion.hi()',
         "Test_jsselector"=>'$($(\'#sample_project\').find(\'button\')).hi()',
         "Test_custom"=>'window.player.hi()',
-        "Test_enclose"=>'function(e,ui){$(".button").hi()}',
-        "Test_enclose2"=>'function(e,ui){$(\'#sample_project\').hi()}',
-        "Test_enclose3"=>'function(e,ui){e.preventDefault();e.stopPropagation();$(\'#sample_project\').hi()}',
+        "Test_enclose"=>'function(){ $(".button").hi() }',
+        "Test_enclose2"=>'function(){ $(\'#sample_project\').hi() }',
+        "Test_enclose3"=>'function(ev){ev.preventDefault();ev.stopPropagation(); $(\'#sample_project\').hi() }',
         "Test_argument"=>'$(window).append($(\'#sample_project\').find(\'button\'))',
         "Test_lib"=>'window.player["sample_project_page_jquerychain"].pause()'
     );
