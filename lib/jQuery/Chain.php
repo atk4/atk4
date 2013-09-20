@@ -242,15 +242,16 @@ class jQuery_Chain extends AbstractModel {
             if($this->str)$ret.="$('#".$this->owner->getJSID()."')";
         }
         $ret.=$this->str;
-        if($this->enclose===true){
-            if($this->preventDefault){
-                $ret="function(ev){ev.preventDefault();ev.stopPropagation(); ".$ret." }";
-            }else{
-                $ret="function(){ ".$ret." }";
-            }
-        }elseif($this->enclose){
-            $ret=($this->library?:"$('#".$this->owner->getJSID()."')").
-                ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
+        if ($this->enclose===true) {
+            $ret =  "function(e,ui){" .
+                        ($this->preventDefault ? "e.preventDefault();e.stopPropagation();" : "") .
+                        $ret .
+                    "}";
+        } elseif($this->enclose) {
+            $ret = ($this->library ?: "$('#".$this->owner->getJSID()."')") .
+                    ".bind('".$this->enclose."',function(e,ui){".
+                        ($this->preventDefault ? "e.preventDefault();e.stopPropagation();" : "") .
+                        $ret."})";
         }
         if(@$this->debug){
             echo "<font color='blue'>".htmlspecialchars($ret).";</font><br/>";
