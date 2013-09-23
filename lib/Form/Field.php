@@ -237,7 +237,7 @@ abstract class Form_Field extends AbstractView {
             $this->addHook('validate',array($this,'_validateField'),array($condition,$msg));
         }else{
             $this->addHook('validate',$s='if(!('.$condition.'))$this->displayFieldError("'.
-                ($msg?$msg:'Error in ".$this->caption."').'");');
+                ($msg?$msg:'Error in "'.$this->caption.'"').'");');
         }
         return $this;
     }
