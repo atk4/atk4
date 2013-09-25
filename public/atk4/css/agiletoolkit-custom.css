@@ -9,3 +9,5 @@ strong{font-weight:500}
 #atk-content{background:#fff;padding:3.236rem}
 #atk-footer{background:#ecf0f1;border-top:1px solid #cfd9db;padding:1.618rem}
 .example{background:#f8f9fa;border:1px solid #ecf0f1}
+#example-swatches,#example-effects{text-align:center}#example-swatches .row>div>div,#example-effects .row>div>div{height:96px;width:100%}
+#example-icons #icons-library{display:none}
