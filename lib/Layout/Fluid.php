@@ -56,8 +56,10 @@ class Layout_Fluid extends View {
      * If your page does not have enough content, it will automatically be expanded
      * to prevent you from having a gap underneath the bottom bar.
      */
-    function addFooter($class = 'Text') {
-        return $this->addRow('Footer')->add($class);
+    function addFooter($class = 'Layout_Footer') {
+        return $this->addRow('Footer')
+            ->add($class)
+            ;
     }
 
 
