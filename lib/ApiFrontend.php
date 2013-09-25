@@ -40,6 +40,8 @@ class ApiFrontend extends ApiWeb{
     }
     function layout_Content(){
 
+        $layout = $this->layout ?: $this;
+
         // TODO: refactor using pathfinders 4th argument to locate = null,
         // to avoid exceptions as those might be expensive.
 
@@ -51,7 +53,7 @@ class ApiFrontend extends ApiWeb{
         if($this->api->page_object)return;   // page is already initialized;
 
         if(method_exists($this,$class)){
-            $this->page_object=$this->add($this->page_class,$page);
+            $this->page_object=$layout->add($this->page_class,$page);
             $this->$class($this->page_object);
         }else{
             $class_parts=explode('_',$page);
@@ -102,7 +104,7 @@ class ApiFrontend extends ApiWeb{
                         $tmp=new $in;
                         if(!method_exists($tmp,$fn) && !method_exists($tmp,'subPageHandler'))continue;
 
-                        $this->page_object=$this->add($in,$page);
+                        $this->page_object=$layout->add($in,$page);
                         if(method_exists($tmp,$fn)){
                             $this->page_object->$fn();
                         }elseif(method_exists($tmp,'subPageHandler')){
@@ -119,7 +121,7 @@ class ApiFrontend extends ApiWeb{
                 return;
             }
             // i wish they implemented "finally"
-            $this->page_object=$this->add($ns.$class,$page,'Content');
+            $this->page_object=$layout->add($ns.$class,$page,'Content');
             if(method_exists($this->page_object,'initMainPage'))$this->page_object->initMainPage();
             if(method_exists($this->page_object,'page_index'))$this->page_object->page_index();
         }
@@ -130,16 +132,17 @@ class ApiFrontend extends ApiWeb{
     }
     /** Attempts to load static page. Raises exception if not found */
     protected function loadStaticPage($page){
+        $layout = $this->layout ?: $this;
         try{
             $t='page/'.str_replace('_','/',strtolower($page));
             $this->template->findTemplate($t);
 
-            $this->page_object=$this->add($this->page_class,$page,'Content',array($t));
+            $this->page_object=$layout->add($this->page_class,$page,'Content',array($t));
         }catch(PathFinder_Exception $e2){
 
             $t='page/'.strtolower($page);
             $this->template->findTemplate($t);
-            $this->page_object=$this->add($this->page_class,$page,'Content',array($t));
+            $this->page_object=$layout->add($this->page_class,$page,'Content',array($t));
         }
 
         return $this->page_object;

@@ -35,25 +35,31 @@ class Layout_Fluid extends View {
      *      the maximum width.
      *
      */
-    function addRow($options = array()) {
-        return $this->add('View')->addClass('atk-layout-row');
+    function init() {
+        parent::init();
+
+        $this->api->layout = $this;
+    }
+    function addRow($spot) {
+        return $this->add('View',null,$spot)->addClass('atk-layout-row');
 
     }
 
 
-    function addMenu($class) {
-        $this->addRow()->add($class);
+    function addMenu($class = 'Text') {
+        return $this->addRow('Header')->add($class);
     }
 
     /**
-     * Bottom bars will be positioned from the bottom edge of the page and upwards.
+     * Footer be positioned from the bottom edge of the page and upwards.
      *
      * If your page does not have enough content, it will automatically be expanded
      * to prevent you from having a gap underneath the bottom bar.
      */
-    function addBottomBar($options = array()) {
-
+    function addFooter($class = 'Text') {
+        return $this->addRow('Footer')->add($class);
     }
+
 
 
     function addLeftBar($optons = array()) {
@@ -63,5 +69,8 @@ class Layout_Fluid extends View {
 
     function defaultSpot() {
         return 'Layout';
+    }
+    function defaultTemplate() {
+        return array('layout/fluid');
     }
 }
