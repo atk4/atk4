@@ -24,6 +24,8 @@ Additionally SQL_Model can use data controllers for caching their data
 
 abstract class Controller_Data extends AbstractController {
     public $supportConditions = false;
+    public $supportLimit = false;
+    public $supportOrder = false;
 
     public $auto_track_element=true;
 
@@ -69,10 +71,10 @@ abstract class Controller_Data extends AbstractController {
     abstract function deleteAll($model);
 
     /** Create a new cursor and load model with the first entry */
-    abstract function rewind($model);
+    abstract function prefetchAll($model);
 
     /** Provided that rewind was called before, load next data entry */
-    abstract function next($model);
+    abstract function loadCurrent($model);
 
     /** must implement in underlying layer */
     function setOrder($model,$field,$desc=false){

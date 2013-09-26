@@ -54,7 +54,7 @@
  * @license See http://agiletoolkit.org/about/license
  * 
  **/
-class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,Countable {
+class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     public $default_exception='BaseException';
 
@@ -81,7 +81,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     public $id_field='id';   // name of ID field
 
     public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+
     public $conditions = array();
+    public $limit = array(null, null);
+    public $order = array(null, null);
 
     // Curretly loaded record
     public $data=array();
@@ -503,15 +506,17 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         return $this;
     }
     function setLimit($count, $offset=null) {
-        if($this->controller && $this->controller->hasMethod('setLimit')) {
-            $this->controller->setLimit($this,$count,$offset);
+        if(!$this->controller->supportLimit) {
+            throw $this->exception('The controller doesn\'t support limit');
         }
+        $this->limit = array($count, $offset);
         return $this;
     }
     function setOrder($field, $desc=null) {
-        if($this->controller && $this->controller->hasMethod('setOrder')) {
-            $this->controller->setOrder($this,$field,$desc);
+        if(!$this->controller->supportOrder) {
+            throw $this->exception('The controller doesn\'t support order');
         }
+        $this->order = array($field, $desc);
         return $this;
     }
     /**
@@ -532,14 +537,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
 
     // {{{ Iterator support 
     function rewind() {
-        $this->reset();
-        $this->controller->rewind($this);
-        if($this->loaded()) {
-            $this->hook('afterLoad');
-        }
+        $this->unload();
+        $this->controller->prefetchAll($this);
+        $this->next();
     }
     function next() {
-        $this->controller->next($this);
+        $this->hook('beforeLoad', array('iterating'));
+        $this->controller->loadCurrent($this);
         if($this->loaded()) {
             $this->hook('afterLoad');
         }
@@ -820,18 +824,5 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
             $m=$m->newInstance();
         }
         return $m->load($this[$our_field]);
-    }
-
-    function serialize() {
-        return serialize(array(
-            'id'=>$this->id,
-            'data'=>$this->data
-        ));
-    }
-
-    function unserialize($data) {
-        $data=unserialize($data);
-        $this->id=$data['id'];
-        $this->data=$data['data'];
     }
 }
