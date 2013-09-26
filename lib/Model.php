@@ -102,9 +102,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     }
     function __clone(){
         parent::__clone();
-        foreach($this->elements as $key=>$el)if(is_object($el)){
-            $this->elements[$key]=clone $el;
-            $this->elements[$key]->owner=$this;
+        foreach($this->elements as $key=>$el) {
+            if(is_object($el)) {
+                $this->elements[$key] = clone $el;
+                $this->elements[$key]->owner=$this;
+            }
         }
     }
     /** Creates field definition object containing field meta-information such as caption, type
@@ -114,38 +116,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
             ->add($this->field_class,$name);
     }
     /** Set value of the field. If $this->strict_fields, will throw exception for non-existant fields. Can also accept array */
-    function set($name,$value=undefined){
+    function set($name,$value=UNDEFINED) {
         if(is_array($name)){
             foreach($name as $key=>$val)$this->set($key,$val);
             return $this;
-        }
-        if($name===false || $name===null){
-            return $this->reset();
+        } elseif ($value === UNDEFINED) {
+            throw $this->exception('You must define the second argument');
         }
 
-        // Verify if such a filed exists
-        if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
-            ->addMoreInfo('name',$name);
+        if ($this->strict_fields && !$this->hasElement($name)) {
+            throw $this->exception('No such field','Logic')
+                ->addMoreInfo('field',$name);
+        }
 
-        if ($value !== undefined 
-            && (
-                // if data[$name] is not initialized at all (for example, in model using array controller)
-                (is_array($this->data) && !array_key_exists($name, $this->data))
-                // value as object
-                || is_object($value)
-                || is_object($this->data[$name])
-                // value as array
-                || is_array($value)
-                || is_array($this->data[$name])
-                // if one and only one value is NULL
-                || (is_null($value) xor is_null($this->data[$name]))
-                // values converted to string loosly differ
-                // need special treatment of [false] value because (string)false === "" not "0"
-                || ($value===false ? '0' : (string)$value) // this is not nice
-                   !=
-                   ($this->data[$name]===false ? '0' : (string)$this->data[$name])
-            )
-        ) {
+        if (($value !== $this->data[$name]) || (is_null($value) && !array_key_exists($name, $this->data))) {
             $this->data[$name]=$value;
             $this->setDirty($name);
         }
@@ -153,92 +137,97 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     }
     /** Return value of the field. If unspecified will return array of all fields.  */
     function get($name=null){
-        if($name===null)return $this->data;
+        if($name === null) {
+            return $this->data;
+        }
 
-        $f=$this->hasElement($name);
-
-        if($this->strict_fields && !$f)
-            throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
+        $f = $this->hasElement($name);
+        if($this->strict_fields && !$f) {
+            throw $this->exception('No such field','Logic')
+                ->addMoreInfo('field',$name);
+        }
 
         // See if we have data for the field
-        if(!$this->loaded() && !isset($this->data[$name])){ // && !$this->hasElement($name))
+        if(!$this->loaded() && !array_key_exists($name, $this->data)) {
+            if($f && $f->has_default_value) {
+                return $f->defaultValue();
+            }
 
-            if($f && $f->has_default_value)return $f->defaultValue();
-
-
-            if($this->strict_fields)throw $this->exception('Model field was not loaded')
-                ->addMoreInfo('id',$this->id)
-                ->addMoreinfo('field',$name);
+            if($this->strict_fields) {
+                throw $this->exception('Model field was not loaded')
+                    ->addMoreInfo('id',$this->id)
+                    ->addMoreinfo('field',$name);
+            }
 
             return null;
         }
         return $this->data[$name];
     }
-    /**
-     * Returns list of fieldnames which belong to specific group.
-     * You can add fields into groups when you define them and it can be used by
-     * the front-end to determine which fields needs to be displayed.
-     * 
-     * If no group is specified, then all non-system fieldnames are returned
-     * for backwards compatibility.
-     * 
-     * You can pass multiple groups as CSV and add "-" prefix to groupname to
-     * exclude all fields from this specific group in result set.
-     * 
-     * @param string $group Name of field group or CSV of them
-     * @return array
-     */
-    function getActualFields($group = undefined)
-    {
-        if($group===undefined && $this->actual_fields) {
-            return $this->actual_fields;
+
+    function getGroupField($group='all') {
+        $toExclude = array();
+        $toAdd = array();
+        if (strpos($group, ',')!==false) {
+            foreach(explode(',', $group) as $g) {
+                if($g[0]==='-') {
+                    $toExclude[] = substr($g, 1);
+                } else {
+                    $toAdd[] = $g;
+                }
+            }
+        } else {
+            $toAdd = array($group);
         }
 
         $fields = array();
-
-        if (strpos($group, ',')!==false) {
-            $groups = explode(',', $group);
-
-            foreach($groups as $g) {
-                if($g[0]==='-') { // ??? non ci entra mai... o se ci entra non fa nulla...
-                    $el = $this->getActualFields(substr($g, 1));
-                    $fields = array_diff($fields, $el);
-                } else {
-                    $el = $this->getActualFields($g);
-                    $fields = array_merge($fields, $el);
-                }
-            }
-        }
-
         foreach($this->elements as $el) {
-            if($el instanceof Field && !$el->hidden()) {
-                if( $group===undefined ||
-                    $el->group()===$group ||
-                    (strtolower($group =='visible') && $el->visible()) ||
-                    (strtolower($group =='editable') && $el->editable())
-                ) {
-                    $fields[] = $el->short_name;
-                }
+            if(!($el instanceof Field)) {
+                continue;
+            }
+            $elGroup = $el->group();
+            if (!in_array($elGroup, $toExclude) && 
+                    (in_array('all', $toAdd) || 
+                    in_array($elGroup, $toAdd)))
+            {
+                $fields[] = $el->short_name;
             }
         }
 
         return $fields;
     }
-    /** Returns field which should be used as a title */
-    function getTitleField(){
-        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
-        return $this->id_field;
-    }
+
     /**
      * Default set of fields which will be included into further queries
      * 
      * @param array $fields Array of fieldnames
      * @return $this
      */
-    function setActualFields(array $fields)
-    {
-        $this->actual_fields = $fields;
+    function setActualFields($group=UNDEFINED) {
+        if (is_array($group)) {
+            $this->actual_fields = $group;
+            return;
+        }
+        if ($group === UNDEFINED) {
+            $group = 'all';
+        }
+        $this->actual_fields = $this->getGroupField($group);
         return $this;
+    }
+    /**
+     * Returns list of fieldnames set by setActualFiels
+     * 
+     * @return array
+     */
+    function getActualFields() {
+        if ($this->actual_fields === false) {
+            $this->actual_fields = $this->getGroupField();
+        }
+        return $this->actual_fields;
+    }
+    /** Returns field which should be used as a title */
+    function getTitleField(){
+        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
+        return $this->id_field;
     }
     /**
      * When fields are changed, they are marked dirty.
@@ -247,16 +236,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
      * @param string $name Name of field
      * @return $this
      */
-    function setDirty($name)
-    {
+    function setDirty($name) {
         $this->dirty[$name] = true;
         return $this;
     }
-    function isDirty($name){
+    function isDirty($name) {
         return $this->dirty[$name] || 
             (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
-
 
     // {{{ ArrayAccess support 
     function offsetExists($name){
@@ -276,17 +263,18 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     /// {{{ Operation with external Data Controllers
 
     /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
-    function setSource($controller, $table=null, $id=null){
-        if(is_string($controller)){
+    function setSource($controller, $table=null, $id=null) {
+        if(is_string($controller)) {
             $controller=$this->api->normalizeClassName($controller,'Data');
-        } elseif(!$controller instanceof Controller_Data){
+        } elseif(!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
         $this->controller=$this->setController($controller);
-
         $this->controller->setSource($this,$table);
 
-        if($id)$this->load($id);
+        if($id) {
+            $this->load($id);
+        }
         return $this;
     }
     /** Cache controller is used to attempt and load data a little faster then the primary controller */
@@ -296,86 +284,72 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
+
     // {{{ LOAD METHODS
-    function load($id){
-        if($this->loaded()) {
-            $this->unload();
-        }
-        $this->hook('beforeLoad',array($id));
-        if(!$this->loaded()) {
-            $this->controller->tryLoad($this,$id);
-        }
+    function load($id) {
+        $this->tryLoad($id);
         if(!$this->loaded()) {
             throw $this->exception('Record with specified id was not found');
         }
-        $this->hook('afterLoad');
         return $this;
     }
-
-    function tryLoad($id){
+    function tryLoad($id) {
         if($this->loaded()) {
             $this->unload();
         }
-        $this->hook('beforeLoad',array($id));
-        if(!$this->loaded()) {
-            $this->controller->tryLoad($this,$id);
-        }
+        $this->hook('beforeLoad',array('load', array($id)));
+
+        $this->controller->tryLoad($this,$id);
+
         if($this->loaded()) {
             $this->hook('afterLoad');
+            $this->dirty = array();
         }
         return $this;
     }
-
-    /* Attempt to load record with specified ID. If this fails, no error is produced */
     function loadAny() {
-        if($this->loaded()) {
-            $this->unload();
-        }
-        if(!$this->loaded()) {
-            $this->controller->tryLoadAny($this);
-        }
+        $this->tryLoadAny();
         if(!$this->loaded()) {
             throw $this->exception('Record not found');
         }
-        $this->hook('afterLoad');
         return $this;
     }
-    function tryLoadAny(){
+    function tryLoadAny() {
         if($this->loaded()) {
             $this->unload();
         }
-        if(!$this->loaded()) {
-            $this->controller->tryLoadAny($this);
-        }
+        $this->hook('beforeLoad', array('loadAny', array()));
+
+        $this->controller->tryLoadAny($this);
+
         if($this->loaded()) {
             $this->hook('afterLoad');
+            $this->dirty = array();
         }
         return $this;
     }
-    function loadBy($field,$cond=undefined,$value=undefined){
-        if($this->loaded()) {
-            $this->unload();
-        }
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded()) {
-            $this->controller->tryLoadBy($this,$field,$cond,$value);
-        }
+    function loadBy($field, $cond, $value=UNDEFINED) {
+        $this->tryLoadBy($field, $cond, $value);
         if(!$this->loaded()) {
             throw $this->exception('Record not found');
         }
-        $this->hook('afterLoad');
         return $this;
     }
-    function tryLoadBy($field,$cond=undefined,$value=undefined){
+    function tryLoadBy($field, $cond, $value=UNDEFINED) {
+        if ($value === UNDEFINED) {
+            $value = $condition;
+            $cond = '=';
+        }
         if($this->loaded()) {
             $this->unload();
         }
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded()) {
-            $this->controller->tryLoadBy($this,$field,$cond,$value);
-        }
+        $this->hook('beforeLoad', array('loadBy', array($field, $cond, $value)));
+
+        $this->controller->tryLoadBy($this, $field, $cond, $value);
+
         if($this->loaded()) {
             $this->hook('afterLoad');
+            $this->dirty = array();
         }
         return $this;
     }
@@ -420,29 +394,29 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
      * record with new ID. */
     function save() {
-        $this->hook('beforeSave',array($this->id));
+        $this->hook('beforeSave', array($this->id));
 
         $is_update=$this->loaded();
-        if($is_update){
+        if($is_update) {
             $this->hook('beforeUpdate');
-        }else{
+        } else {
             $this->hook('beforeInsert');
         }
 
         $this->id=$this->controller->save($this, $this->id);
 
-        if($is_update){
+        if($is_update) {
             $this->hook('afterUpdate');
-        }else{
+        } else {
             $this->hook('afterInsert');
         }
 
-        if($this->loaded())$this->hook('afterSave',array($this->id));
+        if($this->loaded()) {
+            $this->dirty = array();
+            $this->hook('afterSave', array($this->id));
+        }
         return $this;
     }
-
-
-
 
     /** Save model and don't try to load it back */
     function saveAndUnload($id=undefined){
@@ -484,13 +458,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
             throw $this->exception('Unable to determine which record to delete');
         }
 
-
         $this->hook('beforeDelete',array($id));
         $this->controller->delete($this,$id);
         $this->hook('afterDelete',array($id));
 
         $this->unload();
-
         return $this;
     }
     /** Deletes all records associated with this model. */
@@ -502,17 +474,20 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         return $this;
     }
     /** Adds a new condition for this model */
-    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED) {
+    function addCondition($field, $operator=UNDEFINED, $value=UNDEFINED) {
         if (is_array($field)) {
             foreach ($field as $value) {
                 $this->addCondition($value[0], $value[1], $value[2]);
             }
+        } elseif ($operator === UNDEFINED) {
+            throw $this->exception('You must define the second argument');
         }
+
         if ($value === UNDEFINED) {
             $value = $condition;
             $operator = '=';
         }
-        $this->controller->addCondition($this,$field,$operator,$value);
+        $this->controller->addCondition($this, $field, $operator, $value);
         return $this;
     }
     // }}}
@@ -524,14 +499,16 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     // }}}
 
     // {{{ Ordering and limiting support
-    function setLimit($count,$offset=null){
-        if($this->controller && $this->controller->hasMethod('setLimit'))
+    function setLimit($count, $offset=null) {
+        if($this->controller && $this->controller->hasMethod('setLimit')) {
             $this->controller->setLimit($this,$count,$offset);
+        }
         return $this;
     }
-    function setOrder($field,$desc=null){
-        if($this->controller && $this->controller->hasMethod('setOrder'))
+    function setOrder($field, $desc=null) {
+        if($this->controller && $this->controller->hasMethod('setOrder')) {
             $this->controller->setOrder($this,$field,$desc);
+        }
         return $this;
     }
     /**
@@ -541,38 +518,41 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
      * 
      * @return integer
      */
-    function count($alias = null) {
+    function count($alias=null) {
         if($this->controller && $this->controller->hasMethod('count')) {
             return $this->controller->count($this, $alias);
-        } else {
-            throw $this->exception('Model do not have controller or count() method not implemented in controller')
-                ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
-        }
+        } 
+        throw $this->exception('Model do not have controller or count() method not implemented in controller')
+            ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
     }
     // }}}
 
     // {{{ Iterator support 
-    function rewind(){
+    function rewind() {
         $this->reset();
         $this->controller->rewind($this);
-        if($this->loaded())$this->hook('afterLoad');
+        if($this->loaded()) {
+            $this->hook('afterLoad');
+        }
     }
-    function next(){
+    function next() {
         $this->controller->next($this);
-        if($this->loaded())$this->hook('afterLoad');
+        if($this->loaded()) {
+            $this->hook('afterLoad');
+        }
         return $this;
     }
-    function current(){
+    function current() {
         return $this->get();
     }
-    function key(){
+    function key() {
         return (string)$this->id;
     }
     function valid(){
         return $this->loaded();
     }
 
-    function getRows($fields=null){
+    function getRows($fields=null) {
         $result=array();
         foreach($this as $row){
             if (is_null($fields)) {
@@ -596,8 +576,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
      *
      * @return AbstractObject $this
      */
-    function each($callable)
-    {
+    function each($callable) {
         if (!($this instanceof Iterator)) {
             throw $this->exception('Calling each() on non-iterative model');
         }
@@ -621,13 +600,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
 
 
     // TODO: worry about cloning!
-    function newField($name){
+    function newField($name) {
         return $this->addField($name); 
     }
-    function hasField($name){
+    function hasField($name) {
         return $this->hasElement($name);
     }
-    function getField($f){
+    function getField($f) {
         return $this->getElement($f);
     }
 
@@ -635,8 +614,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     public $_references=array();
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=undefined,$field_class='Field'){
-
+    function hasOne($model, $our_field=undefined, $field_class='Field') {
         // if our_field is not specified, let's try to guess it from other model's table
         if($our_field===undefined){
             // determine the actual class of the other model
@@ -658,7 +636,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         return null; // no field added
     }
     /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasMany($model,$their_field=undefined,$our_field=undefined,$reference=null){
+    function hasMany($model, $their_field=undefined, $our_field=undefined, $reference=null) {
         $class=$this->api->normalizeClassName($model,'Model');
         if(is_null($reference))$reference=$model;
         $this->_references[$reference]=array($class,$their_field,$our_field);
@@ -703,7 +681,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
      *
      * if the submodel's ref() will return 
      */
-    function ref($ref){
+    function ref($ref) {
         if(!$ref)return $this;
 
         list($ref,$rest)=explode('/',$ref,2);
@@ -742,7 +720,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
             return $m;
         }
     }
-    function _ref($ref,$class,$field,$val){
+    function _ref($ref,$class,$field,$val) {
         $m=$this
             ->add($this->api->normalizeClassName($class,'Model'))
             ->ref($ref);
@@ -795,7 +773,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
      * select * from section where chapter_id in (select id from chapter where book_id=5)
      *
      */
-    function _refBind($field_in,$expression,$field_out=null){
+    function _refBind($field_in,$expression,$field_out=null) {
 
         if($this->controller)return $this->controller->refBind($this,$field,$expression);
 
@@ -841,11 +819,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         }
         return $m->load($this[$our_field]);
     }
-
-    function db(){
-        return $this->_table[$this->controller->short_name]['db'];
-    }
-
 
     function serialize() {
         return serialize(array(
