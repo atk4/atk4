@@ -23,6 +23,7 @@ Additionally SQL_Model can use data controllers for caching their data
 */
 
 abstract class Controller_Data extends AbstractController {
+    public $supportConditions = false;
 
     public $auto_track_element=true;
 
@@ -72,11 +73,6 @@ abstract class Controller_Data extends AbstractController {
 
     /** Provided that rewind was called before, load next data entry */
     abstract function next($model);
-
-    /** Optional function your driver migt support */
-    function addCondition($model,$field,$operator,$value){
-        throw $this->exception('addCondition is not supported by this data driver');
-    }
 
     /** must implement in underlying layer */
     function setOrder($model,$field,$desc=false){

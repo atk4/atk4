@@ -81,7 +81,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     public $id_field='id';   // name of ID field
 
     public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
-
+    public $conditions = array();
 
     // Curretly loaded record
     public $data=array();
@@ -473,32 +473,35 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         $this->hook('afterDeleteAll');
         return $this;
     }
-    /** Adds a new condition for this model */
-    function addCondition($field, $operator=UNDEFINED, $value=UNDEFINED) {
-        if (is_array($field)) {
-            foreach ($field as $value) {
-                $this->addCondition($value[0], $value[1], $value[2]);
-            }
-        } elseif ($operator === UNDEFINED) {
-            throw $this->exception('You must define the second argument');
-        }
-
-        if ($value === UNDEFINED) {
-            $value = $condition;
-            $operator = '=';
-        }
-        $this->controller->addCondition($this, $field, $operator, $value);
-        return $this;
-    }
-    // }}}
 
     /** Unloads then loads current record back. Use this if you have added new fields */
     function reload(){
         return $this->load($this->id);
     }
-    // }}}
 
     // {{{ Ordering and limiting support
+    /** Adds a new condition for this model */
+    function addCondition($field, $operator=UNDEFINED, $value=UNDEFINED) {
+        if (!$this->controller->supportConditions) {
+            throw $this->exception('The controller doesn\'t support conditions');
+        }
+        if (is_array($field)) {
+            foreach ($field as $value) {
+                $this->addCondition($value[0], $value[1], count($value) === 2 ? UNDEFINED : $value[2]);
+            }
+            return $this;
+        } elseif ($operator === UNDEFINED) {
+            throw $this->exception('You must define the second argument');
+        }
+
+        if ($value === UNDEFINED) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $this->conditions[$field][] = array($field, $operator, $value);
+        return $this;
+    }
     function setLimit($count, $offset=null) {
         if($this->controller && $this->controller->hasMethod('setLimit')) {
             $this->controller->setLimit($this,$count,$offset);
@@ -595,7 +598,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
         }
         return $this;
     }
-
     // }}}
 
 
