@@ -337,7 +337,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable,C
     }
     function tryLoadBy($field, $cond, $value=UNDEFINED) {
         if ($value === UNDEFINED) {
-            $value = $condition;
+            $value = $cond;
             $cond = '=';
         }
         if($this->loaded()) {
