@@ -1442,6 +1442,9 @@ fieldset {
 p:last-child {
   margin-bottom: 0;
 }
+.atk-text-nowrap {
+  white-space: nowrap;
+}
 .atk-halfpush {
   margin-bottom: 0.809rem;
 }
@@ -1755,7 +1758,7 @@ input[type=submit].ui-button {
   display: table-cell;
   vertical-align: top;
 }
-.atk-media-block .atk-media img {
+.atk-media-block .atk-media > img {
   display: block;
 }
 .atk-media-block .atk-media + .atk-content {
