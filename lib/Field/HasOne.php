@@ -1,0 +1,21 @@
+<?php
+
+class Field_HasOne extends Field_Calculated {
+    function getValue($model, $data) {
+        $model = $this->add($this->getModel());
+        $id = $data[$this->foreignName];
+
+        $this->hook('beforeForeignLoad', array($model, $id));
+
+        $model->load($id);
+        $titleField = $model->getTitleField();
+        return $model->get($titleField) ?  : 'Ref#' . $id;
+    }
+
+    function setForeignFieldName($name) {
+        $this->foreignName = $name;
+        return $this;
+    }
+}
+
+

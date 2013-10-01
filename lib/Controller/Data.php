@@ -26,6 +26,7 @@ abstract class Controller_Data extends AbstractController {
     public $supportConditions = false;
     public $supportLimit = false;
     public $supportOrder = false;
+    public $supportRef = false;
 
     public $auto_track_element=true;
 
@@ -85,11 +86,5 @@ abstract class Controller_Data extends AbstractController {
     function setLimit($model,$count,$offset=0){
         throw $this->exception('setLimit is not supported by this data driver');
     }
-
-    /** returns count of records matching model criteria */
-    function count($model, $alias = null){
-        throw $this->exception('count is not supported by this data driver');
-    }
-
 }
 

@@ -82,6 +82,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
 
+    // references
+    public $_references = array();
+    // expression
+    public $_expressions = array();
+
     public $conditions = array();
     public $limit = array(null, null);
     public $order = array(null, null);
@@ -96,32 +101,35 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     protected $_save_later=false;
 
     // {{{ Basic functionality, field definitions, set(), get() and related methods
-    function init(){
-        parent::init();
-
-        if(method_exists($this,'defineFields'))
-            throw $this->exception('model->defineField() is obsolete. Change to init()','Obsolete')
-            ->addMoreInfo('class',get_class($this));
-    }
     function __clone(){
         parent::__clone();
-        foreach($this->elements as $key=>$el) {
+        foreach($this->elements as $key => $el) {
             if(is_object($el)) {
                 $this->elements[$key] = clone $el;
                 $this->elements[$key]->owner=$this;
             }
         }
+        foreach ($this->_expressions as $key => $el) {
+            $this->_expressions[$key] = clone $el;
+            $this->_expressions[$key]->owner = $this;
+        }
     }
     /** Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc */
-    function addField($name){
-        return $this
-            ->add($this->field_class,$name);
+    function addField($name) {
+        return $this->add($this->field_class, $name);
+    }
+    function addExpression($name, $field_class) {
+        $field = $this->add($field_class, $name);
+        $this->_expressions[$name] = $field;
+        return $field;
     }
     /** Set value of the field. If $this->strict_fields, will throw exception for non-existant fields. Can also accept array */
     function set($name,$value=UNDEFINED) {
         if(is_array($name)){
-            foreach($name as $key=>$val)$this->set($key,$val);
+            foreach($name as $key=>$val) {
+                $this->set($key,$val);
+            }
             return $this;
         } elseif ($value === UNDEFINED) {
             throw $this->exception('You must define the second argument');
@@ -133,21 +141,29 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
 
         if (($value !== $this->data[$name]) || (is_null($value) && !array_key_exists($name, $this->data))) {
-            $this->data[$name]=$value;
+            $this->data[$name] = $value;
             $this->setDirty($name);
         }
         return $this;
     }
     /** Return value of the field. If unspecified will return array of all fields.  */
-    function get($name=null){
+    function get($name=null) {
         if($name === null) {
-            return $this->data;
+            $data = $this->data;
+            foreach ($this->_expressions as $key => $field) {
+                $data[$key] = $field->getValue($this, $this->data);
+            }
+            return $data;
         }
 
         $f = $this->hasElement($name);
         if($this->strict_fields && !$f) {
             throw $this->exception('No such field','Logic')
                 ->addMoreInfo('field',$name);
+        }
+
+        if ($f instanceof Field_Calculated) {
+            return $f->getValue($this, $this->data);
         }
 
         // See if we have data for the field
@@ -161,7 +177,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
                     ->addMoreInfo('id',$this->id)
                     ->addMoreinfo('field',$name);
             }
-
             return null;
         }
         return $this->data[$name];
@@ -208,7 +223,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     function setActualFields($group=UNDEFINED) {
         if (is_array($group)) {
             $this->actual_fields = $group;
-            return;
+            return $this;
         }
         if ($group === UNDEFINED) {
             $group = 'all';
@@ -247,10 +262,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->dirty[$name] || 
             (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
+    // }}}
 
     // {{{ ArrayAccess support 
-    function offsetExists($name){
-        return $this->hasElement($name);
+    function offsetExists($name) {
+        return $this->get($name);
     }
     function offsetGet($name){
         return $this->get($name);
@@ -260,20 +276,33 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     function offsetUnset($name){
         unset($this->dirty[$name]);
+        unset($this->data[$name]);
     }
     // }}}
 
     /// {{{ Operation with external Data Controllers
 
-    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
-    function setSource($controller, $table=null, $id=null) {
+    function setControllerData($controller) {
         if(is_string($controller)) {
             $controller=$this->api->normalizeClassName($controller,'Data');
         } elseif(!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
         $this->controller=$this->setController($controller);
-        $this->controller->setSource($this,$table);
+        return $this->controller;
+    }
+
+    function setControllerSource($table) {
+        if (is_null($this->controller)) {
+            throw $this->exception('Call setControllerData before');
+        }
+        $this->controller->setSource($this, $table);
+    }
+
+    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
+    function setSource($controller, $table=null, $id=null) {
+        $this->setControllerData($controller);
+        $this->setControllerSource($table);
 
         if($id) {
             $this->load($id);
@@ -287,6 +316,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
+    // }}}
 
     // {{{ LOAD METHODS
     function load($id) {
@@ -304,10 +334,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $this->controller->tryLoad($this,$id);
 
-        if($this->loaded()) {
-            $this->hook('afterLoad');
-            $this->dirty = array();
-        }
+        $this->endLoad();
         return $this;
     }
     function loadAny() {
@@ -325,10 +352,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $this->controller->tryLoadAny($this);
 
-        if($this->loaded()) {
-            $this->hook('afterLoad');
-            $this->dirty = array();
-        }
+        $this->endLoad();
         return $this;
     }
     function loadBy($field, $cond, $value=UNDEFINED) {
@@ -350,11 +374,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $this->controller->tryLoadBy($this, $field, $cond, $value);
 
+        $this->endLoad();
+        return $this;
+    }
+    private function endLoad() {
         if($this->loaded()) {
             $this->hook('afterLoad');
             $this->dirty = array();
         }
-        return $this;
     }
     // END LOAD METHODS }}}
 
@@ -391,7 +418,12 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return $this
      */
     function reset() {
-        return $this->unload();
+        $ret = $this->unload();
+        $this->_table = array();
+        $this->conditions = array();
+        $this->order = array();
+        $this->limit = array();
+        return $ret;
     }
 
     /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
@@ -406,7 +438,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $this->hook('beforeInsert');
         }
 
-        $this->id=$this->controller->save($this, $this->id);
+        $source = $this->data;
+        // remove calculated fields
+        // ...
+        $this->id=$this->controller->save($this, $this->id, $source);
 
         if($is_update) {
             $this->hook('afterUpdate');
@@ -470,7 +505,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /** Deletes all records associated with this model. */
     function deleteAll(){
-        if($this->loaded())$this->unload();
+        if($this->loaded()) {
+            $this->unload();
+        }
         $this->hook('beforeDeleteAll');
         $this->controller->deleteAll($this);
         $this->hook('afterDeleteAll');
@@ -584,10 +621,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return AbstractObject $this
      */
     function each($callable) {
-        if (!($this instanceof Iterator)) {
-            throw $this->exception('Calling each() on non-iterative model');
-        }
-
         if (is_string($callable)) {
             foreach ($this as $value) {
                 $this->$callable();
@@ -616,213 +649,80 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->getElement($f);
     }
 
-    // Reference traversal for regular models
-    public $_references=array();
 
-    /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model, $our_field=undefined, $field_class='Field') {
-        // if our_field is not specified, let's try to guess it from other model's table
-        if($our_field===undefined){
-            // determine the actual class of the other model
-            if(!is_object($model)){
-                $tmp=$this->api->normalizeClassName($model,'Model');
-                $tmp=new $tmp; // avoid recursion
-            }else $tmp=$model;
-            $our_field=($tmp->table).'_id';
+    // {{{ Relational methods
+    function hasOne($model, $our_field=UNDEFINED, $field_class='Field_HasOne') {
+        $tmp = $this->api->normalizeClassName($model,'Model');
+        $tmp = new $tmp; // avoid recursion
+
+        if ($our_field === UNDEFINED) {
+            $refFieldName = ( $tmp->table ? : strtolower(get_class($this)) ) . '_id';
+        } else {
+            $refFieldName = $our_field;
         }
-
-        $this->_references[$our_field]=$model;
-
-        if($our_field !== null && $our_field!=='_id' && !$this->hasElement($our_field)){
-            $f=$this->add($field_class,$our_field);
-            $f->setModel($model);
-            return $f;
+        $displayFieldName = preg_replace('/_id$/', '', $our_field);
+        
+        if (!$this->hasElement($refFieldName)) {
+            $this->addField($refFieldName);
         }
-
-        return null; // no field added
+        $expr = $this->addExpression($displayFieldName, $field_class)
+            ->setModel($model)
+            ->setForeignFieldName($refFieldName);
+        $this->_references[$refFieldName] = $model;
+        return $expr;
     }
-    /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasMany($model, $their_field=undefined, $our_field=undefined, $reference=null) {
-        $class=$this->api->normalizeClassName($model,'Model');
-        if(is_null($reference))$reference=$model;
-        $this->_references[$reference]=array($class,$their_field,$our_field);
+    function hasMany($model, $their_field=UNDEFINED, $our_field=UNDEFINED, $reference_name=null) {
+        $class = $this->api->normalizeClassName($model, 'Model');
+        if(is_null($reference_name)) {
+            $reference_name=$model;
+        }
+        $this->_references[$reference_name] = array($class, $their_field, $our_field);
         return null;
     }
-    /*
-     * How references work:
-     *
-     * $this->hasMany('Chapter'); // hasMany('Section'), hasOne('Picture');
-     * $this->hasOne('Author');   // hasMany('Book'), hasOne('Person','father_id'), hasOne('Person','mother_id')
-     *
-     * $this->ref('Chapter');
-     *   1. Creates Model_Chapter
-     *   2. Model_Chapter -> addCondition() // meaning the traversed model must support them!
-     *   3. Returns
-     *
-     * $this->ref('Chapter/Section');
-     *   1. $b=Creates Model_Chapter
-     *   2. Calls $c=Model_Chapter->_ref('Section'); which only returns model, no binding
-     *   3. Decisions:
-     *   hasMany
-     *      a. $b is loaded(). $c->addCondition();
-     *      b. $b and $c are both SQL. $c->join($b);
-     *      c. load all id's from $b. $c->addCondition(field,ids);
-     *   hasOne()
-     *      a. $b is loaded(). $c->load($b[field]);
-     *      b. $b and $c are both SQL. $c->join($b);
-     *      c. load all [field] values, $c->addCondition('id',ids);
-     *
-     *  Book/Chapter/Section both SQL:
-     *    $book->load(5);
-     *    $book->ref('Chapter/Section');  // get all sections
-     *      $c=$b->_ref('Chapter/Section')
-     *      $s=$c->_ref('Section');
-     *      if($s and $c sql){
-     *        $s->addCondition('chapter_id',$c->getElement('id'))
-     *      }
+    function ref($ref1) {
+        list($ref,$rest)=explode('/', $ref1, 2);
 
-    /* For a current model, will resolve the reference, initialize the related model and call _refBind. If this
-     * is a deep traversing, then it will also specify a field_out to acquire expression, which will be passed
-     * into the further model and so on. 
-     *
-     * if the submodel's ref() will return 
-     */
-    function ref($ref) {
-        if(!$ref)return $this;
-
-        list($ref,$rest)=explode('/',$ref,2);
-
-        if(!isset($this->_references[$ref])){
+        if(!isset($this->_references[$ref])) {
             throw $this->exception('Reference is not defined')
                 ->addMoreInfo('model',$this)
                 ->addMoreInfo('ref',$ref);
         }
 
-        $class=$this->_references[$ref];
-        if(is_array($class)){
-            return $this->_ref(
-                $rest,
+        $class = $this->_references[$ref];
+        if(is_array($class)) { // hasMany
+            if ($rest) {
+                throw $this->exception('Cannot traverse multiple references');
+            }
+            $m = $this->_ref(
                 $class[0],
                 $class[1] && $class[1]!=UNDEFINED ? $class[1] : $this->table.'_id',
                 $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id 
             );
-        } else {
-            $id=$this->get($ref);
-            $m=$this->_ref(
-                $rest,
+        } else { // hasOne
+            $id = $this->get($ref);
+            $m = $this->_ref(
                 $class,
                 null,
                 $id
             );
-            if($id){
+            if($id) {
+                $this->hook('beforeRefLoad', array($m, $id));
                 $m->load($id);
-            }else{
-                $that=$this;
-                $m->addHook('afterSave',function($m,$id)use($that,$ref){
-                    $that[$ref]=$id;
-                    $that->save();
-                });
             }
-            return $m;
         }
+        if ($rest) {
+            $m = $m->ref($rest);
+        }
+        return $m;
     }
-    function _ref($ref,$class,$field,$val) {
-        $m=$this
-            ->add($this->api->normalizeClassName($class,'Model'))
-            ->ref($ref);
+    private function _ref($class,$field,$val) {
+        $m = $this->add($this->api->normalizeClassName($class, 'Model'));
 
-        // For one to many relation, create condition, otherwise do nothing,
-        // as load will follow
-        if($field){
+        // HasMany
+        if($field) {
             $m->addCondition($field,$val);
         }
         return $m;
     }
-    /* Join Binding
-     * ============
-     *
-     * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
-     * first subquery to complete before starting working on the next query. 
-     *
-     * Join binding exists as an extension in SQL_Model::_ref(). It will iterate through array of models and load
-     * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
-     * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
-     * have field_in same as field_out.
-     *
-
-    /* Subselect Binding
-     * =================
-     *
-     * Binding conditions when traversing. The model must apply field=expression, however this might work differently
-     * depending on the type of, the second argument and the refBind implementation. 
-     *
-     * If the model cannot embed this type of expression into field condition, it must call $expression->get(), fetch
-     * all the IDs and then use them instead. This insures intercompatibility between different model implementation.
-     *
-     * If model is using controller, it will attempt to seek controller's help for applying a condition.
-     *
-     * If field_out is specified, then the output should be the expression for the next join containing a set of
-     * values from the field_out.
-     *
-     * SQL: select field_out from table where field_in in (expression)
-     * Generic: foreach(expression->get() as $item){ $res[]=$m->loadBy($field_in,$item[id_field)->get($field_out) };
-     *
-     * If field_out is not specified, then the condition must be applied on a current model and the current model
-     * must be returned with the condition applied. This model bubbles up and is returned through a top-most 
-     * ref / refSQL.
-     *
-     * Shortcuts
-     * ---------
-     * if field_in and field_out are the same, simply return expression
-     *
-     * Book -< Chapter -< Section
-     * select * from section where chapter_id in (select id from chapter where book_id=5)
-     *
-     */
-    function _refBind($field_in,$expression,$field_out=null) {
-
-        if($this->controller)return $this->controller->refBind($this,$field,$expression);
-
-        list($myref,$rest)=explode('/',$ref,2);
-
-        if(!$this->_references[$myref])throw $this->exception('No such relation')
-            ->addMoreInfo('ref',$myref)
-            ->addMoreInfo('rest',$rest);
-        // Determine and populate related model
-
-        if(is_array($this->_references[$myref])){
-            $m=$this->_references[$myref][0];
-        }else{
-            $m=$this->_references[$myref];
-        }
-        $m=$this->add($m);
-        if($rest)$m=$m->_ref($rest);
-        $this->_refGlue();
-        
-
-        if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
-            ->addMoreInfo('name',$ref);
-
-        $r=$this->_references[$ref];
-
-        if(is_array($r)){
-            list($m,$our_field,$their_field)=$r;
-
-            if(is_string($m)){
-                $m=$this->add($m);
-            }else{
-                $m=$m->newInstance();
-            }
-
-            return $m->addCondition($their_field,$this[$our_field]);
-        }
-
-
-        if(is_string($m)){
-            $m=$this->add($m);
-        }else{
-            $m=$m->newInstance();
-        }
-        return $m->load($this[$our_field]);
-    }
+    // }}}
 }
