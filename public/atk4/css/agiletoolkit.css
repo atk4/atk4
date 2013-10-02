@@ -79,10 +79,11 @@ html,body{height:100%;}
 body>.atk-layout{table-layout:fixed;}
 html{font-family:"Helvetica Neue","Helvetica","sans-serif";font-size:100%;line-height:1.618}
 body{color:#000;font-size:.875rem}
-h1,h2,h3,h4,h5,h6{font-family:"Roboto","Helvetica Neue","Helvetica","sans-serif";font-weight:300;line-height:1;text-rendering:optimizeLegibility;margin:2.427rem 0 .809rem 0}h1:first-child,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0}
+h1,h2,h3,h4,h5,h6{font-family:"Roboto","Helvetica Neue","Helvetica","sans-serif";font-weight:300;line-height:1.2;text-rendering:optimizeLegibility;margin:2.427rem 0 .809rem 0}h1:first-child,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0}
 h1+.atk-form,h2+.atk-form,h3+.atk-form,h4+.atk-form,h5+.atk-form,h6+.atk-form{margin-top:1.618rem}
 .atk-size-zetta{font-size:3.7064999999999997rem}
 .atk-size-exa{font-size:2.779875rem}
+h1{margin-bottom:2.427rem}
 h1,.atk-size-peta{font-size:2.29075rem}
 h2,.atk-size-tera{font-size:1.717625rem}
 h3,.atk-size-giga{font-size:1.41575rem}
