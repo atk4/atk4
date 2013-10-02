@@ -203,6 +203,7 @@ a.atk-button,a:link.atk-button,a:visited.atk-button,button.atk-button,input[type
 .atk-media-block .atk-media+.atk-content{padding-left:1.618rem}
 .atk-table .atk-media-block .atk-media+.atk-content{padding-left:.809rem}
 .atk-menu-bar{width:100%}.atk-menu-bar.atk-cells>*{vertical-align:middle}.atk-menu-bar.atk-cells>* .atk-logo,.atk-menu-bar.atk-cells>* .atk-actions,.atk-menu-bar.atk-cells>* .atk-media-block{margin-left:1.618rem;margin-right:1.618rem;white-space:nowrap}
+.atk-menu-bar.atk-cells>* .atk-logo{display:inline-block;margin-top:.5em;margin-bottom:.5em}
 .atk-menu-bar.atk-cells>* .atk-media-block .atk-content{padding-left:.5393333333333333rem}
 .atk-menu{display:inline-block}.atk-menu,.atk-menu li,.atk-menu li,.atk-menu li li{margin:0;padding:0;list-style-type:none}
 .atk-menu>li a{display:block;padding:.6em 1.2em}
@@ -240,12 +241,12 @@ a{color:#00f;text-decoration:none}a:hover,a:focus{color:#f00}
 *[class*=atk-swatch].atk-swatch-1,.atk-button[class*=atk-swatch].atk-swatch-1{background:#bf1313;border-color:#bf1313;color:#fff}
 *[class*=atk-swatch].atk-swatch-2,.atk-button[class*=atk-swatch].atk-swatch-2{background:#14cc76;color:#fff}
 *[class*=atk-swatch].atk-swatch-3,.atk-button[class*=atk-swatch].atk-swatch-3{background:#0a6666;color:#fff}
-*[class*=atk-swatch].atk-swatch-4,.atk-button[class*=atk-swatch].atk-swatch-4{background:#0d171a;color:#fff}
+*[class*=atk-swatch].atk-swatch-4,.atk-button[class*=atk-swatch].atk-swatch-4{background:#1e353c;color:#fff}
 *[class*=atk-swatch].atk-swatch-5,.atk-button[class*=atk-swatch].atk-swatch-5{background:#dee8e3;color:#000}
 *[class*=atk-swatch].atk-button:hover.atk-swatch-1,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-1{background:#d61515}
 *[class*=atk-swatch].atk-button:hover.atk-swatch-2,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-2{background:#16e383}
 *[class*=atk-swatch].atk-button:hover.atk-swatch-3,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-3{background:#0c7d7d}
-*[class*=atk-swatch].atk-button:hover.atk-swatch-4,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-4{background:#16262b}
+*[class*=atk-swatch].atk-button:hover.atk-swatch-4,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-4{background:#26444d}
 *[class*=atk-swatch].atk-button:hover.atk-swatch-5,.atk-button[class*=atk-swatch].atk-button:hover.atk-swatch-5{background:#edf2f0}
 *[class*=atk-effect].atk-effect-danger{background:#fcc}
 *[class*=atk-effect].atk-effect-warning{background:#fcffcc}
