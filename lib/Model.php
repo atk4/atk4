@@ -292,7 +292,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->controller;
     }
 
-    function setControllerSource($table) {
+    function setControllerSource($table=null) {
         if (is_null($this->controller)) {
             throw $this->exception('Call setControllerData before');
         }
@@ -438,10 +438,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $this->hook('beforeInsert');
         }
 
-        $source = $this->data;
+        $source = $this->get();
         // remove calculated fields
         // ...
-        $this->id=$this->controller->save($this, $this->id, $source);
+        $this->id = $this->controller->save($this, $this->id, $source);
 
         if($is_update) {
             $this->hook('afterUpdate');
@@ -495,9 +495,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         if(!$this->loaded()) {
             throw $this->exception('Unable to determine which record to delete');
         }
+        $id = $this->id;
 
         $this->hook('beforeDelete',array($id));
-        $this->controller->delete($this,$id);
+        $this->controller->delete($this, $id);
         $this->hook('afterDelete',array($id));
 
         $this->unload();
@@ -590,7 +591,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->get();
     }
     function key() {
-        return (string)$this->id;
+        return $this->id;
     }
     function valid(){
         return $this->loaded();

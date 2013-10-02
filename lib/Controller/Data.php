@@ -30,12 +30,7 @@ abstract class Controller_Data extends AbstractController {
 
     public $auto_track_element=true;
 
-    function setSource($model,$data=undefined){
-        if($data===undefined)return $this;
-
-        if(!$model->_table[$this->short_name]){
-            $model->_table[$this->short_name]=array();
-        }
+    function setSource($model, $data) {
         $model->_table[$this->short_name] = $data;
         return $this;
     }
@@ -62,7 +57,7 @@ abstract class Controller_Data extends AbstractController {
         $this->tryLoad($model,$id);
     }
 
-	abstract function save($model, $id);
+	abstract function save($model, $id, $data);
 	abstract function delete($model,$id);
 
 	abstract function tryLoad($model,$id);
@@ -77,14 +72,5 @@ abstract class Controller_Data extends AbstractController {
     /** Provided that rewind was called before, load next data entry */
     abstract function loadCurrent($model);
 
-    /** must implement in underlying layer */
-    function setOrder($model,$field,$desc=false){
-        throw $this->exception('setOrder is not supported by this data driver');
-    }
-
-    /** must implement in underlying layer */
-    function setLimit($model,$count,$offset=0){
-        throw $this->exception('setLimit is not supported by this data driver');
-    }
 }
 
