@@ -39,6 +39,7 @@ class ApiFrontend extends ApiWeb{
         $this->namespace_routes[$prefix]=$this->normalizeClassName($ns);
     }
     function layout_Content(){
+        $this->template->trySet('pagename','page-'.$this->page);
 
         $layout = $this->layout ?: $this;
 
