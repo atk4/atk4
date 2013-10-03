@@ -1,23 +1,5 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /*
- * Implementation of array access controller for Agile Toolkit Models.
- *
- * $m=$this->add('Model');
- * $m->addField('test');
- * $m->table='test_table';
- *
- * $storage=array();
- *
- * $m->setSource('Array', $storage);
- * $m['test']=123;
- * $m->save(1);
- *
- * $m['test']=321;
- * $m->save(2);
- *
- * $m->load(1);
- * echo $m['test'];
-*//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -32,7 +14,8 @@
 class Controller_Data_Array extends Controller_Data {
     public $supportConditions = true;
     public $supportLimit = true;
-    public $supportOrder = true;
+    public $supportOrder = false;
+    public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true);
 
     function setSource($model, $table) {
         if (!is_array($table)) {
@@ -103,7 +86,7 @@ class Controller_Data_Array extends Controller_Data {
 
     function prefetchAll($model) {
         // TODO: miss ordering...
-        $model->_table[$this->short_name]['__ids__'] = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions);
+        $model->_table[$this->short_name]['__ids__'] = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions, $model->limit);
         reset($model->_table[$this->short_name]['__ids__']);
         $model->reloaded = true;
     }
@@ -125,7 +108,12 @@ class Controller_Data_Array extends Controller_Data {
     }
 
     // resolve all conditions
-    function getIdsFromConditions($rows, $conditions) {
+    function getIdsFromConditions($rows, $conditions, $limit=null) {
+        $withLimit = !is_null($limit) && (is_array($limit) && !is_null($limit[0]));
+        if ($withLimit) {
+            $max = is_null($limit[1]) ? $limit[0] : ($limit[0] + $limit[1]);
+        }
+
         $ids = array();
         foreach ($rows as $id => $row) {
             if ($id === '__ids__') {
@@ -145,7 +133,13 @@ class Controller_Data_Array extends Controller_Data {
             }
             if ($valid === true) {
                 $ids[] = $id;
+                if ($withLimit && (count($ids) > $max)) {
+                    break;
+                }
             }
+        }
+        if ($withLimit) {
+            $ids = array_slice($ids, $limit[0], $limit[1]);
         }
         return $ids;
     }
@@ -154,6 +148,7 @@ class Controller_Data_Array extends Controller_Data {
         $value = $row[$conditions[0]];
         $op = $conditions[1];
         $expected = $conditions[2];
+
         switch ($op) {
             case '=':
                 return $value === $expected;

@@ -175,7 +175,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             if($this->strict_fields) {
                 throw $this->exception('Model field was not loaded')
                     ->addMoreInfo('id',$this->id)
-                    ->addMoreinfo('field',$name);
+                    ->addMoreInfo('field',$name);
             }
             return null;
         }
@@ -281,7 +281,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // }}}
 
     /// {{{ Operation with external Data Controllers
-
     function setControllerData($controller) {
         if(is_string($controller)) {
             $controller=$this->api->normalizeClassName($controller,'Data');
@@ -292,6 +291,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->controller;
     }
 
+    /*
+     * $table is managed by Controller_Data. It's depends on Controller_Data implementation
+     */
     function setControllerSource($table=null) {
         if (is_null($this->controller)) {
             throw $this->exception('Call setControllerData before');
@@ -524,7 +526,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /** Adds a new condition for this model */
     function addCondition($field, $operator=UNDEFINED, $value=UNDEFINED) {
         if (!$this->controller->supportConditions) {
-            throw $this->exception('The controller doesn\'t support conditions');
+            throw $this->exception('The controller doesn\'t support conditions', 'NotImplemented');
         }
         if (is_array($field)) {
             foreach ($field as $value) {
@@ -534,10 +536,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         } elseif ($operator === UNDEFINED) {
             throw $this->exception('You must define the second argument');
         }
-
         if ($value === UNDEFINED) {
             $value = $operator;
             $operator = '=';
+        }
+        $supportOperators = $this->controller->supportOperators;
+        if ($supportOperators !== 'all' && ( is_null($supportOperators) || (!isset($supportOperators[$operator])))) {
+            throw $this->exception('Unsupport operator', 'NotImplemented')
+                ->addMoreInfo('operator', $operator);
         }
 
         $this->conditions[$field][] = array($field, $operator, $value);
@@ -545,14 +551,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     function setLimit($count, $offset=null) {
         if(!$this->controller->supportLimit) {
-            throw $this->exception('The controller doesn\'t support limit');
+            throw $this->exception('The controller doesn\'t support limit', 'NotImplemented');
         }
         $this->limit = array($count, $offset);
         return $this;
     }
     function setOrder($field, $desc=null) {
         if(!$this->controller->supportOrder) {
-            throw $this->exception('The controller doesn\'t support order');
+            throw $this->exception('The controller doesn\'t support order', 'NotImplemented');
         }
         $this->order = array($field, $desc);
         return $this;
@@ -568,8 +574,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         if($this->controller && $this->controller->hasMethod('count')) {
             return $this->controller->count($this, $alias);
         } 
-        throw $this->exception('Model do not have controller or count() method not implemented in controller')
-            ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
+        throw $this->exception('The controller doesn\'t support count', 'NotImplemented')
+            ->addMoreInfo('controller', $this->controller ? $this->controller->short_name : 'none');
     }
     // }}}
 

@@ -23,38 +23,18 @@ Additionally SQL_Model can use data controllers for caching their data
 */
 
 abstract class Controller_Data extends AbstractController {
+    public $default_exception='Exception_DB';
     public $supportConditions = false;
     public $supportLimit = false;
     public $supportOrder = false;
     public $supportRef = false;
+    public $supportOperators = null;
 
     public $auto_track_element=true;
 
     function setSource($model, $data) {
         $model->_table[$this->short_name] = $data;
         return $this;
-    }
-
-    /* Normally model will call our methods. If the controller is used as a secondary cache, then we need to place hooks
-     * instead */
-    function addHooks($m,$priority){
-        if($m->controller===$this)throw $this->exception('Cannot be data source and cache simultaniously');
-
-        $m->addHook('beforeLoad',array($this,'cache_load'),array(),$priority);
-        $m->addHook('afterSave',array($this,'save'),array(),-$priority);
-        $m->addHook('afterDelete',array($this,'delete'),array(),-$priority);
-
-        return $this;
-    }
-
-    /* Cache Implementation */
-    function isCache($model){
-        return $model->controller != $this;
-    }
-    function cache_load($model,$id=null,$id2=null){
-        if(is_object($id))$id=$id2;
-        if($model->loaded())return; // other cache loaded us
-        $this->tryLoad($model,$id);
     }
 
 	abstract function save($model, $id, $data);
