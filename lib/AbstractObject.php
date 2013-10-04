@@ -531,7 +531,7 @@ abstract class AbstractObject
             } else {
                 $type = $this->default_exception.'_'.substr($type, 1);
             }
-        } elseif ($type != 'BaseException' && strpos($type, 'Exception_') !== 0) {
+        } elseif ($type != 'BaseException' && strpos($type, 'Exception_') !== 0 && strpos($type, 'Exception_') === false) {
             $type = 'Exception_'.$type;
         }
 
