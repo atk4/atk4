@@ -51,24 +51,14 @@ class Controller_Data_Array extends Controller_Data {
         unset($model->_table[$this->short_name][$id]);
     }
 
-    function tryLoad($model,$id) {
+    function loadById($model, $id) {
         if (isset($model->_table[$this->short_name][$id])) {
             $model->id = $id;
             $model->data = $model->_table[$this->short_name][$id];
         }
     }
 
-    function tryLoadBy($model, $field, $cond, $value) {
-        $conditions = $model->conditions;
-        $conditions[$field][] = array($field, $cond, $value);
-        $ids = $this->getIdsFromConditions($model->_table[$this->short_name], $conditions);
-        if (!empty($ids)) {
-            $id = array_pop($ids);
-            $model->id = $id;
-            $model->data = $model->_table[$this->short_name][$id];
-        }
-    }
-    function tryLoadAny($model) {
+    function loadByConditions($model) {
         $ids = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions);
         if (!empty($ids)) {
             $id = array_pop($ids);
@@ -119,17 +109,13 @@ class Controller_Data_Array extends Controller_Data {
             if ($id === '__ids__') {
                 continue;
             }
+
             $valid = true;
-            foreach ($conditions as $cond) {
-                foreach ($cond as $c) {
-                    if (!$this->isValid($row, $c)) {
-                        $valid = false;
-                        break;
-                    }   
-                }
-                if ($valid === false) {
+            foreach ($conditions as $c) {
+                if (!$this->isValid($row, $c)) {
+                    $valid = false;
                     break;
-                }
+                }   
             }
             if ($valid === true) {
                 $ids[] = $id;

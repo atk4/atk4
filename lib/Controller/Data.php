@@ -23,14 +23,14 @@ Additionally SQL_Model can use data controllers for caching their data
 */
 
 abstract class Controller_Data extends AbstractController {
-    public $default_exception='Exception_DB';
+    public $default_exception = 'Exception_DB';
     public $supportConditions = false;
     public $supportLimit = false;
     public $supportOrder = false;
     public $supportRef = false;
     public $supportOperators = null;
 
-    public $auto_track_element=true;
+    public $auto_track_element = true;
 
     function setSource($model, $data) {
         $model->_table[$this->short_name] = $data;
@@ -38,11 +38,10 @@ abstract class Controller_Data extends AbstractController {
     }
 
 	abstract function save($model, $id, $data);
-	abstract function delete($model,$id);
+	abstract function delete($model, $id);
 
-	abstract function tryLoad($model,$id);
-    abstract function tryLoadBy($model,$field,$cond,$value);
-    abstract function tryLoadAny($model);
+	abstract function loadById($model, $id);
+    abstract function loadByConditions($model);
 
     abstract function deleteAll($model);
 
@@ -51,6 +50,5 @@ abstract class Controller_Data extends AbstractController {
 
     /** Provided that rewind was called before, load next data entry */
     abstract function loadCurrent($model);
-
 }
 

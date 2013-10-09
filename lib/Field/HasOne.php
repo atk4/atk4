@@ -1,6 +1,8 @@
 <?php
 
 class Field_HasOne extends Field_Calculated {
+    private $foreignName;
+
     function getValue($model, $data) {
         $model = $this->add($this->getModel());
         $id = $data[$this->foreignName];
@@ -12,10 +14,12 @@ class Field_HasOne extends Field_Calculated {
         return $model->get($titleField) ?  : 'Ref#' . $id;
     }
 
+    function getForeignFieldName() {
+        return $this->foreignName;
+    }
+
     function setForeignFieldName($name) {
         $this->foreignName = $name;
         return $this;
     }
 }
-
-

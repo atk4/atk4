@@ -69,14 +69,11 @@ class Controller_Data_Dumper extends Controller_Data {
     function delete($model,$id) {
         return $this->__call('delete', array($model, $id));
     }
-    function tryLoad($model,$id) {
-        return $this->__call('tryLoad', array($model, $id));
+    function loadById($model,$id) {
+        return $this->__call('loadById', array($model, $id));
     }
-    function tryLoadBy($model, $field, $cond, $value) {
-        return $this->__call('tryLoadBy', array($model, $field, $cond, $value));
-    }
-    function tryLoadAny($model) {
-        return $this->__call('tryLoadAny', array($model));
+    function loadByConditions($model) {
+        return $this->__call('loadByConditions', array($model));
     }
     function deleteAll($model) {
         return $this->__call('deleteAll', array($model));

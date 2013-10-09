@@ -116,17 +116,22 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /** Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc */
-    function addField($name) {
-        return $this->add($this->field_class, $name);
+    function addField($name, $alias=null) {
+        return $this->add($this->field_class, $name)
+            ->actual($alias);
     }
-    function addExpression($name, $field_class) {
-        $field = $this->add($field_class, $name);
+    function addExpression($name, $expression, $field_class=UNDEFINED) {
+        if ($field_class === UNDEFINED) {
+            $field_class = 'Field_Callback';
+        }
+        $field = $this->add($field_class, $name)
+            ->setExpression($expression);
         $this->_expressions[$name] = $field;
         return $field;
     }
     /** Set value of the field. If $this->strict_fields, will throw exception for non-existant fields. Can also accept array */
     function set($name,$value=UNDEFINED) {
-        if(is_array($name)){
+        if(is_array($name)) {
             foreach($name as $key=>$val) {
                 $this->set($key,$val);
             }
@@ -244,7 +249,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /** Returns field which should be used as a title */
     function getTitleField(){
-        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
+        if($this->title_field && $this->hasElement($this->title_field)) {
+            return $this->title_field;
+        }
         return $this->id_field;
     }
     /**
@@ -334,7 +341,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
         $this->hook('beforeLoad',array('load', array($id)));
 
-        $this->controller->tryLoad($this,$id);
+        $this->controller->loadById($this,$id);
 
         $this->endLoad();
         return $this;
@@ -352,7 +359,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
         $this->hook('beforeLoad', array('loadAny', array()));
 
-        $this->controller->tryLoadAny($this);
+        $this->controller->loadByConditions($this);
 
         $this->endLoad();
         return $this;
@@ -364,17 +371,16 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
         return $this;
     }
-    function tryLoadBy($field, $cond, $value=UNDEFINED) {
-        if ($value === UNDEFINED) {
-            $value = $cond;
-            $cond = '=';
-        }
+    function tryLoadBy($field, $cond=UNDEFINED, $value=UNDEFINED) {
         if($this->loaded()) {
             $this->unload();
         }
         $this->hook('beforeLoad', array('loadBy', array($field, $cond, $value)));
 
-        $this->controller->tryLoadBy($this, $field, $cond, $value);
+        $conditions = $this->conditions;
+        $this->addCondition($field, $cond, $value);
+        $this->controller->loadByConditions($this);
+        $this->conditions = $conditions;
 
         $this->endLoad();
         return $this;
@@ -433,7 +439,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     function save() {
         $this->hook('beforeSave', array($this->id));
 
-        $is_update=$this->loaded();
+        $is_update = $this->loaded();
         if($is_update) {
             $this->hook('beforeUpdate');
         } else {
@@ -533,7 +539,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
                 $this->addCondition($value[0], $value[1], count($value) === 2 ? UNDEFINED : $value[2]);
             }
             return $this;
-        } elseif ($operator === UNDEFINED) {
+        } elseif (($operator === UNDEFINED) && (!is_object($field))) { // controller can handle objects
             throw $this->exception('You must define the second argument');
         }
         if ($value === UNDEFINED) {
@@ -546,7 +552,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
                 ->addMoreInfo('operator', $operator);
         }
 
-        $this->conditions[$field][] = array($field, $operator, $value);
+        $this->conditions[] = array($field, $operator, $value);
         return $this;
     }
     function setLimit($count, $offset=null) {
@@ -659,7 +665,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     // {{{ Relational methods
     function hasOne($model, $our_field=UNDEFINED, $field_class='Field_HasOne') {
-        $tmp = $this->api->normalizeClassName($model,'Model');
+        $tmp = $this->api->normalizeClassName($model, 'Model');
         $tmp = new $tmp; // avoid recursion
 
         if ($our_field === UNDEFINED) {
@@ -672,7 +678,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         if (!$this->hasElement($refFieldName)) {
             $this->addField($refFieldName);
         }
-        $expr = $this->addExpression($displayFieldName, $field_class)
+        $expr = $this->addExpression($displayFieldName, $model, $field_class)
             ->setModel($model)
             ->setForeignFieldName($refFieldName);
         $this->_references[$refFieldName] = $model;
