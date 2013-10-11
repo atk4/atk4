@@ -59,7 +59,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     public $default_exception='BaseException';
 
     /** The class prefix used by addField */
-    public $field_class='Field';
+    public $field_class='Field_Base';
 
     /** If true, model will now allow to set values for non-existant fields */
     public $strict_fields=false;
@@ -90,6 +90,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     public $conditions = array();
     public $limit = array(null, null);
     public $order = array(null, null);
+
+    protected $defaultHasOneFieldClass = 'Field_HasOne';
+    protected $defaultExpressionFieldClass = 'Field_Callback';
 
     // Curretly loaded record
     public $data=array();
@@ -122,7 +125,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     function addExpression($name, $expression, $field_class=UNDEFINED) {
         if ($field_class === UNDEFINED) {
-            $field_class = 'Field_Callback';
+            $field_class = $this->defaultExpressionFieldClass;
         }
         $field = $this->add($field_class, $name)
             ->setExpression($expression);
@@ -204,7 +207,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $fields = array();
         foreach($this->elements as $el) {
-            if(!($el instanceof Field)) {
+            if(!($el instanceof $this->field_class)) {
                 continue;
             }
             $elGroup = $el->group();
@@ -664,7 +667,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
 
     // {{{ Relational methods
-    function hasOne($model, $our_field=UNDEFINED, $field_class='Field_HasOne') {
+    function hasOne($model, $our_field=UNDEFINED, $field_class=UNDEFINED) {
+        if ($field_class === UNDEFINED) {
+            $field_class = $this->defaultHasOneFieldClass;
+        }
         $tmp = $this->api->normalizeClassName($model, 'Model');
         $tmp = new $tmp; // avoid recursion
 
