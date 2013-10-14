@@ -105,9 +105,6 @@ class DB extends AbstractController
         // Configure PDO to play nice
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Use global table prefixes
-        $this->table_prefix = $dsn['table_prefix'];
-
         // Based on type, switch dsql class
         list($this->type, $junk) = explode(':', $dsn[0]);
         $this->type = strtolower($this->type);
