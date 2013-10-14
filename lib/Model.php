@@ -175,20 +175,22 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         return $this->data[$name];
     }
     /**
-     * Returns list of fieldnames which belong to specific group.
+     * Returns list of fieldnames or field objects which belong to specific group
+     * 
      * You can add fields into groups when you define them and it can be used by
      * the front-end to determine which fields needs to be displayed.
      * 
-     * If no group is specified, then all non-system fieldnames are returned
-     * for backwards compatibility.
+     * If no group is specified, then all non-system fieldnames (or fields) are
+     * returned for backwards compatibility.
      * 
      * You can pass multiple groups as CSV and add "-" prefix to groupname to
      * exclude all fields from this specific group in result set.
      * 
-     * @param string $group Name of field group or CSV of them
+     * @param string $group      Name of field group or CSV of them
+     * @param bool   $as_objects If set true, then return array of field objects
      * @return array
      */
-    function getActualFields($group = undefined)
+    function getActualFields($group = undefined, $as_objects = false)
     {
         if($group===undefined && $this->actual_fields) {
             return $this->actual_fields;
@@ -217,7 +219,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                     (strtolower($group=='visible') && $el->visible()) ||
                     (strtolower($group=='editable') && $el->editable())
                 ) {
-                    $fields[] = $el->short_name;
+                    $fields[] = $as_objects ? $el : $el->short_name;
                 }
             }
         }
