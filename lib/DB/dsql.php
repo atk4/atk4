@@ -620,7 +620,6 @@ class DB_dsql extends AbstractModel implements Iterator {
                 }
             }
             $field=$or;
-            $this->api->x=1;
         }
 
 
