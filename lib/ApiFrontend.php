@@ -28,6 +28,9 @@ class ApiFrontend extends ApiWeb{
     /** List of pages which are routed into namespace */
     public $namespace_routes=array();
 
+    /** Object for a custom layout, introduced in 4.3 */
+    public $layout=null;
+
     // {{{ Layout Implementation
     /** Content in the global (shared.html) template is rendered by page object. This method loads either class or static file */
     function initLayout(){
