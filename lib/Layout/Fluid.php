@@ -65,8 +65,9 @@ class Layout_Fluid extends View {
 
 
     function addLeftBar($optons = array()) {
-
-
+        return $this->add('View',null,'LeftBar')
+            ->setElement('nav')
+            ->addClass('atk-layout-column span_2 hecto');
     }
 
     function defaultSpot() {
