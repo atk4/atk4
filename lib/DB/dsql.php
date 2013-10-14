@@ -487,30 +487,23 @@ class DB_dsql extends AbstractModel implements Iterator {
      */
     function field($field, $table = null, $alias = null)
     {
+        if (is_string($field) && strpos($field, ',') !== false) {
+            $field = explode(',', $field);
+        } elseif (is_object($field)) {
+            $alias = $table;
+            $table = null;
+        }
+
         if (is_array($field)) {
             foreach ($field as $alias => $f) {
                 if (is_numeric($alias)) {
-                    $alias=null;
+                    $alias = null;
                 }
                 $this->field($f, $table, $alias);
             }
             return $this;
-        } elseif (is_string($field)) {
-            $field=explode(',', $field);
-            if (count($field) > 1) {
-                foreach ($field as $f) {
-                    $this->field($f, $table, $alias);
-                }
-                return $this;
-            }
-            $field=$field[0];
         }
-
-        if (is_object($field)) {
-            $alias=$table;
-            $table=null;
-        }
-        $this->args['fields'][]=array($field, $table, $alias);
+        $this->args['fields'][] = array($field, $table, $alias);
         return $this;
     }
 
