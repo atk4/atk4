@@ -53,6 +53,7 @@ class SQL_Model extends Model implements Serializable {
 
     /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
     protected $dsql; 
+    public $field_class='Field';
 
     /** If you wish that alias is used for the table when selected, you can define it here.
      * This will help to keep SQL syntax shorter, but will not impact functionality */

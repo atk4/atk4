@@ -64,6 +64,7 @@ class Controller_Data_SQL extends Controller_Data {
         if (empty($dsql->args['set'])) {
             return $id; // is it correct?
         }
+        $this->api->db->beginTransaction();
         if (is_null($id)) {
             $id = $dsql->insert();
         } else {
@@ -76,7 +77,16 @@ class Controller_Data_SQL extends Controller_Data {
                 $model->data[$model->id_field] = $id;
             }
         }
-        return '' . $id;
+        //$id = '' . $id;
+        
+        $model->tryLoad($id);
+        if ($model->loaded()) {
+            $this->api->db->commit();
+        } else {
+            $this->api->db->rollback();
+            throw $model->exception('Record with specified id was not found');
+        }
+        return $id;
     }
 
     function delete($model,$id) {

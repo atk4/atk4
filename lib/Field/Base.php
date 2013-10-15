@@ -1,33 +1,34 @@
 <?php
 
 class Field_Base extends AbstractObject {
+    public $auto_track_element=true;
+
+    protected $table=null;
+    public $actual_field=null;
     
     public $type='string';
     public $readonly=false;
     public $system=false;
-    public $hidden=false;
-    public $editable=true;
-    public $visible=true;
-    public $display=null;
-    public $caption=null;
-    public $placeholder=null;
-    public $hint=null;
     public $group=null;
-    public $allowHTML=false;
-    public $sortable=false;
-    public $searchable=false;
     public $mandatory=false;
     public $has_default_value=false;
     public $defaultValue=null;
-    public $emptyText=null;
-    public $auto_track_element=true;
+    public $allowHTML=false;
     public $listData=null;
     public $theModel=null;
+    public $description=null;
+    public $sortable=false;
+    public $searchable=false;
 
-    protected $table=null;
+    public $hint=null;
+    public $editable=true;
+    public $hidden=false;
+    public $visible=true; // ???
+    public $display=null;
+    public $caption=null;
+    public $placeholder=null;
+    public $emptyText=null; // ???
 
-    public $relation=null;
-    public $actual_field=null;
 
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"

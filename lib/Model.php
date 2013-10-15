@@ -744,4 +744,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $m;
     }
     // }}}
+
+    function debug($debug=true) {
+        $this->controller->debug($debug);
+        return parent::debug($debug);
+    }
 }
