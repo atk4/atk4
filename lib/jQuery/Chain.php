@@ -242,12 +242,15 @@ class jQuery_Chain extends AbstractModel {
         }
         $ret.=$this->str;
 
-        $ret_pd = $this->preventDefault ? "ev.preventDefault();ev.stopPropagation(); " : "";
         if ($this->enclose === true) {
-            $ret =  "function(ev,ui){" . $ret_pd . $ret . "}";
+            if ($this->preventDefault) {
+                $ret =  "function(ev,ui){ev.preventDefault();ev.stopPropagation(); " . $ret . "}";
+            } else {
+                $ret =  "function(ev,ui){" . $ret . "}";
+            }
         } elseif($this->enclose) {
             $ret = ($this->library ?: "$('#".$this->owner->getJSID()."')") .
-                    ".bind('".$this->enclose."',function(ev,ui){". $ret_pd . $ret."})";
+                    ".bind('".$this->enclose."',function(ev,ui){ev.preventDefault();ev.stopPropagation(); " . $ret . "})";
         }
 
         if(@$this->debug){
