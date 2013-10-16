@@ -176,14 +176,14 @@ class SQL_Model extends Model {
     }
     /** Return query for a specific field. All other fields are ommitted. */
     function fieldQuery($field){
-        $query=$this->dsql()->del('fields');
+        $query=$this->dsql()->del('fields')->del('order');
         if(is_string($field))$field=$this->getElement($field);
         $field->updateSelectQuery($query);
         return $query;
     }
     /** Returns query which selects title field */
     function titleQuery(){
-        $query=$this->dsql()->del('fields');
+        $query=$this->dsql()->del('fields')->del('order');
         if($this->title_field && $el=$this->hasElement($this->title_field)){
             $el->updateSelectQuery($query);
             return $query;
