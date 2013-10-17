@@ -488,7 +488,17 @@ class ApiCLI extends AbstractView
 
         $s = $separator[0];
         $name = preg_replace('|[^a-z0-9\\'.$s.']|i', $s, $name);
-        $name = trim($name, $s);
+        /*
+         * This is evil.
+         *
+         * If I have a field name in Model as this:
+         * "_amount", then this trim removes trailing "_" and further
+         * set("_amount", "foo") would fail.. 
+         *
+         * Reconsider this change.
+         *
+         * $name = trim($name, $s);
+         */
         $name = preg_replace('|\\'.$s.'{2,}|', $s, $name);
 
         return $name;
