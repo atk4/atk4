@@ -40,12 +40,4 @@ class Model_Relation extends Model {
         $this->relations[$joinAlias] = $field;
         return $field;
     }
-
-    function leftJoin($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null, $relation=null) {
-        if(is_null($join_kind)) {
-            $join_kind = 'left';
-        }
-        $res = $this->join($foreign_table, $master_field, $join_kind, $_foreign_alias, $relation, 'ignore');
-        return $res;
-    }
 }

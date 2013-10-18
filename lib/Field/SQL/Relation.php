@@ -2,6 +2,7 @@
 
 class Field_SQL_Relation extends Field_Base {
     public $referenceType=null;
+    protected $behaviour;
 
     function setModel($model) {
         $this->model = $model;
@@ -21,33 +22,37 @@ class Field_SQL_Relation extends Field_Base {
         return $this->model->join($foreign_table, $master_field, $join_kind, $_foreign_alias, $this->joinAlias);
     }
 
-    function leftJoin($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null) {
-        if (strpos($master_field, '.') === false) {
-            $master_field =  $this->joinAlias . '.' . $master_field;
-        }
-        return $this->model->leftJoin($foreign_table, $master_field, $join_kind, $_foreign_alias, $this->joinAlias);
+    function hasOne($model, $our_field=UNDEFINED, $field_class=UNDEFINED) {
+        $field = $this->model->hasOne($model, $our_field, $field_class);
+        $field->table($this->joinAlias);
+
+        $this->model->getElement($field->getForeignFieldName())->table($this->joinAlias);
+
+        return $field;
+    }
+    function hasMany($model, $their_field=UNDEFINED, $our_field=UNDEFINED, $reference_name=null) {
+        $field = $this->model->hasMany($model, $their_field, $our_field, $reference_name);
+        return $field;
     }
 
     function setBehaviour($behaviour) {
+        if (!in_array($behaviour, array('ignore', 'cascade'))) {
+            throw $this->exception('Unknonw join behaviour')
+                ->addMoreInfo('behaviour', $behaviour)
+                ->addMoreInfo('supported', array('ignore', 'cascade'));
+        }
         $this->model->addHook('beforeInsert', array($this, 'insertInForeingTable'));
         $this->model->addHook('beforeUpdate', array($this, 'updateInForeingTable'));
+        $this->model->addHook('afterDelete', array($this, 'deleteInForeignTable'));
 
-        switch($behaviour) {
-            case 'ignore':
-                // DO NOTHING
-                break;
-            case 'cascade':
-                $this->model->addHook('afterDelete', array($this, 'deleteInForeignTable'));
-                break;
-            default:
-                throw $this->exception('Unknonw join behaviour')
-                    ->addMoreInfo('behaviour', $behaviour)
-                    ->addMoreInfo('supported', array('ignore', 'cascade'));
-                break;
-        }
+        $this->behaviour = $behaviour;
+        return $this;
     }
 
     function insertInForeingTable($model) {
+        if ($this->behaviour === 'ignore') {
+            return;
+        }
         $dsql = $this->api->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
 
@@ -66,6 +71,9 @@ class Field_SQL_Relation extends Field_Base {
     }
 
     function updateInForeingTable($model) {
+        if ($this->behaviour === 'ignore') {
+            return;
+        }
         $dsql = $this->api->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
 
@@ -84,6 +92,9 @@ class Field_SQL_Relation extends Field_Base {
     }
 
     function deleteInForeignTable($model) {
+        if ($this->behaviour === 'ignore') {
+            return;
+        }
         $dsql = $this->api->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
         $dsql->where($this->rightField, $model->get($this->leftField))->delete();

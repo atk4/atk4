@@ -8,9 +8,13 @@ class Field_SQL_HasOne extends Field_SQL_Expression {
         }
         $refModel = $this->add($refModel);
 
+        $other = $model->dsql()->getField($this->getForeignFieldName());
+        if ($this->table()) {
+            $other = $model->dsql()->expr($this->table() . '.' . $this->getForeignFieldName());
+        }
         return $refModel->dsql()
-            ->field('name')
-            ->where($refModel->id_field, $model->dsql()->getField($this->getForeignFieldName()));
+            ->field($refModel->title_field)
+            ->where($refModel->id_field, $other);
     }
 
     function getValue($model, $data) {
