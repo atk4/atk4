@@ -35,7 +35,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
     function incr($m,$field,$amount){
         if(!$m->loaded())throw $this->exception('Can only increment loaded model');
-        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>$amount)));
+        $m->db()->update(array($m->id_field=>$m->id_is_object?new MongoID($m->id):$m->id), array('$inc'=>array($field=>$amount)));
     }
 
     function save($model,$id=null){
@@ -74,7 +74,7 @@ class Controller_Data_Mongo extends Controller_Data {
                 if(!$m->loaded())continue;
 
                 $data[$deref]=$m[$m->title_field];
-                if($m instanceof Mongo_Model){
+                if($m instanceof Mongo_Model && $m->id_is_object){
                     $data[$our_field]=new MongoID($data[$our_field]);
                 }
             }
@@ -85,8 +85,8 @@ class Controller_Data_Mongo extends Controller_Data {
                 if ($model->debug) echo '<font style="color: blue">db.'.$model->table.' is not dirty</font>';
                 return $model->id;
             }
-            if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.(new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
-            $db=$this->_get($model,'db')->update(array($model->id_field=>new MongoID($model->id)), array('$set'=>$data));
+            if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.($modes->id_is_object?new MongoID($model->id):$model->id).'},{"$set":'.json_encode($data).'})</font>';
+            $db=$this->_get($model,'db')->update(array($model->id_field=>$model->id_is_object?new MongoID($model->id):$model->id), array('$set'=>$data));
             return $model->id;
         }
 
@@ -99,10 +99,10 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->id;
     }
     function tryLoad($model,$id){
-        $this->tryLoadBy($model,$model->id_field,new MongoID($id)); // TODO thow exception
+        $this->tryLoadBy($model,$model->id_field,$model->id_is_object?new MongoID($id):$id); // TODO thow exception
     }
     function load($model,$id){
-        $this->tryLoadBy($model,$model->id_field,new MongoID($id));
+        $this->tryLoadBy($model,$model->id_field,$model->id_is_object?new MongoID($id):$id);
         if(!$model->loaded())throw $this->exception('Record not found')
             ->addMoreInfo('id',$id);
     }
@@ -156,7 +156,7 @@ class Controller_Data_Mongo extends Controller_Data {
         return $model->id;
     }
     function delete($model,$id){
-        $id=new MongoID($id);
+        if($model->id_is_object)$id=new MongoID($id);
         if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.remove('.
             json_encode(array($model->id_field=>$id)).',{justOne:true})</font><br/>';
         $model->data=$this->_get($model,'db')->remove(
@@ -240,7 +240,7 @@ class Controller_Data_Mongo extends Controller_Data {
                 ($f->type()=='reference_id' && $value && !is_array($value)) ||
                 $field == $model->id_field
             ) {
-                $value = new MongoID($value);
+                if($model->id_is_object)$value = new MongoID($value);
             }
             $f->defaultValue($value)->system(true);
             // TODO: properly convert to Mongo presentation
