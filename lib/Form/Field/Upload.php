@@ -224,7 +224,7 @@ class Form_Field_Upload extends Form_Field {
             $files=join(',',filter_var_array($b,FILTER_VALIDATE_INT));
             if($files){
                 $c->addCondition('id','in',($files?$files:0));
-                $data=$c->getRows(array('id',$this->getOriginalFilenameFieldName(),$this->getFilesizeFieldName()));
+                $data=$c->getRows(array('id','url','thumb_url',$this->getOriginalFilenameFieldName(),$this->getFilesizeFieldName()));
             }else $data=array();
             return $this->formatFiles($data);
         }
