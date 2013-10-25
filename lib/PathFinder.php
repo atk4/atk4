@@ -170,7 +170,6 @@ class PathFinder extends AbstractController
             ->setBasePath($base_directory.'/public')
             ->setBaseURL($this->api->pm->base_path);
 
-
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
         }
@@ -425,7 +424,12 @@ class PathFinder_Location extends AbstractModel {
 
         if (!$file_path) return $this->base_url;
 
-        return $this->base_url.'/'.$file_path;
+        $u=$this->base_url;
+        if(substr($u,-1) != '/') $u.='/';
+
+
+
+        return $u.$file_path;
     }
 
     /**
