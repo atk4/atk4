@@ -531,8 +531,8 @@ abstract class AbstractObject
             } else {
                 $type = $this->default_exception.'_'.substr($type, 1);
             }
-        } elseif ($type != 'BaseException' && strpos($type, 'Exception_') !== 0) {
-            $type = 'Exception_'.$type;
+        } elseif ($type != 'BaseException') {
+            $type = $this->api->normalizeClassName($type, 'Exception');
         }
 
         // Localization support
