@@ -46,7 +46,7 @@ class Layout_Fluid extends View {
     }
 
 
-    function addMenu($class = 'Text') {
+    function addMenu($class = 'Menu_Main') {
         return $this->addRow('Header')->add($class);
     }
 
