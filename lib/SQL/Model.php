@@ -49,10 +49,11 @@
  * @license See http://agiletoolkit.org/about/license
  * 
 **/
-class SQL_Model extends Model {
+class SQL_Model extends Model implements Serializable {
 
     /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
     protected $dsql; 
+    public $field_class='Field';
 
     /** If you wish that alias is used for the table when selected, you can define it here.
      * This will help to keep SQL syntax shorter, but will not impact functionality */
@@ -98,7 +99,11 @@ class SQL_Model extends Model {
         if($name=='deleted' && isset($this->api->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
-        $f=parent::addField($name);
+
+        // $f=parent::addField($name);
+        $f = $this->add($this->field_class,$name);
+        // 
+
         if(!is_null($actual_field))$f->actual($actual_field);
         return $f;
     }
@@ -220,7 +225,11 @@ class SQL_Model extends Model {
     function hasOne($model,$our_field=null,$display_field=null,$as_field=null){
 
         // register reference, but don't create any fields there
-        parent::hasOne($model,null);
+        // parent::hasOne($model,null);
+        // model, our_field
+        $this->_references[null]=$model;
+        // 
+
 
         if(!$our_field){
             if(!is_object($model)){
@@ -709,7 +718,20 @@ class SQL_Model extends Model {
         }
         $this->hook('beforeUnload');
         $this->id=null;
-        parent::unload();
+        // parent::unload();
+
+        if ($this->_save_later) {
+            $this->_save_later=false;
+            $this->saveAndUnload();
+        }
+        if ($this->loaded()) {
+            $this->hook('beforeUnload');
+        }
+        $this->data = $this->dirty = array();
+        $this->id = null;
+        $this->hook('afterUnload');
+        // 
+
         $this->hook('afterUnload');
         return $this;
     }
@@ -755,4 +777,257 @@ class SQL_Model extends Model {
     }
 
     // }}}
+
+
+
+    // Override all methods to keep back-compatible
+    function set($name,$value=undefined){
+        if(is_array($name)){
+            foreach($name as $key=>$val)$this->set($key,$val);
+            return $this;
+        }
+        if($name===false || $name===null){
+            return $this->reset();
+        }
+
+        // Verify if such a filed exists
+        if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
+            ->addMoreInfo('name',$name);
+
+        if($value!==undefined 
+            && (
+                is_object($value) 
+                || is_object($this->data[$name])
+                || is_array($value)
+                || is_array($this->data[$name])
+                || (string)$value!=(string)$this->data[$name] // this is not nice.. 
+                || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
+                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
+            )
+        ) {
+            $this->data[$name]=$value;
+            $this->setDirty($name);
+        }
+        return $this;
+    }
+
+    function get($name=null){
+        if($name===null)return $this->data;
+
+        $f=$this->hasElement($name);
+
+        if($this->strict_fields && !$f)
+            throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
+
+        // See if we have data for the field
+        if(!$this->loaded() && !isset($this->data[$name])){ // && !$this->hasElement($name))
+
+            if($f && $f->has_default_value)return $f->defaultValue();
+
+
+            if($this->strict_fields)throw $this->exception('Model field was not loaded')
+                ->addMoreInfo('id',$this->id)
+                ->addMoreinfo('field',$name);
+
+            return null;
+        }
+        return $this->data[$name];
+    }
+
+function getActualFields($group = undefined)
+    {
+        if($group===undefined && $this->actual_fields) {
+            return $this->actual_fields;
+        }
+
+        $fields = array();
+
+        if (strpos($group, ',')!==false) {
+            $groups = explode(',', $group);
+
+            foreach($groups as $group) {
+                if($group[0]=='-') {
+                    $el = $this->getActualFields(substr($group, 1));
+                    $fields = array_diff($fields, $el);
+                } else {
+                    $el = $this->getActualFields($group);
+                    $fields = array_merge($fields, $el);
+                }
+            }
+        }
+
+        foreach($this->elements as $el) {
+            if($el instanceof Field && !$el->hidden()) {
+                if( $group===undefined ||
+                    $el->group()==$group ||
+                    (strtolower($group=='visible') && $el->visible()) ||
+                    (strtolower($group=='editable') && $el->editable())
+                ) {
+                    $fields[] = $el->short_name;
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+
+
+function setActualFields(array $fields)
+    {
+        $this->actual_fields = $fields;
+        return $this;
+    }
+
+function setDirty($name)
+    {
+        $this->dirty[$name] = true;
+        return $this;
+    }
+    function isDirty($name){
+        return $this->dirty[$name] || 
+            (!$this->loaded() && $this->getElement($name)->has_default_value);
+    }
+    function reset()
+    {
+        return $this->unload();
+    }
+
+    function offsetExists($name){
+        return $this->hasElement($name);
+    }
+    function offsetGet($name){
+        return $this->get($name);
+    }
+    function offsetSet($name,$val){
+        $this->set($name,$val);
+    }
+    function offsetUnset($name){
+        unset($this->dirty[$name]);
+    }
+
+function setSource($controller, $table=null, $id=null){
+        if(is_string($controller)){
+            $controller=$this->api->normalizeClassName($controller,'Data');
+        } elseif(!$controller instanceof Controller_Data){
+            throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
+        }
+        $this->controller=$this->setController($controller);
+
+        $this->controller->setSource($this,$table);
+
+        if($id)$this->load($id);
+        return $this;
+    }
+function addCache($controller, $table=null, $priority=5){
+        $controller=$this->api->normalizeClassName($controller,'Data');
+        return $this->setController($controller)
+            ->addHooks($this,$priority)
+            ->setSource($this,$table);
+    }
+
+function each($callable)
+    {
+        if (!($this instanceof Iterator)) {
+            throw $this->exception('Calling each() on non-iterative model');
+        }
+
+        if (is_string($callable)) {
+            foreach ($this as $value) {
+                $this->$callable();
+            }
+            return $this;
+        }
+
+        foreach ($this as $value) {
+            if (call_user_func($callable, $this) === false) {
+                break;
+            }
+        }
+        return $this;
+    }
+
+function newField($name){
+        return $this->addField($name); 
+    }
+    function hasField($name){
+        return $this->hasElement($name);
+    }
+    function getField($f){
+        return $this->getElement($f);
+    }
+function _ref($ref,$class,$field,$val){
+        $m=$this
+            ->add($this->api->normalizeClassName($class,'Model'))
+            ->ref($ref);
+
+        // For one to many relation, create condition, otherwise do nothing,
+        // as load will follow
+        if($field){
+            $m->addCondition($field,$val);
+        }
+        return $m;
+    }
+    function _refBind($field_in,$expression,$field_out=null){
+
+        if($this->controller)return $this->controller->refBind($this,$field,$expression);
+
+        list($myref,$rest)=explode('/',$ref,2);
+
+        if(!$this->_references[$myref])throw $this->exception('No such relation')
+            ->addMoreInfo('ref',$myref)
+            ->addMoreInfo('rest',$rest);
+        // Determine and populate related model
+
+        if(is_array($this->_references[$myref])){
+            $m=$this->_references[$myref][0];
+        }else{
+            $m=$this->_references[$myref];
+        }
+        $m=$this->add($m);
+        if($rest)$m=$m->_ref($rest);
+        $this->_refGlue();
+        
+
+        if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
+            ->addMoreInfo('name',$ref);
+
+        $r=$this->_references[$ref];
+
+        if(is_array($r)){
+            list($m,$our_field,$their_field)=$r;
+
+            if(is_string($m)){
+                $m=$this->add($m);
+            }else{
+                $m=$m->newInstance();
+            }
+
+            return $m->addCondition($their_field,$this[$our_field]);
+        }
+
+
+        if(is_string($m)){
+            $m=$this->add($m);
+        }else{
+            $m=$m->newInstance();
+        }
+        return $m->load($this[$our_field]);
+    }
+
+
+
+    function serialize() {
+        return serialize(array(
+            'id'=>$this->id,
+            'data'=>$this->data
+        ));
+    }
+
+    function unserialize($data) {
+        $data=unserialize($data);
+        $this->id=$data['id'];
+        $this->data=$data['data'];
+    }
+
 }

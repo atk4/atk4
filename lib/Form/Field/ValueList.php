@@ -88,8 +88,15 @@ abstract class Form_Field_ValueList extends Form_Field
         if (!$this->value) {
             return parent::validate();
         }
-        $this->getValueList(); //otherwise not preloaded?
 
+        // load allowed values in values_list
+        // @todo Imants: Actually we don't need to load all values from Model in
+        //       array, just to check couple of posted values.
+        //       Probably we should do SELECT * FROM t WHERE id IN ($values) or
+        //       something like that to limit array size and time spent on
+        //       parsing all DB records in Model.
+        $this->getValueList();
+        
         $values = explode($this->separator, $this->value);
         foreach ($values as $v) {
             if (!isset($this->value_list[$v])) {
