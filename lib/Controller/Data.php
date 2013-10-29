@@ -24,12 +24,53 @@ Additionally SQL_Model can use data controllers for caching their data
 
 abstract class Controller_Data extends AbstractController {
     public $default_exception = 'Exception_DB';
+
+    /**
+     * Conditions can be set on non-primary field. This capability of
+     * data controller allows your model to use methods such as 
+     * addCondition, loadBy, tryLoadBy etc. Each of those methods can
+     * be supplied with two arguments - the field and value and 
+     * exact matching will be used. For three-argument use, see
+     * property $supportOperators
+     */
     public $supportConditions = false;
+
+
+    /**
+     * Limit makes it possible to specify count / skip for the
+     * model, which is necessary for pagination.
+     */
     public $supportLimit = false;
+
+    /**
+     * Controller allows re-ordering data set by non-primary field
+     * in either ascending or descending order. Models support
+     * ordering on multiple fields. If controller does not
+     * support multiple ordering fields, then the last
+     * field to be used for ordering must take precedence
+     */
     public $supportOrder = false;
+
+    /**
+     * Controller can load and store data based on ID field.
+     * This would be supported by most data controllers
+     */
     public $supportRef = false;
+
+    /**
+     * Operators add ability to use fuzzy-match on conditions.
+     * Controller is required to support '>', '<', '=', '!=',
+     * '<=', '>=' operators. If the underlying data storage
+     * supports other operators, controller should make them
+     * available too.
+     */
     public $supportOperators = null;
 
+    /**
+     * When controller is added into model, the model will
+     * automatically keep track of it and will not dispose
+     * of it.
+     */
     public $auto_track_element = true;
 
     function setSource($model, $data) {
