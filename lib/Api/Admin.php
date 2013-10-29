@@ -24,5 +24,11 @@ class Api_Admin extends ApiFrontend {
 
         $this->menu = $this->layout->addMenu();
 
+        $this->initAddons();
+    }
+
+    function initAddons() {
+        // TODO: Initialize add-ons automatically which have standard
+        // controllers out there
     }
 }
