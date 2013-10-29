@@ -161,14 +161,17 @@ class PathFinder extends AbstractController
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
 
-        /// Add public location - assets
-        $this->public_location=$this->addLocation(array(
-            'public'=>'.',
-            'js'=>'js',
-            'css'=>'css',
-        ))
-            ->setBasePath($base_directory.'/public')
-            ->setBaseURL($this->api->pm->base_path);
+        // Add public location - assets, but only if 
+        // we hav PageManager to identify it's location
+        if(@$this->api->pm) {
+            $this->public_location=$this->addLocation(array(
+                'public'=>'.',
+                'js'=>'js',
+                'css'=>'css',
+            ))
+                ->setBasePath($base_directory.'/public')
+                ->setBaseURL($this->api->pm->base_path);
+        }
 
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
@@ -183,12 +186,13 @@ class PathFinder extends AbstractController
             ->setBasePath($atk_base_path)
             ;
 
-        $this->atk_public=$this->public_location->addRelativeLocation('atk4',array(
-            'public'=>'.',
-            'js'=>'js',
-            'css'=>'css',
-        ))
-        ;
+        if(@$this->api->pm) {
+            $this->atk_public=$this->public_location->addRelativeLocation('atk4',array(
+                'public'=>'.',
+                'js'=>'js',
+                'css'=>'css',
+            ));
+        }
     }
 
     /**
