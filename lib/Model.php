@@ -58,48 +58,120 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     public $default_exception='BaseException';
 
-    /** The class prefix used by addField */
+    /**
+     * The class prefix used by addField. For some models you might want to
+     * use a more powerful field class
+     */
     public $field_class='Field_Base';
 
-    /** If true, model will now allow to set values for non-existant fields */
+    /**
+     * If true, model will now allow to set values for non-existant fields
+     */
     public $strict_fields=false;
 
-    /** Caption is used on buttons of CRUD and other views which operate with this model.
-     * If not defined, will use class name. Use singular */
+    /**
+     * Caption is used on buttons of CRUD and other views which operate with this model.
+     * If not defined, will use class name. Use singular such as "Purchase".
+     * This label is localized.
+     */
     public $caption=null;
 
-    /** Contains name of table, session key, collection or file, depending on a driver */
+    /**
+     * Contains name of table, session key, collection or file, depending on
+     * data controller you are using.
+     */
     public $table=null;
 
-    /** Controllers store some custom informatio in here under key equal to their name */
+    /**
+     * Controllers store some custom information in here under key equal to
+     * their name. This allows us to use single controller object with
+     * multiple objects.
+     */
     public $_table=array();
 
-    /** Contains identifier of currently loaded record or null. Use load() and reset() */
-    public $id=null;     // currently loaded record
+    /**
+     * Contains identifier of currently loaded record or null. Changed by load() and reset()
+     */
+    public $id=null;
 
-    /** The actual ID field of the table might not always be "id" */
-    public $id_field='id';   // name of ID field
+    /**
+     * The actual ID field of the table might not always be "id". For Mongo this is equal
+     * to "_id".
+     */
+    public $id_field='id';
 
-    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+    /**
+     * Name of descriptive field. If not defined, will use table+'#'+id. This
+     * field will be used to refer to field where possible. This can
+     * be a calculated field or a callback.
+     */
+    public $title_field='name';
 
-    // references
+    /**
+     * Contains connections with other models which are related to this one
+     * through hasOne / hasMany.
+     */
     public $_references = array();
-    // expression
+
+    /**
+     * Expression
+     *
+     * TODO: not sure we need to distinguish expressions at this level
+     */
     public $_expressions = array();
 
+    /**
+     * Contains list of applied conditions. This is because controllers
+     * would not store applied conditions, so we need to keep track of them.
+     *
+     * Please resist the urge to remove conditions from the model - as this
+     * is a very dangerous concept. Refer to documentation on conditions
+     * for more information.
+     */
     public $conditions = array();
+
+    /**
+     * Applied limit on the model, first entry is count, second is offset
+     */
     public $limit = array(null, null);
+
+    /**
+     * Contains requested order definition
+     *
+     * TODO: must support multiple touples for multiple field sorting
+     */
     public $order = array(null, null);
 
+    /**
+     * More internal classes which are used by hasOne, and addExpression
+     */
     protected $defaultHasOneFieldClass = 'Field_HasOne';
     protected $defaultExpressionFieldClass = 'Field_Callback';
 
-    // Curretly loaded record
+    /**
+     * Curretly loaded record data. This information is embedded in the
+     * model, so you can re-use same model for loading multiple records.
+     */
     public $data=array();
+
+    /**
+     * Associative list of fields which have been changed since loading.
+     * Model will only save fields which have changed.
+     */
     public $dirty=array();
 
-    public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
 
+    /**
+     * Some data controllers make it possible to query selective set of
+     * fields. This way the query could be faster and only relevant data
+     * is loaded.
+     */
+    public $actual_fields=false;
+
+
+    /**
+     * Internal use. Used by save().
+     */
     protected $_save_as=null;
     protected $_save_later=false;
 
@@ -117,8 +189,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $this->_expressions[$key]->owner = $this;
         }
     }
-    /** Creates field definition object containing field meta-information such as caption, type
-     * validation rules, default value etc */
+    /**
+     * Creates field definition object containing field meta-information such as caption, type
+     * validation rules, default value etc
+     */
     function addField($name, $alias=null) {
         return $this->add($this->field_class, $name)
             ->actual($alias);
