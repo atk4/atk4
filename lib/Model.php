@@ -189,6 +189,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $this->_expressions[$key]->owner = $this;
         }
     }
+
     /**
      * Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc
@@ -197,6 +198,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this->add($this->field_class, $name)
             ->actual($alias);
     }
+
     /**
      * Add expression: the value of those field will calculate when you use get method
      */
@@ -209,6 +211,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         $this->_expressions[$name] = $field;
         return $field;
     }
+
     /**
      * Set value of fields only if the value is really changed
      * 
@@ -237,6 +240,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
         return $this;
     }
+
     /**
      * Get the value of a field. If the field is an expression (Field_Calculated)
      * the value is calculated a runtime
