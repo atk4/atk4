@@ -151,8 +151,8 @@ class SMlite extends AbstractModel {
          */
         return array(
                 // by separating them with ':'
-                'ldelim'=>'<?',                // tag delimiter
-                'rdelim'=>'?>',
+                'ldelim'=>'{',                // tag delimiter
+                'rdelim'=>'}',
                 'extension'=>'.html',          // template file extension
                 );
     }
@@ -410,7 +410,11 @@ class SMlite extends AbstractModel {
         }
         if(empty($this->tags[$tag])){
             $o=$this->owner?" for ".$this->owner->__toString():"";
-            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
+            $e=$this->exception("No such tag in template")
+                ->addMoreInfo('tag',$tag);
+            if($this->owner)$e->addMoreInfo('owner',$this->owner->__toString());
+            $e->addMoreInfo('tags', join(', ',array_keys($this->tags)));
+            throw $e;
         }
         foreach($this->tags[$tag] as $key=>$val){
             $this->tags[$tag][$key]=array();
@@ -499,6 +503,8 @@ class SMlite extends AbstractModel {
 
         $this->cache[$template_name.$ext]=serialize($this->template);
 
+        exit;
+
         return $this;
     }
     function parseTemplate(&$template,$level=0,$pc=0){
@@ -533,7 +539,9 @@ class SMlite extends AbstractModel {
                     $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
                     $xtag = $this->parseTemplate($template[$tag.'#'.$c],$level+1,$c);
                     if($xtag && $tag!=$xtag){
-                        throw new BaseException("Tag missmatch. $tag is closed with $xtag");
+                        throw $this->exception("Closing tag missmatch.")
+                            ->addMoreInfo('opening',$tag)
+                            ->addMoreInfo('closing',$xtag);
                     }
                 }
             }
