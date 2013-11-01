@@ -194,7 +194,7 @@ abstract class AbstractView extends AbstractObject
                     // if [0] is object, we'll use that
                     $this->template=$template_branch[0];
                 } else {
-                    $this->template=$this->api->add('SMlite');
+                    $this->template=$this->api->add('GiTemplate');
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out

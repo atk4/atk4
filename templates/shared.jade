@@ -7,7 +7,7 @@
     <html class="no-js lt-ie9">
 //if gt IE 8
     <html class="no-js">
-html(lang="{$lang}en{/}")
+html(lang="{lang}en{/}")
     head
         meta(charset="utf-8")
         //if IE
@@ -29,7 +29,7 @@ html(lang="{$lang}en{/}")
                 {$document_ready}
             });
 
-    body(class="{pagename}")
+    body(class="{$pagename}")
         //if lt IE 7
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 

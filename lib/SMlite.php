@@ -33,6 +33,7 @@
  *              Removed support for permanent tags
  *              Much more comments and other fixes
  *
+ *
  * ==[ Description ]===========================================================
  * SMlite templates are HTML pages containing tags to mark certain regions.
  * <html><head>

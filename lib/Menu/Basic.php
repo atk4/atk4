@@ -39,7 +39,7 @@ class Menu_Basic extends CompleteLister {
         parent::init();
     }
     function defaultTemplate(){
-        return array('menu','Menu');
+        return array('menu');
     }
 
     /**

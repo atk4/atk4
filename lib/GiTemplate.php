@@ -15,45 +15,183 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 /**
-  * Really fast template parser.
-  *
-  * This parser is based on SMlite, but is 2-3 times faster than it. Symantically it 
-  * works in the same way, but 
-  */
+ * ==[ About SMlite ]==========================================================
+ * This class is a lightweight template engine. It's based around operating with
+ * chunks of HTML code and the main aims are:
+ *
+ *  - completely remove any code from templates
+ *  - speed up template parsing and manipulation speed
+ *
+ * @author      Romans <romans@agiletoolkit.org>
+ * @copyright   AGPL
+ * @version     2.0
+ * 
+ *
+ * ==[ Version History ]=======================================================
+ * 1.0          First public version (released with AModules3 alpha)
+ * 1.1          Added support for "_top" tag
+ *              Removed support for permanent tags
+ *              Much more comments and other fixes
+ * 2.0          Reimplemented template parsing, now doing it with regexps
+ *
+ * ==[ Description ]===========================================================
+ * SMlite templates are HTML pages containing tags to mark certain regions.
+ * <html><head>
+ *   <title>MySite.com - {page_name}unknown page{/page_name}</title>
+ * </head>
+ *
+ * Inside your application regions may be manipulated in a few ways:
+ *
+ *  - you can replace region with other content. Using this you can replace
+ *   name of sub-page or put a date on your template.
+ *
+ *  - you can clone whole template or part of it. This is useful if you are
+ *   working with objects
+ *
+ *  - you can manipulate with regions from different files.
+ *
+ * Traditional recipe to work with lists in our templates are:
+ *
+ *  1. clone template of generic line
+ *  2. delete content of the list
+ *  3. inside loop
+ *   3a. insert values into cloned template
+ *   3b. render cloned template
+ *   3c. insert rendered HTML into list template
+ *  4. render list template
+ *
+ * Inside the code I use terms 'region' and 'spot'. They refer to the same thing,
+ * but I use 'spot' to refer to a location inside template (such as {$date}),
+ * however I use 'region' when I am refering to a chunk of HTML code or sub-template.
+ * Sometimes I also use term 'tag' which is like a pointer to region or spot.
+ *
+ * When template is loaded it's parsed and converted into array. It's possible to
+ * cache parsed template serialized inside array.
+ *
+ * Tag name looks like this:
+ *
+ *  "misc/listings:student_list"
+ *
+ * Which means to seek tag {student_list} inside misc/listings.html
+ *
+ * You may have same tag several times inside template. For example you can
+ * use tag {$title} inside <head><title> and <h1>.
+ *
+ * If you would set('title','My Title'); it will insert that value in
+ * all those regions.
+ *
+ * ==[ Agile Toolkit integration ]============================================
+ * Rule of thumb in object oriented programming is data / code separation. In
+ * our case HTML is data and our PHP files are code. SMlite helps to completely
+ * cut out the code from templates (smarty promotes idea about integrating
+ * logic inside templates and I decided not to use it for that reason)
+ *
+* Inside Agile Toolkit, each object have it's own template or may have even several
+* templates. When object is created, it's assigned to region inside template.
+* Later object operates with assigned template.
+*
+* Each object is also assigned to a spot on their parent's template. When
+* object is rendered, it's HTML is inserted into parent's template.
+*
+* ==[ Non-AModules3 integration ]=============================================
+* SMlite have no strict bindings or requirements for AModules3. You are free
+* to use it inside any other library as long as you follow license agreements.
+*/
 
 class GiTemplate extends AbstractModel {
 
-    public $settings=array('extension'=>'.html');
+    // {{{ Setting Variables
 
+    /**
+     * This array contains list of all tags found inside template implementing
+     * faster access when manipulating the template.
+     */
+    var $tags = array();
+
+    /**
+     * This is a parsed contents of the template organized inside an array. This
+     * structure makes it very simple to modify any part of the array.
+     */
     public $template=array();
-    
-    // Parsed template consists of String, String, String, String, String.
-    //   If there is tag on any of those, it will have reference from $tags array
-    public $tags=array();
 
-    public $top_tags=array('_top');
+    /**
+     * Settings are populated from the configuration file, if found
+     */
+    public $settings=array();
 
     public $default_exception='Exception_Template';
 
-    public $template_file=null;
+    /**
+     * Which file template is loaded from
+     */
+    public $origin_filename = null;
 
-    public $source='';
+    // }}}
 
-    public $template_type='template';
+    // {{{ Core methods - initialization
+
+    /**
+     * This function specifies default settings for SMlite.
+     */
+    function getDefaultSettings(){
+        return array(
+                // by separating them with ':'
+                'ldelim'=>'{',                // tag delimiter
+                'rdelim'=>'}',
+                'extension'=>'.html',          // template file extension
+                'template_type'=>'template'
+                );
+    }
+
+    // Template creation, interface functions
+    function init(){
+        parent::init();
+        $this->cache=&$this->api->smlite_cache;
+        $this->settings=$this->api->getConfig('smlite',$this->getDefaultSettings());
+    }
 
     function __clone(){
         parent::__clone();
-
-        $x=unserialize(serialize($this->template));
-        unset($this->template);
-        $this->template=$x;
+        $this->template=unserialize(serialize($this->template));
 
         unset($this->tags);
         $this->rebuildTags();
     }
-    function isTopTag($tag){
-        return in_array($tag,$this->top_tags);
+    function exception($message = 'Undefined Exception', $type = null, $code = null)
+    {
+        $o=$this->owner?$this->owner->__toString():"none";
+        return parent::exception($message,$type,$code)
+            ->addMoreInfo('owner',$o)
+            ->addMoreInfo('template',$this->tmp_template)
+            ;
     }
+
+    // }}}
+
+    // {{{ Tag manipulation
+
+    /**
+     * Returns true if specified tag is a top-tag of the template.
+     *
+     * Since Agile Toolkit 4.3 this tag is always called _top
+     */
+    function isTopTag($tag){
+        return $tag=='_top';
+    }
+
+    /**
+     * This is a helper method which populates an array pointing
+     * to the place in the template referenced by a said tag.
+     *
+     * Because there might be multiple tags and getTagRef is
+     * returning only one template, it will return the first
+     * occurence:
+     *
+     * {greeting}hello{/},  {greeting}world{/}
+     *
+     * calling getTagRef('greeting',$template) will point
+     * second argument towards &array('hello');
+     */
     function getTagRef($tag,&$template){
         if($this->isTopTag($tag)){
             $template=&$this->template;
@@ -63,12 +201,44 @@ class GiTemplate extends AbstractModel {
         if(!$ref)$ref=1;
         if(!isset($this->tags[$tag][$ref-1])){
             throw $this->exception('Tag not found in Template')
-                ->setTag($tag);
+                ->addMoreInfo('tag',$tag)
+                ->addMoreInfo('tags',join(', ',array_keys($this->tags)))
+                ;
         }
         $template=$this->tags[$tag][$ref-1];
         return $this;
     }
+
+    /**
+     * For methods which execute action on several tags, this method
+     * will return array of templates. You can then iterate 
+     * through the array and update all the template values.
+     *
+     * {greeting}hello{/},  {greeting}world{/}
+     *
+     * calling getTagRefList('greeting',$template) will point
+     * second argument towards array(&array('hello'),&array('world'));
+     *
+     * If $tag is specified as array, then $templates will
+     * contain all occurences of all tags from the array.
+     */
     function getTagRefList($tag,&$template){
+
+        if(is_array($tag)) {
+            // TODO: test
+            $res=array();
+            foreach($tag as $t) {
+                $template=array();
+                $this->getTagRefList($t,$te);
+
+                foreach($template as &$tpl) {
+                    $res[] =& $tpl;
+                }
+
+                return true;
+            }
+        }
+
         if($this->isTopTag($tag)){
             $template=&$this->template;
             return false;
@@ -86,90 +256,151 @@ class GiTemplate extends AbstractModel {
             throw $this->exception('Tag not found in Template')
                 ->setTag($tag);
         }
-        $template=&$this->tags[$tag][$ref-1];
-        return false;
+        $template=array(&$this->tags[$tag][$ref-1]);
+        return true;
     }
-    function is_set($tag){
-        var_Dump($tag);
-        if($this->isTopTag($tag))return true;
+
+    /**
+     * Checks if template has defined a specified tag.
+     */
+    function hasTag($tag){
+        if(is_array($tag))return true;
+
         @list($tag,$ref)=explode('#',$tag);
         if(!$ref)$ref=1;
-        var_Dump(isset($this->tags[$tag][$ref-1]));
-        return isset($this->tags[$tag][$ref-1]);
+        return isset($this->tags[$tag][$ref-1]) || $this->isTopTag($tag);
     }
-    function cloneRegion($tag){
-        if($this->isTopTag($tag))return clone $this;
+    /**
+     * Obsolete due to inconsistent naming
+     */
+    function is_set($tag){
+        return $this->hasTag($tag);
+    }
 
-        $n=$this->owner->add(get_class($this));
-        $n->template=$this->get($tag);
-        $n->rebuildTags();
-        $n->top_tags[]=$tag;
-        $n->source='Clone ('.$tag.') of '.$this->source;
-        return $n;
-    }
-    function dumpTags(){
-        throw $this->exception('Requested to dump tags');
-    }
-    function get($tag){
-        $template=array();
-        $this->getTagRef($tag,$template);
-        return $template;
-    }
-    function append($tag,$value,$delim=false){
-        $this->getTagRef($tag,$template);
-        if($delim)$template[]=$delim;
-        $template[]=$value;
-        return $this;
-    }
-    function set($tag,$value=null){
+    /**
+     * This function will replace region refered by $tag to a new content.
+     *
+     * If tag is found inside template several times, all occurences are
+     * replaced.
+     *
+     * ALTERNATIVE USE(2) of this function is to pass associative array as
+     * a single argument. This will assign multiple tags with one call.
+     * Sample use is:
+     *
+     *  set($_GET);
+     *
+     * would read and set multiple region values from $_GET array.
+     */
+    function set($tag,$value=null,$encode=true){
         if(is_array($tag)){
             if(is_null($value)){
-                // USE(2)
                 foreach($tag as $s=>$v){
                     $this->trySet($s,$v);
                 }
                 return $this;
             }
             if(is_array($value)){
-                // USE(2)
-                reset($tag);reset($value);
-                while(list(,$s)=each($tag)){
-                    list(,$v)=each($value);
-                    $this->set($s,$v);
-                }
-                return $this;
+                throw $this->exception('No longer supported','Exception_Obsolete');
             }
-            throw $this->exception("Incorrect argument types when calling Template->set()");
+
+            // This can now be used - multiple tags will be set to the value
         }
 
-        if($this->getTagRefList($tag,$template)){
-            foreach($template as $key=>&$ref){
-                //var_Dump($template[$key]);
-                $ref=array($value);
-            }
-        }else{
-            $template=array($value);
+        if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
+
+        $this->getTagRefList($tag,$template);
+        foreach($template as $key=>&$ref){
+            $ref=array($value);
         }
         return $this;
     }
-    function trySet($tag,$value=null){
-        if($this->is_set($tag) || is_array($tag))return $this->set($tag,$value);
-        return $this;
+
+    /**
+     * Attempt to set value of a tag to a HTML variable. The value is
+     * inserted as-is, while regular set() would HTML-encode the values
+     * to avoid injection
+     */
+    function trySetHTML($tag,$value=null){
+        return $this->trySet($tag,$value,false);
     }
+
+
+    /**
+     * Check if tag is present inside template. If it does, execute set();
+     * See documentation for set()
+     */
+    function trySet($tag,$value=null,$encode=true){
+        if(is_array($tag))return $this->set($tag,$value,$encode);
+        return $this->hasTag($tag)?$this->set($tag,$value,$encode):$this;
+    }
+
+    /**
+     * Empty contents of specified region. If region contains sub-hierarchy,
+     * it will be also removed.
+     *
+     * TODO: This does not dispose of the tags which were previously
+     * inside the region. This causes some severe pitfalls for the users
+     * and ideally must be checked and proper errors must be generated.
+     */
     function del($tag){
-        if($this->getTagRefList($tag,$template)){
-            foreach($template as $ref){
-                $ref=array();
-            }
-        }else{
-            $template=array();
+
+        if($this->isTopTag($tag)){
+            $this->loadTemplateFromString('{$'.$tag.'}');
+            return $this;
+        }
+
+
+        $this->getTagRefList($tag,$template);
+        foreach($template as $ref){
+            $ref=array();
+            // TODO recursively go through template, and add tags
+            // to blacklist, which would then be checked by hasTag()
         }
         return $this;
     }
+
+    /** 
+     * Similar to del() but won't throw exception if tag is not present
+     */
     function tryDel($tag){
-        if($this->is_set($tag))return $this->del($tag);
+        if(is_array($tag))return $this->del($tag);
+        return $this->hasTag($tag)?$this->del($tag):$this;
+    }
+
+    /**
+     * Get value of the tag. Note that this may contain an array
+     * if tag contains a structure
+     */
+    function get($tag){
+        $template=array();
+        $this->getTagRef($tag,$template);
+
+        // TODO: test
+        if(count($template==1)) {
+            reset($template);
+            list($k,$v)=each($template);
+            if(!is_array($v))return $v;
+        }
+        return $template;
+    }
+
+    /**
+     * Add more content inside a tag.
+     */
+    function append($tag,$value,$encode=true){
+        if($value instanceof URL)$value=$value->__toString();
+
+        if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
+
+        $this->getTagRef($tag,$template);
+        $template[]=$value;
         return $this;
     }
+
+    function appendHTML($tag,$value){
+        return $this->append($tag,$value,false);
+    }
+
     function eachTag($tag,$callable){
         if(!$this->is_set($tag))return $this;
         if($this->getTagRefList($tag,$template)){
@@ -183,11 +414,52 @@ class GiTemplate extends AbstractModel {
         return $this;
     }
 
+
+
+
+
+
+
+
+
+
+
+    function cloneRegion($tag){
+        if($this->isTopTag($tag))return clone $this;
+
+        $n=$this->newInstance();
+        $n->template=$this->get($tag);
+        $this->dumpTags();
+        var_dump(htmlspecialchars($n->template));
+        $n->rebuildTags();
+        $n->top_tags[]=$tag;
+        $n->source='Clone ('.$tag.') of '.$this->source;
+        return $n;
+    }
+    function _getDumpTags(&$template){
+        $s='';
+        foreach($template as $key=>$val){
+            if(is_array($val)){
+                $s.='<font color="blue">{'.$key.'}</font>'.htmlspecialchars($this->recursiveRender($val)).'<font color="blue">{/'.$key.'}</font>';
+            }else{
+                $s.=$val;
+            }
+        }
+        return $s;
+    }
+    function dumpTags(){
+        echo $this->_getDumpTags($this->template);
+        
+    }
+
+    // template loading and parsing
     function findTemplate($template_name){
         /*
          * Find template location inside search directory path
          */
-        $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
+        if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
+        $f=$this->api->locatePath($this->settings['template_type'],$template_name.$this->settings['extension']);
+        $this->origin_filename=$f;
         return join('',file($f));
     }
     function loadTemplate($template_name,$ext=null){
@@ -210,6 +482,51 @@ class GiTemplate extends AbstractModel {
         if($ext){ $this->settings['extension']=$tempext; }
         return $this;
     }
+
+    private $tag_cnt=array();
+    function regTag($tag){
+        return $tag.'#'.(++$this->tag_cnt[$tag]);
+    }
+
+    private $arr=null;
+    private $arr_t=null;
+    function parseTemplate($str) {
+
+        $nt='((?!{[_\w]*}).)*?';
+        $res = preg_replace_callback('/{([_\w]+)}('.$nt.')(((?R)'.$nt.')*)('.$nt.'){\/(\1)?}/s',function($x){
+
+            $a=&$this->template;
+            unset($this->template);
+            $this->template=array();
+
+            if($x[2])$this->template[] = $x[2]; // add what's before
+
+            $res=$x[2].$this->parseTemplate($x[4]).$x[7];  // adds other tags
+
+            if($x[7])$this->template[] = $x[7]; // add what was after
+
+            $full_tag=$this->regTag($x[1]);
+
+            $a[$full_tag] = $this->template;
+
+
+
+            // set indexes
+            //$this->tags[$full_tag][] =& $a[$full_tag];
+            $this->tags[$x[1]][] =& $a[$full_tag];
+
+            $this->template =& $a;
+
+            return $res;
+        },$str);
+
+        return $res;
+
+
+        //
+    }
+
+
     function loadTemplateFromString($str){
         $this->source='string';
         $this->template=$this->tags=array();
@@ -218,16 +535,42 @@ class GiTemplate extends AbstractModel {
         }
 
 
-        /* First expand self-closing tags <?$tag?> -> <?tag?><?/tag?> */
-        $str=preg_replace('/<\?\$([\w]+)\?>/s','<?\1?><?/\1?>',$str);
 
-        var_Dump($str);
-        /* Next fix short ending tag <?tag?>  <?/?> -> <?tag?>  <?/?> */
-        $x=preg_replace_callback('/<\?([^\/][^>]*)\?>(?:(?:(?!<\?\/\?>).)++|(?R))*<\?\/\?>/s',function($x){
+        /* First expand self-closing tags {$tag} -> {tag}{/tag} */
+        $str=preg_replace('/{\$([\w]+)}/','{\1}{/\1}',$str);
+
+
+//(?R)(.*?)
+        //
+        $notags=$this->parseTemplate('{_top}'.$str.'{/}');
+
+
+        return $this;
+
+
+
+        /* Next fix short ending tag {tag}  {/} -> {tag}  {/tag} */
+        $notags=preg_replace_callback('/.*?{\/}/',function($x){
+                return preg_replace('/(.*<\?([^\/][\w]+)\?>)(.*?)(<\?\/?\?>)/',
+                   '\1\3<?/\2?>',$x[0]);
+                },$str);
+
+        // TODO: make sure $notags really contains no tags
+        var_dump($x);
+        exit;
+
+
+        $x=preg_replace_callback('/{([\w]+)}(.*?)(?R)         /s',function($x){
                 var_Dump($x);
                 /*return preg_replace('/(.*<\?([^\/][\w]+)\?>)(.*?)(<\?\/?\?>)/s','\1\3<?/\2?>',$x[0]); */
                 },$str);
         var_Dump($str);
+
+        /*$x=preg_replace_callback('/<\?([^\/][^>]*)\?>(?:(?:(?!<\?\/\?>).)++|(?R))*<\?\/\?>/s',function($x){*/
+
+        var_Dump($str);
+        exit;
+
 
         /* Finally recursively build tag structure */
         $this->recursiveParse($x);
