@@ -201,12 +201,6 @@ class PageManager extends AbstractController {
         return implode('/',$chunks);
     }
 
-
-
-    function getUrlRoot(){
-        if($r=='')$r='/';
-        return $r;
-    }
     /* @obsolete since 4.2.2
     function getDestinationURL($page){
         if($page[0]=='/'){
