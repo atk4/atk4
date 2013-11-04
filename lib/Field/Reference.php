@@ -138,7 +138,8 @@ class Field_Reference extends Field {
         }else{
             $title=$this->model->titleQuery();
         }
-        $title->where($this,$title->getField($this->model->id_field));
+        $title->del('order')
+            ->where($this,$title->getField($this->model->id_field));
         return $title;
     }
 }
