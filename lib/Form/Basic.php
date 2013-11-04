@@ -152,15 +152,18 @@ class Form_Basic extends View implements ArrayAccess {
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
-    function addField($type, $options, $caption=null, $attr=null)
+    function addField($type, $options, $caption = null, $attr = null)
     {
-        if (is_array($options)){
-            $name = isset($options["name"])?$options["name"]:null;
+        if (is_array($options)) {
+            $name = isset($options["name"]) ? $options["name"] : null;
         } else {
             $name = $options; // backward compatibility
         }
-        if($caption===null)
-            $caption=ucwords(str_replace('_',' ',$name));
+        $name = preg_replace('|[^a-z0-9-_]|i', '_', $name);
+        
+        if ($caption === null) {
+            $caption = ucwords(str_replace('_', ' ', $name));
+        }
         
         $name = $this->api->normalizeName($name);
         /* put name back in options */
