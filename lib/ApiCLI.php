@@ -467,10 +467,12 @@ class ApiCLI extends AbstractView
 
     // {{{ Helper / utility methods
     /**
-     * Normalize field or identifier name. Can also be used in URL normalization.
+     * Normalize string. Can be used in URL normalization and other cases.
      * This will replace all non alpha-numeric characters with separator.
-     * Multiple separators in a row is replaced with one.
+     * Multiple separators in a row are replaced with one.
      * Separators in beginning and at the end of name are removed.
+     *
+     * Note: This shouldn't be use in field name normalization!
      *
      * Sample input:  "Hello, Dear Jon!"
      * Sample output: "Hello_Dear_Jon"
@@ -488,17 +490,7 @@ class ApiCLI extends AbstractView
 
         $s = $separator[0];
         $name = preg_replace('|[^a-z0-9\\'.$s.']|i', $s, $name);
-        /*
-         * This is evil.
-         *
-         * If I have a field name in Model as this:
-         * "_amount", then this trim removes trailing "_" and further
-         * set("_amount", "foo") would fail.. 
-         *
-         * Reconsider this change.
-         *
-         * $name = trim($name, $s);
-         */
+        $name = trim($name, $s);
         $name = preg_replace('|\\'.$s.'{2,}|', $s, $name);
 
         return $name;
