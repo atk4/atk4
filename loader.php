@@ -2,8 +2,8 @@
 // This sets initial path for the include.
 // Further includes will be initialized through PathFinder.
 $places = array(
-    dirname($_SERVER['PHP_SELF']),
-    dirname($_SERVER['PHP_SELF']) . DIRECTORY_SEPARATOR . 'lib',
+    dirname($_SERVER['SCRIPT_FILENAME']),
+    dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR . 'lib',
     __DIR__  . DIRECTORY_SEPARATOR . 'lib',
 );
 set_include_path(join(PATH_SEPARATOR, $places));
