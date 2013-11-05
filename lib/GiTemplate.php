@@ -162,7 +162,7 @@ class GiTemplate extends AbstractModel {
         $o=$this->owner?$this->owner->__toString():"none";
         return parent::exception($message,$type,$code)
             ->addMoreInfo('owner',$o)
-            ->addMoreInfo('template',$this->tmp_template)
+            ->addMoreInfo('template',$this->template_source)
             ;
     }
 
@@ -199,13 +199,13 @@ class GiTemplate extends AbstractModel {
         }
         @list($tag,$ref)=explode('#',$tag);
         if(!$ref)$ref=1;
-        if(!isset($this->tags[$tag][$ref-1])){
+        if(!isset($this->tags[$tag])){
             throw $this->exception('Tag not found in Template')
                 ->addMoreInfo('tag',$tag)
                 ->addMoreInfo('tags',join(', ',array_keys($this->tags)))
                 ;
         }
-        $template=$this->tags[$tag][$ref-1];
+        $template=reset($this->tags[$tag]);
         return $this;
     }
 
@@ -267,8 +267,7 @@ class GiTemplate extends AbstractModel {
         if(is_array($tag))return true;
 
         @list($tag,$ref)=explode('#',$tag);
-        if(!$ref)$ref=1;
-        return isset($this->tags[$tag][$ref-1]) || $this->isTopTag($tag);
+        return isset($this->tags[$tag]) || $this->isTopTag($tag);
     }
     /**
      * Obsolete due to inconsistent naming
@@ -374,13 +373,6 @@ class GiTemplate extends AbstractModel {
     function get($tag){
         $template=array();
         $this->getTagRef($tag,$template);
-
-        // TODO: test
-        if(count($template==1)) {
-            reset($template);
-            list($k,$v)=each($template);
-            if(!is_array($v))return $v;
-        }
         return $template;
     }
 
@@ -389,6 +381,7 @@ class GiTemplate extends AbstractModel {
      */
     function append($tag,$value,$encode=true){
         if($value instanceof URL)$value=$value->__toString();
+
 
         if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
 
@@ -428,9 +421,8 @@ class GiTemplate extends AbstractModel {
         if($this->isTopTag($tag))return clone $this;
 
         $n=$this->newInstance();
-        $n->template=$this->get($tag);
+        $n->template=array('_top#1'=>$this->get($tag));
         $this->dumpTags();
-        var_dump(htmlspecialchars($n->template));
         $n->rebuildTags();
         $n->top_tags[]=$tag;
         $n->source='Clone ('.$tag.') of '.$this->source;
@@ -440,15 +432,15 @@ class GiTemplate extends AbstractModel {
         $s='';
         foreach($template as $key=>$val){
             if(is_array($val)){
-                $s.='<font color="blue">{'.$key.'}</font>'.htmlspecialchars($this->recursiveRender($val)).'<font color="blue">{/'.$key.'}</font>';
+                $s.='<font color="blue">{'.$key.'}</font>'.$this->_getDumpTags($val).'<font color="blue">{/'.$key.'}</font>';
             }else{
-                $s.=$val;
+                $s.=htmlspecialchars($val);
             }
         }
         return $s;
     }
     function dumpTags(){
-        echo $this->_getDumpTags($this->template);
+        echo '"'.$this->_getDumpTags($this->template).'"';
         
     }
 
@@ -470,14 +462,10 @@ class GiTemplate extends AbstractModel {
             $tempext=$this->settings['extension'];
             $this->settings['extension']=$ext;
         };
-        $this->tmp_template = $this->findTemplate($template_name);
+        $template_source = $this->findTemplate($template_name);
         $this->template_file=$template_name;
 
-        if(!isset($this->tmp_template))
-            throw $this->exception("Template not found")
-               ->setTemplate($template_name.$this->settings['extension']);
-
-        $this->loadTemplateFromString($this->tmp_template);
+        $this->loadTemplateFromString($template_source);
         $this->source='file '.$template_name;
         if($ext){ $this->settings['extension']=$tempext; }
         return $this;
@@ -491,36 +479,57 @@ class GiTemplate extends AbstractModel {
     private $arr=null;
     private $arr_t=null;
     function parseTemplate($str) {
+        //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
+        //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
+        //$nt='.*?(?={\/?[_\w]*}|$)';
+        $nt='((?!{\/?[_\w]*}).)*';
+        //$nt='((?!{\/?[_\w]*}).)*';
+        //$nt='(.(?!{\/?[_\w]*}))*.';
+        //$nt='(.(?<!{\/?[_\w]*}))*';
 
-        $nt='((?!{[_\w]*}).)*?';
-        $res = preg_replace_callback('/{([_\w]+)}('.$nt.')(((?R)'.$nt.')*)('.$nt.'){\/(\1)?}/s',function($x){
+        //preg_match('/^('.$nt.')/','hello{a}{/a}',$matches);
+        //var_dump($matches);
 
-            $a=&$this->template;
-            unset($this->template);
-            $this->template=array();
+        while($str) {
+        /*
 
-            if($x[2])$this->template[] = $x[2]; // add what's before
+            $str = preg_replace_callback('/{([_\w]+)}(((?R)'.$nt.')*)('.$nt.'){\/(\1)?}/s',function($x){
+            }*/
 
-            $res=$x[2].$this->parseTemplate($x[4]).$x[7];  // adds other tags
+            $matched=false;
+            $str = preg_replace_callback($z='/^(('.$nt.'){([_\w]+)}((?1)*'.$nt.'){\/(\4)?})/s',function($x)use(&$matched){
 
-            if($x[7])$this->template[] = $x[7]; // add what was after
+                if($x[2])$this->template[] = $x[2]; // add what's before
 
-            $full_tag=$this->regTag($x[1]);
+                $a=&$this->template;
+                unset($this->template);
+                $this->template=array();
 
-            $a[$full_tag] = $this->template;
 
 
+                $this->parseTemplate($x[5]);  // adds other tags
 
-            // set indexes
-            //$this->tags[$full_tag][] =& $a[$full_tag];
-            $this->tags[$x[1]][] =& $a[$full_tag];
+                $full_tag=$this->regTag($x[4]);
 
-            $this->template =& $a;
+                $a[$full_tag] = $this->template;
 
-            return $res;
-        },$str);
+                // set indexes
+                //$this->tags[$full_tag][] =& $a[$full_tag];
+                $this->tags[$x[4]][] =& $a[$full_tag];
 
-        return $res;
+                $this->template =& $a;
+                $matched=true;
+
+                return '';
+            },$str,1);
+            if(!$matched){
+                $this->template[] = $str;
+                break;
+            }
+        }
+
+
+        //return $res;
 
 
         //
@@ -528,6 +537,7 @@ class GiTemplate extends AbstractModel {
 
 
     function loadTemplateFromString($str){
+        $this->template_source=$str;
         $this->source='string';
         $this->template=$this->tags=array();
         if(!$str){
@@ -600,24 +610,22 @@ class GiTemplate extends AbstractModel {
     }
     function rebuildTags(){
         $this->tags=array();
-        $old=$this->template;
-        $this->template=array();
-        $this->rebuildTagsRegion($old,$this->template);
+
+        $this->rebuildTagsRegion($this->template);
         //$this->template=unserialize(serialize($this->template));
         //$this->rebuildTagsRegion($this->template);
     }
-    function rebuildTagsRegion(&$old,&$new){
+    function rebuildTagsRegion(&$template){
         //var_dump($old,$new);
-        foreach($old as $tag=>$val){
+        foreach($template as $tag=>&$val){
+            echo $tag.'<br/>';
             if(is_numeric($tag)){
-                $new[]=$val;
                 continue;
             }
             @list($key,$ref)=explode('#',$tag);
 
-            $new[$c=$key.'#'.count($this->tags[$key])]=array();
-            $this->tags[$key][]=&$new[$c];
-            $this->rebuildTagsRegion($old[$tag],$new[$c]);
+            $this->tags[$key][$ref]=&$val;
+            if(is_array($val))$this->rebuildTagsRegion($val);
         }
         //echo "------------------------------------------<br/>";
         //var_dump($old,$new);
@@ -642,7 +650,7 @@ class GiTemplate extends AbstractModel {
 class Exception_Template extends BaseException {
     function init(){
         parent::init();
-        if($this->owner->template_file)
+        if(@$this->owner->template_file)
             $this->addMoreInfo('file',$this->owner->template_file);
 
         $keys=array_keys($this->owner->tags);
