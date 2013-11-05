@@ -1,0 +1,32 @@
+.atk-table(id="{$_name}")
+
+    // Pannel goes here
+
+    table
+        {header}
+        thead
+            {cols}{col}
+            th
+            {/}{/}
+        {/}
+        {$subheader}
+
+        tbody
+            {rows}{row}
+            tr(class="{$odd_even}")
+                {cols}{col}
+                <td {$tdparam}>
+                {$content}
+                </td>
+                {/}{/}
+            {/}{/}
+
+            {totals}
+            tr(class="totals")
+                {cols}{col}
+                <td {$tdparam}>
+                {$content}
+                </td>
+                {/}{/}
+            {/}
+    {$paginator}

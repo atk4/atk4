@@ -84,8 +84,8 @@ class CompleteLister extends Lister
     function init()
     {
         parent::init();
-        if (!$this->template->is_set($this->item_tag)) {
-            throw $this->exception('Template must have "'.$this->item_tag.'" tag');
+        if (!$this->template->hasTag($this->item_tag)) {
+            throw $this->template->exception('Template must have "'.$this->item_tag.'" tag');
         }
 
         $this->row_t = $this->template->cloneRegion($this->item_tag);
@@ -167,7 +167,7 @@ class CompleteLister extends Lister
         $this->totals_type = $type;
 
         // clone template chunk for totals
-        if ($this->template->is_set('totals')) {
+        if ($this->template->hasTag('totals')) {
             $this->totals_t = $this->template->cloneRegion('totals');
         }
 
