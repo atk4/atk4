@@ -526,6 +526,7 @@ class Logger extends AbstractController {
         $output .= "<b>Stack trace:</b><br /><table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
         $output .= "<tr><th align='right'>File</th><th>&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>";
         if(!isset($backtrace)) $backtrace=debug_backtrace();
+        $sh-=2;
 
         $n=0;
         foreach($backtrace as $bt){

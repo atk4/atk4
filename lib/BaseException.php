@@ -74,6 +74,8 @@ class BaseException extends Exception
     {
         $this->name = get_class($this);
         $this->my_backtrace = debug_backtrace();
+        array_shift($this->my_backtrace);
+        array_shift($this->my_backtrace);
     }
     
     /**
