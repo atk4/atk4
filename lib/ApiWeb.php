@@ -375,11 +375,18 @@ class ApiWeb extends ApiCLI {
         $t->trySet('base_path',$q=$this->api->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
-        $t->eachTag('template',array($this,'_locateTemplate'));
-        $t->eachTag('public',array($this,'_locatePublic'));
-        $t->eachTag('js',array($this,'_locateJS'));
-        $t->eachTag('css',array($this,'_locateCSS'));
-        $t->eachTag('page',array($this,'_locatePage'));
+        try {
+            $t->eachTag($tag='template',array($this,'_locateTemplate'));
+            $t->eachTag($tag='public',array($this,'_locatePublic'));
+            $t->eachTag($tag='js',array($this,'_locateJS'));
+            $t->eachTag($tag='css',array($this,'_locateCSS'));
+            $t->eachTag($tag='page',array($this,'_locatePage'));
+        } catch (Exception $e) {
+            throw $e
+                ->addMoreInfo('processing_tag',$tag)
+                ->addMoreInfo('template',$t->template_file)
+                ;
+        }
 
         $this->hook('set-tags',array($t));
     }

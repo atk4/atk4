@@ -174,7 +174,7 @@ abstract class AbstractView extends AbstractObject
         if (@$this->owner->template
             && !$this->owner->template->is_set($this->spot)
         ) {
-            throw $this->exception(
+            throw $this->owner->template->exception(
                 'Spot is not found in owner\'s template'
             )->addMoreInfo('spot', $this->spot);
         }

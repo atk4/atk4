@@ -422,7 +422,6 @@ class GiTemplate extends AbstractModel {
 
         $n=$this->newInstance();
         $n->template=array('_top#1'=>$this->get($tag));
-        $this->dumpTags();
         $n->rebuildTags();
         $n->top_tags[]=$tag;
         $n->source='Clone ('.$tag.') of '.$this->source;
@@ -466,7 +465,7 @@ class GiTemplate extends AbstractModel {
         $this->template_file=$template_name;
 
         $this->loadTemplateFromString($template_source);
-        $this->source='file '.$template_name;
+        $this->source='Loaded from file: '.$template_name;
         if($ext){ $this->settings['extension']=$tempext; }
         return $this;
     }
@@ -618,7 +617,6 @@ class GiTemplate extends AbstractModel {
     function rebuildTagsRegion(&$template){
         //var_dump($old,$new);
         foreach($template as $tag=>&$val){
-            echo $tag.'<br/>';
             if(is_numeric($tag)){
                 continue;
             }
