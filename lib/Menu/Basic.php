@@ -1,10 +1,5 @@
-<?php
-/***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
+<?php // vim:ts=4:sw=4:et:fdm=marker
+/**
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
     http://agiletoolkit.org/
@@ -14,20 +9,30 @@
    commercial license.
 
    See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
+ =====================================================ATK4=*/
 /**
- * This is the description for the Class
+ * Basic single-level Menu implementation on top of Lister
  *
- * @author      Romans <romans@adevel.com>
- * @copyright   See file COPYING
- * @version     $Id$
+ * @author      Romans <romans@agiletoolkit.org>
  */
 class Menu_Basic extends CompleteLister {
+
     public $items=array();
+
     protected $class_tag='class';
+
     protected $last_item=null;
+
     public $current_menu_class="atk-state-active";
+
     public $inactive_menu_class="";
+
+    /**
+     * if set, then instead of setting a destination page for the URLs
+     * the links will return to the same page, however new argument
+     * will be added to each link containing ID of the menu
+     */
+    public $dest_var=null;
 
     function init(){
         if($this->template->is_set('current')){
@@ -38,6 +43,8 @@ class Menu_Basic extends CompleteLister {
         }
         parent::init();
     }
+
+
     function defaultTemplate(){
         return array('menu');
     }
@@ -51,6 +58,7 @@ class Menu_Basic extends CompleteLister {
         $this->on('click','a')->univ()->frameURL($this->js()->_selectorThis()->attr('href'));
         return $this;
     }
+
     function addMenuItem($page,$label=null){
         if(!$label){
             $label=ucwords(str_replace('_',' ',$page));

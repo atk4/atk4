@@ -30,5 +30,8 @@ class Api_Admin extends ApiFrontend {
     function initAddons() {
         // TODO: Initialize add-ons automatically which have standard
         // controllers out there
+        foreach($this->api->getConfig('addons/active',array()) as $addon) {
+            $this->add($addon.'/Controller');
+        }
     }
 }
