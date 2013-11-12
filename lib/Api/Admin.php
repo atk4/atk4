@@ -23,6 +23,7 @@ class Api_Admin extends ApiFrontend {
         $this->add('Layout_Fluid');
 
         $this->menu = $this->layout->addMenu();
+        $this->layout->addFooter();
 
         $this->initAddons();
     }

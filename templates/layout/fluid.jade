@@ -1,9 +1,20 @@
 .atk-layout
-    {$Header}
+    .atk-layout-row
+        {Header}
+        header#atk-header(class="{$class}")
+            {$Header_Content}
+        {/}
+
+
     #atk-main.atk-layout-row.fluid
         #atk-main-inner.atk-layout
             {$LeftSidebar}
             #atk-content.atk-layout-column.fluid
                 {$Content}
-            {$RightBar}
-    {$Footer}
+            {$RightSideBar}
+
+    .atk-layout-row
+        {Footer}
+        footer#atk-Footer
+            {$Footer_Content}
+        {/}

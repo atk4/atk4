@@ -1,8 +1,14 @@
 
-<div class="atk-layout">{$Header}
+<div class="atk-layout">
+  <div class="atk-layout-row">{Header}
+    <header id="atk-header" class="{$class}">{$Header_Content}</header>{/}
+  </div>
   <div id="atk-main" class="atk-layout-row fluid">
     <div id="atk-main-inner" class="atk-layout">{$LeftSidebar}
-      <div id="atk-content" class="atk-layout-column fluid">{$Content}</div>{$RightBar}
+      <div id="atk-content" class="atk-layout-column fluid">{$Content}</div>{$RightSideBar}
     </div>
-  </div>{$Footer}
+  </div>
+  <div class="atk-layout-row">{Footer}
+    <footer id="atk-Footer">{$Footer_Content}</footer>{/}
+  </div>
 </div>
