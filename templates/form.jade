@@ -1,0 +1,38 @@
+.atk-form(style="{$style}" id="{$_name}")
+    <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+    fieldset(class="{$fieldset}")
+        {Content}
+        {form_line}
+        div.atk-form-row.atk-row(class="atk-form-row-{$field_type} {$row_class}")
+            <label for="{$field_name}" {field_mandatory}class="mandatory"{/}>
+            span {$field_caption}
+            {$after_label}
+            </label>
+            .atk-form-field(class="{$field_class}")
+                {$before_field}{$input_row_start}{$before_input}
+                {$field_input}
+                {$after_input}{$input_row_stop}{$after_field}
+            {$field_hint}
+            {field_error}
+            .atk-form-error
+                span.field-error-text {$field_error_str}
+            {/}
+
+        {/}
+
+        {form_separator}
+    fieldset(class="{$fieldset_class}")
+        {/form_separator}
+
+        {form_comment}{$comment}{/}
+
+        {/Content}
+        .field-error-template.atk-form-error
+            span.field-error-text {$field_error_str}
+
+    {button_row}
+    .atk-buttons(class="{$buttons_class}")
+        {$form_buttons}
+    {/}
+    </form>
+

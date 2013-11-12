@@ -20,7 +20,7 @@ html(lang="{lang}en{/}")
 
         link(href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css')
         link(rel="stylesheet" type="text/css" href="{css}ui-lightness/jquery-ui-1.10.3.custom.min.css{/}")
-        link(rel="stylesheet" type="text/css" href="{css}agiletoolkit.css{/}")
+        link(rel="stylesheet" type="text/css" href="{css}style.css{/}")
 
         {$js_include}
 
@@ -35,15 +35,15 @@ html(lang="{lang}en{/}")
 
         {Layout}
         .atk-layout
-            .atk-layout-row
-                header#atk-header.giga AgileToolkit 4.3 &ndash; 
-                    strong Snippets
-
-            {$Menu}
+            .atk-menu-bar.atk-cells.atk-push.atk-shape-rounded
+                .atk-cell.atk-valign-middle
+                    img(src="{public}images/logo.png{/}" style="background: black")
+                .atk-cell.atk-jackscrew
+                    {$Menu}
 
             #atk-main.atk-layout-row.fluid
                 #atk-main-inner.atk-layout
-                    #atk-content.atk-layout-column.flyid
+                    #atk-content.atk-layout-column.fluid
                         {$Content}
 
             .atk-layout-row

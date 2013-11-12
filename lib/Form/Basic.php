@@ -26,9 +26,6 @@
  * @version     $Id$
  */
 class Form_Basic extends View implements ArrayAccess {
-    protected $form_template = null;
-    protected $form_tag = null;
-
     public $layout=null; // template of layout if form has one
     
     // Here we will have a list of errors occured in the form, when we tried to
@@ -104,24 +101,13 @@ class Form_Basic extends View implements ArrayAccess {
         $this->template_chunks['form']=$this->template;
         $this->template_chunks['form']->del('Content');
         $this->template_chunks['form']->del('form_buttons');
-        $this->template_chunks['form']->set('form_name',$this->name.'_form');
+        $this->template_chunks['form']->trySet('form_name',$this->name.'_form');
 
         return $this;
     }
 
-    function initializeTemplate($tag, $template){
-        $template = $this->form_template?:$template;
-        $tag = $this->form_tag?:$tag;
-        return parent::initializeTemplate($tag, $template);
-    }
     function defaultTemplate($template = null, $tag = null){
-        if ($template){
-            $this->form_template = $template;
-        }
-        if ($tag){
-            $this->form_tag = $tag;
-        }
-        return array($this->form_template?:"form", $this->form_tag?:"form");
+        return array('form');
     }
     function grabTemplateChunk($name){
         if($this->template->is_set($name)){

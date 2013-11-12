@@ -18,7 +18,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory-->
     <link href="http://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="{css}ui-lightness/jquery-ui-1.10.3.custom.min.css{/}">
-    <link rel="stylesheet" type="text/css" href="{css}agiletoolkit.css{/}">{$js_include}
+    <link rel="stylesheet" type="text/css" href="{css}style.css{/}">{$js_include}
     <script type="text/javascript">
       $(function(){
           {$document_ready}
@@ -30,12 +30,13 @@
     <!--[if lt IE 7]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
     <![endif]-->{Layout}
     <div class="atk-layout">
-      <div class="atk-layout-row">
-        <header id="atk-header" class="giga">AgileToolkit 4.3 &ndash; <strong>Snippets</strong></header>
-      </div>{$Menu}
+      <div class="atk-menu-bar atk-cells atk-push atk-shape-rounded">
+        <div class="atk-cell atk-valign-middle"><img src="{public}images/logo.png{/}" style="background: black"></div>
+        <div class="atk-cell atk-jackscrew">{$Menu}</div>
+      </div>
       <div id="atk-main" class="atk-layout-row fluid">
         <div id="atk-main-inner" class="atk-layout">
-          <div id="atk-content" class="atk-layout-column flyid">{$Content}</div>
+          <div id="atk-content" class="atk-layout-column fluid">{$Content}</div>
         </div>
       </div>
       <div class="atk-layout-row">

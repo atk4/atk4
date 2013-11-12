@@ -397,16 +397,16 @@ class Grid_Basic extends CompleteLister
 
             // data row
             $col->del('content')
-                ->setHTML('content', '<?$'.$name.'?>')
-                ->setHTML('tdparam', '<?tdparam_'.$name.'?>style="white-space:nowrap"<?/?>');
+                ->setHTML('content', '{$'.$name.'}')
+                ->setHTML('tdparam', '{tdparam_'.$name.'}style="white-space:nowrap"{/}');
             $row->appendHTML('cols', $col->render());
 
             // totals row
             if (isset($t_row) && isset($t_col)) {
                 $t_col
                     ->del('content')
-                    ->setHTML('content', '<?$'.$name.'?>')
-                    ->trySetHTML('tdparam', '<?tdparam_'.$name.'?>style="white-space:nowrap"<?/?>');
+                    ->setHTML('content', '{$'.$name.'}')
+                    ->trySetHTML('tdparam', '{tdparam_'.$name.'}style="white-space:nowrap"{/}');
                 $t_row
                     ->appendHTML('cols', $t_col->render());
             }

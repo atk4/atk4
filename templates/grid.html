@@ -1,13 +1,15 @@
 
 <div id="{$_name}" class="atk-table">
   <!-- Pannel goes here-->
-  <table>{header}
+  <table>
+    {$grid_buttons}
+    {header}
     <thead>{cols}{col}
-      <th></th>{/}{/}
+      <th>{$descr} {$sort}</th>{/}{/}
     </thead>{/}
     {$subheader}
     <tbody>{rows}{row}
-      <tr class="{$odd_even}">
+      <tr id="{$row_id}" class="{$odd_even}">
         {cols}{col}
         <td {$tdparam}>
         {$content}
@@ -23,5 +25,6 @@
         {/}{/}
       </tr>{/}
     </tbody>
-  </table>{$paginator}
+  </table>{$not_found}
+  {$paginator}
 </div>

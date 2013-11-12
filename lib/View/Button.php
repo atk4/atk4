@@ -37,7 +37,7 @@ class View_Button extends View_HtmlElement
      */
     function defaultTemplate()
     {
-        return array('button', 'button');
+        return array('button');
     }
 
     

@@ -26,8 +26,8 @@ class Menu_Basic extends CompleteLister {
     public $items=array();
     protected $class_tag='class';
     protected $last_item=null;
-    public $current_menu_class="ui-state-active";
-    public $inactive_menu_class="ui-state-default";
+    public $current_menu_class="atk-state-active";
+    public $inactive_menu_class="";
 
     function init(){
         if($this->template->is_set('current')){

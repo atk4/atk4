@@ -114,6 +114,8 @@ class GiTemplate extends AbstractModel {
      */
     public $template=array();
 
+    public $template_source=null;
+
     /**
      * Settings are populated from the configuration file, if found
      */
@@ -323,6 +325,11 @@ class GiTemplate extends AbstractModel {
         return $this->trySet($tag,$value,false);
     }
 
+    function setHTML($tag,$value=null){
+        return $this->set($tag,$value,false);
+    }
+
+
 
     /**
      * Check if tag is present inside template. If it does, execute set();
@@ -350,7 +357,7 @@ class GiTemplate extends AbstractModel {
 
 
         $this->getTagRefList($tag,$template);
-        foreach($template as $ref){
+        foreach($template as &$ref){
             $ref=array();
             // TODO recursively go through template, and add tags
             // to blacklist, which would then be checked by hasTag()
@@ -385,8 +392,10 @@ class GiTemplate extends AbstractModel {
 
         if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
 
-        $this->getTagRef($tag,$template);
-        $template[]=$value;
+        $this->getTagRefList($tag,$template);
+        foreach($template as $key=>&$ref){
+            $ref[]=$value;
+        }
         return $this;
     }
 
