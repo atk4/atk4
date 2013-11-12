@@ -14,11 +14,17 @@ class Controller_Addon extends AbstractController {
 
     public $has_assets=false;
 
+    public $addon_name;
+
     function init() {
         parent::init();
         $this->api->requires('atk',$this->atk_version);
+
+        if(!$this->addon_name)
+            throw $this->exception('Addon name must be specified in it\'s Controller');
+
         $this->namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
-        $this->base_path=$this->api->locatePath('addons',$this->namespace);
+        $this->base_path='vendor/'.$this->addon_name;
     }
 
     /**
@@ -36,26 +42,23 @@ class Controller_Addon extends AbstractController {
      * explicitly from init() if necessary.
      */
     function addLocation($contents,$public_contents=null) {
-        $this->location = $this->api->pathfinder->addLocation($contents);
-        $this->location->setBasePath($this->base_path);
+        $this->location = $this->api->pathfinder->base_location->addRelativeLocation($this->base_path,$contents);
 
 
         // If class has assets, those have probably been installed
         // into the public location
+        // TODO: test
         if ($this->has_assets) {
-            $this->location = $this->api->pathfinder->addLocation($contents);
-            $this->location->setBasePath($this->base_path);
 
             if(is_null($public_contents)) {
-                $public_location=array(
+                $public_contents=array(
                     'public'=>'.',
                     'js'=>'js',
                     'css'=>'css',
                 );
             }
 
-            $this->public_location=$this->api->pathfinder->public_location
-                ->addRelativeLocation($namespace.'/public',$public_contents);
+            $this->location = $this->api->pathfinder->public_location->addRelativeLocation($this->base_path,$contents);
         }
 
         return $this->location;

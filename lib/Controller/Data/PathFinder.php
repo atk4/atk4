@@ -20,12 +20,27 @@ Implements connectivity between Model and Session
 class Controller_Data_PathFinder extends Controller_Data_Array {
 
     function setSource($model, $data) {
-        var_Dump($data);
-        $array = $this->api->pathfinder->searchDir($data);
-        var_Dump($array);
-        exit;
+        $dirs = $this->api->pathfinder->search($data,'','path');
+        $colls=array();
 
-        parent::setSource($model, $array);
+
+        foreach($dirs as $dir){
+
+            // folder will contain collections
+            $d=dir($dir);
+            while(false !== ($file=$d->read())){
+                if($file[0]=='.')continue;
+                if(is_dir($dir.'/'.$file)){
+                    $colls[]=array(
+                        'base_path'=>$dir.'/'.$file,
+                        'name'=>$file,
+                        'id'=>$file,
+                    );
+                }
+            }
+        }
+
+        parent::setSource($model, $colls);
 
     }
 }
