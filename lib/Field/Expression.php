@@ -55,7 +55,7 @@ class Field_Expression extends Field {
     function calculated($x=undefined){
         return $x===undefined?true:$this;
     }
-    /** specify DSQL, String or funciton($master_dsql,$this) */
+    /** specify DSQL, String or function($model, $dsql, $this_field) */
     function set($expr=null){
         $this->expr=$expr;
         return $this;
