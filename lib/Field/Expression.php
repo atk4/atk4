@@ -25,7 +25,7 @@
  * $model->addExpression('age','year(now())-year(birthdate)');  
  * // Below example achieves the same,but it prefixes age with proper table name
  * $model->addExpression('age',
- *      'year(now())-year('.$model->getElement('adatege')->getField().')');
+ *      'year(now())-year('.$model->getElement('adatege').')');
  *
  * $model->addExpression('row_counter',$this->db->dsql()->useExpr('@x := @x+1');
  *
@@ -55,7 +55,7 @@ class Field_Expression extends Field {
     function calculated($x=undefined){
         return $x===undefined?true:$this;
     }
-    /** specify DSQL, String or funciton($master_dsql,$this) */
+    /** specify DSQL, String or function($model, $dsql, $this_field) */
     function set($expr=null){
         $this->expr=$expr;
         return $this;
