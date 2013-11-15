@@ -168,7 +168,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
             if($this->strict_fields)throw $this->exception('Model field was not loaded')
                 ->addMoreInfo('id',$this->id)
-                ->addMoreinfo('field',$name);
+                ->addMoreInfo('field',$name);
 
             return null;
         }
