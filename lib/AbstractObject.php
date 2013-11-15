@@ -1047,11 +1047,14 @@ abstract class AbstractObject
         if (!is_array($array)) {
             throw $this->exception('not array');
         }
+        if ($desired === null) {
+           $desired = 'undef';
+        }
         $postfix = count($array);
         $attempted_key = $desired;
-        while (array_key_exists($attempted_key, $array)) {
+        while (isset($array[$attempted_key])) {
             // already used, move on
-            $attempted_key = ($desired ?: 'undef').'_'.(++$postfix);
+            $attempted_key = $desired . '_' . (++$postfix);
         }
         return $attempted_key;
     }
