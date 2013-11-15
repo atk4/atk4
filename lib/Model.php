@@ -168,7 +168,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
             if($this->strict_fields)throw $this->exception('Model field was not loaded')
                 ->addMoreInfo('id',$this->id)
-                ->addMoreinfo('field',$name);
+                ->addMoreInfo('field',$name);
 
             return null;
         }
@@ -580,7 +580,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     public $_references=array();
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=undefined,$field_class='Field'){
+    function hasOne($model, $our_field = undefined, $field_class = undefined){
+        if ($field_class === undefined) {
+            $field_class = $this->field_class;
+        }
 
         // if our_field is not specified, let's try to guess it from other model's table
         if($our_field===undefined){
