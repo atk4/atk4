@@ -823,7 +823,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      *
      * You can use expression for more complex joins
      *  $q->join('address', 
-     *      $q->exprOrExpr()
+     *      $q->orExpr()
      *          ->where('user.billing_id=address.id')
      *          ->where('user.technical_id=address.id')
      *  )
