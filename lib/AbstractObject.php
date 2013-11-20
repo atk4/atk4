@@ -1052,7 +1052,7 @@ abstract class AbstractObject
         }
         $postfix = count($array);
         $attempted_key = $desired;
-        while (isset($array[$attempted_key])) {
+        while (array_key_exists($attempted_key, $array)) {
             // already used, move on
             $attempted_key = $desired . '_' . (++$postfix);
         }
