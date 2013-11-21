@@ -165,13 +165,9 @@ class Form_Basic extends View implements ArrayAccess {
             $caption = ucwords(str_replace('_', ' ', $name));
         }
         
+        /* normalize name and put it back in options array */
         $name = $this->api->normalizeName($name);
-        /* put name back in options */
-        if (is_array($options)){
-            $options["name"] = $name;
-        } else {
-            $options = $name;
-        }
+        $options["name"] = $name;
 
         switch (strtolower($type)) {
             case 'dropdown':     $class = 'DropDown';     break;
