@@ -1,7 +1,7 @@
 {
     "name": "atk4/atk4",
     "type": "library",
-    "version": "4.2.4",
+    "version": "4.3.x",
     "keywords": ["framework","atk4"],
     "homepage": "https://agiletoolkit.org/",
     "dist": {
@@ -11,7 +11,7 @@
     "source": {
         "url": "https://github.com/atk4/atk4.git",
         "type": "git",
-        "reference": "origin/master"
+        "reference": "origin/4.3"
     },
     "autoload": {
         "psr-0": {"": "lib/"},

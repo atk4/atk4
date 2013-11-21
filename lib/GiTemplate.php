@@ -149,7 +149,11 @@ class GiTemplate extends AbstractModel {
     function init(){
         parent::init();
         $this->cache=&$this->api->smlite_cache;
-        $this->settings=$this->api->getConfig('smlite',$this->getDefaultSettings());
+        $this->settings=array_merge(
+            $this->getDefaultSettings(),
+            $this->api->getConfig('smlite',array())
+        );
+
     }
 
     function __clone(){
@@ -485,7 +489,8 @@ class GiTemplate extends AbstractModel {
         $this->loadTemplateFromString($template_source);
 
 
-        file_put_contents($f.'.cache',serialize($this->template));
+        // TODO: implement proper caching
+        //file_put_contents($f.'.cache',serialize($this->template));
 
 
         $this->source='Loaded from file: '.$template_name;
@@ -527,14 +532,12 @@ class GiTemplate extends AbstractModel {
 
             $rtag = $this->parseTemplateRecursive($input, $template[$full_tag]);
 
-
             list(,$template[])=each($input);
         }
     }
 
     function parseTemplate($str) {
-        $tag='/{([\/$]?[_\w]*)}/';
-
+        $tag='/'.$this->settings['ldelim'].'([\/$]?[_\w]*)'.$this->settings['rdelim'].'/';
 
 		$input = preg_split ( $tag, $str, -1, PREG_SPLIT_DELIM_CAPTURE );
 
@@ -697,7 +700,7 @@ class GiTemplate extends AbstractModel {
             @list($key,$ref)=explode('#',$tag);
 
             $this->tags[$key][$ref]=&$val;
-            if(is_array($val)){ echo 'x';$this->rebuildTagsRegion($val); }
+            if(is_array($val))$this->rebuildTagsRegion($val);
         }
         //echo "------------------------------------------<br/>";
         //var_dump($old,$new);
