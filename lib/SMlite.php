@@ -33,7 +33,6 @@
  *              Removed support for permanent tags
  *              Much more comments and other fixes
  *
- *
  * ==[ Description ]===========================================================
  * SMlite templates are HTML pages containing tags to mark certain regions.
  * <html><head>
@@ -152,8 +151,8 @@ class SMlite extends AbstractModel {
          */
         return array(
                 // by separating them with ':'
-                'ldelim'=>'{',                // tag delimiter
-                'rdelim'=>'}',
+                'ldelim'=>'<?',                // tag delimiter
+                'rdelim'=>'?>',
                 'extension'=>'.html',          // template file extension
                 );
     }
@@ -503,8 +502,6 @@ class SMlite extends AbstractModel {
         if($ext){ $this->settings['extension']=$tempext; }
 
         $this->cache[$template_name.$ext]=serialize($this->template);
-
-        exit;
 
         return $this;
     }

@@ -459,8 +459,7 @@ class GiTemplate extends AbstractModel {
          */
         if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
         $f=$this->api->locatePath($this->settings['template_type'],$template_name.$this->settings['extension']);
-        $this->origin_filename=$f;
-        return join('',file($f));
+        return $this->origin_filename=$f;
     }
     function loadTemplate($template_name,$ext=null){
         /*
@@ -470,10 +469,25 @@ class GiTemplate extends AbstractModel {
             $tempext=$this->settings['extension'];
             $this->settings['extension']=$ext;
         };
-        $template_source = $this->findTemplate($template_name);
+        $f = $this->findTemplate($template_name);
+
+        /*if(file_exists($f.'.cache')){
+            $this->template=unserialize(file_get_contents($f.'.cache'));
+            $this->source='Loaded from file: '.$template_name;
+            $this->rebuildTags();
+            return $this;
+        }*/
+
+        $template_source = join('',file($f));
+
         $this->template_file=$template_name;
 
         $this->loadTemplateFromString($template_source);
+
+
+        file_put_contents($f.'.cache',serialize($this->template));
+
+
         $this->source='Loaded from file: '.$template_name;
         if($ext){ $this->settings['extension']=$tempext; }
         return $this;
@@ -484,9 +498,58 @@ class GiTemplate extends AbstractModel {
         return $tag.'#'.(++$this->tag_cnt[$tag]);
     }
 
+
+    function parseTemplateRecursive(&$input, &$template) {
+        while(list(,$tag) = each($input)) {
+
+            // Closing tag
+            if($tag[0]=='/')return substr($tag,1);
+
+
+            if($tag[0]=='$') {
+                $tag=substr($tag,1);
+                $full_tag=$this->regTag($tag);
+                $template[$full_tag] = '';  // empty value
+                $this->tags[$tag][] =& $template[$full_tag];
+
+                // eat next chunk
+                list(,$template[])=each($input);
+
+                continue;
+            }
+
+            $full_tag=$this->regTag($tag);
+
+            // Next would be prefix
+            list(,$prefix) = each($input);
+            $template[$full_tag] = array($prefix);
+            $this->tags[$tag][] =& $template[$full_tag];
+
+            $rtag = $this->parseTemplateRecursive($input, $template[$full_tag]);
+
+
+            list(,$template[])=each($input);
+        }
+    }
+
+    function parseTemplate($str) {
+        $tag='/{([\/$]?[_\w]*)}/';
+
+
+		$input = preg_split ( $tag, $str, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+        list(,$prefix) = each($input);
+        $this->template=array($prefix);
+
+        $this->parseTemplateRecursive($input, $this->template);
+
+    }
+
+
+
     private $arr=null;
     private $arr_t=null;
-    function parseTemplate($str) {
+    function parseTemplate2($str) {
         //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
         //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
         //$nt='.*?(?={\/?[_\w]*}|$)';
@@ -514,8 +577,10 @@ class GiTemplate extends AbstractModel {
                 $this->template=array();
 
 
-
-                $this->parseTemplate($x[5]);  // adds other tags
+                if($x[5]) {
+                    $this->parseTemplate($x[5]);  // adds other tags
+                }else{
+                }
 
                 $full_tag=$this->regTag($x[4]);
 
@@ -560,7 +625,7 @@ class GiTemplate extends AbstractModel {
 
 //(?R)(.*?)
         //
-        $notags=$this->parseTemplate('{_top}'.$str.'{/}');
+        $notags=$this->parseTemplate($str);
 
 
         return $this;
@@ -632,7 +697,7 @@ class GiTemplate extends AbstractModel {
             @list($key,$ref)=explode('#',$tag);
 
             $this->tags[$key][$ref]=&$val;
-            if(is_array($val))$this->rebuildTagsRegion($val);
+            if(is_array($val)){ echo 'x';$this->rebuildTagsRegion($val); }
         }
         //echo "------------------------------------------<br/>";
         //var_dump($old,$new);

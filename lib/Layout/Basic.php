@@ -47,7 +47,7 @@ class Layout_Basic extends View {
 
 
     function addMenu($class = 'Menu_Main') {
-        return $this->addRow('Header')->add($class);
+        return $this->add($class,null,'Header_Content');
     }
 
     /**
