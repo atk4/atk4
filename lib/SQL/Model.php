@@ -202,11 +202,8 @@ class SQL_Model extends Model {
     }
     /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
     function join($foreign_table, $master_field=null, $join_kind=null, $_foreign_alias=null,$relation=null){
-        if(!$_foreign_alias && is_string($foreign_table)) {
-            // find first letter in string
-            preg_match('/^.*?([a-zA-Z])/', $foreign_table, $matches);
-            $_foreign_alias = isset($matches[1]) ? '_' . $matches[1] : null;
-        }
+
+        if(!$_foreign_alias)$_foreign_alias='_'.$foreign_table[0];
         $_foreign_alias=$this->_unique($this->relations,$_foreign_alias);
 
         return $this->relations[$_foreign_alias]=$this->add('SQL_Relation',$_foreign_alias)
