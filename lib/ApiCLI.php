@@ -114,7 +114,7 @@ class ApiCLI extends AbstractView {
             // we receive URL
             return $page->setArguments($arguments);
         }
-        $url=$this->add('URL','url_'.$this->url_object_count++);
+        $url=$this->add('URL');
         if(substr($page,0,7)=='http://')$url->setURL($page);elseif
             (substr($page,0,8)=='https://')$url->setURL($page);else
                 $url->setPage($page);
