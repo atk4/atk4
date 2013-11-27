@@ -3,6 +3,16 @@
  * Implementation of SQL Query Abstraction Layer for Agile Toolkit
  *
  * @link http://agiletoolkit.org/doc/dsql
+ * @version     3.0
+ *
+ * History
+ *  0.9         First version.
+ *  1.0         This version was adopted into AModules2 and SLib projects.
+ *  1.1         Added support for mysqli, parametric arguments (mvs@adevel.com).
+ *  1.2         Several tuneups and changes, used in AModules3.
+ *  1.3         Released a standalone version with code cleanup.
+ *  2.0         Many significant changes, reorganized structure, might break compatibility with DBlite 1.X
+ *  3.0         Migrated to use of PDO
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -32,8 +42,6 @@ class DB extends AbstractController
 
     /** Current depth of transaction */
     public $transaction_depth = 0;
-
-    // {{{ Connectivity
 
     /**
      * Connect will parse supplied DSN and connect to the database. Please be
