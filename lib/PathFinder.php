@@ -209,7 +209,10 @@ class PathFinder extends AbstractController
     function addLocation($contents=array(), $old_contents=null)
     {
 
-        if ($old_contents) $contents = $old_contents;
+        if ($old_contents && $this->api->compat_42){
+            $contents = $old_contents;
+            $this->_relative_path=$contents;
+        }
 
         return $this
             ->add('PathFinder_Location')
@@ -416,6 +419,10 @@ class PathFinder_Location extends AbstractModel {
 
     public $auto_track_element = true;
 
+    /** OBSOLETE **/
+    private $_relative_path=null;
+
+
     /**
      * Returns how this location or file can be accessed through web
      * base url + relative path + file_path
@@ -486,6 +493,15 @@ class PathFinder_Location extends AbstractModel {
 
         return $location->defineContents($contents);
     }
+
+    // OBSOLETE - Compatiblity
+    function setParent(Pathfinder_Location $parent) {
+        $this->setBasePath($parent->base_path.'/'.$this->_relative_path);
+        $this->setBaseURL($parent->base_url.'/'.$this->_relative_path);
+        return $this;
+    }
+
+
 
     function locate($type,$filename,$return='relative'){
         // Locates the file and if found - returns location,

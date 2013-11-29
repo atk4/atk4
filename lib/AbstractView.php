@@ -20,8 +20,7 @@
 abstract class AbstractView extends AbstractObject
 {
     /**
-     * $template is an SMLite object containing indexed HTML
-     * template. 
+     * $template is an object containing indexed HTML template.
      *
      * Example:
      *
@@ -186,7 +185,7 @@ abstract class AbstractView extends AbstractObject
             // use. Let's look at several cases:
 
             if (is_object($template_branch)) {
-                // it might be already SMlite instance (object)
+                // it might be already template instance (object)
                 $this->template=$template_branch;
             } elseif (is_array($template_branch)) {
                 // it might be array with [0]=template, [1]=tag
@@ -194,7 +193,7 @@ abstract class AbstractView extends AbstractObject
                     // if [0] is object, we'll use that
                     $this->template=$template_branch[0];
                 } else {
-                    $this->template=$this->api->add('GiTemplate');
+                    $this->template=$this->api->add('Template');
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
@@ -207,7 +206,7 @@ abstract class AbstractView extends AbstractObject
                     $this->template
                         = $this->owner->template->cloneRegion($template_branch);
                 } else {
-                    $this->template=$this->add('SMlite');
+                    $this->template=$this->add('Template');
                 }
             }
             $this->template->owner=$this;
@@ -246,8 +245,7 @@ abstract class AbstractView extends AbstractObject
     /**
      * This method is commonly redefined to set a default template for an object.
      * If you return string, object will try to clone specified region off the
-     * parent. If you specify array, it will load and parse a separate SMlite
-     * template.
+     * parent. If you specify array, it will load and parse a separate template.
      *
      * This is overriden by 4th argument in add() method
      *

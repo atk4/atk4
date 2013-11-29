@@ -85,7 +85,21 @@ class CompleteLister extends Lister
     {
         parent::init();
         if (!$this->template->hasTag($this->item_tag)) {
-            throw $this->template->exception('Template must have "'.$this->item_tag.'" tag');
+
+            if($this->api->compat_42 and $this instanceof Menu_Basic) {
+                // look for MenuItem
+
+                $default = $this->item_tag;
+
+                $this->item_tag='MenuItem';
+                $this->container_tag='Item';
+                if (!$this->template->hasTag($this->item_tag)) {
+                    throw $this->template->exception('Template must have "'.$default.'" tag')
+                        ->addMoreInfo('compat','Also tried for compatibility reason "'.$this->item_tag.'" tag');
+                }
+            }else{
+                throw $this->template->exception('Template must have "'.$this->item_tag.'" tag');
+            }
         }
 
         $this->row_t = $this->template->cloneRegion($this->item_tag);
