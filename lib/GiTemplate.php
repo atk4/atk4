@@ -151,9 +151,16 @@ class GiTemplate extends AbstractModel {
         $this->cache=&$this->api->smlite_cache;
         $this->settings=array_merge(
             $this->getDefaultSettings(),
-            $this->api->getConfig('smlite',array())
+            $this->api->getConfig('template',array())
         );
+    }
 
+    /** Causes the template to be refreshed from it's original source */
+    function reload() {
+        $f = $this->findTemplate($this->template_file);
+        $template_source = join('',file($f));
+        $this->loadTemplateFromString($template_source);
+        return $this;
     }
 
     function __clone(){
@@ -300,7 +307,7 @@ class GiTemplate extends AbstractModel {
         if(is_array($tag)){
             if(is_null($value)){
                 foreach($tag as $s=>$v){
-                    $this->trySet($s,$v);
+                    $this->trySet($s,$v,$encode);
                 }
                 return $this;
             }
@@ -355,7 +362,7 @@ class GiTemplate extends AbstractModel {
     function del($tag){
 
         if($this->isTopTag($tag)){
-            $this->loadTemplateFromString('{$'.$tag.'}');
+            $this->loadTemplateFromString('');
             return $this;
         }
 
@@ -619,8 +626,7 @@ class GiTemplate extends AbstractModel {
         if(!$str){
             return;
         }
-
-
+        $this->tag_cnt=array();
 
         /* First expand self-closing tags {$tag} -> {tag}{/tag} */
         $str=preg_replace('/{\$([\w]+)}/','{\1}{/\1}',$str);
