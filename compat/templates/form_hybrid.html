@@ -1,0 +1,41 @@
+<?form?>
+<div id="<?$_name?>" class="atk-form <?class?>atk-form-hybrid<?/?>">
+	<?$hint?>
+	<form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
+		<fieldset class="atk-form-<?form_class?>basic<?/?> ">
+			<?Content?>
+				<?form_line?>
+				<dl class="atk-field atk-field-<?$field_type?>">
+					<dt><label for="<?$field_name?>" <?field_mandatory?>class="mandatory"<?/?>><?$field_caption?></label></dt>
+					<dd class="form_field"><?$before_field?><?field_input?><input/><?/?><?$after_field?><?$field_hint?></dd>
+					<?field_error?>
+					<dd class="atk-error">
+						<div class="ui-state-error ui-corner-all"><span class="ui-icon"></span><?$field_error_str?></div>
+					</dd>
+					<?/?>
+				</dl>
+				<?/form_line?>
+
+				<?form_separator?>
+				</fieldset>
+				<fieldset class="atk-form-<?separator_text?>basic<?/?> ">
+			    <?/form_separator?>
+
+			<?/Content?>
+
+			<dd style="display:none" class="field-error-template atk-form-error field-error-text">
+				<i class="ui-icon ui-icon-alert"></i>Sample Error
+			</dd>
+		</fieldset>
+		<dl class="atk-button-holder">
+			<dd class="atk-field">
+			<?form_buttons?>
+				<input type="button" value="Save" class="no" />
+			<?/form_buttons?>
+			</dd>
+		</dl>
+
+
+	</form>
+</div>
+<?/form?>

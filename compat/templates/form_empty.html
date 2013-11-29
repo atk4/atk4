@@ -1,0 +1,27 @@
+<?form?>
+<div id="<?$_name?>" class="<?$class?>" style="<?$style?>">
+<form class="<?$form_internal_class?>" id="<?$form_name?>" name="<?$form_name?>" action="<?$form_action?>" method="POST" <?$enctype?>>
+
+<?$Hint?>
+
+<!--
+	<?form_error?><dl><dd><span style="color:red; font-size: 200%"><?form_error_str?>Error on form!!<?/?></span></dd></dl><?/?>
+	-->
+		<?Content?>			
+			<?form_line?>
+				<!-- <?$field_caption?> -->
+				<label><?$field_caption?></label><?$before_field?><?field_input?><span class="form_field"><input type="text" 
+				name="loginemail" class="logintext" value=""/></span><?/?><?$after_field?><?field_error?><span class="form_error"><?field_error_str?>Error<?/?></span><?/?>
+				<!--<?field_comment?><span class="form_comment">Password must be 6&ndash;16 characters long</span><?/?>-->
+			<?/form_line?>
+			<?form_separator?>
+			
+			<?separator?>Personal information<?/?><?/form_separator?>
+		<?/Content?>
+			<?form_buttons?>
+			<input type="button" value="Save" class="gbutton button_style1" />
+			<?/form_buttons?>
+	</form>
+</div>
+<?/form?>
+

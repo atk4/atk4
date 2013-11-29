@@ -1,0 +1,29 @@
+<?paginator2?>
+<div class="atk-paginator" id="<?$_name?>">
+  <?prev?><a href="#" class="disabled">← Prev</a><?/?>
+  <?rows?>
+  <?row?><a data-skip="<?$pn?>" href="<?$href?>" class="itemlits <?cur?>ui-state-active ui-corner-all<?/?>"><?$label?></a><?/?>
+  <a href="#">2</a>
+  <a href="#">3</a>
+  <a href="#" class="disabled">…</a>
+  <a href="#">19</a>
+  <a href="#">20</a>
+  <a href="#">21</a>
+  <?/rows?>
+  <?next?><a href="#" class="disabled">Next →</a><?/?>
+</div>
+<?/?>
+
+<?paginator?>
+<?link?><a href="<?$link_url?>"><?link_text?><?prev?>&lt;&lt;<?/prev?><?/link_text?></a><?/?>
+<?cur_item?><strong><?$item?></strong> (<?$total_items?> total)<?/cur_item?> <?separator?> | <?/?>
+2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 
+<?next?>&gt;&gt;<?/next?>
+<?/paginator?>
+
+<?ajax_paginator?>
+<?link?><a href="javascript:void('<?$region?>');" onclick="return $('#<?$region?>').atk4_load('<?$link_url?>&cut_region=<?$region?>&cut_object=<?$object?>')"><?link_text?><?prev?>&lt;&lt;<?/prev?><?/link_text?></a><?/?>
+<?cur_item?><strong><?$item?></strong> (<?$total_items?> total)<?/cur_item?> <?separator?> | <?/?>
+2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 
+<?next?>&gt;&gt;<?/next?>
+<?/ajax_paginator?>

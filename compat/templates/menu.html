@@ -1,0 +1,74 @@
+<?Menu?>
+<script>
+$(document).ready(function(){
+	$('.atk-menu-horizontal>ul>li:first-child').addClass("ui-corner-left");
+	$('.atk-menu-horizontal>ul>li:last-child').addClass("ui-corner-right");
+	
+	$('.atk-menu-vertical>ul>li:first-child').addClass("ui-corner-top");
+	$('.atk-menu-vertical>ul>li:last-child').addClass("ui-corner-bottom");	
+	
+	$('.atk-menu .ui-state-default').hover(function() {
+		$(this).addClass("ui-state-hover");
+	}, function() {
+		$(this).removeClass("ui-state-hover");
+	});
+		
+});
+</script>
+<div id="<?$_name?>" class="atk-menu atk-menu-horizontal ui-widget">
+<ul>
+    <?Item?>
+        <?MenuItem?>
+        <li id="<?$id?>" class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+        <?/MenuItem?>
+    <?/?>
+    <?$Content?>
+</ul>
+</div>
+
+
+<?MenuSeparator?><?/MenuSeparator?>
+<?/?>
+
+
+
+<?MenuVertical?>
+<script>
+$(document).ready(function(){
+	$('.atk-menu-horizontal>ul>li:first-child').addClass("ui-corner-left");
+	$('.atk-menu-horizontal>ul>li:last-child').addClass("ui-corner-right");
+	
+	$('.atk-menu-vertical>ul>li:first-child').addClass("ui-corner-top");
+	$('.atk-menu-vertical>ul>li:last-child').addClass("ui-corner-bottom");	
+	
+	$('.atk-menu .ui-state-default').hover(function() {
+		$(this).addClass("ui-state-hover");
+	}, function() {
+		$(this).removeClass("ui-state-hover");
+	});
+		
+});
+</script>
+<div id="<?$_name?>" class="atk-menu atk-menu-vertical ui-widget">
+<ul>
+    <?Item?>
+        <?MenuItem?>
+        <li class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+        <?/MenuItem?>
+    <?/?>
+</ul>
+</div>
+<?MenuSeparator?><?/MenuSeparator?>
+<?/?>
+
+<?MenujUI?>
+<ul id="<?$_name?>" class="<?$class?>" style="<?$style?>">
+    <?Item?>
+        <?MenuItem?>
+        <li id="<?$id?>" class="<?$class?>"><a href="<?$href?>"><?label?>MenuItem<?/?></a></li>
+        <?/MenuItem?>
+    <?/?>
+    <?$Content?>
+</ul>
+<?MenuSeparator?><?/MenuSeparator?>
+<?/?>

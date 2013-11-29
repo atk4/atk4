@@ -1,0 +1,223 @@
+/* ==============================================
+    Forms
+   ============================================== */
+
+// Overwriting (scaffolding) defaults
+// ----------------------------------------------
+button::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner { padding: 0 !important; border: 0 !important; }
+
+input[type=text],
+input[type=password],
+input[readonly],
+textarea,
+div.atk-form-field-readonly {
+    font-size: @fontSize;
+    font-family: @fontFamily;
+    line-height: 1.4;
+    background: @white;
+    .box-shadow(0 1px 3px rgba(0,0,0,0.1) inset);
+    border: 1px solid @inputBorder;
+    .border-radius(@cornerRadius);
+    padding: @padding/5;
+    .box-sizing();
+    resize: none;
+    @transition: border linear 0.15s, box-shadow linear 0.15s;
+    .transition(@transition);
+}
+
+input[readonly],
+div.atk-form-field-readonly { background: @lightestGray; }
+
+input[type=text]:focus,
+input[type=password]:focus,
+textarea:focus {
+    @shadow: 0 0 3px fadeout(@focused,30%), 0 0 10px fadeout(@focused,70%);
+    border-color: @focused;
+    .box-shadow(@shadow);
+    outline: none;
+}
+
+// ATK form
+// ----------------------------------------------
+.atk-form {
+    fieldset + fieldset {
+        margin-top: @margin;
+        padding-top: @margin;
+        border-top: 1px solid @border;
+    }
+    fieldset {
+        &.atk-row {
+            .atk-form-row { margin-top: 0; }
+        }
+    }
+    fieldset .atk-form-row {
+        .clearfix();
+        margin-top: @margin/2;
+        &:first-child { margin-top: 0; }
+        &.has-error {
+            > label { color: @error; }
+            input { border-color: @error; }
+        }
+        > label { font-weight: bold; width: @label; margin-top: 0.4em; float: left; }
+        > .atk-form-field {
+            margin-left: @label + @labelMargin;
+            input[type=text]:not([class*="span"]),
+            input[type=password]:not([class*="span"]),
+            input[readonly]:not([class*="span"]),
+            textarea:not([class*="span"]),
+            div.atk-form-field-readonly:not([class*="span"]),
+            select { width: 100%; }
+            select { margin-top: 0.5em;}
+            textarea { display: block; margin-bottom: @margin/5; }
+            input + input { margin-left: 0.4em; }
+            .atk-form-error { margin: @margin/5 0 0; color: @error; }
+        }
+    }
+    .atk-buttons { border-top: 1px solid @border; margin-top: @margin/1.5; padding-top: @margin/1.5; }
+    .atk-buttons, .legend { padding-left: @label + @labelMargin; }
+    // Stacked form
+    &.stacked { 
+        fieldset {
+            margin-bottom: @margin/2;
+            .atk-form-row {
+                > label { float: none; width: auto; display: block; margin: 0 0 @margin/6 0; }
+                > .atk-form-field { margin-left: 0; }
+            }
+        }
+        .atk-buttons, .legend { padding-left: 0; }
+        &.atk-row .atk-buttons[class*=span] {
+            &:before { content: '-'; margin-bottom: @margin/6; display: block; visibility: hidden; }
+        }
+    }
+    // Inline form
+    &.atk-row {
+        fieldset {
+            padding-top: 0;
+            margin-top: 0;
+            border: none;
+            &[class*=span] {
+                > *[class*=span] {
+                    margin-top: 0;
+                }
+                +.atk-buttons[class*=span] {
+                    border: none;
+                    margin-top: 0;
+                    padding: 0;
+                    text-align: left;
+                    clear: none;
+                    *.big { margin-top: -0.3em; }
+                }
+            }
+        }
+        .atk-buttons { clear: both; text-align: right; }
+    }
+    // Form with wide labels
+    &.wider-labels {
+        fieldset .atk-form-row {
+            > label { width: @label + (@label*0.6); float: left; }
+            > .atk-form-field { margin-left: @label + (@label*0.6) + @labelMargin; }
+        }
+        &.stacked {
+            fieldset .atk-form-row {
+                > label { width: auto; float: none; }
+                > .atk-form-field { margin-left: 0; }
+            }
+        }
+        .atk-buttons, .legend { padding-left: @label + (@label*0.6) + @labelMargin; }
+    }
+    // Form with right aligned labels
+    &.labels-right fieldset .atk-form-row > label { text-align: right; }
+}
+
+// ATK form fields
+// ----------------------------------------------
+.atk-form {
+    .atk-form-field ins {
+        text-decoration: none;
+        color: @lightGray;
+        display: block;
+        margin-top: @margin/8;
+    }
+    .atk-form-options {
+        position: relative;
+        left: -1em;
+        top: -@margin/3;
+        margin-top: @margin/16+0.3em;
+        div {
+            padding: @margin/3 0 0 1em;
+            margin-top: 0;
+            display: inline-block;
+            > input {margin-right: 0.4em;}
+        }
+        &.stacked {
+            margin-top: @margin/16+0.3em;
+            position: static;
+            div {
+                margin-top: @margin/3;
+                padding: 0;
+                display: block;
+                &:first-child { margin-top: 0; }
+            }
+        }
+    }
+}
+
+// ATK form row ??? really ???
+// ----------------------------------------------
+.input-row {
+    display: table;
+    .input-cell {
+        display: table-cell;
+        vertical-align: middle;
+        &.expanded {
+            width: 100%;
+            line-height: @lineHeight;
+            &:first-child input {
+                .border-right-radius(0);
+            }
+            +.input-cell .ui-button {
+                .border-left-radius(0);
+                margin-left: -1px;
+            }
+            input { width: 100%; }
+        }
+        &:first-child:not(.expanded) {
+            .ui-button {
+                .border-right-radius(0);
+                margin-right: -1px;
+            }
+            +.expanded input {
+                .border-left-radius(0);
+            }
+        }
+        .ui-buttonset { white-space: nowrap; }
+        > .ui-button { margin-left: 0; margin-right: 0; }
+        .ui-button * { line-height: normal; }
+    }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .input-row .input-cell .ui-button,
+    .input-row .input-cell .ui-button * { line-height: 1.4; }
+}
+
+// and this is actually for layout
+.atk-row {
+    .clearfix();
+    +.atk-row { margin-top: @margin; }
+
+    > *:first-child:not([class*="offset"]),
+    > form > *:first-child[class*="span"],
+    > form > *[class*="span"]>*:first-child[class*="span"] {
+        margin-left: 0 !important;
+    }
+
+    > [class*="span"],
+    > form > [class*="span"],
+    > form > [class*="span"] > [class*="span"] {
+        .gridColumn();
+    }
+}

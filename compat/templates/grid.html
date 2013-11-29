@@ -1,0 +1,59 @@
+<?$Misc?>
+<div id="<?$_name?>" class="atk-grid <?$class?>" style="<?$style?>" <?$attributes?>>
+  
+  <?$top_1?>
+  <div class="atk-grid-panel clearfix"><?$quick_search?><?$grid_buttons?></div>
+  <?$top_2?>
+  
+  <?all_table?>
+  <table width="<?table_width?>100%<?/?>">
+
+    <?header?>
+    <thead class="ui-widget-header"><tr>
+      <?cols?>
+        <?col?>
+        <th id="<?$sortid?>" class="ui-widget-header" <?$thparam?>><?sort?><span class="ui-icon <?$sorticon?>"></span><?/?><?descr?>Customer<?/?></th>
+        <?/col?>
+      <?/cols?>
+    </tr></thead>
+    <?/header?>
+    <?$subheader?>
+
+    <tbody class="grid_body">
+      <?rows?>
+      
+      <?row?>
+      <tr class="<?$odd_even?>" data-id="<?$row_id?>" rel="<?$row_id?>">
+      <?cols?>
+        <?col?>
+        <td <?$tdparam?>><?$content?></td>
+        <?/col?>
+      <?/cols?>
+      </tr>
+      <?/row?>
+
+      <?totals?>
+      <tr class="atk-grid-totals">
+      <?cols?>
+        <?col?>
+        <td <?$tdparam?>><?$content?></td>
+        <?/col?>
+      <?/cols?>
+      </tr>
+      <?/totals?>
+      
+      <?/rows?>
+    </tbody>
+
+    <?$footer?>
+
+  </table>
+  <?/?>
+  <?not_found?>
+    <div class="atk-grid-notfound ui-state-highlight ui-corner-all clearfix"><i class="ui-icon ui-icon-alert float-left"></i><?not_found_message?>No Records Found<?/?></div>
+  <?/not_found?>
+
+  <?$bottom_1?>
+  <?$paginator?>
+  <?$bottom_2?>
+</div>
