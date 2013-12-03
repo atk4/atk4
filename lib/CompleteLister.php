@@ -86,7 +86,7 @@ class CompleteLister extends Lister
         parent::init();
         if (!$this->template->hasTag($this->item_tag)) {
 
-            if($this->api->compat_42 and $this instanceof Menu_Basic) {
+            if(@$this->api->compat_42 and $this instanceof Menu_Basic) {
                 // look for MenuItem
 
                 $default = $this->item_tag;
