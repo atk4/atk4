@@ -23,8 +23,9 @@ class Controller_Data_Array extends Controller_Data {
                 ->addMoreInfo('source', $table);
         }
         $data = array();
-        foreach ($table as $row) {
-            $data[$row[$model->id_field]] = $row;
+        foreach ($table as $key => $row) {
+            $id = isset($row[$model->id_field])?$model->id_field:$key;
+            $data[$id] = $row;
         }
         return parent::setSource($model, $data);
     }
@@ -88,7 +89,7 @@ class Controller_Data_Array extends Controller_Data {
         } else {
             $id = next($model->_table[$this->short_name]['__ids__']);
         }
-        if (($id !== false) && ($id != '__ids__')) {
+        if (($id !== false) && ($id !== '__ids__')) {
             $model->id = $id;
             $model->data = $model->_table[$this->short_name][$id];
         } else {
