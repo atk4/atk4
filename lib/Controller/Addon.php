@@ -32,9 +32,9 @@ class Controller_Addon extends AbstractController {
      * from init() if necessary.
      */
     function routePages($page_prefix) {
-        if ($this->api instanceof api/Frontend) {
+        //if ($this->api instanceof api_Frontend) {
             $this->api->routePages($page_prefix, $this->namespace);
-        }
+       // }
     }
 
     /**
