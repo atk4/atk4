@@ -391,7 +391,7 @@ abstract class AbstractView extends AbstractObject
      */
     function output($txt)
     {
-        if (!$this->hook('output', array($txt))) {
+        if (!is_null($this->hook('output', array($txt)))) {
             if (isset($this->owner->template)
                 && !empty($this->owner->template)
             ) {
