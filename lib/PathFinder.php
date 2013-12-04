@@ -419,6 +419,14 @@ class PathFinder_Location extends AbstractModel {
 
     public $auto_track_element = true;
 
+    public $is_cdn = false;
+    /**
+     * If you set this to true, then baseURL will be considered
+     * to point to a remote location. 
+     *
+     * use setCDN() method;
+     */
+
     /** OBSOLETE **/
     private $_relative_path=null;
 
@@ -463,6 +471,11 @@ class PathFinder_Location extends AbstractModel {
         $url=preg_replace('|//|','/',$url);
         $this->base_url=$url;
         return $this;
+    }
+
+    function setCDN($url){
+        $this->base_url=$url;
+        $this->is_cdn=true;
     }
 
     /**
@@ -532,10 +545,22 @@ class PathFinder_Location extends AbstractModel {
         }
 
         foreach($locations as $path){
-            $f=$this->getPath($pathfile=$path.'/'.$filename);
+            $pathfile=$path.'/'.$filename;
+
+            // If this location represents CDN, it always finds URl files
+            if($this->is_cdn && $return=='url') {
+                return $this->getURL($pathfile);
+            }
+
+            $f=$this->getPath($pathfile);
+
             if(file_exists($f)){
                 if(!is_readable($f)){
-                    throw new PathFinder_Exception($type,$filename,$f,'File found but it is not readable');
+                    throw $this->exception('File found but it is not readable')
+                        ->addMoreInfo('type',$type)
+                        ->addMoreInfo('filename',$filename)
+                        ->addMoreInfo('f',$f)
+                        ;
                 }
 
                 if($return=='location')return $this;
@@ -543,7 +568,7 @@ class PathFinder_Location extends AbstractModel {
                 if($return=='url')return $this->getURL($pathfile);
                 if($return=='path')return $f;
 
-                throw new BaseException('Wrong return type for locate()');
+                throw $this->exception('Wrong return type for locate()');
 
             }else $attempted_locations[]=$f;
         }

@@ -14,7 +14,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class ApiInstall extends ApiWeb {
+class Api_Installer extends ApiWeb {
     function init(){
         parent::init();
 
