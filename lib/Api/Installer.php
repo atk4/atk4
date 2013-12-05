@@ -66,7 +66,8 @@ class Api_Installer extends ApiWeb {
 
         }
         if(!$_GET['step']){
-            return $this->showIntro($this->makePage('init'));
+            $this->api->redirect($this->stepURL('first'));
+            //return $this->showIntro($this->makePage('init'));
         }
 
         $this->initStep($this->s_current);
@@ -75,12 +76,11 @@ class Api_Installer extends ApiWeb {
         return $this->layout->add('Page');
     }
     function initStep($step){
-        //var_dump($this->s_first,$this->s_prev,$this->s_current,$this->s_next,$this->s_last);
-        //echo $this->url(null,array('step'=>$this->s_first));
-        $step='step_'.$step;
-        if(!$this->hasMethod($step))return $this->add('H1')->set('No such step');
+        $step_method='step_'.$step;
+        if(!$this->hasMethod($step_method))return $this->add('H1')->set('No such step');
         $this->header=$this->add('H1')->set('Step '.$this->s_cnt.': '.$this->s_title);
-        return $this->$step();
+        $page = $this->makePage($step);
+        return $this->$step_method($page);
     }
     function showIntro($p){
 
