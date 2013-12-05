@@ -15,6 +15,8 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Api_Installer extends ApiWeb {
+    public $page_class = 'Page';
+    public $page_options = null;
     function init(){
         parent::init();
 
@@ -34,7 +36,8 @@ class Api_Installer extends ApiWeb {
         $this->initInstaller();
     }
     function initInstaller(){
-        $m=$this->add('Menu',null,'Menu');
+        //$m=$this->layout->add('Menu');
+
 
         foreach(get_class_methods($this) as $method){
             list($a,$method)=explode('step_',$method); if(!$method)continue;
@@ -45,7 +48,7 @@ class Api_Installer extends ApiWeb {
 
             $u=$this->url(null,array('step'=>$method));
             $this->page=$this->pm->base_path.'?step='.$_GET['step'];
-            $m->addMenuItem($u,ucwords(strtr($method,'_',' ')));
+           // $m->addMenuItem($u,ucwords(strtr($method,'_',' ')));
             $this->page=null;
 
             if(is_null($this->s_current)){
@@ -63,10 +66,13 @@ class Api_Installer extends ApiWeb {
 
         }
         if(!$_GET['step']){
-            return $this->showIntro();
+            return $this->showIntro($this->makePage('init'));
         }
 
         $this->initStep($this->s_current);
+    }
+    function makePage($step) {
+        return $this->layout->add('Page');
     }
     function initStep($step){
         //var_dump($this->s_first,$this->s_prev,$this->s_current,$this->s_next,$this->s_last);
@@ -76,17 +82,20 @@ class Api_Installer extends ApiWeb {
         $this->header=$this->add('H1')->set('Step '.$this->s_cnt.': '.$this->s_title);
         return $this->$step();
     }
-    function showIntro(){
-        $this->add('H1')->set('Welcome to Web Software');
-        $this->add('P')->set('Thank you for downloading this software. This wizard will guide you through the installation procedure.');
+    function showIntro($p){
+
+        return;
+
+        $p->add('H1')->set('Welcome to Web Software');
+        $p->add('P')->set('Thank you for downloading this software. This wizard will guide you through the installation procedure.');
 
         if(!is_writable('.') ){
-            $this->add('View_Warning')->setHTML('This installation does not have permissions to create your <b>config.php</b> file for you. You will need to manually create this file');
+            $p->add('View_Warning')->setHTML('This installation does not have permissions to create your <b>config.php</b> file for you. You will need to manually create this file');
         }elseif(file_exists('config.php')){
-            $this->add('View_Warning')->setHTML('It appears that you alerady have <b>config.php</b> file in your applicaiton folder. This installation will read defaults from config.php, but it will ultimatelly <b>overwrite</b> it with the new settings.');
+            $p->add('View_Warning')->setHTML('It appears that you alerady have <b>config.php</b> file in your applicaiton folder. This installation will read defaults from config.php, but it will ultimatelly <b>overwrite</b> it with the new settings.');
         }
 
-        $this->add('Button')->set('Start')->js('click')->univ()->location($this->stepURL('first'));
+        $p->add('Button')->set('Start')->js('click')->univ()->location($this->stepURL('first'));
     }
     function stepURL($position){
         $s='s_'.$position;
