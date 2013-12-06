@@ -44,7 +44,7 @@ class jQuery extends AbstractController {
 
         /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
         if($v=$this->api->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
-        else($v=$this->api->getConfig('js/jquery','jquery-1.9.1.min'));   // bundled jQuery version
+        else($v=$this->api->getConfig('js/jquery','jquery-2.0.3.min'));   // bundled jQuery version
 
         $this->addInclude($v);
 
