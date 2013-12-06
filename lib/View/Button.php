@@ -106,7 +106,8 @@ class View_Button extends View_HtmlElement
         }
 
         // enable widget
-        $this->js(true)->button($this->options);
+        $this->addClass('atk-button');
+        //$this->js(true)->button($this->options);
         return $this;
     }
 
