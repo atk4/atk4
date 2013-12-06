@@ -72,8 +72,8 @@ class Api_Installer extends ApiWeb {
 
         $this->initStep($this->s_current);
     }
-    function makePage($step) {
-        return $this->layout->add('Page',null,null,array('step/default'));
+    function makePage($step,$template='step/default') {
+        return $this->layout->add('Page',null,null,array($template));
     }
     function initStep($step){
         $step_method='step_'.$step;
