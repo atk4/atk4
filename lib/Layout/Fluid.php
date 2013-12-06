@@ -12,4 +12,8 @@ class Layout_Fluid extends Layout_Basic {
     function defaultTemplate() {
         return array('layout/fluid');
     }
+
+    function addMenu($class = 'Menu_Main') {
+        return $this->add($class,null,'Main_Menu');
+    }
 }

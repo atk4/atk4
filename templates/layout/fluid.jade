@@ -1,20 +1,54 @@
 .atk-layout
-    .atk-layout-row
-        {Header}
-        header#atk-header(class="{$class}")
-            {$Header_Content}
-        {/}
+  .atk-layout-row
+    // Toolbar
+
+    header.atk-size-kilo.atk-swatch-blue.atk-cells
+      .atk-cell
+        ul.atk-menu.atk-menu-horizontal
+          li.atk-size-mega
+            a My Gallery Project
+          li
+            a
+              i.icon-clock
+              | 145ms
+          li
+            a 
+              i.icon-alert
+              | 3
+          li
+            a 
+              .atk-label.atk-swatch-green
+                i.icon-upload-cloud-1
+                | Upload
+      .atk-cell.atk-move-right
+        .atk-media-block
+          .atk-media.atk-valign-middle
+            .img(src="temp/apples.jpg" width="32").atk-shape-circle
+          .atk-content.atk-valign-middle
+            | John Smith
+            span.icon-down-dir
+      .atk-cell.atk-move-right
+        ul.atk-menu.atk-menu-horizontal
+          li
+            a
+              i.icon-bag
+              | Market
 
 
-    #atk-main.atk-layout-row.fluid
-        #atk-main-inner.atk-layout
-            {$LeftSidebar}
-            #atk-content.atk-layout-column.fluid
-                {$Content}
-            {$RightSideBar}
 
-    .atk-layout-row
-        {Footer}
-        footer#atk-Footer
-            {$Footer_Content}
-        {/}
+  #atk-main.atk-layout-row.fluid
+    #atk-main-inner.atk-layout
+      {$LeftSidebar}
+      nav#atk-nav.atk-layout-column.span_2
+        {$Main_Menu}
+      #atk-content.atk-layout-column.fluid
+        section
+          h2 {page_title}Page Title{/}
+          {$Content}
+      {$RightSideBar}
+
+  .atk-layout-row
+    {Footer}
+    footer#atk-Footer
+      {$Footer_Content}
+    {/}

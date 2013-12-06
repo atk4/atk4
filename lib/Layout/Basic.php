@@ -46,9 +46,6 @@ class Layout_Basic extends View {
     }
 
 
-    function addMenu($class = 'Menu_Main') {
-        return $this->add($class,null,'Header_Content');
-    }
 
     /**
      * Footer be positioned from the bottom edge of the page and upwards.
