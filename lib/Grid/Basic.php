@@ -419,13 +419,13 @@ class Grid_Basic extends CompleteLister
 
         // data row
         $this->row_t = $this->api
-            ->add('SMlite')
+            ->add('GiTemplate')
             ->loadTemplateFromString($row->render());
 
         // totals row
         if (isset($t_row) && $this->totals_t) {
             $this->totals_t = $this->api
-                ->add('SMlite')
+                ->add('GiTemplate')
                 ->loadTemplateFromString($t_row->render());
         }
     }

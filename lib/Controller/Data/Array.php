@@ -22,6 +22,17 @@ class Controller_Data_Array extends Controller_Data {
             throw $this->exception('Wrong type: expected array')
                 ->addMoreInfo('source', $table);
         }
+
+        // convert single dimension arrays
+        reset($table);
+        if (!is_array(each($table)['value'])) {
+            // assuming that this array needs to be converted
+            foreach ($table as $key => &$name) {
+                $name=array($model->id_field=>$key, $model->title_field=>$name);
+            }
+            return parent::setSource($model, $table);
+        }
+
         $data = array();
         foreach ($table as $key => $row) {
             $id = isset($row[$model->id_field])?$model->id_field:$key;
