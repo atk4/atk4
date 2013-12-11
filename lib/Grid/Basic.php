@@ -350,8 +350,8 @@ class Grid_Basic extends CompleteLister
         // data row and column
         $row = $this->row_t;
         $col = $row->cloneRegion('col');
-        $row->setHTML('row_id', '<?$id?>');
-        $row->trySetHTML('odd_even', '<?$odd_even?>');
+        $row->setHTML('row_id', '{$id}');
+        $row->trySetHTML('odd_even', '{$odd_even}');
         $row->del('cols');
 
         // totals row and column
