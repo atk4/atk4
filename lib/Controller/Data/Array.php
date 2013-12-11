@@ -25,7 +25,9 @@ class Controller_Data_Array extends Controller_Data {
 
         // convert single dimension arrays
         reset($table);
-        if (!is_array(each($table)['value'])) {
+        list(,$firstrow) = each($table);
+
+        if (!is_array($firstrow)) {
             // assuming that this array needs to be converted
             foreach ($table as $key => &$name) {
                 $name=array($model->id_field=>$key, $model->title_field=>$name);
