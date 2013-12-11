@@ -41,7 +41,7 @@ class View_Popover extends View {
             'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar:last')->hide())->click(
                 $this->js()->dialog('close')->_enclose()
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
-        ),$options))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>')
+        ),$options))->parent()->append('<div class="atk-arrow '.($options['arrow']?:'vertical top left').'"></div>')
         ;
 
         return $this->js()->dialog('open')->dialog('option',array(
@@ -58,6 +58,7 @@ class View_Popover extends View {
 // Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
 // TODO: merge JS chains by putting them into combined chain.
 function array_extend($a, $b) {
+    if(!$b)return $a;
     foreach($b as $k=>$v) {
         if( is_array($v) ) {
             if( !isset($a[$k]) ) {
