@@ -172,7 +172,8 @@ class VirtualPage extends AbstractController
             return $this->page;
         }
 
-        $this->api->_removeElement($this->api->page_object->short_name);
+        $this->api->page_object->destroy();
+
 
         $this->api->page_object = $this->page = $this->api->add(
             $this->page_class,
