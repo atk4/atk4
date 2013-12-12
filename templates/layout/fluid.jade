@@ -1,50 +1,49 @@
 .atk-layout
   .atk-layout-row
     // Toolbar
-
-    header.atk-size-kilo.atk-swatch-blue.atk-cells
-      .atk-cell
-        ul.atk-menu.atk-menu-horizontal
-          li.atk-size-mega
-            a My Gallery Project
-          li
-            a
-              i.icon-clock
-              | 145ms
-          li
-            a 
-              i.icon-alert
-              | 3
-          li
-            a 
-              .atk-label.atk-swatch-green
-                i.icon-upload-cloud-1
+    header.atk-bar.atk-padding-small.atk-cells.atk-swatch-ink
+        .atk-cell.atk-valign-middle
+          a(href="#").atk-logo.atk-size-mega Logo
+        .atk-cell.atk-valign-middle.atk-jackscrew
+          ul.atk-menu.atk-menu-horizontal
+            li
+              a
+                i.icon-clock
+                | 145ms
+            li
+              a 
+                i.icon-alert
+                | 3
+            li
+              a.atk-button.atk-swatch-green
+                span.icon-upload-cloud-1
                 | Upload
-      .atk-cell.atk-move-right
-        .atk-media-block
-          .atk-media.atk-valign-middle
-            .img(src="temp/apples.jpg" width="32").atk-shape-circle
-          .atk-content.atk-valign-middle
-            | John Smith
-            span.icon-down-dir
-      .atk-cell.atk-move-right
-        ul.atk-menu.atk-menu-horizontal
-          li
-            a
-              i.icon-bag
-              | Market
+        .atk-cell.atk-actions.atk-valign-middle.atk-text-nowrap
+          a(href="#")
+            span.icon-basket
+            |  Market
+          span.atk-sep ⋅
+          a(href="#")
+            span.icon-help
+            | Help
+        .atk-cell.atk-valign-middle.atk-text-nowrap
+          .atk-cells.atk-cells-gutter-small
+            .atk-cell.atk-valign-middle
+              .img(src="temp/apples.jpg" width="32").atk-shape-circle
+            .atk-cell.atk-valign-middle
+              | John Smith
+              span.icon-down-dir
 
 
 
-  #atk-main.atk-layout-row.fluid
-    #atk-main-inner.atk-layout
+  .atk-layout-row.fluid
+    .atk-layout
       {$LeftSidebar}
-      nav#atk-nav.atk-layout-column.span_2
+      nav.atk-layout-column.span_2.atk-swatch-gray.atk-padding
         {$Main_Menu}
-      #atk-content.atk-layout-column.fluid
-        section
-          h2 {page_title}Page Title{/}
-          {$Content}
+      .atk-layout-column.fluid.atk-padding
+        h2 {page_title}Page Title{/}
+        {$Content}
       {$RightSideBar}
 
   .atk-layout-row

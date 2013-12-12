@@ -2,38 +2,31 @@
 <div class="atk-layout">
   <div class="atk-layout-row">
     <!-- Toolbar-->
-    <header class="atk-size-kilo atk-swatch-blue atk-cells">
-      <div class="atk-cell">
+    <header class="atk-bar atk-padding-small atk-cells atk-swatch-ink">
+      <div class="atk-cell atk-valign-middle"><a href="#" class="atk-logo atk-size-mega">Logo</a></div>
+      <div class="atk-cell atk-valign-middle atk-jackscrew">
         <ul class="atk-menu atk-menu-horizontal">
-          <li class="atk-size-mega"><a>My Gallery Project</a></li>
           <li><a><i class="icon-clock"></i>145ms</a></li>
           <li><a> <i class="icon-alert"></i>3</a></li>
-          <li><a> 
-              <div class="atk-label atk-swatch-green"><i class="icon-upload-cloud-1"></i>Upload</div></a></li>
+          <li><a class="atk-button atk-swatch-green"><span class="icon-upload-cloud-1"></span>Upload</a></li>
         </ul>
       </div>
-      <div class="atk-cell atk-move-right">
-        <div class="atk-media-block">
-          <div class="atk-media atk-valign-middle">
+      <div class="atk-cell atk-actions atk-valign-middle atk-text-nowrap"><a href="#"><span class="icon-basket"></span> Market</a><span class="atk-sep">⋅</span><a href="#"><span class="icon-help"></span>Help</a></div>
+      <div class="atk-cell atk-valign-middle atk-text-nowrap">
+        <div class="atk-cells atk-cells-gutter-small">
+          <div class="atk-cell atk-valign-middle">
             <div src="temp/apples.jpg" width="32" class="img atk-shape-circle"></div>
           </div>
-          <div class="atk-content atk-valign-middle">John Smith<span class="icon-down-dir"></span></div>
+          <div class="atk-cell atk-valign-middle">John Smith<span class="icon-down-dir"></span></div>
         </div>
-      </div>
-      <div class="atk-cell atk-move-right">
-        <ul class="atk-menu atk-menu-horizontal">
-          <li><a><i class="icon-bag"></i>Market</a></li>
-        </ul>
       </div>
     </header>
   </div>
-  <div id="atk-main" class="atk-layout-row fluid">
-    <div id="atk-main-inner" class="atk-layout">{$LeftSidebar}
-      <nav id="atk-nav" class="atk-layout-column span_2">{$Main_Menu}</nav>
-      <div id="atk-content" class="atk-layout-column fluid">
-        <section>
-          <h2>{page_title}Page Title{/}</h2>{$Content}
-        </section>
+  <div class="atk-layout-row fluid">
+    <div class="atk-layout">{$LeftSidebar}
+      <nav class="atk-layout-column span_2 atk-swatch-gray atk-padding">{$Main_Menu}</nav>
+      <div class="atk-layout-column fluid atk-padding">
+        <h2>{page_title}Page Title{/}</h2>{$Content}
       </div>{$RightSideBar}
     </div>
   </div>
