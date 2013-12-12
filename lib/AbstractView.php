@@ -301,6 +301,9 @@ abstract class AbstractView extends AbstractObject
         }
 
         $cutting_here=false;
+        $cutting_output='';
+
+
         $this->initTemplateTags();
 
         if (isset($_GET['cut_object'])
@@ -310,6 +313,11 @@ abstract class AbstractView extends AbstractObject
             // If we are cutting here, render childs and then we are done
             unset($_GET['cut_object']);
             $cutting_here=true;
+
+            $this->addHook('output',function($self,$output)use(&$cutting_output) {
+                $cutting_output.=$output;
+            });
+
         }
 
         foreach ($this->elements as $key => $obj) {
@@ -328,11 +336,11 @@ abstract class AbstractView extends AbstractObject
         }
 
         if ($cutting_here) {
-            $result=$this->owner->template->cloneRegion($this->spot)->render();
+            //$result=$this->owner->template->cloneRegion($this->spot)->render();
             if ($this->api->jquery) {
                 $this->api->jquery->getJS($this);
             }
-            throw new Exception_StopRender($result);
+            throw new Exception_StopRender($cutting_output);
         }
         // if template wasn't cut, we move all JS chains to parent
 
@@ -410,6 +418,8 @@ abstract class AbstractView extends AbstractObject
      */
     function region_render()
     {
+        throw $this->exception('cut_region is now obsolete');
+
         if ($this->template_flush) {
             if ($this->api->jquery) {
                 $this->api->jquery->getJS($this);
