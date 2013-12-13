@@ -437,7 +437,7 @@ class Form_Basic extends View implements ArrayAccess {
             }
             $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
         }
-        $this->owner->template->appendHTML($this->spot,$r=$this->template_chunks['form']->render());
+        $this->output($r=$this->template_chunks['form']->render());
     }
     function hasField($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;
