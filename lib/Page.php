@@ -23,18 +23,22 @@
  * @version     $Id$
  */
 class Page extends AbstractView {
+
+    /** 
+     * Specify page title which will be used inside the <title> tag in the main
+     * api template
+     */
     public $title = null;
+
+    /** 
+     * Errors generated on the page are primarily there to alert the user,
+     * although they are not logic-related and page shouldn't do validation
+     * either.
+     */
     public $default_exception='Exception_ForUser';
+
     function init(){
         $this->api->page_object=$this;
-        /*
-        if($this->owner!=$this->api && !($this->owner instanceof BasicAuth)){
-            throw $this->exception('Do not add page manually. Page is automatically initialized by the Application class')
-                ->addMoreInfo('owner',$this->owner->name)
-                ->addMoreInfo('api',$this->api->name)
-                ;
-        }
-         */
         $this->template->trySet('_page',$this->short_name);
 
         if(method_exists($this,get_class($this))){
@@ -63,8 +67,8 @@ class Page extends AbstractView {
     function recursiveRender(){
         if(isset($_GET['cut_page']) && !isset($_GET['cut_object']) && !isset($_GET['cut_region']))
             $_GET['cut_object']=$this->short_name;
-        if($this->title && $this->owner instanceof ApiFrontend){
-            $this->owner->template->trySet('page_title',$this->title);
+        if($this->title && $this->api instanceof ApiFrontend){
+            $this->api->template->trySet('page_title',$this->title);
         }
         parent::recursiveRender();
     }
