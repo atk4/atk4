@@ -245,7 +245,7 @@ class PathFinder extends AbstractController
             $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://../agiletoolkit-sandbox.phar');
         }
 
-        if($this->sandbox) {
+        if(@$this->sandbox) {
             $this->sandbox->defineContents(array(
                 'template'=>'template',
                 'addons'=>'addons',
@@ -269,7 +269,7 @@ class PathFinder extends AbstractController
     function addLocation($contents=array(), $old_contents=null)
     {
 
-        if ($old_contents && $this->api->compat_42){
+        if ($old_contents && @$this->api->compat_42){
             $contents = $old_contents;
             $this->_relative_path=$contents;
         }
@@ -550,7 +550,7 @@ class PathFinder_Location extends AbstractModel {
     }
 
     function defineContents($contents){
-        $this->contents=array_merge_recursive($this->contents,$contents);
+        $this->contents=@array_merge_recursive($this->contents,$contents);
         return $this;
     }
 
