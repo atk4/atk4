@@ -37,7 +37,7 @@ class Controller_Data_Array extends Controller_Data {
 
         $data = array();
         foreach ($table as $key => $row) {
-            $id = isset($row[$model->id_field])?$model->id_field:$key;
+            $id = isset($row[$model->id_field])?$row[$model->id_field]:$key;
             $data[$id] = $row;
         }
         return parent::setSource($model, $data);
