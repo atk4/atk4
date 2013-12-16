@@ -1,8 +1,30 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
+/**
+ * This is a generic page manager. For web applications it calculates
+ * base URI, sets up path manager with the URI locations, determines
+ * which page was requested
  *
- * @link http://agiletoolkit.org/
+ * This class works with PathFinder, ApiWeb, and Location.
+ *
+ * Terminology:
+ *
+ * Project - entirety of your files including shared folders,
+ * documestation, migrations scripts, support files etc etc.
+ * Project concept is introduced in Agile Toolkit 4.3
+ *
+ * Interface - (such as "admin", "frontend", "cli", "api")
+ * is located in the project folder and contains interface
+ * specific pages, librares and templates.
+ *
+ * Location - represents a physical location on the filesystem,
+ * where files can be located either through file access or
+ * whrough URL access.
+ *
+ *
+ * you can access variabless below through $this->api->pm->base_url
+ * concatinate them to get full URL
+ *
+ * @link http://agiletoolkit.org/learn/intro
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -15,62 +37,49 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Controller_PageManager extends AbstractController {
-    /*
-     * This is a generic page manager. For web applications it calculates
-     * base URI, sets up path manager with the URI locations, determines
-     * which page was requested
+
+
+    /**
+     *  Base URL defines the absolute destination of our server. Because some
+     *  other resources may be located outside of our Base Path, we need to
+     *  know a Base URL.
      *
-     * This class works with PathFinder, ApiWeb, and Location.
+     *  For CLI scripts, you need to set this manually. Also if you are
+     *  going to use URLs in emails, you should use this.
+     *
+     *  See also: URL::useAbsoluteURL();
      */
-
-
-    // you can access variabless below through $this->api->pm->base_url
-    // concatinate them to get full URL
-
     public $base_url;           // http://yoursite.com:81
-    /*
-       Base URL defines the absolute destination of our server. Because some
-       other resources may be located outside of our Base Path, we need to
-       know a Base URL.
 
-       For CLI scripts, you need to set this manually. Also if you are
-       going to use URLs in emails, you should use this.
-
-       See also: URL::useAbsoluteURL();
+    /**
+     *  Base PATH points to the top location of our project. Basically it's
+     *  where the project is installed in the webroot. This is determined
+     *  by thelocation of catch-all file. It is determined by SCRIPT_NAME
+     *  which should be supported by most web installations. It will also
+     *  work when mod_rewrite is not used.
+     *
+     *  You can use $base_path in your script to put it say on a logo link
+     *
+     *  Also - some other parts of the library may have a different path,
+     *  for example base_path could be = /admin/, and atk4_path could be /amodules/
+     *
+     *  If project is installed in web-root, then $base_path will be "/"
+     *
+     *  path always starts and ends with slash
      */
-
     public $base_path;          // /admin/
-    /*
-       Base PATH points to the top location of our project. Basically it's
-       where the project is installed in the webroot. This is determined
-       by thelocation of catch-all file. It is determined by SCRIPT_NAME
-       which should be supported by most web installations. It will also
-       work when mod_rewrite is not used.
 
-       You can use $base_path in your script to put it say on a logo link
-
-       Also - some other parts of the library may have a different path,
-       for example base_path could be = /admin/, and atk4_path could be /amodules/
-
-       If project is installed in web-root, then $base_path will be "/"
-
-       path always starts and ends with slash
+    /**
+     *  This is a third and a final part of the URLs. This points to a page
+     *  which were reuqested. You can pass path to getDestinationURL() function,
+     *  as a first argument. Also $path is used to determine which page class
+     *  to load.
+     *
+     *  Page must never start with slash. Also if path is empty, then
+     *  the "index" is used automatically.
      */
-
     public $page;               // user/add
-    /*
-       This is a third and a final part of the URLs. This points to a page
-       which were reuqested. You can pass path to getDestinationURL() function,
-       as a first argument. Also $path is used to determine which page class
-       to load.
 
-       Page must never start with slash. Also if path is empty, then
-       the "index" is used automatically.
-
-
-     */
-
-    public $base_directory;     // /home/web/admin/ - physical path
     public $template_filename;
 
     function init(){
@@ -81,7 +90,6 @@ class Controller_PageManager extends AbstractController {
         // take care of all possible rewrite engines and bring up a real
         // URL which matches the one in the browser. Also e will need to
         // determine a relative path for the requested page
-
     }
 
     function setURL($url) {
@@ -114,14 +122,6 @@ class Controller_PageManager extends AbstractController {
      * See docs: doc/application/routing/parsing
      */
     function parseRequestedURL(){
-        $this->base_path=$this->unix_dirname($_SERVER['SCRIPT_NAME']);
-        // for windows
-        if(substr($this->base_path,-1)=='\\')$this->base_path=substr($this->base_path,1,-1).'/';
-        if(substr($this->base_path,-1)!='/')$this->base_path.='/';
-
-        // We are assuming that all requests are being redirected though a single file
-        $this->base_directory=$this->unix_dirname($_SERVER['SCRIPT_FILENAME']).'/';
-
         // This is the re-constructions of teh proper URL.
         // 1. Schema
         $url=$this->api->getConfig('atk/base_url',null);
@@ -188,7 +188,6 @@ class Controller_PageManager extends AbstractController {
     function debug(){
         $this->debug=true;
         parent::debug("base_path=".$this->base_path);
-        parent::debug("base_directory=".$this->base_directory);
         parent::debug("page=".$this->api->page);
         parent::debug("template_filename=".$this->template_filename);
     }
@@ -208,27 +207,10 @@ class Controller_PageManager extends AbstractController {
         $request_uri=explode('?',$request_uri,2);
         return $request_uri[0];
     }
-
     function unix_dirname($path){
         $chunks=explode('/',$path);
         array_pop($chunks);
         if(!$chunks)return '/';
         return implode('/',$chunks);
     }
-
-
-
-    function getUrlRoot(){
-        if($r=='')$r='/';
-        return $r;
-    }
-    /* @obsolete since 4.2.2
-    function getDestinationURL($page){
-        if($page[0]=='/'){
-            // Location absolute
-            return $this->base_path.substr($page,1).'.html';
-        }
-        return $page.'.html';
-    }
-    */
 }

@@ -40,15 +40,15 @@
 class PathFinder extends AbstractController
 {
     /**
-     * Base location is where your application files are located. Normally
+     * Base location is where your interface files are located. Normally
      * this location is added first and all the requests are checked here
-     * before elsewhere.
+     * before elsewhere. Example: /my/path/agiletoolkit/admin/
      */
     public $base_location=null;
 
     /**
      * This is location where images, javascript files and some other
-     * public resources are located.
+     * public resources are located. Ex: /my/path/agiletoolkit/public
      */
     public $public_location=null;
 
@@ -58,6 +58,17 @@ class PathFinder extends AbstractController
      */
     public $atk_location=null;
 
+    /**
+     * There are also some public files in ATK folder. Normally
+     * this folder would be symlinked like this:
+     *
+     * public/atk4  -> /vendor/atk4/atk4/public/atk4
+     *
+     * If that folder is not there, PathFinder will point directly
+     * to vendor folder (such as if on development environment),
+     * if that is also unavailable, this can fall back to Agile Toolkit CDN.
+     */
+    public $atk_public=null;
 
     /** {@inheritdoc} */
     public $default_exception='Exception_PathFinder';
@@ -103,8 +114,6 @@ class PathFinder extends AbstractController
                 $self->api->caughtException($e);
             }
         });
-
-
     }
 
     /**
@@ -144,8 +153,15 @@ class PathFinder extends AbstractController
      */
     function addDefaultLocations()
     {
-        $base_directory=getcwd();
+        // api->addAllLocations will override creation of all locations
+        // api->addDefaultLocations - will let you add high-priority locations
+        // api->addSharedLocations - will let you add low-priority locations
+        if ($this->api->hasMethod('addAllLocations')) {
+            return $this->api->addAllLocations();
+        }
 
+
+        $base_directory=getcwd();
 
         /// Add base location - where our private files are
         if ($this->api->hasMethod('addDefaultLocations')) {
@@ -161,17 +177,30 @@ class PathFinder extends AbstractController
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
 
-        // Add public location - assets, but only if 
-        // we hav PageManager to identify it's location
+
         if(@$this->api->pm) {
-            $this->public_location=$this->addLocation(array(
-                'public'=>'.',
-                'js'=>'js',
-                'css'=>'css',
-            ))
-                ->setBasePath($base_directory.'/public')
-                ->setBaseURL($this->api->pm->base_path);
+            // Add public location - assets, but only if 
+            // we hav PageManager to identify it's location
+            if(is_dir($base_directory.'/public')) {
+                $this->public_location=$this->addLocation(array(
+                    'public'=>'.',
+                    'js'=>'js',
+                    'css'=>'css',
+                ))
+                    ->setBasePath($base_directory.'/public')
+                    ->setBaseURL($this->api->pm->base_path);
+            }else{
+                $this->base_location
+                    ->setBaseURL($this->api->pm->base_path);
+            }
         }
+
+        if(basename($this->api->pm->base_path)=='public') {
+            $this->base_location
+                ->setBaseURL(dirname($this->api->pm->base_path));
+        }
+
+
 
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
@@ -187,12 +216,43 @@ class PathFinder extends AbstractController
             ;
 
         if(@$this->api->pm) {
-            $this->atk_public=$this->public_location->addRelativeLocation('atk4',array(
-                'public'=>'.',
-                'js'=>'js',
-                'css'=>'css',
+            if(is_dir($base_directory.'/public/atk4')) {
+                $this->atk_public=$this->public_location->addRelativeLocation('atk4')
+                    ->setBaseURL($this->api->pm->base_url);
+            }elseif(is_dir($base_directory.'/vendor/atk4/atk4/public/atk4')) {
+                $this->atk_public=$this->base_location->addRelativeLocation('vendor/atk4/atk4/public/atk4');
+            }elseif(is_dir($base_directory.'/../vendor/atk4/atk4/public/atk4')) {
+                $this->atk_public=$this->base_location->addRelativeLocation('../vendor/atk4/atk4/public/atk4');
+            }else{
+                throw $this->exception('Agile Toolkit unable to locate public/atk4 folder');
+            }
+
+            $this->atk_public->defineContents(array(
+                    'public'=>'.',
+                    'js'=>'js',
+                    'css'=>'css',
+                ));
+        }
+
+        // Add sandbox if it is found
+        if (file_exists('agiletoolkit-sandbox') && is_dir('agiletoolkit-sandbox')) {
+            $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation('agiletoolkit-sandbox');
+        }elseif (file_exists('../agiletoolkit-sandbox') && is_dir('../agiletoolkit-sandbox')) {
+            $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation('../agiletoolkit-sandbox');
+        }elseif(file_exists('agiletoolkit-sandbox.phar')){
+            $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://agiletoolkit-sandbox.phar');
+        }elseif(file_exists('../agiletoolkit-sandbox.phar')){
+            $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://../agiletoolkit-sandbox.phar');
+        }
+
+        if($this->sandbox) {
+            $this->sandbox->defineContents(array(
+                'template'=>'template',
+                'addons'=>'addons',
+                'php'=>'lib'
             ));
         }
+
     }
 
     /**
@@ -494,7 +554,7 @@ class PathFinder_Location extends AbstractModel {
         return $this;
     }
 
-    function addRelativeLocation($relative_path, array $contents) {
+    function addRelativeLocation($relative_path, array $contents=array()) {
 
         $location = $this->newInstance();
 
@@ -504,7 +564,7 @@ class PathFinder_Location extends AbstractModel {
             $location->setBaseURL($this->base_url.'/'.$relative_path);
         }
 
-        return $location->defineContents($contents);
+        return $contents?$location->defineContents($contents):$location;
     }
 
     // OBSOLETE - Compatiblity
