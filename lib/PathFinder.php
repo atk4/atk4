@@ -218,7 +218,7 @@ class PathFinder extends AbstractController
         if(@$this->api->pm) {
             if(is_dir($base_directory.'/public/atk4')) {
                 $this->atk_public=$this->public_location->addRelativeLocation('atk4')
-                    ->setBaseURL($this->api->pm->base_url.'/atk4');
+                    ->setBaseURL($this->api->pm->base_path.'/atk4');
             }elseif(is_dir($base_directory.'/vendor/atk4/atk4/public/atk4')) {
                 $this->atk_public=$this->base_location->addRelativeLocation('vendor/atk4/atk4/public/atk4');
             }elseif(is_dir($base_directory.'/../vendor/atk4/atk4/public/atk4')) {
