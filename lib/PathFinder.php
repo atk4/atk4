@@ -111,6 +111,11 @@ class PathFinder extends AbstractController
             try {
                 $self->loadClass($class);
             }catch(Exception $e) {
+                // If due to your PHP version, it says that 
+                // autoloader may not throw exceptions, then you should
+                // add PHP verion check here and skip to next line.
+                // PHP 5.5 - throwing seems to work out OK
+                throw $e;
                 $self->api->caughtException($e);
             }
         });
