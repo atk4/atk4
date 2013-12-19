@@ -41,7 +41,11 @@ class Paginator_Basic extends CompleteLister {
     /** Set a custom source. Must be an object with foundRows() method */
     function setSource($source){
         if($this->memorize){
-            $this->skip=$this->memorize('skip', @$_GET[$this->skip_var])+0;
+            if (isset($_GET[$this->skip_var])){
+                $this->skip=$this->memorize('skip', @$_GET[$this->skip_var])+0;
+            } else {
+                $this->skip=$this->recall('skip',0);
+            }
         }else{
             $this->skip=@$_GET[$this->skip_var]+0;
         }
