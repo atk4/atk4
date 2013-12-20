@@ -318,6 +318,13 @@ class GiTemplate extends AbstractModel {
             // This can now be used - multiple tags will be set to the value
         }
 
+        if(is_array($value)) {
+            return $this;
+            throw $this->exception('Second argument must not be array')
+                ->addMoreInfo('arg1',$tag)
+                ->addMoreInfo('arg2',$value);
+        }
+
         if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
 
         $this->getTagRefList($tag,$template);
