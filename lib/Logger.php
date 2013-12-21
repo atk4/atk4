@@ -191,7 +191,7 @@ class Logger extends AbstractController {
         if(!$this->web_output){
             $this->public_error_message=$this->api
                 ->getConfig('debug_public_error_message',
-                        'We are currently having some technical difficulties. '.
+                        'We were unable to deal with your request. '.
                         'Please retry later.');
         }
         
