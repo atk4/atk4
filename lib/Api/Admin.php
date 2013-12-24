@@ -25,6 +25,12 @@ class Api_Admin extends ApiFrontend {
         $this->menu = $this->layout->addMenu();
         $this->layout->addFooter();
 
+        $this->add('jUI');
+
+        $this->police = $this->add('Controller_Police');
+        $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
+            
+
         $this->initAddons();
     }
 
