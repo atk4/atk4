@@ -246,7 +246,7 @@ abstract class AbstractObject
             }
         }
 
-        $short_name = $this->_unique($this->elements, $short_name);
+        $short_name = $this->_unique_element($short_name);
 
         if (isset($this->elements[$short_name])) {
             throw $this->exception($class." with requested name already exists")
@@ -1030,6 +1030,14 @@ abstract class AbstractObject
 
         return $desired;
     }
+
+    private $_element_name_counts=array();
+    function _unique_element($desired = null)
+    {
+        $postfix = @++$this->_element_name_counts[$desired];
+        return $desired.($postfix>1?('_'.$postfix):'');
+    }
+
 
     /**
      * This funcion given the associative $array and desired new key will return
