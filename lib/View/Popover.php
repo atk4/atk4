@@ -19,16 +19,40 @@
 * relative to your element */
 class View_Popover extends View {
 
-    public $position='top';
     // can be top, bottom, left or right
-    //
+    public $position='top';
+
+    public $url=null;
+
     function init(){
         parent::init();
         $this->addStyle('display','none');
     }
 
+    /**
+     * If callable is passed, it will be executed when the dialog is popped
+     * through the use of VirtualPage
+     */
+    function set($fx){
+
+        $p=$this->add('VirtualPage')->set($fx);
+
+        $this->setURL($p->getURL());
+    }
+
+    /**
+     * Specify URL here and it will be automatically loaded in the popover
+     * every time it's shown
+     */
+    function setURL($url){
+        $this->url=$url;
+    }
+
     /* Returns JS which will position this element and show it */
     function showJS($element=null,$options=array()){
+
+        $loader_js=$this->url?
+            $this->js()->atk4_load($this->url):null;
 
         $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
@@ -38,9 +62,14 @@ class View_Popover extends View {
             'minHeight'=>'auto',
             'autoOpen'=>false,
             'width'=>250,
-            'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar:last')->hide())->click(
+            'open'=>$this->js(null,array(
+                $this->js()->_selector('.ui-dialog-titlebar:last')->hide(),
+                $loader_js
+            ))->click(
                 $this->js()->dialog('close')->_enclose()
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
+
+            
         ),$options))->parent()->append('<div class="atk-arrow '.($options['arrow']?:'vertical top left').'"></div>')
         ;
 
