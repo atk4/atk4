@@ -205,6 +205,14 @@ class PathFinder extends AbstractController
                 ->setBaseURL(dirname($this->api->pm->base_path));
         }
 
+        // Add shared locations
+        if(is_dir(dirname($base_directory).'/shared')) {
+            $this->shared_location=$this->addLocation(array(
+                'php'=>'lib',
+                'template'=>'templates'
+            ))->setBasePath(dirname($base_directory).'/shared');
+        }
+
 
 
         if ($this->api->hasMethod('addSharedLocations')) {
