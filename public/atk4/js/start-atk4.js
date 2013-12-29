@@ -379,8 +379,16 @@ $.extend($.atk4,{
 				url=u;
 			}
 		}
-		if(typeof(a)=='undefined')return url;
-		if(b)a+='='+encodeURIComponent(b);
+		if(typeof(b)=='object'){
+            console.log(b);
+            var u=url;
+            $.each(b,function(_a,_b){
+                u=$.atk4.addArgument(u,_a,_b);
+            });
+            return u;
+        }
+        if(typeof(a)=='undefined')return url;
+        if(b)a+='='+encodeURIComponent(b);
         return url+(url.indexOf('?')==-1?'?':'&')+a;
 	}
 
