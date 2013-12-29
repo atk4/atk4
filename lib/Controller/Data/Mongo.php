@@ -1,5 +1,12 @@
 <?php
 class Controller_Data_Mongo extends Controller_Data {
+
+    public $supportConditions = true;
+    public $supportLimit = true;
+    public $supportOrder = true;
+    public $supportRef = true;
+    public $supportOperators = array(); //'=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
+
     function setSource($model,$table=null){
 
         if(!$table)$table=$model->table;
