@@ -21,20 +21,20 @@ class Controller_Data_SQL extends Controller_Data {
         if ($model->_references) {
             $p = ($model->table_alias ? : $model->table) . '.';
         }
-        if (!is_null($id)) {
-            $dsql->where($p . $model->id_field, $id);
+        if (is_null($id)) {
+            throw $this->exception('ID is specified as null');
         }
 
         $dsql->where($p . $model->id_field, $id);
-        return $this->_load($model, $dsql);
+        return $this->load($model, $dsql);
     }
 
     function loadByConditions($model) {
         $dsql = $this->dsql($model);
-        return $this->_load($model, $dsql);
+        return $this->load($model, $dsql);
     }
 
-    function _load($model, $dsql) {
+    function load($model, $dsql) {
         $dsql = $this->getDsqlFromModel($model, $dsql);
 
         $data = $dsql->limit(1)->getHash();
@@ -180,7 +180,7 @@ class Controller_Data_SQL extends Controller_Data {
         return clone $model->dsql;
     }
 
-    private function getDsqlForSelect($model, $dsql=null) {
+    protected function getDsqlForSelect($model, $dsql=null) {
         if (is_null($dsql)) {
             $dsql = $this->dsql($model);
         }
