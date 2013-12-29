@@ -38,6 +38,7 @@ class View_Popover extends View {
         $p=$this->add('VirtualPage')->set($fx);
 
         $this->setURL($p->getURL());
+        return $this;
     }
 
     /**
@@ -46,13 +47,19 @@ class View_Popover extends View {
      */
     function setURL($url){
         $this->url=$url;
+        return $this;
     }
 
     /* Returns JS which will position this element and show it */
-    function showJS($element=null,$options=array()){
+    function showJS($options=null,$options_compat=array()){
+
+        if($options_compat) {
+            $options=$options_compat;
+        }
+
 
         $loader_js=$this->url?
-            $this->js()->atk4_load($this->url):null;
+            $this->js()->atk4_load(array($this->url)):null;
 
         $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
@@ -77,7 +84,7 @@ class View_Popover extends View {
             'position'=>$p=array(
                 'my'=>$options['my']?:'left top',
                 'at'=>$options['at']?:'left-5 bottom+5',
-                'of'=>$element
+                'of'=>$this->js()->_selectorThis()
                 //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
             )
         ));
