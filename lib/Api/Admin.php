@@ -14,7 +14,7 @@
  */
 class Api_Admin extends ApiFrontend {
 
-    public $menu;
+    public $title='ExDash Admin';
 
     function init() {
         parent::init();
@@ -40,6 +40,8 @@ class Api_Admin extends ApiFrontend {
 
         $this->add('sandbox/Initiator');
 
+        parent::initLayout();
+
         // TODO - remove dependency on get arguments in generic code
         if ($_GET['debug']) {
             $this->police->addDebugView($this->page_object);
@@ -51,7 +53,6 @@ class Api_Admin extends ApiFrontend {
         }
 
 
-        parent::initLayout();
     }
 
 
