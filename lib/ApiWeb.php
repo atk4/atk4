@@ -30,6 +30,10 @@ class ApiWeb extends ApiCLI {
     /** Skin for web application templates */
     public $skin;
 
+    /** Set a title of your application, will appear in <title> tag */
+    public $title;
+
+
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
