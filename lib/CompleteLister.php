@@ -298,6 +298,8 @@ class CompleteLister extends Lister
                 $this->container_tag,
                 $this->rowRender($this->totals_t)
             );
+        }else{
+            $this->template->tryDel('totals');
         }
     }
 
