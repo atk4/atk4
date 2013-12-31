@@ -16,7 +16,10 @@
  =====================================================ATK4=*/
 class Form_Field_DropDown extends Form_Field_ValueList {
 
+
+
     function getInput($attr=array()){
+        $this->js(true)->selectmenu();
         $multi = isset($this->attr['multiple']);
         $output=$this->getTag('select',array_merge(array(
                         'name'=>$this->name . ($multi?'[]':''),
