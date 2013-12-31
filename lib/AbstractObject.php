@@ -208,6 +208,9 @@ abstract class AbstractObject
             if (!$class->api) {
                 $class->api = $this->api;
             }
+            $class->short_name = $this->_unique_element($class->short_name);
+            $class->name = $this->_shorten($this->name . '_' . $class->short_name);
+
             $this->elements[$class->short_name] = $class;
             if ($class instanceof AbstractView) {
                 $class->owner->elements[$class->short_name] = true;
@@ -251,7 +254,9 @@ abstract class AbstractObject
         if (isset($this->elements[$short_name])) {
             throw $this->exception($class." with requested name already exists")
                 ->addMoreInfo('class', $class)
-                ->addMoreInfo('name', $short_name)
+                ->addMoreInfo('new_short_name', $short_name)
+                ->addMoreInfo('object', $this)
+                ->addMoreInfo('counts', json_encode($this->_element_name_counts))
                 ->addThis($this);
         }
 
