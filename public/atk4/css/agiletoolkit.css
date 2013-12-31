@@ -4877,6 +4877,15 @@ hr.atk-hr-small {
 hr.atk-hr-dotted {
   border-top-style: dotted;
 }
+input[readonly],
+div.atk-form-field-readonly {
+  background: #000000;
+}
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
 label {
   font-weight: bold;
   padding: 0.41675rem 0;
@@ -4917,12 +4926,8 @@ button::-moz-focus-inner,
 input[type="button"]::-moz-focus-inner,
 input[type="submit"]::-moz-focus-inner,
 input[type="reset"]::-moz-focus-inner {
-  padding: 0 !important;
   border: 0 !important;
-}
-input[readonly],
-div.atk-form-field-readonly {
-  background: #000000;
+  padding: 0 !important;
 }
 input[type=text]:focus,
 input[type=password]:focus,
@@ -4933,267 +4938,265 @@ textarea:focus {
   box-shadow: 0 0 3px rgba(0, 149, 255, 0.7), 0 0 10px rgba(0, 149, 255, 0.30000000000000004);
   outline: none;
 }
-fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-.atk-form {
-  margin-bottom: 1.667rem;
-}
-.atk-form .atk-form-row + .atk-form-row {
-  margin-top: 1.667rem;
-}
-.atk-form fieldset legend {
-  border: 0;
-  border-bottom: 1px solid #e5e5e5;
-  color: #333333;
-  padding: 0;
-  margin: 0 0 0.8335rem 0;
-  width: 100%;
-  display: block;
-  font-size: 0.875rem;
-}
-.atk-form fieldset .atk-form-row {
-  *zoom: 1;
-}
-.atk-form fieldset .atk-form-row:before,
-.atk-form fieldset .atk-form-row:after {
-  display: table;
-  content: "";
-  line-height: 0;
-}
-.atk-form fieldset .atk-form-row:after {
-  clear: both;
-}
-.atk-form fieldset .atk-form-row > label {
-  width: 7em;
-  float: left;
-}
-.atk-form fieldset .atk-form-row > .atk-form-field {
-  margin-left: 9em;
-}
-.atk-form fieldset .atk-form-row > .atk-form-field input[type=text]:not([class*="span"]),
-.atk-form fieldset .atk-form-row > .atk-form-field input[type=password]:not([class*="span"]),
-.atk-form fieldset .atk-form-row > .atk-form-field input[readonly]:not([class*="span"]),
-.atk-form fieldset .atk-form-row > .atk-form-field textarea:not([class*="span"]),
-.atk-form fieldset .atk-form-row > .atk-form-field div.atk-form-field-readonly:not([class*="span"]),
-.atk-form fieldset .atk-form-row > .atk-form-field select {
-  width: 100%;
-}
-.atk-form fieldset .atk-form-row > .atk-form-field input + input {
-  margin-left: 0.41675rem;
-}
-.atk-form fieldset .atk-form-row > .atk-form-field ins {
-  text-decoration: none;
-  color: #000000;
-  display: block;
-  margin-top: 0.5556666666666666rem;
-}
-.atk-form fieldset .atk-form-row > .atk-form-field .atk-form-error {
-  color: red;
-  margin-top: 0.5556666666666666rem;
-}
-.atk-form fieldset .atk-form-row.has-error > label {
-  color: red;
-}
-.atk-form fieldset .atk-form-row.has-error input {
-  border-color: red;
-}
-.atk-form fieldset .atk-form-row + *[class*=span] {
-  margin-top: 0;
-}
-.atk-form fieldset[class*=span] + fieldset[class*=span] + .atk-actions {
-  border: none;
-  padding-left: 0;
-  margin: 0;
-}
-.atk-form fieldset[class*=span] + fieldset[class*=span] + .atk-actions:before {
-  border-top: 1px solid #e1e1e1;
-  margin-top: 1.667rem;
-  padding-top: 1.667rem;
-  padding-left: 14em;
-  margin-top: 0;
-  content: '';
-  display: block;
-}
-.atk-form fieldset + fieldset {
-  margin-top: 1.667rem;
-  padding-top: 1.667rem;
-  border-top: 1px solid #e1e1e1;
-}
-.atk-form .atk-actions {
-  border-top: 1px solid #e1e1e1;
-  margin-top: 1.667rem;
-  padding-top: 1.667rem;
-}
-.atk-form .atk-actions,
-.atk-form .legend {
-  padding-left: 14em;
-}
-.atk-form.stacked fieldset .atk-form-row > label {
-  margin-bottom: 0.2778333333333333rem;
-  padding: 0;
-  width: auto;
-  display: block;
-  float: none;
-}
-.atk-form.stacked fieldset .atk-form-row > .atk-form-field {
-  margin-left: 0;
-}
-.atk-form.stacked fieldset .atk-form-row .atk-form-options {
-  padding: 0;
-}
-.atk-form.stacked .atk-actions[class*=span] {
-  padding-top: 1.9448333333333334rem !important;
-}
-.atk-form.stacked .atk-actions,
-.atk-form.stacked .legend {
-  padding-left: 0;
-}
-.atk-form.atk-form-compact fieldset {
-  margin-bottom: 0;
-}
-.atk-form.atk-form-compact fieldset .atk-form-row + .atk-form-row {
-  margin-top: 0.41675rem;
-}
-.atk-form.atk-form-compact fieldset label {
-  display: none !important;
-}
-.atk-form.atk-form-compact .atk-actions {
-  border: none;
-  margin-top: 0.41675rem;
-  padding: 0;
-}
-.atk-form.atk-form-compact .atk-actions .atk-button {
-  width: 100%;
-}
-.atk-form.row fieldset {
-  padding-top: 0;
-  margin-top: 0;
-  border: none;
-}
-.atk-form.row fieldset[class*=span] > *[class*=span] {
-  margin-top: 0;
-}
-.atk-form.row fieldset[class*=span] + .atk-actions[class*=span] {
-  border: none;
-  margin-top: 0;
-  padding: 0;
-  text-align: left;
-  clear: none;
-}
-.atk-form.row .atk-actions {
-  clear: both;
-  text-align: right;
-}
-.atk-form.wider-labels fieldset .atk-form-row > label {
-  width: 11.2em;
-  float: left;
-}
-.atk-form.wider-labels fieldset .atk-form-row > .atk-form-field {
-  margin-left: 18.2em;
-}
-.atk-form.wider-labels.stacked fieldset .atk-form-row > label {
-  width: auto;
-  float: none;
-}
-.atk-form.wider-labels.stacked fieldset .atk-form-row > .atk-form-field {
-  margin-left: 0;
-}
-.atk-form.wider-labels .atk-actions,
-.atk-form.wider-labels .legend {
-  padding-left: 18.2em;
-}
-.atk-form.labels-right fieldset .atk-form-row > label {
-  text-align: right;
-}
-.atk-form ul.atk-form-options {
-  list-style-type: none;
-  margin: 0;
-  padding: 0.41675rem 0;
-}
-.atk-form ul.atk-form-options li {
-  margin: 0;
-}
-.atk-form ul.atk-form-options li label {
-  font-weight: normal;
-}
-.atk-form ul.atk-form-options li input {
-  margin-right: 0.41675rem;
-}
-.atk-form ul.atk-form-options.stacked li {
-  display: block;
-}
-.input-row {
+.atk-form form {
   display: table;
 }
-.input-row .input-cell {
-  display: table-cell;
-  vertical-align: middle;
+.atk-form form .atk-cells {
+  display: table-row;
 }
-.input-row .input-cell.expanded {
-  width: 100%;
-  line-height: 1.667;
+.atk-form form .atk-cells > .atk-cell {
+  padding-bottom: 1.667rem;
+  vertical-align: top;
 }
-.input-row .input-cell.expanded:first-child input {
-  -webkit-border-top-right-radius: 0;
-  -moz-border-top-right-radius: 0;
-  border-top-right-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-bottom-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.input-row .input-cell.expanded + .input-cell .ui-button {
-  -webkit-border-top-left-radius: 0;
-  -moz-border-top-left-radius: 0;
-  border-top-left-radius: 0;
-  -webkit-border-bottom-left-radius: 0;
-  -moz-border-bottom-left-radius: 0;
-  border-bottom-left-radius: 0;
-  margin-left: -1px;
-}
-.input-row .input-cell.expanded input {
-  width: 100%;
-}
-.input-row .input-cell:first-child:not(.expanded) .ui-button {
-  -webkit-border-top-right-radius: 0;
-  -moz-border-top-right-radius: 0;
-  border-top-right-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-bottom-right-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-right: -1px;
-}
-.input-row .input-cell:first-child:not(.expanded) + .expanded input {
-  -webkit-border-top-left-radius: 0;
-  -moz-border-top-left-radius: 0;
-  border-top-left-radius: 0;
-  -webkit-border-bottom-left-radius: 0;
-  -moz-border-bottom-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.input-row .input-cell .ui-buttonset {
-  white-space: nowrap;
-}
-.input-row .input-cell > .ui-button {
-  margin-left: 0;
-  margin-right: 0;
-}
-.input-row .input-cell .ui-button * {
-  line-height: normal;
-}
-.atk-form-field {
-  font-size: 0;
-  line-height: 0;
-}
-.atk-form-field * {
-  font-size: 0.875rem;
-  line-height: 1.667;
-}
-.atk-form-field .ui-selectmenu-button {
+.atk-form form .atk-cells > .atk-cell input[type=text]:not([class*="span"]),
+.atk-form form .atk-cells > .atk-cell input[type=password]:not([class*="span"]),
+.atk-form form .atk-cells > .atk-cell input[readonly]:not([class*="span"]),
+.atk-form form .atk-cells > .atk-cell textarea:not([class*="span"]),
+.atk-form form .atk-cells > .atk-cell div.atk-form-field-readonly:not([class*="span"]),
+.atk-form form .atk-cells > .atk-cell select,
+.atk-form form .atk-cells > .atk-cell .ui-selectmenu-button,
+.atk-form form .atk-cells > .atk-cell .atk-input-icon {
   width: 100% !important;
 }
+.atk-form form .atk-cells > .atk-cell input + input {
+  margin-left: 0.3em;
+}
+.atk-form form .atk-cells > .atk-cell:first-child label {
+  display: inline-block;
+}
+.atk-form form .atk-cells + .atk-cells {
+  margin-top: 1.667rem;
+}
+.atk-form form .atk-form-fieldset {
+  display: table-row-group;
+}
+/*
+.atk-form-old {
+    margin-bottom: @margin;
+    .atk-form-row + .atk-form-row {
+        margin-top: @margin;
+    }
+    fieldset {
+        legend {
+            border: 0;
+            border-bottom: 1px solid #e5e5e5;
+            color: #333333;
+            padding: 0;
+            margin: 0 0 @margin/2 0;
+            width: 100%;
+            display: block;
+            .atk-size-kilo;
+        }
+        .atk-form-row {
+            .clear-fix();
+            > label {
+                width: 7em;
+                float: left;
+            }
+            > .atk-form-field {
+                margin-left: 7em + 2em;
+                input[type=text]:not([class*="span"]),
+                input[type=password]:not([class*="span"]),
+                input[readonly]:not([class*="span"]),
+                textarea:not([class*="span"]),
+                div.atk-form-field-readonly:not([class*="span"]),
+                select { width: 100%; }
+                input + input { margin-left: @margin/4; }
+                ins {
+                    text-decoration: none;
+                    color: @bodyColor;
+                    display: block;
+                    margin-top: @margin/3;
+                }
+                .atk-form-error {
+                    color: red;
+                    margin-top: @margin/3;
+                }
+            }
+            &.has-error {
+                > label { color: red; }
+                input { border-color: red; }
+            }
+            + *[class*=span] {
+                margin-top: 0;
+            }
+        }
+        &[class*=span] + fieldset[class*=span] + .atk-actions {
+            border: none;
+            padding-left: 0;
+            margin: 0;
+            &:before {
+                .atk-actions;
+                margin-top: 0;
+                content: '';
+                display: block;
+            }
+        }
+        + fieldset {
+                margin-top: @margin;
+                padding-top: @margin;
+                border-top: 1px solid @borderStatic;
+        }
+    }
+    .atk-actions { border-top: 1px solid @borderStatic; margin-top: @margin; padding-top: @margin; }
+    .atk-actions, .legend { padding-left: 7em + 7em; }
+
+    // Stacked form
+    &.stacked { 
+        fieldset {
+            .atk-form-row {
+                > label {
+                    margin-bottom: @margin/6;
+                    padding: 0;
+                    width: auto;
+                    display: block;
+                    float: none;
+                }
+                > .atk-form-field { margin-left: 0; }
+                .atk-form-options {
+                    padding: 0;
+                }
+            }
+        }
+        .atk-actions[class*=span] {
+            padding-top: @margin + @margin/6 !important;
+        }
+        .atk-actions, .legend { padding-left: 0; }
+    }
+    // Stacked form
+    &.atk-form-compact {
+      fieldset {
+        margin-bottom: 0;
+        .atk-form-row + .atk-form-row {
+          margin-top: @margin/4;
+        }
+        label {
+          display: none !important;
+        }
+      }
+      .atk-actions {
+        border: none;
+        margin-top: @margin/4;
+        padding: 0;
+        .atk-button {
+          width: 100%;
+        }
+      }
+    }
+    // Inline form
+    &.row {
+        fieldset {
+            padding-top: 0;
+            margin-top: 0;
+            border: none;
+            &[class*=span] {
+                > *[class*=span] {
+                    margin-top: 0;
+                }
+                +.atk-actions[class*=span] {
+                    border: none;
+                    margin-top: 0;
+                    padding: 0;
+                    text-align: left;
+                    clear: none;
+                }
+            }
+        }
+        .atk-actions { clear: both; text-align: right; }
+    }
+    // Form with wide labels
+    &.wider-labels {
+        fieldset {
+            // legend {
+            //     text-indent: 7em*1.6 + 7em;
+            // }
+            .atk-form-row {
+                > label { width: 7em + (7em*0.6); float: left; }
+                > .atk-form-field { margin-left: 7em + (7em*0.6) + 7em; }
+            }
+        }
+        &.stacked {
+            fieldset .atk-form-row {
+                > label { width: auto; float: none; }
+                > .atk-form-field { margin-left: 0; }
+            }
+        }
+        .atk-actions, .legend { padding-left: 7em + (7em*0.6) + 7em; }
+    }
+    // Form with right aligned labels
+    &.labels-right fieldset .atk-form-row > label { text-align: right; }
+}
+
+// ATK form fields
+// ----------------------------------------------
+.atk-form-old {
+    ul.atk-form-options {
+        list-style-type: none;
+        margin: 0;
+        padding: @margin/4 0;
+        li {
+            margin: 0;
+            label {
+                font-weight: normal;
+            }
+            input {margin-right: @margin/4;}
+        }
+        &.stacked {
+            li {
+                display: block;
+            }
+        }
+    }
+}
+
+// ATK form row ??? really ???
+// ----------------------------------------------
+.input-row {
+    display: table;
+    .input-cell {
+        display: table-cell;
+        vertical-align: middle;
+        &.expanded {
+            width: 100%;
+            line-height: @bodyBaseline;
+            &:first-child input {
+                .border-right-radius(0);
+            }
+            +.input-cell .ui-button {
+                .border-left-radius(0);
+                margin-left: -1px;
+            }
+            input { width: 100%; }
+        }
+        &:first-child:not(.expanded) {
+            .ui-button {
+                .border-right-radius(0);
+                margin-right: -1px;
+            }
+            +.expanded input {
+                .border-left-radius(0);
+            }
+        }
+        .ui-buttonset { white-space: nowrap; }
+        > .ui-button { margin-left: 0; margin-right: 0; }
+        .ui-button * { line-height: normal; }
+    }
+}
+
+
+// New Forms
+
+.atk-form-field {
+    .clear-font;
+    * {
+        font-size: @bodySize;
+        line-height: @bodyBaseline;
+    }
+    .ui-selectmenu-button {
+        width: 100% !important;
+    }
+}
+*/
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -5409,7 +5412,10 @@ img.atk-shape-circle {
 .ui-selectmenu-button span.ui-selectmenu-text {
   font-weight: normal;
   line-height: 1.667;
-  padding: 0.5em 0.7em;
+  padding: 0.5em 2em 0.5em 0.7em;
+}
+.ui-selectmenu-button span.ui-icon {
+  text-align: center;
 }
 .ui-selectmenu-button span.ui-icon:after {
   content: '\e870';
@@ -5421,9 +5427,13 @@ img.atk-shape-circle {
   line-height: 1.667;
   width: 16px;
 }
-.ui-menu .ui-menu-item {
+.ui-selectmenu-menu .ui-menu {
+  border-top: 0;
+  padding: 0;
+}
+.ui-selectmenu-menu .ui-menu .ui-menu-item {
   border: none;
-  padding: 0.2em 0.7em;
+  padding: 0.2em 0.4em;
 }
 .ui-datepicker {
   border-color: #a1a1a1;
@@ -5676,6 +5686,23 @@ img.atk-shape-circle {
 .atk-popover.ui-dialog .arrow.top:after {
   background: #fff;
   border-color: #e1e1e1;
+}
+.atk-input-icon {
+  display: inline-block;
+  position: relative;
+}
+.atk-input-icon input {
+  padding-right: 1.4em;
+}
+.atk-input-icon *[class*=icon] {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  line-height: 1;
+  margin-top: -0.5em;
+}
+.atk-input-icon *[class*=icon]:before {
+  margin: 0;
 }
 .atk-popover.ui-dialog {
   border-color: #e1e1e1;
