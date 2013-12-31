@@ -1,0 +1,41 @@
+!!! 5
+//if lt IE 7
+    <html class="no-js lt-ie9 lt-ie8 lt-ie7">
+//if IE 7
+    <html class="no-js lt-ie9 lt-ie8">
+//if IE 8
+    <html class="no-js lt-ie9">
+//if gt IE 8
+    <html class="no-js">
+html(lang="{lang}en{/}")
+    head
+        meta(charset="utf-8")
+        //if IE
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        title {page_title}Untitled Project - Agile Toolkit{/}
+        meta(name="desciption" content="{$page_description}")
+        meta(name="viewport" content="width=device-width")
+        script(src="require.js")
+        script(type='text/javascript').
+            require.config({
+                paths: {
+                    "jquery": "jquery-2.0.3.min"
+                    ,"jquery-ui": "jquery-ui-1.11.master"
+                },
+            });
+            require( ["atk"], function(someModule,    myModule) {
+                console.log('atk loaded',jQuery);
+
+            $.atk4(function(){ 
+                alert('ok');
+                });
+
+            });
+
+
+
+    body(class="{$pagename}")
+        //if lt IE 7
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+
+        | Hello World
