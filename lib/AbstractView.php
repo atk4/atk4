@@ -542,8 +542,50 @@ abstract class AbstractView extends AbstractObject
     function getJSID(){
         return str_replace('/', '_', $this->name);
     }
-    /** Experimental */
+    /**
+     * Views in Agile Toolkit can assign javascript actions to themselves. This
+     * is done by calling $view->js() or $view->on().
+     *
+     * on() method implements implementation of jQuery on() method.
+     *
+     * on(event, [selector], [other_chain])
+     *
+     * Returned is a javascript chain wich is executed when event is triggered
+     * on specified selector (or all of the view if selector is ommitted).
+     * Optional other_chain argument can contain one or more chains (in array)
+     * which will also be executed.
+     *
+     * The chain returned by on() will properly select affected element. For
+     * example if the following view would contain multiple <a> elements, then
+     * only the clicked-one will be hidden.
+     *
+     * on('click','a')->hide();
+     *
+     *
+     * Other_chain can also be specified as a Callable. In this case the
+     * executable code you have specified here will be called with several
+     * arguments:
+     *
+     * function($js, $data){
+     *   $js->hide();
+     * }
+     *
+     *
+     * In this case javascript method is executed on a clicked event but
+     * in a more AJAX-way
+     *
+     * If your method returns a javascript chain, it will be executed
+     * instead. You can execute both if you embed $js inside returned
+     * chain.
+     *
+     * The third argument passed to your method contains 
+     */
     function on($event, $selector=null, $js=null){
+
+        if(!is_string($selector) && is_null($js)) {
+            $js=$selector;
+            $selector=null;
+        }
 
         if(is_callable($js)){
             $p=$this->add('VirtualPage');
