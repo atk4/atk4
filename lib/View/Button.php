@@ -23,9 +23,6 @@ class View_Button extends View_HtmlElement
     // Options to pass to JS button widget
     public $options = array();
     
-    // use setIcon() to change icon displayed on the button
-    private $icon = null;
-    
     // used jQuery-UI classes
     public $js_active_class = 'ui-state-highlight';     // active (selected) button
     public $js_triangle_class = 'ui-icon-triangle-1-s'; // triangle, down arrow icon
@@ -70,7 +67,8 @@ class View_Button extends View_HtmlElement
      */
     function setIcon($icon)
     {
-        $this->icon = $icon;
+        if($icon[0]!='<')$icon='<i class="icon-'.$icon.'"></i>';
+        $this->template->trySetHTML('icon',$icon);
         return $this;
     }
     
@@ -87,12 +85,6 @@ class View_Button extends View_HtmlElement
     }
     
     
-    /**
-     * Button will use jQuery UI button widget.
-     * Redefine this method with empty one if you DONT want buttons to use jUI.
-     * 
-     * @return $this
-     */
     private $js_button_called = false;
     function jsButton()
     {
@@ -106,8 +98,7 @@ class View_Button extends View_HtmlElement
         }
 
         // enable widget
-        $this->addClass('atk-button');
-        //$this->js(true)->button($this->options);
+        $this->js(true)->button($this->options);
         return $this;
     }
 
@@ -117,7 +108,7 @@ class View_Button extends View_HtmlElement
      * @return void
      */
     function render(){
-        $this->jsButton();
+        $this->addClass('atk-button');
         parent::render();
     }
     

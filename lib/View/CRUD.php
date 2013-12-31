@@ -369,9 +369,21 @@ class View_CRUD extends View
             ->addColumn(
                 'fr_'.$s,
                 $options['title']?:$name,
-                $options['label'],
+                array(
+                    'descr'=>$options['label']?:null,
+                    'icon'=>$options['icon']?:null,
+                ),
                 $this->grid
             );
+    }
+
+    /**
+     * Transparent method for adding buttons to a crud
+     */
+    function addButton($label, $class = 'Button')
+    {
+        if(!$this->grid)return new Dummy();
+        return $this->grid->addButton($label,$class);
     }
 
     /**
@@ -402,7 +414,7 @@ class View_CRUD extends View
             );
 
         if ($this->entity_name !== false) {
-            $this->add_button->setLabel('Add '.$this->entity_name);
+            $this->add_button->setHTML('<i class="icon-plus"></i> Add '.htmlspecialchars($this->entity_name));
         }
     }
 
@@ -426,7 +438,7 @@ class View_CRUD extends View
 
         $this
             ->virtual_page
-            ->addColumn('edit', 'Editing '.$this->entity_name, 'Edit', $this->grid)
+            ->addColumn('edit', 'Editing '.$this->entity_name, array('descr'=>'Edit','icon'=>'pencil'), $this->grid)
             ;
     }
 
@@ -449,7 +461,7 @@ class View_CRUD extends View
      */
     protected function configureDel()
     {
-        $this->grid->addColumn('delete', 'delete');
+        $this->grid->addColumn('delete', 'delete',array('icon'=>'trash','descr'=>'Delete'));
     }
 
 

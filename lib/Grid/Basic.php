@@ -98,6 +98,14 @@ class Grid_Basic extends CompleteLister
             $this->columns[$name]['descr'] = $descr;
         }
 
+        if($this->columns[$name]['icon']) {
+            if($this->columns[$name]['icon'][0]!='<') {
+                $this->columns[$name]['icon']='<i class="icon-'.
+                    $this->columns[$name]['icon'].'"></i>';
+            }
+        }
+
+
         $this->last_column = $name;
 
         if (!is_string($formatters) && is_callable($formatters)) {

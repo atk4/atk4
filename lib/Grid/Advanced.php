@@ -776,7 +776,7 @@ class Grid_Advanced extends Grid_Basic
         if ($this->current_row[$field] && $this->current_row[$field] !== 'N') {
             $this->current_row_html[$field] =
                 '<div align=center>'.
-                    '<span class="ui-icon ui-icon-check">yes</span>'.
+                    '<i class="icon-check">'.$this->api->_('yes').'</i>'.
                 '</div>';
         } else {
             $this->current_row_html[$field] = '';
