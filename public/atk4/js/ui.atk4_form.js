@@ -242,6 +242,8 @@ jQuery.widget("ui.atk4_form", {
 		// highlight field
 		var field_highlight=field.closest('.atk-form-row').addClass('has-error').find('.atk-form-field');
 
+		field.closest('.atk-form-row').find('.atk-form-label').addClass('atk-effect-danger');
+
 		// Clear previous errors
 		field_highlight.children('.atk-form-error').remove();
 
@@ -267,7 +269,7 @@ jQuery.widget("ui.atk4_form", {
 			 error+'</div></dd>').insertAfter(field_highlight);
 		*/
 
-		error_bl.click(function(){ $(this).closest('.has-error').removeClass('has-error'); error_bl.remove(); });
+		error_bl.click(function(){ $(this).closest('.has-error').removeClass('has-error').find('.atk-form-label').removeClass('atk-effect-danger'); error_bl.remove(); });
 
 		var self=this;
 
@@ -276,7 +278,7 @@ jQuery.widget("ui.atk4_form", {
 			var t=$(this);
 			t.unbind('change.errorhide');
 
-			self.form.removeClass('form_has_error');
+			self.form.removeClass('form_has_error').find('.atk-form-label').removeClass('atk-effect-danger');
 			field_highlight.closest('.has-error').removeClass('has-error');
 			error_bl.fadeOut(function(){ error_bl.remove(); });
 		});
