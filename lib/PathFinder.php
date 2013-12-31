@@ -209,6 +209,7 @@ class PathFinder extends AbstractController
         if(is_dir(dirname($base_directory).'/shared')) {
             $this->shared_location=$this->addLocation(array(
                 'php'=>'lib',
+                'addons'=>'addons',
                 'template'=>'templates'
             ))->setBasePath(dirname($base_directory).'/shared');
         }
