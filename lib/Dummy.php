@@ -16,8 +16,13 @@
  =====================================================ATK4=*/
 class Dummy {
     function __call($foo,$bar){
+        return $this;
     }
     function __set($foo,$bar){
+        return $this;
+    }
+    function __toString() {
+        return '##Dummy Object';
     }
     function __get($foo){
         return null;
