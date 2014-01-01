@@ -42,6 +42,10 @@ class Controller_Data_RESTFul extends Controller_Data {
             $pest->setupAuth($auth[0], $auth[1], @$auth[2]?:'basic');
         }
 
+        $model->addMethod('pest',function() use ($pest) {
+            return $pest;
+        });
+
         parent::setSource($model, $pest);
     }
 
