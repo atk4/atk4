@@ -82,9 +82,10 @@ abstract class Controller_Data extends AbstractController {
 	abstract function delete($model, $id);
 
 	abstract function loadById($model, $id);
-    abstract function loadByConditions($model);
 
-    abstract function deleteAll($model);
+    // Those methods may not be available in a model
+    // abstract function loadByConditions($model);
+    // abstract function deleteAll($model);
 
     /** Create a new cursor and load model with the first entry */
     abstract function prefetchAll($model);
