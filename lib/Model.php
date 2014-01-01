@@ -766,14 +766,15 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // }}}
 
     // {{{ Iterator support 
+    public $_cursor=null;
     function rewind() {
         $this->unload();
-        $this->controller->prefetchAll($this);
+        $this->_cursor = $this->controller->prefetchAll($this);
         $this->next();
     }
     function next() {
         $this->hook('beforeLoad', array('iterating'));
-        $this->controller->loadCurrent($this);
+        $this->controller->loadCurrent($this,$this->_cursor);
         if($this->loaded()) {
             $this->hook('afterLoad');
         }

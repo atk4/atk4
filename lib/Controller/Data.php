@@ -87,10 +87,10 @@ abstract class Controller_Data extends AbstractController {
     // abstract function loadByConditions($model);
     // abstract function deleteAll($model);
 
-    /** Create a new cursor and load model with the first entry */
+    /** Create a new cursor and load model with the first entry. Returns cursor */
     abstract function prefetchAll($model);
 
-    /** Provided that rewind was called before, load next data entry */
-    abstract function loadCurrent($model);
+    /** Load next data row from cursor */
+    abstract function loadCurrent($model,&$cursor);
 }
 
