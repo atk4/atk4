@@ -26,7 +26,23 @@ class Controller_Data_RESTFul extends Controller_Data {
         if(!$model->collection_uri)throw $this->exception('Define $collection_uri in your model');
         if(!$model->element_uri)throw $this->exception('Define $element_uri in your model');
 
-        parent::setSource($model, new $this->transport_class($table));
+        $pest = new $this->transport_class($table);
+
+        if ($auth = $this->api->getConfig('restapi/auth',null)) {
+
+            // Per-URL authentication is defined
+            if (is_array($auth) && isset($auth[$table])) {
+                $auth = $auth [$table];
+            }
+
+            if (!is_array($auth)) {
+                throw $this->exception('auth must be array("user","pass")');
+            }
+
+            $pest->setupAuth($auth[0], $auth[1], @$auth[2]?:'basic');
+        }
+
+        parent::setSource($model, $pest);
     }
 
     /**
