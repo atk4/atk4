@@ -34,7 +34,6 @@ class View_ModelDetails extends Grid_Basic
                 throw $this->exception('Specified model must be loaded');
             }
             $data = array();
-            var_Dump($this->model->get());
             foreach ($this->model->elements as $key => $field) {
                 if ($field instanceof Field || $field instanceof Field_Base) {
                     $data[]=array(
