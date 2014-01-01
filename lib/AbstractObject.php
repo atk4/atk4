@@ -115,6 +115,7 @@ abstract class AbstractObject
                 $el->destroy();
             }
         }
+        /*
         if (@$this->model && $this->model instanceof AbstractObject) {
             $this->model->destroy();
             unset($this->model);
@@ -123,6 +124,7 @@ abstract class AbstractObject
             $this->controller->destroy();
             unset($this->controller);
         }
+        */
         $this->owner->_removeElement($this->short_name);
     }
 
