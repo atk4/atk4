@@ -69,7 +69,9 @@ class Controller_Data_Array extends Controller_Data {
         if (isset($model->_table[$this->short_name][$id])) {
             $model->id = $id;
             $model->data = $model->_table[$this->short_name][$id];
+            return true;
         }
+        return false;
     }
 
     function loadByConditions($model) {
@@ -90,22 +92,11 @@ class Controller_Data_Array extends Controller_Data {
 
     function prefetchAll($model) {
         // TODO: miss ordering...
-        $model->_table[$this->short_name]['__ids__'] = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions, $model->limit);
-        reset($model->_table[$this->short_name]['__ids__']);
-        $model->reloaded = true;
+        return $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions, $model->limit);
     }
 
-    function loadCurrent($model) {
-        if ($model->reloaded === true) {
-            $id = current($model->_table[$this->short_name]['__ids__']);
-            $model->reloaded = false;
-        } else {
-            $id = next($model->_table[$this->short_name]['__ids__']);
-        }
-        if (($id !== false) && ($id !== '__ids__')) {
-            $model->id = $id;
-            $model->data = $model->_table[$this->short_name][$id];
-        } else {
+    function loadCurrent($model,&$cursor) {
+        if (!$this->loadByID($model, array_shift($cursor))) {
             $model->id = null;
             $model->data = array();
         }
