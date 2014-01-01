@@ -457,6 +457,15 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
+
+    /** Returns if certain feature is supported by model */
+    function supports($feature) {
+
+        if(!$this->controller)return false;
+
+        $s='support'.$feature;
+        return $this->controller->$s;
+    }
     // }}}
 
     // {{{ LOAD METHODS
