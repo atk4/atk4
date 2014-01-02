@@ -393,7 +393,6 @@ class Field_Base extends AbstractObject {
                 $val=array_search($m->data[$this->short_name], $t);
                 if($val===false)return; // do nothing
                 $m->data[$this->short_name]=(boolean)!$val;
-                var_Dump($m->data[$this->short_name]);
             });
 
             $this->owner->addHook('beforeUpdate,beforeInsert',function($m,&$data)use($t) {
