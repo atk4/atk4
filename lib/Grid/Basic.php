@@ -473,7 +473,7 @@ class Grid_Basic extends CompleteLister
             
             // if model field has listData structure, then get value instead of key
             if ($this->model && $f=$this->model->hasElement($field)) {
-                if ($values = $f->listData()) {
+                if ($f->type() !== 'boolean' && $values = $f->listData()) {
                     $this->current_row[$field] = $values[$this->current_row[$field]];
                 }
             }

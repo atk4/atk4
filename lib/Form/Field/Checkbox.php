@@ -12,6 +12,11 @@ class Form_Field_Checkbox extends Form_Field {
         return $this;
     }
     function setValueList($list){
+
+        // Model must convert it properly
+        return $this;
+
+
         /* otherwise type("boolean")->enum(array("Y","N")) won't work */
         if (count($list) != 2){
             throw $this->exception("Invalid value list for Checkbox");

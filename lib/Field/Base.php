@@ -385,6 +385,26 @@ class Field_Base extends AbstractObject {
      */
     function listData($t = UNDEFINED)
     {
+
+        if ($this->type() === 'boolean' && $t !== UNDEFINED) {
+
+            $this->owner->addHook('afterLoad,afterUpdate,afterInsert',function($m)use($t) {
+                // Normalize boolean data
+                $val=array_search($m->data[$this->short_name], $t);
+                if($val===false)return; // do nothing
+                $m->data[$this->short_name]=(boolean)!$val;
+                var_Dump($m->data[$this->short_name]);
+            });
+
+            $this->owner->addHook('beforeUpdate,beforeInsert',function($m,&$data)use($t) {
+                // De-Normalize boolean data
+                $val = (int)(!$data[$this->short_name]);
+                if(!isset($t[$val]))return;  // do nothing
+                $data[$this->short_name]=$t[$val];
+            });
+
+        }
+
         return $this->setterGetter('listData', $t);
     }
 
