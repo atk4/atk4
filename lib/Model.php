@@ -621,14 +621,24 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $is_update = $this->loaded();
         if($is_update) {
-            $this->hook('beforeUpdate');
+
+            $source=array();
+            foreach($this->dirty as $name=>$junk) {
+                $source[$name]=$this->get($name);
+            }
+
+            // No save needed, nothing was changed
+            if(!$source)return $this;
+
+            $this->hook('beforeUpdate',array(&$source));
         } else {
-            $this->hook('beforeInsert');
+
+            // Collect all data of a new record
+            $source = $this->get();
+
+            $this->hook('beforeInsert',array(&$source));
         }
 
-        $source = $this->get();
-        // remove calculated fields
-        // ...
         $this->id = $this->controller->save($this, $this->id, $source);
 
         if($is_update) {
