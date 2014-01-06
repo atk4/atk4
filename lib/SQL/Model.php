@@ -144,8 +144,10 @@ class SQL_Model extends Model implements Serializable {
     }
     /** Turns debugging mode on|off for this model. All database operations will be outputed */
     function debug($enabled = true){
-        $this->debug = $enabled;
-        if($this->dsql)$this->dsql->debug($enabled);
+        if($enabled===true) {
+            $this->debug = $enabled;
+            if($this->dsql)$this->dsql->debug($enabled);
+        } else  parent::debug($enabled);
         return $this;
     }
     /** Completes initialization of dsql() by adding fields and expressions. */
