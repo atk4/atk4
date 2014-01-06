@@ -176,6 +176,9 @@ class Controller_Data_Array extends Controller_Data {
                 ->addMoreInfo('support', array('int', 'str'));
         }
     }
+    function count($model) {
+        return count($model->_table[$this->short_name]);
+    }
     function push($model,$row) {
         $model->_table[$this->short_name][] = $row;
     }
