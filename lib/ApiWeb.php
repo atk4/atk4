@@ -344,6 +344,8 @@ class ApiWeb extends ApiCLI {
         }
         echo $this->template->render();
         $this->hook('post-render-output');
+
+        if(!$_GET['cut_page'] && !$_GET['cut_object']) $this->_rendered=true;
     }
     // }}}
 

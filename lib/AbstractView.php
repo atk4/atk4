@@ -125,6 +125,12 @@ abstract class AbstractView extends AbstractObject
         $this->_tsBuffer.=$data;
     }
 
+    function init()
+    {
+        parent::init();
+        $this->_rendered=false;
+    }
+    
     /**
      * Converting View into string will render recursively and produce HTML.
      * If argument is passed, JavaScript will be added into on_ready section
@@ -293,6 +299,7 @@ abstract class AbstractView extends AbstractObject
      *
      * @return void
      */
+    public $_rendered=null;
     function recursiveRender()
     {
 
@@ -344,7 +351,24 @@ abstract class AbstractView extends AbstractObject
         }
         // if template wasn't cut, we move all JS chains to parent
 
+        $this->_rendered = true;
     }
+
+    // TODO: finish this check
+    function destroy()
+    {
+        // We don't care about if we were rendered or not
+        $this->_rendered=true;
+    }
+    function __destruct()
+    {
+        if($this->_rendered===false && $this->api->_rendered){
+            $this->warning($this->name.' wasn\'t rendered');
+            echo ($this->name.' ('.get_class($this).') wasn\'t rendered');
+        }
+    }
+
+
     /**
      * Append our chains to owner's chains. JS chains bubble up to
      * API, which plugs them into template. If the object is being
