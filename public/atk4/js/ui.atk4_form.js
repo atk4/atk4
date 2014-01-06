@@ -60,7 +60,7 @@ jQuery.widget("ui.atk4_form", {
 
 		console.log('created with url=',this.form.attr('action'));
 
-		this.form.append('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
+		this.form.prepend('<input name="ajax_submit" id="ajax_submit" value="1" type="hidden"/>');
 		this.form.addClass('atk4_form');
 		this.element.addClass('atk4_form_widget');
 
