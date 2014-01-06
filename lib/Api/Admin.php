@@ -14,7 +14,7 @@
  */
 class Api_Admin extends ApiFrontend {
 
-    public $title='ExDash Admin';
+    public $title='Agile Toolkit™ Admin';
 
     function init() {
         parent::init();
