@@ -47,6 +47,9 @@ class CompleteLister extends Lister
     /** Item ($item_tag) template */
     public $row_t;
 
+    /** Separator */
+    public $sep_html = null;
+
     /** Will contain accumulated totals for all fields */
     public $totals = false;
 
@@ -103,6 +106,10 @@ class CompleteLister extends Lister
         }
 
         $this->row_t = $this->template->cloneRegion($this->item_tag);
+
+        if($this->template->hasTag('sep')) {
+            $this->sep_html = $this->template->get('sep');
+        }
     }
 
     /**
@@ -242,6 +249,10 @@ class CompleteLister extends Lister
                 }
             }
 
+            if($this->sep_html && $this->total_rows) {
+                $this->renderSeparator();
+            }
+
             // calculate rows so far
             $this->total_rows++;
 
@@ -252,6 +263,7 @@ class CompleteLister extends Lister
 
             // render data row
             $this->renderDataRow();
+
         }
         
         // calculate grand totals if needed
@@ -278,6 +290,14 @@ class CompleteLister extends Lister
         $this->template->appendHTML(
             $this->container_tag,
             $this->rowRender($this->row_t)
+        );
+    }
+
+    function renderSeparator()
+    {
+        $this->template->appendHTML(
+            $this->container_tag,
+            $this->sep_html
         );
     }
 
