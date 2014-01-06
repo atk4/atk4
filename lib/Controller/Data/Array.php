@@ -23,6 +23,9 @@ class Controller_Data_Array extends Controller_Data {
                 ->addMoreInfo('source', $table);
         }
 
+
+        $model->addMethod('push',$this);
+
         // convert single dimension arrays
         reset($table);
         list(,$firstrow) = each($table);
@@ -172,5 +175,8 @@ class Controller_Data_Array extends Controller_Data {
                 ->addMoreInfo('type', $type)
                 ->addMoreInfo('support', array('int', 'str'));
         }
+    }
+    function push($model,$row) {
+        $model->_table[$this->short_name][] = $row;
     }
 }
