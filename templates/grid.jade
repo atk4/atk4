@@ -2,8 +2,16 @@
 
     // Pannel goes here
 
+    {Pannel}
+    .atk-cells.atk-cells-gutter-large.atk-padding-small(class="{$pannel_class}")
+        .atk-cell.atk-jackscrew.atk-actions
+            {$grid_buttons}
+        .atk-cell
+            {$quick_search}
+    {Pannel}
+
+
     table
-        {$grid_buttons}
         {header}
         thead
             {cols}{col}

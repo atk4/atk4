@@ -1,9 +1,11 @@
 
 <div id="{$_name}" class="atk-table">
-  <!-- Pannel goes here-->
-  <table>
-    {$grid_buttons}
-    {header}
+  <!-- Pannel goes here-->{Pannel}
+  <div class="atk-cells atk-cells-gutter-large atk-padding-small {$pannel_class}">
+    <div class="atk-cell atk-jackscrew atk-actions">{$grid_buttons}</div>
+    <div class="atk-cell">{$quick_search}</div>
+  </div>{Pannel}
+  <table>{header}
     <thead>{cols}{col}
       <th>{$descr} {$sort}</th>{/}{/}
     </thead>{/}
