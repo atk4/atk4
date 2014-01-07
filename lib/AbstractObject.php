@@ -614,8 +614,8 @@ abstract class AbstractObject
      */
     function debug($msg = true, $file = null, $line = null)
     {
-        if ($msg === true) {
-            $this->debug = true;
+        if (is_bool($msg)) {
+            $this->debug = $msg;
             return $this;
         }
 
