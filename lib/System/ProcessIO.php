@@ -50,7 +50,7 @@ class System_ProcessIO extends AbstractModel {
                 );
     }
     function debugStatus(){
-        $this->debug('process status: '.print_r(proc_get_status($this->process),true));
+        //$this->debug('process status: '.print_r(proc_get_status($this->process),true));
     }
     function exec($cmd,$args=array()){
         // Arguments must be safe
@@ -63,7 +63,7 @@ class System_ProcessIO extends AbstractModel {
         // Command myst be safe
         $this->cmd=escapeshellcmd($cmd);
 
-        $this->debug('Executing '.$cmd.($this->args?' with options '.join(',',$this->args):''));
+        $this->debug('Executing '.$cmd.($this->args?' '.join(' ',$this->args):''));
         // Now do the execution
         $this->execute_raw($this->cmd.' '.join(' ',$this->args));
         return $this;
