@@ -24,6 +24,12 @@ class View_ButtonSet extends HtmlElement
     public $vertical = false;
 
 
+    function init() {
+        parent::init();
+        $this->addClass('atk-actions atk-padding-small');
+    }
+
+
 
     /**
      * Add button to buttonset
@@ -58,7 +64,7 @@ class View_ButtonSet extends HtmlElement
      */
     function render()
     {
-        $this->jsButtonSet();
+        //$this->jsButtonSet();
         parent::render();
     }
 }
