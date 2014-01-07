@@ -53,6 +53,11 @@ class Controller_Data_RESTFul extends Controller_Data {
      * Sends request to specified URL with specified method and data
      */
     function sendRawRequest($model,$url,$method='GET',$data=null){
+        if($model->debug) {
+            echo '<font color="blue">'.
+                htmlspecialchars("$method $url (".json_encode($data).")").
+                '</font>';
+        }
         $method=strtolower($method);
 
         $pest = $model->_table[$this->short_name];
@@ -106,6 +111,7 @@ class Controller_Data_RESTFul extends Controller_Data {
             $model->data = $this->sendItemRequest($model, $id, 'PUT', $data);
             $model->id = $model->data?$model->data[$model->id_field]:null;
         }
+        return $model->id;
     }
 
     function delete($model, $id) {
