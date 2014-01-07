@@ -254,6 +254,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             foreach ($this->_expressions as $key => $field) {
                 $data[$key] = $field->getValue($this, $this->data);
             }
+            foreach ($this->elements as $key => $field) {
+                if($field instanceof Field || $field instanceof Field_Base) {
+                    if($field->defaultValue() !== null && !isset($data[$key])) {
+                        $data[$key] = $field->defaultValue();
+                    }
+                }
+            }
             return $data;
         }
 
@@ -933,7 +940,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // }}}
 
     function debug($debug=true) {
-        if($this->controller)$this->controller->debug($debug);
+        //if($this->controller)$this->controller->debug($debug);
         return parent::debug($debug);
     }
 }
