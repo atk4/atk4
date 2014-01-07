@@ -170,7 +170,7 @@ class Controller_Data_SQL extends Controller_Data {
         }
 
         $model->dsql = $model->api->db->dsql();
-        $model->dsql->debug($model->debug);
+        $model->dsql->debug =& $model->debug;
         $model->dsql->table($model->table,$model->table_alias);
         $model->dsql->default_field=$model->dsql->expr('*,'.
             $model->dsql->bt($model->table_alias?:$model->table).'.'.
