@@ -256,7 +256,10 @@ class PathFinder extends AbstractController
             $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://agiletoolkit-sandbox.phar');
         }elseif(file_exists('../agiletoolkit-sandbox.phar')){
             $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://../agiletoolkit-sandbox.phar');
+        }else{
+            $this->api->no_sendbox = true;
         }
+
 
         if(@$this->sandbox) {
             $this->sandbox->defineContents(array(

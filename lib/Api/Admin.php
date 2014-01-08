@@ -26,10 +26,12 @@ class Api_Admin extends ApiFrontend {
         $this->layout->addFooter();
 
         $this->add('jUI');
-
-        $this->police = $this->add('Controller_Police');
-        $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
-            
+       
+        if (!$this->no_sendbox) {
+            $this->police = $this->add('Controller_Police');
+            $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
+        }
+                   
 
     }
 
@@ -38,19 +40,23 @@ class Api_Admin extends ApiFrontend {
         $this->addAddonsLocations();
         $this->initAddons();
 
-        $this->add('sandbox/Initiator');
+       // $this->add('sandbox/Initiator');
 
         parent::initLayout();
 
         // TODO - remove dependency on get arguments in generic code
-        if ($_GET['debug']) {
-            $this->police->addDebugView($this->page_object);
+
+        if (is_object($this->police)) {
+            if ($_GET['debug']) {
+                 $this->police->addDebugView($this->page_object);
+            }
+            try {
+                $this->police->guard();
+            } catch (Exception $e) {
+                $this->police->addErrorView($this->page_object);
+            }
         }
-        try {
-            $this->police->guard();
-        } catch (Exception $e) {
-            $this->police->addErrorView($this->page_object);
-        }
+        
 
 
     }
