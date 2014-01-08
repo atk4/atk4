@@ -33,9 +33,6 @@ abstract class Form_Field extends AbstractView {
     public $attr=array();
     public $no_save=null;
 
-    public $field_prepend='';
-    public $field_append='';
-
     public $comment='&nbsp;';
     protected $disabled=false;
     protected $mandatory=false;
@@ -134,31 +131,43 @@ abstract class Form_Field extends AbstractView {
             return $this->beforeField()->add('Button',$options)->setLabel($label);
         }
     }
-    function beforeField(){
-        if(!$this->template->hasTag('after_input')){
-            $el=$this->owner->add('HtmlElement');
-            $this->owner->add('Order')->move($el,'before',$this)->now();
-            return $el;
+
+    /** Layout changes in response to adding more elements before / after */
+
+    public $_icon=null;
+    /** Wraps input field into a <span> to align icon correctly */
+    function addIcon($icon,$link=null)
+    {
+        if(!$this->_icon){
+            $this->_icon=$this->add('Icon',null,'icon');
         }
-        if(!$this->button_prepend)return $this->button_prepend=$this
-            ->add('HtmlElement',null,'before_input')->addClass('input-cell');
-        return $this->button_prepend;
+        $this->_icon->set($icon);
+        if($link){
+            $this->_icon->setElement('a')
+                ->setAttr('href',$link);
+        }
+
+        $this->template->trySetHTML('before_input','<span class="atk-input-icon">');
+        $this->template->trySetHTML('after_input','</span>');
+
+        return $this->_icon;
+    }
+
+    /** Will enable field wrappin inside a atk-cells/atk-cell block */
+    public $_use_cells=false;
+    function beforeField(){
+        $this->_use_cells=true;
+        return $this->add('View',null,'before_field')->addClass('atk-cell');
     }
     function afterField(){
-        if(!$this->template->hasTag('after_input')){
-            $el=$this->owner->add('HtmlElement');
-            $this->owner->add('Order')->move($el,'after',$this)->now();
-            return $el;
-        }
-        if(!$this->button_append)return $this->button_append=$this
-            ->add('HtmlElement',null,'after_input')->addClass('input-cell');
-        return $this->button_append;
+        $this->_use_cells=true;
+        return $this->add('View',null,'after_field')->addClass('atk-cell');
     }
     function aboveField(){
-        return $this->add('HtmlElement',null,'before_field');
+        return $this->add('View',null,'above_field');
     }
     function belowField(){
-        return $this->add('HtmlElement',null,'after_field');
+        return $this->add('View',null,'below_field');
     }
     function setComment($text=''){
         $this->belowField()->setElement('ins')->set($text);
@@ -282,13 +291,13 @@ abstract class Form_Field extends AbstractView {
         $this->template->trySet('field_name',$this->name);
         $this->template->trySet('field_comment',$this->comment);
         // some fields may not have field_input tag at all...
-        if($this->button_prepend || $this->button_append){
-            $this->field_prepend.='<div class="input-cell expanded">';
-            $this->field_append='</div>'.$this->field_append;
-            $this->template->trySetHTML('input_row_start','<div class="input-row">');
-            $this->template->trySetHTML('input_row_stop','</div>');
+        if($this->_use_cells){
+            $this->template->trySetHTML('cells_start','<div class="atk-cells atk-input-combo">');
+            $this->template->trySetHTML('cells_stop','</div>');
+            $this->template->trySetHTML('input_cell_start','<div class="atk-cell atk-jackscrew">');
+            $this->template->trySetHTML('input_cell_stop','</div>');
         }
-        $this->template->trySetHTML('field_input',$this->field_prepend.$this->getInput().$this->field_append);
+        $this->template->trySetHTML('field_input',$this->getInput());
         $this->template->trySetHTML('field_error',
                 isset($this->form->errors[$this->short_name])?
                 $this->error_template->set('field_error_str',$this->form->errors[$this->short_name])->render()
