@@ -15,6 +15,7 @@
 class Api_Admin extends ApiFrontend {
 
     public $title='Agile Toolkit™ Admin';
+    private $no_sendbox;
 
     function init() {
         parent::init();
