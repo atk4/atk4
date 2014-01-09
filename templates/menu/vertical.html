@@ -2,7 +2,9 @@
 <div id="{$_name}" class="{$class} atk-menu-vertical">
   {Content}
   {rows}
-  {row}<a id="{$id}" href="{$href}" class="{$class} atk-padding-small">{$label}</a>{/}
+  {row}
+  <a id="{$id}" class="{$class}" href="{$href}" {$attributes} class="atk-padding-small atk-cells"><span class="atk-cell atk-jackscrew">{$icon}{$nbsp}<strong>{$Content}</strong></span><span class="atk-cell">{$badge}</span></a>
+  {/}
   {separator}<span class="atk-padding-small">
     <h4>{$label}</h4></span>{/}
   {/Content}
