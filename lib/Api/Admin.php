@@ -28,7 +28,7 @@ class Api_Admin extends ApiFrontend {
 
         $this->add('jUI');
        
-        if (!$this->no_sendbox) {
+        if ($this->no_sendbox===false) {
             $this->police = $this->add('Controller_Police');
             $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
         }
