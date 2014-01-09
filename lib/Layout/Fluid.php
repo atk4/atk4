@@ -13,7 +13,7 @@ class Layout_Fluid extends Layout_Basic {
         return array('layout/fluid');
     }
 
-    function addMenu($class = 'Menu_Main') {
+    function addMenu($class = 'Menu_Vertical') {
         return $this->add($class,null,'Main_Menu');
     }
 }
