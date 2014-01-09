@@ -16,7 +16,7 @@ class Menu_Vertical extends Menu_Objective {
             return $li;
         }
 
-        $a->setAttr('href',$this->api->url($page));
+        $a->template->set('href',$this->api->url($page));
 
         if($this->isCurrent($page) && $this->current_menu_class){
             $a->addClass($this->current_menu_class);
