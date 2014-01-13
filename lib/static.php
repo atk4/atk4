@@ -25,18 +25,22 @@ if(!defined('UNDEFINED'))define('UNDEFINED', '_atk4_undefined_value');
 if(!function_exists('error_handler')){
     function error_handler($errno, $errstr, $errfile, $errline){
         $errorType = Array (
-                E_ERROR               => "Error",
-                E_WARNING             => "Warning",
-                E_PARSE               => "Parsing Error",
-                E_NOTICE              => "Notice",
-                E_CORE_ERROR          => "Core Error",
-                E_CORE_WARNING        => "Core Warning",
-                E_COMPILE_ERROR       => "Compile Error",
-                E_COMPILE_WARNING     => "Compile Warning",
-                E_USER_ERROR          => "User Error",
-                E_USER_WARNING        => "User Warning",
-                E_USER_NOTICE         => "User Notice",
-                4096                  => "Runtime Notice"
+                E_ERROR             => "Error",             // 1
+                E_WARNING           => "Warning",           // 2
+                E_PARSE             => "Parsing Error",     // 4
+                E_NOTICE            => "Notice",            // 8
+                E_CORE_ERROR        => "Core Error",        // 16
+                E_CORE_WARNING      => "Core Warning",      // 32
+                E_COMPILE_ERROR     => "Compile Error",     // 64
+                E_COMPILE_WARNING   => "Compile Warning",   // 128
+                E_USER_ERROR        => "User Error",        // 256
+                E_USER_WARNING      => "User Warning",      // 512
+                E_USER_NOTICE       => "User Notice",       // 1024
+                E_STRICT            => "PHP suggestions",   // 2048
+                E_RECOVERABLE_ERROR => "Runtime Notice",    // 4096
+                E_DEPRECATED        => "Deprecated Notice", // 8192
+                E_USER_DEPRECATED   => "User Deprecated Notice", // 16384
+                E_ALL               => "All Errors",        // 32767
                 );
 
         if((error_reporting() & $errno)!=0) {
@@ -44,16 +48,16 @@ if(!function_exists('error_handler')){
             $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
 
             switch ($errno) {
-                case 2:
+                case 2: // E_WARNING
                     if(strpos($errstr,'mysql_connect')!==false)break;
-                case 8:
+                case 8: // E_NOTICE
                     if(strpos($errstr,'Undefined offset')===0)break;
                     if(strpos($errstr,'Undefined index')===0)break;
-                case 2048:
+                case 2048: // E_STRICT
                     if(strpos($errstr,'var: Deprecated')===0)break;
                     if(strpos($errstr,'Declaration of ')===0)break;
                     if(strpos($errstr,'Non-static method')===0)break;
-                case 8192:
+                case 8192: // E_DEPRECATED
                     if(substr($errstr,-13)=='is deprecated')break;
                 default:
                     // throw consistently all errors into exceptions

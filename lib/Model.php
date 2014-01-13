@@ -127,15 +127,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
             ->addMoreInfo('name',$name);
 
-        if($value!==undefined 
+        if ($value !== undefined 
             && (
-                is_object($value) 
+                // if data[$name] is not initialized at all (for example, in model using array controller)
+                (is_array($this->data) && !array_key_exists($name, $this->data))
+                // value as object
+                || is_object($value)
                 || is_object($this->data[$name])
+                // value as array
                 || is_array($value)
                 || is_array($this->data[$name])
-                || (string)$value!=(string)$this->data[$name] // this is not nice.. 
-                || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
-                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
+                // if one and only one value is NULL
+                || (is_null($value) xor is_null($this->data[$name]))
+                // values converted to string loosly differ
+                // need special treatment of [false] value because (string)false === "" not "0"
+                || ($value===false ? '0' : (string)$value) // this is not nice
+                   !=
+                   ($this->data[$name]===false ? '0' : (string)$this->data[$name])
             )
         ) {
             $this->data[$name]=$value;
@@ -160,27 +168,29 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
 
             if($this->strict_fields)throw $this->exception('Model field was not loaded')
                 ->addMoreInfo('id',$this->id)
-                ->addMoreinfo('field',$name);
+                ->addMoreInfo('field',$name);
 
             return null;
         }
         return $this->data[$name];
     }
     /**
-     * Returns list of fieldnames which belong to specific group.
+     * Returns list of fieldnames or field objects which belong to specific group
+     * 
      * You can add fields into groups when you define them and it can be used by
      * the front-end to determine which fields needs to be displayed.
      * 
-     * If no group is specified, then all non-system fieldnames are returned
-     * for backwards compatibility.
+     * If no group is specified, then all non-system fieldnames (or fields) are
+     * returned for backwards compatibility.
      * 
      * You can pass multiple groups as CSV and add "-" prefix to groupname to
      * exclude all fields from this specific group in result set.
      * 
-     * @param string $group Name of field group or CSV of them
+     * @param string $group      Name of field group or CSV of them
+     * @param bool   $as_objects If set true, then return array of field objects
      * @return array
      */
-    function getActualFields($group = undefined)
+    function getActualFields($group = undefined, $as_objects = false)
     {
         if($group===undefined && $this->actual_fields) {
             return $this->actual_fields;
@@ -209,7 +219,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
                     (strtolower($group=='visible') && $el->visible()) ||
                     (strtolower($group=='editable') && $el->editable())
                 ) {
-                    $fields[] = $el->short_name;
+                    $fields[] = $as_objects ? $el : $el->short_name;
                 }
             }
         }
@@ -396,7 +406,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->hook('afterDelete',array($id));
         return $this;
     }
-    /** Deletes all records associated with this modle. */
+    /** Deletes all records associated with this model. */
     function deleteAll(){
         if($this->loaded())$this->unload();
         $this->hook('beforeDeleteAll');
@@ -570,7 +580,10 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     public $_references=array();
 
     /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model,$our_field=undefined,$field_class='Field'){
+    function hasOne($model, $our_field = undefined, $field_class = undefined){
+        if ($field_class === undefined) {
+            $field_class = $this->field_class;
+        }
 
         // if our_field is not specified, let's try to guess it from other model's table
         if($our_field===undefined){

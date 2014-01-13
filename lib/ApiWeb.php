@@ -47,7 +47,7 @@ class ApiWeb extends ApiCLI {
             $this->caughtException($e);
         }
     }
-    /** Redifine this function instead of default constructor */
+    /** Redefine this function instead of default constructor */
     function init(){
         $this->getLogger();
 
@@ -169,7 +169,7 @@ class ApiWeb extends ApiCLI {
         return false;
     }
     /** If version tag is defined in template, inserts current version of Agile Toolkit there.
-        When newer verison is available, it will be displayed. Override this with empty function
+        When newer version is available, it will be displayed. Override this with empty function
         to disable. */
     function upgradeChecker(){
 
@@ -350,7 +350,7 @@ class ApiWeb extends ApiCLI {
     }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
-        /**
+        /*
          * Redirect to specified page. $args are $_GET arguments.
          * Use this function instead of issuing header("Location") stuff
          */

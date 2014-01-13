@@ -527,12 +527,12 @@ abstract class AbstractObject
             $type = $this->default_exception;
         } elseif ($type[0] == '_') {
             if ($this->default_exception == 'BaseException') {
-                $type = 'Exception_'.substr($type, 1);
+                $type = 'Exception' . $type;
             } else {
-                $type = $this->default_exception.'_'.substr($type, 1);
+                $type = $this->default_exception . $type;
             }
-        } elseif ($type != 'BaseException' && strpos($type, 'Exception_') !== 0) {
-            $type = 'Exception_'.$type;
+        } elseif ($type != 'BaseException') {
+            $type = $this->api->normalizeClassName($type, 'Exception');
         }
 
         // Localization support
@@ -1047,11 +1047,14 @@ abstract class AbstractObject
         if (!is_array($array)) {
             throw $this->exception('not array');
         }
+        if ($desired === null) {
+           $desired = 'undef';
+        }
         $postfix = count($array);
         $attempted_key = $desired;
         while (array_key_exists($attempted_key, $array)) {
             // already used, move on
-            $attempted_key = ($desired ?: 'undef').'_'.(++$postfix);
+            $attempted_key = $desired . '_' . (++$postfix);
         }
         return $attempted_key;
     }

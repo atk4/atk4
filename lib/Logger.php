@@ -552,7 +552,7 @@ class Logger extends AbstractController {
                         $args .= "Object(".get_class($a).")";
                         break;
                     case 'resource':
-                        $args .= "Resource(".strstr($a, '#').")";
+                        $args .= "Resource(".get_resource_type($a).")";
                         break;
                     case 'boolean':
                         $args .= $a ? 'True' : 'False';

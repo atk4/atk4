@@ -467,10 +467,12 @@ class ApiCLI extends AbstractView
 
     // {{{ Helper / utility methods
     /**
-     * Normalize field or identifier name. Can also be used in URL normalization.
+     * Normalize string. Can be used in URL normalization and other cases.
      * This will replace all non alpha-numeric characters with separator.
-     * Multiple separators in a row is replaced with one.
+     * Multiple separators in a row are replaced with one.
      * Separators in beginning and at the end of name are removed.
+     *
+     * Note: This shouldn't be use in field name normalization!
      *
      * Sample input:  "Hello, Dear Jon!"
      * Sample output: "Hello_Dear_Jon"

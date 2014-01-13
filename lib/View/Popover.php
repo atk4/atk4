@@ -41,15 +41,17 @@ class View_Popover extends View {
             'open'=>$this->js(null, $this->js()->_selector('.ui-dialog-titlebar:last')->hide())->click(
                 $this->js()->dialog('close')->_enclose()
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
+        ),$options))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>')
+        ;
+
+        return $this->js()->dialog('open')->dialog('option',array(
             'position'=>$p=array(
                 'my'=>$options['my']?:'left top',
                 'at'=>$options['at']?:'left-5 bottom+5',
-                'of'=>$element?:$this->owner
+                'of'=>$element
                 //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
             )
-        ),$options))->parent()->append('<div class="arrow '.($options['arrow']?:'vertical top left').'"></div>');
-
-        return $this->js()->dialog('open');
+        ));
     }
 }
 

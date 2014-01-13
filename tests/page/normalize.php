@@ -9,6 +9,7 @@ class page_normalize extends Page_Tester {
         "Test_padder2"=>'Hey.there.Bring.me.my.sandwich',
         "Test_padder3"=>'Hey\\there\\Bring\\me\\my\\sandwich',
         "Test_padder4"=>'Hey^there^Bring^me^my^sandwich',
+        "Test_unicode"=>'aurslie_u_dzelzce',
         "Test_c_basic"=>'Model_Hi',
         "Test_c_basic2"=>'Model_Hi',
         "Test_c_basic3"=>'Model_Data_Eater',
@@ -40,6 +41,9 @@ class page_normalize extends Page_Tester {
     }
     function test_padder4(){
         return $this->api->normalizeName('>> Hey there! Bring me my sandwich!','^_^');
+    }
+    function test_unicode(){
+        return $this->api->normalizeName('Šaursliežu dzelzceļš');
     }
     function test_c_basic(){
         return $this->api->normalizeClassName('Hi','Model');

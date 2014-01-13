@@ -138,7 +138,9 @@ class jQuery_Chain extends AbstractModel {
             echo $this->_render();
             $this->api->hook('post-js-execute');
             exit;
-        }else return $this;
+        }else{
+            throw $this->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
+        }
     }
     /* [private] used by custom json_encoding */
     function _safe_js_string($str) {
@@ -232,24 +234,25 @@ class jQuery_Chain extends AbstractModel {
         return $this;
     }
     function _render(){
-        $ret='';
-        $ret.=$this->prepend;
+        $ret=$this->prepend;
         if($this->library){
             $ret.=$this->library;
         }else{
             if($this->str)$ret.="$('#".$this->owner->getJSID()."')";
         }
         $ret.=$this->str;
-        if($this->enclose===true){
-            if($this->preventDefault){
-                $ret="function(ev){ev.preventDefault();ev.stopPropagation(); ".$ret." }";
-            }else{
-                $ret="function(){ ".$ret." }";
+
+        if ($this->enclose === true) {
+            if ($this->preventDefault) {
+                $ret =  "function(ev,ui){ev.preventDefault();ev.stopPropagation(); " . $ret . "}";
+            } else {
+                $ret =  "function(ev,ui){" . $ret . "}";
             }
-        }elseif($this->enclose){
-            $ret=($this->library?:"$('#".$this->owner->getJSID()."')").
-                ".bind('".$this->enclose."',function(ev){ ev.preventDefault();ev.stopPropagation(); ".$ret." })";
+        } elseif($this->enclose) {
+            $ret = ($this->library ?: "$('#".$this->owner->getJSID()."')") .
+                    ".bind('".$this->enclose."',function(ev,ui){ev.preventDefault();ev.stopPropagation(); " . $ret . "})";
         }
+
         if(@$this->debug){
             echo "<font color='blue'>".htmlspecialchars($ret).";</font><br/>";
             $this->debug=false;
