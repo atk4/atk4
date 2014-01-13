@@ -3,6 +3,7 @@ php:
   - 5.5
   - 5.4
   - 5.3
+  - hhvm
 script: (cd tests; php run_tests.php)
 services: mongodb
 before_script:
@@ -18,3 +19,6 @@ notifications:
   email: false
   flowdock:
     - secure: Iyvr9KzrWbZ4CPoJA23+WzPrCLYo1QDll0Ka69qkma9E1YsoC/ysmdjFZvQBGM2odVk7AShfGiSWo3ndng+BbOIA8QsGfGQdydoLh4El1JBKm4oQbinDF9wbRHhNk4vJOkqIObUZcDZbQcO9Vm65jQQkyxmJ5RlbrpwnP4UsjXc=
+matrix:
+  allow_failures:
+    - hhvm
