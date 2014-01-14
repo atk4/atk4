@@ -5,10 +5,10 @@
   <div class="atk-form-fieldset">
     {Content}
     {form_line}
-    <div class="atk-form-row atk-cells atk-cells-gutter-large atk-form-row-{$field_type} {$row_class}">
+    <div class="atk-form-row atk-cells atk-cells-gutter-large atk-form-row-{$field_type} {$row_class}">{label_div}
       <div class="atk-cell atk-form-label"><label for="{$field_name}" {field_mandatory}class="mandatory"{/}><span>{$field_caption}</span>{$after_label}
         </label>
-      </div>
+      </div>{/}
       <div class="atk-cell atk-form-field atk-jackscrew {$field_class}">{$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}</div>{$field_hint}
       {field_error}
       <div class="atk-form-error"><span class="atk-size-micro">atk-effect-danger {$field_error_str}</span></div>{/}
