@@ -28,10 +28,10 @@ class Api_Admin extends ApiFrontend {
 
         $this->add('jUI');
        
-        if ($this->no_sendbox===false) {
+        //if ($this->no_sendbox===false) {
             $this->police = $this->add('Controller_Police');
             $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
-        }
+        //}
                    
 
     }
@@ -47,7 +47,7 @@ class Api_Admin extends ApiFrontend {
 
         // TODO - remove dependency on get arguments in generic code
 
-        if (is_object($this->police)) {
+        if (@is_object($this->police)) {
             if ($_GET['debug']) {
                  $this->police->addDebugView($this->page_object);
             }
