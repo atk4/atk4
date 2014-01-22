@@ -201,8 +201,14 @@ class Controller_Data_Mongo extends Controller_Data {
         // skip
         if($l=$this->_get($model,'limit')){
             list($count,$skip)=$l;
-            if($skip)$c->skip($skip);
-            if($count)$c->limit($count);
+            if($skip){
+                if ($model->debug) echo '<font style="color: blue">.skip('.$skip.')</font>';
+                $c->skip($skip);
+            }
+            if($count){
+                if ($model->debug) echo '<font style="color: blue">.limit('.$count.')</font>';
+                $c->limit($count);
+            }
         }
 
         return $c;
