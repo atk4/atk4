@@ -368,6 +368,7 @@ class Auth_Basic extends AbstractController {
 
                 if ($rehash) {
                     $hash=$data[$this->password_field]=$password;
+                    $data->setDirty($this->password_field);
                     $data->save();
                     $this->debug('Rehashed into '.$data[$this->password_field]);
                 }
