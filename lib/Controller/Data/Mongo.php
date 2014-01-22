@@ -217,7 +217,6 @@ class Controller_Data_Mongo extends Controller_Data {
         return $this->selectQuery($model)->count();
     }
     function rewind($model){
-        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         $c=$this->selectQuery($model);
 
         $model->data=$c->getNext();
