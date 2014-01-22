@@ -254,7 +254,7 @@ class Controller_Data_Mongo extends Controller_Data {
             $f->defaultValue($value)->system(true);
             // TODO: properly convert to Mongo presentation
         }else{
-            if($field[0]!='$'){
+            if($field[0]!='$' && strpos($field,'.')===false){
                 throw $this->exception('Condition on undefined field. Does not '.
                     'look like expression either')
                     ->addMoreInfo('model',$model)
