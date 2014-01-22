@@ -35,7 +35,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
     function incr($m,$field,$amount){
         if(!$m->loaded())throw $this->exception('Can only increment loaded model');
-        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>$amount)));
+        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>(float)$amount)));
     }
 
     function save($model,$id=null){
