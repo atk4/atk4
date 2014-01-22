@@ -192,7 +192,10 @@ class Controller_Data_Mongo extends Controller_Data {
         );
 
         // sort
-        if($s=$this->_get($model,'order'))$c->sort($s);
+        if($s=$this->_get($model,'order')){
+            if ($model->debug) echo '<font style="color: blue">.sort('.json_encode($s).')</font>';
+            $c->sort($s);
+        }
         $this->_set($model,'cur',$c);
 
         // skip
