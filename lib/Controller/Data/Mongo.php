@@ -234,24 +234,26 @@ class Controller_Data_Mongo extends Controller_Data {
         if($model->_table[$this->short_name]['conditions'][$field]){
             throw $this->exception('Multiple conditions on same field not supported yet');
         }
-        if ($f=$model->hasElement($field)) {
-            if($f->type()=='boolean' && is_bool($value)) {
-                $value=(bool)$value;
-            }
-            if($f->type()=='int'){
-                $value=(int)$value;
-            }
-            if($f->type()=='money' || $f->type()=='float'){
-                $value=(float)$value;
-            }
+        if ($f=$model->hasElement($field)){ 
+            if(!is_array($value)) {
+                if($f->type()=='boolean' && is_bool($value)) {
+                    $value=(bool)$value;
+                }
+                if($f->type()=='int'){
+                    $value=(int)$value;
+                }
+                if($f->type()=='money' || $f->type()=='float'){
+                    $value=(float)$value;
+                }
 
-            if(
-                ($f->type()=='reference_id' && $value && !is_array($value)) ||
-                $field == $model->id_field
-            ) {
-                $value = new MongoID($value);
+                if(
+                    ($f->type()=='reference_id' && $value && !is_array($value)) ||
+                    $field == $model->id_field
+                ) {
+                    $value = new MongoID($value);
+                }
+                $f->defaultValue($value)->system(true);
             }
-            $f->defaultValue($value)->system(true);
             // TODO: properly convert to Mongo presentation
         }else{
             if($field[0]!='$' && strpos($field,'.')===false){
