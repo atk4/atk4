@@ -186,6 +186,7 @@ class Controller_Data_Mongo extends Controller_Data {
         $this->_set($model,'limit',array($count,$offset));
     }
     function selectQuery($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         $c=$this->_get($model,'db')->find(
             $model->_table[$this->short_name]['conditions']
         );
