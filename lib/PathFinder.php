@@ -248,27 +248,36 @@ class PathFinder extends AbstractController
         }
 
         // Add sandbox if it is found
-        if (file_exists('agiletoolkit-sandbox') && is_dir('agiletoolkit-sandbox')) {
-            $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation('agiletoolkit-sandbox');
-        }elseif (file_exists('../agiletoolkit-sandbox') && is_dir('../agiletoolkit-sandbox')) {
-            $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation('../agiletoolkit-sandbox');
-        }elseif(file_exists('agiletoolkit-sandbox.phar')){
-            $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://agiletoolkit-sandbox.phar');
-        }elseif(file_exists('../agiletoolkit-sandbox.phar')){
-            $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath('phar://../agiletoolkit-sandbox.phar');
-        }else{
-            $this->api->no_sendbox = true;
+        $this->addSandbox();
+    }
+
+    function addSandbox() {
+        $sandbox_posible_locations = array(
+            'agiletoolkit-sandbox'        =>'agiletoolkit-sandbox',
+            '../agiletoolkit-sandbox'     =>'../agiletoolkit-sandbox',
+            'agiletoolkit-sandbox.phar'   =>'phar://agiletoolkit-sandbox.phar',
+            '../agiletoolkit-sandbox.phar'=>'phar://../agiletoolkit-sandbox.phar',
+        );
+
+        $this->sandbox = null;
+        foreach ($sandbox_posible_locations as $k=>$v) {
+            if ($this->sandbox) continue;
+            if (file_exists($k)) {
+                if (is_dir($k)) {
+                    $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation($v);
+                } else {
+                    $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath($v);
+                }
+
+            }
         }
-
-
-        if(@$this->sandbox) {
+        if($this->sandbox) {
             $this->sandbox->defineContents(array(
                 'template'=>'template',
                 'addons'=>'addons',
                 'php'=>'lib'
             ));
         }
-
     }
 
     /**

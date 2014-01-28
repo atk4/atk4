@@ -15,7 +15,6 @@
 class Api_Admin extends ApiFrontend {
 
     public $title='Agile Toolkit™ Admin';
-    private $no_sendbox;
 
     function init() {
         parent::init();
@@ -27,21 +26,16 @@ class Api_Admin extends ApiFrontend {
         $this->layout->addFooter();
 
         $this->add('jUI');
-       
-        //if ($this->no_sendbox===false) {
-            $this->police = $this->add('Controller_Police');
-            $this->layout->add('sandbox/View_Toolbar',null,'Toolbar');
-        //}
-                   
 
+        if ($this->pathfinder->sandbox) {
+            $this->api->add('sandbox\\Initiator');
+        }
     }
 
     function initLayout() {
 
         $this->addAddonsLocations();
         $this->initAddons();
-
-       // $this->add('sandbox/Initiator');
 
         parent::initLayout();
 
