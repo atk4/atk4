@@ -664,7 +664,7 @@ class SQL_Model extends Model {
      */
     private function modify(){
         $modify = $this->dsql()->del('where');
-        $modify->where($this->id_field, $this->id);
+        $modify->where($this->getElement($this->id_field), $this->id);
 
         if(!$this->dirty)return $this;
 
