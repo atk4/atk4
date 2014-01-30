@@ -34,53 +34,48 @@ class Api_Admin extends ApiFrontend {
         if ($this->pathfinder->sandbox) {
             $sandbox = $this->api->add('sandbox\\Initiator');
             if ($sandbox->getGuardError()) {
-                $this->sandbox->police->addErrorView($this->page_object);
+                $this->sandbox->police->addErrorView($this->layout);
             }
         }
     }
 
     function initLayout() {
-
-        $this->addAddonsLocations();
-        $this->initAddons();
-
+        if ($this->pathfinder->sandbox) {
+            $this->addAddonsLocations();
+            $this->initAddons();
+        }
         parent::initLayout();
-
-        // TODO - remove dependency on get arguments in generic code
     }
 
 
     function addAddonsLocations() {
+        $a = $this->add('sandbox\\Controller_InstallAddon');
         $base_path = $this->pathfinder->base_location->getPath();
-        $file = $base_path.'/../../sandbox_addons.json';
-        if (file_exists($file)) {
-            $json = file_get_contents($file);
-            $objects = $this->addons = json_decode($json);
-            foreach ($objects as $obj) {
-                // Private location contains templates and php files YOU develop yourself
-                /*$this->private_location = */
-                $this->api->pathfinder->addLocation(array(
-                    'docs'      => 'docs',
-                    'php'       => 'lib',
-                    'page'      => 'page',
-                    'template'  => 'templates',
-                ))
-                        ->setBasePath($base_path.'/'.$obj->addon_full_path)
-                ;
+        foreach ($a->getSndBoxAddonReader()->getReflections() as $addon) {
+            // Private location contains templates and php files YOU develop yourself
+            /*$this->private_location = */
+            $this->api->pathfinder->addLocation(array(
+                'docs'      => 'docs',
+                'php'       => 'lib',
+                'addons'    => '../..',
+                'page'      => 'page',
+                'template'  => 'templates',
+            ))
+                    ->setBasePath($base_path.'/../'.$addon->get('addon_full_path'))
+            ;
 
-                $addon_public = $obj->addon_symlink_name;
-                // this public location cotains YOUR js, css and images, but not templates
-                /*$this->public_location = */
-                $this->api->pathfinder->addLocation(array(
-                    'js'     => 'js',
-                    'css'    => 'css',
-                    'public' => './',
-                    //'public'=>'.',  // use with < ?public? > tag in your template
-                ))
-                        ->setBasePath($this->app_base_path.'/'.$obj->addon_public_symlink)
-                        ->setBaseURL($this->api->url('/').$addon_public) // $this->api->pm->base_path
-                ;
-            }
+            $addon_public = $addon->get('addon_symlink_name');
+            // this public location cotains YOUR js, css and images, but not templates
+            /*$this->public_location = */
+            $this->api->pathfinder->addLocation(array(
+                'js'     => 'js',
+                'css'    => 'css',
+                'public' => './',
+                //'public'=>'.',  // use with < ?public? > tag in your template
+            ))
+                    ->setBasePath($base_path.'/'.$addon->get('addon_public_symlink'))
+                    ->setBaseURL($this->api->url('/').$addon_public) // $this->api->pm->base_path
+            ;
         }
     }
     function initAddons() {
