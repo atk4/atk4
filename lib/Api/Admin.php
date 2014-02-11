@@ -18,6 +18,9 @@ class Api_Admin extends ApiFrontend {
 
     private $controller_install_addon;
 
+    /** Array with all addon initiators, introduced in 4.3 */
+    public $addons=array();
+
     function init() {
         parent::init();
 
@@ -59,6 +62,10 @@ class Api_Admin extends ApiFrontend {
         }
         return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
     }
+
+    function getInitiatedAddons() {
+        return $this->addons;
+    }
     private function initAddons() {
         foreach ($this->getInstalledAddons() as $addon) {
             $this->initAddon($addon);
@@ -79,6 +86,7 @@ class Api_Admin extends ApiFrontend {
                     'Initiator of '.$addon->get('name').' is inherited not from \Controller_Addon'
                 );
             }
+            $this->addons[$init->api_var] = $init;
         }
     }
 }

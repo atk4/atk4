@@ -25,6 +25,8 @@ class Controller_Addon extends AbstractController {
     public $addon_private_locations = array();
     public $addon_public_locations  = array();
 
+    public $with_pages = false;
+
     function init() {
         parent::init();
         $this->api->requires('atk',$this->atk_version);
