@@ -11,10 +11,19 @@ class Controller_Addon extends AbstractController {
     public $namespace=null;
 
     public $base_path=null;
+    public $addon_base_path=null;
 
     public $has_assets=false;
 
     public $addon_name;
+
+    public $api_var;
+
+    // object with information from json file
+    public $addon_obj;
+
+    public $addon_private_locations = array();
+    public $addon_public_locations  = array();
 
     function init() {
         parent::init();
@@ -24,7 +33,11 @@ class Controller_Addon extends AbstractController {
             throw $this->exception('Addon name must be specified in it\'s Controller');
 
         $this->namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
-        $this->base_path='vendor/'.$this->addon_name;
+        $this->addon_base_path='vendor/'.$this->addon_name;
+
+        if (count($this->addon_private_locations) || count($this->addon_public_locations)) {
+            $this->addAddonLocations($this->base_path);
+        }
     }
 
     /**
@@ -37,12 +50,21 @@ class Controller_Addon extends AbstractController {
        // }
     }
 
+    function addAddonLocations($base_path) {
+        $this->api->pathfinder->addLocation($this->addon_private_locations)
+                ->setBasePath($base_path.'/../'.$this->addon_obj->get('addon_full_path'));
+
+        $this->api->pathfinder->addLocation($this->addon_public_locations)
+                ->setBasePath($base_path.'/'.$this->addon_obj->get('addon_public_symlink'))
+                ->setBaseURL($this->api->url('/').$this->addon_obj->get('addon_symlink_name'));
+    }
+
     /**
      * This defines the location data for the add-on. Call this method
      * explicitly from init() if necessary.
      */
     function addLocation($contents,$public_contents=null) {
-        $this->location = $this->api->pathfinder->base_location->addRelativeLocation($this->base_path,$contents);
+        $this->location = $this->api->pathfinder->base_location->addRelativeLocation($this->addon_base_path,$contents);
 
 
         // If class has assets, those have probably been installed
@@ -58,7 +80,7 @@ class Controller_Addon extends AbstractController {
                 );
             }
 
-            $this->location = $this->api->pathfinder->public_location->addRelativeLocation($this->base_path,$contents);
+            $this->location = $this->api->pathfinder->public_location->addRelativeLocation($this->addon_base_path,$contents);
         }
 
         return $this->location;
