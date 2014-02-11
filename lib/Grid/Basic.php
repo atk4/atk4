@@ -88,7 +88,11 @@ class Grid_Basic extends CompleteLister
         if ($descr === null) {
             $descr = ucwords(str_replace('_', ' ', $name));
         }
-        $descr = $this->api->_($descr);
+        if (is_array($descr)) {
+            $descr['descr'] = $this->api->_($descr['descr']);
+        } else {
+            $descr = $this->api->_($descr);
+        }
 
         $this->columns[$name] = array('type' => $formatters);
 
