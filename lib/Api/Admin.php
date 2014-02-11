@@ -19,12 +19,10 @@ class Api_Admin extends ApiFrontend {
     private $controller_install_addon;
 
     /** Array with all addon initiators, introduced in 4.3 */
-    public $addons=array();
+    private $addons=array();
 
     function init() {
         parent::init();
-
-
         $this->add('Layout_Fluid');
 
         $this->menu = $this->layout->addMenu();
@@ -63,7 +61,10 @@ class Api_Admin extends ApiFrontend {
         return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
     }
 
-    function getInitiatedAddons() {
+    function getInitiatedAddons($addon_api_name=null) {
+        if ($addon_api_name) {
+            return $this->addons[$addon_api_name];
+        }
         return $this->addons;
     }
     private function initAddons() {
@@ -86,7 +87,16 @@ class Api_Admin extends ApiFrontend {
                     'Initiator of '.$addon->get('name').' is inherited not from \Controller_Addon'
                 );
             }
+
+            /**
+             * initiators of all addons are accessible
+             * from all around the project
+             * through $this->api->getInitiatedAddons()
+             */
             $this->addons[$init->api_var] = $init;
+            if ($init->with_pages) {
+                $init->routePages($init->api_var);
+            }
         }
     }
 }
