@@ -7,7 +7,7 @@ class Form_Field_Money extends Form_Field_Number {
     }
     function getInput($attr=array()){
         return parent::getInput(array_merge(array(
-                'value'=>number_format($this->value,$this->digits)
+                'value'=>round($this->value,$this->digits)
             ),$attr));
     }
 }
