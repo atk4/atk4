@@ -1,11 +1,14 @@
 .atk-layout
   .atk-layout-row
-    {Toolbar}
-    {/Toolbar}
-  .atk-layout-row.fluid
-    .atk-layout
+    {Header}
+    .atk-layout-cell(class="{$class}")
+        .atk-wrapper.atk-padding-small
+            {$Header_Content}
+    {/Header}
+  .atk-layout-row.atk-layout-fluid
+    .atk-layout.atk-layout-cell
       {$LeftSidebar}
-      nav.atk-layout-column.span_2.atk-swatch-gray
+      .atk-layout-column.atk-swatch-ink.span_3
         {$Main_Menu}
       .atk-layout-column.fluid.atk-padding
         h2 {page_title}Page Title{/}
@@ -14,6 +17,7 @@
 
   .atk-layout-row
     {Footer}
-    footer#atk-Footer
-      {$Footer_Content}
+    .atk-layout-cell(class="{$class}")
+        .atk-wrapper.atk-padding-small
+            {$Footer_Content}
     {/}

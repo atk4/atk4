@@ -1,18 +1,21 @@
 
 <div class="atk-layout">
-  <div class="atk-layout-row">
-    {Toolbar}
-    {/Toolbar}
+  <div class="atk-layout-row">{Header}
+    <div class="atk-layout-cell {$class}">
+      <div class="atk-wrapper atk-padding-small">{$Header_Content}</div>
+    </div>{/Header}
   </div>
-  <div class="atk-layout-row fluid">
-    <div class="atk-layout">{$LeftSidebar}
-      <nav class="atk-layout-column span_2 atk-swatch-gray">{$Main_Menu}</nav>
+  <div class="atk-layout-row atk-layout-fluid">
+    <div class="atk-layout atk-layout-cell">{$LeftSidebar}
+      <div class="atk-layout-column atk-swatch-ink span_3">{$Main_Menu}</div>
       <div class="atk-layout-column fluid atk-padding">
         <h2>{page_title}Page Title{/}</h2>{$Content}
       </div>{$RightSideBar}
     </div>
   </div>
   <div class="atk-layout-row">{Footer}
-    <footer id="atk-Footer">{$Footer_Content}</footer>{/}
+    <div class="atk-layout-cell {$class}">
+      <div class="atk-wrapper atk-padding-small">{$Footer_Content}</div>
+    </div>{/}
   </div>
 </div>
