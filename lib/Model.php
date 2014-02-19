@@ -496,6 +496,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return $this
      */
     function tryLoad($id) {
+
+        if(!$this->controller){
+            throw $this->exception('Unable to load model, setSource() must be set');
+        }
+
         if($this->loaded()) {
             $this->unload();
         }
@@ -559,6 +564,14 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return $this
      */
     function tryLoadBy($field, $cond=UNDEFINED, $value=UNDEFINED) {
+
+        if($field==$this->id_field && $value===UNDEFINED){
+            return $this->tryLoad($cond);
+        }
+        if($field==$this->id_field && cond==='='){
+            return $this->tryLoad($value);
+        }
+
         if($this->loaded()) {
             $this->unload();
         }
@@ -728,7 +741,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // {{{ Ordering and limiting support
     /** Adds a new condition for this model */
     function addCondition($field, $operator=UNDEFINED, $value=UNDEFINED) {
-        if (!$this->controller->supportConditions) {
+        if (!@$this->controller->supportConditions) {
             throw $this->exception('The controller doesn\'t support conditions', 'NotImplemented');
         }
         if (is_array($field)) {

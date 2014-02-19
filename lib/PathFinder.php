@@ -333,6 +333,9 @@ class PathFinder extends AbstractController
             if (is_string($path) || is_object($path)) {
                 return $path;
             } elseif (is_array($path)) {
+                if($return==='array' && @isset($path['name'])) 
+                    return $path;
+
                 $attempted_locations=array_merge($attempted_locations, $path);
             }
         }
@@ -464,9 +467,12 @@ class PathFinder extends AbstractController
         /**/$this->api->pr->start('php parsing');
         include_once($path);
         /**/$this->api->pr->stop();
-        if(!class_exists($origClassName ,false) && !interface_exists($origClassName, false))throw $this->exception('Class is not defined in file')
+        if(!class_exists($origClassName ,false) && !interface_exists($origClassName, false))
+            throw $this->exception('Class is not defined in file')
             ->addMoreInfo('file',$path)
-            ->addMoreInfo('class',$className);
+            ->addMoreInfo('namespace',$namespace)
+            ->addMoreInfo('class',$className)
+            ;
         /**/$this->api->pr->stop();
         return $path;
     }
@@ -648,6 +654,13 @@ class PathFinder_Location extends AbstractModel {
                         ;
                 }
 
+                if($return=='array')return array(
+                    'name'=>$filename,
+                    'relative'=>$pathfile,
+                    'url'=>$this->base_url?$this->getURL($pathfile):null,
+                    'path'=>$f,
+                    'location'=>$this
+                );
                 if($return=='location')return $this;
                 if($return=='relative')return $pathfile;
                 if($return=='url')return $this->getURL($pathfile);

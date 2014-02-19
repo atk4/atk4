@@ -17,10 +17,31 @@
 /* 
 Implements connectivity between Model and Session 
 */
-class Controller_Data_PathFinder extends Controller_Data_Array {
+class Controller_Data_PathFinder extends Controller_Data {
 
-    function setSource($model, $data) {
-        $dirs = $this->api->pathfinder->search($data,'','path');
+    function save($model, $id, $data) {
+        throw $this->exception('Unable to save into pathfinder');
+    }
+    function delete($model, $id) {
+        throw $this->exception('Unable to save into pathfinder');
+    }
+    function loadById($model, $id) {
+        $model->data = $this->api->pathfinder->locate($model->_table[$this->short_name],$id,'array',false);
+        if(!$model->data)return;
+
+        $model->id=$id;
+
+        // If location field is not defined, get rid unnecessary reference
+        if(!$model->hasElement('location'))unset($model->data['location']);
+
+        // only load contents if field is defined
+        if($model->hasElement('data') && $model->data['path']){
+            $model->data['data']=file_get_contents($model->data['path']);
+        }
+    }
+    // TODO: testing
+    function prefetchAll($model) {
+        $dirs = $this->api->pathfinder->search($model->_table[$this->short_name],'','path');
         $colls=array();
 
 
@@ -40,7 +61,6 @@ class Controller_Data_PathFinder extends Controller_Data_Array {
             }
         }
 
-        parent::setSource($model, $colls);
-
+        return $colls;
     }
 }
