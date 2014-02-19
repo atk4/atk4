@@ -81,7 +81,7 @@ class View_Button extends View_HtmlElement
      */
     function setLabel($label)
     {
-        return $this->setText($this->api->_($label));
+        return $this->setText($label);
     }
     
     
