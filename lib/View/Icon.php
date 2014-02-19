@@ -19,10 +19,10 @@ class View_Icon extends View {
     public $shappe=null;
     function init(){
         parent::init();
-        $this->setElement('i');
+        $this->setElement('span');
     }
     /* Sets icon by its shape. http://agiletoolkit.org/ref/icon */
-    function set($shape){
+    function setText($shape){
         $this->shape=$shape;
         return $this;
     }
