@@ -1,5 +1,6 @@
 <?php
 class Menu_Objective extends View {
+    public $current_menu_class='atk-state-current';
 
     function init(){
         parent::init();
