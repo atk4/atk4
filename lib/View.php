@@ -61,6 +61,7 @@ class View extends AbstractView
         $this->template->appendHTML('attributes', ' '.$attribute.'="'.$value.'"');
         return $this;
     }
+
     
     /** 
      * Replace all CSS classes with new ones.
@@ -97,6 +98,23 @@ class View extends AbstractView
         $this->template->append('class', " ".$class);
         return $this;
     }
+    /**
+     * Agile Toolkit CSS now supports concept of Components. Using this method
+     * you can define various components for this element:
+     *
+     * addComponents( [ 'size'=>'mega', 'swatch'=>'green' ] );
+     */
+    function addComponents(array $class, $append_to_tag='class')
+    {
+        foreach($class as $key=>$value){
+            if(is_array($value)){
+                continue;
+            }
+            $this->template->append($append_to_tag, ' atk-'.$key.'-'.$value);
+        }
+        return $this;
+    }
+
     /** 
      * Remove CSS class from element, if it was added with setClass
      * or addClass.
@@ -185,7 +203,11 @@ class View extends AbstractView
 
     /**
      * Sets text to appear inside element. Automatically escapes
-     * HTML characters. See also setHTML(). Same as setText().
+     * HTML characters. See also setHTML().
+     *
+     * 4.3: You can now pass array to this, which will cleverly
+     * affect components of this widget and possibly assign
+     * icon
      *
      * @param string $text Text
      *
@@ -193,7 +215,33 @@ class View extends AbstractView
      */
     function set($text)
     {
-        return $this->setText($text);
+        if(!is_array($text))return $this->setText($text);
+
+        if($text[0])$this->setText($text[0]);
+
+        // If icon is defined, it will either insert it into
+        // a designated spot or will combine it with text
+        if($text['icon']){
+
+            if($this->template->hasTag('icon')) {
+                $this->add('Icon',null,'icon')
+                    ->set($text['icon']);
+            }else{
+                $this->add('Icon')->set($text['icon']);
+                $this->add('HTML')->set('&nbsp;');
+                $this->add('Text')->set($text[0]);
+            }
+
+            unset($text['icon']);
+        }
+        if($text[0])unset($text[0]);
+
+        // for remaining items - apply them as components
+        if($text){
+            $this->addComponents($text);
+        }
+
+        return $this;
     }
     /**
      * Sets text to appear inside element. Automatically escapes
@@ -206,7 +254,7 @@ class View extends AbstractView
      */
     function setText($text)
     {
-        $this->template->trySet('Content', $text);
+        $this->template->trySet('Content', $this->api->_($text));
         return $this;
     }
     /**
