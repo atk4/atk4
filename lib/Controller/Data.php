@@ -91,6 +91,10 @@ abstract class Controller_Data extends AbstractController {
     abstract function prefetchAll($model);
 
     /** Load next data row from cursor */
-    abstract function loadCurrent($model,&$cursor);
+    function loadCurrent($model,&$cursor) {
+        $model->data=array_shift($cursor);
+        $model->id=$model->data[$model->id_field];
+    }
+
 }
 
