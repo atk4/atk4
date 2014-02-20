@@ -8,9 +8,9 @@ class Controller_Addon extends AbstractController {
 
     public $atk_version='4.3';
 
-    public $namespace=null;
+    public $namespace = __NAMESPACE__;
 
-    public $base_path=null;
+    public $base_path = null;
     public $addon_base_path=null;
 
     public $has_assets=false;
