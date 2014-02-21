@@ -56,6 +56,8 @@ class Auth_Basic extends AbstractController {
     public $hash_algo=PASSWORD_DEFAULT;
     public $hash_options=array();
 
+    public $login_layout_class='Layout_Centered';
+
     function init(){
         parent::init();
 
@@ -514,7 +516,16 @@ class Auth_Basic extends AbstractController {
     }
     /** Do not override this function. */ 
     function showLoginForm(){
-        $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
+
+        if($this->api->layout && $this->login_layout_class){
+            $this->api->layout->destroy();
+            $this->api->add($this->login_layout_class);
+            $p=$this->api->layout;
+        }else{
+            $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
+
+        }
+
 
         // hook: createForm use this to build basic login form
         $this->form=$this->hook('createForm',array($p));
@@ -522,6 +533,7 @@ class Auth_Basic extends AbstractController {
         // If no hook, build standard form
         if(!is_object($this->form))
             $this->form=$this->createForm($p);
+
 
         $this->hook('updateForm');
         $f=$this->form;
