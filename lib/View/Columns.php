@@ -48,7 +48,7 @@ class View_Columns extends View {
         $c=$this->add('View_Columns_Column',null,'Columns');
         if(is_numeric($width)){
             $this->mode='grid';
-            $c->addClass('span'.$width);
+            $c->addClass('col span_'.$width);
         }elseif(substr($width,-1)=='%'){
             if($this->mode!='pct'){
                 $this->template->trySet('class','atk-flexy');
