@@ -46,7 +46,7 @@ class TMail_Basic extends AbstractModel {
         return array('shared');
     }
     function addTransport($t){
-        return $this->add('TMail_Transport_'.$t);
+        return $this->add($this->api->normalizeClassName($t,'TMail_Transport'));
     }
     function addPart($p){
         return $this->add('TMail_Part_'.$p);
@@ -253,7 +253,7 @@ class TMail_Transport_DBStore extends TMail_Transport {
     }
 }
 
-class TMail_Template extends SMlite {
+class TMail_Template extends GiTemplate {
     public $template_type='mail';
     function init(){
         parent::init();

@@ -128,6 +128,8 @@ class GiTemplate extends AbstractModel {
      */
     public $origin_filename = null;
 
+    public $template_type=null;  // redefine or set in config
+
     // }}}
 
     // {{{ Core methods - initialization
@@ -476,7 +478,7 @@ class GiTemplate extends AbstractModel {
          * Find template location inside search directory path
          */
         if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
-        $f=$this->api->locatePath($this->settings['template_type'],$template_name.$this->settings['extension']);
+        $f=$this->api->locatePath($this->template_type?:$this->settings['template_type'],$template_name.$this->settings['extension']);
         return $this->origin_filename=$f;
     }
     function loadTemplate($template_name,$ext=null){
