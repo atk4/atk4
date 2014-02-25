@@ -1,15 +1,8 @@
-.atk-table(id="{$_name}" class="{$class}")
-
-    // Pannel goes here
-
+.atk-table.atk-table-zebra.atk-table-bordered(id="{$_name}" class="{$class}")
     {Pannel}
-    .atk-cells.atk-cells-gutter-large.atk-padding-small(class="{$pannel_class}")
-        .atk-cell.atk-jackscrew.atk-actions
-            {$grid_buttons}
-        .atk-cell
-            {$quick_search}
+    .atk-box-small(class="{$pannel_class}") {$quick_search}
+        .atk-actions {$grid_buttons}
     {Pannel}
-
 
     table
         {header}
@@ -30,6 +23,12 @@
                 </td>
                 {/}{/}
             {/}{/}
+            {not_found}
+            tr
+                td.atk-padding-large.atk-align-center
+                    span.atk-label.atk-effect-warning
+                        span.icon-attention {$not_found_message}
+            {/}
 
             {totals}
             tr(class="totals")
@@ -39,5 +38,4 @@
                 </td>
                 {/}{/}
             {/}
-    {not_found}{$not_found_message}{/}
     {$paginator}
