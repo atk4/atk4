@@ -110,7 +110,7 @@ class Grid_Advanced extends Grid_Basic
     function addButton($label, $class = 'Button')
     {
         if (!$this->buttonset) {
-            $this->buttonset = $this->add('ButtonSet', null, 'grid_buttons');
+            $this->buttonset = $this->add('ButtonSet', null, 'grid_buttons')->setClass('atk-actions');
         }
         return $this->buttonset
             ->add($class, 'gbtn'.count($this->elements))
