@@ -53,9 +53,12 @@ class QuickSearch extends Filter
 
         // cancel button
         if($this->show_cancel && $this->recall($this->search_field->short_name)) {
-            $this->bset->addButton('', array('options'=>array('text'=>false)))
-                ->setHtml('&nbsp;')
-                ->setIcon($this->cancel_icon)
+            $this->add('View',null,'cancel_button')
+                ->setClass('atk-cell')
+                ->add('HtmlElement')
+                ->setElement('A')
+                ->setClass('atk-button')
+                ->setHtml('<span class="icon-cancel atk-swatch-red"></span>')
                 ->js('click', array(
                     $this->search_field->js()->val(null),
                     $this->js()->submit()
@@ -65,8 +68,8 @@ class QuickSearch extends Filter
         // search button
         $this->add('HtmlElement',null,'form_buttons')
             ->setElement('A')
-            ->setHtml('&nbsp;')
-            ->setClass('icon-search atk-swatch-ink')
+            ->setClass('atk-button')
+            ->setHtml('<span class="icon-search"></span>')
             ->js('click', $this->js()->submit());
     }
 

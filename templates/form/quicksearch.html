@@ -1,5 +1,4 @@
-<span id="{$_name}" style="{$style}" class="{$class}"><form name="{$form_name}" action="{$form_action}" method="POST">{$Hint}
-{Content}
+<span id="{$_name}" style="{$style}" class="{$class} span_3"><form name="{$form_name}" action="{$form_action}" method="POST"><div class="atk-cells atk-input-combo">{$cancel_button}<div class="atk-cell atk-jackscrew">{Content}
 {form_line}
 {$before_field}
 {field_input}<input type="text" name="loginemail" value="" placeholder="{field_caption}Search...{/}" class="logintext"/>{/}
@@ -9,5 +8,4 @@
 {form_separator}
 {separator} Personal information{/}
 {/form_separator}
-{/Content}
-{form_buttons}<a href="javascript:void(0)" class="icon-search atk-swatch-ink"></a>{/form_buttons}</form></span>
+{/Content}</div><div class="atk-cell">{$form_buttons}</div></div></form></span>
