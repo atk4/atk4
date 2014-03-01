@@ -10,8 +10,10 @@
  */
 class Layout_Fluid extends Layout_Basic {
 
-    public $footer_wrap;
     public $header_wrap;
+    public $header;
+    public $footer_wrap;
+    public $footer;
 
     function defaultTemplate() {
         return array('layout/fluid');
@@ -20,9 +22,9 @@ class Layout_Fluid extends Layout_Basic {
     function addHeader($class = 'Menu_Objective') {
         $this->header_wrap = $this->add('View',null,'Header',array('layout/fluid','Header'));
 
-        $res=$this->header_wrap->add($class,null,'Header_Content');
+        $this->header=$this->header_wrap->add($class,null,'Header_Content');
 
-        return $res;
+        return $this->header;
     }
 
     function addMenu($class = 'Menu_Vertical') {
@@ -32,7 +34,7 @@ class Layout_Fluid extends Layout_Basic {
     function addFooter($class = 'View') {
         $this->footer_wrap = $this->add('View',null,'Footer',array('layout/fluid','Footer'));
 
-        return $this->footer_wrap->add($class,null,'Footer_Content')
+        return $this->footer = $this->footer_wrap->add($class,null,'Footer_Content')
             ->set('This site is developed with Agile Toolkit');
     }
 }
