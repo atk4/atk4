@@ -18,12 +18,14 @@ class Api_Admin extends ApiFrontend {
 
     private $controller_install_addon;
 
+    public $layout_class='Layout_Fluid';
+
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons=array();
 
     function init() {
         parent::init();
-        $this->add('Layout_Fluid');
+        $this->add($this->layout_class);
 
         $this->menu = $this->layout->addMenu();
         $this->layout->addFooter();
