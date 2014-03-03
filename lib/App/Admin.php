@@ -1,6 +1,6 @@
 <?php
 /**
- * Api_Admin should be used for building your own application's administration
+ * App_Admin should be used for building your own application's administration
  * model. The benefit is that you'll have access to a number of add-ons which
  * are specifically written for admin system.
  *
@@ -9,10 +9,10 @@
  * application's admin.
  *
  * This is done through hooks in the Admin Class. It's also important that
- * Api_Admin relies on layout_fluid which makes it easier for add-ons to
+ * App_Admin relies on layout_fluid which makes it easier for add-ons to
  * add menu items, sidebars and foot-bars.
  */
-class Api_Admin extends ApiFrontend {
+class App_Admin extends App_Frontend {
 
     public $title='Agile Toolkit™ Admin';
 

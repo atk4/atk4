@@ -15,12 +15,12 @@ require'../lib/Exception/InitError.php';
 require'../lib/Exception/Hook.php';
 require'../lib/Exception/ForUser.php';
 require'../lib/PathFinder.php';
-require'../lib/ApiCLI.php';
+require'../lib/Api/CLI.php';
 require'../lib/Page.php';
 require'../lib/Page/Tester.php';
  */
 
-$api=new ApiCLI('sample_project');
+$api=new Api_CLI('sample_project');
 
 $tests = $api->add('Model_AgileTest');
 

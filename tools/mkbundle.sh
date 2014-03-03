@@ -17,9 +17,9 @@ AbstractObject.php
 AbstractController.php
 AbstractModel.php
 AbstractView.php
-ApiCLI.php
-ApiWeb.php
-ApiFrontend.php
+Api/CLI.php
+Api/Web.php
+Api/Frontend.php
 View.php
 BaseException.php
 BasicAuth.php

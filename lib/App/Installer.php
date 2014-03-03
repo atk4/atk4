@@ -14,7 +14,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Api_Installer extends ApiWeb {
+class App_Installer extends App_Web {
     public $page_class = 'Page';
     public $page_options = null;
     function init(){
