@@ -51,7 +51,7 @@ abstract class AbstractObject
     public $app;
 
     /** Obsolete - for compatibility, use ->app instead */
-    public $app;
+    public $api;
 
     /** 
      * When this object is added, owner->elements[$this->short_name] 
