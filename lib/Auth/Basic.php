@@ -55,12 +55,15 @@ class Auth_Basic extends AbstractController {
 
     public $hash_algo=PASSWORD_DEFAULT;
     public $hash_options=array();
+    public $is_default_auth_system=true;
 
     function init(){
         parent::init();
 
-        // Register as auth handler.
-        $this->api->auth=$this;
+        if($this->is_default_auth_system){
+            // Register as auth handler.
+            $this->api->auth=$this;
+        }
 
         if (!$this->api->hasMethod('initializeSession')) {
             // No session support
