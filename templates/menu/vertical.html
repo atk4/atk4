@@ -1,11 +1,15 @@
 
-<div id="{$_name}" class="{$class} atk-menu-vertical">
+<ul id="{$_name}" style="{$style}" class="atk-menu atk-menu-vertical {$class}">
   {Content}
-  {rows}
-  {row}
-  <a id="{$id}" class="{$class}" href="{$href}" {$attributes} class="atk-padding-small atk-cells"><span class="atk-cell atk-jackscrew">{$icon}{$nbsp}<strong>{$Content}</strong></span><span class="atk-cell">{$badge}</span></a>
+  {Title}
+  <li id="{$_name}" class="atk-padding-small atk-size-kilo {$class}">{$Content}</li>{/Title}
+  {Item}
+  <li><a class="atk-padding-small atk-cells {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}><span class="atk-cell atk-jackscrew">{$icon}&nbsp;<strong>{$Content}</strong></span><span class="atk-cell">{$Badge}</span></a></li>{/Item}
+  {Menu}
+  <li id="{$_name}"><a href="javascript:void(0)" class="atk-padding-small atk-cells {$class}"><span class="atk-cell atk-jackscrew">{$icon}&nbsp;<strong>{$Content}</strong></span><span class="atk-cell"><span class="icon-right-dir"></span></span></a>{$SubMenu}</li>{/Menu}
+  {Separator}
+  <li>
+    <hr/>
+  </li>{/Separator}
   {/}
-  {separator}<span class="atk-padding-small">
-    <h4>{$label}</h4></span>{/}
-  {/Content}
-</div>
+</ul>

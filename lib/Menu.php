@@ -15,4 +15,4 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class Menu extends Menu_Basic {}
+class Menu extends Menu_Horizontal {}

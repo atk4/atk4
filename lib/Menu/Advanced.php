@@ -1,0 +1,99 @@
+<?php
+
+abstract class Menu_Advanced extends View {
+
+    public $swatch='ink';
+
+    /**
+     * Adds a title to your menu.
+     */
+    function addTitle($title, $class='Menu_Advanced_Title') {
+
+        $i = $this->add($class,null,null,
+            array_merge($this->defaultTemplate(),array('Title'))
+        );
+
+
+        $i->set($title);
+
+        return $i;
+    }
+
+    function addItem($title, $action=null, $class='Menu_Advanced_Item') {
+
+        $i = $this->add($class,null,null,
+            array_merge($this->defaultTemplate(),array('Item'))
+        );
+
+        if(is_array($title)) {
+
+            if($title['badge']) {
+                $i->add('View',null,'Badge')
+                    ->setElement('span')
+                    ->addClass('atk-label')
+                    ->set($title['badge']);
+                unset($title['badge']);
+            }
+
+        }
+
+        if($action){
+            if(is_string($action)){
+                $i->template->set('url',$this->api->url($action));
+            }else{
+                $this->on('click',$action);
+            }
+        }
+
+        $i->set($title);
+
+        return $i;
+    }
+
+    function addMenu($title, $class='Menu_Vertical') {
+        if($class=='Horizontal')$class='Menu_Horizontal';
+
+
+        $i = $this->add('Menu_Advanced_Item',null,null,
+            array_merge($this->defaultTemplate(),array('Menu'))
+        );
+
+        if(is_array($title)) {
+
+            /*
+            // Allow to set custom classes on a element
+            if($title['a']) {
+                $this->setComponents($title['a'],'a');
+                unset($title['a']);
+            }
+             */
+
+        }
+        $i->set($title);
+
+        $m = $i->add($class,null,'SubMenu');
+
+
+        return $m;
+    }
+
+    function addSeparator($class='Menu_Advanced_Separator') {
+        $i = $this->add($class,null,null,
+            $this->defaultTemplate()+array('Separator')
+        );
+
+        return $i;
+    }
+
+
+    // compatibility
+    function addMenuItem($page,$label=null){
+        if(!$label){
+            $label=ucwords(str_replace('_',' ',$page));
+        }
+
+        return $this->addItem($label,$page);
+
+    }
+
+}
