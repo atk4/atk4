@@ -605,9 +605,13 @@ class SQL_Model extends Model {
 
         // decide, insert or modify
         if($this->loaded()){
+            $this->hook('beforeUpdate');
             $res=$this->modify();
+            $this->hook('afterUpdate');
         }else{
+            $this->hook('beforeInsert');
             $res=$this->insert();
+            $this->hook('afterInsert');
         }
 
         $res->hook('afterSave');
