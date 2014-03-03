@@ -59,8 +59,8 @@ class Auth_Basic extends AbstractController {
     function init(){
         parent::init();
 
-        // Register as auth handler.
-        $this->api->auth=$this;
+        // Register as auth handler, if it's not set yet
+        if(@!$this->api->auth)$this->api->auth=$this;
 
         if (!$this->api->hasMethod('initializeSession')) {
             // No session support
