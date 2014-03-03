@@ -275,7 +275,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
 
         // See if we have data for the field
-        if(!$this->loaded() && !array_key_exists($name, $this->data)) {
+        if(!$this->loaded() && !@array_key_exists($name, $this->data)) {
             if($f && $f->has_default_value) {
                 return $f->defaultValue();
             }
