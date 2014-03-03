@@ -9,3 +9,5 @@
 .buildpath
 .settings
 .DS_Store
+
+*-ck.js
