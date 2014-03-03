@@ -199,6 +199,7 @@ $.widget("ui.atk4_uploader", {
 		//this.element.next('br').remove();
 		this.element.remove();
 		this._setChanged();
+		this.element.trigger('upload_complete');
 		//$('#'+this.name+'_token').val(data.id);
 	},
 	uploadFailed: function(message,debug){
