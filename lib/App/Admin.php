@@ -38,7 +38,7 @@ class App_Admin extends App_Frontend {
 
     private function initSandbox() {
         if ($this->pathfinder->sandbox) {
-            $sandbox = $this->api->add('sandbox\\Initiator');
+            $sandbox = $this->app->add('sandbox\\Initiator');
             if ($sandbox->getGuardError()) {
                 $this->sandbox->getPolice()->addErrorView($this->layout);
             }
@@ -94,7 +94,7 @@ class App_Admin extends App_Frontend {
             /**
              * initiators of all addons are accessible
              * from all around the project
-             * through $this->api->getInitiatedAddons()
+             * through $this->app->getInitiatedAddons()
              */
             $this->addons[$init->api_var] = $init;
             if ($init->with_pages) {

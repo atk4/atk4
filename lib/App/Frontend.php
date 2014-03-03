@@ -54,7 +54,7 @@ class App_Frontend extends App_Web {
         $page=str_replace('-','',$page);
         $class='page_'.$page;
 
-        if($this->api->page_object)return;   // page is already initialized;
+        if($this->app->page_object)return;   // page is already initialized;
 
         if(method_exists($this,$class)){
             $this->page_object=$layout->add($this->page_class,$page);
@@ -79,7 +79,7 @@ class App_Frontend extends App_Web {
             }
 
             try{
-                $this->api->pathfinder->loadClass($ns.$class);
+                $this->app->pathfinder->loadClass($ns.$class);
             }catch(PathFinder_Exception $e){
 
 
@@ -100,7 +100,7 @@ class App_Frontend extends App_Web {
                         }
                         if($in=='page_')$in='page_index';
                         try {
-                            $this->api->pathfinder->loadClass($in);
+                            $this->app->pathfinder->loadClass($in);
                         }catch(PathFinder_Exception $e3){
                             continue;
                         }

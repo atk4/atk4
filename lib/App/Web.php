@@ -150,25 +150,25 @@ class App_Web extends App_CLI {
             3 work hours. Your honest purchase is really necessary to keep Agile Toolkit
             development alive. Please do not tamper with licensing mechanisms. Thank you!
             */
-        $id=$this->api->getConfig('license/'.$product.'/id',false);
+        $id=$this->app->getConfig('license/'.$product.'/id',false);
         if(!$id)return false;
 
-        $type=$this->api->getConfig('license/'.$product.'/type',false);
+        $type=$this->app->getConfig('license/'.$product.'/type',false);
 
         $data=$_SERVER['HTTP_HOST'].'|'.$id.'|'.$type;
 
         if($type=='agpl'){
-            $data.='|'.$this->api->getConfig('license/'.$product.'/repo',false);
+            $data.='|'.$this->app->getConfig('license/'.$product.'/repo',false);
         }
 
-        $this->api->_license_checksum=md5($data);
+        $this->app->_license_checksum=md5($data);
         if(!function_exists('openssl_get_publickey'))return false;
 
-        $cert=$this->api->getConfig('license/'.$product.'/public',
+        $cert=$this->app->getConfig('license/'.$product.'/public',
             dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
             DIRECTORY_SEPARATOR.'atk4.crt');
 
-        $signature=$this->api->getConfig('license/'.$product.'/certificate',false);
+        $signature=$this->app->getConfig('license/'.$product.'/certificate',false);
         if(!$signature)return false;
 
         $cert=openssl_get_publickey(file_get_contents($cert));
@@ -226,7 +226,7 @@ class App_Web extends App_CLI {
         $params['httponly']=true;   // true by default
 
         foreach($params as $key=>$default){
-            $params[$key]=$this->api->getConfig('session/'.$key,$default);
+            $params[$key]=$this->app->getConfig('session/'.$key,$default);
         }
 
         if($create===false && !isset($_COOKIE[$this->name]))return;
@@ -331,7 +331,7 @@ class App_Web extends App_CLI {
     /** Renders all objects inside applications and echo all output to the browser */
     function render(){
         $this->hook('pre-js-collection');
-        if(isset($this->api->jquery) && $this->api->jquery)$this->api->jquery->getJS($this);
+        if(isset($this->app->jquery) && $this->app->jquery)$this->app->jquery->getJS($this);
 
         if(!($this->template)){
             throw new BaseException("You should specify template for API object");
@@ -359,13 +359,13 @@ class App_Web extends App_CLI {
          * Use this function instead of issuing header("Location") stuff
          */
         $url=$this->url($page,$args);
-         if($this->api->isAjaxOutput()) {
+         if($this->app->isAjaxOutput()) {
              if($_GET['cut_page']) {
-                 echo "<script>".$this->api->js()->univ()->redirect($url)."</script>Redirecting page...";
+                 echo "<script>".$this->app->js()->univ()->redirect($url)."</script>Redirecting page...";
                  exit;
              }
              else {
-                 $this->api->js()->univ()->redirect($url)->execute();
+                 $this->app->js()->univ()->redirect($url)->execute();
              }
         }
         header("Location: ".$url);
@@ -375,8 +375,8 @@ class App_Web extends App_CLI {
     function setTags($t){
         // absolute path to base location
         $t->trySet('atk_path',$q=
-            $this->api->pathfinder->atk_public->getURL().'/');
-        $t->trySet('base_path',$q=$this->api->pm->base_path);
+            $this->app->pathfinder->atk_public->getURL().'/');
+        $t->trySet('base_path',$q=$this->app->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
         try {
@@ -451,7 +451,7 @@ class App_Web extends App_CLI {
             $p=$this->add('Page',$this->page,'Content');
             $this->$pagefunc($p);
         }else{
-            $this->api->locate('page',str_replace('_','/',$this->page).'.php');
+            $this->app->locate('page',str_replace('_','/',$this->page).'.php');
             $this->add('page_'.$page,$page,'Content');
             //throw new BaseException("No such page: ".$this->page);
         }

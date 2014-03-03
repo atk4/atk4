@@ -66,7 +66,7 @@ class App_Installer extends App_Web {
 
         }
         if(!$_GET['step']){
-            $this->api->redirect($this->stepURL('first'));
+            $this->app->redirect($this->stepURL('first'));
             //return $this->showIntro($this->makePage('init'));
         }
 
