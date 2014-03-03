@@ -143,8 +143,8 @@ abstract class AbstractView extends AbstractObject
         $this->removeHook('output', array($this, '_tsBuffer'));
         $ret=$this->_tsBuffer;
         $this->_tsBuffer='';
-        if ($execute_js && @$this->api->jquery) {
-            $this->api->jquery->getJS($this);
+        if ($execute_js && @$this->app->jquery) {
+            $this->app->jquery->getJS($this);
         }
         if ($destroy) {
             $this->destroy();
@@ -193,7 +193,7 @@ abstract class AbstractView extends AbstractObject
                     // if [0] is object, we'll use that
                     $this->template=$template_branch[0];
                 } else {
-                    $this->template=$this->api->add('Template');
+                    $this->template=$this->app->add('Template');
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
@@ -228,7 +228,7 @@ abstract class AbstractView extends AbstractObject
 
     /**
      * This method is called to automatically fill in some of the tags in this
-     * view. Normally the call is bassed to $api->setTags(), however you can
+     * view. Normally the call is bassed to $app->setTags(), however you can
      * extend and add more tags to fill
      *
      * @return void
@@ -236,9 +236,9 @@ abstract class AbstractView extends AbstractObject
     function initTemplateTags()
     {
         if ($this->template
-            && $this->api->hasMethod('setTags')
+            && $this->app->hasMethod('setTags')
         ) {
-            $this->api->setTags($this->template);
+            $this->app->setTags($this->template);
         }
     }
 
@@ -288,7 +288,7 @@ abstract class AbstractView extends AbstractObject
      * This method will be called instead of default render() and it will 
      * stop rendering process and output object's HTML once it finds
      * a suitable object. Exception_StopRender is used to terminate
-     * rendering process and bubble up to the API. This exception is
+     * rendering process and bubble up to the APP. This exception is
      * not an error.
      *
      * @return void
@@ -337,8 +337,8 @@ abstract class AbstractView extends AbstractObject
 
         if ($cutting_here) {
             //$result=$this->owner->template->cloneRegion($this->spot)->render();
-            if ($this->api->jquery) {
-                $this->api->jquery->getJS($this);
+            if ($this->app->jquery) {
+                $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender($cutting_output);
         }
@@ -347,7 +347,7 @@ abstract class AbstractView extends AbstractObject
     }
     /**
      * Append our chains to owner's chains. JS chains bubble up to
-     * API, which plugs them into template. If the object is being
+     * app, which plugs them into template. If the object is being
      * "cut" then only relevant chains will be outputed.
      *
      * @return void
@@ -421,8 +421,8 @@ abstract class AbstractView extends AbstractObject
         throw $this->exception('cut_region is now obsolete');
 
         if ($this->template_flush) {
-            if ($this->api->jquery) {
-                $this->api->jquery->getJS($this);
+            if ($this->app->jquery) {
+                $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender(
                 $this->template->cloneRegion($this->template_flush)->render()
@@ -508,7 +508,7 @@ abstract class AbstractView extends AbstractObject
     function js($when = null, $code = null, $instance = null)
     {
         // Create new jQuery_Chain object
-        if (!isset($this->api->jquery)) {
+        if (!isset($this->app->jquery)) {
             throw new BaseException("requires jQuery or jUI support");
         }
 
@@ -524,7 +524,7 @@ abstract class AbstractView extends AbstractObject
         if ($instance && isset($this->js[$when][$instance])) {
             $js=$this->js[$when][$instance];
         } else {
-            $js=$this->api->jquery->chain($this);
+            $js=$this->app->jquery->chain($this);
         }
 
         if ($code) {
@@ -616,9 +616,9 @@ abstract class AbstractView extends AbstractObject
         $on_chain=$this->js(true);
         $fired=false;
 
-        $this->api->jui->addHook(
+        $this->app->jui->addHook(
             'pre-getJS', 
-            function($api) use($event,$selector,$ret_js,$on_chain,&$fired) {
+            function($app) use($event,$selector,$ret_js,$on_chain,&$fired) {
                 if($fired)return;
                 $fired=true;
 

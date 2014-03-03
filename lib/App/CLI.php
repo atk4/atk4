@@ -180,7 +180,7 @@ class App_CLI extends AbstractView
      * preferably that you keep realm unique on your domain in the interests
      * of security.
      *
-     * @param string $realm Will become $api->name
+     * @param string $realm Will become $app->name
      */
     function __construct($realm = null)
     {
@@ -189,7 +189,8 @@ class App_CLI extends AbstractView
         }
         $this->owner = $this;
         $this->name  = $realm;
-        $this->api   = $this;
+        $this->api   = // compatibility
+        $this->app   = $this;
 
         // Profiler is a class for benchmarking your application. All calls to pr
         /**/$this->pr=new Dummy();
@@ -427,7 +428,7 @@ class App_CLI extends AbstractView
          * To find out if config is set, do this:
          *
          * $var_is_set=true;
-         * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
+         * try { $app->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
          */
         $parts = explode('/',$path);
         $current_position = $this->config;
@@ -451,7 +452,7 @@ class App_CLI extends AbstractView
     function getVersion($of='atk'){
         // TODO: get version of add-on
         if(!$this->version_cache){
-            $f=$this->api->pathfinder->atk_location->base_path.DIRECTORY_SEPARATOR.'VERSION';
+            $f=$this->app->pathfinder->atk_location->base_path.DIRECTORY_SEPARATOR.'VERSION';
             if(file_exists($f)){
                 $this->version_cache=trim(file_get_contents($f));
             }else{
