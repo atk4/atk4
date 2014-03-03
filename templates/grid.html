@@ -1,9 +1,7 @@
 
-<div id="{$_name}" class="atk-table {$class}">
-  <!-- Pannel goes here-->{Pannel}
-  <div class="atk-cells atk-cells-gutter-large atk-padding-small {$pannel_class}">
-    <div class="atk-cell atk-jackscrew atk-actions">{$grid_buttons}</div>
-    <div class="atk-cell">{$quick_search}</div>
+<div id="{$_name}" class="atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}
+  <div class="atk-box-small {$pannel_class}">{$quick_search}
+    <div class="atk-actions">{$grid_buttons}</div>
   </div>{Pannel}
   <table>{header}
     <thead>{cols}{col}
@@ -18,6 +16,10 @@
         </td>
         {/}{/}
       </tr>{/}{/}
+      {not_found}
+      <tr>
+        <td class="atk-padding-large atk-align-center"><span class="atk-label atk-effect-warning"><span class="icon-attention">{$not_found_message}</span></span></td>
+      </tr>{/}
       {totals}
       <tr class="totals">
         {cols}{col}
@@ -27,6 +29,5 @@
         {/}{/}
       </tr>{/}
     </tbody>
-  </table>{not_found}{$not_found_message}{/}
-  {$paginator}
+  </table>{$paginator}
 </div>
