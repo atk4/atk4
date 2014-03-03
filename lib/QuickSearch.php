@@ -96,7 +96,7 @@ class QuickSearch extends Filter
     function postInit()
     {
         parent::postInit();
-        if(!($v = $this->get('q'))) {
+        if(!($v = trim($this->get('q')))) {
             return;
         }
 
