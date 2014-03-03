@@ -27,7 +27,7 @@ class Api_Admin extends ApiFrontend {
         parent::init();
         $this->add($this->layout_class);
 
-        $this->menu = $this->layout->addMenu('romaninsh/menu/Vertical');
+        $this->menu = $this->layout->addMenu('Menu_Vertical');
         $this->menu->swatch='ink';
         $this->layout->addFooter();
 

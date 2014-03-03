@@ -95,5 +95,8 @@ abstract class Menu_Advanced extends View {
         return $this->addItem($label,$page);
 
     }
+    function addLabel($label){ 
+        return $this->addTitle($label);
+    }
 
 }
