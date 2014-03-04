@@ -56,7 +56,7 @@ class Page extends AbstractView {
                 ;
         }
 
-        if($this->api instanceOf Api_Frontend && @$this->api->layout && $this->api->layout->template->hasTag('page_title')) {
+        if($this->api instanceOf App_Frontend && @$this->api->layout && $this->api->layout->template->hasTag('page_title')) {
             $this->api->addHook('afterInit',array($this,'addBreadCrumb'));
         }
 
