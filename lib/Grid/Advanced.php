@@ -114,7 +114,7 @@ class Grid_Advanced extends Grid_Basic
         }
         return $this->buttonset
             ->add($class, 'gbtn'.count($this->elements))
-            ->setLabel($label);
+            ->set($label);
     }
 
     /**
