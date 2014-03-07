@@ -111,9 +111,9 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function destroy()
+    function destroy($recursive=true)
     {
-        foreach ($this->elements as $el) {
+        if($recursive) foreach ($this->elements as $el) {
             if ($el instanceof AbstractObject) {
                 $el->destroy();
             }
