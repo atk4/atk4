@@ -811,7 +811,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this;
     }
     function current() {
-        return $this->get();
+        return $this;
     }
     function key() {
         return $this->id;

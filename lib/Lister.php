@@ -134,6 +134,11 @@ class Lister extends View
     {
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id=>$this->current_row) {
+
+            if($this->current_row instanceof Model){
+                $this->current_row=$this->current_row->get();
+            }
+
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }

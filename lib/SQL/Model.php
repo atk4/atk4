@@ -394,7 +394,7 @@ class SQL_Model extends Model implements Serializable {
         $this->hook('afterLoad');
     }
     function current(){
-        return $this->get();
+        return $this;
     }
     function key(){
         return $this->id;
