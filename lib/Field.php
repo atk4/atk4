@@ -331,9 +331,11 @@ class Field extends AbstractModel
      */
     function system($t = UNDEFINED)
     {
+        /*
         if ($t===true) {
-            $this->editable(false)->visible(false);
+            $this->visible(false);
         }
+         */
         return $this->setterGetter('system', $t);
     }
 
