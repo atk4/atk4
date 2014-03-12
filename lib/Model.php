@@ -238,6 +238,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $this->data[$name] = $value;
             $this->setDirty($name);
         }
+
+        if($name === $this->id_field)$this->id=$value;
+
         return $this;
     }
 
