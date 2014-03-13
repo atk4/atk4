@@ -243,6 +243,7 @@ class SQL_Model extends Model implements Serializable {
 
         $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
+        $r->visible(true)->system(false);
         return $r;
     }
     /** Defines many to one association */
@@ -862,8 +863,8 @@ function getActualFields($group = undefined)
             if($el instanceof Field && !$el->hidden()) {
                 if( $group===undefined ||
                     $el->group()==$group ||
-                    (strtolower($group=='visible') && $el->visible() && !$el->system()) ||
-                    (strtolower($group=='editable') && $el->editable() && !$el->system())
+                    (strtolower($group=='visible') && $el->visible()) ||
+                    (strtolower($group=='editable') && $el->editable())
                 ) {
                     $fields[] = $el->short_name;
                 }
