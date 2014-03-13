@@ -863,8 +863,8 @@ function getActualFields($group = undefined)
             if($el instanceof Field && !$el->hidden()) {
                 if( $group===undefined ||
                     $el->group()==$group ||
-                    (strtolower($group=='visible') && $el->visible()) ||
-                    (strtolower($group=='editable') && $el->editable())
+                    (strtolower($group=='visible') && $el->visible() && !$el->system()) ||
+                    (strtolower($group=='editable') && $el->editable() && !$el->system())
                 ) {
                     $fields[] = $el->short_name;
                 }
