@@ -158,7 +158,9 @@ class View_CRUD extends View
             $this->form = $this
                 ->virtual_page
                 ->getPage()
-                ->add($this->form_class);
+                ->add($this->form_class)
+                //->addClass('atk-form-stacked')
+                ;
 
             return;
         }
@@ -409,6 +411,7 @@ class View_CRUD extends View
     {
         // We are actually in the frame!
         if ($this->isEditing('add')) {
+            $this->model->unload();
             $m = $this->form->setModel($this->model, $fields);
             $this->form->addSubmit('Add');
             $this->form->onSubmit(array($this,'formSubmit'));
