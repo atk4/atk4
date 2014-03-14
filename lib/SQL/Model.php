@@ -300,12 +300,9 @@ class SQL_Model extends Model implements Serializable {
             $value=$field->getBooleanValue($value);
         }
 
-        if($cond==='='){
-            $field->defaultValue($value)->system(true)->editable(false);
-        }
-
-        if($cond==='in'){
+        if($cond==='=' || $cond==='in'){
             $field->system(true)->editable(false);
+            if($cond==='=') $field->defaultValue($value);
         }
         
         $f = $field->actual_field?:$field->short_name;
