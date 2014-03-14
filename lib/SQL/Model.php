@@ -289,7 +289,11 @@ class SQL_Model extends Model implements Serializable {
 
         if($cond!==undefined && $value===undefined) {
             $value = $cond;
-            $cond = '=';
+            if (is_array($value)) {
+                $cond = 'in';
+            } else {
+                $cond = '=';
+            }
         }
         
         if($field->type()=='boolean'){
@@ -298,6 +302,10 @@ class SQL_Model extends Model implements Serializable {
 
         if($cond==='='){
             $field->defaultValue($value)->system(true)->editable(false);
+        }
+
+        if($cond==='in'){
+            $field->system(true)->editable(false);
         }
         
         $f = $field->actual_field?:$field->short_name;
