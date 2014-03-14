@@ -26,7 +26,7 @@ class Model_AgileTest extends Model {
          */
         $p=$this->api->pathfinder->searchDir($this->dir);
         sort($p);
-        $this->setSource('ArrayAssoc',$p);
+        $this->setSource('Array',$p);
         $this->addHook('afterLoad',$this);
 
         return $this;
