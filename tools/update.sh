@@ -40,7 +40,7 @@ for x in *.sql; do
 		echo 'fail'
 		cat $x.fail
 		echo
-        break;
+        #break;
 	fi
 done
 cd ..

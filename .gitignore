@@ -9,3 +9,4 @@
 .buildpath
 .settings
 .DS_Store
+tests/log
