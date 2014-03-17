@@ -1,6 +1,21 @@
 <?php
 
 
+class Model_Auth_User extends Model {
+    function init() {
+        parent::init();
+
+        $this->addField('myusername');
+        $this->addfield('mypassword');
+
+
+        $this->setSource('Array',array(
+            array( 'myusername'=>'jonh', 'mypassword'=>'smith'),
+            array( 'myusername'=>'peter', 'mypassword'=>'$2y$10$NquZ/mcgKawWcTpq1i9Oz.aC.n5eD1gC3cEsbCOc3XtSFlP6oNAKG'), // passsword_hash(smith)
+        ));
+    }
+}
+
 class page_auth extends Page_Tester {
     function test_auth(){
         $a=$this->add('Auth');
@@ -17,8 +32,26 @@ class page_auth extends Page_Tester {
     function test_auth3(){
         $a=$this->add('Auth');
 
-      //  $a->setModel('Auth_User');
-       // $a->verifyCredentials('john','doe');
+        $a->setModel('Auth_User','myusername','mypassword');
+        return(boolean)$a->verifyCredentials('john','doe');
+    }
+    function test_auth4(){
+        $a=$this->add('Auth');
+
+        $a->setModel('Auth_User','myusername','mypassword');
+        return (boolean)$a->verifyCredentials('john','smith');
+    }
+    function test_auth5(){
+        $a=$this->add('Auth');
+
+        $a->setModel('Auth_User','myusername','mypassword');
+        return $a->verifyCredentials('peter','smith');
+    }
+    function test_auth6(){
+        $a=$this->add('Auth');
+
+        $a->setModel('Auth_User','myusername','mypassword');
+        return $a->verifyCredentials('nouser','smith');
     }
 }
 
