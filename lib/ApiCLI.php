@@ -396,7 +396,7 @@ class ApiCLI extends AbstractView
             if(!array_key_exists($part,$current_position)){
                 if($default_value!==undefined)return $default_value;
                 throw $this->exception("Configuration parameter is missing in config.php",'NotConfigured')
-                    ->addMoreInfo("missign_line"," \$config['".join("']['",explode('/',$path))."']");
+                    ->addMoreInfo("missing_line"," \$config['".join("']['",explode('/',$path))."']");
             }else{
                 $current_position = $current_position[$part];
             }
