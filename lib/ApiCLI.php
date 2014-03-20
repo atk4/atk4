@@ -377,14 +377,15 @@ class ApiCLI extends AbstractView
     }
     /** Load config if necessary and look up corresponding setting */
     function getConfig($path, $default_value = undefined){
+
         /**
          * For given path such as 'dsn' or 'logger/log_dir' returns
-         * corresponding config value. Throws ExceptionNotConfigured if not set.
+         * corresponding config value. Throws Exception_NotConfigured if not set.
          *
          * To find out if config is set, do this:
          *
          * $var_is_set=true;
-         * try { $api->getConfig($path); } catch ExceptionNotConfigured($e) { $var_is_set=false; };
+         * try { $api->getConfig($path); } catch Exception_NotConfigured($e) { $var_is_set=false; };
          */
         if(is_null($this->config)){
             $this->readConfig('config-default.php');
