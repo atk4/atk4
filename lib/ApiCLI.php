@@ -319,8 +319,7 @@ class ApiCLI extends AbstractView
      */
     function caughtException($e)
     {
-        $this->hook('caught-exception', array(
-            $e));
+        $this->hook('caught-exception', array($e));
         echo get_class($e), ": ".$e->getMessage().PHP_EOL;
         if (!empty($e->more_info))
         {
@@ -330,18 +329,21 @@ class ApiCLI extends AbstractView
                 $key = str_pad($key.':', $max_len, ' ', STR_PAD_RIGHT);
                 echo "  $key $val".PHP_EOL;
             }
-        }
-        echo PHP_EOL."Backtrace:".PHP_EOL;
-        $key_len = max(array_map('strlen', array_keys($e->my_backtrace)));
-        $line_no_len = max(array_map(function($i)
+    	}
+	    if(isset($e->my_backtrace))
+    	{
+            echo PHP_EOL."Backtrace:".PHP_EOL;
+            $key_len = max(array_map('strlen', array_keys($e->my_backtrace)));
+            $line_no_len = max(array_map(function($i)
                 {
                     return strlen($i['line']);
                 }, $e->my_backtrace));
-        foreach ($e->my_backtrace as $key => $val)
-        {
-            $key = str_pad($key, $key_len, ' ', STR_PAD_LEFT);
-            $line_no = str_pad($val['line'], $line_no_len, ' ', STR_PAD_LEFT);
-            echo "$key: $line_no -> ".$val['file'].PHP_EOL;
+            foreach ($e->my_backtrace as $key => $val)
+            {
+                $key = str_pad($key, $key_len, ' ', STR_PAD_LEFT);
+                $line_no = str_pad($val['line'], $line_no_len, ' ', STR_PAD_LEFT);
+                echo "$key: $line_no -> ".$val['file'].PHP_EOL;
+            }
         }
         exit(99); // indicates that execution was not successful
     }
