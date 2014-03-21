@@ -29,8 +29,8 @@ class Form_Field_DatePicker extends Form_Field_Line {
     }
     function addCalendarIcon() {
         $this->addButton('',array('options'=>array('text'=>false)))
-            ->setHtml('&nbsp;')
-            ->setIcon('icon-calendar')
+            ->setHtml('')
+            ->setIcon('calendar')
             ->js('click',$this->js()->datepicker('show'));
         $this->js('focus', $this->js()->datepicker('show'));
     }
