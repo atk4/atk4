@@ -343,7 +343,7 @@ class ApiCLI extends AbstractView
             $line_no = str_pad($val['line'], $line_no_len, ' ', STR_PAD_LEFT);
             echo "$key: $line_no -> ".$val['file'].PHP_EOL;
         }
-        exit;
+        exit(99); // indicates that execution was not successful
     }
     
     /** @obsolete */
