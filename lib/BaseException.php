@@ -73,7 +73,7 @@ class BaseException extends Exception
     function collectBasicData($code)
     {
         $this->name = get_class($this);
-        $this->my_backtrace = debug_backtrace();
+        $this->my_backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
     }
     
     /**

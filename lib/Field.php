@@ -58,7 +58,7 @@ class Field extends AbstractModel
     function setterGetter($type, $value = UNDEFINED)
     {
         if ($value === UNDEFINED) {
-            return $this->$type;
+            return isset($this->$type)?$this->$type:null;
         }
         $this->$type=$value;
         return $this;

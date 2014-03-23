@@ -35,7 +35,7 @@ class Controller_Data_Mongo extends Controller_Data {
 
     function incr($m,$field,$amount){
         if(!$m->loaded())throw $this->exception('Can only increment loaded model');
-        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>$amount)));
+        $m->db()->update(array($m->id_field=>new MongoID($m->id)), array('$inc'=>array($field=>(float)$amount)));
     }
 
     function save($model,$id=null){
@@ -186,19 +186,29 @@ class Controller_Data_Mongo extends Controller_Data {
         $this->_set($model,'limit',array($count,$offset));
     }
     function selectQuery($model){
+        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         $c=$this->_get($model,'db')->find(
             $model->_table[$this->short_name]['conditions']
         );
 
         // sort
-        if($s=$this->_get($model,'order'))$c->sort($s);
+        if($s=$this->_get($model,'order')){
+            if ($model->debug) echo '<font style="color: blue">.sort('.json_encode($s).')</font>';
+            $c->sort($s);
+        }
         $this->_set($model,'cur',$c);
 
         // skip
         if($l=$this->_get($model,'limit')){
             list($count,$skip)=$l;
-            if($skip)$c->skip($skip);
-            if($count)$c->limit($count);
+            if($skip){
+                if ($model->debug) echo '<font style="color: blue">.skip('.$skip.')</font>';
+                $c->skip($skip);
+            }
+            if($count){
+                if ($model->debug) echo '<font style="color: blue">.limit('.$count.')</font>';
+                $c->limit($count);
+            }
         }
 
         return $c;
@@ -207,7 +217,6 @@ class Controller_Data_Mongo extends Controller_Data {
         return $this->selectQuery($model)->count();
     }
     function rewind($model){
-        if ($model->debug) echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         $c=$this->selectQuery($model);
 
         $model->data=$c->getNext();
@@ -225,27 +234,29 @@ class Controller_Data_Mongo extends Controller_Data {
         if($model->_table[$this->short_name]['conditions'][$field]){
             throw $this->exception('Multiple conditions on same field not supported yet');
         }
-        if ($f=$model->hasElement($field)) {
-            if($f->type()=='boolean' && is_bool($value)) {
-                $value=(bool)$value;
-            }
-            if($f->type()=='int'){
-                $value=(int)$value;
-            }
-            if($f->type()=='money' || $f->type()=='float'){
-                $value=(float)$value;
-            }
+        if ($f=$model->hasElement($field)){ 
+            if(!is_array($value)) {
+                if($f->type()=='boolean' && is_bool($value)) {
+                    $value=(bool)$value;
+                }
+                if($f->type()=='int'){
+                    $value=(int)$value;
+                }
+                if($f->type()=='money' || $f->type()=='float'){
+                    $value=(float)$value;
+                }
 
-            if(
-                ($f->type()=='reference_id' && $value && !is_array($value)) ||
-                $field == $model->id_field
-            ) {
-                $value = new MongoID($value);
+                if(
+                    ($f->type()=='reference_id' && $value && !is_array($value)) ||
+                    $field == $model->id_field
+                ) {
+                    $value = new MongoID($value);
+                }
+                $f->defaultValue($value)->system(true);
             }
-            $f->defaultValue($value)->system(true);
             // TODO: properly convert to Mongo presentation
         }else{
-            if($field[0]!='$'){
+            if($field[0]!='$' && strpos($field,'.')===false){
                 throw $this->exception('Condition on undefined field. Does not '.
                     'look like expression either')
                     ->addMoreInfo('model',$model)
