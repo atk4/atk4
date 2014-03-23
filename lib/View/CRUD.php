@@ -162,10 +162,13 @@ class View_CRUD extends View
                 //->addClass('atk-form-stacked')
                 ;
 
+            $this->grid = new Dummy();
+
             return;
         }
 
         $this->grid = $this->add($this->grid_class);
+        $this->form = new Dummy();
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
