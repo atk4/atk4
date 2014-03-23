@@ -338,12 +338,21 @@ class Logger extends AbstractController {
         if(method_exists($e,'getMyTrace'))$o.= $this->backtrace(3,$e->getMyTrace());
         else $o.= $this->backtrace(@$e->shift,$e->getTrace());
 
+
         if(
             (isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest') &&
             !$_GET['cut_page'] && !$_GET['cut_object'] && !$_GET['cut_region']
         ){
             $this->displayError($o);
         }else echo $o;
+
+        if(@$e->by_exception){
+            echo "<h3>This error was triggered by the following error:</h3>";
+            $this->caughtException($caller,$e->by_exception);
+
+        }
+
+
 
         echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
 
