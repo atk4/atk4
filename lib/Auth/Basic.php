@@ -502,7 +502,9 @@ class Auth_Basic extends AbstractController {
     /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form, 
      * add template/default/page/login.html */
     function createForm($page){
-        $form=$page->add('Form');
+        $form=$page->add('Form_Stacked',array('nolabels'=>true));
+
+        $form->addClass('atk-form-stacked');
 
         $email=$this->model->hasField($this->login_field);
         $email=$email?$email->caption:'E-mail';
@@ -510,9 +512,12 @@ class Auth_Basic extends AbstractController {
         $password=$this->model->hasField($this->password_field);
         $password=$password?$password->caption:'Password';
 
-        $form->addField('Line','username',$email);
-        $form->addField('Password','password',$password);
+        $form->addField('Line','username',$email)->template->del('label_div');
+        $form->addField('Password','password',$password)->template->del('label_div');
         $form->addSubmit('Login');
+
+        $form->add('View',null,'button_row_left')
+            ->addClass('atk-jackscrew');
 
         return $form;
     }
@@ -522,7 +527,7 @@ class Auth_Basic extends AbstractController {
         if($this->api->layout && $this->login_layout_class){
             $this->api->layout->destroy();
             $this->api->add($this->login_layout_class);
-            $p=$this->api->layout;
+            $this->api->page_object=$p=$this->api->layout->add('Page',null,null,array('page/login'));
         }else{
             $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
 
