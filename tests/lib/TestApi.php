@@ -1,5 +1,5 @@
 <?php
-class TestApi extends Api_Frontend {
+class TestApi extends App_Frontend {
     function init(){
         parent::init();
         $this->add('jUI');

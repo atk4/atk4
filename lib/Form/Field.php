@@ -51,6 +51,17 @@ abstract class Form_Field extends AbstractView {
         if(@$_GET[$this->owner->name.'_cut_field']==$this->name){
             $this->api->addHook('pre-render',array($this,'_cutField'));
         }
+
+        /** TODO: finish refactoring
+        // find the form
+        $obj=$this->owner;
+        while(!$obj instanceof Form){
+            if($obj === $this->app)throw $this->exception('You must add fields only inside Form');
+
+            $obj = $obj->owner;
+        }
+        $this->setForm($obj);
+         */
     }
     function setForm($form){
         $form->addHook('loadPOST',$this);
