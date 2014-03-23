@@ -165,7 +165,8 @@ class BaseException extends Exception
             '<p><font color=blue>' . $this->getMyFile() . ':' .
             $this->getMyLine() . '</font></p>' .
             $this->getDetailedHTML() .
-            backtrace($this->shift + 1, $this->getMyTrace());
+            '' //backtrace($this->shift + 1, $this->getMyTrace())
+            ;
         
         return $html;
     }
