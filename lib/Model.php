@@ -486,20 +486,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return $this
      */
     function load($id) {
-        $this->tryLoad($id);
-        if(!$this->loaded()) {
-            throw $this->exception('Record with specified id was not found');
-        }
-        return $this;
-    }
-    /**
-     * Ask the controller data to load the model by a given $id
-     * 
-     * @param $id
-     * @return $this
-     */
-    function tryLoad($id) {
-
         if(!$this->controller){
             throw $this->exception('Unable to load model, setSource() must be set');
         }
@@ -515,23 +501,24 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this;
     }
     /**
+     * Ask the controller data to load the model by a given $id
+     * 
+     * @param $id
+     * @return $this
+     */
+    function tryLoad($id) {
+        try {
+            $this->load($id);
+        }catch(Exception_NotFound $e){
+        }
+        return $this;
+    }
+    /**
      * Like tryLoadAny method but if the record not found, an exception is thrown
      * 
      * @return $this
      */
     function loadAny() {
-        $this->tryLoadAny();
-        if(!$this->loaded()) {
-            throw $this->exception('Record not found');
-        }
-        return $this;
-    }
-    /**
-     * Retrive the first record that matching the conditions
-     * 
-     * @return $this
-     */
-    function tryLoadAny() {
         if($this->loaded()) {
             $this->unload();
         }
@@ -543,6 +530,18 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $this;
     }
     /**
+     * Retrive the first record that matching the conditions
+     * 
+     * @return $this
+     */
+    function tryLoadAny() {
+        try {
+            $this->loadAny();
+        }catch(Exception_NotFound $e){
+        }
+        return $this;
+    }
+    /**
      * Like tryLoadBy method but if the record not found, an exception is thrown
      * 
      * @param $field
@@ -551,28 +550,11 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
      * @return $this
      */
     function loadBy($field, $cond, $value=UNDEFINED) {
-        $this->tryLoadBy($field, $cond, $value);
-        if(!$this->loaded()) {
-            throw $this->exception('Record not found');
-        }
-        return $this;
-    }
-    /**
-     * Adding temporally condition to the model to retrive the first record
-     * The condition specified is removed after the controller data call
-     * 
-     * @param $field
-     * @param $cond
-     * @param $value
-     * @return $this
-     */
-    function tryLoadBy($field, $cond=UNDEFINED, $value=UNDEFINED) {
-
         if($field==$this->id_field && $value===UNDEFINED){
-            return $this->tryLoad($cond);
+            return $this->load($cond);
         }
         if($field==$this->id_field && cond==='='){
-            return $this->tryLoad($value);
+            return $this->load($value);
         }
 
         if($this->loaded()) {
@@ -587,6 +569,23 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
         $this->endLoad();
         return $this;
+    }
+    /**
+     * Adding temporally condition to the model to retrive the first record
+     * The condition specified is removed after the controller data call
+     * 
+     * @param $field
+     * @param $cond
+     * @param $value
+     * @return $this
+     */
+    function tryLoadBy($field, $cond=UNDEFINED, $value=UNDEFINED) {
+        try {
+            $this->loadBy($field, $cond, $value);
+        }catch(Exception_NotFound $e){
+        }
+        return $this;
+
     }
     private function endLoad() {
         if($this->loaded()) {
