@@ -24,7 +24,32 @@ abstract class AbstractObject
     /** Reference to the current controller. Read only. Use setController() */
     public $controller;
 
-    /** Exception class to use when $this->exception() is called */
+    /**
+     * Exception class to use when $this->exception() is called. When
+     * you later call ->exception() method, you can either override
+     * or postfix your exception with second argument
+     *
+     *
+     *  $default_exception='PathFinder' by default would
+     *  return 'Exception_PathFinder' from exception().
+     *
+     *  $default_exceptoin='PathFinder' in combination with
+     *  ->exception('Blah','_NotFound') will return
+     *  'Exception_PathFinder_NotFound'
+     *
+     *  $default_exception='BaseException' in combination with
+     *  ->exception('Blah', 'PathFinder')   will create
+     *  'Exception_PathFinder' exception.
+     *
+     *  and finally
+     *
+     *  $default_exception='PathFinder' in combination with
+     *  ->exception('Blah','NotFound') will return
+     *  'Exception_NotFound';
+     *
+     *
+     * TODO: implement test-cases for the above
+     */
     public $default_exception='BaseException';
 
     /** Default controller to initialize when calling setModel() */
