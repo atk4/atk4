@@ -437,8 +437,8 @@ class Auth_Basic extends AbstractController {
         if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
 
         // Don't store password in model / memory / session
-        $this->model['password']=null;
-        unset($this->model->dirty['password']);
+        $this->model[$this->password_field]=null;
+        unset($this->model->dirty[$this->password_field]);
 
         // Cache memory. Should we use controller?
         $this->info=$this->model->get();
