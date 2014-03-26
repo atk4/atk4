@@ -93,8 +93,7 @@ class Form_Basic extends View implements ArrayAccess {
         $this->grabTemplateChunk('form_comment');
         $this->grabTemplateChunk('form_separator');
         $this->grabTemplateChunk('form_line');      // template for form line, must contain field_caption,field_input,field_error
-        if($this->template->is_set('hidden_form_line'))
-            $this->grabTemplateChunk('hidden_form_line');
+        $this->grabTemplateChunk('hidden_form_line');
         $this->grabTemplateChunk('field_error');    // template for error code, must contain field_error_str
         $this->grabTemplateChunk('field_mandatory');// template for marking mandatory fields
 
