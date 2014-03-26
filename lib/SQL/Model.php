@@ -230,7 +230,6 @@ class SQL_Model extends Model implements Serializable {
         // parent::hasOne($model,null);
         // model, our_field
         $this->_references[null]=$model;
-        // 
 
 
         if(!$our_field){
@@ -243,7 +242,7 @@ class SQL_Model extends Model implements Serializable {
 
         $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
-        $r->visible(true)->system(false);
+        $r->system(true)->editable(true);
         return $r;
     }
     /** Defines many to one association */
