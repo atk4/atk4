@@ -303,7 +303,8 @@ class Auth_Basic extends AbstractController {
 
         // Attempt to load user data by username. If not found, return
         // false
-        $data = $this->model->tryLoadBy($this->login_field, $user);
+
+        $data = $this->model->newInstance()->tryLoadBy($this->login_field, $user);
         if (!$data->loaded()) {
             $this->debug('user with login '.$user.' could not be loaded');
             if (!$password_existed) {
