@@ -516,8 +516,8 @@ class Auth_Basic extends AbstractController {
         $form->addField('Password','password',$password)->template->del('label_div');
         $form->addSubmit('Login');
 
-        $form->add('View',null,'button_row_left')
-            ->addClass('atk-jackscrew');
+        //$form->add('View',null,'button_row_left')
+            //->addClass('atk-jackscrew');
 
         return $form;
     }
