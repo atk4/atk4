@@ -109,7 +109,9 @@ class View_Button extends View_HtmlElement
      */
     function render(){
         $this->addClass('atk-button');
-        if($this->template->get('icon') && $this->template->get('Content')) {
+        $c=$this->template->get('Content');
+        if(is_array($c))$c=$c[0];
+        if($this->template->get('icon') && $c) {
             $this->template->setHTML('nbsp','&nbsp;');
         }
         parent::render();
