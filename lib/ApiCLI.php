@@ -345,7 +345,12 @@ class ApiCLI extends AbstractView
                 echo "$key: $line_no -> ".$val['file'].PHP_EOL;
             }
         }
-        exit(99); // indicates that execution was not successful
+        $errCode = intval($e->getCode()); // May not be an integer
+        if($errCode>0){ // if getCode doesn't return an integer maybe this will be zero?
+        	exit($errCode);
+        }else{
+        	exit(1); // indicates that execution was not successful
+        }
     }
     
     /** @obsolete */
