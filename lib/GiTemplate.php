@@ -553,7 +553,7 @@ class GiTemplate extends AbstractModel {
     }
 
     function parseTemplate($str) {
-        $tag='/'.$this->settings['ldelim'].'([\/$]?[_\w]*)'.$this->settings['rdelim'].'/';
+        $tag='/'.$this->settings['ldelim'].'([\/$]?[-_\w]*)'.$this->settings['rdelim'].'/';
 
 		$input = preg_split ( $tag, $str, -1, PREG_SPLIT_DELIM_CAPTURE );
 
