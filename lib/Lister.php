@@ -134,6 +134,11 @@ class Lister extends View
     {
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id=>$this->current_row) {
+
+            if($this->current_row instanceof Model){
+                $this->current_row=$this->current_row->get();
+            }
+
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }
@@ -159,7 +164,11 @@ class Lister extends View
         }
         $template->setHTML($this->current_row_html);
         $template->trySet('id', $this->current_id);
-        return $template->render();
+        $o=$template->render();
+        foreach(array_keys($this->current_row)+array_keys($this->current_row_html) as $k){
+            $template->tryDel($k);
+        }
+        return $o;
     }
 
     /**

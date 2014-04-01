@@ -28,7 +28,7 @@ class Controller_Data_RESTFul extends Controller_Data {
 
         $pest = new $this->transport_class($table);
 
-        if ($auth = $this->api->getConfig('restapi/auth',null)) {
+        if ($auth = $model->auth ?: $this->api->getConfig('restapi/auth',null)) {
 
             // Per-URL authentication is defined
             if (is_array($auth) && isset($auth[$table])) {

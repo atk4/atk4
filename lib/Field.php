@@ -59,7 +59,7 @@ class Field extends AbstractModel
     function setterGetter($type, $value = UNDEFINED)
     {
         if ($value === UNDEFINED) {
-            return $this->$type;
+            return isset($this->$type)?$this->$type:null;
         }
         $this->$type=$value;
         return $this;
@@ -490,17 +490,28 @@ class Field extends AbstractModel
      *
      * @return array current value if $t=UNDEFINED
      */
-    function enum($t){ return $this->listData(array_combine($t,$t)); }
-        /** Binds the field to a relation (returned by join() function) */
-        function from($m){
-            if($m===undefined)return $this->relation;
-            if(is_object($m)){
-                $this->relation=$m;
-            }else{
-                $this->relations=$this->owner->relations[$m];
-            }
-            return $this;
+    function enum($t){
+        return $this->listData(array_combine($t,$t));
+    }
+
+    /**
+     * Binds the field to a relation (returned by join() function)
+     *
+     * @param Object $m the result of join() function
+     *
+     * @return self or the relation if $m is undefined
+     */
+    function from($m){
+        if($m===undefined){
+            return $this->relation;
+        }elseif(is_object($m)){
+            $this->relation=$m;
+        }else{
+            $this->relations=$this->owner->relations[$m];
         }
+        return $this;
+    }
+
     // what is alias?
     //function alias($t=undefined){ return $this->setterGetter('alias',$t); }
 

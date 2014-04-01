@@ -24,7 +24,32 @@ abstract class AbstractObject
     /** Reference to the current controller. Read only. Use setController() */
     public $controller;
 
-    /** Exception class to use when $this->exception() is called */
+    /**
+     * Exception class to use when $this->exception() is called. When
+     * you later call ->exception() method, you can either override
+     * or postfix your exception with second argument
+     *
+     *
+     *  $default_exception='PathFinder' by default would
+     *  return 'Exception_PathFinder' from exception().
+     *
+     *  $default_exceptoin='PathFinder' in combination with
+     *  ->exception('Blah','_NotFound') will return
+     *  'Exception_PathFinder_NotFound'
+     *
+     *  $default_exception='BaseException' in combination with
+     *  ->exception('Blah', 'PathFinder')   will create
+     *  'Exception_PathFinder' exception.
+     *
+     *  and finally
+     *
+     *  $default_exception='PathFinder' in combination with
+     *  ->exception('Blah','NotFound') will return
+     *  'Exception_NotFound';
+     *
+     *
+     * TODO: implement test-cases for the above
+     */
     public $default_exception='BaseException';
 
     /** Default controller to initialize when calling setModel() */
@@ -47,7 +72,10 @@ abstract class AbstractObject
     /** Link to object into which we added this object */
     public $owner;
     
-    /** Always points to current API */
+    /** Always points to current Application */
+    public $app;
+
+    /** Obsolete - for compatibility, use ->app instead */
     public $api;
 
     /** 
@@ -108,9 +136,9 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function destroy()
+    function destroy($recursive=true)
     {
-        foreach ($this->elements as $el) {
+        if($recursive) foreach ($this->elements as $el) {
             if ($el instanceof AbstractObject) {
                 $el->destroy();
             }
@@ -207,8 +235,8 @@ abstract class AbstractObject
             if (!$class->short_name) {
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
-            if (!$class->api) {
-                $class->api = $this->api;
+            if (!$class->app) {
+                $class->api = $class->app = $this->app;
             }
             $class->short_name = $this->_unique_element($class->short_name);
             $class->name = $this->_shorten($this->name . '_' . $class->short_name);
@@ -269,9 +297,9 @@ abstract class AbstractObject
          * of relying on this
          *
         if (!class_exists($class_name_nodash, false)
-            && isset($this->api->pathfinder)
+            && isset($this->app->pathfinder)
         ) {
-            $this->api->pathfinder->loadClass($class);
+            $this->app->pathfinder->loadClass($class);
         }*/
         $element = new $class_name_nodash();
 
@@ -288,7 +316,7 @@ abstract class AbstractObject
         }
 
         $element->owner = $this;
-        $element->api = $this->api;
+        $element->api = $element->app = $this->app;
         $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
 
@@ -307,7 +335,7 @@ abstract class AbstractObject
 
         // Avoid using this hook. Agile Toolkit creates LOTS of objects,
         // so you'll get significantly slower code if you try to use this
-        $this->api->hook('beforeObjectInit', array(&$element));
+        $this->app->hook('beforeObjectInit', array(&$element));
 
         // Initialize element
         $element->init();
@@ -390,7 +418,7 @@ abstract class AbstractObject
      */
     function setController($controller, $name = null)
     {
-        $controller = $this->api->normalizeClassName($controller, 'Controller');
+        $controller = $this->app->normalizeClassName($controller, 'Controller');
         return $this->add($controller, $name);
     }
 
@@ -403,7 +431,7 @@ abstract class AbstractObject
      */
     function setModel($model)
     {
-        $model = $this->api->normalizeClassName($model, 'Model');
+        $model = $this->app->normalizeClassName($model, 'Model');
         $this->model = $this->add($model);
         return $this->model;
     }
@@ -430,7 +458,7 @@ abstract class AbstractObject
      */
     function memorize($key, $value)
     {
-        $this->api->initializeSession();
+        $this->app->initializeSession();
 
         if ($value instanceof Model) {
             unset($_SESSION['o'][$this->name][$key]);
@@ -453,7 +481,7 @@ abstract class AbstractObject
      */
     function learn($key, $default = null)
     {
-        $this->api->initializeSession(false);
+        $this->app->initializeSession(false);
         
         if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
@@ -477,7 +505,7 @@ abstract class AbstractObject
      */
     function forget($key = null)
     {
-        $this->api->initializeSession();
+        $this->app->initializeSession();
         
         if (is_null($key)) {
             unset ($_SESSION['o'][$this->name]);
@@ -501,7 +529,7 @@ abstract class AbstractObject
      */
     function recall($key, $default = null)
     {
-        $this->api->initializeSession(false);
+        $this->app->initializeSession(false);
         
         if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
@@ -539,11 +567,11 @@ abstract class AbstractObject
                 $type = $this->default_exception.'_'.substr($type, 1);
             }
         } elseif ($type != 'BaseException') {
-            $type = $this->api->normalizeClassName($type, 'Exception');
+            $type = $this->app->normalizeClassName($type, 'Exception');
         }
 
         // Localization support
-        $message = $this->api->_($message);
+        $message = $this->app->_($message);
 
         if ($type == 'Exception') {
             $type = 'BaseException';
@@ -554,7 +582,7 @@ abstract class AbstractObject
             throw $e;
         }
         $e->owner = $this;
-        $e->api = $this->api;
+        $e->api = $e->app = $this->app;
         $e->init();
 
         return $e;
@@ -593,7 +621,7 @@ abstract class AbstractObject
     function info($msg)
     {
         /**
-         * Call this function to send some information to API. Example:
+         * Call this function to send some information to Application. Example:
          *
          * $this->info("User tried buying traffic without enough money in bank");
          */
@@ -621,7 +649,7 @@ abstract class AbstractObject
 
         // The rest of this method is obsolete
         if ((isset($this->debug) && $this->debug)
-            || (isset($this->api->debug) && $this->api->debug)
+            || (isset($this->app->debug) && $this->app->debug)
         ) {
             $this->upCall(
                 'outputDebug', array (
@@ -653,7 +681,7 @@ abstract class AbstractObject
     }
 
     /**
-     * Call specified method for this class and all parents up to api.
+     * Call specified method for this class and all parents up to app.
      *
      * @param string $type information
      * @param array  $args relative offset in backtrace
@@ -871,7 +899,7 @@ abstract class AbstractObject
             return $ret;
         }
         array_unshift($arguments, $this);
-        if (($ret = $this->api->hook('global-method-'.$method, $arguments))) {
+        if (($ret = $this->app->hook('global-method-'.$method, $arguments))) {
             return $ret;
         }
     }
@@ -915,7 +943,7 @@ abstract class AbstractObject
     {
         return method_exists($this, $name)
             || isset($this->hooks['method-'.$name])
-            || isset($this->api->hooks['global-method-'.$name]);
+            || isset($this->app->hooks['global-method-'.$name]);
     }
 
     /**
@@ -943,7 +971,7 @@ abstract class AbstractObject
      */
     function logVar($var, $msg = "")
     {
-        $this->api->getLogger()->logVar($var, $msg);
+        $this->app->getLogger()->logVar($var, $msg);
     }
 
     /**
@@ -957,7 +985,7 @@ abstract class AbstractObject
      */
     function logInfo($info, $msg = "")
     {
-        $this->api->getLogger()->logLine($msg.' '.$info."\n");
+        $this->app->getLogger()->logLine($msg.' '.$info."\n");
     }
 
     /**
@@ -975,7 +1003,7 @@ abstract class AbstractObject
             // we got exception object obviously
             $error = $error->getMessage();
         }
-        $this->api->getLogger()->logLine($msg.' '.$error."\n", null, 'error');
+        $this->app->getLogger()->logLine($msg.' '.$error."\n", null, 'error');
     }
     // }}}
 
@@ -1018,21 +1046,21 @@ abstract class AbstractObject
      */
     function _shorten($desired)
     {
-        if (strlen($desired) > $this->api->max_name_length
-            && $this->api->max_name_length !== false
+        if (strlen($desired) > $this->app->max_name_length
+            && $this->app->max_name_length !== false
         ) {
-            $len = $this->api->max_name_length - 10;
+            $len = $this->app->max_name_length - 10;
             if ($len < 5) {
-                $len = $this->api->max_name_length;
+                $len = $this->app->max_name_length;
             }
 
             $key = substr($desired, 0, $len);
             $rest = substr($desired, $len);
 
-            if (!$this->api->unique_hashes[$key]) {
-                $this->api->unique_hashes[$key] = dechex(crc32($key));
+            if (!$this->app->unique_hashes[$key]) {
+                $this->app->unique_hashes[$key] = dechex(crc32($key));
             }
-            $desired = $this->api->unique_hashes[$key].'__'.$rest;
+            $desired = $this->app->unique_hashes[$key].'__'.$rest;
         };
 
         return $desired;

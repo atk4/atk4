@@ -40,6 +40,9 @@ class BaseException extends Exception
     // Array of available actions
     public $actions;
 
+    // Link to another exception which caused this one
+    public $by_exception=null;
+
 
 
     /**
@@ -103,7 +106,17 @@ class BaseException extends Exception
     {
         return $this->addMoreInfo('Raised by object', $t);
     }
-    
+
+    /**
+     * Records another exception as a cause of your current exception.
+     * Wrapping one exception inside another helps you to track problems
+     * better
+     */
+    function by(Exception $e){
+        $this->by_exception=$e;
+        return $this;
+    }
+
     /**
      * Actions will be displayed as links on the exception page allowing viewer
      * to perform additional debug functions.
@@ -167,7 +180,8 @@ class BaseException extends Exception
             '<p><font color=blue>' . $this->getMyFile() . ':' .
             $this->getMyLine() . '</font></p>' .
             $this->getDetailedHTML() .
-            backtrace($this->shift + 1, $this->getMyTrace());
+            '' //backtrace($this->shift + 1, $this->getMyTrace())
+            ;
         
         return $html;
     }

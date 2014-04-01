@@ -26,7 +26,14 @@ class Controller_Data_PathFinder extends Controller_Data {
         throw $this->exception('Unable to save into pathfinder');
     }
     function loadById($model, $id) {
-        $model->data = $this->api->pathfinder->locate($model->_table[$this->short_name],$id,'array',false);
+        try {
+            $model->data = $this->api->pathfinder->locate($model->_table[$this->short_name],$id,'array');
+        }catch(Exception_PathFinder $e){
+            throw $this->exception('Requested file not found','NotFound')
+                ->by($e);
+        }
+
+
         if(!$model->data)return;
 
         $model->id=$id;

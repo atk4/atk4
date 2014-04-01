@@ -198,11 +198,11 @@ class PathFinder extends AbstractController
                 $this->base_location
                     ->setBaseURL($this->api->pm->base_path);
             }
-        }
 
-        if(basename($this->api->pm->base_path)=='public') {
-            $this->base_location
-                ->setBaseURL(dirname($this->api->pm->base_path));
+            if(basename($this->api->pm->base_path)=='public') {
+                $this->base_location
+                    ->setBaseURL(dirname($this->api->pm->base_path));
+            }
         }
 
         // Add shared locations

@@ -230,7 +230,6 @@ class SQL_Model extends Model implements Serializable {
         // parent::hasOne($model,null);
         // model, our_field
         $this->_references[null]=$model;
-        // 
 
 
         if(!$our_field){
@@ -243,6 +242,7 @@ class SQL_Model extends Model implements Serializable {
 
         $r=$this->add('Field_Reference',array('name'=>$our_field,'dereferenced_field'=>$as_field));
         $r->setModel($model,$display_field);
+        $r->system(true)->editable(true);
         return $r;
     }
     /** Defines many to one association */
@@ -288,15 +288,20 @@ class SQL_Model extends Model implements Serializable {
 
         if($cond!==undefined && $value===undefined) {
             $value = $cond;
-            $cond = '=';
+            if (is_array($value)) {
+                $cond = 'in';
+            } else {
+                $cond = '=';
+            }
         }
         
         if($field->type()=='boolean'){
             $value=$field->getBooleanValue($value);
         }
 
-        if($cond==='='){
-            $field->defaultValue($value)->system(true)->editable(false);
+        if($cond==='=' || $cond==='in'){
+            $field->system(true)->editable(false);
+            if($cond==='=') $field->defaultValue($value);
         }
         
         $f = $field->actual_field?:$field->short_name;
@@ -394,7 +399,7 @@ class SQL_Model extends Model implements Serializable {
         $this->hook('afterLoad');
     }
     function current(){
-        return $this->get();
+        return $this;
     }
     function key(){
         return $this->id;
@@ -675,7 +680,7 @@ class SQL_Model extends Model implements Serializable {
      */
     private function modify(){
         $modify = $this->dsql()->del('where');
-        $modify->where($this->id_field, $this->id);
+        $modify->where($this->getElement($this->id_field), $this->id);
 
         if(!$this->dirty)return $this;
 

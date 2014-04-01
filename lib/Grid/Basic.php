@@ -339,7 +339,7 @@ class Grid_Basic extends CompleteLister
         if ($this->total_rows) {
             $this->template->del('not_found');
         } elseif ($this->no_records_message) {
-            $this->template->tryDel('all_table');
+            $this->template->del('header');
             $this->template->set('not_found_message', $this->no_records_message);
         }
     }

@@ -137,13 +137,8 @@ $.widget("ui.atk4_uploader", {
 				$('.elrte_editor').elrte()[0].elrte.selection.insertText('<img src="'+url+'"/>');
 			})
 			tpl.find('.thumbnail').each(function(){
-                $(this).attr('src',row['thumb32']);
-                /*
-                act+'&view=true&'+
-					self.element.attr('name')+'_save_action='+
-					$(this).closest('div').attr('rel') 
-				);
-                */
+                var f=$(this).data('thumb_field');
+                $(this).attr('src',f?f:row['thumb_url']);
 			})
 			tpl.find('.image_preview').each(function(){
 				$(this).attr('src',act+'&view=true&'+
@@ -204,6 +199,7 @@ $.widget("ui.atk4_uploader", {
 		//this.element.next('br').remove();
 		this.element.remove();
 		this._setChanged();
+		this.element.trigger('upload_complete');
 		//$('#'+this.name+'_token').val(data.id);
 	},
 	uploadFailed: function(message,debug){

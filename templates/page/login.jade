@@ -1,0 +1,35 @@
+.atk-box
+  .atk-push.atk-align-center
+    a.atk-text-reset(href='javascript:void(0)')
+        img(src='{public}images/logo-gray.svg{/}', title='Agile Toolkit', width='96')
+  {$Content}
+  // .atk-form.atk-form-stacked.atk-form-compact
+    form
+      .atk-form-fieldset.atk-push-small
+        .atk-cells
+          .atk-cell
+          .atk-cell
+            input(type='text', placeholder='E-mail')
+        .atk-cells
+          .atk-cell
+          .atk-cell
+            span.atk-input-icon
+              input(type='password', placeholder='Password')
+              a.icon-help-circled-1(href='javascript:void(0)')
+      .atk-cells.atk-cells-gutter
+        .atk-cell
+          .atk-input-radio
+            span.atk-text-dimmed
+              input#remember(type='checkbox')
+              label(for='remember') Remember me
+        .atk-cell.atk-align-right
+          button.atk-button.atk-jackscrew.atk-swatch-green Sign In
+  // hr
+  // .atk-push-small
+    a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-facebook(href='#')
+      span.icon-facebook
+      | Sign in with Facebook
+  // a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-twitter(href='#')
+    span.icon-twitter
+    | Sign in with Twitter
+

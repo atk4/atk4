@@ -1,6 +1,6 @@
 <?php
 /**
- * Api_Admin should be used for building your own application's administration
+ * App_Admin should be used for building your own application's administration
  * model. The benefit is that you'll have access to a number of add-ons which
  * are specifically written for admin system.
  *
@@ -9,23 +9,26 @@
  * application's admin.
  *
  * This is done through hooks in the Admin Class. It's also important that
- * Api_Admin relies on layout_fluid which makes it easier for add-ons to
+ * App_Admin relies on layout_fluid which makes it easier for add-ons to
  * add menu items, sidebars and foot-bars.
  */
-class Api_Admin extends ApiFrontend {
+class App_Admin extends App_Frontend {
 
     public $title='Agile Toolkit™ Admin';
 
     private $controller_install_addon;
+
+    public $layout_class='Layout_Fluid';
 
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons=array();
 
     function init() {
         parent::init();
-        $this->add('Layout_Fluid');
+        $this->add($this->layout_class);
 
-        $this->menu = $this->layout->addMenu();
+        $this->menu = $this->layout->addMenu('Menu_Vertical');
+        $this->menu->swatch='ink';
         $this->layout->addFooter();
 
         $this->add('jUI');
@@ -35,7 +38,7 @@ class Api_Admin extends ApiFrontend {
 
     private function initSandbox() {
         if ($this->pathfinder->sandbox) {
-            $sandbox = $this->api->add('sandbox\\Initiator');
+            $sandbox = $this->app->add('sandbox\\Initiator');
             if ($sandbox->getGuardError()) {
                 $this->sandbox->getPolice()->addErrorView($this->layout);
             }
@@ -91,7 +94,7 @@ class Api_Admin extends ApiFrontend {
             /**
              * initiators of all addons are accessible
              * from all around the project
-             * through $this->api->getInitiatedAddons()
+             * through $this->app->getInitiatedAddons()
              */
             $this->addons[$init->api_var] = $init;
             if ($init->with_pages) {

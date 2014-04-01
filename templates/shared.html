@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7">
-<![endif]-->
-<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8">
-<![endif]-->
-<!--[if IE 8]><html class="no-js lt-ie9">
-<![endif]-->
-<!--[if gt IE 8]><html class="no-js">
-<![endif]-->
+<!DOCTYPE html><!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
 <html lang="{lang}en{/}">
   <head>
-    <meta charset="utf-8">
-    <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <![endif]-->
+    <meta charset="utf-8"><!--[if IE><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
     <title>{page_title}Untitled Project - Agile Toolkit{/}</title>
     <meta name="desciption" content="{$page_description}">
-    <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory-->
     <link href="http://fonts.googleapis.com/css?family=Roboto:400,300,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="{css}style.css{/}">{$js_block}
@@ -27,8 +18,10 @@
     </script>
   </head>
   <body class="{$pagename}">
-    <!--[if lt IE 7]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-    <![endif]-->{Layout}
+    <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+    {Layout}
     <div class="atk-layout">
       <div class="atk-menu-bar atk-cells atk-push atk-shape-rounded">
         <div class="atk-cell atk-valign-middle"><img src="{public}images/logo.png{/}" style="background: black"></div>
@@ -40,7 +33,7 @@
         </div>
       </div>
       <div class="atk-layout-row">
-        <footer id="atk-footer">&copy; Agile Toolkit 2013</footer>
+        <footer id="atk-footer">&copy; Agile Toolkit 2014</footer>
       </div>
     </div>{/}
   </body>

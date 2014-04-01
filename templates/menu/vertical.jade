@@ -1,18 +1,37 @@
-div(id="{$_name}" class="{$class}").atk-menu-vertical
+ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
     {Content}
-    {rows}
-    {row}
-    <a id="{$id}" class="{$class}" href="{$href}" {$attributes} class="atk-padding-small atk-cells">
-    span.atk-cell.atk-jackscrew
-        {$icon}{$nbsp}
-        strong {$Content}
-    span.atk-cell
-        {$badge}
-    </a>
+
+    {Title}
+    li.atk-padding-small.atk-size-kilo(id="{$_name}" class="{$class}") {$Content}
+    {/Title}
+
+    {Item}
+    li
+        <a class="atk-padding-small atk-cells {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}>
+        span.atk-cell.atk-jackscrew
+            {$icon}&nbsp;
+            strong
+                {$Content}
+        span.atk-cell {$Badge}
+        </a>
+    {/Item}
+
+    {Menu}
+    li(id="{$_name}")
+        a.atk-padding-small.atk-cells(href="javascript:void(0)" class="{$class}")
+            span.atk-cell.atk-jackscrew
+                {$icon}&nbsp;
+                strong
+                    {$Content}
+            span.atk-cell
+                span.icon-right-dir
+        {$SubMenu}
+    {/Menu}
+
+    {Separator}
+    li
+        hr
+    {/Separator}
+
     {/}
-    {separator}
-    span.atk-padding-small
-        h4 {$label}
-    {/}
-    {/Content}
 

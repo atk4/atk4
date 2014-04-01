@@ -65,11 +65,13 @@ $.each({
             },
             buttons: buttons,
             open: function(x){
-                $("body").css({ overflow: 'hidden' });
+                $("body").css({ overflow: 'hidden' })
+                .children('.atk-layout').addClass('visible-dialog');
                 $(x.target).css({'max-height': $(window).height()-180});
             },
             close: function(){
-                $("body").css({ overflow: 'auto' });
+                $("body").css({ overflow: 'auto' })
+                .children('.atk-layout').removeClass('visible-dialog');
                 $(this).dialog('destroy');
                 $(this).remove();
             }

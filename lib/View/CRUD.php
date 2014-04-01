@@ -158,12 +158,17 @@ class View_CRUD extends View
             $this->form = $this
                 ->virtual_page
                 ->getPage()
-                ->add($this->form_class);
+                ->add($this->form_class)
+                //->addClass('atk-form-stacked')
+                ;
+
+            $this->grid = new Dummy();
 
             return;
         }
 
         $this->grid = $this->add($this->grid_class);
+        $this->form = new Dummy();
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
@@ -377,6 +382,18 @@ class View_CRUD extends View
             );
     }
 
+
+    /** 
+     * Assuming that your model contains a certain method, this allows
+     * you to create a frame which will pop you a new frame with
+     * a form representing model method arguments. Once the form
+     * is submitted, the action will be evaluated
+     */
+    function addAction($method_name, $options = array()) {
+        
+    }
+
+
     /**
      * Transparent method for adding buttons to a crud
      */
@@ -397,6 +414,7 @@ class View_CRUD extends View
     {
         // We are actually in the frame!
         if ($this->isEditing('add')) {
+            $this->model->unload();
             $m = $this->form->setModel($this->model, $fields);
             $this->form->addSubmit('Add');
             $this->form->onSubmit(array($this,'formSubmit'));

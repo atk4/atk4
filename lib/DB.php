@@ -113,9 +113,6 @@ class DB extends AbstractController
         // Configure PDO to play nice
         $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Use global table prefixes
-        $this->table_prefix = $dsn['table_prefix'];
-
         // Based on type, switch dsql class
         list($this->type, $junk) = explode(':', $dsn[0]);
         $this->type = strtolower($this->type);
@@ -207,11 +204,12 @@ class DB extends AbstractController
 
     /**
      * Executes query and returns first column of first row. This is quick and
-     * speedy way to get the results of simple queries. Consider using DSQL:
+     * speedy way to get the results of simple queries.
+     * 
+     * Consider using DSQL:
+     * echo $this->api->db->dsql()->expr('select now()')->getOne();
      *
-     * echo $this->api->db->dsql()->expr('select now()');
-     *
-     * @param string $query  SQL Qurey
+     * @param string $query  SQL Query
      * @param arary  $params PDO-params
      *
      * @return string first column of first row

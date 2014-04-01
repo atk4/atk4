@@ -1,3 +1,4 @@
+tests/log/
 *.swp
 .svn
 *.swo
@@ -9,3 +10,7 @@
 .buildpath
 .settings
 .DS_Store
+
+*-ck.js
+
+*.codekit

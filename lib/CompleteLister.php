@@ -241,6 +241,12 @@ class CompleteLister extends Lister
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id=>$this->current_row) {
 
+            if($this->current_row instanceof Model){
+                $this->current_row=$this->current_row->get();
+            }
+
+            $this->current_row_html=array();
+
             // if totals enabled, but specific fields are not specified with
             // addTotals, then calculate totals for all available fields
             if ($this->totals === array()) {

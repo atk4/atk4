@@ -2,15 +2,15 @@
   .atk-layout-row
     {Header}
     .atk-layout-cell(class="{$class}")
-        .atk-wrapper.atk-padding-small
-            {$Header_Content}
+        .atk-padding-small.atk-swatch-ink
+            {Header_Content}use layout->addHeader() to menu, toolbar or header here{/}
     {/Header}
   .atk-layout-row.atk-layout-fluid
     .atk-layout.atk-layout-cell
       {$LeftSidebar}
-      .atk-layout-column.atk-swatch-ink.span_3
+      .atk-layout-column(class="{left-column-class}atk-swatch-ink{/}" style="{$left-column-style}")
         {$Main_Menu}
-      .atk-layout-column.fluid.atk-padding
+      .atk-layout-column.fluid.atk-padding.atk-jackscrew
         h2 {page_title}Page Title{/}
         {$Content}
       {$RightSideBar}
@@ -18,6 +18,6 @@
   .atk-layout-row
     {Footer}
     .atk-layout-cell(class="{$class}")
-        .atk-wrapper.atk-padding-small
+        .atk-padding-small.atk-swatch-ink
             {$Footer_Content}
     {/}

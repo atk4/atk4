@@ -61,8 +61,8 @@ class Auth_Basic extends AbstractController {
     function init(){
         parent::init();
 
-        // Register as auth handler.
-        $this->api->auth=$this;
+        // Register as auth handler, if it's not set yet
+        if(@!$this->api->auth)$this->api->auth=$this;
 
         if (!$this->api->hasMethod('initializeSession')) {
             // No session support
@@ -143,6 +143,7 @@ class Auth_Basic extends AbstractController {
     function addEncryptionHook($model){
         // If model is saved, encrypt password
         $t=$this;
+        if(@$model->has_encryption_hook)return;
         $model->has_encryption_hook=true;
         $model->addHook('beforeSave',function($m)use($t){
             if($m->isDirty($t->password_field)&&$m[$t->password_field]){
@@ -302,7 +303,8 @@ class Auth_Basic extends AbstractController {
 
         // Attempt to load user data by username. If not found, return
         // false
-        $data = $this->model->tryLoadBy($this->login_field, $user);
+
+        $data = $this->model->newInstance()->tryLoadBy($this->login_field, $user);
         if (!$data->loaded()) {
             $this->debug('user with login '.$user.' could not be loaded');
             if (!$password_existed) {
@@ -369,6 +371,7 @@ class Auth_Basic extends AbstractController {
 
                 if ($rehash) {
                     $hash=$data[$this->password_field]=$password;
+                    $data->setDirty($this->password_field);
                     $data->save();
                     $this->debug('Rehashed into '.$data[$this->password_field]);
                 }
@@ -500,7 +503,9 @@ class Auth_Basic extends AbstractController {
     /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form, 
      * add template/default/page/login.html */
     function createForm($page){
-        $form=$page->add('Form');
+        $form=$page->add('Form_Stacked',array('nolabels'=>true));
+
+        $form->addClass('atk-form-stacked');
 
         $email=$this->model->hasField($this->login_field);
         $email=$email?$email->caption:'E-mail';
@@ -508,9 +513,12 @@ class Auth_Basic extends AbstractController {
         $password=$this->model->hasField($this->password_field);
         $password=$password?$password->caption:'Password';
 
-        $form->addField('Line','username',$email);
-        $form->addField('Password','password',$password);
+        $form->addField('Line','username',$email)->template->del('label_div');
+        $form->addField('Password','password',$password)->template->del('label_div');
         $form->addSubmit('Login');
+
+        //$form->add('View',null,'button_row_left')
+            //->addClass('atk-jackscrew');
 
         return $form;
     }
@@ -520,7 +528,7 @@ class Auth_Basic extends AbstractController {
         if($this->api->layout && $this->login_layout_class){
             $this->api->layout->destroy();
             $this->api->add($this->login_layout_class);
-            $p=$this->api->layout;
+            $this->api->page_object=$p=$this->api->layout->add('Page',null,null,array('page/login'));
         }else{
             $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
 
