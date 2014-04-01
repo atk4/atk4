@@ -2,7 +2,7 @@ ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
     {Content}
 
     {Title}
-    li.atk-padding-small.atk-size-kilo.atk-swatch-yellow(id="{$_name}" class="{$class}") {$Content}
+    li.atk-padding-small.atk-size-kilo(id="{$_name}" class="{$class}") {$Content}
     {/Title}
 
     {Item}
@@ -17,7 +17,7 @@ ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
     {/Item}
 
     {Menu}
-    li(id="{$_name}")
+    li(id="{$_name}" class="{$li-class}")
         a.atk-padding-small.atk-cells(href="javascript:void(0)" class="{$class}")
             span.atk-cell.atk-jackscrew
                 {$icon}&nbsp;

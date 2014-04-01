@@ -3,6 +3,7 @@
 abstract class Menu_Advanced extends View {
 
     public $swatch='ink';
+    public $hover_swatch=null;
 
     /**
      * Adds a title to your menu.
@@ -57,6 +58,9 @@ abstract class Menu_Advanced extends View {
         $i = $this->add('Menu_Advanced_Item',null,null,
             array_merge($this->defaultTemplate(),array('Menu'))
         );
+        if($this->hover_swatch){
+            $i->template->set('li-class','atk-swatch-'.$this->hover_swatch);
+        }
 
         if(is_array($title)) {
 
@@ -71,7 +75,10 @@ abstract class Menu_Advanced extends View {
         }
         $i->set($title);
 
-        $m = $i->add($class,array('swatch'=>$this->swatch),'SubMenu');
+        $m = $i->add($class,array(
+            'swatch'=>$this->swatch,
+            'hover_swatch'=>$this->hover_swatch
+        ),'SubMenu');
 
 
         return $m;
