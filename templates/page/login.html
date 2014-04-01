@@ -1,36 +1,63 @@
 
 <div class="atk-box">
-  <div class="atk-push atk-align-center"><a href="javascript:void(0)" class="atk-text-reset"><img src="{public}images/logo-gray.svg{/}" title="Agile Toolkit" width="96"/></a></div>{$Content}
+  <div class="atk-push atk-align-center"><a href="javascript:void(0)" class="atk-text-reset"><img src="{public}images/logo-gray.svg{/}" title="Agile Toolkit" width="96"/></a></div>{Content}
+  {LoginForm}
+  <div style="{$style}" id="{$_name}" class="atk-form {$class}">
+    <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+    {Layout}
+    <div class="atk-cells-group atk-cells-gutter-large atk-newform atk-valign-top">
+      {Content}
+      {form_line}
+      <div class="atk-cells atk-push atk-form-row-{$field_type} {$row_class}">{label_div}
+        <div class="atk-cell atk-form-label atk-text-nowrap"><label for="{$field_name}" {field_mandatory}class="mandatory"{/}><span>{$field_caption}</span>{$after_label}
+          </label>
+        </div>{/}
+        <div class="atk-cell atk-form-field atk-jackscrew {$field_class}">{$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}</div>{$field_hint}
+        {field_error}
+        <div class="atk-form-error"><span class="atk-size-micro">atk-effect-danger {$field_error_str}</span></div>{/}
+      </div>{/}
+      {/Content}
+      <div class="field-error-template atk-form-error"><span class="atk-effect-danger field-error-text">{$field_error_str}</span></div>
+    </div>{button_row}
+    <div class="atk-cells atk-push">
+      <div class="atk-cell"></div>
+      <div class="atk-cell atk-actions {$buttons_class}">{$form_buttons}</div>
+    </div>{/}
+    {/Layout}
+    </form>
+  </div>{/}
+  {/}
   <!-- .atk-form.atk-form-stacked.atk-form-compact
-  <form>
-    <div class="atk-form-fieldset atk-push-small">
-      <div class="atk-cells">
-        <div class="atk-cell"></div>
-        <div class="atk-cell">
-          <input type="text" placeholder="E-mail"/>
-        </div>
-      </div>
-      <div class="atk-cells">
-        <div class="atk-cell"></div>
-        <div class="atk-cell"><span class="atk-input-icon">
-            <input type="password" placeholder="Password"/><a href="javascript:void(0)" class="icon-help-circled-1"></a></span></div>
-      </div>
-    </div>
-    <div class="atk-cells atk-cells-gutter">
-      <div class="atk-cell">
-        <div class="atk-input-radio"><span class="atk-text-dimmed">
-            <input id="remember" type="checkbox"/>
-            <label for="remember">Remember me</label></span></div>
-      </div>
-      <div class="atk-cell atk-align-right">
-        <button class="atk-button atk-jackscrew atk-swatch-green">Sign In</button>
-      </div>
-    </div>
-  </form>
+  form
+    .atk-form-fieldset.atk-push-small
+      .atk-cells
+        .atk-cell
+        .atk-cell
+          input(type='text', placeholder='E-mail')
+      .atk-cells
+        .atk-cell
+        .atk-cell
+          span.atk-input-icon
+            input(type='password', placeholder='Password')
+            a.icon-help-circled-1(href='javascript:void(0)')
+    .atk-cells.atk-cells-gutter
+      .atk-cell
+        .atk-input-radio
+          span.atk-text-dimmed
+            input#remember(type='checkbox')
+            label(for='remember') Remember me
+      .atk-cell.atk-align-right
+        button.atk-button.atk-jackscrew.atk-swatch-green Sign In
   -->
   <!-- hr-->
-  <!-- .atk-push-small<a href="#" class="atk-button atk-jackscrew atk-align-center atk-swatch-facebook"><span class="icon-facebook"></span>Sign in with Facebook</a>
+  <!-- .atk-push-small
+  a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-facebook(href='#')
+    span.icon-facebook
+    | Sign in with Facebook
   -->
-  <!-- a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-twitter(href='#')<span class="icon-twitter"></span>Sign in with Twitter
+  <!-- a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-twitter(href='#')
+  span.icon-twitter
+  | Sign in with Twitter
+  
   -->
 </div>
