@@ -71,7 +71,7 @@ abstract class Menu_Advanced extends View {
         }
         $i->set($title);
 
-        $m = $i->add($class,null,'SubMenu');
+        $m = $i->add($class,array('swatch'=>$this->swatch),'SubMenu');
 
 
         return $m;
