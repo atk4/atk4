@@ -1,20 +1,13 @@
-!!! 5
-//if lt IE 7
-    <html class="no-js lt-ie9 lt-ie8 lt-ie7">
-//if IE 7
-    <html class="no-js lt-ie9 lt-ie8">
-//if IE 8
-    <html class="no-js lt-ie9">
-//if gt IE 8
-    <html class="no-js">
+doctype html
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
 html(lang="{lang}en{/}")
     head
         meta(charset="utf-8")
-        //if IE
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--[if IE><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
         title {page_title}Untitled Project - Agile Toolkit{/}
         meta(name="desciption" content="{$page_description}")
-        meta(name="viewport" content="width=device-width")
 
         // Place favicon.ico and apple-touch-icon.png in the root directory
 
@@ -24,14 +17,15 @@ html(lang="{lang}en{/}")
         {$js_block}
         {$js_include}
 
-        script(type='text/javascript')
+        script(type='text/javascript').
             $(function(){
                 {$document_ready}
             });
 
     body(class="{$pagename}")
-        //if lt IE 7
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
 
         {Layout}
         .atk-layout
@@ -48,5 +42,5 @@ html(lang="{lang}en{/}")
 
             .atk-layout-row
                 footer#atk-footer
-                    &copy; Agile Toolkit 2013
+                    &copy; Agile Toolkit 2014
         {/}
