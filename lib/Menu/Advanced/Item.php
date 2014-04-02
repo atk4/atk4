@@ -4,7 +4,7 @@ class Menu_Advanced_Item extends View {
     function init() {
         parent::init();
 
-        $this->addComponents(array('swatch'=>$this->owner->swatch));
+        if($this->owner->swatch)$this->addComponents(array('swatch'=>$this->owner->swatch));
     }
 
     function set($data){
