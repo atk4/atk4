@@ -51,7 +51,8 @@ abstract class Menu_Advanced extends View {
         return $i;
     }
 
-    function addMenu($title, $class='Menu_Vertical') {
+    function addMenu($title, $class=null, $options=[]) {
+        if(is_null($class))$class='Menu_Vertical';
         if($class=='Horizontal')$class='Menu_Horizontal';
 
 
@@ -76,7 +77,7 @@ abstract class Menu_Advanced extends View {
         $i->set($title);
 
         $m = $i->add($class,array(
-            'swatch'=>$this->swatch,
+            'swatch'=>$options['swatch']?:$this->swatch,
             'hover_swatch'=>$this->hover_swatch
         ),'SubMenu');
 
