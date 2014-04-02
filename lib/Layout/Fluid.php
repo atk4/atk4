@@ -27,8 +27,8 @@ class Layout_Fluid extends Layout_Basic {
         return $this->header;
     }
 
-    function addMenu($class = 'Menu_Vertical') {
-        return $this->add($class,null,'Main_Menu');
+    function addMenu($class = 'Menu_Vertical', $options=null) {
+        return $this->add($class,$options,'Main_Menu');
     }
 
     function addFooter($class = 'View') {
