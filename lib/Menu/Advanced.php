@@ -51,7 +51,7 @@ abstract class Menu_Advanced extends View {
         return $i;
     }
 
-    function addMenu($title, $class=null, $options=[]) {
+    function addMenu($title, $class=null, $options=array()) {
         if(is_null($class))$class='Menu_Vertical';
         if($class=='Horizontal')$class='Menu_Horizontal';
 
