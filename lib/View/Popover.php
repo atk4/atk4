@@ -77,7 +77,7 @@ class View_Popover extends View {
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
 
             
-        ),$options))->parent()->append('<div class="atk-arrow '.($options['arrow']?:'vertical top left').'"></div>')
+        ),$options))->parent()->append('<div class="atk-popover-arrow"></div>')
         ;
 
         return $this->js()->dialog('open')->dialog('option',array(
