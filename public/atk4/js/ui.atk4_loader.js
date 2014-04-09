@@ -42,7 +42,7 @@ $.widget('ui.atk4_loader', {
         loaded.
         */
         loading: false,
-        cogs: '<div class="loading"><i></i><i></i></div>',
+        cogs: '<div id="banner-loader" class="atk-banner atk-cells atk-visible"><div class="atk-cell atk-align-center atk-valign-middle"><div class="atk-box atk-inline atk-size-zetta atk-banner-cogs"></div></div></div>',
 
         /*
         when we are loading URLs, we will automaticaly pass arguments to cut stuff out
