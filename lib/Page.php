@@ -122,7 +122,7 @@ class Page extends AbstractView {
                 '<meta name="'.
                     htmlspecialchars($k,ENT_NOQUOTES,'UTF-8')
                 .'" content="'.
-                htmlspecialchars($v,ENT_NOQUOTES,'UTF-8')
+                    htmlspecialchars($v,ENT_NOQUOTES,'UTF-8')
             .'" />'
             );
         }
