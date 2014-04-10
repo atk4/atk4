@@ -109,7 +109,7 @@ class Page extends AbstractView {
             $title = $this->title;
         }
         if (trim($title)) {
-            $this->app->template->trySetHTML('page_title',$title);
+            $this->app->template->trySet('page_title',$title);
         }
 
     }
@@ -118,8 +118,8 @@ class Page extends AbstractView {
     }
     function addMetas() {
         foreach ($this->metas as $k=>$v) {
-            $this->app->template->trySetHTML('page_metas',
-                '<meta name="'.$k.'" content="'.$v.'">'
+            $this->app->template->trySet('page_metas',
+                '<meta name="'.$k.'" content="'.$v.'" />'
             );
         }
     }
