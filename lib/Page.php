@@ -118,7 +118,7 @@ class Page extends AbstractView {
     }
     function addMetas() {
         foreach ($this->metas as $k=>$v) {
-            $this->app->template->trySetHTML('page_metas',
+            $this->app->template->appendHTML('page_metas',
                 '<meta name="'.
                     htmlspecialchars($k,ENT_NOQUOTES,'UTF-8')
                 .'" content="'.
