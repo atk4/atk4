@@ -118,8 +118,12 @@ class Page extends AbstractView {
     }
     function addMetas() {
         foreach ($this->metas as $k=>$v) {
-            $this->app->template->trySet('page_metas',
-                '<meta name="'.$k.'" content="'.$v.'" />'
+            $this->app->template->trySetHTML('page_metas',
+                '<meta name="'.
+                    htmlspecialchars($k,ENT_NOQUOTES,'UTF-8')
+                .'" content="'.
+                htmlspecialchars($v,ENT_NOQUOTES,'UTF-8')
+            .'" />'
             );
         }
     }
