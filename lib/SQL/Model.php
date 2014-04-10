@@ -675,14 +675,16 @@ class SQL_Model extends Model {
         }
 
         // Performs the actual database changes. Throw exceptions if problem occurs
-        $this->hook('beforeModify',array($modify));
+	$this->hook('beforeUpdate',array($modify));
+	$this->hook('beforeModify',array($modify));
         if($modify->args['set'])$modify->do_update();
 
         if($this->dirty[$this->id_field]){
             $this->id=$this->get($this->id_field);
         }
 
-        $this->hook('afterModify');
+	$this->hook('afterUpdate');
+	$this->hook('afterModify');
 
         if($this->_save_as===false)return $this->unload();
         $id=$this->id;
