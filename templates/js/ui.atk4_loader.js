@@ -319,16 +319,31 @@ $.extend($.ui.atk4_loader, {
 });
 
 $.fn.extend({
-	atk4_load: function(url,fn){
+    atk4_load: function(url,fn){
         this.atk4_loader().atk4_loader('loadURL',url,fn);
-	},
-	atk4_reload: function(url,arg,fn){
+    },
+    atk4_reload: function(url,arg,fn,interval){
         if(arg){
             $.each(arg,function(key,value){
                 url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
             });
         }
-		this.atk4_loader()
-			.atk4_loader('loadURL',url,fn,true);
-	}
+
+        if(interval) {
+            // if interval is set, then do periodic reloads / refreshes
+            // execute reload after defined period of time
+            var id = $.univ.setTimeout(function(obj){
+                obj.atk4_loader()
+                    .atk4_loader('loadURL',url,fn,true);
+            }, interval, this);
+            // if associated DOM element is destroyed, then remove timeout action
+            this.on('remove',function(){
+                $.univ.clearTimeout(id);
+            });
+        } else {
+            // if no interval set, then do simple reloading of element
+            this.atk4_loader()
+                .atk4_loader('loadURL',url,fn,true);
+        }
+    }
 });
