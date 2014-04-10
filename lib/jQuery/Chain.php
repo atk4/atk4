@@ -213,10 +213,19 @@ class jQuery_Chain extends AbstractModel {
         }
         return $s;
     }
-    /* Calls real redirect (from univ), but accepts page name. Use url() for 1st argument manually anyway. */
-    function redirect($page=null,$arg=null){
-        $url=$this->api->url($page,$arg);
-        return $this->_fn('redirect',array($url));
+    /**
+     * Calls real redirect (from univ), but accepts page name
+     *
+     * Use url() for 1st argument manually anyway.
+     * 
+     * @param string $page Page name
+     * @param Array $arg Arguments
+     * 
+     * @return this
+     */
+    function redirect($page = null, $arg = null) {
+        $url = $this->api->url($page, $arg);
+        return $this->univ()->_fn('redirect', array($url));
     }
     /**
      * Reload object
@@ -240,7 +249,7 @@ class jQuery_Chain extends AbstractModel {
         if (!$url) {
             $url = $this->api->url(null, array('cut_object' => $obj->name));
         }
-        return $this->_fn('atk4_reload', array($url, $arg, $fn, $interval));
+        return $this->univ()->_fn('reload', array($url, $arg, $fn, $interval));
     }
     /* Chain will not be called but will return callable function instead. */
     function _enclose($fn=null,$preventDefault=false){
