@@ -13,17 +13,42 @@ $.each({
 	alert: function(a){
 		alert(a);
 	},
+	displayAlert: function(a){
+		alert(a);
+	},
+	/*
+	// Upgraded changed interval and timeout solution like adviced here:
+	// https://developer.mozilla.org/en/docs/Web/API/window.setInterval#A_possible_solution
 	setTimeout: function(code,delay){
 		setTimeout(code,delay);
 	},
 	setInterval: function(code,delay){
 		return setInterval(code,delay);
 	},
-	clearInterval: function(a){
-		clearInterval(a);
+	*/
+	setTimeout: function(callback, delay /*, arg1, arg2, ... */){
+        var oThis = this.jquery;
+        var aArgs = Array.prototype.slice.call(arguments, 2);
+        return window.setTimeout(
+            callback instanceof Function
+                ? function() {callback.apply(oThis, aArgs);}
+                : callback
+            , delay);
 	},
-	displayAlert: function(a){
-		alert(a);
+	setInterval: function(callback, delay /*, arg1, arg2, ... */){
+        var oThis = this.jquery;
+        var aArgs = Array.prototype.slice.call(arguments, 2);
+        return window.setInterval(
+            callback instanceof Function
+                ? function() {callback.apply(oThis, aArgs);}
+                : callback
+            , delay);
+	},
+	clearTimeout: function(id){
+		window.clearTimeout(id);
+	},
+	clearInterval: function(id){
+		window.clearInterval(id);
 	},
 	redirect: function(url,fn){
 		if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
