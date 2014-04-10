@@ -176,19 +176,34 @@ $.each({
         var u=$.atk4.addArgument(url,key+'='+value);
         this.jquery.atk4_load(u);
     },
-    reload: function(url,arg,fn){
+    reload: function(url,arg,fn,interval){
         /*
          * $obj->js()->reload();	 will now properly reload most of the objects.
-         * This function can be also called on a low level, however URL have to be
-         * specified.
+         * This function can be also called on a low level, however URL have to
+         * be specified.
          * $('#obj').univ().reload('http://..');
          *
-         * Difference between atk4_load and this function is that this function will
-         * correctly replace element and insert it into container when reloading. It
-         * is more suitable for reloading existing elements
+         * Difference between atk4_load and this function is that this function
+         * will correctly replace element and insert it into container when
+         * reloading. It is more suitable for reloading existing elements.
+         *
+         * If interval is set, then object will be periodically reloaded.
          */
 
-        this.jquery.atk4_reload(url,arg,fn);
+        // if interval is set, then do periodic reloads / refreshes
+        // otherwise just reload object one time
+        if(interval) {
+            // execute reload after defined period of time
+            var id = this.setTimeout(function(){
+                this.atk4_reload(url,arg,fn);
+            }, interval);
+            // if associated DOM element is destroyed, then remove timeout action
+            this.jquery.on('remove',function(ev){
+                $.univ.clearTimeout(id);
+            });
+        } else {
+            this.jquery.atk4_reload(url,arg,fn);
+        }
     },
     reloadParent: function(depth,args){
         if(!depth)depth=1;
