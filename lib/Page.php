@@ -93,18 +93,24 @@ class Page extends AbstractView {
     function addTitle() {
         $first = true;
         $title = '';
-        foreach ($this->title as $t) {
-            if (!$first) {
-                $title = $title . $this->title_separator;
+        if (is_array($this->title)) {
+            foreach ($this->title as $t) {
+                if (!$first) {
+                    $title = $title . $this->title_separator;
+                }
+                $first = false;
+                if (is_array($t)) {
+                    $title = $title . $t['name'];
+                } else {
+                    $title = $title . $t;
+                }
             }
-            $first = false;
-            if (is_array($t)) {
-                $title = $title . $t['name'];
-            } else {
-                $title = $title . $t;
-            }
+        } else {
+            $title = $this->title;
         }
-        $this->app->template->trySetHTML('page_title',$title);
+        if (trim($title)) {
+            $this->app->template->trySetHTML('page_title',$title);
+        }
 
     }
     function setMetaTag($key,$value) {
