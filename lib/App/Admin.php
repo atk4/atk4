@@ -20,6 +20,8 @@ class App_Admin extends App_Frontend {
 
     public $layout_class='Layout_Fluid';
 
+    public $auth_config=array('admin'=>'admin');
+
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons=array();
 
@@ -29,7 +31,10 @@ class App_Admin extends App_Frontend {
 
         $this->menu = $this->layout->addMenu('Menu_Vertical');
         $this->menu->swatch='ink';
-        $this->layout->addFooter();
+
+
+        $m=$this->layout->addFooter('Menu_Horizontal');
+        $m->addItem('foobar');
 
         $this->add('jUI');
 
@@ -50,6 +55,19 @@ class App_Admin extends App_Frontend {
             $this->initAddons();
         }
         parent::initLayout();
+
+        if(!$this->pathfinder->sandbox){
+            $this->menu->addItem(array('Install Developer Toools','icon'=>'tools'),'sandbox');
+        }
+    }
+
+    function page_sandbox($p){
+        $p->addCrumb('Install Developer Tools');
+        $p->add('P')->set('Development is more productive when Agile Toolkit 4.3 developer tools are installed.
+            Agile Toolkit can install them automatically for you.');
+
+        $p->add('Button')->set('Install Now')
+            ->addClass('atk-swatch-green');
     }
 
     /**
