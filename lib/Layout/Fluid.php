@@ -32,9 +32,6 @@ class Layout_Fluid extends Layout_Basic {
     }
 
     function addFooter($class = 'View') {
-        $this->footer_wrap = $this->add('View',null,'Footer',array('layout/fluid','Footer'));
-
-        return $this->footer = $this->footer_wrap->add($class,null,'Footer_Content')
-            ->set('This site is developed with Agile Toolkit');
+        return $this->footer = $this->add($class,null,'Footer_Content');
     }
 }
