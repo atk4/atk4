@@ -498,8 +498,7 @@ class App_CLI extends AbstractView
     // {{{ Database connection handling
     /** Use database configuration settings from config file to establish default connection */
     function dbConnect($dsn=null){
-        $this->db=$this->add('DB')->connect($dsn);
-        return $this;
+        return $this->db=$this->add('DB')->connect($dsn);
     }
     /** Attempts to connect, but does not raise exception on failure. */
     function tryConnect($dsn){
