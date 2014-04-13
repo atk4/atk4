@@ -316,7 +316,7 @@ class View_Button extends View_HtmlElement
     /** @obsolete */
     function redirect($page)
     {
-        return $this->js('click')->univ()->redirect($this->api->url($page));
+        return $this->js('click')->redirect($this->api->url($page));
     }
     /** @obsolete */
     function submitForm($form)

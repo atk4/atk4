@@ -357,11 +357,11 @@ class ApiWeb extends ApiCLI {
         $url=$this->url($page,$args);
          if($this->api->isAjaxOutput()) {
              if($_GET['cut_page']) {
-                 echo "<script>".$this->api->js()->univ()->redirect($url)."</script>Redirecting page...";
+                 echo "<script>".$this->api->js()->redirect($url)."</script>Redirecting page...";
                  exit;
              }
              else {
-                 $this->api->js()->univ()->redirect($url)->execute();
+                 $this->api->js()->redirect($url)->execute();
              }
         }
         header("Location: ".$url);
