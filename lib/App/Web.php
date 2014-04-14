@@ -361,11 +361,11 @@ class App_Web extends App_CLI {
         $url=$this->url($page,$args);
          if($this->app->isAjaxOutput()) {
              if($_GET['cut_page']) {
-                 echo "<script>".$this->app->js()->univ()->redirect($url)."</script>Redirecting page...";
+                 echo "<script>".$this->app->js()->redirect($url)."</script>Redirecting page...";
                  exit;
              }
              else {
-                 $this->app->js()->univ()->redirect($url)->execute();
+                 $this->app->js()->redirect($url)->execute();
              }
         }
         header("Location: ".$url);
