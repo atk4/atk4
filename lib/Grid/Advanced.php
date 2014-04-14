@@ -1138,7 +1138,6 @@ class Grid_Advanced extends Grid_Basic
             // show message
             $this->js()->univ()
                 ->successMessage('Deleted Successfully')
-                ->getjQuery()
                 ->reload()
                 ->execute();
         }

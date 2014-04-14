@@ -214,6 +214,20 @@ class jQuery_Chain extends AbstractModel {
         return $s;
     }
     /**
+     * Prevents calling univ() multiple times
+     * 
+     * Useful for backwards compatibility and in case of human mistake
+     * 
+     * @return this
+     */
+    function univ() {
+        if ($this->univ_called) {
+            return $this;
+        }
+        $this->univ_called = true;
+        return $this->_fn('univ');
+    }
+    /**
      * Calls real redirect (from univ), but accepts page name
      *
      * Use url() for 1st argument manually anyway.
