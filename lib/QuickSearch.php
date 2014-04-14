@@ -44,7 +44,7 @@ class QuickSearch extends Filter
         parent::init();
 
         // template fixes
-        $this->addClass('atk-form atk-form-stacked atk-form-compact atk-input-icon atk-move-right');
+        $this->addClass('atk-form atk-form-stacked atk-form-compact atk-move-right');
         $this->template->trySet('fieldset', 'atk-row');
         $this->template->tryDel('button_row');
 
@@ -57,6 +57,7 @@ class QuickSearch extends Filter
                 ->setClass('atk-cell')
                 ->add('HtmlElement')
                 ->setElement('A')
+	            ->setAttr('href','javascript:void(0)')
                 ->setClass('atk-button')
                 ->setHtml('<span class="icon-cancel atk-swatch-red"></span>')
                 ->js('click', array(
@@ -68,6 +69,7 @@ class QuickSearch extends Filter
         // search button
         $this->add('HtmlElement',null,'form_buttons')
             ->setElement('A')
+	        ->setAttr('href','javascript:void(0)')
             ->setClass('atk-button')
             ->setHtml('<span class="icon-search"></span>')
             ->js('click', $this->js()->submit());
