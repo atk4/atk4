@@ -29,6 +29,7 @@ class jQuery_Chain extends AbstractModel {
     public $preventDefault=false;
     public $base='';
     public $debug=false;
+    public $univ_called=false;
     function __call($name,$arguments){
         if($arguments){
             $a2=$this->_flattern_objects($arguments,true);
