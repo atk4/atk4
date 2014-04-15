@@ -8,8 +8,8 @@
         {header}
         thead
             {cols}{col}
-            th
-                {$descr} {$sort}
+            th(id="{$sortid}")
+                {$descr} {sort}<span class="{$sorticon}"></span>{/}
             {/}{/}
         {/}
         {$subheader}
