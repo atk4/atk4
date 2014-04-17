@@ -56,17 +56,17 @@ class App_Admin extends App_Frontend {
         }
         parent::initLayout();
 
-        if(!$this->pathfinder->sandbox){
+        if(!$this->pathfinder->sandbox && !$this->app->getConfig('production',false)){
             $this->menu->addItem(array('Install Developer Toools','icon'=>'tools'),'sandbox');
         }
     }
 
     function page_sandbox($p){
         $p->addCrumb('Install Developer Tools');
-        $p->add('P')->set('Development is more productive when Agile Toolkit 4.3 developer tools are installed.
-            Agile Toolkit can install them automatically for you.');
 
-        $p->add('Button')->set('Install Now')
+        $v=$p->add('View',null,null,array('view/developer-tools'));
+
+        $v->add('Button')->set('Install Now')
             ->addClass('atk-swatch-green');
     }
 
