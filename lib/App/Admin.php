@@ -33,8 +33,8 @@ class App_Admin extends App_Frontend {
         $this->menu->swatch='ink';
 
 
-        $m=$this->layout->addFooter('Menu_Horizontal');
-        $m->addItem('foobar');
+        //$m=$this->layout->addFooter('Menu_Horizontal');
+        //$m->addItem('foobar');
 
         $this->add('jUI');
 
