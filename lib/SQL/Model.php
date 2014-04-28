@@ -676,7 +676,7 @@ class SQL_Model extends Model {
 
         // Performs the actual database changes. Throw exceptions if problem occurs
         $this->hook('beforeModify',array($modify));
-        if($modify->args['set'])$modify->do_update();
+        if($modify->args['set'])$modify->update();
 
         if($this->dirty[$this->id_field]){
             $this->id=$this->get($this->id_field);
