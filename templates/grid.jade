@@ -9,7 +9,11 @@
         thead
             {cols}{col}
             th(id="{$sortid}")
-                {$descr} {sort}<span class="{$sorticon}"></span>{/}
+                a(href="javascript:void(0)")
+                    {$descr}
+                    {sort}
+                    span(class="{$sorticon}")
+                    {/}
             {/}{/}
         {/}
         {$subheader}

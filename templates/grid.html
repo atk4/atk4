@@ -1,4 +1,5 @@
-<div id="{$_name}" class="atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}<div class="atk-box-small {$pannel_class}">{$quick_search}<div class="atk-actions">{$grid_buttons}</div></div>{Pannel}<table>{header}<thead>{cols}{col}<th id="{$sortid}">{$descr} {sort}<span class="{$sorticon}"></span>{/}</th>{/}{/}</thead>{/}
+<div id="{$_name}" class="atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}<div class="atk-box-small {$pannel_class}">{$quick_search}<div class="atk-actions">{$grid_buttons}</div></div>{Pannel}<table>{header}<thead>{cols}{col}<th id="{$sortid}"><a href="javascript:void(0)">{$descr}
+{sort}<span class="{$sorticon}"></span>{/}</a></th>{/}{/}</thead>{/}
 {$subheader}<tbody>{rows}{row}<tr data-id="{$row_id}" class="{$odd_even}">{cols}{col}
 <td {$tdparam}>
 {$content}
