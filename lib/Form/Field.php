@@ -59,7 +59,7 @@ abstract class Form_Field extends AbstractView {
         $form->addHook('loadPOST',$this);
         $form->addHook('validate',$this);
         $this->form=$form;
-        $this->form->data[$this->short_name] = $this->value;
+        $this->form->data[$this->short_name] = ($this->value===null ?: $this->default_value);
         $this->value =& $this->form->data[$this->short_name];
         return $this;
     }
