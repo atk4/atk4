@@ -27,7 +27,7 @@ class Form_Field_Checkbox extends Form_Field {
     function getInput($attr=array()){
         $this->template->trySet('field_caption','');
         $this->template->tryDel('label_container');
-        if(strpos('<',$this->caption)!==false){
+        if($this->caption && strpos('<',$this->caption)!==false){
             // HTML in label
             $label=$this->caption;
         }else{

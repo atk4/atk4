@@ -1,0 +1,14 @@
+#!/bin/sh
+
+git=`which git`
+[ -x "$git" ] || { echo "Could not find command-line 'git' on your system. Try manual install."; exit 1; }
+[ `ls` ] && { echo "There are files in your current folder. Go to an empty folder."; exit 2; }
+git clone -b 4.3 https://github.com/atk4/atk4.git .
+rm -rf .git
+git init
+git add .
+git commit -m "Initial Commit"
+
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+
