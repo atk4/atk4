@@ -39,7 +39,7 @@ abstract class Menu_Advanced extends View {
         }
 
         if($action){
-            if(is_string($action)){
+            if(is_string($action) || is_array($action) || is_object($action)){
                 $i->template->set('url',$this->api->url($action));
             }else{
                 $this->on('click',$action);
@@ -103,7 +103,7 @@ abstract class Menu_Advanced extends View {
         return $this->addItem($label,$page);
 
     }
-    function addLabel($label){ 
+    function addLabel($label){
         return $this->addTitle($label);
     }
 

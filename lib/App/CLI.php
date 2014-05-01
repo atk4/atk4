@@ -2,7 +2,7 @@
 /**
  * Base class for Command-Line Applications. The purpose of Application class
  * is to initialize all the other classes and aid their connectivity. API
- * class can be accessed from any object through $this->api property. 
+ * class can be accessed from any object through $this->api property.
  *
  * API classes are derrived from AbstractView because normally they would have
  * a template and will be able to render themselves consistently to any other
@@ -30,14 +30,14 @@ class App_CLI extends AbstractView
      * a more advanced connectivity or multiple connections, you can manually
      * initialize more database connections.
      *
-     * @see dbConnect()  
+     * @see dbConnect()
      */
     public $db=null;
 
     /**
      * App_CLI implements a API for accessing your application configuration.
      * Once configuration file is read, data is saved inside this property.
-     * 
+     *
      * @see getConfig()
      * @see readConfig()
      */
@@ -126,7 +126,7 @@ class App_CLI extends AbstractView
      * methods. All the lines referencing $pr myst be prefixed with the
      * 4-symbol sequence "/ ** /" (no spaces). If you want to speed up Agile
      * Toolkit further, you can eliminate all lines started with this sequence
-     * from your source code. 
+     * from your source code.
      */
     /**/public $pr;
 
@@ -142,7 +142,7 @@ class App_CLI extends AbstractView
      * control. This variable defines the maximum length of the object's $name.
      * Be mindful that some objects will concatinate theri name with fields,
      * so the maximum letgth of GET argument names can exceed this value by
-     * the length of your field. 
+     * the length of your field.
      *
      * We recommend you to increase SUHOSIN get limits if you encounter any
      * problems. Set this value to "false" to turn off name shortening.
@@ -225,7 +225,7 @@ class App_CLI extends AbstractView
     }
     // }}}
 
-    // {{{ Management of Global Methods 
+    // {{{ Management of Global Methods
     /**
      * Agile Toolkit objects allow method injection. This is quite similar
      * to technique used in JavaScript:
@@ -233,7 +233,7 @@ class App_CLI extends AbstractView
      *     obj.test = function() { .. }
      *
      * All non-existant method calls on all Agile Toolkit objects will be
-     * tried against local table of registered methods and then against 
+     * tried against local table of registered methods and then against
      * global registered methods.
      *
      * addGlobalmethod allows you to register a globally-recognized for all
@@ -257,7 +257,7 @@ class App_CLI extends AbstractView
         }
         $this->addHook('global-method-'.$name, $callable);
     }
-    /** 
+    /**
      * Returns if a global method with such name was defined
      *
      * @param string $name Name of the method
@@ -320,6 +320,12 @@ class App_CLI extends AbstractView
             // we receive URL
             return $page->setArguments($arguments);
         }
+        if(is_array($page)){
+            $p=$page[0];
+            unset($page[0]);
+            $arguments=$page;
+            $page=$p;
+        }
         $url=$this->add('URL');
         unset($this->elements[$url->short_name]);   // garbage collect URLs
         if(strpos($page,'http://')===0 || strpos($page,'https://')===0) $url->setURL($page);
@@ -360,10 +366,10 @@ class App_CLI extends AbstractView
     }
     // }}}
 
-    // {{{ Configuration File Handling 
+    // {{{ Configuration File Handling
 
     /**
-     * readAllConfig - will include all files as they are defined in 
+     * readAllConfig - will include all files as they are defined in
      * $this->config_files from folder $config_location
      */
     function readAllConfig() {
@@ -481,7 +487,7 @@ class App_CLI extends AbstractView
         if($addon=='atk'){
             if(
                 version_compare($v,'4.2')<0 &&
-                version_compare($v,'4.1.4')>=0 
+                version_compare($v,'4.1.4')>=0
             ){
                 $this->add('Controller_Compat');
                 return true;
@@ -515,10 +521,10 @@ class App_CLI extends AbstractView
      *
      * Sample input:  "Hello, Dear Jon!"
      * Sample output: "Hello_Dear_Jon"
-     * 
+     *
      * @param string $name      String to process
      * @param string $separator Character acting as separator
-     * 
+     *
      * @return string           Normalized string
      */
     function normalizeName($name, $separator = '_')
@@ -540,10 +546,10 @@ class App_CLI extends AbstractView
      * Class name can have namespaces and they are treated prefectly.
      *
      * Example: normalizeClassName('User','Model') == 'Model_User';
-     * 
+     *
      * @param string|object $name   Name of class or object
      * @param string        $prefix Optional prefix for class name
-     * 
+     *
      * @return string|object Full, normalized class name or received object
      */
     function normalizeClassName($name, $prefix = null)
