@@ -39,7 +39,7 @@ abstract class Menu_Advanced extends View {
         }
 
         if($action){
-            if(is_string($action) || is_array($action) || is_object($action)){
+            if(is_string($action) || is_array($action) || $action instanceof URL){
                 $i->template->set('url',$this->api->url($action));
             }else{
                 $this->on('click',$action);
