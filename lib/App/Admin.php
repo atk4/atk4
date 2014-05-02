@@ -79,7 +79,11 @@ class App_Admin extends App_Frontend {
         if (!$this->controller_install_addon) {
             $this->controller_install_addon = $this->add('sandbox\\Controller_InstallAddon');
         }
-        return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
+        
+        if ($this->controller_install_addon && $this->controller_install_addon->getSndBoxAddonReader())
+            return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
+        
+        return array();
     }
 
     function getInitiatedAddons($addon_api_name=null) {
