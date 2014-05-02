@@ -29,7 +29,8 @@ class App_REST extends App_CLI {
 
             $class = "endpoint_" . $this->page;
             $this->endpoint = new $class();
-            $this->endpoint->api = $this;
+            $this->endpoint->app = $this;
+            $this->endpoint->api = $this; // compatibility
 
             $raw_post = file_get_contents("php://input");
             try {
@@ -44,6 +45,9 @@ class App_REST extends App_CLI {
                         exit;
 
                     case'POST':
+                        echo json_encode($this->endpoint->insert($_POST));
+                        exit;
+                    case'PUT':
                         echo json_encode($this->endpoint->save($_POST));
                         exit;
                     case'DELETE':
