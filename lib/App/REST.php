@@ -54,8 +54,12 @@ class App_REST extends App_CLI
      */
     public function encodeOutput($data)
     {
+
+        // TODO - use HTTP_ACCEPT here ?
+        //var_Dump($_SERVER['HTTP_ACCEPT']);
+
         if ($_GET['format'] == 'xml') {
-            throw $this->excception('only JSON format is supported');
+            throw $this->excception('only JSON format is supported', null, 406);
         }
         header('Content-type: application/json');
         echo json_encode($data);
@@ -74,18 +78,23 @@ class App_REST extends App_CLI
 
             $this->pm->base_path = '/';
 
-            $class = "endpoint_" . $this->page;
-            $this->endpoint = new $class();
-            $this->endpoint->app = $this;
-            $this->endpoint->api = $this; // compatibility
 
-            $raw_post = file_get_contents("php://input");
             try {
+
+                $class = "endpoint_" . $this->page;
+                $this->endpoint = $this->add($class);
+                $this->endpoint->app = $this;
+                $this->endpoint->api = $this; // compatibility
+
+                $raw_post = file_get_contents("php://input");
+                if ($raw_post && $raw_post[0]=='{') {
+                    $_POST=json_decode($raw_post, true);
+                }
 
                 $method=strtolower($_SERVER['REQUEST_METHOD']);
                 if($_GET['method'])$method.='_'.$_GET['method'];
-                if (!$this->endpoint->methodExists($method)) {
-                    throw $this->exception('Method does not exist for this endpoint')
+                if (!$this->endpoint->hasMethod($method)) {
+                    throw $this->exception('Method does not exist for this endpoint', null, 404)
                         ->addMoreInfo('method', $method)
                         ->addMoreInfo('endpoint', $this->endpoint)
                         ;
@@ -96,13 +105,15 @@ class App_REST extends App_CLI
 
             } catch (Exception $e) {
                 header('HTTP/1.1 500 Internal Server Error');
-                var_Dump($e->getMessage());
                 $error = array(
                     'error'=>$e->getMessage(),
                     'type'=>get_class($e),
                     'more_info'=>$e instanceof BaseException ? $e->more_info:null
                 );
-                echo json_encode($error);
+                array_walk_recursive($error, function (&$item, $key) {
+                    if (is_object($item)) $item=(string)$item;
+                });
+                echo json_encode($error, null);
                 exit;
             }
 

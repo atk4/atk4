@@ -4,7 +4,7 @@
  */
 
 // @codingStandardsIgnoreStart because REST is acronym
-class Endpoint_REST
+class Endpoint_REST extends AbstractModel
 {
 // @codingStandardsIgnoreEnd
 
@@ -24,10 +24,22 @@ class Endpoint_REST
     public $app;
     public $api;
 
+
+    /**
+     * init
+     *
+     * @return void
+     */
+    function init()
+    {
+        parent::init();
+        $this->setModel($this->_model());
+    }
+
     /**
      * [_authenticate description]
      *
-     * @return [type] [description]
+     * @return void
      */
     public function _authenticate()
     {
@@ -80,9 +92,10 @@ class Endpoint_REST
     }
 
     /**
-     * Method returns instance of the model we will operate on.
+     * Method returns new instance of the model we will operate on. Instead of
+     * using this method, you can use $this->model instead
      *
-     * @return [type] [description]
+     * @return Model [description]
      */
     protected function _model()
     {
@@ -175,7 +188,7 @@ class Endpoint_REST
      */
     public function get()
     {
-        $m=$this->_model();
+        $m=$this->model;
         if ($m->loaded()) {
             if(!$this->allow_list_one)throw $this->exception('Loading is not allowed');
 
@@ -188,25 +201,33 @@ class Endpoint_REST
     }
 
     /**
+     * see get()
+     *
+     * @return [type] [description]
+     */
+    public function head()
+    {
+        return $this->get();
+    }
+
+    /**
      * [insert description]
      *
      * @param [type] $data [description]
      *
      * @return [type]       [description]
      */
-    public function insert($data)
+    public function post($data)
     {
-        $m=$this->_model();
+        $m=$this->model;
 
         if(!$this->allow_add)throw $this->exception('Adding is not allowed');
 
         if($m->loaded()) throw $this->exception('Not a valid request for this resource URL');
 
-        var_dump($data);
-        exit;
         $data=$this->_input($data, $this->allow_add);
 
-        return $this->_outputOne($m->set($data)->debug()->save()->get());
+        return $this->_outputOne($m->set($data)->save()->get());
     }
 
     /**
@@ -216,9 +237,9 @@ class Endpoint_REST
      *
      * @return [type]       [description]
      */
-    public function save($data)
+    public function put($data)
     {
-        $m=$this->_model();
+        $m=$this->model;
 
         if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
 
@@ -226,7 +247,20 @@ class Endpoint_REST
 
         $data=$this->_input($data, $this->allow_edit);
 
+
         return $this->_outputOne($m->set($data)->save()->get());
+    }
+
+    /**
+     * See put()
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type]       [description]
+     */
+    public function patch($data)
+    {
+        return $this->put($data);
     }
 
     /**
@@ -238,7 +272,7 @@ class Endpoint_REST
     {
         if(!$this->allow_delete)throw $this->exception('Deleting is not allowed');
 
-        $m=$this->_model();
+        $m=$this->model;
         if(!$m->loaded())throw $this->exception('Cowardly refusing to delete all records');
 
         $m->delete();
