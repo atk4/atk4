@@ -253,7 +253,7 @@ class TMail_Transport_DBStore extends TMail_Transport {
     }
 }
 
-class TMail_Template extends SMLite {
+class TMail_Template extends SMlite {
     public $template_type='mail';
     function getDefaultSettings(){
         /*
