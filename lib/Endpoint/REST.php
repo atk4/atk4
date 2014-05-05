@@ -2,7 +2,13 @@
 /**
  * Implementation of RESTful endpoint for App_REST
  */
-class Endpoint_REST {
+
+// @codingStandardsIgnoreStart because REST is acronym
+class Endpoint_REST
+{
+// @codingStandardsIgnoreEnd
+
+    public $doc_url='app/rest';
 
     public $model_class=null;
     public $user_id_field='user_id';
@@ -18,19 +24,26 @@ class Endpoint_REST {
     public $app;
     public $api;
 
-
-    public function _authenticate() {
+    /**
+     * [_authenticate description]
+     *
+     * @return [type] [description]
+     */
+    public function _authenticate()
+    {
         // Verifies user authentication data
         if(!$this->authenticate)return;
 
-        if($t=$_GET['token']){
+        if ($t=$_GET['token']) {
+
             $guid= $this->_hubid_auth($t);
-            $m=$this->app->add('Model_User')->loadBy('hub_guid',$guid);
+            $m=$this->app->add('Model_User')->loadBy('hub_guid', $guid);
+
             return $this->user = $m;
 
-        }elseif ($u=$_GET['username']) {
+        } elseif ($u=$_GET['username']) {
             $p=$_GET['password'];
-        }else{
+        } else {
 
             if (!isset($_SERVER['PHP_AUTH_USER'])) {
 
@@ -42,19 +55,19 @@ class Endpoint_REST {
                 exit;
             }
 
-	    $u=$_SERVER['PHP_AUTH_USER'];
-	    $p=$_SERVER['PHP_AUTH_PW'];
+            $u=$_SERVER['PHP_AUTH_USER'];
+            $p=$_SERVER['PHP_AUTH_PW'];
 
         }
 
-        if($_SERVER['PHP_X_VEN_AUTH']) {
+        if ($_SERVER['PHP_X_VEN_AUTH']) {
             throw $this->exception('Not Implemented');
         }
 
         $auth=$this->app->add('Controller_VenAuth');
-        $result = $auth->verifyCredentials($u,$p);
+        $result = $auth->verifyCredentials($u, $p);
 
-        if($result === false){
+        if ($result === false) {
             //throw $this->exception('Authentication wrong');
 
             header('WWW-Authenticate: Basic realm="ATK4 REST API"');
@@ -66,18 +79,24 @@ class Endpoint_REST {
         $this->user = $auth->model;
     }
 
-    protected function _model(){
+    /**
+     * Method returns instance of the model we will operate on.
+     *
+     * @return [type] [description]
+     */
+    protected function _model()
+    {
         // Based od authentication data, return a valid model
         if(!$this->model_class)throw $this->exception('Must have model');
 
         $m=$this->app->add('Model_'.$this->model_class);
-        if($this->user_id_field && $this->authenticate){
+        if ($this->user_id_field && $this->authenticate) {
             // if not authenticated, blow up
-            $m->addCondition($this->user_id_field,$this->user->id);
+            $m->addCondition($this->user_id_field, $this->user->id);
         }
 
         $id=$_GET['id'];
-        if(!is_null($id)){
+        if (!is_null($id)) {
             $m->load($id);
         }
 
@@ -85,33 +104,59 @@ class Endpoint_REST {
 
     }
 
-    protected function _outputOne($data) {
-
-        if($data['_id']) {
-            $data = array('id'=>(string)$data['_id'])+$data;
+    /**
+     * Generic method for returning single record item of data, which can be
+     * used for filtering or cleaning up.
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type] [description]
+     */
+    protected function _outputOne($data)
+    {
+        if ($data['_id']) {
+            $data = array('id'=>(string) $data['_id'])+$data;
         }
         unset($data['_id']);
 
-        foreach($data as $key=>$val){
-            if($val instanceof MongoID) {
-                $data[$key]=(string)$val;
+        foreach ($data as $key => $val) {
+            if ($val instanceof MongoID) {
+                $data[$key]=(string) $val;
             }
         }
 
         return $data;
     }
 
-    protected function _outputMany($data) {
+    /**
+     * Generic outptu filtering method for multiple records of data
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type] [description]
+     */
+    protected function _outputMany($data)
+    {
         $output = array();
-        foreach($data as $row) {
+        foreach ($data as $row) {
             $output[] = $this->_outputOne($row);
         }
+
         return $output;
     }
 
-    protected function _input($data,$filter=true){
+    /**
+     * Filtering input data
+     *
+     * @param type    $data   [description]
+     * @param boolean $filter [description]
+     *
+     * @return [type]          [description]
+     */
+    protected function _input($data, $filter = true)
+    {
         // validates input
-        if(is_array($filter)) {
+        if (is_array($filter)) {
             $data = array_intersect_key($my_array, array_flip($allowed));
         }
 
@@ -123,42 +168,74 @@ class Endpoint_REST {
         return $data;
     }
 
-
-    function get(){
+    /**
+     * [get description]
+     *
+     * @return [type] [description]
+     */
+    public function get()
+    {
         $m=$this->_model();
-        if($m->loaded()){
+        if ($m->loaded()) {
             if(!$this->allow_list_one)throw $this->exception('Loading is not allowed');
+
             return $this->_outputOne($m->get());
         }
 
         if(!$this->allow_list)throw $this->app->exception('Listing is not allowed');
+
         return $this->_outputMany($m->setLimit(100)->getRows());
     }
 
-    function insert($data){
+    /**
+     * [insert description]
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type]       [description]
+     */
+    public function insert($data)
+    {
         $m=$this->_model();
 
         if(!$this->allow_add)throw $this->exception('Adding is not allowed');
 
         if($m->loaded()) throw $this->exception('Not a valid request for this resource URL');
 
-        $data=$this->_input($data,$this->allow_add);
+        var_dump($data);
+        exit;
+        $data=$this->_input($data, $this->allow_add);
 
-        return $this->_outputOne($m->set($data)->save()->get());
+        return $this->_outputOne($m->set($data)->debug()->save()->get());
     }
-    function save($data){
+
+    /**
+     * [save description]
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type]       [description]
+     */
+    public function save($data)
+    {
         $m=$this->_model();
 
         if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
 
         if(!$this->allow_edit)throw $this->exception('Editing is not allowed');
 
-        $data=$this->_input($data,$this->allow_edit);
+        $data=$this->_input($data, $this->allow_edit);
 
         return $this->_outputOne($m->set($data)->save()->get());
     }
 
-    function delete(){
+    /**
+     * [delete description]
+     *
+     * @return [type] [description]
+     */
+    public function delete()
+    {
         if(!$this->allow_delete)throw $this->exception('Deleting is not allowed');
 
         $m=$this->_model();
