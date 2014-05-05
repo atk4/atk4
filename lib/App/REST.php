@@ -6,12 +6,22 @@
  * to enhance and make it super simple to create an awesome API for
  * your existing application.
  */
-class App_REST extends App_CLI {
+// @codingStandardsIgnoreStart because REST is acronym
+class App_REST extends App_CLI
+{
+// @codingStandardsIgnoreEnd
 
     public $doc_page='app/rest';
 
     public $page;
-    function init(){
+
+    /**
+     * init
+     *
+     * @return [type] [description]
+     */
+    public function init()
+    {
         parent::init();
         try {
             // Extra 24-hour protection
@@ -25,7 +35,7 @@ class App_REST extends App_CLI {
             // for example http://api.example.com/v1/user
             //
             // This way version is accessible anywhere from $this->app->version
-            list($this->version,$junk)=explode('_',$this->page,2);
+            list($this->version, $junk)=explode('_', $this->page, 2);
 
             // Add-ons may define additional endpoints for your API, but
             // you must activate them explicitly.
@@ -35,21 +45,32 @@ class App_REST extends App_CLI {
             $this->caughtException($e);
         }
     }
-    function encodeOutput($data){
-        switch($_GET['format']){
-            case 'xml':
-                throw $this->excception('only JSON format is supported');
-            case 'json':
-            default:
-                header('Content-type: application/json');
-                echo json_encode($data);
-                exit;
+    /**
+     * Output will be properly fromatted
+     *
+     * @param [type] $data [description]
+     *
+     * @return [type]       [description]
+     */
+    public function encodeOutput($data)
+    {
+        if ($_GET['format'] == 'xml') {
+            throw $this->excception('only JSON format is supported');
         }
+        header('Content-type: application/json');
+        echo json_encode($data);
+        exit;
     }
-    function main(){
+    /**
+     * main
+     *
+     * @return [type] [description]
+     */
+    public function main()
+    {
         try {
-            $file = $this->api->locatePath('endpoint', str_replace('_','/',$this->page) . '.php');
-            include_once($file);
+            $file = $this->api->locatePath('endpoint', str_replace('_', '/', $this->page) . '.php');
+            include_once $file;
 
             $this->pm->base_path = '/';
 
@@ -63,10 +84,10 @@ class App_REST extends App_CLI {
 
                 $method=strtolower($_SERVER['REQUEST_METHOD']);
                 if($_GET['method'])$method.='_'.$_GET['method'];
-                if(!$this->endpoint->methodExists($method)){
+                if (!$this->endpoint->methodExists($method)) {
                     throw $this->exception('Method does not exist for this endpoint')
-                        ->addMoreInfo('method',$method)
-                        ->addMoreInfo('endpoint',$this->endpoint)
+                        ->addMoreInfo('method', $method)
+                        ->addMoreInfo('endpoint', $this->endpoint)
                         ;
                 }
 
@@ -84,7 +105,6 @@ class App_REST extends App_CLI {
                 echo json_encode($error);
                 exit;
             }
-
 
         } catch (Exception $e) {
             $this->caughtException($e);
