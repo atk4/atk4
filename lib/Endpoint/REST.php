@@ -11,6 +11,9 @@ class Endpoint_REST extends AbstractModel
     public $doc_url='app/rest';
 
     public $model_class=null;
+    public $id_field=null;
+
+
     public $user_id_field='user_id';
     public $user=null;  // authenticated user
 
@@ -79,7 +82,11 @@ class Endpoint_REST extends AbstractModel
 
         $id=$_GET['id'];
         if (!is_null($id)) {
-            $m->load($id);
+            if ($this->id_field) {
+                $m->loadBy($this->id_field, $id);
+            } else {
+                $m->load($id);
+            }
         }
 
         return $m;
