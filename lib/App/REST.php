@@ -122,7 +122,7 @@ class App_REST extends App_CLI
                 $this->encodeOutput($this->endpoint->$method($args));
 
             } catch (Exception $e) {
-                http_response_code($e->getCode());
+                http_response_code($e->getCode()?:500);
 
                 $error = array(
                     'error'=>$e->getMessage(),
