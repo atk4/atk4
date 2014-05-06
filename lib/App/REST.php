@@ -72,6 +72,8 @@ class App_REST extends App_CLI
             exit;
         }
         header('Content-type: application/json');
+
+        if($data===null)$data=array();
         echo json_encode($data);
         exit;
     }
