@@ -3,7 +3,7 @@
  * A basic authentication class. Include inside your API or
  * on a page. You may have multiple Auth instances. Supports
  * 3rd party plugins.
- * 
+ *
  * @link http://agiletoolkit.org/doc/auth
 *//*
 ==ATK4===================================================
@@ -230,7 +230,7 @@ class Auth_Basic extends AbstractController {
             $this->memorizeURL();
 
             // Brings up additional verification methods, such as cookie
-            // authentication, token or OpenID. In case of successful login, 
+            // authentication, token or OpenID. In case of successful login,
             // breakHook($user_id) must be used
             $user_id=$this->hook('check');
             if(!is_array($user_id) && !is_bool($user_id) && $user_id){
@@ -275,7 +275,7 @@ class Auth_Basic extends AbstractController {
     /**
      * This function verifies credibility of supplied authenication data.
      * It will search based on user and verify the password. It's also
-     * possible that the function will re-hash user password with 
+     * possible that the function will re-hash user password with
      * updated hash.
      *
      * if default authentication method is used, the function will
@@ -500,7 +500,7 @@ class Auth_Basic extends AbstractController {
         $this->info=false;
         return $this;
     }
-    /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form, 
+    /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form,
      * add template/default/page/login.html */
     function createForm($page){
         $form=$page->add('Form_Stacked',array('nolabels'=>true));
@@ -522,7 +522,7 @@ class Auth_Basic extends AbstractController {
 
         return $form;
     }
-    /** Do not override this function. */ 
+    /** Do not override this function. */
     function showLoginForm(){
 
         if($this->api->layout && $this->login_layout_class){
@@ -547,7 +547,7 @@ class Auth_Basic extends AbstractController {
         $f=$this->form;
         if($f->isSubmitted()){
             $id = $this->verifyCredentials($f->get('username'), $f->get('password'));
-            if($id){             
+            if($id){
                 $this->loginByID($id);
                 $this->loggedIn($f->get('username'),$f->get('password'));
                 exit;
