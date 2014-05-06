@@ -447,9 +447,11 @@ class Auth_Basic extends AbstractController {
         $this->info=$this->model->get();
         $this->info['username']=$this->info[$this->login_field];
 
-        $this->memorize('info',$this->info);
-        $this->memorize('class',get_class($this->model));
-        $this->memorize('id',$this->model->id);
+        if ($this->app->hasMethod('initializeSession')) {
+            $this->memorize('info',$this->info);
+            $this->memorize('class',get_class($this->model));
+            $this->memorize('id',$this->model->id);
+        }
 
         $this->hook('login');
     }
