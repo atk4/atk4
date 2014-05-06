@@ -114,7 +114,8 @@ class App_REST extends App_CLI
                 $this->encodeOutput($this->endpoint->$method($_POST));
 
             } catch (Exception $e) {
-                header('HTTP/1.1 500 Internal Server Error');
+                http_response_code($e->getCode());
+
                 $error = array(
                     'error'=>$e->getMessage(),
                     'type'=>get_class($e),
@@ -123,8 +124,7 @@ class App_REST extends App_CLI
                 array_walk_recursive($error, function (&$item, $key) {
                     if (is_object($item)) $item=(string)$item;
                 });
-                echo json_encode($error, null);
-                exit;
+                $this->encodeOutput($error, null);
             }
 
         } catch (Exception $e) {
