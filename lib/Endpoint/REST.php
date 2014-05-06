@@ -152,7 +152,7 @@ class Endpoint_REST extends AbstractModel
     {
         // validates input
         if (is_array($filter)) {
-            $data = array_intersect_key($my_array, array_flip($allowed));
+            $data = array_intersect_key($data, array_flip($allowed));
         }
 
         unset($data['id']);
