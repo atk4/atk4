@@ -13,6 +13,7 @@ class Endpoint_REST extends AbstractModel
     public $model_class=null;
     public $user_id_field='user_id';
     public $user=null;  // authenticated user
+
     public $authenticate=null;
 
     public $allow_list=true;
@@ -33,65 +34,31 @@ class Endpoint_REST extends AbstractModel
     function init()
     {
         parent::init();
+        // first let's see if we authenticate
+        if ($this->authenticate === true || ($this->authenticate !== false && ($this->hasMethod('authenticate') || $this->app->hasMethod('authenticate')))) {
+            $result=false;
+            if ($this->hasMethod('authenticate')) {
+                $result = $this->authenticate();
+            }
+
+            if (!$result && $this->app->hasMethod('authenticate')) {
+                $result = $this->app->authenticate();
+            }
+
+            if (!$result) {
+                throw $this->exception('Authentication Failed', null, 403);
+            }
+
+            if (is_object($result)) {
+                $this->user=$result;
+            }
+        }
+
         $m=$this->_model();
+
         if($m)$this->setModel($m);
     }
 
-    /**
-     * [_authenticate description]
-     *
-     * @return void
-     */
-    public function _authenticate()
-    {
-        // Verifies user authentication data
-        if ($this->authenticate===false) return;
-        if (!$this->authenticate) return;
-
-        if ($t=$_GET['token']) {
-
-            $guid= $this->_hubid_auth($t);
-            $m=$this->app->add('Model_User')->loadBy('hub_guid', $guid);
-
-            return $this->user = $m;
-
-        } elseif ($u=$_GET['username']) {
-            $p=$_GET['password'];
-        } else {
-
-            if (!isset($_SERVER['PHP_AUTH_USER'])) {
-
-                //throw $this->exception('Use Authenticaiton');
-
-                header('WWW-Authenticate: Basic realm="ATK4 REST API"');
-                header('HTTP/1.0 401 Unauthorized');
-                echo 'Please use authentication authentication';
-                exit;
-            }
-
-            $u=$_SERVER['PHP_AUTH_USER'];
-            $p=$_SERVER['PHP_AUTH_PW'];
-
-        }
-
-        if ($_SERVER['PHP_X_VEN_AUTH']) {
-            throw $this->exception('Not Implemented');
-        }
-
-        $auth=$this->app->add('Controller_VenAuth');
-        $result = $auth->verifyCredentials($u, $p);
-
-        if ($result === false) {
-            //throw $this->exception('Authentication wrong');
-
-            header('WWW-Authenticate: Basic realm="ATK4 REST API"');
-            header('HTTP/1.0 401 Unauthorized');
-            echo 'Authenticaiton wrong';
-            exit;
-        }
-
-        $this->user = $auth->model;
-    }
 
     /**
      * Method returns new instance of the model we will operate on. Instead of
@@ -105,7 +72,7 @@ class Endpoint_REST extends AbstractModel
         if(!$this->model_class)return false;
 
         $m=$this->app->add('Model_'.$this->model_class);
-        if ($this->user_id_field && $this->authenticate) {
+        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false) {
             // if not authenticated, blow up
             $m->addCondition($this->user_id_field, $this->user->id);
         }
