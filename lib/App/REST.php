@@ -98,12 +98,18 @@ class App_REST extends App_CLI
                 $this->endpoint->app = $this;
                 $this->endpoint->api = $this; // compatibility
 
+                $method=strtolower($_SERVER['REQUEST_METHOD']);
                 $raw_post = file_get_contents("php://input");
+
                 if ($raw_post && $raw_post[0]=='{') {
-                    $_POST=json_decode($raw_post, true);
+                    $args=json_decode($raw_post, true);
+                } elseif ($method=='put') {
+                    parse_str($raw_post, $args);
+                } else {
+                    $args=$_POST;
                 }
 
-                $method=strtolower($_SERVER['REQUEST_METHOD']);
+
                 if($_GET['method'])$method.='_'.$_GET['method'];
                 if (!$this->endpoint->hasMethod($method)) {
                     throw $this->exception('Method does not exist for this endpoint', null, 404)
@@ -113,7 +119,7 @@ class App_REST extends App_CLI
                 }
 
                 // Perform the desired action
-                $this->encodeOutput($this->endpoint->$method($_POST));
+                $this->encodeOutput($this->endpoint->$method($args));
 
             } catch (Exception $e) {
                 http_response_code($e->getCode());
