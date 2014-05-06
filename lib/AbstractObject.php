@@ -458,7 +458,9 @@ abstract class AbstractObject
      */
     function memorize($key, $value)
     {
-        $this->app->initializeSession();
+        if (!session_id()) {
+            $this->app->initializeSession();
+        }
 
         if ($value instanceof Model) {
             unset($_SESSION['o'][$this->name][$key]);
@@ -481,8 +483,10 @@ abstract class AbstractObject
      */
     function learn($key, $default = null)
     {
-        $this->app->initializeSession(false);
-        
+        if (!session_id()) {
+            $this->app->initializeSession(false);
+        }
+
         if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
@@ -505,8 +509,10 @@ abstract class AbstractObject
      */
     function forget($key = null)
     {
-        $this->app->initializeSession();
-        
+        if (!session_id()) {
+            $this->app->initializeSession(false);
+        }
+
         if (is_null($key)) {
             unset ($_SESSION['o'][$this->name]);
             unset ($_SESSION['s'][$this->name]);
@@ -529,8 +535,11 @@ abstract class AbstractObject
      */
     function recall($key, $default = null)
     {
-        $this->app->initializeSession(false);
-        
+        if (!session_id()) {
+            $this->app->initializeSession(false);
+        }
+
+
         if (!isset($_SESSION['o'][$this->name][$key])
             || is_null($_SESSION['o'][$this->name][$key])
         ) {
