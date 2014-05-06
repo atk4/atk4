@@ -13,7 +13,7 @@ class Endpoint_REST extends AbstractModel
     public $model_class=null;
     public $user_id_field='user_id';
     public $user=null;  // authenticated user
-    public $authenticate=true;
+    public $authenticate=null;
 
     public $allow_list=true;
     public $allow_list_one=true;
@@ -33,7 +33,8 @@ class Endpoint_REST extends AbstractModel
     function init()
     {
         parent::init();
-        $this->setModel($this->_model());
+        $m=$this->_model();
+        if($m)$this->setModel($m);
     }
 
     /**
@@ -44,7 +45,8 @@ class Endpoint_REST extends AbstractModel
     public function _authenticate()
     {
         // Verifies user authentication data
-        if(!$this->authenticate)return;
+        if ($this->authenticate===false) return;
+        if (!$this->authenticate) return;
 
         if ($t=$_GET['token']) {
 
@@ -100,7 +102,7 @@ class Endpoint_REST extends AbstractModel
     protected function _model()
     {
         // Based od authentication data, return a valid model
-        if(!$this->model_class)throw $this->exception('Must have model');
+        if(!$this->model_class)return false;
 
         $m=$this->app->add('Model_'.$this->model_class);
         if ($this->user_id_field && $this->authenticate) {
@@ -125,8 +127,10 @@ class Endpoint_REST extends AbstractModel
      *
      * @return [type] [description]
      */
-    protected function _outputOne($data)
+    protected function outputOne($data)
     {
+        if(is_object($data))
+            $data=$data->get();
         if ($data['_id']) {
             $data = array('id'=>(string) $data['_id'])+$data;
         }
@@ -148,11 +152,15 @@ class Endpoint_REST extends AbstractModel
      *
      * @return [type] [description]
      */
-    protected function _outputMany($data)
+    protected function outputMany($data)
     {
+
+        if(is_object($data))
+            $data=$data->getRows();
+
         $output = array();
         foreach ($data as $row) {
-            $output[] = $this->_outputOne($row);
+            $output[] = $this->outputOne($row);
         }
 
         return $output;
@@ -189,15 +197,17 @@ class Endpoint_REST extends AbstractModel
     public function get()
     {
         $m=$this->model;
+        if(!$m)throw $this->exception('Specify model_class or define your method handlers');
+
         if ($m->loaded()) {
             if(!$this->allow_list_one)throw $this->exception('Loading is not allowed');
 
-            return $this->_outputOne($m->get());
+            return $this->outputOne($m->get());
         }
 
         if(!$this->allow_list)throw $this->app->exception('Listing is not allowed');
 
-        return $this->_outputMany($m->setLimit(100)->getRows());
+        return $this->outputMany($m->setLimit(100)->getRows());
     }
 
     /**
@@ -227,7 +237,7 @@ class Endpoint_REST extends AbstractModel
 
         $data=$this->_input($data, $this->allow_add);
 
-        return $this->_outputOne($m->set($data)->save()->get());
+        return $this->outputOne($m->set($data)->save()->get());
     }
 
     /**
@@ -248,7 +258,7 @@ class Endpoint_REST extends AbstractModel
         $data=$this->_input($data, $this->allow_edit);
 
 
-        return $this->_outputOne($m->set($data)->save()->get());
+        return $this->outputOne($m->set($data)->save()->get());
     }
 
     /**
