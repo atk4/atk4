@@ -2,12 +2,11 @@
 
 class Controller_Data_SQLite extends Controller_Data_SQL {
 
-    function dsql($model) {
+    function setSource($model, $data) {
+        // do nothing
+
         if (!$model->table) {
             throw $this->exception('$table property must be defined');
-        }
-        if ($model->dsql) {
-            return clone $model->dsql;
         }
 
         if ($model->app->db && $model->app->db=='sqlite'){
@@ -19,6 +18,13 @@ class Controller_Data_SQLite extends Controller_Data_SQL {
             $model->dsql = $model->app->db_sqlite;
         };
         $model->dsql->id_field = $model->id_field;
-        return clone $model->dsql;
+        $model->dsql->table($model->table);
+        return parent::setSource($model,$data);
+    }
+
+    function dsql($model)
+    {
+
+        return $model->dsql;
     }
 }
