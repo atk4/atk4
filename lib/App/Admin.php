@@ -32,7 +32,6 @@ class App_Admin extends App_Frontend {
         $this->menu = $this->layout->addMenu('Menu_Vertical');
         $this->menu->swatch='ink';
 
-
         //$m=$this->layout->addFooter('Menu_Horizontal');
         //$m->addItem('foobar');
 
@@ -54,12 +53,32 @@ class App_Admin extends App_Frontend {
         if ($this->pathfinder->sandbox) {
             $this->initAddons();
         }
+
+        $this->addLayout('mainMenu');
+
         parent::initLayout();
+
+        $this->initTopMenu();
+
 
         if(!$this->pathfinder->sandbox && !$this->app->getConfig('production',false)){
             $this->menu->addItem(array('Install Developer Toools','icon'=>'tools'),'sandbox');
         }
+
+        if(@$this->sandbox){
+            $this->sandbox->initLayout();
+        }
     }
+
+    function initTopMenu() {
+        $m=$this->layout->add('Menu_Horizontal',null,'Top_Menu');
+        //$m->addClass('atk-size-kilo');
+        $m->addItem('Admin');
+        $m->addItem('AgileToolkit');
+        $m->addItem('Documentation');
+    }
+
+
 
     function page_sandbox($p){
         $p->addCrumb('Install Developer Tools');
@@ -79,10 +98,11 @@ class App_Admin extends App_Frontend {
         if (!$this->controller_install_addon) {
             $this->controller_install_addon = $this->add('sandbox\\Controller_InstallAddon');
         }
-        
+
+
         if ($this->controller_install_addon && $this->controller_install_addon->getSndBoxAddonReader())
             return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
-        
+
         return array();
     }
 
@@ -93,6 +113,7 @@ class App_Admin extends App_Frontend {
         return $this->addons;
     }
     private function initAddons() {
+        return;
         foreach ($this->getInstalledAddons() as $addon) {
             $this->initAddon($addon);
         }
