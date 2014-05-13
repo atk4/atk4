@@ -206,23 +206,23 @@ class VirtualPage extends AbstractController
         }
         if(!$buttontext['descr'])$buttontext['descr']=$title?:ucwords(str_replace('_', ' ', $name));
 
-/*
+        $icon='';
         if($buttontext['icon']) {
             if($buttontext['icon'][0]!='<') {
-                $buttontext['icon']='<i class="icon-'.
+                $icon.='<i class="icon-'.
                     $buttontext['icon'].'"></i>';
+            }else{
+                $icon.=$buttontext['icon'];
             }
+            $icon.='&nbsp;';
         }
-        */
 
-        $grid->addColumn('button', $name, $buttontext?:$title);
-        /*
+        $grid->addColumn('template', $name, $buttontext?:$title)
             ->setTemplate(
                 '<button type="button" class="pb_'.$name.'">'.
-                    $buttontext['icon'].htmlspecialchars($buttontext['descr']).
+                    $icon.htmlspecialchars($buttontext['descr']).
                 '</button>'
             );
-            */
 
         $grid->columns[$name]['thparam'].=' style="width: 40px; text-align: center"';
 
