@@ -360,8 +360,8 @@ class App_CLI extends AbstractView
         echo "warning: $msg\n";
     }
     /** @obsolete */
-    function outputDebug($msg,$shift=0){
-        if($this->hook('output-debug',array($msg,$shift)))return true;
+    function outputDebug($object, $msg, $shift=0){
+        if($this->hook('output-debug',array($object, $msg,$shift)))return true;
         echo "debug: $msg\n";
     }
     // }}}
