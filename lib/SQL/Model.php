@@ -326,8 +326,8 @@ class SQL_Model extends Model {
                 }
                 // add each condition to OR expression (not models DSQL)
                 $f = $row[0];
-                $c = isset($row[1]) ? $row[1] : undefined;
-                $v = isset($row[2]) ? $row[2] : undefined;
+                $c = array_key_exists(1, $row) ? $row[1] : undefined;
+                $v = array_key_exists(2, $row) ? $row[2] : undefined;
 
                 // recursively calls addCondition method, but adds conditions
                 // to OR expression not models DSQL object
