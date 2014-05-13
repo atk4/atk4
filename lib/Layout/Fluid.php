@@ -19,6 +19,12 @@ class Layout_Fluid extends Layout_Basic {
         return array('layout/fluid');
     }
 
+    function init(){
+        parent::init();
+        $u=$this->add('Menu_Horizontal',null,'User_Menu');
+        $u->addMenu('John Smith')->addItem('Logout');
+    }
+
     function addHeader($class = 'Menu_Objective') {
         $this->header_wrap = $this->add('View',null,'Header',array('layout/fluid','Header'));
 

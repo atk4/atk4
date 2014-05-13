@@ -1,9 +1,20 @@
 <snippet>
 	<content><![CDATA[
 <?php
-class Model_${1:${TM_FILENAME/\.php//}} extends ${2:SQL_Model} {
+/**
+ * Model implementation
+ */
+class Model_${1:${TM_FILENAME/\.php//}} extends ${2:SQL_Model}
+{
 	public \$table="${1/(.*)/\L$1\E/g}";
-	function init(){
+
+	/**
+	 * init model
+	 *
+	 * @return void
+	 */
+	function init()
+	{
 		parent::init();
 		$3
 	}
@@ -12,5 +23,5 @@ class Model_${1:${TM_FILENAME/\.php//}} extends ${2:SQL_Model} {
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>model</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
-	<!-- <scope>source.python</scope> -->
+	<!-- <scope>source.php</scope> -->
 </snippet>

@@ -14,3 +14,7 @@ tests/log/
 *-ck.js
 
 *.codekit
+
+*.sublime-workspace
+
+public/atk4/css/style.css

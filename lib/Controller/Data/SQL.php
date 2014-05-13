@@ -55,7 +55,7 @@ class Controller_Data_SQL extends Controller_Data {
         foreach ($data as $key => $value) {
             $field = $model->getElement($key);
             $fieldTable = $field->table();
-            // I set the value only for the current model table. 
+            // I set the value only for the current model table.
             // The other values'll be save by field sql relation
             if ($model->isDirty($key) && $field && (is_null($fieldTable) || $fieldTable === $model->table_alias)) {
                 $dsql->set($field->actual() ? : $key, $field->sanitize($value));
@@ -78,7 +78,7 @@ class Controller_Data_SQL extends Controller_Data {
             }
         }
         //$id = '' . $id;
-        
+
         $model->tryLoad($id);
         if ($model->loaded()) {
             $this->api->db->commit();
@@ -102,7 +102,7 @@ class Controller_Data_SQL extends Controller_Data {
 
     function prefetchAll($model) {
         $dsql = $this->getDsqlFromModel($model);
-        
+
         $dsql->rewind();
         $model->_table[$this->short_name] = $dsql;
     }
@@ -153,7 +153,7 @@ class Controller_Data_SQL extends Controller_Data {
                     ->system(true) // ???
                     ->editable(false); // ???
             }
-            
+
             $fieldName = $field->short_name;
             if($field instanceof Field_SQL_Expression) {
                 // TODO: should we use expression in where?
@@ -191,7 +191,7 @@ class Controller_Data_SQL extends Controller_Data {
                 continue;
             }
 
-            if($el->system() && 
+            if($el->system() &&
                 !in_array($el->short_name, $actualFields))
             {
                 $actualFields[] = $el->short_name;
@@ -199,7 +199,7 @@ class Controller_Data_SQL extends Controller_Data {
             } elseif(in_array($el->short_name, $actualFields)) {
                 $this->updateQuery($model, $el, $dsql);
             }
-            
+
         }
         return $dsql;
     }

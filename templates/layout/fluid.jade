@@ -7,15 +7,21 @@
             .atk-bar.atk-cells.atk-cells-gutter-large
                 .atk-cell.atk-text-nowrap
                   a(href='{page}/{/}')
-                    img(src='{public}images/logo.png{/}')
+                    img(src='{public}images/logo.svg{/}' width="50px")
                 .atk-cell.atk-jackscrew
                     {Top_Menu}
                     | Top Menu
                     {/}
                 .atk-cell.atk-text-nowrap
-                    {User_Menu}
-                    | User Menu
-                    {/}
+                    {$Top_Actions}
+                .atk-cell.atk-text-nowrap
+                    .atk-cells.atk-cells-gutter-small
+                        .atk-cell.atk-text-reset
+                            img(src="http://sites.local.agiletech.ie/agiletoolkit-css/playground/temp/apples.jpg" width="32").atk-shape-rounded
+                        .atk-cell
+                            {User_Menu}
+                            | User Menu
+                            {/}
             {/}
     {/Header}
   .atk-layout-row.atk-layout-fluid
