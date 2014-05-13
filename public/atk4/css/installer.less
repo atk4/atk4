@@ -23,58 +23,79 @@
 
 
 // ==========================================================
-// General
-// ==========================================================
-
-@bodyBackground:       @atk-swatch-green;
-@margin:               1rem * @bodyBaseline;
-@cornerRadius:         3px;
-@siteWidth:            960px;
-
-
-// ==========================================================
 // Typography
 // ==========================================================
 
 @bodyFamily:           "Helvetica Neue", "Helvetica", @jui-ffDefault;
-@bodyColor:            #393d40;
-@bodySize:             1rem; // 16px
-@bodyBaseline:         1.5; // Perfect Fifth
+@bodyColor:            #000;
+@bodySize:             0.875rem; // 14px
+@bodyBaseline:         1.618; // Golden Section
 
-@headingColor:         #2b3033;
+@headingCase:          none; // Options: none, capitalize, uppercase, lowercase
+@headingColor:         #000;
 @headingFamily:        "Helvetica Neue", "Helvetica", @jui-ffDefault;
-@headingWeight:        400;
-@headingBaseline:      1.5; // Perfect Fifth
+@headingWeight:		   400;
+@headingBaseline:	   1.2; // Minor Third
+
+@fontScatter:          0.5; // Multiplier that affects difference between heading sizes
+
 
 // ==========================================================
-// Colors
+// Styles & Colors
 // ==========================================================
 
-@linkColor:            darken(@atk-swatch-green, 5%);
-@linkColorHover:       darken(@atk-swatch-green, 15%);
+@bodyBackground:       #fff;
 
-@borderStatic:         @atk-swatch-gray;
-@borderClickable:      #c1c1c1;
+@cornerRadius:         5px;
+
+@textSelect:           @atk-swatch-ink; // Text selection's color
+@textDimmed:           40%;
+
+@blur:                 5px; // Effect .atk-blur can be applied on any element.
+
+@borderStatic:         #e1e1e1;
+@borderClickable:      darken(@borderStatic, 10%);
 @borderOverlay:        darken(@borderStatic, 25%);
 
-@stateDefault:         #fff;
-@stateHover:           #f5f5f5;
-@stateActive:          #eee;
-
-@colorFocus:           blue; // (!)
-@colorLight:           #fff; // (!)
-@colorDark:            #000; // (!)
-
-@atk-swatch-gray:	   #e6f2ec;		.createSwatch(atk-swatch-gray);
+@atk-swatch-white:	   #ffffff;		.createSwatch(atk-swatch-white);
+@atk-swatch-gray:	   #f5f6f7;		.createSwatch(atk-swatch-gray);
 @atk-swatch-ink:       #1c2933;		.createSwatch(atk-swatch-ink);
 @atk-swatch-yellow:	   #ffcc00;		.createSwatch(atk-swatch-yellow);
+@atk-swatch-red:	   #f9451f;		.createSwatch(atk-swatch-red);
 @atk-swatch-green:     #00cc66;		.createSwatch(atk-swatch-green);
 @atk-swatch-blue:      #0095ff;		.createSwatch(atk-swatch-blue);
+@swatchText:           50%; // Text color sensitivity based on swatch
 
-@effectSuccess:        #ccffdb;
-@effectWarning:        #fcffcc;
-@effectDanger:         #ffcccc;
-@effectInfo:           #cceeff;
+@effectSuccess:        #25c425;
+@effectWarning:        #f7a600;
+@effectDanger:         #ff2d1a;
+@effectInfo:           #2bacd7;
+
+
+// ==========================================================
+// Components & Widgets
+// ==========================================================
+
+@linkColor:            darken(@atk-swatch-blue,10%);
+@linkColorHover:       darken(@linkColor,10%);
+
+@dialogOverlay:        fade(#000, 25%); // Color of modal dialog's overlay
+
+@tooltipColor:         fade(@atk-swatch-ink, 90%);
+
+@menuActive:           @atk-swatch-blue;
+
+@buttonDefault:        #fff;
+@buttonHover:          #f5f5f5;
+@buttonActive:         #eee;
+
+@boxColor:             #fff;
+
+@formMandatory:        #ff0000;
+
+@inputFocus:           @atk-swatch-blue;
+
+@popoverArrow:        12px;
 
 
 // ==========================================================

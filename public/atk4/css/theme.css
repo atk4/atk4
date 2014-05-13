@@ -4816,6 +4816,35 @@ h5,
 h6 {
   line-height: 1.2;
 }
+.atk-text-bold {
+  font-weight: bold;
+}
+.atk-text-normal {
+  font-weight: normal;
+  text-transform: normal;
+}
+.atk-text-dimmed {
+  color: #666666;
+}
+a:hover.atk-text-dimmed {
+  color: #575757;
+}
+.atk-text-nowrap {
+  white-space: nowrap;
+}
+.atk-text-reset {
+  font-size: 0;
+  line-height: 0;
+}
+.atk-text-baseline-reset {
+  line-height: 1;
+}
+.atk-text-ellipsis {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 figure img {
   display: block;
   height: auto;
@@ -5515,28 +5544,6 @@ a:focus {
   }
 }
 /* Bars, Tables, Tabs, Datepicker, Accordion  etc. */
-.atk-text-dimmed {
-  color: #666666;
-}
-a:hover.atk-text-dimmed {
-  color: #575757;
-}
-.atk-text-nowrap {
-  white-space: nowrap;
-}
-.atk-text-reset {
-  font-size: 0;
-  line-height: 0;
-}
-.atk-text-baseline-reset {
-  line-height: 1;
-}
-.atk-text-ellipsis {
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .atk-actions > * + * {
   margin-left: 0.5em;
 }
@@ -5597,17 +5604,26 @@ a:hover.atk-text-dimmed {
 .atk-cells-table > .atk-cells {
   display: table-row;
 }
-*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-large > .atk-cell + .atk-cell,
-*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-large > .atk-cells > .atk-cell + .atk-cell {
-  padding-left: 2em;
+*[class*=atk-cells-gutter] {
+  border-collapse: collapse;
+  border-style: hidden;
 }
-*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter > .atk-cell + .atk-cell,
-*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter > .atk-cells > .atk-cell + .atk-cell {
-  padding-left: 1em;
+*[class*=atk-cells-gutter].atk-cells > .atk-cell,
+*[class*=atk-cells-gutter].atk-cells-group > .atk-cells > .atk-cell {
+  border-color: transparent;
+  border-style: solid;
 }
-*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-small > .atk-cell + .atk-cell,
-*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-small > .atk-cells > .atk-cell + .atk-cell {
-  padding-left: 0.5em;
+*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-large > .atk-cell,
+*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-large > .atk-cells > .atk-cell {
+  border-width: 0 2em;
+}
+*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter > .atk-cell,
+*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter > .atk-cells > .atk-cell {
+  border-width: 0 1em;
+}
+*[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-small > .atk-cell,
+*[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-small > .atk-cells > .atk-cell {
+  border-width: 0 0.5em;
 }
 a[class*='atk-button'],
 button[class*='atk-button'],
@@ -5628,6 +5644,7 @@ input.ui-button {
   font-weight: bold;
   line-height: 1.618;
   padding: 0.5em 1em;
+  text-align: center;
   white-space: nowrap;
 }
 a[class*='atk-button']:hover,
@@ -5883,6 +5900,7 @@ ul[class*=atk-menu].atk-menu-vertical > li *[class*=atk-menu] {
   display: inline;
   font-weight: bold;
   padding: 0.2em 0.4em;
+  white-space: nowrap;
 }
 .atk-inline {
   display: inline-block;
