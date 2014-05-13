@@ -2,7 +2,7 @@
 /**
  * Addon Controller is used to help installation of your add-on. If your
  * add-on needs to perform some specific actions during the installation,
- * such as creating a symling for asset access or 
+ * such as creating a symling for asset access or
  */
 class Controller_Addon extends AbstractController {
 
@@ -36,6 +36,9 @@ class Controller_Addon extends AbstractController {
 
         $this->namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
         $this->addon_base_path='vendor/'.$this->addon_name;
+        if ( !is_dir($this->addon_base_path)) {
+            $this->addon_base_path='../shared/addons/'.$this->addon_name;
+        }
 
         if (count($this->addon_private_locations) || count($this->addon_public_locations)) {
             $this->addAddonLocations($this->base_path);
@@ -89,7 +92,7 @@ class Controller_Addon extends AbstractController {
     }
 
     /**
-     * This method will rely on location data to link 
+     * This method will rely on location data to link
      */
     function installAssets() {
 
@@ -99,7 +102,7 @@ class Controller_Addon extends AbstractController {
         // this folder under $api->pathfinder->public_location
         //
         // TODO: create a symlink such as $this->namespace pointing
-        // to 
+        // to
         //
         // TODO: if this already exist, don't mess it up. Also, resolve
     }
