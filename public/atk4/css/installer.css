@@ -4845,6 +4845,15 @@ a:hover.atk-text-dimmed {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.atk-text-left {
+  text-align: left;
+}
+.atk-text-right {
+  text-align: right;
+}
+.atk-text-center {
+  text-align: center;
+}
 figure img {
   display: block;
   height: auto;
@@ -5164,6 +5173,28 @@ label.atk-input-label em {
 body {
   background: #ffffff;
 }
+.atk-background-cover {
+  background-attachment: fixed;
+  background-image: url(inherit);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+*[class*=atk-box].atk-border-static,
+.ui-tabs *[class*=atk-box].ui-tabs-panel.ui-widget-content.atk-border-static,
+*[class*=atk-swatch] hr.atk-border-static {
+  border-color: #e1e1e1;
+}
+*[class*=atk-box].atk-border-active,
+.ui-tabs *[class*=atk-box].ui-tabs-panel.ui-widget-content.atk-border-active,
+*[class*=atk-swatch] hr.atk-border-active {
+  border-color: #c8c8c8;
+}
+*[class*=atk-box].atk-border-overlay,
+.ui-tabs *[class*=atk-box].ui-tabs-panel.ui-widget-content.atk-border-overlay,
+*[class*=atk-swatch] hr.atk-border-overlay {
+  border-color: #a1a1a1;
+}
 ::selection {
   background: #1c2933;
   color: white;
@@ -5185,12 +5216,6 @@ a {
 a:hover,
 a:focus {
   color: #005999;
-}
-.atk-color-facebook {
-  background: blue;
-}
-.atk-color-twitter {
-  background: blue;
 }
 .row {
   *zoom: 1;
@@ -5604,26 +5629,28 @@ a:focus {
 .atk-cells-table > .atk-cells {
   display: table-row;
 }
-*[class*=atk-cells-gutter] {
-  border-collapse: collapse;
-  border-style: hidden;
-}
-*[class*=atk-cells-gutter].atk-cells > .atk-cell,
-*[class*=atk-cells-gutter].atk-cells-group > .atk-cells > .atk-cell {
-  border-color: transparent;
-  border-style: solid;
-}
 *[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-large > .atk-cell,
 *[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-large > .atk-cells > .atk-cell {
-  border-width: 0 2em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 *[class*=atk-cells-gutter].atk-cells.atk-cells-gutter > .atk-cell,
 *[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter > .atk-cells > .atk-cell {
-  border-width: 0 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 *[class*=atk-cells-gutter].atk-cells.atk-cells-gutter-small > .atk-cell,
 *[class*=atk-cells-gutter].atk-cells-group.atk-cells-gutter-small > .atk-cells > .atk-cell {
-  border-width: 0 0.5em;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+*[class*=atk-cells-gutter].atk-cells > .atk-cell:first-child,
+*[class*=atk-cells-gutter].atk-cells-group > .atk-cells > .atk-cell:first-child {
+  padding-left: 0;
+}
+*[class*=atk-cells-gutter].atk-cells > .atk-cell:last-child,
+*[class*=atk-cells-gutter].atk-cells-group > .atk-cells > .atk-cell:last-child {
+  padding-right: 0;
 }
 a[class*='atk-button'],
 button[class*='atk-button'],
@@ -5865,6 +5892,9 @@ ul[class*=atk-menu].atk-menu-vertical > li a {
   display: block;
   float: none;
 }
+ul[class*=atk-menu].atk-menu-vertical > li a[class*=atk-button] {
+  text-align: left;
+}
 ul[class*=atk-menu].atk-menu-vertical > li *[class*=atk-menu] {
   position: absolute;
   top: 0;
@@ -5936,15 +5966,6 @@ ul[class*=atk-menu].atk-menu-vertical > li *[class*=atk-menu] {
 }
 .atk-move-right {
   float: right;
-}
-.atk-align-left {
-  text-align: left;
-}
-.atk-align-right {
-  text-align: right;
-}
-.atk-align-center {
-  text-align: center;
 }
 .atk-cells-group.atk-valign-top > .atk-cells > .atk-cell,
 .atk-valign-top {
@@ -6284,7 +6305,7 @@ a:link.atk-swatch-gray[class*=icon-] {
 a.atk-swatch-gray:hover,
 .atk-swatch-gray[class*=atk-button]:hover {
   color: black;
-  background: #ffffff;
+  background: #f6f7f8;
 }
 .atk-swatch-gray[class*='atk-button'],
 .atk-swatch-gray.atk-label,
@@ -6341,7 +6362,7 @@ a:link.atk-swatch-ink[class*=icon-] {
 a.atk-swatch-ink:hover,
 .atk-swatch-ink[class*=atk-button]:hover {
   color: white;
-  background: #253643;
+  background: #333e47;
 }
 .atk-swatch-ink[class*='atk-button'],
 .atk-swatch-ink.atk-label,
@@ -6398,7 +6419,7 @@ a:link.atk-swatch-yellow[class*=icon-] {
 a.atk-swatch-yellow:hover,
 .atk-swatch-yellow[class*=atk-button]:hover {
   color: black;
-  background: #ffd11a;
+  background: #ffd119;
 }
 .atk-swatch-yellow[class*='atk-button'],
 .atk-swatch-yellow.atk-label,
@@ -6455,7 +6476,7 @@ a:link.atk-swatch-red[class*=icon-] {
 a.atk-swatch-red:hover,
 .atk-swatch-red[class*=atk-button]:hover {
   color: white;
-  background: #fa5a38;
+  background: #fa5835;
 }
 .atk-swatch-red[class*='atk-button'],
 .atk-swatch-red.atk-label,
@@ -6512,7 +6533,7 @@ a:link.atk-swatch-green[class*=icon-] {
 a.atk-swatch-green:hover,
 .atk-swatch-green[class*=atk-button]:hover {
   color: white;
-  background: #00e673;
+  background: #19d175;
 }
 .atk-swatch-green[class*='atk-button'],
 .atk-swatch-green.atk-label,
@@ -6569,7 +6590,7 @@ a:link.atk-swatch-blue[class*=icon-] {
 a.atk-swatch-blue:hover,
 .atk-swatch-blue[class*=atk-button]:hover {
   color: white;
-  background: #1aa0ff;
+  background: #19a0ff;
 }
 .atk-swatch-blue[class*='atk-button'],
 .atk-swatch-blue.atk-label,
@@ -6594,8 +6615,16 @@ a.atk-swatch-blue:hover,
     min-width: 100%;
   }
   .atk-wrapper {
-    min-width: 600px;
-    max-width: 600px;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+  .atk-layout > .atk-layout-row > .atk-layout-cell {
+    min-width: 43.2rem;
+  }
+  .atk-wrapper {
+    min-width: 40rem;
+    max-width: 40rem;
     padding-left: 1.6rem;
     padding-right: 1.6rem;
   }
@@ -6728,7 +6757,7 @@ a:link.atk-swatch-gray[class*=icon-] {
 a.atk-swatch-gray:hover,
 .atk-swatch-gray[class*=atk-button]:hover {
   color: black;
-  background: #ffffff;
+  background: #f6f7f8;
 }
 .atk-swatch-gray[class*='atk-button'],
 .atk-swatch-gray.atk-label,
@@ -6785,7 +6814,7 @@ a:link.atk-swatch-ink[class*=icon-] {
 a.atk-swatch-ink:hover,
 .atk-swatch-ink[class*=atk-button]:hover {
   color: white;
-  background: #253643;
+  background: #333e47;
 }
 .atk-swatch-ink[class*='atk-button'],
 .atk-swatch-ink.atk-label,
@@ -6842,7 +6871,7 @@ a:link.atk-swatch-yellow[class*=icon-] {
 a.atk-swatch-yellow:hover,
 .atk-swatch-yellow[class*=atk-button]:hover {
   color: black;
-  background: #ffd11a;
+  background: #ffd119;
 }
 .atk-swatch-yellow[class*='atk-button'],
 .atk-swatch-yellow.atk-label,
@@ -6899,7 +6928,7 @@ a:link.atk-swatch-red[class*=icon-] {
 a.atk-swatch-red:hover,
 .atk-swatch-red[class*=atk-button]:hover {
   color: white;
-  background: #fa5a38;
+  background: #fa5835;
 }
 .atk-swatch-red[class*='atk-button'],
 .atk-swatch-red.atk-label,
@@ -6956,7 +6985,7 @@ a:link.atk-swatch-green[class*=icon-] {
 a.atk-swatch-green:hover,
 .atk-swatch-green[class*=atk-button]:hover {
   color: white;
-  background: #00e673;
+  background: #19d175;
 }
 .atk-swatch-green[class*='atk-button'],
 .atk-swatch-green.atk-label,
@@ -7013,7 +7042,7 @@ a:link.atk-swatch-blue[class*=icon-] {
 a.atk-swatch-blue:hover,
 .atk-swatch-blue[class*=atk-button]:hover {
   color: white;
-  background: #1aa0ff;
+  background: #19a0ff;
 }
 .atk-swatch-blue[class*='atk-button'],
 .atk-swatch-blue.atk-label,
