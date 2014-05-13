@@ -660,13 +660,7 @@ abstract class AbstractObject
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
         ) {
-            $this->upCall(
-                'outputDebug', array (
-                    $msg,
-                    $file,
-                    $line
-                )
-            );
+            $this->app->outputDebug($this, $msg, $file, $line );
         }
     }
 
@@ -758,17 +752,8 @@ abstract class AbstractObject
             // short for addHook('test', $this); to call $this->test();
         }
 
-        if ($priority >= 0) {
-            $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
-        } else {
-            if (!$this->hooks[$hook_spot][$priority]) {
-                $this->hooks[$hook_spot][$priority] = array();
-            }
-            array_unshift(
-                $this->hooks[$hook_spot][$priority],
-                array($callable, $arguments)
-            );
-        }
+        $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
+        ksort($this->hooks[$hook_spot]);
 
         return $this;
     }
@@ -809,7 +794,9 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
+                    echo "start $hook_spot:<br/>";
                     foreach ($this->hooks[$hook_spot] as $prio => $_data) {
+                        var_Dump($prio);
                         foreach ($_data as $data) {
 
                             // Our extension
