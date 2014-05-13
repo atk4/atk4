@@ -1,10 +1,22 @@
 <snippet>
 	<content><![CDATA[
 <?php
-class page_${1:$TM_FILENAME} extends ${2:Page} {
-	function init(){
+/**
+ * Page class
+ */
+class page_${1:$TM_FILENAME} extends ${2:Page}
+{
+    public $title='${3}';
+
+    /**
+     * Initialize the page
+     *
+     * @return void
+     */
+	function init()
+    {
 		parent::init();
-		$3
+		$4
 	}
 }
 ]]></content>
