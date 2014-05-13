@@ -271,9 +271,9 @@ class SQL_Model extends Model implements Serializable {
 
         // TODO: refactor using parent:: conditions (through array)
 
-        // You may pass plain "dsql" expressions as a first argument
-        if($field instanceof DB_dsql && $cond===undefined && $value===undefined){
-            $this->_dsql()->where($field);
+        // You may pass plain "dsql" expression as a first argument
+        if($field instanceof DB_dsql){
+            $this->_dsql()->where($field, $cond, $value);
             return $this;
         }
 
@@ -692,7 +692,7 @@ class SQL_Model extends Model implements Serializable {
 
         // Performs the actual database changes. Throw exceptions if problem occurs
         $this->hook('beforeModify',array($modify));
-        if($modify->args['set'])$modify->do_update();
+        if($modify->args['set'])$modify->update();
 
         if($this->dirty[$this->id_field]){
             $this->id=$this->get($this->id_field);

@@ -39,7 +39,7 @@ abstract class Menu_Advanced extends View {
         }
 
         if($action){
-            if(is_string($action)){
+            if(is_string($action) || is_array($action) || $action instanceof URL){
                 $i->template->set('url',$this->api->url($action));
             }else{
                 $this->on('click',$action);
@@ -51,7 +51,7 @@ abstract class Menu_Advanced extends View {
         return $i;
     }
 
-    function addMenu($title, $class=null, $options=[]) {
+    function addMenu($title, $class=null, $options=array()) {
         if(is_null($class))$class='Menu_Vertical';
         if($class=='Horizontal')$class='Menu_Horizontal';
 
@@ -103,7 +103,7 @@ abstract class Menu_Advanced extends View {
         return $this->addItem($label,$page);
 
     }
-    function addLabel($label){ 
+    function addLabel($label){
         return $this->addTitle($label);
     }
 

@@ -20,6 +20,8 @@ class App_Admin extends App_Frontend {
 
     public $layout_class='Layout_Fluid';
 
+    public $auth_config=array('admin'=>'admin');
+
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons=array();
 
@@ -29,7 +31,9 @@ class App_Admin extends App_Frontend {
 
         $this->menu = $this->layout->addMenu('Menu_Vertical');
         $this->menu->swatch='ink';
-        $this->layout->addFooter();
+
+        //$m=$this->layout->addFooter('Menu_Horizontal');
+        //$m->addItem('foobar');
 
         $this->add('jUI');
 
@@ -49,7 +53,40 @@ class App_Admin extends App_Frontend {
         if ($this->pathfinder->sandbox) {
             $this->initAddons();
         }
+
+        $this->addLayout('mainMenu');
+
         parent::initLayout();
+
+        $this->initTopMenu();
+
+
+        if(!$this->pathfinder->sandbox && !$this->app->getConfig('production',false)){
+            $this->menu->addItem(array('Install Developer Toools','icon'=>'tools'),'sandbox');
+        }
+
+        if(@$this->sandbox){
+            $this->sandbox->initLayout();
+        }
+    }
+
+    function initTopMenu() {
+        $m=$this->layout->add('Menu_Horizontal',null,'Top_Menu');
+        //$m->addClass('atk-size-kilo');
+        $m->addItem('Admin');
+        $m->addItem('AgileToolkit');
+        $m->addItem('Documentation');
+    }
+
+
+
+    function page_sandbox($p){
+        $p->addCrumb('Install Developer Tools');
+
+        $v=$p->add('View',null,null,array('view/developer-tools'));
+
+        $v->add('Button')->set('Install Now')
+            ->addClass('atk-swatch-green');
     }
 
     /**
@@ -61,7 +98,12 @@ class App_Admin extends App_Frontend {
         if (!$this->controller_install_addon) {
             $this->controller_install_addon = $this->add('sandbox\\Controller_InstallAddon');
         }
-        return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
+
+
+        if ($this->controller_install_addon && $this->controller_install_addon->getSndBoxAddonReader())
+            return $this->controller_install_addon->getSndBoxAddonReader()->getReflections();
+
+        return array();
     }
 
     function getInitiatedAddons($addon_api_name=null) {
@@ -71,6 +113,7 @@ class App_Admin extends App_Frontend {
         return $this->addons;
     }
     private function initAddons() {
+        return;
         foreach ($this->getInstalledAddons() as $addon) {
             $this->initAddon($addon);
         }

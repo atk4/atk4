@@ -3,7 +3,26 @@
     {Header}
     .atk-layout-cell(class="{$class}")
         .atk-padding-small.atk-swatch-ink
-            {Header_Content}use layout->addHeader() to menu, toolbar or header here{/}
+            {Header_Content}
+            .atk-bar.atk-cells.atk-cells-gutter-large
+                .atk-cell.atk-text-nowrap
+                  a(href='{page}/{/}')
+                    img(src='{public}images/logo.svg{/}' width="50px")
+                .atk-cell.atk-jackscrew
+                    {Top_Menu}
+                    | Top Menu
+                    {/}
+                .atk-cell.atk-text-nowrap
+                    {$Top_Actions}
+                .atk-cell.atk-text-nowrap
+                    .atk-cells.atk-cells-gutter-small
+                        .atk-cell.atk-text-reset
+                            img(src="http://sites.local.agiletech.ie/agiletoolkit-css/playground/temp/apples.jpg" width="32").atk-shape-rounded
+                        .atk-cell
+                            {User_Menu}
+                            | User Menu
+                            {/}
+            {/}
     {/Header}
   .atk-layout-row.atk-layout-fluid
     .atk-layout.atk-layout-cell
@@ -19,5 +38,7 @@
     {Footer}
     .atk-layout-cell(class="{$class}")
         .atk-padding-small.atk-swatch-ink
-            {$Footer_Content}
+            {Footer_Content}
+            | This site is developed with Agile Toolkit
+            {/}
     {/}

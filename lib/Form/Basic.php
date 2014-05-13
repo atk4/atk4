@@ -27,7 +27,7 @@
  */
 class Form_Basic extends View implements ArrayAccess {
     public $layout=null; // template of layout if form has one
-    
+
     // Here we will have a list of errors occured in the form, when we tried to
     // submit it. field_name => error
     public $errors=array();
@@ -146,11 +146,11 @@ class Form_Basic extends View implements ArrayAccess {
             $name = $options; // backward compatibility
         }
         $name = preg_replace('|[^a-z0-9-_]|i', '_', $name);
-        
+
         if ($caption === null) {
             $caption = ucwords(str_replace('_', ' ', $name));
         }
-        
+
         /* normalzie name and put name back in options array */
         $name = $this->api->normalizeName($name);
         if (is_array($options)){
@@ -199,7 +199,7 @@ class Form_Basic extends View implements ArrayAccess {
                 );
     }
     function addSeparator($class='',$attr=array()){
-        if(!isset($this->template_chunks['form_separator']))return $this;
+        if(!isset($this->template_chunks['form_separator']))return $this->add('View')->addClass($class);
         $c = clone $this->template_chunks['form_separator'];
         $c->trySet('fieldset_class',$class);
 
@@ -214,7 +214,7 @@ class Form_Basic extends View implements ArrayAccess {
 
     // Operating with field values
     //
-    // {{{ ArrayAccess support 
+    // {{{ ArrayAccess support
     function offsetExists($name){
         return $f=$this->hasElement($name) && $f instanceof Form_Field;
     }
@@ -346,7 +346,7 @@ class Form_Basic extends View implements ArrayAccess {
             $this->hook('validate');
 
             if(!empty($this->errors))return false;
-            
+
             if(($output=$this->hook('submit',array($this)))){
                 /* checking if anything usefull in output */
                 if(is_array($output)){
@@ -432,7 +432,7 @@ class Form_Basic extends View implements ArrayAccess {
                     $attr=$this->template_chunks['custom_layout']->get($key);
                     if(is_array($attr))$attr=join(' ',$attr);
                     if($attr)$val->setAttr('style',$attr);
-                    
+
                     if(!$this->template_chunks['custom_layout']->is_set($key)){
                         $this->js(true)->univ()->log('No field in layout: '.$key);
                     }

@@ -7,12 +7,13 @@ html(lang="{lang}en{/}")
         meta(charset="utf-8")
         <!--[if IE><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
         title {page_title}Untitled Project - Agile Toolkit{/}
-        meta(name="desciption" content="{$page_description}")
+        //meta(name="desciption" content="{$page_description}")
+        {$page_metas}
 
         // Place favicon.ico and apple-touch-icon.png in the root directory
 
         link(href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css')
-        link(rel="stylesheet" type="text/css" href="{css}style.css{/}")
+        link(rel="stylesheet" type="text/css" href="{css}theme.css{/}")
 
         {$js_block}
         {$js_include}

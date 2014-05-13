@@ -37,9 +37,9 @@ class Grid_Basic extends CompleteLister
 
     /** jQuery-UI icons to show as sort icons in header */
     public $sort_icons = array(
-        'ui-icon ui-icon-arrowthick-2-n-s',
-        'ui-icon ui-icon-arrowthick-1-n',
-        'ui-icon ui-icon-arrowthick-1-s',
+        'icon-sort',
+        'icon-up-dir',
+        'icon-down-dir',
     );
 
     /** Should we show header line */

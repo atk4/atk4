@@ -1,21 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
 /**
- * Implementation of a Generic Model. 
+ * Implementation of a Generic Model.
  * @link http://agiletoolkit.org/doc/model
  *
  * Model has fields which you add with addField() and access through get() and set()
@@ -52,15 +37,16 @@
  *
  *
  * @license See http://agiletoolkit.org/about/license
- * 
+ *
  **/
 class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     public $default_exception='BaseException';
 
     /**
-     * The class prefix used by addField. For some models you might want to
-     * use a more powerful field class
+     * The class prefix used by addField.
+     *
+     * For some models you might want to use a more powerful field class
      */
     public $field_class='Field_Base';
 
@@ -214,15 +200,16 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /**
      * Set value of fields only if the value is really changed
-     * 
+     *
      * @param $name array or string
      * @param $value null or value
      * @return mix
      */
-    function set($name,$value=UNDEFINED) {
-        if(is_array($name)) {
-            foreach($name as $key=>$val) {
-                $this->set($key,$val);
+    function set($name,$value=UNDEFINED)
+    {
+        if (is_array($name)) {
+            foreach ($name as $key => $val) {
+                $this->set($key, $val);
             }
             return $this;
         } elseif ($value === UNDEFINED) {
@@ -230,8 +217,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
 
         if ($this->strict_fields && !$this->hasElement($name)) {
-            throw $this->exception('No such field','Logic')
-                ->addMoreInfo('field',$name);
+            throw $this->exception('No such field', 'Logic')
+                ->addMoreInfo('field', $name);
         }
 
         if (($value !== $this->data[$name]) || (is_null($value) && !array_key_exists($name, $this->data))) {
@@ -247,7 +234,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /**
      * Get the value of a field. If the field is an expression (Field_Calculated)
      * the value is calculated a runtime
-     * 
+     *
      * @param $name null or string
      * @return mix
      */
@@ -296,7 +283,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /**
      * Return all fields that belongs to the specified group.
      * You can use the subtractions group also ("all,-group1,-group2")
-     * 
+     *
      * @param string
      * @return array
      */
@@ -321,8 +308,8 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
                 continue;
             }
             $elGroup = $el->group();
-            if (!in_array($elGroup, $toExclude) && 
-                    (in_array('all', $toAdd) || 
+            if (!in_array($elGroup, $toExclude) &&
+                    (in_array('all', $toAdd) ||
                     in_array($elGroup, $toAdd)))
             {
                 $fields[] = $el->short_name;
@@ -334,9 +321,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /**
      * Set the actual fields of this model.
-     * You can use an array to set the list of fields or a string to 
-     * use the grouping 
-     * 
+     * You can use an array to set the list of fields or a string to
+     * use the grouping
+     *
      * @param $group string or array
      * @return array  the actual fields
      */
@@ -353,7 +340,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Get the actual fields
-     * 
+     *
      * @return array  the actual fields
      */
     function getActualFields() {
@@ -364,7 +351,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Return the title field
-     * 
+     *
      * @return string  the title field
      */
     function getTitleField(){
@@ -375,7 +362,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Set a field as dirty. This is used to force insert/update a field
-     * 
+     *
      * @param $name
      * @return $this
      */
@@ -385,17 +372,17 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Return true if the field is set
-     * 
+     *
      * @param $name
      * @return bool
      */
     function isDirty($name) {
-        return $this->dirty[$name] || 
+        return $this->dirty[$name] ||
             (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
     // }}}
 
-    // {{{ ArrayAccess support 
+    // {{{ ArrayAccess support
     function offsetExists($name) {
         return $this->get($name);
     }
@@ -414,7 +401,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /// {{{ Operation with external Data Controllers
     /**
      * Set the controller data of this model
-     * 
+     *
      * @param $controller
      * @return $this
      */
@@ -431,7 +418,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /**
      * Set the source to the controller data.
      * The $table argument depends on the controller data implementation
-     * 
+     *
      * @param $table
      * @return $this
      */
@@ -444,7 +431,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /**
      * Set the controller data, the controlelr source and load the model id $id is specified
-     * 
+     *
      * @param $controller
      * @param $table
      * @param $id
@@ -459,7 +446,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
         return $this;
     }
-    
+
     /** Cache controller is used to attempt and load data a little faster then the primary controller */
     function addCache($controller, $table=null, $priority=5){
         $controller=$this->api->normalizeClassName($controller,'Data');
@@ -481,7 +468,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // {{{ LOAD METHODS
     /**
      * Like tryLoad method but if the record not found, an exception is thrown
-     * 
+     *
      * @param $id
      * @return $this
      */
@@ -502,7 +489,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Ask the controller data to load the model by a given $id
-     * 
+     *
      * @param $id
      * @return $this
      */
@@ -515,7 +502,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Like tryLoadAny method but if the record not found, an exception is thrown
-     * 
+     *
      * @return $this
      */
     function loadAny() {
@@ -531,7 +518,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Retrive the first record that matching the conditions
-     * 
+     *
      * @return $this
      */
     function tryLoadAny() {
@@ -543,7 +530,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Like tryLoadBy method but if the record not found, an exception is thrown
-     * 
+     *
      * @param $field
      * @param $cond
      * @param $value
@@ -573,7 +560,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     /**
      * Adding temporally condition to the model to retrive the first record
      * The condition specified is removed after the controller data call
-     * 
+     *
      * @param $field
      * @param $cond
      * @param $value
@@ -597,7 +584,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /**
      * Returns true if the model is loaded
-     * 
+     *
      * @return boolean
      */
     function loaded() {
@@ -606,7 +593,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /**
      * Forget loaded data
-     * 
+     *
      * @return $this
      */
     function unload() {
@@ -624,7 +611,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Same as unload() method
-     * 
+     *
      * @return $this
      */
     function reset() {
@@ -636,7 +623,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         return $ret;
     }
 
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
+    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create
      * record with new ID. */
     function save() {
         $this->hook('beforeSave', array($this->id));
@@ -678,7 +665,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     /** Save model and don't try to load it back */
     function saveAndUnload($id=undefined){
-        // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to 
+        // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
         // revert and make sure save() is not re-loading the record.
         // (performance)
         $this->save($id);
@@ -700,9 +687,9 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     function __destruct(){
         $this->saveDelayedModels();
     }
-    
+
     /*
-     * Delete a record. If the model is loaded, delete the current id. 
+     * Delete a record. If the model is loaded, delete the current id.
      * If not loaded, load model through the $id parameter and delete
      */
     function delete($id=null) {
@@ -783,21 +770,21 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     }
     /**
      * Count records of model
-     * 
+     *
      * @param string $alias Optional alias of count result
-     * 
+     *
      * @return integer
      */
     function count($alias=null) {
         if($this->controller && $this->controller->hasMethod('count')) {
             return $this->controller->count($this, $alias);
-        } 
+        }
         throw $this->exception('The controller doesn\'t support count', 'NotImplemented')
             ->addMoreInfo('controller', $this->controller ? $this->controller->short_name : 'none');
     }
     // }}}
 
-    // {{{ Iterator support 
+    // {{{ Iterator support
     public $_cursor=null;
     function rewind() {
         $this->unload();
@@ -866,7 +853,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
 
     // TODO: worry about cloning!
     function newField($name) {
-        return $this->addField($name); 
+        return $this->addField($name);
     }
     function hasField($name) {
         return $this->hasElement($name);
@@ -890,7 +877,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $refFieldName = $our_field;
         }
         $displayFieldName = preg_replace('/_id$/', '', $our_field);
-        
+
         if (!$this->hasElement($refFieldName)) {
             $this->addField($refFieldName);
         }
@@ -925,7 +912,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
             $m = $this->_ref(
                 $class[0],
                 $class[1] && $class[1]!=UNDEFINED ? $class[1] : $this->table.'_id',
-                $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id 
+                $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id
             );
         } else { // hasOne
             $id = $this->get($ref);
