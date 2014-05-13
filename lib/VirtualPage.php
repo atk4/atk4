@@ -20,7 +20,7 @@
  *
  * VirtualPage is intelligent enough to act differently depending on where you
  * add it.
- * 
+ *
  * This way you can create popup on page load.
  *  $vp = $this->add('VirtualPage');
  *  $this->js(true)->univ()->frameURL('MyPopup',$vp->getURL());
@@ -90,7 +90,7 @@ class VirtualPage extends AbstractController
      *
      * @param string $arg Optionally ask for specific argument
      *
-     * @return boolean|string 
+     * @return boolean|string
      */
     function isActive($arg = null)
     {
@@ -121,11 +121,11 @@ class VirtualPage extends AbstractController
 
     /**
      * Associates code with the page. This code will be executed within
-     * a brand new page when called by URL. 
+     * a brand new page when called by URL.
      *
      * @param callable $method_or_arg Optional argument
      * @param callable $method        function($page){ .. }
-     * 
+     *
      * @return VirtualPage $this
      */
     function set($method_or_arg, $method = null)
@@ -206,19 +206,23 @@ class VirtualPage extends AbstractController
         }
         if(!$buttontext['descr'])$buttontext['descr']=$title?:ucwords(str_replace('_', ' ', $name));
 
+/*
         if($buttontext['icon']) {
             if($buttontext['icon'][0]!='<') {
                 $buttontext['icon']='<i class="icon-'.
                     $buttontext['icon'].'"></i>';
             }
         }
+        */
 
-        $grid->addColumn('template', $name, $buttontext?:$title)
+        $grid->addColumn('button', $name, $buttontext?:$title);
+        /*
             ->setTemplate(
                 '<button type="button" class="pb_'.$name.'">'.
                     $buttontext['icon'].htmlspecialchars($buttontext['descr']).
                 '</button>'
             );
+            */
 
         $grid->columns[$name]['thparam'].=' style="width: 40px; text-align: center"';
 

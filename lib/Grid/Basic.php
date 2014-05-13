@@ -5,7 +5,7 @@
  * and using multiple column formatters.
  * Basic Grid no longer implements the column formatters, instead
  * they have been moved into Grid_Advanced.
- * 
+ *
  * @link http://agiletoolkit.org/doc/grid
  *
  * Use:
@@ -105,8 +105,8 @@ class Grid_Basic extends CompleteLister
         if($this->columns[$name]['icon']) {
             if($this->columns[$name]['icon'][0]!='<') {
                 $this->columns[$name]['icon']='<i class="icon-'.
-                    $this->columns[$name]['icon'].'"></i>';
-            }
+                    $this->columns[$name]['icon'].'"></i>&nbsp;';
+            }else throw $this->exception('obsolete way of using icon. Do not specify HTML code, but juts the icon');
         }
 
 
@@ -189,7 +189,7 @@ class Grid_Basic extends CompleteLister
 
         return $this;
     }
-    
+
     /**
      * Set caption of column
      *
@@ -206,7 +206,7 @@ class Grid_Basic extends CompleteLister
     // }}}
 
     // {{{ Misc
-    
+
     /**
      * Import fields using controller
      *
@@ -220,12 +220,12 @@ class Grid_Basic extends CompleteLister
         $this->add($this->default_controller)
             ->importFields($model, $fields);
     }
-    
+
     /**
      * Set message to show when no records are retrieved
      *
      * @param string $message
-     * 
+     *
      * @return $this
      */
     public function setNoRecordsMessage($message)
@@ -261,7 +261,7 @@ class Grid_Basic extends CompleteLister
 
     /**
      * Add extra formatter to existing field
-     * 
+     *
      * @param string $field
      * @param mixed $formatter
      * @param array $options
@@ -307,7 +307,7 @@ class Grid_Basic extends CompleteLister
 
     /**
      * Default formatter
-     * 
+     *
      * @param string $field
      *
      * @return void
@@ -374,7 +374,7 @@ class Grid_Basic extends CompleteLister
 
         // Add requested columns to row templates
         foreach ($this->columns as $name => $column) {
-            
+
             // header row
             $header_col
                 ->set('descr', $column['descr'])
@@ -474,7 +474,7 @@ class Grid_Basic extends CompleteLister
 
         foreach ($this->columns as $field => $column) {
             $this->current_row[$field.'_original'] = @$this->current_row[$field];
-            
+
             // if model field has listData structure, then get value instead of key
             if ($this->model && $f=$this->model->hasElement($field)) {
                 if ($f->type() !== 'boolean' && $values = $f->listData()) {
@@ -507,7 +507,7 @@ class Grid_Basic extends CompleteLister
             if (!$formatter) {
                 continue;
             }
-            
+
             if ($this->hasMethod($m = $formatter_prefix . $formatter)) {
                 // formatter method is included in this class
                 $this->$m($field, $column);
@@ -526,7 +526,7 @@ class Grid_Basic extends CompleteLister
 
     /**
      * Apply TD parameters in appropriate template
-     * 
+     *
      * You can pass row template too. That's useful to set up totals rows, for example.
      *
      * @param string $field Fieldname
