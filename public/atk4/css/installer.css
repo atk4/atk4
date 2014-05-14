@@ -6629,11 +6629,11 @@ a.atk-swatch-blue:hover,
     padding-right: 1.6rem;
   }
   .atk-row {
-    margin-left: -1.6rem;
+    margin-left: -1rem;
   }
   .atk-row *[class*=atk-col] {
     border: 0px solid rgba(0, 0, 0, 0);
-    border-left-width: 1.6rem;
+    border-left-width: 1rem;
   }
   *[class*=atk-col] {
     width: 100%;
