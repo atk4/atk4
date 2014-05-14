@@ -603,8 +603,8 @@ class DB_dsql extends AbstractModel implements Iterator {
                 if (is_array($row)) {
                     $or->where(
                         $row[0],
-                        isset($row[1])?$row[1]:UNDEFINED,
-                        isset($row[2])?$row[2]:UNDEFINED
+                        array_key_exists(1, $row) ? $row[1] : UNDEFINED,
+                        array_key_exists(2, $row) ? $row[2] : UNDEFINED
                     );
                 } elseif (is_object($row)) {
                     $or->where($row);
@@ -720,7 +720,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 $value = explode(',', $value);
             }
 
-            // if value is array, then us IN or NOT IN as condition
+            // if value is array, then use IN or NOT IN as condition
             if (is_array($value)) {
                 $v=array();
                 foreach ($value as $vv) {

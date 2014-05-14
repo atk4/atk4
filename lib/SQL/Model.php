@@ -266,61 +266,134 @@ class SQL_Model extends Model implements Serializable {
     function getRef($name,$load=null){
         return $this->ref($name,$load);
     }
-    /** Adds a "WHERE" condition, but tries to be smart about where and how the field is defined */
-    function addCondition($field,$cond=undefined,$value=undefined){
+    /**
+     * Adds "WHERE" condition / conditions in underlying DSQL
+     *
+     * It tries to be smart about where and how the field is defined.
+     *
+     * $field can be passed as:
+     *      - string (field name in this model)
+     *      - Field object
+     *      - DSQL expression
+     *      - array (see note below)
+     *
+     * $cond can be passed as:
+     *      - string ('=', '>', '<=', etc.)
+     *      - value can be passed here, then it's used as $value with condition '='
+     *
+     * $value can be passed as:
+     *      - string, integer, boolean or any other simple data type
+     *      - Field object
+     *      - DSQL expreession
+     *
+     * NOTE: $field can be passed as array of conditions. Then all conditions
+     *      will be joined with `OR` using DSQLs orExpr method.
+     *      For example,
+     *          $model->addCondition(array(
+     *              array('profit', '=', null),
+     *              array('profit', '<', 1000),
+     *          ));
+     *      will generate "WHERE profit is null OR profit < 1000"
+     *
+     * EXAMPLES:
+     * you can pass [dsql, dsql, dsql ...] and this will be treated
+     * as (dsql OR dsql OR dsql) ...
+     *
+     * you can pass [[field,cond,value], [field,cond,value], ...] and this will
+     * be treated as (field=value OR field=value OR ...)
+     *
+     * BTW, you can mix these too :)
+     * [[field,cond,value], dsql, [field,cond,value], ...]
+     * will become (field=value OR dsql OR field=value)
+     * 
+     * Value also can be DSQL expression, so following will work nicely:
+     * [dsql,'>',dsql] will become (dsql > dsql)
+     * [dsql, dsql] will become (dsql = dsql)
+     * [field, cond, dsql] will become (field = dsql)
+     *
+     * @todo Romans: refactor using parent::conditions (through array)
+     *
+     * @param mixed $field Field for comparing or array of conditions
+     * @param mixed $cond Condition
+     * @param mixed $value Value for comparing
+     * @param DSQL $dsql DSQL object to which conditions will be added
+     *
+     * @return this
+     */
+    function addCondition($field, $cond = undefined, $value = undefined, $dsql = null)
+    {
+        // by default add condition to models DSQL
+        if (! $dsql) {
+            $dsql = $this->_dsql();
+        }
 
-        // TODO: refactor using parent:: conditions (through array)
+        // if array passed, then create multiple conditions joined with OR
+        if (is_array($field)) {
+            $or = $this->dsql()->orExpr();
 
-        // You may pass plain "dsql" expression as a first argument
-        if($field instanceof DB_dsql){
-            $this->_dsql()->where($field, $cond, $value);
+            foreach ($field as $row) {
+                if (! is_array($row)) {
+                    $row = array($row);
+                }
+                // add each condition to OR expression (not models DSQL)
+                $f = $row[0];
+                $c = array_key_exists(1, $row) ? $row[1] : undefined;
+                $v = array_key_exists(2, $row) ? $row[2] : undefined;
+
+                // recursively calls addCondition method, but adds conditions
+                // to OR expression not models DSQL object
+                $this->addCondition($f, $c, $v, $or);
+            }
+
+            // pass generated DSQL expression as "field"
+            $field = $or;
+            $cond = $value = undefined;
+        }
+        
+        // You may pass DSQL expression as a first argument
+        if ($field instanceof DB_dsql) {
+            $dsql->where($field, $cond, $value);
             return $this;
         }
 
         // value should be specified
-        if($cond===undefined && $value===undefined)
+        if ($cond === undefined && $value === undefined) {
             throw $this->exception('Incorrect condition. Please specify value');
+        }
 
         // get model field object
-        if(!$field instanceof Field){
-            $field=$this->getElement($field);
+        if (! $field instanceof Field) {
+            $field = $this->getElement($field);
         }
 
-        if($cond!==undefined && $value===undefined) {
+        if ($cond !== undefined && $value === undefined) {
             $value = $cond;
-            if (is_array($value)) {
-                $cond = 'in';
-            } else {
-                $cond = '=';
-            }
+            $cond = '=';
         }
-        
-        if($field->type()=='boolean'){
-            $value=$field->getBooleanValue($value);
+        if ($field->type() == 'boolean') {
+            $value = $field->getBooleanValue($value);
         }
 
-        if($cond==='=' || $cond==='in'){
-            $field->system(true)->editable(false);
-            if($cond==='=') $field->defaultValue($value);
+        if ($cond === '=') {
+            $field->defaultValue($value)->system(true)->editable(false);
         }
         
-        $f = $field->actual_field?:$field->short_name;
-        if($field->calculated()){
+        $f = $field->actual_field ?: $field->short_name;
+        
+        if ($field->calculated()) {
             // TODO: should we use expression in where?
-
-
-            $this->_dsql()->where($field->getExpr(),$cond,$value);
-
-
-            //$this->_dsql()->having($f,$cond,$value);
+            
+            $dsql->where($field->getExpr(), $cond, $value);
+            //$dsql->having($f, $cond, $value);
             //$field->updateSelectQuery($this->dsql);
-        }elseif($field->relation){
-            $this->_dsql()->where($field->relation->short_name.'.'.$f,$cond,$value);
-        }elseif($this->relations){
-            $this->_dsql()->where(($this->table_alias?:$this->table).'.'.$f,$cond,$value);
-        }else{
-            $this->_dsql()->where(($this->table_alias?:$this->table).".".$f,$cond,$value);
+        } elseif ($field->relation) {
+            $dsql->where($field->relation->short_name . '.' . $f, $cond, $value);
+        } elseif ($this->relations) {
+            $dsql->where(($this->table_alias ?: $this->table) . '.' . $f, $cond, $value);
+        } else {
+            $dsql->where(($this->table_alias ?: $this->table) . '.' . $f, $cond, $value);
         }
+
         return $this;
     }
     /** Sets limit on query */
