@@ -2,10 +2,10 @@
     <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
 
     {Layout}
-    div.atk-form-fieldset
+    div.atk-cells-group.atk-cells-gutter-large
         {Content}
         {form_line}
-        div.atk-form-row.atk-cells.atk-cells-gutter-large(class="atk-form-row-{$field_type} {$row_class}")
+        div.atk-form-row.atk-cells.atk-push-small(class="atk-form-row-{$field_type} {$row_class}")
             {label_div}
             .atk-cell.atk-form-label.atk-text-nowrap
                 <label for="{$field_name}" {field_mandatory}class="mandatory"{/}>
