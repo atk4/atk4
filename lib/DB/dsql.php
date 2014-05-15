@@ -85,25 +85,27 @@ class DB_dsql extends AbstractModel implements Iterator {
     {
         $this->stmt=null;
     }
+    private $to_stringing=false;
     function __toString()
     {
+        if($this->to_stringing)return 'Recursive __toString';
+        $this->to_stringing=true;
         try {
             if ($this->output_mode==='render') {
-                return $this->render();
+                $output=$this->render();
             } else {
-                return (string)$this->getOne();
+                $output=(string)$this->getOne();
             }
+            $this->to_stringing=false;
+            return $output;
         } catch (Exception $e) {
             $this->api->caughtException($e);
             //return "Exception: ".$e->getMessage();
         }
 
-        return $this->toString();
-
-        if ($this->expr) {
-            return $this->parseTemplate($this->expr);
-        }
-        return $this->select();
+        $output=$this->toString();
+        $this->to_stringing=false;
+        return $output;
     }
 
     /**
@@ -222,6 +224,32 @@ class DB_dsql extends AbstractModel implements Iterator {
         }
         $this->args['custom'][$tag]=$value;
         return $this;
+    }
+
+    /**
+     * This is identical to AbstractObject::debug(), but as an object
+     * will refer to the $owner. This is to avoid string-casting and
+     * messing up with the DSQL string.
+     *
+     * @param bool|string $msg  "true" to start debugging
+     *
+     * @return void
+     */
+    function debug($msg = true)
+    {
+        if (is_bool($msg)) {
+            $this->debug = $msg;
+            return $this;
+        }
+
+        if(is_object($msg))throw $this->exception('Do not debug objects');
+
+        // The rest of this method is obsolete
+        if ((isset($this->debug) && $this->debug)
+            || (isset($this->app->debug) && $this->app->debug)
+        ) {
+            $this->app->outputDebug($this->owner, $msg);
+        }
     }
 
     /**
@@ -1856,9 +1884,8 @@ class DB_dsql extends AbstractModel implements Iterator {
     {
         $this->params=$this->extra_params;
         $r=$this->_render();
-        if ($this->debug) {
-            $this->debug($this->getDebugQuery($r));
-        }
+        $this->debug((string)$this->getDebugQuery($r));
+
         return $r;
     }
     /**
