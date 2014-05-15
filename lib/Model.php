@@ -851,10 +851,6 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
     // }}}
 
 
-    // TODO: worry about cloning!
-    function newField($name) {
-        return $this->addField($name);
-    }
     function hasField($name) {
         return $this->hasElement($name);
     }
