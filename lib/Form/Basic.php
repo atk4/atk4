@@ -277,10 +277,10 @@ class Form_Basic extends View implements ArrayAccess {
     function getAllFields(){
         return $this->get();
     }
-    function addSubmit($label='Save',$name=null){
+    function addSubmit($label='Save',$name=null,$icon='ok'){
         $submit = $this->add('Form_Submit',$name,'form_buttons')
             ->setLabel($label)
-            ->setIcon('ok')
+            ->setIcon($icon)
             ->setNoSave();
 
         return $submit;
