@@ -16,19 +16,19 @@ class View_Button extends View_HtmlElement
 {
     // Menu class
     public $menu_class = 'Menu_jUI';
-    
+
     // Popover class
     public $popover_class = 'View_Popover';
-    
+
     // Options to pass to JS button widget
     public $options = array();
-    
+
     // used jQuery-UI classes
     public $js_active_class = 'ui-state-highlight';     // active (selected) button
     public $js_triangle_class = 'ui-icon-triangle-1-s'; // triangle, down arrow icon
-    
-    
-    
+
+
+
     /**
      * Set template of button element
      */
@@ -37,15 +37,15 @@ class View_Button extends View_HtmlElement
         return array('button');
     }
 
-    
-    
-    
+
+
+
     // {{ Management of button
     /**
      * Set button without text and optionally with icon
-     * 
+     *
      * @param string $icon Icon CSS class
-     * 
+     *
      * @return $this
      */
     function setNoText($icon = null)
@@ -56,12 +56,12 @@ class View_Button extends View_HtmlElement
         }
         return $this;
     }
-    
+
     /**
      * Sets icon for button
      *
      * @param string $icon Icon CSS class
-     * 
+     *
      * @return $this
      * @todo Implement this trough Icon view
      */
@@ -71,27 +71,31 @@ class View_Button extends View_HtmlElement
         $this->template->trySetHTML('icon',$icon);
         return $this;
     }
-    
+
     /**
      * Sets label of button
      *
      * @param string $label
-     * 
+     *
      * @return $this
      */
     function setLabel($label)
     {
+        if(is_array($label) && $label['icon']){
+            $this->setIcon($label['icon']);
+
+        }
         return $this->setText($label);
     }
-    
-    
+
+
     private $js_button_called = false;
     function jsButton()
     {
         if ($this->js_button_called) {
             return $this;
         }
-        
+
         $this->js_button_called = true;
         if ($this->icon) {
             $this->options['icons']['primary'] = $this->icon;
@@ -104,7 +108,7 @@ class View_Button extends View_HtmlElement
 
     /**
      * Render button
-     * 
+     *
      * @return void
      */
     function render(){
@@ -116,35 +120,35 @@ class View_Button extends View_HtmlElement
         }
         parent::render();
     }
-    
+
     /**
      * Set button as HTML link object <a href="">
-     * 
+     *
      * @param string $page
      * @param array $args
-     * 
+     *
      * @return $this
      */
     function link($page, $args = array())
     {
         $this->setElement('a');
         $this->setAttr('href', $this->api->url($page, $args));
-        
+
         return $this;
     }
     // }}}
-    
-    
-    
+
+
+
     // {{{ Enhanced javascript functionality
     /**
      * When button is clicked, opens a frame containing generic view.
      * Because this is based on a dialog (popover), this is a modal action
      * even though it does not add dimming / transparency.
-     * 
+     *
      * @param array $js_options Options to pass to popover JS widget
      * @param array $class_options Options to pass to popover PHP class
-     * 
+     *
      * @return View_Popover
      */
     function addPopover($js_options = null, $class_options = null)
@@ -152,15 +156,15 @@ class View_Button extends View_HtmlElement
         $this->options['icons']['secondary'] = $this->js_triangle_class;
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
         $this->js('click', $popover->showJS($this, $js_options));
-        
+
         return $popover;
     }
-    
+
     /**
      * Adds another button after this one with an arrow and returns it
-     * 
+     *
      * @param array $options Options to pass to new Button class
-     * 
+     *
      * @return Button New button object (button with triangle)
      */
     function addSplitButton($options = null)
@@ -190,16 +194,16 @@ class View_Button extends View_HtmlElement
             ->removeClass('ui-corner-all')
             ->addClass('ui-corner-left')
             ->css('margin-right','-2px');
-        
+
         return $but;
     }
 
     /**
      * Show menu when clicked. For example, dropdown menu.
-     * 
+     *
      * @param array $options Options to pass to Menu class
      * @param boolean $vertical Direction of menu (false=horizontal, true=vertical)
-     * 
+     *
      * @return Menu
      */
     function addMenu($options = array(), $vertical = false)
@@ -218,7 +222,7 @@ class View_Button extends View_HtmlElement
                 ->toggle()
                 ->position($this->getPosition($vertical)),
         ));
-        
+
         // hide menu on clicking outside of menu
         $this->js(true)->_selectorDocument()->bind('click',
             $this->js(null, array(
@@ -229,12 +233,12 @@ class View_Button extends View_HtmlElement
 
         return $this->menu;
     }
-    
+
     /**
      * Return array with position settings for JS
-     * 
+     *
      * @param boolean $vertical Direction of menu (false=horizontal, true=vertical)
-     * 
+     *
      * @return array
      */
     function getPosition($vertical = false) {
@@ -258,7 +262,7 @@ class View_Button extends View_HtmlElement
     // {{{ Click handlers
     /**
      * Add click handler on button and returns true if button was clicked
-     * 
+     *
      * @param string $message Confirmation question to ask
      *
      * @return boolean
@@ -274,7 +278,7 @@ class View_Button extends View_HtmlElement
 
         return isset($_GET[$this->name]);
     }
-    
+
     /**
      * Add click handler on button and executes $callback if button was clicked
      *
