@@ -25,7 +25,7 @@
  * @author      Romans <romans@agiletoolkit.org>
  * @copyright   AGPL
  * @version     2.0
- * 
+ *
  *
  * ==[ Version History ]=======================================================
  * 1.0          First public version (released with AModules3 alpha)
@@ -226,7 +226,7 @@ class GiTemplate extends AbstractModel {
 
     /**
      * For methods which execute action on several tags, this method
-     * will return array of templates. You can then iterate 
+     * will return array of templates. You can then iterate
      * through the array and update all the template values.
      *
      * {greeting}hello{/},  {greeting}world{/}
@@ -385,7 +385,7 @@ class GiTemplate extends AbstractModel {
         return $this;
     }
 
-    /** 
+    /**
      * Similar to del() but won't throw exception if tag is not present
      */
     function tryDel($tag){
@@ -450,7 +450,7 @@ class GiTemplate extends AbstractModel {
         if($this->isTopTag($tag))return clone $this;
 
         $n=$this->newInstance();
-        $n->template=array('_top#1'=>$this->get($tag));
+        $n->template=unserialize(serialize(array('_top#1'=>$this->get($tag))));
         $n->rebuildTags();
         $n->top_tags[]=$tag;
         $n->source='Clone ('.$tag.') of '.$this->source;
@@ -469,7 +469,7 @@ class GiTemplate extends AbstractModel {
     }
     function dumpTags(){
         echo '"'.$this->_getDumpTags($this->template).'"';
-        
+
     }
 
     // template loading and parsing
