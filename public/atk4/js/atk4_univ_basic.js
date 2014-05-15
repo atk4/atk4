@@ -316,7 +316,12 @@ $.each({
 
         }
 
+        var cogs=$('<div id="banner-loader" class="atk-banner atk-cells atk-visible"><div class="atk-cell atk-align-center atk-valign-middle"><div class="atk-box atk-inline atk-size-zetta atk-banner-cogs"></div></div></div>');
+        cogs.appendTo('body');
+
+
         $.atk4.get(url,data,function(ret){
+            cogs.remove();
             region.data('ajaxec_loading',false);
             /*
             // error handling goes away from here
