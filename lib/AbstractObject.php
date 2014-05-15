@@ -656,6 +656,8 @@ abstract class AbstractObject
             return $this;
         }
 
+        if(is_object($msg))throw $this->exception('Do not debug objects');
+
         // The rest of this method is obsolete
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
