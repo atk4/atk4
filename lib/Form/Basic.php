@@ -175,8 +175,7 @@ class Form_Basic extends View implements ArrayAccess {
         $class = $this->api->normalizeClassName($class, 'Form_Field');
 
         // TODO: this is workaround, must properly fix cloneRegion
-        $template=$this->defaultTemplate();
-        $template[]='form_line';
+        $template=$this->template->cloneRegion('form_line');
         $last_field = $this->add($class, $options, null, $template)
 
 
