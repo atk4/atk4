@@ -62,6 +62,8 @@ abstract class Form_Field extends AbstractView {
         }
         $this->setForm($obj);
          */
+
+        $this->setClass('atk-jackscrew');
     }
     function setForm($form){
         $form->addHook('loadPOST',$this);
@@ -158,7 +160,7 @@ abstract class Form_Field extends AbstractView {
                 ->setAttr('href',$link);
         }
 
-        $this->template->trySetHTML('before_input','<span class="atk-input-icon">');
+        $this->template->trySetHTML('before_input','<span class="atk-input-icon atk-jackscrew">');
         $this->template->trySetHTML('after_input','</span>');
 
         return $this->_icon;
@@ -226,7 +228,7 @@ abstract class Form_Field extends AbstractView {
         $this->normalize();
     }
     function normalize(){
-        /* Normalization will make sure that entry conforms to the field type. 
+        /* Normalization will make sure that entry conforms to the field type.
            Possible trimming, rounding or length enforcements may happen. */
         $this->hook('normalize');
     }
