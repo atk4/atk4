@@ -85,10 +85,27 @@ class App_REST extends App_CLI
     public function main()
     {
         try {
-            $file = $this->api->locatePath('endpoint', str_replace('_', '/', $this->page) . '.php');
-            include_once $file;
+            try {
+                $file = $this->api->locatePath('endpoint', str_replace('_', '/', $this->page) . '.php');
+                include_once $file;
 
-            $this->pm->base_path = '/';
+                $this->pm->base_path = '/';
+            } catch (Exception $e) {
+                http_response_code(500);
+                if($e instanceof Exception_Pathfinder) {
+                    $error = array(
+                        'error'=>'No such endpoint',
+                        'type'=>'API_Error'
+                        );
+                } else {
+                    $error = array(
+                        'error'=>'Problem with endpoint',
+                        'type'=>'API_Error'
+                        );
+                }
+                $this->encodeOutput($error, null);
+                exit;
+            }
 
 
             try {
