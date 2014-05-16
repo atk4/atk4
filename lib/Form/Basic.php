@@ -81,8 +81,6 @@ class Form_Basic extends View implements ArrayAccess {
         $this->api->addHook('pre-render-output',array($this,'lateSubmit'));
         $this->api->addHook('submitted',$this);
 
-        $this->template_chunks['form']
-            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
 
     }
     protected function getChunks(){
@@ -102,6 +100,8 @@ class Form_Basic extends View implements ArrayAccess {
         $this->template_chunks['form']->del('Content');
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->trySet('form_name',$this->name.'_form');
+        $this->template_chunks['form']
+            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
 
         return $this;
     }
@@ -113,6 +113,7 @@ class Form_Basic extends View implements ArrayAccess {
         if($this->template->is_set($name)){
             $this->template_chunks[$name] = $this->template->cloneRegion($name);
         }else{
+            unset($this->template_chunks[$name]);
             //return $this->fatal('missing form tag: '.$name);
             // hmm.. i wonder what ? :)
         }
@@ -474,6 +475,8 @@ class Form_Basic extends View implements ArrayAccess {
         if ($class=='stacked' || $class=='atk-form-stacked') {
             // there are no longer stacked forms, instead a separat etemplate must be used
             $this->template->loadTemplate('form/stacked');
+            $this->getChunks();
+            $this->template->trySet('_name', $this->getJSID());
             return $this;
         } else {
             return parent::addClass($class);
