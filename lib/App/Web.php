@@ -2,7 +2,7 @@
 /**
  * App_Web extends an api of CommandLine applications with knowlnedge of HTML
  * templates, understanding of pages and routing.
- * 
+ *
  * @link http://agiletoolkit.org/learn/understand/api
  * @link http://agiletoolkit.org/learn/template
 *//*
@@ -34,7 +34,7 @@ class App_Web extends App_CLI {
     public $title;
 
 
-    // {{{ Start-up 
+    // {{{ Start-up
     function __construct($realm=null,$skin='default'){
         $this->start_time=time()+microtime();
 
@@ -46,7 +46,7 @@ class App_Web extends App_CLI {
 
             // This exception is used to abort initialisation of the objects but when
             // normal rendering is still required
-            if($e instanceof Exception_StopInit)return;
+            if($e instanceof Exception_Stop)return;
 
             $this->caughtException($e);
         }
@@ -134,7 +134,7 @@ class App_Web extends App_CLI {
 
     // {{{ License checking function
     private $_license_checksum=null;
-    private $_license='unlicensed'; 
+    private $_license='unlicensed';
 
     /** This function will return type of the license used: agpl, single, multi */
     final function license(){
@@ -213,7 +213,7 @@ class App_Web extends App_CLI {
     function initializeSession($create=true){
         /* Attempts to re-initialize session. If session is not found,
            new one will be created, unless $create is set to false. Avoiding
-           session creation and placing cookies is to enhance user privacy. 
+           session creation and placing cookies is to enhance user privacy.
         Call to memorize() / recall() will automatically create session */
 
 
@@ -278,7 +278,7 @@ class App_Web extends App_CLI {
             // Initialize page and all elements from here
             $this->initLayout();
         }catch(Exception $e){
-            if(!($e instanceof Exception_StopInit))
+            if(!($e instanceof Exception_Stop))
                 return $this->caughtException($e);
             //$this->caughtException($e);
         }
@@ -303,7 +303,7 @@ class App_Web extends App_CLI {
         }
         $this->hook('saveDelayedModels');
     }
-    /** Main execution loop */ 
+    /** Main execution loop */
     function execute(){
         $this->rendered['sub-elements']=array();
         try {
@@ -318,7 +318,7 @@ class App_Web extends App_CLI {
                 return;
             }
         }catch(Exception $e){
-            if($e instanceof Exception_StopRender){
+            if($e instanceof Exception_Stop){
                 $this->hook('cut-output');
                 echo $e->result;
                 $this->hook('post-render-output');
@@ -460,5 +460,5 @@ class App_Web extends App_CLI {
     function defaultTemplate(){
         return array('shared');
     }
-    // }}} 
+    // }}}
 }
