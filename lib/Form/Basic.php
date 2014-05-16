@@ -462,4 +462,22 @@ class Form_Basic extends View implements ArrayAccess {
     function setFieldError($field, $name){
         $this->errors[$field] = (isset($this->errors[$field])?$this->errors[$field]:'') . $name;
     }
+
+
+    /**
+     * Compatibility
+     *
+     * @param [type] $class [description]
+     */
+    function addClass($class)
+    {
+        if ($class=='stacked' || $class=='atk-form-stacked') {
+            // there are no longer stacked forms, instead a separat etemplate must be used
+            $this->template->loadTemplate('form/stacked');
+            return $this;
+        } else {
+            return parent::addClass($class);
+        }
+    }
+
 }
