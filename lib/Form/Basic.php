@@ -465,7 +465,7 @@ class Form_Basic extends View implements ArrayAccess {
 
 
     /**
-     * Compatibility
+     * Compatibility. TODO remove in 4.4
      *
      * @param [type] $class [description]
      */
