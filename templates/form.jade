@@ -1,8 +1,8 @@
 .atk-form(style="{$style}" class="{$class}" id="{$_name}")
-    <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+    <form class="{$form_class}" action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
 
     {Layout}
-    div.atk-cells-group.atk-cells-gutter-large
+    div.atk-cells-group.atk-cells-gutter-large(class="{$fieldset_class}")
         {Content}
         {form_line}
         div.atk-form-row.atk-cells.atk-push-small(class="atk-form-row-{$field_type} {$row_class}")
@@ -25,6 +25,8 @@
             {/}
 
         {/}
+
+        {form_separator}</div><div class="{$fieldset_class} atk-cells-group atk-cells-gutter-large">{/}
 
         {/Content}
         .field-error-template.atk-form-error
