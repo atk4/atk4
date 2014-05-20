@@ -63,7 +63,6 @@ abstract class Form_Field extends AbstractView {
         $this->setForm($obj);
          */
 
-        $this->setClass('atk-jackscrew');
     }
     function setForm($form){
         $form->addHook('loadPOST',$this);
