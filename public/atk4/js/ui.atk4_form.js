@@ -16,7 +16,7 @@
 //   ..repeats..
 //
 //   <div class="field-error-template" style="display: none"> .<span class="field-error-text">error template</span> </div>
-// </form>	
+// </form>
 //</div>
 
 jQuery.widget("ui.atk4_form", {
@@ -99,7 +99,7 @@ jQuery.widget("ui.atk4_form", {
             }
             self._setChanged(true);
         });
-		
+
 
 		this.form.find('input[type=radio]').click(function(){
 			self._setChanged(true);
@@ -211,6 +211,21 @@ jQuery.widget("ui.atk4_form", {
 		f.atk4_load(url,fn);
 		this._setChanged(c);
 	},
+	/**
+	 * [fieldError description]
+	 *
+	 *     .atk-form-row
+	 *        .atk-form-label
+	 *        .atk-form-field
+
+	   .atk-effect-danger - needs to be added to atk-form-row
+
+	   next, we need to create error text by reusing template
+	 *
+	 * @param  {[type]} field_name [description]
+	 * @param  {[type]} error      [description]
+	 * @return {[type]}            [description]
+	 */
 	fieldError: function(field_name,error){
 
 		if(this.options.error_handler){
@@ -242,7 +257,7 @@ jQuery.widget("ui.atk4_form", {
 		// highlight field
 		var field_highlight=field.closest('.atk-form-row').addClass('has-error').find('.atk-form-field');
 
-		field.closest('.atk-form-row').find('.atk-form-label').addClass('atk-effect-danger');
+		field.closest('.atk-form-row').addClass('atk-effect-danger');
 
 		// Clear previous errors
 		field_highlight.children('.atk-form-error').remove();
@@ -253,7 +268,7 @@ jQuery.widget("ui.atk4_form", {
 			return;
 		}
 		var error_bl=this.template['field_error'].clone();
-        
+
         // One of the below would find the text. This is faster appreach than
         // doing find('*').andSelf().filter('.field-error-text');
 		error_bl.find('.field-error-text').
@@ -323,12 +338,12 @@ jQuery.widget("ui.atk4_form", {
         if(form.show_loader){
             form.element.atk4_loader().atk4_loader('showLoader');
         }
-        
+
         // disable all fields and buttons while submitting
         form.element.find(":input:enabled")
             .attr("disabled",true)
             .attr("reenable",true);
-		
+
 		// do request
 		$.atk4.get(properties,params,function(res){
 			var c=form._getChanged();
