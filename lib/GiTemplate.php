@@ -435,17 +435,6 @@ class GiTemplate extends AbstractModel {
         }
         return $this;
     }
-
-
-
-
-
-
-
-
-
-
-
     function cloneRegion($tag){
         if($this->isTopTag($tag))return clone $this;
 
@@ -526,7 +515,6 @@ class GiTemplate extends AbstractModel {
             // Closing tag
             if($tag[0]=='/')return substr($tag,1);
 
-
             if($tag[0]=='$') {
                 $tag=substr($tag,1);
                 $full_tag=$this->regTag($tag);
@@ -534,7 +522,8 @@ class GiTemplate extends AbstractModel {
                 $this->tags[$tag][] =& $template[$full_tag];
 
                 // eat next chunk
-                list(,$template[])=each($input);
+                $chunk=each($input);
+                if($chunk[1])$template[]=$chunk[1];
 
                 continue;
             }
@@ -543,12 +532,14 @@ class GiTemplate extends AbstractModel {
 
             // Next would be prefix
             list(,$prefix) = each($input);
-            $template[$full_tag] = array($prefix);
+            $template[$full_tag] = $prefix?array($prefix):array();
+
             $this->tags[$tag][] =& $template[$full_tag];
 
             $rtag = $this->parseTemplateRecursive($input, $template[$full_tag]);
 
-            list(,$template[])=each($input);
+            $chunk=each($input);
+            if($chunk[1])$template[]=$chunk[1];
         }
     }
 
@@ -566,68 +557,6 @@ class GiTemplate extends AbstractModel {
 
 
 
-    private $arr=null;
-    private $arr_t=null;
-    function parseTemplate2($str) {
-        //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
-        //$nt='((?!{\/?[_\w]*})|(.(?!{\/?[_\w]*}))*.)';
-        //$nt='.*?(?={\/?[_\w]*}|$)';
-        $nt='((?!{\/?[_\w]*}).)*';
-        //$nt='((?!{\/?[_\w]*}).)*';
-        //$nt='(.(?!{\/?[_\w]*}))*.';
-        //$nt='(.(?<!{\/?[_\w]*}))*';
-
-        //preg_match('/^('.$nt.')/','hello{a}{/a}',$matches);
-        //var_dump($matches);
-
-        while($str) {
-        /*
-
-            $str = preg_replace_callback('/{([_\w]+)}(((?R)'.$nt.')*)('.$nt.'){\/(\1)?}/s',function($x){
-            }*/
-
-            $matched=false;
-            $str = preg_replace_callback($z='/^(('.$nt.'){([_\w]+)}((?1)*'.$nt.'){\/(\4)?})/s',function($x)use(&$matched){
-
-                if($x[2])$this->template[] = $x[2]; // add what's before
-
-                $a=&$this->template;
-                unset($this->template);
-                $this->template=array();
-
-
-                if($x[5]) {
-                    $this->parseTemplate($x[5]);  // adds other tags
-                }else{
-                }
-
-                $full_tag=$this->regTag($x[4]);
-
-                $a[$full_tag] = $this->template;
-
-                // set indexes
-                //$this->tags[$full_tag][] =& $a[$full_tag];
-                $this->tags[$x[4]][] =& $a[$full_tag];
-
-                $this->template =& $a;
-                $matched=true;
-
-                return '';
-            },$str,1);
-            if(!$matched){
-                $this->template[] = $str;
-                break;
-            }
-        }
-
-
-        //return $res;
-
-
-        //
-    }
-
-
     function loadTemplateFromString($str){
         $this->template_source=$str;
         $this->source='string';
@@ -641,63 +570,10 @@ class GiTemplate extends AbstractModel {
         $str=preg_replace('/{\$([\w]+)}/','{\1}{/\1}',$str);
 
 
-//(?R)(.*?)
-        //
         $notags=$this->parseTemplate($str);
 
 
         return $this;
-
-
-
-        /* Next fix short ending tag {tag}  {/} -> {tag}  {/tag} */
-        $notags=preg_replace_callback('/.*?{\/}/',function($x){
-                return preg_replace('/(.*<\?([^\/][\w]+)\?>)(.*?)(<\?\/?\?>)/',
-                   '\1\3<?/\2?>',$x[0]);
-                },$str);
-
-        // TODO: make sure $notags really contains no tags
-        var_dump($x);
-        exit;
-
-
-        $x=preg_replace_callback('/{([\w]+)}(.*?)(?R)         /s',function($x){
-                var_Dump($x);
-                /*return preg_replace('/(.*<\?([^\/][\w]+)\?>)(.*?)(<\?\/?\?>)/s','\1\3<?/\2?>',$x[0]); */
-                },$str);
-        var_Dump($str);
-
-        /*$x=preg_replace_callback('/<\?([^\/][^>]*)\?>(?:(?:(?!<\?\/\?>).)++|(?R))*<\?\/\?>/s',function($x){*/
-
-        var_Dump($str);
-        exit;
-
-
-        /* Finally recursively build tag structure */
-        $this->recursiveParse($x);
-
-        $this->tags['_top'][]=&$this->template;
-        return $this;
-    }
-    function recursiveParse($x){
-
-        if(is_array($x)){
-            // Called recursively
-            $tmp2=$this->template;$this->template=array();
-        }else{
-            $x=array(4=>$x);
-            $tmp2=null;
-        }
-        $y=preg_replace_callback('/(.*?)(<\?([^\/$][\w]+)\?>)(.*?)(<\?\/(\3)?\?>)(.*?)/s',array($this,'recursiveParse'),$x[4]);
-        $this->template[]=$y;
-        if($tmp2===null)return;
-        $tmp=$this->template;
-        $this->template=$tmp2;
-
-        $this->template[]=$x[1];
-        $this->template[$x[3].'#'.count($this->tags[$x[3]])]=$tmp;
-        $this->tags[$x[3]][]=&$this->template[$x[3].'#'.count($this->tags[$x[3]])];
-        return '';
     }
     function rebuildTags(){
         $this->tags=array();
