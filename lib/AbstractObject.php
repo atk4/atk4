@@ -349,6 +349,9 @@ abstract class AbstractObject
                 ->addMoreInfo('class', get_class($element));
         }
 
+        // Great hook to affect children recursively
+        $this->hook('afterAdd',array($element));
+
         return $element;
     }
 
