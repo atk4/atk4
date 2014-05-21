@@ -59,6 +59,13 @@ class Form_Basic extends View implements ArrayAccess {
     public $default_exception='Exception_ValidityCheck';
     public $default_controller='Controller_MVCForm';
 
+    /**
+     * Normally form fields are inserted using a form template. If you
+     *
+     * @var [type]
+     */
+    public $search_for_field_spots;
+
     public $dq = null;
     function init(){
         /**
@@ -82,7 +89,15 @@ class Form_Basic extends View implements ArrayAccess {
         $this->api->addHook('submitted',$this);
 
 
+        $this->addHook('afterAdd',$this);
     }
+    function afterAdd($p,$c){
+        if ($c instanceof AbstractView) {
+            $c->addHook('afterAdd',$this);
+            $c->addMethod('addField',$this);
+        }
+    }
+
     protected function getChunks(){
         // commonly replaceable chunks
         $this->grabTemplateChunk('form_comment');
@@ -139,8 +154,24 @@ class Form_Basic extends View implements ArrayAccess {
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
-    function addField($type, $options, $caption = null, $attr = null)
+    function addField($type, $options = null, $caption = null, $attr = null)
     {
+
+        $insert_into = $this->layout ?: $this;
+
+        if (is_object($type) && $type instanceof AbstractView && !($type instanceof Form_Field)) {
+
+            // using callback on a sub-view
+            $insert_into = $type;
+            list(,$type,$options,$caption,$attr)=func_get_args();
+
+        }
+
+        if ($options === null) {
+            $options = $type;
+            $type = 'Line';
+        }
+
         if (is_array($options)) {
             $name = isset($options["name"]) ? $options["name"] : null;
         } else {
@@ -175,28 +206,36 @@ class Form_Basic extends View implements ArrayAccess {
         }
         $class = $this->api->normalizeClassName($class, 'Form_Field');
 
-        // TODO: this is workaround, must properly fix cloneRegion
-        $template=$this->template->cloneRegion('form_line');
-        $last_field = $this->add($class, $options, null, $template)
+        if ($insert_into === $this) {
+            $template=$this->template->cloneRegion('form_line');
+            $field = $this->add($class, $options, null, $template);
+        } else {
+            if ($insert_into->template->hasTag($name)) {
+                $template=$this->template->cloneRegion('field_input');
+                $options['show_input_only']=true;
+                $field = $insert_into->add($class, $options, $name);
+            } else {
+                $template=$this->template->cloneRegion('form_line');
+                $field = $insert_into->add($class, $options, null, $template);
+
+            }
+        }
 
 
-            ->setCaption($caption);
-        $last_field->setForm($this);
-        $last_field->template->trySet('field_type', strtolower($type));
-        $last_field->setAttr($attr);
+        $field->setCaption($caption);
+        $field->setForm($this);
+        $field->template->trySet('field_type', strtolower($type));
+        $field->setAttr($attr);
 
-        return $last_field;
+        return $field;
     }
     function importFields($model,$fields=undefined){
         $this->add($this->default_controller)->importFields($model,$fields);
     }
+    function addfieldBreak(){
+        // TODO: refactor and get rid of separator
+        throw $this->exception('addSeparator is obsolete. Use add("View") or addColumnBreak()');
 
-    function addComment($comment){
-        if(!isset($this->template_chunks['form_comment']))
-            throw new BaseException('Form\'s template ('.$this->template->loaded_template.') does not support comments');
-        return $this->add('Html')->set(
-                $this->template_chunks['form_comment']->set('comment',$comment)->render()
-                );
     }
     function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this->add('View')->addClass($class);
@@ -409,15 +448,16 @@ class Form_Basic extends View implements ArrayAccess {
         $this->isSubmitted();
     }
     function setLayout($template){
-        // Instead of building our own Content we will take it from
-        // pre-defined template and insert fields into there
-        $this->layout = $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
-        $this->template_chunks['custom_layout']->trySet('_name',$this->name);
-        $this->template->trySet('form_class_layout',$c='form_'.basename($template));
+        if (!$template instanceof AbstractView) {
+            if (is_string($template)) {
+                $template = $this->add('View',null,null,array($template));
+            } else {
+                $template = $this->add('View',null,null,$template);
+            }
+        }
+
+        $this->layout=$template;
         return $this;
-    }
-    function setFormClass($class){
-        return $this->setClass($class);
     }
     function render(){
         // Assuming, that child fields already inserted their HTML code into 'form'/Content using 'form_line'
@@ -428,28 +468,7 @@ class Form_Basic extends View implements ArrayAccess {
             $this->js(true)->_load($this->js_widget)->$fn($this->js_widget_arguments);
         }
 
-        if(isset($this->template_chunks['custom_layout'])){
-            foreach($this->elements as $key=>$val){
-                if($val instanceof Form_Field){
-                    $attr=$this->template_chunks['custom_layout']->get($key);
-                    if(is_array($attr))$attr=join(' ',$attr);
-                    if($attr)$val->setAttr('style',$attr);
-
-                    if(!$this->template_chunks['custom_layout']->is_set($key)){
-                        $this->js(true)->univ()->log('No field in layout: '.$key);
-                    }
-                    $this->template_chunks['custom_layout']->trySetHTML($key,$val->getInput());
-
-                    if($this->errors[$key]){
-                        $this->template_chunks['custom_layout']
-                            ->trySet($key.'_error',$val->error_template
-                                ->set('field_error_str',$this->errors[$key])->render());
-                    }
-                }
-            }
-            $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
-        }
-        $this->output($r=$this->template_chunks['form']->render());
+        return parent::render();
     }
     function hasField($name){
         return isset($this->elements[$name])?$this->elements[$name]:false;

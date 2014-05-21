@@ -97,6 +97,9 @@ abstract class Form_Field extends AbstractView {
     }
     function setCaption($_caption){
         $this->caption=$this->api->_($_caption);
+        if ($this->show_input_only || !$this->template->hasTag('field_caption')) {
+            $this->setAttr('placeholder',$this->caption);
+        }
         return $this;
     }
     function displayFieldError($msg=null){
@@ -404,6 +407,9 @@ abstract class Form_Field extends AbstractView {
             else $tmp[] = "$key=\"".htmlspecialchars($val)."\"";
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
+    }
+    function defaultTemplate(){
+        return array('form_field');
     }
 }
 
