@@ -405,13 +405,5 @@ abstract class Form_Field extends AbstractView {
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }
-
-    function setSource(){
-        return call_user_func_array(array($this->form,'setSource'),func_get_args());
-    }
-    function addField(){
-        return call_user_func_array(array($this->form,'addField'),func_get_args());
-        //throw new ObsoleteException('$form->addField() now returns Field object and not Form. Do not chain it.');
-    }
 }
 
