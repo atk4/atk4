@@ -219,14 +219,14 @@ class VirtualPage extends AbstractController
 
         $grid->addColumn('template', $name, $buttontext?:$title)
             ->setTemplate(
-                '<button type="button" class="pb_'.$name.'">'.
+                '<button type="button" class="atk-button-small pb_'.$name.'">'.
                     $icon.htmlspecialchars($buttontext['descr']).
                 '</button>'
             );
 
         $grid->columns[$name]['thparam'].=' style="width: 40px; text-align: center"';
 
-        $grid->js(true)->_selector('#'.$grid->name.' .pb_'.$name)->button();
+        //$grid->js(true)->_selector('#'.$grid->name.' .pb_'.$name)->button();
         $t=$this->type;
         $grid->js('click')->_selector('#'.$grid->name.' .pb_'.$name)->univ()
             ->$t($title, array($this->getURL($name),
