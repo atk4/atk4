@@ -319,7 +319,14 @@ class Form_Basic extends View implements ArrayAccess {
         return $this->get();
     }
     function addSubmit($label='Save',$name=null){
-        $submit = $this->add('Form_Submit',$name,'form_buttons')
+
+        if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
+           $submit = $this->layout->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'FormButtons');
+        } else {
+            $submit = $this->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'form_buttons');
+        }
+
+        $submit
             ->setIcon('ok')
             ->setLabel($label)
             ->setNoSave();
@@ -327,10 +334,13 @@ class Form_Basic extends View implements ArrayAccess {
         return $submit;
     }
     function addButton($label='Button',$name=null){
-        $button = $this->add('Button',$name,'form_buttons')
-            ->setLabel($label);
-
-       return $button;
+        if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
+           $button = $this->layout->add('Button', $name, 'FormButtons');
+        } else {
+            $button = $this->add('Button',$name,'form_buttons');
+        }
+        $button->setLabel($label);
+        return $button;
     }
 
     function loadData(){
