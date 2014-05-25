@@ -1039,7 +1039,7 @@ class Grid_Advanced extends Grid_Basic
     function init_prompt($field)
     {
         @$this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
-        $this->js(true)->find('.button_'.$field)->button();
+        //$this->js(true)->find('.button_'.$field)->button();
     }
 
     /**
@@ -1053,9 +1053,15 @@ class Grid_Advanced extends Grid_Basic
     {
         $class = $this->columns[$field]['button_class'];
 
+        $icon=$this->columns[$field]['icon'];
+        if($icon) {
+            if($icon[0]!='<')$icon='<span class="icon-'.$icon.'"></span>';
+            $icon.='&nbsp;';
+        }
+
         $this->current_row_html[$field] =
             '<button class="atk-button-small do-'.$field.'  '.$class.'" data-id="'.$this->model->id.'">'.
-                $this->columns[$field]['descr'].
+                $icon.$this->columns[$field]['descr'].
             '</button>';
     }
 
@@ -1130,6 +1136,7 @@ class Grid_Advanced extends Grid_Basic
     {
         // set special CSS class for delete buttons to add some styling
         $this->columns[$field]['button_class'] = 'atk-effect-danger atk-delete-button';
+        $this->columns[$field]['icon'] = 'trash';
 
         // if this was clicked, then delete record
         if ($id = @$_GET[$this->name.'_'.$field]) {
