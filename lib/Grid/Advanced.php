@@ -1001,9 +1001,16 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_button($field)
     {
-        $this->_url[$field] = $this->api->url();
+        $this->on('click','.do-'.$field)->univ()->ajaxec(array(
+            $this->api->url(),
+            $field=>$a=$this->js()->_selectorThis()->data('id'),
+            $this->name.'_'.$field => $a
+            ));
+
+        /*
         @$this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
         $this->js(true)->find('.button_'.$field)->button();
+        */
     }
 
     /**
@@ -1015,7 +1022,11 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_confirm($field)
     {
-        $this->init_button($field);
+        $this->on('click','.do-'.$field)->univ()->confirm('Are you sure?')->ajaxec(array(
+            $this->api->url(),
+            $field=>$a=$this->js()->_selectorThis()->data('id'),
+            $this->name.'_'.$field => $a
+        ));
     }
 
     /**
@@ -1040,21 +1051,10 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_button($field)
     {
-        $url = clone $this->_url[$field];
-        $class = $this->columns[$field]['button_class'].' button_'.$field;
-        $icon = isset($this->columns[$field]['icon'])
-                    ? $this->columns[$field]['icon']
-                    : '';
+        $class = $this->columns[$field]['button_class'];
 
         $this->current_row_html[$field] =
-            '<button type="button" class="'.$class.'" '.
-                'onclick="$(this).univ().ajaxec(\'' .
-                    $url->set(array(
-                        $field => $this->current_id,
-                        $this->name.'_'.$field => $this->current_id
-                    )) . '\')"'.
-            '>'.
-                $icon.
+            '<button class="atk-button-small do-'.$field.'  '.$class.'" data-id="'.$this->model->id.'">'.
                 $this->columns[$field]['descr'].
             '</button>';
     }
@@ -1068,6 +1068,8 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_confirm($field)
     {
+        return $this->format_button($field);
+
         $url = clone $this->_url[$field];
         $class = $this->columns[$field]['button_class'].' button_'.$field;
         $icon = isset($this->columns[$field]['icon'])
