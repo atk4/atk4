@@ -3,7 +3,7 @@
  * This is a Basic Grid implementation, which produces fully
  * functional HTML grid capable of filtering, sorting, paginating
  * and using multiple column formatters.
- * 
+ *
  * @link http://agiletoolkit.org/doc/grid
  *
  * Use:
@@ -27,11 +27,11 @@ class Grid_Advanced extends Grid_Basic
     /** Sorting */
     public $sortby = '0';
     public $sortby_db = null;
-    
+
     /** For totals */
     private $totals_title_field = null;
     private $totals_title = "";
-    
+
     /**
      * Grid buttons
      *
@@ -119,7 +119,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Adds QuickSearch
-     * 
+     *
      * @param array $fields array of fieldnames used in quick search
      * @param string $class optional quick search object class
      * @param array $options optional options array
@@ -167,7 +167,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Adds column with checkboxes on the basis of Model definition
-     * 
+     *
      * @param mixed $field should be Form_Field object or jQuery selector of
      *                     1 field. When passing it as jQuery selector don't
      *                     forget to use hash sign like "#myfield"
@@ -187,7 +187,7 @@ class Grid_Advanced extends Grid_Basic
     }
 
     // }}}
-    
+
     // {{{ Sorting
 
     /**
@@ -205,7 +205,7 @@ class Grid_Advanced extends Grid_Basic
             $order = ltrim($this->sortby_db, '-');
             $this->applySorting($iter, $order, $desc);
         }
-        
+
         return $iter;
     }
 
@@ -231,7 +231,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         switch ((string)$this->sortby) {
-            
+
             // we are already sorting by this column
             case $this->last_column:
                 $info = array('1', $reverse ? 0 : ("-".$this->last_column));
@@ -243,7 +243,7 @@ class Grid_Advanced extends Grid_Basic
                 $info = array('2', $reverse ? $this->last_column : '0');
                 $this->sortby_db = "-" . $db_sort;
                 break;
-            
+
             // we are not sorted by this column
             default:
                 $info = array('0', $reverse ? ("-" . $this->last_column) : $this->last_column);
@@ -261,7 +261,7 @@ class Grid_Advanced extends Grid_Basic
      *      and 0 if they are equal.
      *
      * Note that this comparison is case sensitive
-     * 
+     *
      * @param string $str1
      * @param string $str2
      *
@@ -322,7 +322,7 @@ class Grid_Advanced extends Grid_Basic
 
         parent::render();
     }
-    
+
     /**
      * Render Totals row
      *
@@ -359,7 +359,7 @@ class Grid_Advanced extends Grid_Basic
 
             // process formatters (additional to default formatters)
             $this->executeFormatters($field, $column, 'format_totals_', true);
- 
+
             // totals title displaying
             if ($field == $this->totals_title_field) {
                 $this->setTDParam($field, 'style/font-weight', 'bold');
@@ -419,7 +419,7 @@ class Grid_Advanced extends Grid_Basic
         if (!is_array($current_position)) {
             $current_position = array();
         }
-        
+
         foreach ($path as $part) {
             if (array_key_exists($part, $current_position)) {
                 $current_position = &$current_position[$part];
@@ -428,13 +428,13 @@ class Grid_Advanced extends Grid_Basic
                 $current_position = &$current_position[$part];
             }
         }
-        
+
         $current_position = $value;
     }
 
     /**
      * Apply TD parameters to appropriate template
-     * 
+     *
      * You can pass row template to use too. That's useful to set up totals rows, for example.
      *
      * @param string $field Fieldname
@@ -461,12 +461,12 @@ class Grid_Advanced extends Grid_Basic
                 $tdparam_str .= '" ';
                 unset($tdparam['style']);
             }
-            
+
             //walking and combining string
             foreach ($tdparam as $id=>$value) {
                 $tdparam_str .= $id . '="' . $value . '" ';
             }
-            
+
             // set TD param to appropriate row template
             $row_template->set("tdparam_$field", trim($tdparam_str));
         }
@@ -508,7 +508,7 @@ class Grid_Advanced extends Grid_Basic
      * Calculate grand totals of all rows
      *
      * Called one time on rendering phase - before renderRows() call.
-     * 
+     *
      * @return void
      */
     function updateGrandTotals()
@@ -518,7 +518,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Additional formatting of number fields for totals row
-     * 
+     *
      * @param string $field
      *
      * @return void
@@ -527,7 +527,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Additional formatting of money fields for totals row
-     * 
+     *
      * @param string $field
      *
      * @return void
@@ -536,7 +536,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Additional formatting of real number fields for totals row
-     * 
+     *
      * @param string $field
      *
      * @return void
@@ -547,7 +547,7 @@ class Grid_Advanced extends Grid_Basic
      * Additional formatting of expander fields for totals row
      *
      * Basically we remove everything from such field
-     * 
+     *
      * @param string $field field name
      * @param array $column column configuration
      *
@@ -561,7 +561,7 @@ class Grid_Advanced extends Grid_Basic
      * Additional formatting of custom template fields for totals row
      *
      * Basically we remove everything from such field
-     * 
+     *
      * @param string $field field name
      * @param array $column column configuration
      *
@@ -575,7 +575,7 @@ class Grid_Advanced extends Grid_Basic
      * Additional formatting of delete button fields for totals row
      *
      * Basically we remove everything from such field
-     * 
+     *
      * @param string $field field name
      * @param array $column column configuration
      *
@@ -640,7 +640,7 @@ class Grid_Advanced extends Grid_Basic
             $this->current_row[$field] = $column['descr'];
         }
 
-        // TODO: 
+        // TODO:
         // reformat this using Button, once we have more advanced system to
         // bypass rendering of sub-elements.
         // $this->current_row[$field] = $this->add('Button',null,false)
@@ -648,7 +648,7 @@ class Grid_Advanced extends Grid_Basic
         $id    = $key . $this->api->normalizeName($this->model->id);
         $class = $key . 'expander';
 
-        @$this->current_row_html[$field] = 
+        @$this->current_row_html[$field] =
             '<input type="checkbox" '.
                 'class="'.$class.'" '.
                 'id="'.$id.'" '.
@@ -745,13 +745,13 @@ class Grid_Advanced extends Grid_Basic
     {
         // use real number formatter
         $this->format_real($field);
-        
+
         // negative values show in red color
         if ($this->current_row[$field] < 0) {
             $this->setTDParam($field, 'style/color', 'red');
         }
     }
-    
+
     /**
      * Initialize column as boolean
      *
@@ -928,7 +928,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         $this->current_row[$field] = $text;
-        
+
         $this->setTDParam($field, 'title',
             htmlspecialchars($this->current_row[$field.'_original']));
     }
@@ -1133,10 +1133,10 @@ class Grid_Advanced extends Grid_Basic
 
         // if this was clicked, then delete record
         if ($id = @$_GET[$this->name.'_'.$field]) {
-            
+
             // delete record
             $this->_performDelete($id);
-            
+
             // show message
             $this->js()->univ()
                 ->successMessage('Deleted Successfully')
