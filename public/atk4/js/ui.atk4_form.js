@@ -217,6 +217,9 @@ jQuery.widget("ui.atk4_form", {
 	 *     .atk-form-row
 	 *        .atk-form-label
 	 *        .atk-form-field
+	 *					{field}
+	 *					.atk-form-error
+	 *						span.field-error-text
 
 	   .atk-effect-danger - needs to be added to atk-form-row
 
@@ -233,10 +236,10 @@ jQuery.widget("ui.atk4_form", {
 			return this.options.error_handler(field_name,error);
 		}
 
-        var field=
-            typeof(field_name)=='string'?
-                $('[data-shortname="'+field_name+'"]','#'+this.id):
-                    field_name;
+    var field=
+        typeof(field_name)=='string'?
+            $('[data-shortname="'+field_name+'"]','#'+this.id):
+                field_name;
 
 		if(!field.length){
 			field=this.form.find('[name="'+field_name+'"]');
@@ -248,54 +251,72 @@ jQuery.widget("ui.atk4_form", {
 
 		if(!error || error=='0')error="must be specified properly";
 
-
 		field.focus();
 
 		//field.closest('.form_field').find('.field_hint').hide();
 		field.closest('form').find('.field_error').remove();
 
-		// highlight field
-		var field_highlight=field.closest('.atk-form-row').addClass('has-error').find('.atk-form-field');
+		// form row
+		var field_row = field.closest('.atk-form-row');
+		field_row.addClass('atk-effect-danger').addClass('has-error');
 
-		field.closest('.atk-form-row').addClass('atk-effect-danger');
+		// highlight field
+		var field_highlight = field_row.find('.atk-form-field');
 
 		// Clear previous errors
-		field_highlight.children('.atk-form-error').remove();
+		var field_error = field_row.find('.atk-form-error');
+		field_error.remove();
 
 		if(!this.template['field_error'].length){
 			// no template, use alert;
 			alert(error);
 			return;
 		}
+		
 		var error_bl=this.template['field_error'].clone();
 
-        // One of the below would find the text. This is faster appreach than
-        // doing find('*').andSelf().filter('.field-error-text');
-		error_bl.find('.field-error-text').
-            add(error_bl.filter('.field-error-text')).text(error);
+    // One of the below would find the text. This is faster appreach than
+    // doing find('*').andSelf().filter('.field-error-text');
+		error_bl.find('.field-error-text').add(error_bl.filter('.field-error-text')).text(error);
 
 		error_bl.appendTo(field_highlight).fadeIn();
 
 		this.form.addClass('form_has_error');
 
-		/*
-		h=$(//'<div class="clear"></div><span class="form_error"><i></i>'+error+'</span>');
-		 '<dd class="atk-error"><div class="ui-state-error ui-corner-all"><span class="ui-icon"></span>'+
-			 error+'</div></dd>').insertAfter(field_highlight);
-		*/
-
-		error_bl.click(function(){ $(this).closest('.has-error').removeClass('has-error').find('.atk-form-label').removeClass('atk-effect-danger'); error_bl.remove(); });
+		// Hide Error when clicked on it
+		// error_bl.on('click', function(e){
+		// 	$(this).closest('.has-error').removeClass('has-error')
+		// 		.find('.atk-form-label').removeClass('atk-effect-danger'); 
+		// 	error_bl.remove(); 
+		// });
 
 		var self=this;
 
 		// make it remove error automatically when edited
-		field.bind('change.errorhide',function(){
-			var t=$(this);
+		field.on('input', function(e) {
+			e.preventDefault();
+			field.trigger('change.errorhide');
+		});
+
+		// For IE < 9
+		field.on('propertychange', function(e) {
+			e.preventDefault();
+			if (e.originalEvent.propertyName == "value")
+				field.trigger('change.errorhide');
+		});
+
+		field.bind('change.errorhide',function(e){
+			var t = $(this);
 			t.unbind('change.errorhide');
 
-			self.form.removeClass('form_has_error').find('.atk-form-label').removeClass('atk-effect-danger');
+			self.form.removeClass('form_has_error');
+			field_row.removeClass('atk-effect-danger');
+
 			field_highlight.closest('.has-error').removeClass('has-error');
-			error_bl.fadeOut(function(){ error_bl.remove(); });
+
+			error_bl.fadeOut(function(){ 
+				error_bl.remove(); 
+			});
 		});
 	},
 	clearError: function(field){

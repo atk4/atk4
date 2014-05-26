@@ -20,7 +20,7 @@
             {$field_hint}
             {field_error}
 
-            .atk-form-error
+            p.atk-form-error
                 span.icon-attention
                 span.atk-size-micro.field-error-text {$field_error_str}
             {/}
@@ -30,8 +30,8 @@
         {form_separator}</div><div class="{$fieldset_class} atk-cells-group atk-cells-gutter-large">{/}
 
         {/Content}
-        .field-error-template.atk-form-error
-            span.atk-effect-danger.field-error-text {$field_error_str}
+        p.field-error-template.atk-form-error
+            span.field-error-text {$field_error_str}
 
 
     {button_row}
