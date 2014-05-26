@@ -36,14 +36,14 @@ jQuery.widget("ui.atk4_form", {
 		return this.form.hasClass('form_changed');
 	},
 	_setChanged: function(state){
-        if(this.element.is('.ignore_changes')){
-            this.form.removeClass('form_changed');
-            return;
-        }
+		if(this.element.is('.ignore_changes')){
+			this.form.removeClass('form_changed');
+			return;
+		}
 		if(state)this.form.addClass('form_changed');else this.form.removeClass('form_changed');
 	},
 
-    _create: function(){
+	_create: function(){
 		var self=this;
 
 		this.id=this.element.attr('id');
@@ -73,15 +73,15 @@ jQuery.widget("ui.atk4_form", {
 				}
 		});
 
-        /*
-         * TODO: check if new MSIE supports this correctly
+		/*
+		 * TODO: check if new MSIE supports this correctly
 		if($.browser.msie){
 			this.form.find('input:radio,input:checkbox').click(function(){
-				this.blur();	// this will call onchange event, like it should
+				this.blur();    // this will call onchange event, like it should
 				this.focus();
 			});
 		}
-       */
+	   */
 
 		this.form.find(':input').each(function(){
 			if($(this).attr('type')=='checkbox')
@@ -91,14 +91,14 @@ jQuery.widget("ui.atk4_form", {
 			})
 		.bind('change',function(ev){
 				//if($(this).attr('type')=='checkbox')
-            if($(this).attr('data-initvalue')==$(this).val()){
-                ev.preventDefault();
-                return;
-            }else {
-                $(this).attr('data-initvalue',$(this).val());
-            }
-            self._setChanged(true);
-        });
+			if($(this).attr('data-initvalue')==$(this).val()){
+				ev.preventDefault();
+				return;
+			}else {
+				$(this).attr('data-initvalue',$(this).val());
+			}
+			self._setChanged(true);
+		});
 
 
 		this.form.find('input[type=radio]').click(function(){
@@ -143,9 +143,9 @@ jQuery.widget("ui.atk4_form", {
 		});
 		*/
 		this.base_url=window.location.href.substr(0,window.location.href.indexOf('#'));
-        if(!this.base_url)this.base_url=window.location.href;
+		if(!this.base_url)this.base_url=window.location.href;
 		if(this.options.base_url)this.base_url=this.options.base_url;
-    },
+	},
 	submitPlain: function(){
 		// Disable AJAX handling, perform submit to a specified target then restore functionality.
 		// This function is used by file upload
@@ -189,11 +189,11 @@ jQuery.widget("ui.atk4_form", {
 	reloadField: function(field_name,url,fn,notrigger,arg){
 		var field_id = $("#"+this.id+' [data-shortname="'+field_name+'"]').first().attr("id");
 		if(!url) url=this.form.attr('action');
-        if(arg){
-            $.each(arg,function(key,value){
-                url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
-            });
-        }
+		if(arg){
+			$.each(arg,function(key,value){
+				url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
+			});
+		}
 		url=$.atk4.addArgument(url,this.id+'_cut_field',field_id);
 		var f=$("#"+field_id);
 		console.log('Field found: ',field_id,'->',f);
@@ -217,9 +217,9 @@ jQuery.widget("ui.atk4_form", {
 	 *     .atk-form-row
 	 *        .atk-form-label
 	 *        .atk-form-field
-	 *					{field}
-	 *					.atk-form-error
-	 *						span.field-error-text
+	 *                  {field}
+	 *                  .atk-form-error
+	 *                      span.field-error-text
 
 	   .atk-effect-danger - needs to be added to atk-form-row
 
@@ -236,10 +236,10 @@ jQuery.widget("ui.atk4_form", {
 			return this.options.error_handler(field_name,error);
 		}
 
-    var field=
-        typeof(field_name)=='string'?
-            $('[data-shortname="'+field_name+'"]','#'+this.id):
-                field_name;
+		var field=
+			typeof(field_name)=='string'?
+				$('[data-shortname="'+field_name+'"]','#'+this.id):
+					field_name;
 
 		if(!field.length){
 			field=this.form.find('[name="'+field_name+'"]');
@@ -262,6 +262,10 @@ jQuery.widget("ui.atk4_form", {
 
 		// highlight field
 		var field_highlight = field_row.find('.atk-form-field');
+		// Show highlight if atk-form-field is not present
+		if (!field_highlight.length) {
+			field_highlight = field_row;
+		}
 
 		// Clear previous errors
 		var field_error = field_row.find('.atk-form-error');
@@ -275,8 +279,8 @@ jQuery.widget("ui.atk4_form", {
 		
 		var error_bl=this.template['field_error'].clone();
 
-    // One of the below would find the text. This is faster appreach than
-    // doing find('*').andSelf().filter('.field-error-text');
+		// One of the below would find the text. This is faster appreach than
+		// doing find('*').andSelf().filter('.field-error-text');
 		error_bl.find('.field-error-text').add(error_bl.filter('.field-error-text')).text(error);
 
 		error_bl.appendTo(field_highlight).fadeIn();
@@ -285,22 +289,20 @@ jQuery.widget("ui.atk4_form", {
 
 		// Hide Error when clicked on it
 		// error_bl.on('click', function(e){
-		// 	$(this).closest('.has-error').removeClass('has-error')
-		// 		.find('.atk-form-label').removeClass('atk-effect-danger'); 
-		// 	error_bl.remove(); 
+		//  $(this).closest('.has-error').removeClass('has-error')
+		//      .find('.atk-form-label').removeClass('atk-effect-danger'); 
+		//  error_bl.remove(); 
 		// });
 
 		var self=this;
 
 		// make it remove error automatically when edited
-		field.on('input', function(e) {
-			e.preventDefault();
+		field.on('input paste change keyup', function(e) {
 			field.trigger('change.errorhide');
 		});
 
 		// For IE < 9
 		field.on('propertychange', function(e) {
-			e.preventDefault();
 			if (e.originalEvent.propertyName == "value")
 				field.trigger('change.errorhide');
 		});
@@ -342,13 +344,13 @@ jQuery.widget("ui.atk4_form", {
 		if(richtext.length)richtext.atk4_richtext('changeHTML');
 		params=form.element.find(":input").serializeArray();
 		if(btn){
-            for (var el in params){
-                if (params[el].name == 'ajax_submit'){
-                    params[el].value=btn;
-                    break;
-                }
-            }
-        }
+			for (var el in params){
+				if (params[el].name == 'ajax_submit'){
+					params[el].value=btn;
+					break;
+				}
+			}
+		}
 
 		var properties={
 			type: "POST",
@@ -356,14 +358,14 @@ jQuery.widget("ui.atk4_form", {
 		};
 
 		form.loading=true;
-        if(form.show_loader){
-            form.element.atk4_loader().atk4_loader('showLoader');
-        }
+		if(form.show_loader){
+			form.element.atk4_loader().atk4_loader('showLoader');
+		}
 
-        // disable all fields and buttons while submitting
-        form.element.find(":input:enabled")
-            .attr("disabled",true)
-            .attr("reenable",true);
+		// disable all fields and buttons while submitting
+		form.element.find(":input:enabled")
+			.attr("disabled",true)
+			.attr("reenable",true);
 
 		// do request
 		$.atk4.get(properties,params,function(res){
@@ -393,14 +395,14 @@ jQuery.widget("ui.atk4_form", {
 			form._setChanged(c);
 		},function(){
 			form.loading=false;
-            if(form.show_loader){
-                form.element.atk4_loader().atk4_loader('hideLoader');
-            }
+			if(form.show_loader){
+				form.element.atk4_loader().atk4_loader('hideLoader');
+			}
 
-            // reenable all fields and buttons which was previously enabled
-            form.element.find(":input[reenable]")
-                .removeAttr("disabled")
-                .removeAttr("reenable");
+			// reenable all fields and buttons which was previously enabled
+			form.element.find(":input[reenable]")
+				.removeAttr("disabled")
+				.removeAttr("reenable");
 		});
 	}
 });
