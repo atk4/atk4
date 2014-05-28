@@ -29,7 +29,6 @@ class Form_Submit extends Button {
 
     function init(){
         parent::init();
-        $this->addClass('atk-effect-success');
         $this->template->trySet('type','submit');
         if($this->form->js_widget){
             $this->js('click',array(
