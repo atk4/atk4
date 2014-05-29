@@ -341,12 +341,6 @@ jQuery.widget("ui.atk4_form", {
 			return false;
 		}
 
-		if(this.form.hasClass('form_has_errors')) {
-			this.form.removeClass('form_has_error');
-			this.form.find('.atk-effect-danger').removeClass('atk-effect-danger');
-		}
-
-
 		this.form.trigger('beforesubmit');
 		// btn is clicked
 		var richtext=form.element.find('.atk4_richtext');
@@ -375,6 +369,11 @@ jQuery.widget("ui.atk4_form", {
 		form.element.find(":input:enabled")
 			.attr("disabled",true)
 			.attr("reenable",true);
+
+		form.element.find('.atk-effect-danger').removeClass('atk-effect-danger');
+
+
+
 
 		// do request
 		$.atk4.get(properties,params,function(res){
