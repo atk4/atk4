@@ -276,7 +276,7 @@ jQuery.widget("ui.atk4_form", {
 			alert(error);
 			return;
 		}
-		
+
 		var error_bl=this.template['field_error'].clone();
 
 		// One of the below would find the text. This is faster appreach than
@@ -290,8 +290,8 @@ jQuery.widget("ui.atk4_form", {
 		// Hide Error when clicked on it
 		// error_bl.on('click', function(e){
 		//  $(this).closest('.has-error').removeClass('has-error')
-		//      .find('.atk-form-label').removeClass('atk-effect-danger'); 
-		//  error_bl.remove(); 
+		//      .find('.atk-form-label').removeClass('atk-effect-danger');
+		//  error_bl.remove();
 		// });
 
 		var self=this;
@@ -318,8 +318,8 @@ jQuery.widget("ui.atk4_form", {
 
 			field_highlight.closest('.has-error').removeClass('has-error');
 
-			error_bl.fadeOut(function(){ 
-				error_bl.remove(); 
+			error_bl.fadeOut(function(){
+				error_bl.remove();
 			});
 		});
 	},
