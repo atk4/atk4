@@ -111,7 +111,7 @@ class PathFinder extends AbstractController
             try {
                 $self->loadClass($class);
             }catch(Exception $e) {
-                // If due to your PHP version, it says that 
+                // If due to your PHP version, it says that
                 // autoloader may not throw exceptions, then you should
                 // add PHP verion check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
@@ -173,18 +173,25 @@ class PathFinder extends AbstractController
             $this->api->addDefaultLocations($this, $base_directory);
         }
 
+        $templates_folder='templates';
+
+        if ($this->app->compat_42 && is_dir($base_directory.'/templates/default')) {
+            $templates_folder='templates/default';
+        }
+
         $this->base_location=$this->addLocation(array(
             'php'=>'lib',
             'page'=>'page',
-            'template'=>'templates',
+            'template'=>$templates_folder,
             'mail'=>'mail',
             'logs'=>'logs',
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
 
 
+
         if(@$this->api->pm) {
-            // Add public location - assets, but only if 
+            // Add public location - assets, but only if
             // we hav PageManager to identify it's location
             if(is_dir($base_directory.'/public')) {
                 $this->public_location=$this->addLocation(array(
@@ -197,6 +204,8 @@ class PathFinder extends AbstractController
             }else{
                 $this->base_location
                     ->setBaseURL($this->api->pm->base_path);
+                $this->public_location = $this->base_location;
+                $this->public_location->defineContents(array('js'=>'templates/js','css'=>'templates/css'));
             }
 
             if(basename($this->api->pm->base_path)=='public') {
@@ -231,14 +240,17 @@ class PathFinder extends AbstractController
             ;
 
         if(@$this->api->pm) {
-            if(is_dir($base_directory.'/public/atk4')) {
+            if($this->app->compat_42 && is_dir($this->public_location->base_path.'/atk4/public/atk4')) {
+                $this->atk_public=$this->public_location->addRelativeLocation('atk4/public/atk4');
+            }elseif(is_dir($this->public_location->base_path.'/atk4')) {
                 $this->atk_public=$this->public_location->addRelativeLocation('atk4');
             }elseif(is_dir($base_directory.'/vendor/atk4/atk4/public/atk4')) {
                 $this->atk_public=$this->base_location->addRelativeLocation('vendor/atk4/atk4/public/atk4');
             }elseif(is_dir($base_directory.'/../vendor/atk4/atk4/public/atk4')) {
                 $this->atk_public=$this->base_location->addRelativeLocation('../vendor/atk4/atk4/public/atk4');
             }else{
-                throw $this->exception('Agile Toolkit unable to locate public/atk4 folder');
+                echo $this->public_location;
+                throw $this->exception('Unable to locate public/atk4 folder','Migration');
             }
 
             $this->atk_public->defineContents(array(
@@ -247,6 +259,7 @@ class PathFinder extends AbstractController
                     'css'=>'css',
                 ));
         }
+
 
         // Add sandbox if it is found
         $this->addSandbox();
@@ -283,7 +296,7 @@ class PathFinder extends AbstractController
 
     /**
      * Cretes new PathFinder_Location object and specifies it's contents.
-     * You can subsequentially add more contents by calling 
+     * You can subsequentially add more contents by calling
      *
      *   $location->defineContents
      *
@@ -296,8 +309,7 @@ class PathFinder extends AbstractController
     {
 
         if ($old_contents && @$this->api->compat_42){
-            $contents = $old_contents;
-            $this->_relative_path=$contents;
+            return $this->base_location->addRelativeLocation($contents,$old_contents);
         }
 
         return $this
@@ -334,7 +346,7 @@ class PathFinder extends AbstractController
             if (is_string($path) || is_object($path)) {
                 return $path;
             } elseif (is_array($path)) {
-                if($return==='array' && @isset($path['name'])) 
+                if($return==='array' && @isset($path['name']))
                     return $path;
 
                 $attempted_locations=array_merge($attempted_locations, $path);
@@ -400,8 +412,8 @@ class PathFinder extends AbstractController
         }
         return $files;
     }
-    /** 
-     * Provided with a class name, this will attempt to 
+    /**
+     * Provided with a class name, this will attempt to
      * find and load it
      *
      * @return String path from where the class was loaded
@@ -514,7 +526,7 @@ class PathFinder_Location extends AbstractModel {
     public $is_cdn = false;
     /**
      * If you set this to true, then baseURL will be considered
-     * to point to a remote location. 
+     * to point to a remote location.
      *
      * use setCDN() method;
      */
