@@ -253,6 +253,9 @@ class Form_Basic extends View implements ArrayAccess {
         return $this->add('Html')->set($c->render());
     }
 
+    function addComment(){
+    }
+
     // Operating with field values
     //
     // {{{ ArrayAccess support
