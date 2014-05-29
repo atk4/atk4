@@ -373,9 +373,15 @@ class App_Web extends App_CLI {
     }
     /** Called on all templates in the system, populates some system-wide tags */
     function setTags($t){
-        // absolute path to base location
-        $t->trySet('atk_path',$q=
-            $this->app->pathfinder->atk_public->getURL().'/');
+
+        // Determine Location to atk_public
+        if ($this->app->pathfinder && $this->app->pathfinder->atk_public) {
+            $q=$this->app->pathfinder->atk_public->getURL();
+        } else {
+            $q='http://www4.agiletoolkit.org/atk4';
+        }
+
+        $t->trySet('atk_path',$q.'/');
         $t->trySet('base_path',$q=$this->app->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
