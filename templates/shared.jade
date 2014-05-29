@@ -30,18 +30,21 @@ html(lang="{lang}en{/}")
 
         {Layout}
         .atk-layout
-            .atk-menu-bar.atk-cells.atk-push.atk-shape-rounded
-                .atk-cell.atk-valign-middle
-                    img(src="{public}images/logo.png{/}" style="background: black")
-                .atk-cell.atk-jackscrew
-                    {$Menu}
+            .atk-layout-row
+                .atk-wrapper.atk-padding-small.atk-cells
+                    .atk-cell.atk-valign-middle
+                        img(src="{public}images/logo.png{/}" style="background: black")
+                    .atk-cell.atk-jackscrew.atk-align-right
+                        {$Menu}
 
-            #atk-main.atk-layout-row.fluid
-                #atk-main-inner.atk-layout
-                    #atk-content.atk-layout-column.fluid
-                        {$Content}
+            .atk-layout-row.atk-layout-fluid
+                .atk-wrapper
+                    {$Content}
 
             .atk-layout-row
-                footer#atk-footer
-                    &copy; Agile Toolkit 2014
+                .atk-wrapper.atk-padding-small.atk-align-center.atk-size-milli
+                    | This system is implemented using&nbsp;
+                    a(href="http://agiletoolkit.org/") Agile Toolkit
+                    |. © 1999–2014 Agile Toolkit Limited.&nbsp;
+                    a(href="http://agiletoolkit.org/about/license") See License
         {/}
