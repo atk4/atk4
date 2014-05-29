@@ -153,25 +153,48 @@ class App_Frontend extends App_Web {
     }
     // }}}
 
-    // {{{ Obsolete functions
-    /** @obsolete - does nothing */
-    function execute(){
-        try{
-            parent::execute();
-        }catch(Exception $e){
-            $this->caughtException($e);
+    function caughtException($e) {
+        if ($e instanceof Exception_ForUser || $e instanceof Exception_Migration) {
+
+            try {
+
+                // The mesage is for user. Let's display it nicely.
+
+                $this->app->pathfinder->addLocation(['public'=>'.'])
+                   ->setCDN('http://www4.agiletoolkit.org/atk4');
+
+                $l=$this->app->add('Layout_Basic',null,null,array('layout/installer'));
+                $i=$l->add('View')->addClass('atk-align-center');
+                $i->add('H1')->set($e->getMessage());
+
+                if ($e instanceof Exception_Migration) {
+                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. Your project may require some minor tweaks before you can use 4.3.');
+                }
+
+                $b=$i->add('Button')->addClass('atk-swatch-green');
+                $b->set(['Migration Guide','icon'=>'book']);
+                $b->link('http://www4.agiletoolkit.org/42');
+
+                if ($this->app->template && $this->app->template->hasTag('Layout')) {
+                    $t=$this->app->template;
+                } else {
+                    $t=$this->add('GiTemplate');
+                    $t->loadTemplate('shared');
+                }
+
+                $t->setHTML('Layout',$l->getHTML());
+                $t->trySet('css','http://css.agiletoolkit.org/framework/css/installer.css');
+                echo $t->render();
+
+                exit;
+            } catch (BaseException $e){
+                echo 'here';
+                $this->app->add('Logger');
+                return parent::caughtException($e);
+            }
+
+
         }
+        return parent::caughtException($e);
     }
-    /** @obsolete */
-    function getRSSURL($rss,$args=array()){
-        $tmp=array();
-        foreach($args as $arg=>$val){
-            if(!isset($val) || $val===false)continue;
-            if(is_array($val)||is_object($val))$val=serialize($val);
-            $tmp[]="$arg=".urlencode($val);
-        }
-        return
-            $rss.'.xml'.($tmp?'?'.join('&',$tmp):'');
-    }
-    // }}}
 }
