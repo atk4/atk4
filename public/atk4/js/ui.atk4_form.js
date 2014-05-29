@@ -302,6 +302,8 @@ jQuery.widget("ui.atk4_form", {
 		});
 
 		// For IE < 9
+
+		// TODO: make sure this is not create multiple errors
 		field.on('propertychange', function(e) {
 			if (e.originalEvent.propertyName == "value")
 				field.trigger('change.errorhide');
