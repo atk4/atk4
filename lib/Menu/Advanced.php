@@ -93,6 +93,29 @@ abstract class Menu_Advanced extends View {
         return $i;
     }
 
+    function setModel($m){
+        $m=parent::setModel($m);
+        foreach($m as $model) {
+
+            // check subitems
+            if($model[$model->hierarchy_controller->child_ref.'_cnt']){
+                $m=$this->addMenu($model['name']);
+                foreach($model->ref($model->hierarchy_controller->child_ref) as $child){
+                    $m->addItem($child['name'],$child['page']);
+                }
+
+            }else{
+
+                $this->addItem($model['name'],$model['page']);
+
+            }
+
+
+
+        }
+
+    }
+
 
     // compatibility
     function addMenuItem($page,$label=null){
