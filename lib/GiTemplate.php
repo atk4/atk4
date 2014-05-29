@@ -491,6 +491,11 @@ class GiTemplate extends AbstractModel {
 
         $this->template_file=$template_name;
 
+        if ($this->app->compat_42 && strpos($template_source,'<?')!== false) {
+            $this->settings['ldelim']='<\?';
+            $this->settings['rdelim']='\?>';
+        }
+
         $this->loadTemplateFromString($template_source);
 
 
