@@ -179,7 +179,7 @@ class App_Frontend extends App_Web {
                     $t=$this->app->template;
                 } else {
                     $t=$this->add('GiTemplate');
-                    $t->loadTemplate('shared');
+                    $t->loadTemplate('html');
                 }
 
                 $t->setHTML('Layout',$l->getHTML());

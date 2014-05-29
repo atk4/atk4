@@ -464,7 +464,7 @@ class App_Web extends App_CLI {
     }
     /** Default template for the application. Redefine to add your own rules. */
     function defaultTemplate(){
-        return array('shared');
+        return array('html');
     }
     // }}}
 }
