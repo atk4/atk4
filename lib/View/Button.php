@@ -183,13 +183,13 @@ class View_Button extends View_HtmlElement
         $this->owner->add('Order')->move($but, 'after', $this)->now();
 
         // Not very pretty, but works well
-        $but->jsButton()
+        $but
             ->js(true)
             ->removeClass('ui-corner-all')
             ->addClass('ui-corner-right')
             ->css('margin-left','-2px');
 
-        $this->jsButton()
+        $this
             ->js(true)
             ->removeClass('ui-corner-all')
             ->addClass('ui-corner-left')
