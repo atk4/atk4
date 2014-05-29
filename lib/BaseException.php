@@ -27,16 +27,16 @@ class BaseException extends Exception
 
     // Backtrace array
     public $my_backtrace;
-    
+
     // Backtrace shift
     public $shift = 0;
-    
+
     // Classname of exception
     public $name;
 
     // Array with more info
     public $more_info = array();
-    
+
     // Array of available actions
     public $actions;
 
@@ -65,10 +65,10 @@ class BaseException extends Exception
         parent::__construct($msg, $code);
         $this->collectBasicData($code);
     }
-    
+
     /**
      * Collect basic data of exception
-     * 
+     *
      * @param string $code Error code
      *
      * @return void
@@ -80,11 +80,11 @@ class BaseException extends Exception
         array_shift($this->my_backtrace);
         array_shift($this->my_backtrace);
     }
-    
+
     /**
      * Call this to add additional information to the exception you are about
      * to throw.
-     * 
+     *
      * @param string $key
      * @param string $value
      *
@@ -95,11 +95,11 @@ class BaseException extends Exception
         $this->more_info[$key] = $value;
         return $this;
     }
-    
+
     /**
      * Add reference to the object.
      * Do not call this directly, exception() method takes care of that.
-     * 
+     *
      * @param string $t
      */
     function addThis($t)
@@ -132,7 +132,7 @@ class BaseException extends Exception
         $this->actions[$key] = $descr;
         return $this;
     }
-    
+
     /**
      * Return collected backtrace info
      *
@@ -142,10 +142,10 @@ class BaseException extends Exception
     {
         return $this->my_backtrace;
     }
-    
+
     /**
      * Return filename from backtrace log
-     * 
+     *
      * @return string
      */
     function getMyFile()
@@ -173,7 +173,7 @@ class BaseException extends Exception
     function getHTML($message = null)
     {
         $msg = isset($message) ? ': ' . $message : '';
-        
+
         $html =
             '<h2>' . get_class($this) . $msg . '</h2>' .
             '<p><font color=red>'  . $this->getMessage() . '</font></p>' .
@@ -182,10 +182,10 @@ class BaseException extends Exception
             $this->getDetailedHTML() .
             '' //backtrace($this->shift + 1, $this->getMyTrace())
             ;
-        
+
         return $html;
     }
-    
+
     /**
      * Returns Textual representation of the exception
      *
@@ -210,7 +210,7 @@ class BaseException extends Exception
 
     /**
      * Redefine this function to add additional HTML output
-     * 
+     *
      * @return string
      */
     function getDetailedHTML()
