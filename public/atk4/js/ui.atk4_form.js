@@ -297,7 +297,7 @@ jQuery.widget("ui.atk4_form", {
 		var self=this;
 
 		// make it remove error automatically when edited
-		field.on('input paste change keyup', function(e) {
+		field.on('input paste change', function(e) {
 			field.trigger('change.errorhide');
 		});
 
