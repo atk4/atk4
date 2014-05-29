@@ -114,7 +114,17 @@ class App_CLI extends AbstractView
      *
      * @see requires();
      */
-    public $atk_version=4.2;
+    public $atk_version=4.3;
+
+    /**
+     * If you want Agile Toolkit to be compatible with 4.2 version, include
+     * compatibility controller. For more information see:
+     *
+     * http://www.agiletoolkit.org/compat42
+     *
+     * @var boolean
+     */
+    public $compat_42=false;
 
     /**
      * Some Agile Toolkit classes contain references to profiler. Profiler
