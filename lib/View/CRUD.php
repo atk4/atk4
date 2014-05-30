@@ -292,7 +292,7 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        if(!$this->grid)return;
+        if(!$this->grid || $this->grid instanceof Dummy)return;
 
         $s = $this->api->normalizeName($name);
 
