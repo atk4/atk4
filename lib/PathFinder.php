@@ -110,8 +110,12 @@ class PathFinder extends AbstractController
         $base_directory=dirname(@$_SERVER['SCRIPT_FILENAME']);
 
         // Compatibility with command-line
-        if (!$base_directory) {
-            $base_directory=realpath($GLOBALS['argv'][0]);
+        // PHP manual: If there are no slashes in path, a dot ('.') is returned,
+        // indicating the current directory.
+        if (!$base_directory || $base_directory === '.') {
+            // PHP manual: The running script must have executable permissions on
+            // all directories in the hierarchy, otherwise realpath() will return FALSE.
+            $base_directory = dirname(realpath($GLOBALS['argv'][0]));
         }
 
         if ($this->api->hasMethod('addDefaultLocations')) {
