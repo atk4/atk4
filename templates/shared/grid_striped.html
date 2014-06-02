@@ -37,19 +37,20 @@
     </tr>
     <?/row?>
 
-    <?totals?>
-      <tr class="atk-grid-totals">
-      <?cols?>
-        <?col?>
-          <td <?$tdparam?>><?$content?></td>
-        <?/col?>
-      <?/cols?>
-      </tr>
-    <?/totals?>
-    
   <?/rows?>
   </tbody>
 
+  <?totals?>
+  <tfoot>
+    <tr class="atk-grid-totals">
+    <?cols?>
+      <?col?>
+        <td <?$tdparam?>><?$content?></td>
+      <?/col?>
+    <?/cols?>
+    </tr>
+  </tfoot>
+  <?/totals?>
   <?$footer?>
 
 </table>
