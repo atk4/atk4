@@ -16,6 +16,23 @@
  =====================================================ATK4=*/
 class Form_Field_DropDown extends Form_Field_ValueList {
 
+    public $default_selected_key = '';
+
+    /**
+     * Sets default selected key from exisiting list of key => value pair
+     *
+     * @param string/integer $key {ass UNDEFINED to use default value empty_text/value
+     *
+     * @return $this
+     */
+    function setDefaultSelectedKey($key = UNDEFINED)
+    {
+        if ($this->value_list && isset($this->value_list[$key])) {
+            $this->default_selected_key = $key;
+        }
+        return $this;
+    }
+
     function getInput($attr=array()){
         $multi = isset($this->attr['multiple']);
         $output=$this->getTag('select',array_merge(array(
@@ -38,9 +55,13 @@ class Form_Field_DropDown extends Form_Field_ValueList {
         return $output;
     }
     function getOption($value){
+        $selected = $value == $this->value;
+        if ($this->default_selected_key && $value == $this->default_selected_key) {
+            $selected = $this->default_selected_key;
+        }
         return $this->getTag('option',array(
                     'value'=>$value,
-                    'selected'=>$value == $this->value
+                    'selected'=>$selected
                     ));
     }
 }
