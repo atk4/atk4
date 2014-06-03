@@ -98,13 +98,14 @@ abstract class Menu_Advanced extends View {
         foreach($m as $model) {
 
             // check subitems
-            if($model[$model->hierarchy_controller->child_ref.'_cnt']){
+            if(@$model->hierarchy_controller && $model[$model->hierarchy_controller->child_ref.'_cnt']){
                 $m=$this->addMenu($model['name']);
                 foreach($model->ref($model->hierarchy_controller->child_ref) as $child){
                     $m->addItem($child['name'],$child['page']);
                 }
 
             }else{
+
 
                 $this->addItem($model['name'],$model['page']);
 
