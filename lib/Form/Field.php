@@ -408,6 +408,14 @@ abstract class Form_Field extends AbstractView {
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }
+
+    function destroy(){
+        parent::destroy();
+        if ($this->form != $this->owner) {
+            $this->form->_removeElement($this->short_name);
+        }
+    }
+
     function defaultTemplate(){
         return array('form_field');
     }
