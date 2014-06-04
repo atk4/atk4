@@ -24,13 +24,13 @@ $.widget("ui.atk4_checkboxes", {
 		.each(function(){
 			var o=$(this);
 			if($.inArray(o.val(), ivalue)>-1){
-				o.attr('checked',true);
+				o.prop('checked',true);
 				$(this).closest('tr').addClass('ui-selected');
 			}
 		})
 		.change(function(){
 			var tr=$(this).closest('tr');
-			if($(this).attr('checked')){
+			if($(this).prop('checked')){
 				tr.addClass('ui-selected');
 			}else{
 				tr.removeClass('ui-selected');
@@ -39,20 +39,20 @@ $.widget("ui.atk4_checkboxes", {
 		});
 	},
 	stop: function(c){
-		$(c).children('.ui-selected').find('input').attr('checked',true);
-		$(c).children().not('.ui-selected').find('input').removeAttr('checked',true);
+		$(c).children('.ui-selected').find('input').prop('checked',true);
+		$(c).children().not('.ui-selected').find('input').prop('checked',false);
 		this.recalc();
 	},
 	select_all: function(){
 		this.element.find('tbody tr').not('.ui-selected')
 			.addClass('ui-selected')
-			.find('input[type="checkbox"]').attr('checked',true);
+			.find('input[type="checkbox"]').prop('checked',true);
 		this.recalc();
 	},
 	unselect_all: function(){
 		this.element.find('tbody tr.ui-selected')
 			.removeClass('ui-selected')
-			.find('input[type="checkbox"]').removeAttr('checked');
+			.find('input[type="checkbox"]').prop('checked',false);
 		this.recalc();
 	},
 	recalc: function(){
