@@ -217,8 +217,10 @@ class Form_Basic extends View implements ArrayAccess {
             } else {
                 $template=$this->template->cloneRegion('form_line');
                 $field = $insert_into->add($class, $options, null, $template);
-
             }
+
+            // Keep Reference, for $form->getElement().
+            $this->elements[$options['name']]=$field;
         }
 
 
