@@ -8,6 +8,7 @@ abstract class Menu_Advanced extends View {
     /**
      * Adds a title to your menu.
      */
+
     function addTitle($title, $class='Menu_Advanced_Title') {
 
         $i = $this->add($class,null,null,
@@ -87,9 +88,8 @@ abstract class Menu_Advanced extends View {
 
     function addSeparator($class='Menu_Advanced_Separator') {
         $i = $this->add($class,null,null,
-            $this->defaultTemplate()+array('Separator')
+            $x=array_merge($this->defaultTemplate(),array('Separator'))
         );
-
         return $i;
     }
 
