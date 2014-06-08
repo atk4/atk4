@@ -47,7 +47,7 @@ class Grid_Advanced extends Grid_Basic
      *
      * @see addPaginator()
      */
-    protected $paginator = null;
+    public $paginator = null;
 
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
@@ -575,7 +575,7 @@ class Grid_Advanced extends Grid_Basic
      * Additional formatting of checkbox fields column for totals row
      *
      * Basically we remove everything from such field
-     * 
+     *
      * @param string $field field name
      * @param array $column column configuration
      *
