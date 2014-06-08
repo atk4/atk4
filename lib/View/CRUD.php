@@ -206,7 +206,7 @@ class View_CRUD extends View
         }
 
         // Argument was blank, then edit/add is OK
-        return $page_mode=='edit' || $page_mode=='add';
+        return (boolean)$page_mode;
     }
 
     /**
@@ -391,6 +391,69 @@ class View_CRUD extends View
      */
     function addAction($method_name, $options = array()) {
 
+        if($options=='toolbar'){
+            $options=array('column'=>false);
+        }
+        if($options=='column'){
+            $options=array('toolbar'=>false);
+        }
+
+        $descr = $options['descr']?:ucwords(str_replace('_', ' ', $method_name));
+        $icon = $options['icon']?:'target';
+
+        $show_toolbar = isset($options['toolbar'])?$options['toolbar']:true;
+        $show_column = isset($options['column'])?$options['column']:true;
+
+        if ($this->isEditing($method_name)) {
+            if($show_toolbar && !$this->id) {
+                $this->model->unload();
+            }elseif($show_column && $this->id){
+                $this->model->load($this->id);
+            }else{
+                return ;
+            }
+
+            $reflection = new ReflectionMethod($this->model, $method_name);
+            $has_parameters=false;
+            foreach($reflection->getParameters() as $i=>$param) {
+                $this->form->addField($param->name);
+                $this->has_parameters=true;
+            }
+
+            if(!$has_parameters) {
+                $this->form->destroy();
+                $ret=$this->model->$method_name();
+                $this->virtual_page->getPage()->add('P')->set('Returned: '.$ret);
+                return true;
+            }
+
+            $this->form->addSubmit('Execute');
+            if($this->form->isSubmitted()) {
+                $ret=call_user_func_array(array($this->model,$method_name),array_values($this->form->get()));
+                $this->js()->univ()->successMessage('Returned: '.$ret)->closeDialog()->execute();
+            }
+            return true;
+        } elseif ($this->isEditing()) return;
+
+
+        if ($show_column) {
+            $this
+                ->virtual_page
+                ->addColumn($method_name, $descr.' '.$this->entity_name,  array('descr'=>$descr,'icon'=>$icon), $this->grid)
+                ;
+        }
+
+        if ($show_toolbar) {
+            $button = $this->addButton(array( $descr,'icon'=>$icon));
+
+            // Configure Add Button on Grid and JS
+            $button->js('click')->univ()
+                ->frameURL(
+                    $this->api->_($descr.' '.$this->entity_name),
+                    $this->virtual_page->getURL($method_name),
+                    $this->frame_options
+                );
+            }
     }
 
 
