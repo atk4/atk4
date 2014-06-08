@@ -516,10 +516,6 @@ class App_CLI extends AbstractView
     function dbConnect($dsn=null){
         return $this->db=$this->add('DB')->connect($dsn);
     }
-    /** Attempts to connect, but does not raise exception on failure. */
-    function tryConnect($dsn){
-        $this->db=DBlite::tryConnect($dsn);
-    }
     // }}}
 
     // {{{ Helper / utility methods
