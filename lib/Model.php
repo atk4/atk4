@@ -176,6 +176,13 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Countable {
         }
     }
 
+    function init(){
+        parent::init();
+
+
+        $this->addField($this->id_field)->system(true);
+    }
+
     /**
      * Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc
