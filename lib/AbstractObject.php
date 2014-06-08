@@ -4,7 +4,7 @@
  * Do not directly inherit from this class, instead use one of
  * AbstractModel, AbstractController or AbstractView
  *
- * @link http://agiletoolkit.org/learn/intro
+ * @link http://agiletoolkit.org/doc/core-features/objects
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
