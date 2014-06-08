@@ -79,6 +79,7 @@ class Controller_Data_SQL extends Controller_Data {
         }
         //$id = '' . $id;
 
+        $dsql->stmt=null;
         $model->tryLoad($id);
         if ($model->loaded()) {
             $this->api->db->commit();
