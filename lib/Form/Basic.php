@@ -242,7 +242,7 @@ class Form_Basic extends View implements ArrayAccess {
     function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this->add('View')->addClass($class);
         $c = clone $this->template_chunks['form_separator'];
-        $c->trySet('fieldset_class','atk-cell');
+        $c->trySet('fieldset_class','atk-cell '.$class);
         $this->template->trySet('fieldset_class','atk-cell');
         $this->template->trySet('form_class','atk-cells atk-cells-gutter-large');
 
@@ -251,7 +251,7 @@ class Form_Basic extends View implements ArrayAccess {
                 $c->appendHTML('fieldset_attributes',' '.$k.'="'.$v.'"');
             }
         }
-
+        
         return $this->add('Html')->set($c->render());
     }
 
