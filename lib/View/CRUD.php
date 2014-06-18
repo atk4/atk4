@@ -265,6 +265,11 @@ class View_CRUD extends View
     }
 
     /**
+     * Assuming that your model has a $relation defined, this method will add a button
+     * into a separate column. When clicking, it will expand the grid and will present
+     * either another CRUD with related model contents (one to many) or a form preloaded
+     * with related model data (many to one).
+     *
      * Adds expander to the crud, which edits references under the specified
      * name. Returns object of nested CRUD when active, or null
      *
@@ -422,12 +427,23 @@ class View_CRUD extends View
                 return ;
             }
 
-            $reflection = new ReflectionMethod($this->model, $method_name);
-            $has_parameters=false;
-            foreach($reflection->getParameters() as $i=>$param) {
+            if(isset($options['args'])) {
+                $params = $options['args'];
+            } elseif(!method_exists($this->model, $method_name)) {
+                // probably a dynamic method
+                $params = array();
+            } else {
+                $reflection = new ReflectionMethod($this->model, $method_name);
+
+                $params = $reflection->getParameters();
+            }
+
+            $has_parameters=(bool)$params;
+            foreach($params as $i=>$param) {
                 $this->form->addField($param->name);
                 $this->has_parameters=true;
             }
+
 
             if(!$has_parameters) {
                 $this->form->destroy();
