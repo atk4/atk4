@@ -26,7 +26,7 @@
  *
  * and if you want to use your own class based on this one, syntax is:
  *  $ctl = $form->add('Controller_MVCForm_Derived')->importFields($model,array('name','surname'));
- * 
+ *
  *
  * You can subsequently call importField() to add additional fields such as:
  *

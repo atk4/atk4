@@ -562,6 +562,12 @@ class GiTemplate extends AbstractModel {
 
 
 
+    /**
+     * Initialize current template from the supplied string
+     *
+     * @param  [type] $str [description]
+     * @return [type]      [description]
+     */
     function loadTemplateFromString($str){
         $this->template_source=$str;
         $this->source='string';
