@@ -42,7 +42,7 @@ class jQuery_Chain extends AbstractModel {
     function __get($property){
         /* this enables you  to have syntax like this:
          *
-         * $this->js()->offset()->top <-- access object items, if object is 
+         * $this->js()->offset()->top <-- access object items, if object is
          * returned by chained method call */
         if (!property_exists($this, $property)){
             $this->str.=".$property";
@@ -77,7 +77,7 @@ class jQuery_Chain extends AbstractModel {
     }
 
     /**
-     * Allows to chain calls on different library 
+     * Allows to chain calls on different library
      *
      * If you are using jQuery, then you can call _selector('blah')
      * which will result in $('blah') prefix, however if you want
@@ -85,7 +85,7 @@ class jQuery_Chain extends AbstractModel {
      *
      * _library('window.player').play();
      *
-     * will result in 
+     * will result in
      *
      * window.player.play();
      *
@@ -95,23 +95,40 @@ class jQuery_Chain extends AbstractModel {
         $this->library=$library;
         return $this;
     }
-    /* Use this to bind chain to document $(document)... */
+    /**
+     * Use this to bind chain to document $(document)...
+     *
+     * @return [type] [description]
+     */
     function _selectorDocument(){
         return $this->_library('$(document)');
     }
-    /* Use this to bind chain to window $(window)... */
+    /**
+     * Use this to bind chain to window $(window)...
+     *
+     * @return [type] [description]
+     */
     function _selectorWindow(){
         return $this->_library('$(window)');
     }
-    /* Use this to bind chain to "this" $(this)... */
+    /**
+     * Use this to bind chain to "this" $(this)...
+     */
     function _selectorThis(){
         return $this->_library('$(this)');
     }
-    /* Use this to bind chain to "region" $(region). Region is defined by ATK when reloading */
+    /**
+     * Use this to bind chain to "region" $(region). Region is defined by ATK when reloading
+     */
     function _selectorRegion(){
         return $this->_library('$(region)');
     }
-    /* Execute more JavaScript code before chain. Avoid using. */
+    /**
+     * Execute more JavaScript code before chain. Avoid using.
+     *
+     * @param  [type] $code [description]
+     * @return [type]       [description]
+     */
     function _prepend($code){
         if(is_array($code)){
             $code=join(';',$code);
@@ -123,7 +140,11 @@ class jQuery_Chain extends AbstractModel {
         $this->debug=true;
         return $this;
     }
-    /* Send chain in response to form submit, button click or ajaxec() function for AJAX control output */
+    /**
+     * Send chain in response to form submit, button click or ajaxec() function for AJAX control output
+     *
+     * @return [type] [description]
+     */
     function execute(){
         if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
             //if($this->api->jquery)$this->api->jquery->getJS($this->owner);
@@ -216,9 +237,9 @@ class jQuery_Chain extends AbstractModel {
     }
     /**
      * Prevents calling univ() multiple times
-     * 
+     *
      * Useful for backwards compatibility and in case of human mistake
-     * 
+     *
      * @return this
      */
     function univ() {
@@ -232,10 +253,10 @@ class jQuery_Chain extends AbstractModel {
      * Calls real redirect (from univ), but accepts page name
      *
      * Use url() for 1st argument manually anyway.
-     * 
+     *
      * @param string $page Page name
      * @param Array $arg Arguments
-     * 
+     *
      * @return this
      */
     function redirect($page = null, $arg = null) {
@@ -248,12 +269,12 @@ class jQuery_Chain extends AbstractModel {
      * You can bind this to custom event and trigger it if object is not
      * directly accessible.
      * If interval is given, then object will periodically reload itself.
-     * 
+     *
      * @param Array $arg
      * @param jQuery_Chain $fn
      * @param string $url
      * @param integer $interval Interval in milisec. how often to reload object
-     * 
+     *
      * @return this
      */
     function reload($arg = array(), $fn = null, $url = null, $interval = null) {
