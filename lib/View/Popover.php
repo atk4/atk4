@@ -14,8 +14,8 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-/* Popover is a handy view which can be used to display content in 
-* frames.The popover will automatically hide itself and position itself 
+/* Popover is a handy view which can be used to display content in
+* frames.The popover will automatically hide itself and position itself
 * relative to your element */
 class View_Popover extends View {
 
@@ -59,7 +59,7 @@ class View_Popover extends View {
 
 
         $loader_js=$this->url?
-            $this->js()->atk4_load(array($this->url)):null;
+            $this->js()->atk4_load(array($this->url)):$options['open_js']?:null;
 
         $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
@@ -76,7 +76,7 @@ class View_Popover extends View {
                 $this->js()->dialog('close')->_enclose()
             )->_selector('.ui-widget-overlay:last')->_enclose()->css('opacity','0'),
 
-            
+
         ),$options))->parent()->append('<div class="atk-popover-arrow"></div>')
         ;
 
