@@ -292,17 +292,21 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        if(!$this->grid || $this->grid instanceof Dummy)return;
+//        if(!$this->grid || $this->grid instanceof Dummy)return;
 
         $s = $this->api->normalizeName($name);
 
-        $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
-        $this->grid->columns['ex_'.$s]['page']
-            = $this->virtual_page->getURL('ex_'.$s);
 
         if ($this->isEditing('ex_'.$s)) {
 
-            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
+            $n=$this->virtual_page->name.'_'.$name;
+
+            if ($_GET[$n]) {
+                $this->id = $_GET[$n];
+                $this->api->stickyGET($n);
+            }
+
+            $idfield=$this->model->table.'_id';
             if ($_GET[$idfield]) {
                 $this->id = $_GET[$idfield];
                 $this->api->stickyGET($idfield);
@@ -323,6 +327,11 @@ class View_CRUD extends View
                 $options['grid_fields']?:$options['extra_fields']
             );
             return $subview;
+        }else{
+            $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
+            $this->grid->columns['ex_'.$s]['page']
+                = $this->virtual_page->getURL('ex_'.$s);
+            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
         }
 
         if ($this->isEditing()) {
@@ -423,14 +432,16 @@ class View_CRUD extends View
             if(!$has_parameters) {
                 $this->form->destroy();
                 $ret=$this->model->$method_name();
-                $this->virtual_page->getPage()->add('P')->set('Returned: '.$ret);
+                if(is_object($ret))$ret=(string)$ret;
+                $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
                 return true;
             }
 
             $this->form->addSubmit('Execute');
             if($this->form->isSubmitted()) {
                 $ret=call_user_func_array(array($this->model,$method_name),array_values($this->form->get()));
-                $this->js()->univ()->successMessage('Returned: '.$ret)->closeDialog()->execute();
+                if(is_object($ret))$ret=(string)$ret;
+                $this->js()->univ()->successMessage('Returned: '.json_encode($ret))->closeDialog()->execute();
             }
             return true;
         } elseif ($this->isEditing()) return;
