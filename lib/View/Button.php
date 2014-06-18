@@ -12,7 +12,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class View_Button extends View_HtmlElement
+class View_Button extends View
 {
     // Menu class
     public $menu_class = 'Menu_jUI';
@@ -300,35 +300,8 @@ class View_Button extends View_HtmlElement
             }
 
             // blank chain otherwise
-            $this->js()->execute();
+            $this->js()->univ()->successMessage('Success')->execute();
         }
-    }
-    // }}}
-
-
-
-    // {{{ Obsolete
-    /** @obsolete */
-    function setAction($js = null, $page = null)
-    {
-        throw $this->exception('setAction() is now obsolete. use onClick() or redirect() method');
-        return $this;
-    }
-    /** @obsolete */
-    function redirect($page)
-    {
-        return $this->js('click')->redirect($this->api->url($page));
-    }
-    /** @obsolete */
-    function submitForm($form)
-    {
-        throw $this->exception('submitForm() is obsolete, use button->js("click",$form->js()->submit());');
-        return $this->js('click', $form->js()->submit());
-    }
-    /** @obsolete Use addMenu instead */
-    function useMenu()
-    {
-       return $this->addMenu();
     }
     // }}}
 }
