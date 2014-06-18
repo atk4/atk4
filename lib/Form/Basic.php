@@ -154,6 +154,9 @@ class Form_Basic extends View implements ArrayAccess {
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
+    function error($field,$text=null){
+        $this->getElement($field)->displayFieldError($text);
+    }
     function addField($type, $options = null, $caption = null, $attr = null)
     {
 
@@ -227,17 +230,19 @@ class Form_Basic extends View implements ArrayAccess {
         $field->setCaption($caption);
         $field->setForm($this);
         $field->template->trySet('field_type', strtolower($type));
-        $field->setAttr($attr);
+
+        if($attr) {
+            if($this->app->compat) {
+                $field->setAttr($attr);
+            }else{
+                throw $this->exception('4th argument to addField is obsolete');
+            }
+        }
 
         return $field;
     }
     function importFields($model,$fields=undefined){
         $this->add($this->default_controller)->importFields($model,$fields);
-    }
-    function addfieldBreak(){
-        // TODO: refactor and get rid of separator
-        throw $this->exception('addSeparator is obsolete. Use add("View") or addColumnBreak()');
-
     }
     function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this->add('View')->addClass($class);
@@ -251,11 +256,8 @@ class Form_Basic extends View implements ArrayAccess {
                 $c->appendHTML('fieldset_attributes',' '.$k.'="'.$v.'"');
             }
         }
-        
-        return $this->add('Html')->set($c->render());
-    }
 
-    function addComment(){
+        return $this->add('Html')->set($c->render());
     }
 
     // Operating with field values
@@ -359,7 +361,9 @@ class Form_Basic extends View implements ArrayAccess {
     function isLoadedFromDB(){
         return $this->loaded_from_db;
     }
-    function update(){
+    /* obsolete in 4.3 - use save() */
+    function update() { return $this->save(); }
+    function save(){
         // TODO: start transaction here
         try{
 
@@ -486,17 +490,16 @@ class Form_Basic extends View implements ArrayAccess {
         return parent::render();
     }
     function hasField($name){
+        if(!$this->app->compat)throw $this->exception('Use $form->hasElement instead','_Obsolete');
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
     function isClicked($name){
         if(is_object($name))$name=$name->short_name;
         return $_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]);
     }
-    function error($field,$text){
-        $this->getElement($field)->displayFieldError($text);
-    }
     /* external error management */
     function setFieldError($field, $name){
+        if(!$this->app->compat)throw $this->exception('4.3','_Obsolete');
         $this->errors[$field] = (isset($this->errors[$field])?$this->errors[$field]:'') . $name;
     }
 
