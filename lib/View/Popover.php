@@ -50,6 +50,12 @@ class View_Popover extends View {
         return $this;
     }
 
+    public $pop_class="";
+    function addClass($class) {
+        $this->pop_class.=" ".$class;
+        return $this;
+    }
+
     /* Returns JS which will position this element and show it */
     function showJS($options=null,$options_compat=array()){
 
@@ -63,7 +69,8 @@ class View_Popover extends View {
 
         $this->js(true)->dialog(array_extend(array(
             'modal'=>true,
-            'dialogClass'=>$options['class']?:'atk-popover',
+            'dialogClass'=>($options['class']?:'atk-popover').$this->pop_class.
+            ' atk-popover-'.($options['tip']?:'top-center'),
             'dragable'=>false,
             'resizable'=>false,
             'minHeight'=>'auto',
@@ -82,8 +89,8 @@ class View_Popover extends View {
 
         return $this->js()->dialog('open')->dialog('option',array(
             'position'=>$p=array(
-                'my'=>$options['my']?:'left top',
-                'at'=>$options['at']?:'left-5 bottom+5',
+                'my'=>$options['my']?:'center top',
+                'at'=>$options['at']?:'center bottom+8',
                 'of'=>$this->js()->_selectorThis()
                 //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
             )
