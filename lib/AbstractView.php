@@ -404,6 +404,8 @@ abstract class AbstractView extends AbstractObject
                 && !empty($this->owner->template)
             ) {
                 $this->owner->template->append($this->spot, $txt, false);
+            } elseif ($this->owner instanceof App_CLI) {
+                echo $txt;
             }
         }
     }

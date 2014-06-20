@@ -301,30 +301,62 @@ class App_CLI extends AbstractView
     // }}}
 
     // {{{ PathFinder and PageManager bindings
-    /** Find relative path to the resource respective to the current directory. */
+    /**
+     * Find relative path to the resource respective to the current directory.
+     *
+     * @param  [type] $type     [description]
+     * @param  string $filename [description]
+     * @param  string $return   [description]
+     * @return [type]           [description]
+     */
     function locate($type,$filename='',$return='relative'){
         return $this->pathfinder->locate($type,$filename,$return);
     }
-    /** Calculate URL pointing to specified resource */
+    /**
+     * Calculate URL pointing to specified resource
+     *
+     * @param  [type] $type     [description]
+     * @param  string $filename [description]
+     * @return [type]           [description]
+     */
     function locateURL($type,$filename=''){
         return $this->pathfinder->locate($type,$filename,'url');
     }
-    /** Return full system path to specified resource */
+    /**
+     * Return full system path to specified resource
+     *
+     * @param  [type] $type     [description]
+     * @param  string $filename [description]
+     * @return [type]           [description]
+     */
     function locatePath($type,$filename=''){
         return $this->pathfinder->locate($type,$filename,'path');
     }
-    /** Add new location with additional resources */
-    function addLocation($location,$contents){
-        return $this->pathfinder->addLocation($location,$contents);
+    /**
+     * Add new location with additional resources
+     *
+     * @param [type] $contents [description]
+     * @param [type] $obsolete [description]
+     */
+    function addLocation($contents, $obsolete=undefined){
+        if($obsolete !== undefined) throw $this->exception('Use a single argument for addLocation');
+        return $this->pathfinder->addLocation($contents);
     }
-    /** Returns base URL of this Web application installation. If you require
+    /**
+     * Returns base URL of this Web application installation. If you require
      * link to a page, you can use URL::useAbsoluteURL();
      *
      * @see URL::useAbsoluteURL() */
     function getBaseURL(){
         return $this->pm->base_path;
     }
-    /** Generates URL for specified page. Useful for building links on pages or emails. Returns URL object. */
+    /**
+     * Generates URL for specified page. Useful for building links on pages or emails. Returns URL object.
+     *
+     * @param  [type] $page      [description]
+     * @param  array  $arguments [description]
+     * @return [type]            [description]
+     */
     function url($page=null,$arguments=array()){
         if(is_object($page) && $page instanceof URL){
             // we receive URL
@@ -346,8 +378,6 @@ class App_CLI extends AbstractView
     function getStickyArguments(){
         return array();
     }
-    /** @obsolete use url() */
-    function getDestinationURL($page=null,$arguments=array()){ return $this->url($page,$arguments); }
     // }}}
 
     // {{{ Error handling
@@ -395,7 +425,13 @@ class App_CLI extends AbstractView
         }
     }
 
-    /** Executed when trying to access config parameter which is not find in the file */
+    /**
+     * Executed when trying to access config parameter which is not find in the file
+     *
+     * @param  [type] $default       [description]
+     * @param  [type] $exceptiontext [description]
+     * @return [type]                [description]
+     */
     function configExceptionOrDefault($default,$exceptiontext){
         if($default!='_config_get_false')return $default;
         throw new BaseException($exceptiontext);
@@ -428,7 +464,12 @@ class App_CLI extends AbstractView
 
         return false;
     }
-    /** Manually set configuration option */
+    /**
+     * Manually set configuration option
+     *
+     * @param array  $config [description]
+     * @param [type] $val    [description]
+     */
     function setConfig($config=array(),$val=UNDEFINED){
         if($val!==UNDEFINED)return $this->setConfig(array($config=>$val));
         if(!$config)$config=array();
