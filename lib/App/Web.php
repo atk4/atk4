@@ -332,6 +332,7 @@ class App_Web extends App_CLI {
         $this->rendered['sub-elements']=array();
         try {
             $this->hook('pre-render');
+            $this->hook('beforeRender');
             $this->recursiveRender();
             if(isset($_GET['cut_object']))
                 throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");
