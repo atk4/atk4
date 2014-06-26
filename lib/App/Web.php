@@ -307,6 +307,20 @@ class App_Web extends App_CLI {
         return $_GET[$name];
     }
 
+    function addStylesheet($file,$ext='.css',$locate='css'){
+        //$file=$this->api->locateURL('css',$file.$ext);
+        if(@$this->included[$locate.'-'.$file.$ext]++)return;
+
+        if(strpos($file,'http')!==0 && $file[0]!='/'){
+            $url=$this->locateURL($locate,$file.$ext);
+        }else $url=$file;
+
+        $this->template->appendHTML('js_include',
+                '<link type="text/css" href="'.$url.'" rel="stylesheet" />'."\n");
+        return $this;
+    }
+
+
     // }}}
 
     // {{{ Very Important Methods
