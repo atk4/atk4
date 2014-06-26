@@ -424,7 +424,14 @@ class Form_Basic extends View implements ArrayAccess {
                 /* TODO: need logic re-check here + test scripts */
                 //if(!is_array($output))$output=array($output);
                 // already array
-                if($has_output)$this->js(null,$output)->execute();
+                if($has_output) {
+
+                    if($output instanceof jQuery_Chain) {
+                        $output->execute();
+                    }elseif(is_string($output)) {
+                        $this->js(null, $this->js()->reload())->univ()->successMessage($output)->execute();
+                    }
+                }
             }
         }catch (BaseException $e){
             if($e instanceof Exception_ValidityCheck){
