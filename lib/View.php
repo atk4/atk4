@@ -232,8 +232,25 @@ class View extends AbstractView
                     ->set($text['icon']);
             }else{
                 $this->add('Icon')->set($text['icon']);
-                $this->add('HTML')->set('&nbsp;');
-                $this->add('Text')->set($text[0]);
+                if($text[0]){
+                    $this->add('HTML')->set('&nbsp;');
+                    $this->add('Text')->set($text[0]);
+                }
+            }
+
+            unset($text['icon']);
+        }
+        if($text['icon-r']){
+
+            if($this->template->hasTag('icon-r')) {
+                $this->add('Icon',null,'icon')
+                    ->set($text['icon']);
+            }else{
+                if($text[0]){
+                    $this->add('Text')->set($text[0]);
+                    $this->add('HTML')->set('&nbsp;');
+                }
+                $this->add('Icon')->set($text['icon-r']);
             }
 
             unset($text['icon']);
