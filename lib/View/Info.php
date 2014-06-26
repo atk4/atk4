@@ -16,5 +16,9 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class View_Info extends View_Box {
-    public $class="ui-state-highlight";
+    function init(){
+        parent::init();
+        $this->addClass('atk-effect-info');
+        $this->addIcon('info-circled');
+    }
 }

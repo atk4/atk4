@@ -16,32 +16,57 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class View_Box extends View {
-    public $class=null;         // ui-state-highligt, ui-state-error, etc
-    public $has_close=false;
     function set($text){
         $this->template->set('Content',$text);
         return $this;
     }
-    /** View box can be closed by clicking on the cross */
-    function addClose($state=true){
-        $this->has_close=$state;
+    /**
+     * By default box uses information Icon. You can use addIcon() to override or $this->template->del('Icon') to remove.
+     *
+     * @param [type] $i [description]
+     */
+    function addIcon($i){
+        return $this->add('Icon',null,'Icon')->set($i)->addClass('atk-size-mega');
+    }
+
+    /**
+     * Adds Button on the right side of the box for follow-up action
+     *
+     * @param [type] $page  [description]
+     * @param string $label [description]
+     */
+    function addButton($label='Continue'){
+        if(!is_array($label)){
+            $label=array($label, 'icon-r'=>'right-big');
+        }
+        return $this->add('Button',null,'Button')
+            ->set($label);
+    }
+
+
+    function link($page){
+        $this->addButton(false)->link($page);
+    }
+    /**
+     * View box can be closed by clicking on the cross
+     */
+    function addClose() {
+
+        if($this->recall('closed',false))$this->destroy();
+
+        $self = $this;
+        $this->add('Icon',null,'Button')
+            ->addComponents(array('size'=>'mega'))
+            ->set('cancel-1')
+            ->addStyle(array('cursor'=>'pointer'))
+            ->on('click',function($js) use($self) {
+                $self->memorize('closed', true);
+                return $self->js()->hide()->execute();
+            });
+
         return $this;
     }
-    /** By default box uses information Icon. You can use addIcon() to override or $this->template->del('Icon') to remove. */
-    function addIcon($i){
-        return $this->add('Icon',null,'Icon')->set($i);
-    }
-    function render(){
-        $this->template->trySet('class',$this->class);
-        if($this->has_close){
-            $this->js('click',
-                $this->js()->fadeOut()
-            )->_selector('#'.$this->name.' .ui-icon-closethick');
-        }else{
-            $this->template->tryDel('close');
-        }
-        return parent::render();
-    }
+
     function defaultTemplate(){
         return array('view/box');
     }

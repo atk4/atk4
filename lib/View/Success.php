@@ -1,6 +1,6 @@
 <?php
 /***********************************************************
-  Display standard Warning box
+  Adds standard box with success message
 
   Reference:
   http://agiletoolkit.org/doc/ref
@@ -15,11 +15,10 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-class View_Warning extends View_Box {
+class View_Success extends View_Box {
     function init(){
         parent::init();
-        $this->addClass('atk-effect-warning');
-        $this->template->set('label',$this->app->_('Warning').': ');
-        $this->addIcon('attention');
+        $this->addClass('atk-effect-success');
+        $this->addIcon('thumbs-up');
     }
 }
