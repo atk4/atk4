@@ -28,7 +28,7 @@ class Form_Field_Checkbox extends Form_Field {
         $this->template->trySet('field_caption','');
         $this->template->tryDel('label_container');
 
-        $label='<label for="'.$this->name.'">'.$this->caption.'</label>';
+        $label='&nbsp;<label for="'.$this->name.'">'.$this->caption.'</label>';
         return parent::getInput(array_merge(
                     array(
                         'type'=>'checkbox',
