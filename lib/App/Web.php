@@ -279,18 +279,32 @@ class App_Web extends App_CLI {
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
     public $sticky_get_arguments = array();
-    /** Make current get argument with specified name automatically appended to all generated URLs */
-    function stickyGET($name){
+    /**
+     * Make current get argument with specified name automatically appended to all generated URLs
+     *
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+    function stickyGet($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
         return $_GET[$name];
     }
-    /** Remove sticky GET which was set by stickyGET */
+    /**
+     * Remove sticky GET which was set by stickyGET
+     *
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
     function stickyForget($name){
         unset($this->sticky_get_arguments[$name]);
     }
     /** @ignore - used by URL class */
     function getStickyArguments(){
         return $this->sticky_get_arguments;
+    }
+
+    function get($name){
+        return $_GET[$name];
     }
 
     // }}}
