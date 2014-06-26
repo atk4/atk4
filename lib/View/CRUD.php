@@ -448,7 +448,10 @@ class View_CRUD extends View
             if(!$has_parameters) {
                 $this->form->destroy();
                 $ret=$this->model->$method_name();
-                if(is_object($ret))$ret=(string)$ret;
+                $this->virtual_page->js(true, $this->js()->reload());
+                if(is_object($ret)) {
+                    $this->virtual_page->js(true)->univ()->closeDialog();
+                }
                 $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
                 return true;
             }
@@ -457,7 +460,7 @@ class View_CRUD extends View
             if($this->form->isSubmitted()) {
                 $ret=call_user_func_array(array($this->model,$method_name),array_values($this->form->get()));
                 if(is_object($ret))$ret=(string)$ret;
-                $this->js()->univ()->successMessage('Returned: '.json_encode($ret))->closeDialog()->execute();
+                $this->js(null, $this->js()->reload())->univ()->successMessage('Returned: '.json_encode($ret))->closeDialog()->execute();
             }
             return true;
         } elseif ($this->isEditing()) return;
