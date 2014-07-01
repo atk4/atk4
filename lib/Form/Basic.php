@@ -335,7 +335,7 @@ class Form_Basic extends View implements ArrayAccess {
 
         $submit
             ->setIcon('ok')
-            ->setLabel($label)
+            ->set($label)
             ->setNoSave();
 
         return $submit;
