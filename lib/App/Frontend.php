@@ -171,7 +171,7 @@ class App_Frontend extends App_Web {
     // }}}
 
     function caughtException($e) {
-        if ($e instanceof Exception_ForUser || $e instanceof Exception_Migration) {
+        if ($e instanceof Exception_Migration) {
 
             try {
 
