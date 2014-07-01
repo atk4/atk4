@@ -274,7 +274,7 @@ class View_Button extends View
             $cl->confirm($message);
         }
 
-        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')));
+        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')),true);
 
         return isset($_GET[$this->name]);
     }
@@ -292,7 +292,7 @@ class View_Button extends View
         if ($this->isClicked($confirm_msg)) {
 
             // TODO: add try catch here
-            $ret = call_user_func($callback, $this);
+            $ret = call_user_func($callback, $this, $_POST);
 
             // if callback response is JS, then execute it
             if ($ret instanceof jQuery_Chain) {
@@ -300,7 +300,7 @@ class View_Button extends View
             }
 
             // blank chain otherwise
-            $this->js()->univ()->successMessage('Success')->execute();
+            $this->js()->univ()->successMessage(is_string($ret)?$ret:'Success')->execute();
         }
     }
     // }}}
