@@ -219,9 +219,10 @@ class View extends AbstractView
      */
     function set($text)
     {
+
         if(!is_array($text))return $this->setText($text);
 
-        if($text[0])$this->setText($text[0]);
+        if(!is_null($text[0]))$this->setText($text[0]);
 
         // If icon is defined, it will either insert it into
         // a designated spot or will combine it with text
