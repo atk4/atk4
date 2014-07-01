@@ -74,9 +74,9 @@ class App_Admin extends App_Frontend {
     function initTopMenu() {
         $m=$this->layout->add('Menu_Horizontal',null,'Top_Menu');
         //$m->addClass('atk-size-kilo');
-        $m->addItem('Admin');
-        $m->addItem('AgileToolkit');
-        $m->addItem('Documentation');
+        $m->addItem('Admin','/');
+        $m->addItem('AgileToolkit','/sandbox/dashboard');
+        $m->addItem('Documentation','http://book.agiletoolkit.org/');
     }
 
 
