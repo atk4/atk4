@@ -141,10 +141,12 @@ abstract class Form_Field extends AbstractView {
             if(isset($options['position']))$position=$options['position'];
         }
         if($position=='after'){
-            return $this->afterField()->add('Button',$options)->setLabel($label);
+            $button = $this->afterField()->add('Button',$options)->set($label);
         }else{
-            return $this->beforeField()->add('Button',$options)->setLabel($label);
+            $button = $this->beforeField()->add('Button',$options)->set($label);
         }
+        $this->js('change', $button->js()->data('val', $this->js()->val()) );
+        return $button;
     }
 
     /** Layout changes in response to adding more elements before / after */
