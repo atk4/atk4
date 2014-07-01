@@ -332,7 +332,7 @@ class View_CRUD extends View
                 $options['grid_fields']?:$options['extra_fields']
             );
             return $subview;
-        }else{
+        }elseif($this->grid instanceof Grid){
             $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
             $this->grid->columns['ex_'.$s]['page']
                 = $this->virtual_page->getURL('ex_'.$s);
