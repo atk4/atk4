@@ -1,9 +1,6 @@
 <?php
 /***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
+  http://book.agiletoolkit.org/contoller/process.html
 
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -15,8 +12,6 @@
 
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
-// TODO: System_ProcessIO is created but not tested yet.
-// Make sure to finish test-class and test with that
 
 //
 // This class provides a much more flexible and efficient interface
@@ -25,7 +20,10 @@
 // exceptions
 
 
+// obselete, use Exception_System_ProcessIO
 class System_ProcessIO_Exception extends BaseException { }
+class Exception_System_ProcessIO extends System_ProcessIO_Exception {}
+
 class System_ProcessIO extends AbstractModel {
     // allow us to execute commands in a flexible and easy way
     public $descriptorspec=array();
@@ -38,7 +36,11 @@ class System_ProcessIO extends AbstractModel {
     public $stderr='';
     public $exic_code=null;
 
-    // Initialization and starting process
+    /**
+     * Initialization of the object
+     *
+     * @return void
+     */
     function init(){
         parent::init();
         $this->debug('ProcessIO initialised, setting descriptor options');
@@ -52,6 +54,13 @@ class System_ProcessIO extends AbstractModel {
     function debugStatus(){
         //$this->debug('process status: '.print_r(proc_get_status($this->process),true));
     }
+    /**
+     * Execute the process and associate with this object.
+     *
+     * @param  string $cmd  Command to be executed
+     * @param  array  $args Arguments (strings)
+     * @return self
+     */
     function exec($cmd,$args=array()){
         // Arguments must be safe
         if(!is_array($args))$args=array($args);
@@ -65,12 +74,21 @@ class System_ProcessIO extends AbstractModel {
 
         $this->debug('Executing '.$cmd.($this->args?' '.join(' ',$this->args):''));
         // Now do the execution
-        $this->execute_raw($this->cmd.' '.join(' ',$this->args));
+        $this->executeRaw($this->cmd.' '.join(' ',$this->args));
         return $this;
     }
-    protected function execute_raw($command){
-        // This function just executes command and returns hash of descriptors.
-        // Hash will have keys 'in', 'out' and 'err'
+
+    /**
+     * This function just executes command and returns hash of descriptors.
+     * Hash will have keys 'in', 'out' and 'err'
+     *
+     * This is a handy function to override if you are piping input and
+     * output through sockets (such as SSH connection)
+     *
+     * @param  string $command raw and proprely escaped command
+     * @return array of pipes
+     */
+    protected function executeRaw($command){
 
         $pipes=null;
         $this->process = proc_open($command,$this->descriptorspec,$pipes);
@@ -85,11 +103,16 @@ class System_ProcessIO extends AbstractModel {
         $this->pipes['err'] =& $pipes[2];
         return $pipes;  // in case you need more streams redirected
     }
+    protected function execute_raw($command){ return $this->executeRaw($command); }
 
-    // Basic input-output
+    /**
+     * Sends string to process, but process will wait for more input. Always
+     * adds newline at the end
+     *
+     * @param  string $str any input data.
+     * @return self
+     */
     function write($str){
-        // Sends string to process, but process will wait for more input.
-        // always adds newline at the end
         if(!is_resource($this->pipes['in']))
             throw new System_ProcessIO_Exception("stdin is closed or haven't been opened. Cannot write to process");
         $this->debug('writing '.$str.'+newline into stdin');
@@ -97,26 +120,45 @@ class System_ProcessIO extends AbstractModel {
         $this->debugStatus();
         return $this;
     }
-    function write_all($str){
-        // Similar to write but will send EOF after sending text.
-        // Also makes sure your list do not end with endline (because write
-        // adds it)
+
+    /**
+     * Similar to write but will send EOF after sending text.
+     * Also makes sure your list do not end with endline (because write
+     * adds it)
+     *
+     * @param  string $str any input data.
+     * @return self
+     */
+    function writeAll($str){
         if(substr($str,-1)=="\n")$str=substr($str,0,-1);
         $this->write($str);
         $this->close('in');
         $this->debugStatus();
         return $this;
     }
-    function read_line($res='out'){
-        // Reads one line of output. Careful - if no output is provided it this function
-        // will be waiting.
+    function write_all($str){ return $this->writeAll($str); }
+
+    /**
+     * Reads one line of output. Careful - if no output is provided it
+     * this function  will be waiting.
+     *
+     * @param  string $res optional descriptor (either out or err)
+     * @return self
+     */
+    function readLine($res='out'){
         $str=fgets($this->pipes[$res]);
         if(substr($str,-1)=="\n")$str=substr($str,0,-1);
         return $str;
     }
+    function read_line($res='out'){ return $this->returnLine($res); }
+
+    /**
+     * Reads all output and returns. Closes stdout when EOF reached.
+     *
+     * @param  string $res optional descriptor (out or err)
+     * @return self
+     */
     function read_all($res='out'){
-        // Reads all output and returns. Closes stdout when EOF reached.
-        // set $safety
         $str='';
         $this->debugStatus();
         $this->debug('reading all output');
@@ -127,11 +169,19 @@ class System_ProcessIO extends AbstractModel {
 
         return $str;
     }
-    function read_stderr(){
+    function read_all($res='out'){ return $this->readAll(); }
+
+    function readStdErr(){
         return $this->read_all('err');
     }
+    function read_stderr(){ return $this->readStdErr(); }
 
-    // Closing IO and terminating
+    /**
+     * Closing IO and terminating
+     *
+     * @param  int    $sig Unix signal
+     * @return null
+     */
     function terminate($sig=null){
         // Terminates application without reading anything more.
         foreach($this->pipes as $key=>$res){
@@ -140,13 +190,16 @@ class System_ProcessIO extends AbstractModel {
         $this->debug('process terminated');
         proc_terminate($this->process,$sig);
     }
+
+
+    /**
+     * This function will finish reading from in/err streams
+     * and will close all streams. If you are doing your
+     * own reading line-by-line or you want to terminate
+     * application without reading all of it's output -
+     * use terminate() instead;
+     */
     function close($res=null){
-        // This function will finish reading from in/err streams
-        // and will close all streams. If you are doing your
-        // own reading line-by-line or you want to terminate
-        // application without reading all of it's output -
-        // use terminate() instead;
-        //
         if(is_null($res)){
             $this->debug('closing ALL streams, starting with IN');
             $this->close('in');
@@ -173,7 +226,12 @@ class System_ProcessIO extends AbstractModel {
         //$this->exit_code = proc_close($this->process);
     }
 
-    // Misc
+    /**
+     * Set "nice" value for the process
+     *
+     * @param  [type] $nice Nice level 0 .. 20
+     * @return null
+     */
     function nice($nice){
         if(function_exists('proc_nice')){
             proc_nice($this->process,$nice);
