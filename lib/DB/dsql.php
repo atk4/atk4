@@ -1318,6 +1318,7 @@ class DB_dsql extends AbstractModel implements Iterator {
                 if (is_object($value)) {
                     $value=$this->consume($value);
                 } else {
+                    if(is_array($value))$value=json_encode($value);
                     $value=$this->escape($value);
                 }
 

@@ -64,25 +64,29 @@ class App_REST extends App_CLI
         if ($_GET['format'] == 'json_pretty') {
             header('Content-type: application/json');
             echo json_encode($data, JSON_PRETTY_PRINT);
-            exit;
+            return;
         }
         if ($_GET['format'] == 'html') {
             echo '<pre>';
             echo json_encode($data, JSON_PRETTY_PRINT);
-            exit;
+            return;
         }
         header('Content-type: application/json');
 
         if($data===null)$data=array();
         echo json_encode($data);
-        exit;
+        return;
     }
     /**
      * main
      *
      * @return [type] [description]
      */
-    public function main()
+    function main(){
+        $this->execute();
+        $this->hook('saveDelayedModels');
+    }
+    public function execute()
     {
         try {
             try {
@@ -105,7 +109,7 @@ class App_REST extends App_CLI
                 }
                 $this->caughtException($e);
                 $this->encodeOutput($error, null);
-                exit;
+                return;
             }
 
 
