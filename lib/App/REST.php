@@ -27,7 +27,7 @@ class App_REST extends App_CLI
             // Extra 24-hour protection
             parent::init();
 
-            $this->add('Logger');
+            $this->logger = $this->add('Logger');
             $this->add('Controller_PageManager')
                 ->parseRequestedURL();
 
@@ -103,6 +103,7 @@ class App_REST extends App_CLI
                         'type'=>'API_Error'
                         );
                 }
+                $this->caughtException($e);
                 $this->encodeOutput($error, null);
                 exit;
             }
@@ -135,10 +136,13 @@ class App_REST extends App_CLI
                         ;
                 }
 
+                $this->logRequest($method, $args);
+
                 // Perform the desired action
                 $this->encodeOutput($this->endpoint->$method($args));
 
             } catch (Exception $e) {
+                $this->caughtException($e);
                 http_response_code($e->getCode()?:500);
 
                 $error = array(
@@ -155,5 +159,15 @@ class App_REST extends App_CLI
         } catch (Exception $e) {
             $this->caughtException($e);
         }
+    }
+    /**
+     * Override to extend the logging
+     *
+     * @param  [type] $method [description]
+     * @param  [type] $args   [description]
+     * @return [type]         [description]
+     */
+    function logRequest($method, $args) {
+
     }
 }
