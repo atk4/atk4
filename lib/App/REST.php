@@ -145,6 +145,8 @@ class App_REST extends App_CLI
                 // Perform the desired action
                 $this->encodeOutput($this->endpoint->$method($args));
 
+                $this->logSuccess();
+
             } catch (Exception $e) {
                 $this->caughtException($e);
                 http_response_code($e->getCode()?:500);
@@ -172,6 +174,9 @@ class App_REST extends App_CLI
      * @return [type]         [description]
      */
     function logRequest($method, $args) {
+
+    }
+    function logSuccess(){
 
     }
 }
