@@ -170,8 +170,9 @@ class BaseException extends Exception
      *
      * @return string
      */
-    function getHTML($message = null)
+    function getHTML()
     {
+        /*
         $msg = isset($message) ? ': ' . $message : '';
 
         $html =
@@ -182,9 +183,120 @@ class BaseException extends Exception
             $this->getDetailedHTML() .
             '' //backtrace($this->shift + 1, $this->getMyTrace())
             ;
+            */
 
-        return $html;
+        $e=$this;
+        $o='<div class="">';
+        $o.= "<h2 class='atk-effect-danger'>".get_class($e).": ". htmlspecialchars($e->getMessage()). ($e->getCode()?' [code: '.$e->getCode().']':'') ."</h2>\n";
+        if(@$e->more_info){
+            $o.= '<div class="atk-box-small">Additional information:';
+            $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
+            $o.= '</div>';
+        }
+        if(method_exists($e,'getMyFile'))$o.= '<div class="atk-effect-info">' . $e->getMyFile() . ':' . $e->getMyLine() . '</div>';
+
+        if(method_exists($e,'getMyTrace'))$o.= $this->backtrace(3,$e->getMyTrace());
+        else $o.= $this->backtrace(@$e->shift,$e->getTrace());
+
+        if(@$e->by_exception){
+            $o.="<h3>This error was triggered by the following error:</h3>";
+            $o.=$e->by_exception->getHTML();
+        }
+        $o.='</div>';
+
+
+        return $o;
     }
+
+    /**
+     * Utility
+     *
+     * @param  [type] $key [description]
+     * @param  [type] $gs  [description]
+     * @param  [type] $ge  [description]
+     * @param  [type] $ls  [description]
+     * @param  [type] $le  [description]
+     * @param  string $ind [description]
+     * @return [type]      [description]
+     */
+    function print_r($key,$gs,$ge,$ls,$le,$ind=' '){
+        $o='';
+        if(strlen($ind)>3)return;
+        if(is_array($key)){
+            $o=$gs;
+            foreach($key as $a=>$b){
+                $o.= $ind.$ls.$a.': '.$this->print_r($b,$gs,$ge,$ls,$le,$ind.' ').$le;
+            }
+            $o.=$ge;
+
+        }else{
+            $o.=$gs?htmlspecialchars($key):$key;
+        }
+        return $o;
+    }
+
+    function backtrace($sh=null,$backtrace=null){
+
+        $output  = '<div class="atk-box-small atk-table atk-table-zebra">';
+        $output .= "<table>\n";
+        $output .= "<tr><th align='right'>File</th><th>Object Name</th><th>Stack Trace</th></tr>";
+        if(!isset($backtrace)) $backtrace=debug_backtrace();
+        $sh-=2;
+
+        $n=0;
+        foreach($backtrace as $bt){
+            $n++;
+            $args = '';
+            if(!isset($bt['args']))continue;
+            foreach($bt['args'] as $a){
+                if(!empty($args)){
+                    $args .= ', ';
+                }
+                switch (gettype($a)) {
+                    case 'integer':
+                    case 'double':
+                        $args .= $a;
+                        break;
+                    case 'string':
+                        $a = htmlspecialchars(substr($a, 0, 128)).((strlen($a) > 128) ? '...' : '');
+                        $args .= "\"$a\"";
+                        break;
+                    case 'array':
+                        $args .= "Array(".count($a).")";
+                        break;
+                    case 'object':
+                        $args .= "Object(".get_class($a).")";
+                        break;
+                    case 'resource':
+                        $args .= "Resource(".strstr((string)$a, '#').")";
+                        break;
+                    case 'boolean':
+                        $args .= $a ? 'True' : 'False';
+                        break;
+                    case 'NULL':
+                        $args .= 'Null';
+                        break;
+                    default:
+                        $args .= 'Unknown';
+                }
+            }
+
+            if(($sh==null && strpos($bt['file'],'/atk4/lib/')===false) || (!is_int($sh) && $bt['function']==$sh)){
+                $sh=$n;
+            }
+
+            $output .= "<tr><td valign=top align=right class=atk-effect-".($sh==$n?'danger':'info').">".htmlspecialchars(dirname($bt['file']))."/".
+                "<b>".htmlspecialchars(basename($bt['file']))."</b>";
+            $output .= ":{$bt['line']}</font>&nbsp;</td>";
+            $name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
+            if($name)$output .= "<td>".$name."</td>";else $output.="<td></td>";
+            $output .= "<td valign=top class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+        }
+        $output .= "</table></div>\n";
+        return $output;
+    }
+
+
 
     /**
      * Returns Textual representation of the exception
