@@ -556,7 +556,7 @@ class SQL_Model extends Model implements Serializable {
         try{
             return $this->_load(null);
         }catch(BaseException $e){
-            throw $this->exception('No matching records found');
+            throw $this->exception('No matching records found',null,404);
         }
     }
     /** Try to load a matching record for the model. Will not raise exception if no records are found */
