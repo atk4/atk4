@@ -414,6 +414,7 @@ class Form_Basic extends View implements ArrayAccess {
                     foreach ($output as $row){
                         if ($row){
                             $has_output = true;
+                            $output=$row;
                             break;
                         }
                     }
@@ -425,9 +426,8 @@ class Form_Basic extends View implements ArrayAccess {
                 //if(!is_array($output))$output=array($output);
                 // already array
                 if($has_output) {
-
                     if($output instanceof jQuery_Chain) {
-                        $output->execute();
+                        $this->js(null, $output)->execute();
                     }elseif(is_string($output)) {
                         $this->js(null, $this->js()->reload())->univ()->successMessage($output)->execute();
                     }
