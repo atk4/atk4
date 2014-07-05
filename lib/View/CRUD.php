@@ -121,6 +121,12 @@ class View_CRUD extends View
     public $id=null;
 
     /**
+     * Contains reload javascript, used occassionally throughout the object
+     */
+    public $js_reload=null;
+
+
+    /**
      * {@inheritdoc}
      *
      * CRUD's init() will create either a grid or form, depending on
@@ -134,6 +140,8 @@ class View_CRUD extends View
     function init()
     {
         parent::init();
+
+        $this->js_reload = $this->js()->reload();
 
         // Virtual Page would receive 3 types of requests - add, delete, edit
         $this->virtual_page = $this->add('VirtualPage', array(
@@ -404,7 +412,9 @@ class View_CRUD extends View
      * is submitted, the action will be evaluated
      */
     function addAction($method_name, $options = array()) {
-
+        if (!$this->model) {
+            throw $this->exception('Must set CRUD model first');
+        }
         if($options=='toolbar'){
             $options=array('column'=>false);
         }
@@ -448,11 +458,16 @@ class View_CRUD extends View
             if(!$has_parameters) {
                 $this->form->destroy();
                 $ret=$this->model->$method_name();
-                $this->virtual_page->js(true, $this->js()->reload());
-                if(is_object($ret)) {
-                    $this->virtual_page->js(true)->univ()->closeDialog();
+                if(is_object($ret) && $ret == $this->model) {
+                    $this->virtual_page->getPage()->add('P')->set('Executed successfully');
+                    $this->virtual_page->getPage()->js(true, $this->js_reload);
+                }else{
+                    $this->virtual_page->getPage()->js(true, $this->js_reload);
+                    if(is_object($ret))$ret=(string)$ret;
+                    $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
                 }
-                $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
+                $this->virtual_page->getPage()->add('Button')->set(['Close', 'icon'=>'cross', 'swatch'=>'green'])
+                    ->js('click')->univ()->closeDialog();
                 return true;
             }
 
@@ -464,6 +479,8 @@ class View_CRUD extends View
             }
             return true;
         } elseif ($this->isEditing()) return;
+
+        $frame_options = array_merge(array('width'=>'300px','dialogClass'=>'atk-align-center'), $this->frame_options?:array());
 
 
         if ($show_column) {
@@ -479,9 +496,9 @@ class View_CRUD extends View
             // Configure Add Button on Grid and JS
             $button->js('click')->univ()
                 ->frameURL(
-                    $this->api->_($descr.' '.$this->entity_name),
+                    $this->api->_($this->entity_name.'::'.$descr),
                     $this->virtual_page->getURL($method_name),
-                    $this->frame_options
+                    $frame_options
                 );
             }
     }
