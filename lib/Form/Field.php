@@ -39,7 +39,7 @@ abstract class Form_Field extends AbstractView {
     public $default_value=null;
 
     // Field customization
-    private $separator='';
+    private $separator=':';
     public $show_input_only;
     public $form=null;
 
