@@ -37,7 +37,11 @@
     </tr>
     {/row}
 
-    {totals}
+  {/rows}
+  </tbody>
+
+  {totals}
+    <tfoot>
       <tr class="atk-grid-totals">
       {cols}
         {col}
@@ -45,10 +49,8 @@
         {/col}
       {/cols}
       </tr>
-    {/totals}
-    
-  {/rows}
-  </tbody>
+    </tfoot>
+  {/totals}
 
   {$footer}
 

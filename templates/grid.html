@@ -6,8 +6,9 @@
 </td>
 {/}{/}</tr>{/}{/}
 {not_found}<tr><td class="atk-padding-large atk-align-center"><span class="atk-label atk-effect-warning"><span class="icon-attention">&nbsp;{$not_found_message}</span></span></td></tr>{/}
-{totals}<tr class="totals">{cols}{col}
+</tbody>
+{totals}<tfoot><tr class="totals">{cols}{col}
 <td {$tdparam}>
 {$content}
 </td>
-{/}{/}</tr>{/}</tbody></table>{$paginator}</div>
+{/}{/}</tr></tfoot>{/}</table>{$paginator}</div>
