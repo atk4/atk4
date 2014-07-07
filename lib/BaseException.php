@@ -107,6 +107,10 @@ class BaseException extends Exception
         return $this->addMoreInfo('Raised by object', $t);
     }
 
+    function setCode(int $code){
+        $this->code=$code;
+    }
+
     /**
      * Records another exception as a cause of your current exception.
      * Wrapping one exception inside another helps you to track problems
