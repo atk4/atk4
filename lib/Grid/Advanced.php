@@ -908,7 +908,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_nowrap($field)
     {
-        $this->setTDParam($field, 'style/white-space', 'nowrap');
+        $this->setTDParam($field, 'class', 'atk-text-nowrap');
     }
 
     /**
@@ -920,7 +920,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_wrap($field)
     {
-        $this->setTDParam($field, 'style/white-space', 'wrap');
+        $this->setTDParam($field, 'class', 'atk-text-wrap');
     }
 
 
