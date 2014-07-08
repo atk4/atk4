@@ -371,6 +371,9 @@ class Logger extends AbstractController {
             }
             $o.=$ge;
 
+        }elseif($key instanceof Closure){
+            $o.='[closure]';
+
         }else{
             $o.=$gs?htmlspecialchars($key):$key;
         }
