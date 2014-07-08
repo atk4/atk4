@@ -27,7 +27,7 @@ abstract class AbstractView extends AbstractObject
      *
      * $view->template->set('title', $my_title);
      *
-     * Assuming you have tag <?$template?> in template file associated
+     * Assuming you have tag <?$title?> in template file associated
      * with this view - will insert text into this tag.
      *
      * @see AbstractObject::add();

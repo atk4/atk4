@@ -10,21 +10,46 @@ jQuery||console.error("jQuery must be loaded");
 
 
 $.each({
-    alert: function(a){
-        alert(a);
-    },
-    setTimeout: function(code,delay){
-        setTimeout(code,delay);
-    },
-    setInterval: function(code,delay){
-        return setInterval(code,delay);
-    },
-    clearInterval: function(a){
-        clearInterval(a);
-    },
-    displayAlert: function(a){
-        alert(a);
-    },
+	alert: function(a){
+		alert(a);
+	},
+	displayAlert: function(a){
+		alert(a);
+	},
+	/*
+	// Upgraded changed interval and timeout solution like adviced here:
+	// https://developer.mozilla.org/en/docs/Web/API/window.setInterval#A_possible_solution
+	setTimeout: function(code,delay){
+		setTimeout(code,delay);
+	},
+	setInterval: function(code,delay){
+		return setInterval(code,delay);
+	},
+	*/
+	setTimeout: function(callback, delay /*, arg1, arg2, ... */){
+        var oThis = this.jquery;
+        var aArgs = Array.prototype.slice.call(arguments, 2);
+        return window.setTimeout(
+            callback instanceof Function
+                ? function() {callback.apply(oThis, aArgs);}
+                : callback
+            , delay);
+	},
+	setInterval: function(callback, delay /*, arg1, arg2, ... */){
+        var oThis = this.jquery;
+        var aArgs = Array.prototype.slice.call(arguments, 2);
+        return window.setInterval(
+            callback instanceof Function
+                ? function() {callback.apply(oThis, aArgs);}
+                : callback
+            , delay);
+	},
+	clearTimeout: function(id){
+		window.clearTimeout(id);
+	},
+	clearInterval: function(id){
+		window.clearInterval(id);
+	},
     redirect: function(url,fn){
         if($.fn.atk4_load && $('#Content').hasClass('atk4_loader')){
             $.univ.page(url,fn);
@@ -151,19 +176,34 @@ $.each({
         var u=$.atk4.addArgument(url,key+'='+value);
         this.jquery.atk4_load(u);
     },
-    reload: function(url,arg,fn){
+    reload: function(url,arg,fn,interval){
         /*
          * $obj->js()->reload();	 will now properly reload most of the objects.
-         * This function can be also called on a low level, however URL have to be
-         * specified.
+         * This function can be also called on a low level, however URL have to
+         * be specified.
          * $('#obj').univ().reload('http://..');
          *
-         * Difference between atk4_load and this function is that this function will
-         * correctly replace element and insert it into container when reloading. It
-         * is more suitable for reloading existing elements
+         * Difference between atk4_load and this function is that this function
+         * will correctly replace element and insert it into container when
+         * reloading. It is more suitable for reloading existing elements.
+         *
+         * If interval is set, then object will be periodically reloaded.
          */
 
-        this.jquery.atk4_reload(url,arg,fn);
+        // if interval is set, then do periodic reloads / refreshes
+        // otherwise just reload object one time
+        if(interval) {
+            // execute reload after defined period of time
+            var id = this.setTimeout(function(){
+                this.atk4_reload(url,arg,fn);
+            }, interval);
+            // if associated DOM element is destroyed, then remove timeout action
+            this.jquery.on('remove',function(ev){
+                $.univ.clearTimeout(id);
+            });
+        } else {
+            this.jquery.atk4_reload(url,arg,fn);
+        }
     },
     reloadParent: function(depth,args){
         if(!depth)depth=1;

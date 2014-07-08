@@ -319,16 +319,17 @@ $.extend($.ui.atk4_loader, {
 });
 
 $.fn.extend({
-	atk4_load: function(url,fn){
+    atk4_load: function(url,fn){
         this.atk4_loader().atk4_loader('loadURL',url,fn);
-	},
-	atk4_reload: function(url,arg,fn){
+    },
+    atk4_reload: function(url,arg,fn){
         if(arg){
             $.each(arg,function(key,value){
                 url=$.atk4.addArgument(url,key+'='+encodeURIComponent(value));
             });
         }
-		this.atk4_loader()
-			.atk4_loader('loadURL',url,fn,true);
-	}
+
+        this.atk4_loader()
+            .atk4_loader('loadURL',url,fn,true);
+    }
 });

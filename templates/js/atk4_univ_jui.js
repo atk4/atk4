@@ -39,7 +39,7 @@ $.each({
 
         buttons.push({
             text: options.ok_label,
-            class: options.ok_class,
+            'class': options.ok_class,
             click: function(){
                 var f=$(this).find('form');
                 if(f.length)f.eq(0).submit(); else $(this).dialog('close');

@@ -51,7 +51,7 @@ class Filter extends Form
         {
             if($field instanceof Form_Field)
             {
-                $field->set($val = $this->recall($x));
+                $field->set($val = $this->recall($x, $field->default_value));
 
                 if($field->no_save || !$field->get()) {
                     continue;

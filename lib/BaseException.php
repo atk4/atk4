@@ -73,7 +73,7 @@ class BaseException extends Exception
     function collectBasicData($code)
     {
         $this->name = get_class($this);
-        $this->my_backtrace = debug_backtrace();
+        $this->my_backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
     }
     
     /**
@@ -165,7 +165,8 @@ class BaseException extends Exception
             '<p><font color=blue>' . $this->getMyFile() . ':' .
             $this->getMyLine() . '</font></p>' .
             $this->getDetailedHTML() .
-            backtrace($this->shift + 1, $this->getMyTrace());
+            '' //backtrace($this->shift + 1, $this->getMyTrace())
+            ;
         
         return $html;
     }

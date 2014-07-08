@@ -163,7 +163,11 @@ class Lister extends View
         }
         $template->setHTML($this->current_row_html);
         $template->trySet('id', $this->current_id);
-        return $template->render();
+        $o=$template->render();
+        foreach(array_keys($this->current_row)+array_keys($this->current_row_html) as $k){
+            $template->tryDel($k);
+        }
+        return $o;
     }
 
     /**
