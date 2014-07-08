@@ -47,7 +47,7 @@ class Grid_Advanced extends Grid_Basic
      *
      * @see addPaginator()
      */
-    protected $paginator = null;
+    public $paginator = null;
 
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
