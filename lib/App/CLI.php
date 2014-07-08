@@ -422,6 +422,8 @@ class App_CLI extends AbstractView
         if(!is_null($tz) && function_exists('date_default_timezone_set')){
             // with seting default timezone
             date_default_timezone_set($tz);
+        }else{
+            if(!ini_get('date.timezone'))ini_set('date.timezone','UTC');
         }
     }
 
