@@ -57,6 +57,9 @@ class Form_Field_DatePicker extends Form_Field_Line {
     function set($value){
         // value can be valid date format, as in config['locale']['date']
         if(!$value)return parent::set(null);
+        if(is_int($value)){
+            return parent::set(date('Y-m-d',$value));
+        }
         @list($d,$m,$y)=explode('/',$value);
         if($y)$value=join('/',array($m,$d,$y));
         elseif($m)$value=join('/',array($m,$d));
