@@ -505,18 +505,16 @@ class Auth_Basic extends AbstractController {
     /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form,
      * add template/default/page/login.html */
     function createForm($page){
-        $form=$page->add('Form',null,null,array('form/stacked'));
-
-        $form->addClass('atk-form-stacked');
+        $form=$page->add('Form',null,null,array('form/minimal'));
 
         $email=$this->model->hasField($this->login_field);
-        $email=$email?$email->caption:'E-mail';
+        $email=$email?$email->caption():'E-mail';
 
         $password=$this->model->hasField($this->password_field);
-        $password=$password?$password->caption:'Password';
+        $password=$password?$password->caption():'Password';
 
-        $form->addField('Line','username',$email)->template->del('label_div');
-        $form->addField('Password','password',$password)->template->del('label_div');
+        $form->addField('Line','username',$email);
+        $form->addField('Password','password',$password);
         $form->addSubmit('Login')->addClass('atk-jackscrew')->addClass('atk-swatch-green');
 
         //$form->add('View',null,'button_row_left')
