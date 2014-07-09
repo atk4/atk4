@@ -158,7 +158,7 @@ class System_ProcessIO extends AbstractModel {
      * @param  string $res optional descriptor (out or err)
      * @return self
      */
-    function read_all($res='out'){
+    function readAll($res='out'){
         $str='';
         $this->debugStatus();
         $this->debug('reading all output');
