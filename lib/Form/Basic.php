@@ -95,6 +95,7 @@ class Form_Basic extends View implements ArrayAccess {
         if ($c instanceof AbstractView) {
             $c->addHook('afterAdd',$this);
             $c->addMethod('addField',$this);
+            $c->addMethod('addSubmit',$this);
         }
     }
 
@@ -327,10 +328,18 @@ class Form_Basic extends View implements ArrayAccess {
     }
     function addSubmit($label='Save',$name=null){
 
-        if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
-           $submit = $this->layout->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'FormButtons');
-        } else {
-            $submit = $this->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'form_buttons');
+
+        if (is_object($label) && $label instanceof AbstractView && !($label instanceof Form_Field)) {
+            // using callback on a sub-view
+            $insert_into = $label;
+            list(,$label,$name)=func_get_args();
+            $submit = $insert_into->add('Form_Submit', array('name'=>$name, 'form'=>$this));
+        }else{
+            if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
+               $submit = $this->layout->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'FormButtons');
+            } else {
+                $submit = $this->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'form_buttons');
+            }
         }
 
         $submit

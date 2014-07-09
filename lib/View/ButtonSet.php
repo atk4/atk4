@@ -19,17 +19,15 @@ class View_ButtonSet extends HtmlElement
 {
     // options to pass to buttonset JS widget
     public $options = array();
-    
+
     // buttonset direction (false = horizontal, true = vertical)
     public $vertical = false;
 
 
     function init() {
         parent::init();
-        $this->addClass('atk-actions atk-padding-small');
+        $this->addClass('atk-buttonset atk-inline');
     }
-
-
 
     /**
      * Add button to buttonset
@@ -49,6 +47,7 @@ class View_ButtonSet extends HtmlElement
     }
 
     function jsButtonSet() {
+        return;
         if ($this->vertical) {
             $this->js(true)->_load('jquery-ui.buttonset-vertical');
             $this->js(true)->buttonsetv($this->options);
@@ -57,14 +56,4 @@ class View_ButtonSet extends HtmlElement
         }
     }
 
-    /**
-     * Render
-     *
-     * @return void
-     */
-    function render()
-    {
-        //$this->jsButtonSet();
-        parent::render();
-    }
 }
