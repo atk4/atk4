@@ -494,7 +494,7 @@ class Logger extends AbstractController {
         if (isset($e->shift)){
             $frame=$e->my_backtrace[$e->shift-1];
         } else {
-            $frame=["file"=>"unavailable", "line" => "n/a"];
+            $frame=array("file"=>"unavailable", "line" => "n/a");
         }
         $this->logLine($this->txtLine(get_class($e).": (".$e->getCode().") ".$e->getMessage(),$frame),2,'error');
         return $this;
@@ -614,7 +614,7 @@ class Logger extends AbstractController {
                         $args .= "Object(".get_class($a).")";
                         break;
                     case 'resource':
-                        $args .= "Resource(".strstr($a, '#').")";
+                        $args .= "Resource(".strstr((string)$a, '#').")";
                         break;
                     case 'boolean':
                         $args .= $a ? 'True' : 'False';
