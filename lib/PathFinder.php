@@ -173,7 +173,7 @@ class PathFinder extends AbstractController
             $this->api->addDefaultLocations($this, $base_directory);
         }
 
-        $templates_folder='templates';
+        $templates_folder=array('template','templates');
 
         if ($this->app->compat_42 && is_dir($base_directory.'/templates/default')) {
             $templates_folder='templates/default';
