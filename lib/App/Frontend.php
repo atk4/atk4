@@ -189,7 +189,7 @@ class App_Frontend extends App_Web {
                 }
 
                 $b=$i->add('Button')->addClass('atk-swatch-green');
-                $b->set(['Migration Guide','icon'=>'book']);
+                $b->set(array('Migration Guide','icon'=>'book'));
                 $b->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
 
                 if ($this->app->template && $this->app->template->hasTag('Layout')) {
