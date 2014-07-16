@@ -525,13 +525,13 @@ class Auth_Basic extends AbstractController {
     /** Do not override this function. */
     function showLoginForm(){
 
+        $this->app->template->trySet('page_title','Login');
         if($this->api->layout && $this->login_layout_class){
             $this->api->layout->destroy();
             $this->api->add($this->login_layout_class);
             $this->api->page_object=$p=$this->api->layout->add('Page',null,null,array('page/login'));
         }else{
             $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
-
         }
 
 
