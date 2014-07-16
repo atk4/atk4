@@ -15,9 +15,9 @@
             <div class="atk-cells atk-cells-gutter-small">
               <div class="atk-cell atk-text-reset"><img src="{user_icon}http://sites.local.agiletech.ie/agiletoolkit-css/playground/temp/apples.jpg{/}" width="32" class="atk-shape-rounded"/></div>
               <div class="atk-cell">
-                {UserMenu}
+                {User_Menu}{UserMenu}
                 User Menu
-                {/}
+                {/}{/}
               </div>
             </div>
           </div>
@@ -29,7 +29,7 @@
     <div class="atk-layout atk-layout-cell">{$LeftSidebar}
       <div style="{$left-column-style}" class="atk-layout-column {left-column-class}atk-swatch-ink{/}">{$Main_Menu}</div>
       <div class="atk-layout-column fluid atk-padding atk-jackscrew">
-        <h2>{page_title}Page Title{/}</h2>{$Content}
+        <h2 class="atk-push-small">{page_title}Page Title{/}</h2>{$Content}
       </div>{$RightSideBar}
     </div>
   </div>
