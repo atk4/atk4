@@ -177,7 +177,7 @@ class App_Frontend extends App_Web {
 
                 // The mesage is for user. Let's display it nicely.
 
-                $this->app->pathfinder->addLocation(['public'=>'.'])
+                $this->app->pathfinder->addLocation(array('public'=>'.'))
                    ->setCDN('http://www4.agiletoolkit.org/atk4');
 
                 $l=$this->app->add('Layout_Basic',null,null,array('layout/installer'));
