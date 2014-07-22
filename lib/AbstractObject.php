@@ -18,6 +18,8 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
+    public $_doc = 'http://book.agiletoolkit.org/core-features/objects.html';
+
     /** Reference to the current model. Read only. Use setModel() */
     public $model;
 
