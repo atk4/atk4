@@ -234,7 +234,7 @@ class Endpoint_REST extends AbstractModel
     {
 
 
-        if($m->loaded()) throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
+        //if($m->loaded()) throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
 
         return $this->put_post($data);
     }
