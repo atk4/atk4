@@ -252,7 +252,7 @@ class Endpoint_REST extends AbstractModel
     {
         $m=$this->model;
 
-        if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
+        //if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
 
         return $this->put_post($data);
     }
