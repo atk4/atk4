@@ -236,8 +236,7 @@ class Endpoint_REST extends AbstractModel
 
         if($m->loaded()) throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
 
-
-        return $this->outputOne($m->set($data)->save()->get());
+        return $this->put_post($data);
     }
 
     /**
@@ -255,10 +254,7 @@ class Endpoint_REST extends AbstractModel
 
         if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
 
-
-        $data=$this->_input($data, $this->allow_edit);
-
-
+        return $this->put_post($data);
     }
 
     /**
