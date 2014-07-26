@@ -82,12 +82,34 @@ class App_Admin extends App_Frontend {
 
 
     function page_sandbox($p){
-        $p->addCrumb('Install Developer Tools');
+        $p->title='Install Developer Tools';
+        //$p->addCrumb('Install Developer Tools');
 
         $v=$p->add('View',null,null,array('view/developer-tools'));
 
         $v->add('Button')->set('Install Now')
-            ->addClass('atk-swatch-green');
+            ->addClass('atk-swatch-green')->onClick(function(){
+
+            $installation_dir = getcwd();
+            if(file_exists($installation_dir).'/VERSION'){
+                $installation_dir=dirname($installation_dir);
+            }
+            $path_d = $installation_dir . '/agiletoolkit-sandbox-d.phar';
+            $path = $installation_dir . '/agiletoolkit-sandbox.phar';
+            if (file_put_contents($path_d, file_get_contents("http://www4.agiletoolkit.org/dist/agiletoolkit-sandbox.phar")) == false){
+                return 'update error';
+            }else{
+                if(rename($path_d,$path) == false){
+                    // get version of a phar
+
+                    return 'update error';
+                }else{
+                    $version=file_get_contents('phar://'.$path.'/VERSION');
+
+                    return 'updated to '.$version;
+                }
+            }
+        });
     }
 
     /**

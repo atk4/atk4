@@ -282,7 +282,7 @@ class PathFinder extends AbstractController
                 } else {
                     $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath($v);
                 }
-
+                break;
             }
         }
         if($this->sandbox) {
