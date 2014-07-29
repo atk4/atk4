@@ -53,6 +53,10 @@ class App_Admin extends App_Frontend {
     function initLayout() {
         if ($this->pathfinder->sandbox) {
             $this->initAddons();
+        }else{
+            if(preg_match('/^sandbox_/',$this->app->page)){
+                $this->app->redirect('sandbox');
+            }
         }
 
         $this->addLayout('mainMenu');
