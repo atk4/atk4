@@ -98,7 +98,7 @@
 * to use it inside any other library as long as you follow license agreements.
 */
 
-class GiTemplate extends AbstractModel {
+class GiTemplate extends AbstractModel implements ArrayAccess {
 
     // {{{ Setting Variables
 
@@ -402,6 +402,23 @@ class GiTemplate extends AbstractModel {
         $this->getTagRef($tag,$template);
         return $template;
     }
+
+    // {{{ ArrayAccess support
+    function offsetExists($name){
+        return $this->hasTag($name);
+    }
+    function offsetGet($name){
+        return $this->get($name);
+    }
+    function offsetSet($name,$val){
+        $this->set($name,$val);
+    }
+    function offsetUnset($name){
+        $this->del($name,null);
+    }
+    // }}}
+
+
 
     /**
      * Add more content inside a tag.
