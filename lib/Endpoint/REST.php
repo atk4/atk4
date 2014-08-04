@@ -76,7 +76,7 @@ class Endpoint_REST extends AbstractModel
 
         //$m=$this->app->add('Model_'.$this->model_class);
         $m = $this->setModel($this->model_class);
-        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false) {
+        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false && $this->user) {
             // if not authenticated, blow up
             $m->addCondition($this->user_id_field, $this->user->id);
         }
