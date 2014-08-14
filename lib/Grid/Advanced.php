@@ -48,6 +48,13 @@ class Grid_Advanced extends Grid_Basic
      * @see addPaginator()
      */
     public $paginator = null;
+    
+    /**
+     * Paginator class name
+     * 
+     * @see addPaginator()
+     * */
+    public $paginator_class = 'Paginator';
 
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
@@ -146,7 +153,7 @@ class Grid_Advanced extends Grid_Basic
         if ($this->paginator) {
             return $this->paginator;
         }
-        $this->paginator = $this->add('Paginator', $options);
+        $this->paginator = $this->add($this->paginator_class, $options);
         $this->paginator->ipp($ipp);
         return $this;
     }
