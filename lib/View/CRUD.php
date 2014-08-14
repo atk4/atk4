@@ -60,6 +60,20 @@ class View_CRUD extends View
     public $form_class='Form';
 
     /**
+     * You can pass additional options for grid using this array
+     *
+     * $this->add('CRUD', array('grid_options'=>array('show_header'=>false)));
+     */
+    public $grid_options=array();
+
+    /**
+     * You can pass additional options for form using this array
+     *
+     * $this->add('CRUD', array('form_options'=>array('js_widget'=>'ui.atk4_form')));
+     */
+    public $form_options=array();
+
+    /**
      * Grid will contain an "Add X" button and will allow user to add records
      *
      * $this->add('CRUD', array('allow_add'=>false')); // to disable
@@ -158,12 +172,12 @@ class View_CRUD extends View
             $this->form = $this
                 ->virtual_page
                 ->getPage()
-                ->add($this->form_class);
+                ->add($this->form_class, $this->form_options);
 
             return;
         }
 
-        $this->grid = $this->add($this->grid_class);
+        $this->grid = $this->add($this->grid_class, $this->grid_options);
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
