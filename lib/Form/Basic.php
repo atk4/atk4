@@ -47,8 +47,6 @@ class Form_Basic extends View implements ArrayAccess {
 
     public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
     protected $loaded_from_db = false;  // if true, update() will try updating existing row. if false - it would insert new
-    public $onsubmit = null;
-    public $onload = null;
     protected $ajax_submits=array();    // contains AJAX instances assigned to buttons
     protected $get_field=null;          // if condition was passed to a form through GET, contains a GET field name
     protected $conditions=array();
