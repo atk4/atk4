@@ -55,7 +55,7 @@ class View_CRUD extends View
      * but if you would like to use your custom form, specify it inside
      * associative array as second argument to add()
      *
-     * $this->add('CRUD', array('grid_class'=>'MyGrid'));
+     * $this->add('CRUD', array('form_class'=>'MyForm'));
      */
     public $form_class='Form';
 
