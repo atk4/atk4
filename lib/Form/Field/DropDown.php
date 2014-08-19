@@ -41,9 +41,15 @@ class Form_Field_DropDown extends Form_Field_ValueList {
         return $output;
     }
     function getOption($value){
+        $selected = false;
+        if($this->value===null || $this->value===''){
+            $selected = $value==='';
+        } else {
+            $selected = $value == $this->value;
+        }
         return $this->getTag('option',array(
                     'value'=>$value,
-                    'selected'=>$value == $this->value
-                    ));
+                    'selected'=>$selected
+        ));
     }
 }
