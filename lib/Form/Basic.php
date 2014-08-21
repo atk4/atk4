@@ -343,7 +343,7 @@ class Form_Basic extends View implements ArrayAccess {
         }
 
         $submit
-            ->setIcon('ok')
+            //->setIcon('ok') - removed as per dmity's request
             ->set($label)
             ->setNoSave();
 
