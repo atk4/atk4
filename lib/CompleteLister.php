@@ -360,7 +360,15 @@ class CompleteLister extends Lister
 
         // create DSQL query for sum and count request
         $fields = array_keys($this->totals);
-        $q = $m->sum($fields)->del('limit')->del('order');
+
+        // select as sub-query
+        $sub_q = $m->dsql()->del('limit')->del('order');
+        
+        $q = $this->api->db->dsql();//->debug();
+        $q->table($sub_q, 'grandTotals'); // alias is mandatory if you pass table as DSQL
+        foreach ($fields as $field) {
+            $q->field($q->sum($field), $field);
+        }
         $q->field($q->count(), 'total_cnt');
 
         // execute DSQL
