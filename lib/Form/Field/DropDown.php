@@ -39,7 +39,7 @@ class Form_Field_DropDown extends Form_Field_ValueList {
     }
     function getOption($value){
         $selected = false;
-        if($this->value===null){
+        if($this->value===null || $this->value===''){
             $selected = $value==='';
         } else {
             $selected = $value == $this->value;
