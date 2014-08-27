@@ -6,9 +6,16 @@ class View_ModelDetails extends Grid_Basic
 {
     public $default_controller=null;
 
+    /**
+     * The view will have 3 columns instead of just 2 by also showing the
+     * ID of each field. Uneful for debug purposes but unnecessary for
+     * general use.
+     */
+    public $include_id_column=false;
+
     function init(){
         parent::init();
-        $this->addColumn('text', 'id');
+        if($this->include_id_column)$this->addColumn('text', 'id');
         $this->addColumn('text', 'name');
         $this->addColumn('text', 'value');
     }
