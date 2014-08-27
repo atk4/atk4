@@ -326,7 +326,7 @@ class View_CRUD extends View
 
         if ($this->isEditing('ex_'.$s)) {
 
-            $n=$this->virtual_page->name.'_'.$name;
+            $n=$this->virtual_page->name.'_'.$s;
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
@@ -372,6 +372,13 @@ class View_CRUD extends View
      * you. Add anything into the page as you see fit. The ID of the record
      * will be inside $crud->id
      *
+     * The format of $options is the following:
+     * array (
+     *   'title'=> 'Click Me'     // Header for the column
+     *   'label'=> 'Click Me'     // Text to put on the button
+     *   'icon' => 'click-me'     // Icon for button
+     * )
+     * 
      * @param string $name    Unique name, also button and title default
      * @param array  $options Options
      *
@@ -391,7 +398,7 @@ class View_CRUD extends View
 
         if ($this->isEditing('fr_'.$s)) {
 
-            $n=$this->virtual_page->name.'_'.$name;
+            $n=$this->virtual_page->name.'_'.$s;
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
