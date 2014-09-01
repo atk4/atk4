@@ -139,7 +139,6 @@ class View_CRUD extends View
      */
     public $js_reload=null;
 
-
     /**
      * {@inheritdoc}
      *
@@ -151,7 +150,7 @@ class View_CRUD extends View
      *
      * @return void
      */
-    function init()
+    public function init()
     {
         parent::init();
 
@@ -169,7 +168,6 @@ class View_CRUD extends View
             $_GET[$name_id] = $_GET['edit'];
         }
          */
-
 
         if (isset($_GET[$name_id])) {
             $this->api->stickyGET($name_id);
@@ -208,7 +206,7 @@ class View_CRUD extends View
      *
      * @return boolean true if editing.
      */
-    function isEditing($mode = null)
+    public function isEditing($mode = null)
     {
         $page_mode = $this->virtual_page->isActive();
 
@@ -228,7 +226,7 @@ class View_CRUD extends View
         }
 
         // Argument was blank, then edit/add is OK
-        return (boolean)$page_mode;
+        return (boolean) $page_mode;
     }
 
     /**
@@ -242,17 +240,17 @@ class View_CRUD extends View
      *
      * @return AbstractModel $model
      */
-    function setModel($model, $fields = null, $grid_fields = null)
+    public function setModel($model, $fields = null, $grid_fields = null)
     {
         $model=parent::setModel($model);
 
         if ($this->entity_name === null) {
 
-            if ($model->caption === null ) {
+            if ($model->caption === null) {
 
                 // Calculates entity name
                 $class = get_class($this->model);
-                $class = substr(strrchr($class, '\\')?:' '.$class, 1); // strip namespace
+                $class = substr(strrchr($class, '\\') ?: ' '.$class, 1); // strip namespace
                 $this->entity_name = str_replace(
                     array('Model_', '_'),
                     array('', ' '),
@@ -264,7 +262,7 @@ class View_CRUD extends View
         }
 
         if (!$this->isEditing()) {
-            $this->configureGrid(is_null($grid_fields)?$fields:$grid_fields);
+            $this->configureGrid(is_null($grid_fields) ? $fields : $grid_fields);
         }
 
         if ($this->allow_add) {
@@ -309,7 +307,7 @@ class View_CRUD extends View
      *
      * @return View_CRUD|null Returns crud object, when expanded page is rendered
      */
-    function addRef($name, $options = array())
+    public function addRef($name, $options = array())
     {
         if (!$this->model) {
             throw $this->exception('Must set CRUD model first');
@@ -319,10 +317,9 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-//        if(!$this->grid || $this->grid instanceof Dummy)return;
+        // if(!$this->grid || $this->grid instanceof Dummy)return;
 
         $s = $this->api->normalizeName($name);
-
 
         if ($this->isEditing('ex_'.$s)) {
 
@@ -339,8 +336,8 @@ class View_CRUD extends View
                 $this->api->stickyGET($idfield);
             }
 
-            $view_class = (is_null($options['view_class']))?
-                get_class($this):
+            $view_class = (is_null($options['view_class'])) ?
+                get_class($this) :
                 $options['view_class'];
 
             $subview=$this->virtual_page->getPage()->add(
@@ -351,11 +348,12 @@ class View_CRUD extends View
             $subview->setModel(
                 $this->model->load($this->id)->ref($name),
                 $options['fields'],
-                $options['grid_fields']?:$options['extra_fields']
+                $options['grid_fields'] ?: $options['extra_fields']
             );
+
             return $subview;
-        }elseif($this->grid instanceof Grid){
-            $this->grid->addColumn('expander', 'ex_'.$s, $options['label']?:$s);
+        } elseif ($this->grid instanceof Grid) {
+            $this->grid->addColumn('expander', 'ex_'.$s, $options['label'] ?: $s);
             $this->grid->columns['ex_'.$s]['page']
                 = $this->virtual_page->getURL('ex_'.$s);
             $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
@@ -378,13 +376,13 @@ class View_CRUD extends View
      *   'label'=> 'Click Me'     // Text to put on the button
      *   'icon' => 'click-me'     // Icon for button
      * )
-     * 
+     *
      * @param string $name    Unique name, also button and title default
      * @param array  $options Options
      *
      * @return Page|null Returns object if clicked on popup.
      */
-    function addFrame($name, $options = array())
+    public function addFrame($name, $options = array())
     {
         if (!$this->model) {
             throw $this->exception('Must set CRUD model first');
@@ -416,15 +414,14 @@ class View_CRUD extends View
             ->virtual_page
             ->addColumn(
                 'fr_'.$s,
-                $options['title']?:$name,
+                $options['title'] ?: $name,
                 array(
-                    'descr'=>$options['label']?:null,
-                    'icon'=>$options['icon']?:null,
+                    'descr'=>$options['label'] ?: null,
+                    'icon'=>$options['icon'] ?: null,
                 ),
                 $this->grid
             );
     }
-
 
     /**
      * Assuming that your model contains a certain method, this allows
@@ -432,35 +429,36 @@ class View_CRUD extends View
      * a form representing model method arguments. Once the form
      * is submitted, the action will be evaluated
      */
-    function addAction($method_name, $options = array()) {
+    public function addAction($method_name, $options = array())
+    {
         if (!$this->model) {
             throw $this->exception('Must set CRUD model first');
         }
-        if($options=='toolbar'){
+        if ($options=='toolbar') {
             $options=array('column'=>false);
         }
-        if($options=='column'){
+        if ($options=='column') {
             $options=array('toolbar'=>false);
         }
 
-        $descr = $options['descr']?:ucwords(str_replace('_', ' ', $method_name));
-        $icon = $options['icon']?:'target';
+        $descr = $options['descr'] ?: ucwords(str_replace('_', ' ', $method_name));
+        $icon = $options['icon'] ?: 'target';
 
-        $show_toolbar = isset($options['toolbar'])?$options['toolbar']:true;
-        $show_column = isset($options['column'])?$options['column']:true;
+        $show_toolbar = isset($options['toolbar']) ? $options['toolbar'] : true;
+        $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
-            if($show_toolbar && !$this->id) {
+            if ($show_toolbar && !$this->id) {
                 $this->model->unload();
-            }elseif($show_column && $this->id){
+            } elseif ($show_column && $this->id) {
                 $this->model->load($this->id);
-            }else{
+            } else {
                 return ;
             }
 
-            if(isset($options['args'])) {
+            if (isset($options['args'])) {
                 $params = $options['args'];
-            } elseif(!method_exists($this->model, $method_name)) {
+            } elseif (!method_exists($this->model, $method_name)) {
                 // probably a dynamic method
                 $params = array();
             } else {
@@ -469,40 +467,40 @@ class View_CRUD extends View
                 $params = $reflection->getParameters();
             }
 
-            $has_parameters=(bool)$params;
-            foreach($params as $i=>$param) {
+            $has_parameters=(bool) $params;
+            foreach ($params as $i => $param) {
                 $this->form->addField($param->name);
                 $this->has_parameters=true;
             }
 
-
-            if(!$has_parameters) {
+            if (!$has_parameters) {
                 $this->form->destroy();
                 $ret=$this->model->$method_name();
-                if(is_object($ret) && $ret == $this->model) {
+                if (is_object($ret) && $ret == $this->model) {
                     $this->virtual_page->getPage()->add('P')->set('Executed successfully');
                     $this->virtual_page->getPage()->js(true, $this->js_reload);
-                }else{
+                } else {
                     $this->virtual_page->getPage()->js(true, $this->js_reload);
-                    if(is_object($ret))$ret=(string)$ret;
+                    if(is_object($ret))$ret=(string) $ret;
                     $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
                 }
                 $this->virtual_page->getPage()->add('Button')->set(['Close', 'icon'=>'cross', 'swatch'=>'green'])
                     ->js('click')->univ()->closeDialog();
+
                 return true;
             }
 
             $this->form->addSubmit('Execute');
-            if($this->form->isSubmitted()) {
-                $ret=call_user_func_array(array($this->model,$method_name),array_values($this->form->get()));
-                if(is_object($ret))$ret=(string)$ret;
+            if ($this->form->isSubmitted()) {
+                $ret=call_user_func_array(array($this->model, $method_name), array_values($this->form->get()));
+                if(is_object($ret))$ret=(string) $ret;
                 $this->js(null, $this->js()->reload())->univ()->successMessage('Returned: '.json_encode($ret))->closeDialog()->execute();
             }
+
             return true;
         } elseif ($this->isEditing()) return;
 
-        $frame_options = array_merge(array('width'=>'300px','dialogClass'=>'atk-align-center'), $this->frame_options?:array());
-
+        $frame_options = array_merge(array('width'=>'300px','dialogClass'=>'atk-align-center'), $this->frame_options ?: array());
 
         if ($show_column) {
             $this
@@ -521,17 +519,17 @@ class View_CRUD extends View
                     $this->virtual_page->getURL($method_name),
                     $frame_options
                 );
-            }
+        }
     }
-
 
     /**
      * Transparent method for adding buttons to a crud
      */
-    function addButton($label, $class = 'Button')
+    public function addButton($label, $class = 'Button')
     {
         if(!$this->grid)return new Dummy();
-        return $this->grid->addButton($label,$class);
+
+        return $this->grid->addButton($label, $class);
     }
 
     /**
@@ -549,15 +547,18 @@ class View_CRUD extends View
             $m = $this->form->setModel($this->model, $fields);
             $this->form->addSubmit('Add');
             $this->form->onSubmit(array($this,'formSubmit'));
+
             return $m;
         } elseif ($this->isEditing()) return;
 
         // Configure Add Button on Grid and JS
         $this->add_button->js('click')->univ()
             ->frameURL(
-                $this->api->_($this->entity_name===false
-                    ?'New Record'
-                    :'Adding new '.$this->entity_name),
+                $this->api->_(
+                    $this->entity_name===false
+                    ? 'New Record'
+                    : 'Adding new '.$this->entity_name
+                ),
                 $this->virtual_page->getURL('add'),
                 $this->frame_options
             );
@@ -582,6 +583,7 @@ class View_CRUD extends View
             $m->load($this->id);
             $this->form->addSubmit();
             $this->form->onSubmit(array($this,'formSubmit'));
+
             return $m;
         } elseif ($this->isEditing()) return;
 
@@ -610,9 +612,8 @@ class View_CRUD extends View
      */
     protected function configureDel()
     {
-        $this->grid->addColumn('delete', 'delete',array('icon'=>'trash','descr'=>'Delete'));
+        $this->grid->addColumn('delete', 'delete', array('icon'=>'trash', 'descr'=>'Delete'));
     }
-
 
     /**
      * Called after on post-init hook when form is submitted
@@ -634,14 +635,13 @@ class View_CRUD extends View
         }
     }
 
-
     /**
      * Returns JavaScript action which should be executed on form successfull
      * submission
      *
      * @return jQuery_Chain to be executed on successful submit
      */
-    function formSubmitSuccess()
+    public function formSubmitSuccess()
     {
         return $this->form->js(null, $this->js()->trigger('reload'))
             ->univ()->closeDialog();
