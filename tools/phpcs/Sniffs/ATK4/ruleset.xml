@@ -7,23 +7,27 @@
  <rule ref="PSR2">
   <exclude name="PSR1.Classes.ClassDeclaration"/>
   <exclude name="Squiz.Scope.MethodScope"/>
+  <exclude name="Squiz.Classes.ValidClassName"/>
  </rule>
 
  <rule ref="PEAR">
-  <!-- 
+  <exclude name="PEAR.Commenting.FunctionComment"/>
+  <!--
        file typically contains single class, why do we still need to specify file comment
        -->
   <exclude name="PEAR.Commenting.FileComment"/>
-  <!-- 
-       class comments are silly and contain only garbage making files less readable. 
+  <!--
+       class comments are silly and contain only garbage making files less readable.
        Keep them free of garbage such as @category PHP
        -->
   <exclude name="PEAR.Commenting.ClassComment"/>
   <!--
        unfliendly with DB_dsql and few other classes we keep in lowercase (for some reason)
        -->
+  <!-- <exclude name="Generic.NamingConventions.ValidFunctionName"/> -->
+
   <exclude name="Generic.NamingConventions.CamelCapsFunctionName"/>
-  <!-- 
+  <!--
        blocks our prefixed MethodScope
 
         page_xx
@@ -31,7 +35,7 @@
         etc
         -->
   <exclude name="PEAR.NamingConventions.ValidFunctionName"/>
-  <!-- 
+  <!--
        blocks our single-line semicolon
 
        dsql()

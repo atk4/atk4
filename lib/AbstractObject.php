@@ -138,7 +138,7 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function destroy($recursive=true)
+    function destroy($recursive = true)
     {
         if($recursive) foreach ($this->elements as $el) {
             if ($el instanceof AbstractObject) {
@@ -352,7 +352,7 @@ abstract class AbstractObject
         }
 
         // Great hook to affect children recursively
-        $this->hook('afterAdd',array($element));
+        $this->hook('afterAdd', array($element));
 
         return $element;
     }
@@ -592,7 +592,7 @@ abstract class AbstractObject
         }
 
         $e = new $type($message, $code);
-        if (! ($e instanceof BaseException) ) {
+        if (!($e instanceof BaseException)) {
             throw $e;
         }
         $e->owner = $this;
@@ -616,7 +616,8 @@ abstract class AbstractObject
     function fatal($error, $shift = 0)
     {
         return $this->upCall(
-            'outputFatal', array (
+            'outputFatal',
+            array (
                 $error,
                 $shift
             )
@@ -641,7 +642,7 @@ abstract class AbstractObject
          */
         $args=func_get_args();
         array_shift($args);
-        $this->_info[]=vsprintf($msg,$args);
+        $this->_info[]=vsprintf($msg, $args);
     }
 
     /**
@@ -667,7 +668,7 @@ abstract class AbstractObject
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
         ) {
-            $this->app->outputDebug($this, $msg, $file, $line );
+            $this->app->outputDebug($this, $msg, $file, $line);
         }
     }
 
@@ -683,7 +684,8 @@ abstract class AbstractObject
     function warning($msg, $shift = 0)
     {
         $this->upCall(
-            'outputWarning', array (
+            'outputWarning',
+            array (
                 $msg,
                 $shift
             )
@@ -711,7 +713,8 @@ abstract class AbstractObject
                 array (
                     $this,
                     $type
-                ), $args
+                ),
+                $args
             );
         }
         if (!$this->owner) {
@@ -879,7 +882,8 @@ abstract class AbstractObject
             return $ret[0];
         }
         throw $this->exception(
-            "Method is not defined for this object", 'Logic'
+            "Method is not defined for this object",
+            'Logic'
         )
             ->addMoreInfo('class', get_class($this))
             ->addMoreInfo("method", $method)
