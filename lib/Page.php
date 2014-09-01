@@ -105,9 +105,9 @@ class Page extends AbstractView {
                     $title = $title . $t;
                 }
             }
-        } else {
+        } elseif($this->title) {
             $title = $this->title;
-        } else {
+        } elseif($this->app->title) {
             $title = $this->app->title;
         }
         if (trim($title)) {
