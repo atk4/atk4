@@ -107,6 +107,8 @@ class Page extends AbstractView {
             }
         } else {
             $title = $this->title;
+        } else {
+            $title = $this->app->title;
         }
         if (trim($title)) {
             $this->app->template->trySet('page_title',$title);
