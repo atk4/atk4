@@ -804,7 +804,7 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
-                    foreach ($this->hooks[$hook_spot] as $prio => $_data) {
+                    while($_data = array_pop($this->hooks[$hook_spot])) {
                         foreach ($_data as $data) {
 
                             // Our extension
