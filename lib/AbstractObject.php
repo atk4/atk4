@@ -804,8 +804,9 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
-                    while($_data = array_pop($this->hooks[$hook_spot])) {
-                        foreach ($_data as $data) {
+                    $hook_backup = $this->hooks[$hook_spot];
+                    while ($_data = array_pop($this->hooks[$hook_spot])) {
+                        foreach ($_data as $key=>&$data) {
 
                             // Our extension
                             if (is_string($data[0])
@@ -841,6 +842,8 @@ abstract class AbstractObject
                             $return[] = $result;
                         }
                     }
+
+                    $this->hooks[$hook_spot] = $hook_backup;
                 }
             }
         } catch (Exception_Hook $e) {
