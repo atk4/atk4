@@ -2,7 +2,7 @@
 /**
  * Lister implements a very simple and fast way to output series
  * of data by applying template formatting
- * 
+ *
  * @link http://agiletoolkit.org/doc/lister
  *
  * Use:
@@ -43,34 +43,10 @@ class Lister extends View
     public $current_id = null;
 
     /**
-     * Sets source data for the lister. If source is a model, use setModel() instead.
-     *
-     * @link http://agiletoolkit.org/doc/lister
-     *
-     * Examples:
-     *  $l=$this->add('Lister');
-     *  $l->setSource( array('a','b','c') );        // associative array
-     *
-     * or   // array of hashes
-     *  $l->setSource( array(
-     *      array('id'=>1,'name'=>'John','surname'=>'Smith'),
-     *      array('id'=>2,'name'=>'Joe','surname'=>'Blogs')
-     *      ));
-     *
-     * or   // dsql
-     *  $l->setSource( $this->api->db->dsql()
-     *      ->table('user')
-     *      ->where('age>',3)
-     *      ->field('*') 
-     *  );
-     *
-     * or   // sql table
-     *  $l->setSource( 'user', array('name','surname'));
-     *
-     * @param mixed $source data source
-     * @param array $fields array of fieldnames
-     *
-     * @return $this
+     * Similar to setModel, however you specify array of data here. setSource is
+     * actually implemented around :php:class:`Controller_Data_Array`. actually
+     * you can pass anything iterateable to setSource() as long as elements of
+     * iterating produce either a string or array.
      */
 	function setSource($source, $fields = null)
     {
@@ -111,7 +87,7 @@ class Lister extends View
 
         return $this;
     }
- 
+
     /**
      * Returns data source iterator
      *
@@ -172,8 +148,10 @@ class Lister extends View
     }
 
     /**
-     * Redefine and change $this->current_row to format data before it appears
-     * 
+     * Called after iterating and may be redefined to change contents of
+     * :php:attr:`Lister::current_row`. Redefine this method to change rendering
+     * logic
+     *
      * @return void
      */
     function formatRow()
