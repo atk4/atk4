@@ -484,7 +484,7 @@ class View_CRUD extends View
                     if(is_object($ret))$ret=(string) $ret;
                     $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
                 }
-                $this->virtual_page->getPage()->add('Button')->set(['Close', 'icon'=>'cross', 'swatch'=>'green'])
+                $this->virtual_page->getPage()->add('Button')->set(array('Close', 'icon'=>'cross', 'swatch'=>'green'))
                     ->js('click')->univ()->closeDialog();
 
                 return true;

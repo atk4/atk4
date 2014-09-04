@@ -39,7 +39,7 @@ class App_REST extends App_CLI
 
             // Add-ons may define additional endpoints for your API, but
             // you must activate them explicitly.
-            $this->pathfinder->base_location->defineContents(['endpoint'=>'endpoint']);
+            $this->pathfinder->base_location->defineContents(array('endpoint'=>'endpoint'));
 
         } catch (Exception $e) {
             $this->caughtException($e);
