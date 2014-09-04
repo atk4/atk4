@@ -51,7 +51,7 @@ class Grid_Advanced extends Grid_Basic
 
     /**
      * Paginator class name
-     * 
+     *
      * @see addPaginator()
      * */
     public $paginator_class = 'Paginator';
@@ -1224,9 +1224,9 @@ class Grid_Advanced extends Grid_Basic
      *
      * @return $this
      */
-    function setTemplate($template)
+    function setTemplate($template,$field=null)
     {
-        $this->columns[$this->last_column]['template'] = $this->add('SMlite')
+        $this->columns[$field ?: $this->last_column]['template'] = $this->add('SMlite')
             ->loadTemplateFromString($template);
 
         return $this;
@@ -1261,7 +1261,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_link($field)
     {
-        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>');
+        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>',$field);
     }
 
     /**
