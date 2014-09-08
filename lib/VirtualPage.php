@@ -149,7 +149,13 @@ class VirtualPage extends AbstractController
                 $self->api->cut($page);
                 $self->api->stickyGET($self->name);
                 $self->api->stickyGET($self->name.'_id');
-                call_user_func($method, $page, $self);
+                try {
+                    call_user_func($method, $page, $self);
+                } catch (Exception $e){
+                    // exception occured possibly due to a nested page. We
+                    // are already executing from post-init, so
+                    // it's fine to ignore it.
+                }
                 $self->api->stickyForget($self->name.'_id');
                 $self->api->stickyForget($self->name);
             });
