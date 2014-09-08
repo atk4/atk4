@@ -186,6 +186,7 @@ class VirtualPage extends AbstractController
             null,
             $this->page_template
         );
+        $this->api->cut($this->page);
         $this->api->stickyGET($this->name);
         return $this->page;
     }
