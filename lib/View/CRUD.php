@@ -407,7 +407,7 @@ class View_CRUD extends View
         }
 
         if ($this->isEditing()) {
-            return new Dummy();
+            return false;
         }
 
         $this
