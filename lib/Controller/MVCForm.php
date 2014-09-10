@@ -1,19 +1,4 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
 /**
  * Connects regular form with a model and imports some fields. It also
  * binds action on form->update(), which will now force model to be updated.
@@ -34,8 +19,8 @@
  *
  * which will return newly added form field.
  */
-class Controller_MVCForm extends AbstractController {
-
+class Controller_MVCForm extends AbstractController
+{
     public $model=null;
     public $form=null;
 
@@ -61,13 +46,22 @@ class Controller_MVCForm extends AbstractController {
         'image'=>'Image',
         'file'=>'Upload',
     );
-    function setActualFields($fields){
+    public function setActualFields($fields)
+    {
         $this->importFields($this->owner->model,$fields);
     }
 
     private $_hook_set=false;
-    function importFields($model,$fields=undefined){
 
+    /**
+     * importFields description blah
+     *
+     * @param  [type] $model  [description]
+     * @param  [type] $fields [description]
+     * @return [type]         [description]
+     */
+    public function importFields($model,$fields=undefined)
+    {
         $this->model=$model;
         $this->form=$this->owner;
 
@@ -75,11 +69,11 @@ class Controller_MVCForm extends AbstractController {
 
         if(!$fields || $fields===undefined)$fields='editable';
         if(!is_array($fields))$fields=$model->getActualFields($fields);
-        foreach($fields as $field){
+        foreach ($fields as $field) {
             $this->importField($field);
         }
 
-        if(!$this->_hook_set){
+        if (!$this->_hook_set) {
             $this->owner->addHook('update',array($this,'update'));
             $model->addHook('afterLoad',array($this,'setFields'));
             $this->_hook_set=true;
@@ -87,13 +81,13 @@ class Controller_MVCForm extends AbstractController {
 
         return $this;
     }
-    function importField($field, $field_name=null){
-
+    public function importField($field, $field_name=null)
+    {
         $field=$this->model->hasElement($field);
         if(!$field)return;
         if(!$field->editable())return;
 
-        if (!$field_name){
+        if (!$field_name) {
             $field_name=$this->_unique($this->owner->elements,$field->short_name);
         }
         $field_type=$this->getFieldType($field);
@@ -113,54 +107,58 @@ class Controller_MVCForm extends AbstractController {
             $form_field->setAttr('placeholder', $field_placeholder);
         }
 
-        if($field->hint()){
+        if ($field->hint()) {
             $form_field->setFieldHint($field->hint());
         }
 
-        if($field->listData()){
+        if ($field->listData()) {
             $a=$field->listData();
             $form_field->setValueList($a);
         }
-        if ($msg=$field->mandatory()){
+        if ($msg=$field->mandatory()) {
             $form_field->validateNotNULL($msg);
         }
 
-        if($field instanceof Field_Reference || $field_type=='reference') {
+        if ($field instanceof Field_Reference || $field_type=='reference') {
             $form_field->setModel($field->getModel());
         }
-        if($field->theModel){
+        if ($field->theModel) {
             $form_field->setModel($field->theModel);
         }
-        if($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
+        if ($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
             $form_field->setEmptyText($field->emptyText());
         }
 
         return $form_field;
     }
     /** Copies model field values into form */
-    function setFields(){
-        foreach($this->field_associations as $form_field=>$model_field){
+    public function setFields()
+    {
+        foreach ($this->field_associations as $form_field=>$model_field) {
             $this->form->set($form_field,$model_field->get());
         }
     }
-    function getFields(){
+    public function getFields()
+    {
         $models=array();
-        foreach($this->field_associations as $form_field=>$model_field){
+        foreach ($this->field_associations as $form_field=>$model_field) {
             $model_field->set($v=$this->form->get($form_field));
-            if(!isset($models[$model_field->owner->name])){
+            if (!isset($models[$model_field->owner->name])) {
                 $models[$model_field->owner->name]=$model_field->owner;
             }
         }
+
         return $models;
     }
     /** Redefine this to add special handling of your own fields */
-    function getFieldType($field){
+    public function getFieldType($field)
+    {
         $type='Line';
 
         if(isset($this->type_associations[$field->type()]))$type=$this->type_associations[$field->type()];
         if($field instanceof Model_Field_Reference)$type='DropDown';
 
-        if($field->display()){
+        if ($field->display()) {
             $tmp=$field->display();
             if(is_array($tmp))$tmp=$tmp['form'];
             if($tmp)$type=$tmp;
@@ -168,7 +166,8 @@ class Controller_MVCForm extends AbstractController {
 
         return $type;
     }
-    function update($form){
+    public function update($form)
+    {
         $models=$this->getFields();
         foreach($models as $model)$model->save();
     }

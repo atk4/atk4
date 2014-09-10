@@ -313,6 +313,8 @@ class Logger extends AbstractController {
             echo $this->public_error_message;
             exit;
         }
+
+        if(method_exists($e,'getHTML')){
 ?><!DOCTYPE html>
 <html lang="en"><head>
     <title>Exception: <?php echo htmlspecialchars($e->getMessage())?></title>
@@ -321,7 +323,8 @@ class Logger extends AbstractController {
 <?php  echo $e->getHTML();?>
 </body></head>
 <?
-        exit;
+            exit;
+        }
 
         if($_GET[$this->name.'_debug']=='rendertree'){
             echo '<h2>Object Tree</h2>';
