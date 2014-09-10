@@ -18,7 +18,7 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
-    public $class_doc = 'core-features/objects';
+    const DOC = 'core-features/objects';
 
     /** Reference to the current model. Read only. Use setModel() */
     public $model;

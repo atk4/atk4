@@ -22,7 +22,7 @@ class PathFinder extends AbstractController
     /**
      * Location of the documentation for this class
      */
-    public $class_doc = 'controller/pathfinder';
+    const DOC = 'controller/pathfinder';
 
     /**
      * Base location is where your interface files are located. Normally
