@@ -1,16 +1,5 @@
 <?php
 /**
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
-/**
  * PathFinder is responsible for locating resources in Agile
  * Toolkit. One of the most significant principles it implements
  * is ability for any resource (PHP, JS, HTML, IMG) to be
@@ -70,13 +59,15 @@ class PathFinder extends AbstractController
      */
     public $atk_public=null;
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public $default_exception='Exception_PathFinder';
 
     /**
      * {@inheritdoc}
      */
-    function init()
+    public function init()
     {
         parent::init();
         $this->api->pathfinder=$this;
@@ -84,12 +75,12 @@ class PathFinder extends AbstractController
         $this->addDefaultLocations();
 
         // Unregister previously defined loader
-        if(function_exists('agile_toolkit_temporary_load_class')) {
+        if (function_exists('agile_toolkit_temporary_load_class')) {
             spl_autoload_unregister('agile_toolkit_temporary_load_class');
 
             // collect information about previusly loaded files
-            foreach($GLOBALS['agile_toolkit_temporary_load_class_log'] as $class=>$path) {
-                $this->info('Loaded class %s from file %s',$class,$path);
+            foreach ($GLOBALS['agile_toolkit_temporary_load_class_log'] as $class => $path) {
+                $this->info('Loaded class %s from file %s', $class, $path);
             }
 
         }
@@ -98,19 +89,21 @@ class PathFinder extends AbstractController
 
         // Register preceeding autoload method. We want to get a first shot at
         // loading classes
-        spl_autoload_register(function ($class)use($self){
+        spl_autoload_register(function ($class) use ($self) {
             try {
                 $path = $self->loadClass($class);
-                if($path)$self->info('Loaded class %s from file %s',$class,$path);
-            }catch(Exception $e) {
+                if ($path) {
+                    $self->info('Loaded class %s from file %s', $class, $path);
+                }
+            } catch (Exception $e) {
             }
-        },true,true);
+        }, true, true);
 
         // If we couldn't load the class, let's throw exception
-        spl_autoload_register(function ($class)use($self){
+        spl_autoload_register(function ($class) use ($self) {
             try {
                 $self->loadClass($class);
-            }catch(Exception $e) {
+            } catch (Exception $e) {
                 // If due to your PHP version, it says that
                 // autoloader may not throw exceptions, then you should
                 // add PHP verion check here and skip to next line.
@@ -156,7 +149,7 @@ class PathFinder extends AbstractController
      *
      * @return void
      */
-    function addDefaultLocations()
+    public function addDefaultLocations()
     {
         // api->addAllLocations will override creation of all locations
         // api->addDefaultLocations - will let you add high-priority locations
@@ -164,7 +157,6 @@ class PathFinder extends AbstractController
         if ($this->api->hasMethod('addAllLocations')) {
             return $this->api->addAllLocations();
         }
-
 
         $base_directory=getcwd();
 
@@ -188,12 +180,10 @@ class PathFinder extends AbstractController
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
 
-
-
-        if(@$this->api->pm) {
+        if (@$this->api->pm) {
             // Add public location - assets, but only if
             // we hav PageManager to identify it's location
-            if(is_dir($base_directory.'/public')) {
+            if (is_dir($base_directory.'/public')) {
                 $this->public_location=$this->addLocation(array(
                     'public'=>'.',
                     'js'=>'js',
@@ -201,29 +191,27 @@ class PathFinder extends AbstractController
                 ))
                     ->setBasePath($base_directory.'/public')
                     ->setBaseURL($this->api->pm->base_path);
-            }else{
+            } else {
                 $this->base_location
                     ->setBaseURL($this->api->pm->base_path);
                 $this->public_location = $this->base_location;
                 $this->public_location->defineContents(array('js'=>'templates/js','css'=>'templates/css'));
             }
 
-            if(basename($this->api->pm->base_path)=='public') {
+            if (basename($this->api->pm->base_path)=='public') {
                 $this->base_location
                     ->setBaseURL(dirname($this->api->pm->base_path));
             }
         }
 
         // Add shared locations
-        if(is_dir(dirname($base_directory).'/shared')) {
+        if (is_dir(dirname($base_directory).'/shared')) {
             $this->shared_location=$this->addLocation(array(
                 'php'=>'lib',
                 'addons'=>'addons',
-                'template'=>'templates'
+                'template'=>$templates_folder,
             ))->setBasePath(dirname($base_directory).'/shared');
         }
-
-
 
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
@@ -233,24 +221,24 @@ class PathFinder extends AbstractController
 
         $this->atk_location=$this->addLocation(array(
             'php'=>'lib',
-            'template'=>'templates',
+            'template'=>$templates_folder,
             'mail'=>'mail',
         ))
             ->setBasePath($atk_base_path)
             ;
 
-        if(@$this->api->pm) {
-            if($this->app->compat_42 && is_dir($this->public_location->base_path.'/atk4/public/atk4')) {
+        if (@$this->api->pm) {
+            if ($this->app->compat_42 && is_dir($this->public_location->base_path.'/atk4/public/atk4')) {
                 $this->atk_public=$this->public_location->addRelativeLocation('atk4/public/atk4');
-            }elseif(is_dir($this->public_location->base_path.'/atk4')) {
+            } elseif (is_dir($this->public_location->base_path.'/atk4')) {
                 $this->atk_public=$this->public_location->addRelativeLocation('atk4');
-            }elseif(is_dir($base_directory.'/vendor/atk4/atk4/public/atk4')) {
+            } elseif (is_dir($base_directory.'/vendor/atk4/atk4/public/atk4')) {
                 $this->atk_public=$this->base_location->addRelativeLocation('vendor/atk4/atk4/public/atk4');
-            }elseif(is_dir($base_directory.'/../vendor/atk4/atk4/public/atk4')) {
+            } elseif (is_dir($base_directory.'/../vendor/atk4/atk4/public/atk4')) {
                 $this->atk_public=$this->base_location->addRelativeLocation('../vendor/atk4/atk4/public/atk4');
-            }else{
+            } else {
                 echo $this->public_location;
-                throw $this->exception('Unable to locate public/atk4 folder','Migration');
+                throw $this->exception('Unable to locate public/atk4 folder', 'Migration');
             }
 
             $this->atk_public->defineContents(array(
@@ -260,12 +248,12 @@ class PathFinder extends AbstractController
                 ));
         }
 
-
         // Add sandbox if it is found
         $this->addSandbox();
     }
 
-    function addSandbox() {
+    public function addSandbox()
+    {
         $sandbox_posible_locations = array(
             'agiletoolkit-sandbox'        =>'agiletoolkit-sandbox',
             '../agiletoolkit-sandbox'     =>'../agiletoolkit-sandbox',
@@ -274,7 +262,7 @@ class PathFinder extends AbstractController
         );
 
         $this->sandbox = null;
-        foreach ($sandbox_posible_locations as $k=>$v) {
+        foreach ($sandbox_posible_locations as $k => $v) {
             if ($this->sandbox) continue;
             if (file_exists($k)) {
                 if (is_dir($k)) {
@@ -285,7 +273,7 @@ class PathFinder extends AbstractController
                 break;
             }
         }
-        if($this->sandbox) {
+        if ($this->sandbox) {
             $this->sandbox->defineContents(array(
                 'template'=>'template',
                 'addons'=>'addons',
@@ -300,16 +288,16 @@ class PathFinder extends AbstractController
      *
      *   $location->defineContents
      *
-     * @param array  $contents     Array describing contents
-     * @param array  $old_contents Remains for backwards compatibility
+     * @param array $contents     Array describing contents
+     * @param array $old_contents Remains for backwards compatibility
      *
      * @return PathFinder_Location New Location
      */
-    function addLocation($contents=array(), $old_contents=null)
+    public function addLocation($contents = array(), $old_contents = null)
     {
 
-        if ($old_contents && @$this->api->compat_42){
-            return $this->base_location->addRelativeLocation($contents,$old_contents);
+        if ($old_contents && @$this->api->compat_42) {
+            return $this->base_location->addRelativeLocation($contents, $old_contents);
         }
 
         return $this
@@ -329,17 +317,16 @@ class PathFinder extends AbstractController
      *
      * @return string|object as specified by $return
      */
-    function locate($type, $filename='', $return='relative', $throws_exception=true)
+    public function locate($type, $filename = '', $return = 'relative', $throws_exception = true)
     {
         $attempted_locations=array();
         if (!$return) {
             $return='relative';
         }
-        foreach ($this->elements as $key=>$location) {
+        foreach ($this->elements as $key => $location) {
             if (!($location instanceof PathFinder_Location)) {
                 continue;
             }
-
 
             $path=$location->locate($type, $filename, $return);
 
@@ -347,13 +334,14 @@ class PathFinder extends AbstractController
                 return $path;
             } elseif (is_array($path)) {
                 if($return==='array' && @isset($path['name']))
+
                     return $path;
 
                 $attempted_locations=array_merge($attempted_locations, $path);
             }
         }
 
-        if($throws_exception) {
+        if ($throws_exception) {
             throw $this->exception('File not found')
                 ->addMoreInfo('file', $filename)
                 ->addMoreInfo('type', $type)
@@ -371,45 +359,50 @@ class PathFinder extends AbstractController
      *
      * @return string|object as specified by $return
      */
-    function search($type,$filename='',$return='relative'){
+    public function search($type, $filename = '', $return = 'relative')
+    {
         /*
            Similar to locate but returns array with all matches for the specified file
            in array
          */
         $matches=array();
-        foreach($this->elements as $location){
+        foreach ($this->elements as $location) {
             if(!($location instanceof PathFinder_Location))continue;
 
-            $path=$location->locate($type,$filename,$return);
+            $path=$location->locate($type, $filename, $return);
 
-            if(is_string($path)){
+            if (is_string($path)) {
                 // file found!
                 $matches[]=$path;
             }
         }
+
         return $matches;
     }
-    function _searchDirFiles($dir,&$files,$prefix=''){
+    public function _searchDirFiles($dir, &$files, $prefix = '')
+    {
         $d=dir($dir);
-        while(false !== ($file=$d->read())){
+        while (false !== ($file=$d->read())) {
             if($file[0]=='.')continue;
-            if(is_dir($dir.'/'.$file)){
-                $this->_searchDirFiles($dir.'/'.$file,$files,$prefix.$file.'/');
-            }else{
+            if (is_dir($dir.'/'.$file)) {
+                $this->_searchDirFiles($dir.'/'.$file, $files, $prefix.$file.'/');
+            } else {
                 $files[]=$prefix.$file;
             }
         }
         $d->close();
     }
-    function searchDir($type,$directory=''){
+    public function searchDir($type, $directory = '')
+    {
         /*
            List all files inside particular directory
          */
-        $dirs=$this->search($type,$directory,'path');
+        $dirs=$this->search($type, $directory, 'path');
         $files=array();
-        foreach($dirs as $dir){
-            $this->_searchDirFiles($dir,$files);
+        foreach ($dirs as $dir) {
+            $this->_searchDirFiles($dir, $files);
         }
+
         return $files;
     }
     /**
@@ -418,8 +411,9 @@ class PathFinder extends AbstractController
      *
      * @return String path from where the class was loaded
      */
-    function loadClass($className){
-        $origClassName = str_replace('-','',$className);
+    public function loadClass($className)
+    {
+        $origClassName = str_replace('-', '', $className);
 
         /**/$this->api->pr->start('pathfinder/loadClass ');
 
@@ -436,8 +430,8 @@ class PathFinder extends AbstractController
 
         /**/$this->api->pr->next('pathfinder/loadClass/locate ');
         try {
-            if ($namespace){
-                if (strpos($className,'page_')===0) {
+            if ($namespace) {
+                if (strpos($className, 'page_')===0) {
                     $path=$this->api->locatePath(
                         'addons',
                         $nsPath.DIRECTORY_SEPARATOR.$classPath
@@ -450,10 +444,10 @@ class PathFinder extends AbstractController
                     );
                 }
             } else {
-                if (strpos($className,'page_')===0) {
+                if (strpos($className, 'page_')===0) {
                     $path=$this->api->locatePath(
                         'page',
-                        substr($classPath,5)
+                        substr($classPath, 5)
                     );
                 } else {
                     $path=$this->api->locatePath(
@@ -462,35 +456,33 @@ class PathFinder extends AbstractController
                     );
                 }
             }
-        }catch(PathFinder_Exception $e){
+        } catch (PathFinder_Exception $e) {
             $e
-                ->addMoreInfo('class',$className)
-                ->addMoreInfo('namespace',$namespace)
-                ->addMoreInfo('orig_class',$origClassName)
+                ->addMoreInfo('class', $className)
+                ->addMoreInfo('namespace', $namespace)
+                ->addMoreInfo('orig_class', $origClassName)
                 ;
             throw $e;
         }
 
-        if(!is_readable($path)){
-            throw new PathFinder_Exception('addon',$path,$prefix);
+        if (!is_readable($path)) {
+            throw new PathFinder_Exception('addon', $path, $prefix);
         }
-
 
         /**/$this->api->pr->next('pathfinder/loadClass/include ');
         /**/$this->api->pr->start('php parsing');
-        include_once($path);
+        include_once $path;
         /**/$this->api->pr->stop();
-        if(!class_exists($origClassName ,false) && !interface_exists($origClassName, false))
+        if(!class_exists($origClassName, false) && !interface_exists($origClassName, false))
             throw $this->exception('Class is not defined in file')
-            ->addMoreInfo('file',$path)
-            ->addMoreInfo('namespace',$namespace)
-            ->addMoreInfo('class',$className)
-            ;
+                ->addMoreInfo('file', $path)
+                ->addMoreInfo('namespace', $namespace)
+                ->addMoreInfo('class', $className)
+                ;
         /**/$this->api->pr->stop();
+
         return $path;
     }
-
-
 }
 class PathFinder_Exception extends BaseException
 {
@@ -503,8 +495,8 @@ class Exception_PathFinder extends Pathfinder_Exception
  * Represents a location, which contains number of sub-locations. Each
  * of which may contain certain type of data
  */
-class PathFinder_Location extends AbstractModel {
-
+class PathFinder_Location extends AbstractModel
+{
     /**
      * contains list of 'type'=>'subdir' which lists all the
      * resources which can be found in this directory
@@ -534,13 +526,12 @@ class PathFinder_Location extends AbstractModel {
     /** OBSOLETE **/
     private $_relative_path=null;
 
-
     /**
      * Returns how this location or file can be accessed through web
      * base url + relative path + file_path
      */
-    function getURL($file_path=null){
-
+    public function getURL($file_path = null)
+    {
         if (!$this->base_url) {
             throw new BaseException('Unable to determine URL');
         }
@@ -548,9 +539,7 @@ class PathFinder_Location extends AbstractModel {
         if (!$file_path) return $this->base_url;
 
         $u=$this->base_url;
-        if(substr($u,-1) != '/') $u.='/';
-
-
+        if(substr($u, -1) != '/') $u.='/';
 
         return $u.$file_path;
     }
@@ -558,26 +547,28 @@ class PathFinder_Location extends AbstractModel {
     /**
      * Returns how this location or file can be accessed through filesystem
      */
-    function getPath($file_path=null){
-
+    public function getPath($file_path = null)
+    {
         if (!$file_path) return $this->base_path;
-
         return $this->base_path.'/'.$file_path;
     }
 
     /**
      * Set a new BaseURL
      */
-    function setBaseURL($url){
+    public function setBaseURL($url)
+    {
         /*
            something like /my/app
          */
-        $url=preg_replace('|//|','/',$url);
+        $url=preg_replace('|//|', '/', $url);
         $this->base_url=$url;
+
         return $this;
     }
 
-    function setCDN($url){
+    public function setCDN($url)
+    {
         $this->base_url=$url;
         $this->is_cdn=true;
     }
@@ -585,21 +576,25 @@ class PathFinder_Location extends AbstractModel {
     /**
      * Set a new BaseURL
      */
-    function setBasePath($path){
+    public function setBasePath($path)
+    {
         /*
            something like /home/web/public_html
          */
         $this->base_path=$path;
+
         return $this;
     }
 
-    function defineContents($contents){
-        $this->contents=@array_merge_recursive($this->contents,$contents);
+    public function defineContents($contents)
+    {
+        $this->contents=@array_merge_recursive($this->contents, $contents);
+
         return $this;
     }
 
-    function addRelativeLocation($relative_path, array $contents=array()) {
-
+    public function addRelativeLocation($relative_path, array $contents = array())
+    {
         $location = $this->newInstance();
 
         $location->setBasePath($this->base_path.'/'.$relative_path);
@@ -608,19 +603,20 @@ class PathFinder_Location extends AbstractModel {
             $location->setBaseURL($this->base_url.'/'.$relative_path);
         }
 
-        return $contents?$location->defineContents($contents):$location;
+        return $contents ? $location->defineContents($contents) : $location;
     }
 
     // OBSOLETE - Compatiblity
-    function setParent(Pathfinder_Location $parent) {
+    public function setParent(Pathfinder_Location $parent)
+    {
         $this->setBasePath($parent->base_path.'/'.$this->_relative_path);
         $this->setBaseURL($parent->base_url.'/'.$this->_relative_path);
+
         return $this;
     }
 
-
-
-    function locate($type,$filename,$return='relative'){
+    public function locate($type, $filename, $return = 'relative')
+    {
         // Locates the file and if found - returns location,
         // otherwise returns array of attempted locations.
         // Specify empty filename to find location.
@@ -629,48 +625,48 @@ class PathFinder_Location extends AbstractModel {
         // Vendor\MyAddon otherwise these are not found on *Nix systems
 
 
-        $filename = str_replace('\\','/',$filename);
+        $filename = str_replace('\\', '/', $filename);
 
         $attempted_locations=array();
         $locations=array();
         $location=null;
 
         // first - look if type is explicitly defined in
-        if(isset($this->contents[$type])){
-            if(is_array($this->contents[$type])){
+        if (isset($this->contents[$type])) {
+            if (is_array($this->contents[$type])) {
                 $locations=$this->contents[$type];
-            }else{
+            } else {
                 $locations=array($this->contents[$type]);
             }
             // next - look if locations claims to have all resource types
-        }elseif(isset($this->contents['all'])){
+        } elseif (isset($this->contents['all'])) {
             $locations=array($type);
-            echo (string)$this;
+            echo (string) $this;
         }
 
-        foreach($locations as $path){
+        foreach ($locations as $path) {
             $pathfile=$path.'/'.$filename;
 
             // If this location represents CDN, it always finds URl files
-            if($this->is_cdn && $return=='url') {
+            if ($this->is_cdn && $return=='url') {
                 return $this->getURL($pathfile);
             }
 
             $f=$this->getPath($pathfile);
 
-            if(file_exists($f)){
-                if(!is_readable($f)){
+            if (file_exists($f)) {
+                if (!is_readable($f)) {
                     throw $this->exception('File found but it is not readable')
-                        ->addMoreInfo('type',$type)
-                        ->addMoreInfo('filename',$filename)
-                        ->addMoreInfo('f',$f)
+                        ->addMoreInfo('type', $type)
+                        ->addMoreInfo('filename', $filename)
+                        ->addMoreInfo('f', $f)
                         ;
                 }
 
                 if($return=='array')return array(
                     'name'=>$filename,
                     'relative'=>$pathfile,
-                    'url'=>$this->base_url?$this->getURL($pathfile):null,
+                    'url'=>$this->base_url ? $this->getURL($pathfile) : null,
                     'path'=>$f,
                     'location'=>$this
                 );
