@@ -29,6 +29,11 @@
 class PathFinder extends AbstractController
 {
     /**
+     * Location of the documentation for this class
+     */
+    public $class_doc = 'controller/pathfinder';
+
+    /**
      * Base location is where your interface files are located. Normally
      * this location is added first and all the requests are checked here
      * before elsewhere. Example: /my/path/agiletoolkit/admin/

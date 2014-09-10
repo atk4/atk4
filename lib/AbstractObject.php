@@ -18,7 +18,7 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
-    public $_doc = 'http://book.agiletoolkit.org/core-features/objects.html';
+    public $class_doc = 'core-features/objects';
 
     /** Reference to the current model. Read only. Use setModel() */
     public $model;
@@ -86,7 +86,9 @@ abstract class AbstractObject
      */
     public $auto_track_element = false;
 
-    /** To make sure you have called parent::init() properly */
+    /**
+     * To make sure you have called parent::init() properly
+     */
     public $_initialized = false;
 
     /**
@@ -806,7 +808,7 @@ abstract class AbstractObject
                 if (is_array($this->hooks[$hook_spot])) {
                     $hook_backup = $this->hooks[$hook_spot];
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
-                        foreach ($_data as $key=>&$data) {
+                        foreach ($_data as $key => &$data) {
 
                             // Our extension
                             if (is_string($data[0])
