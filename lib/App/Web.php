@@ -404,6 +404,7 @@ class App_Web extends App_CLI {
     /** Render only specified object or object with specified name */
     function cut($object){
         $_GET['cut_object']=is_object($object)?$object->name:$object;
+        return $this;
     }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
@@ -475,10 +476,12 @@ class App_Web extends App_CLI {
     function _locatePage($path){
         return $this->url($path);
     }
-    /** Only show $object in the final rendering */
+    /**
+     * Only show $object in the final rendering
+     * @obsolete and should be removed in 4.4
+     */
     function renderOnly($object){
-        $_GET['cut_object']=$object->name;
-        return $this;
+        return $this->cut($object);
     }
     // }}}
 
