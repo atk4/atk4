@@ -9,22 +9,13 @@
  * path to a file.
 
  * To make this possible, PathFinder relies on a class
- * PathFinder_Location, which describes each individual
+ * :php:class:`PathFinder_Location`, which describes each individual
  * location and it's contents.
 
  * You may add additional locations in your application,
  * add-on or elsewhere. Some locations may be activated only
  * in certain circumstances, for example add-on will be able
- * to add it's location only if add-on have been added to
- * a page.
-
- * Here is a list of resource categories:
- * php, page, addons, template, mail, js, css
-
- * Resources which are planned or under development:
- * dbupdates, logs, public
-
- * @link http://agiletoolkit.org/pathfinder
+ * to add it's location if add-on was added to a page.
  */
 class PathFinder extends AbstractController
 {
@@ -120,37 +111,19 @@ class PathFinder extends AbstractController
     }
 
     /**
-     * Agile Toolkit-based application comes with a structure as described
-     * in documentation. For new users it's easier if they see consistent
-     * structure they are used to.
+     * Agile Toolkit-based application comes with a predefined resource
+     * structure. For new users it's easier if they use a consistest structure,
+     * for example having all the PHP classes inside "lib" folder.
      *
-     * As a more advanced developer (since you reading this text!) you
-     * may know that it's possible to completely redefine locations
+     * A more advanced developer might be willing to add additional locations
      * of resources to suit your own preferences. You might want to do
      * this if you are integrating with your existing application or
      * another framework or building multi-tiered project with extensive
      * structure.
      *
-     * Usually it's enough to add additional resources by creating one or
-     * both methods in your API class:
-     *
-     * * addDefaultLocations() - will be checked first (overrides)
-     * *  base_location is checked after
-     * * addSharedLocations() - add your secondary location (shared/lib)
-     * *  atk_location is checked Here
-     * * api->init() executes after where you can add more fall-back locations
-     *
-     * Add-ons would typically be added during init() so they would have low
-     * precedence. PathPinder does not support priority handling.
-     *
-     * As each location must know both physical path and URL, for custom
-     * configuration you will need to define both - base path and base url.
-     *
-     * By default the following things are assumed:
-     *  * path of base location is same as the front-controller (index.php)
-     *  * URL of base location is same as dirname(request url)
-     *  * path to ATK location determined by 2 directories up from this file
-     *  * URL of ATK location is ./atk4/ or $config['atk_location'], if set
+     * To extend the default structure which this method defines - you should
+     * look into :php:class:`App_CLI::addDefaultLocations` and
+     * :php:class:`App_CLI::addSharedLocations`
      *
      * @return void
      */
@@ -209,6 +182,10 @@ class PathFinder extends AbstractController
             }
         }
 
+        if ($this->api->hasMethod('addSharedLocations')) {
+            $this->api->addSharedLocations($this, $base_directory);
+        }
+
         // Add shared locations
         if (is_dir(dirname($base_directory).'/shared')) {
             $this->shared_location=$this->addLocation(array(
@@ -216,10 +193,6 @@ class PathFinder extends AbstractController
                 'addons'=>'addons',
                 'template'=>$templates_folder,
             ))->setBasePath(dirname($base_directory).'/shared');
-        }
-
-        if ($this->api->hasMethod('addSharedLocations')) {
-            $this->api->addSharedLocations($this, $base_directory);
         }
 
         $atk_base_path=dirname(dirname(__FILE__));
