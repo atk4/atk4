@@ -262,14 +262,8 @@ class PathFinder extends AbstractController
 
     /**
      * Cretes new PathFinder_Location object and specifies it's contents.
-     * You can subsequentially add more contents by calling
-     *
-     *   $location->defineContents
-     *
-     * @param array $contents     Array describing contents
-     * @param array $old_contents Remains for backwards compatibility
-     *
-     * @return PathFinder_Location New Location
+     * You can subsequentially add more contents by calling:
+     * :php:meth:`PathFinder_Location::defineContents`
      */
     public function addLocation($contents = array(), $old_contents = null)
     {
@@ -285,9 +279,15 @@ class PathFinder extends AbstractController
     }
 
     /**
-     * Search for a file inside multiple locations, associated with resource
+     * Search for a $filename inside multiple locations, associated with resource
      * $type. By default will return relative path, but 3rd argument can
-     * change that
+     * change that.
+     *
+     * The third argument can also be 'location', in which case a :php:class:`PathFinder_Location`
+     * object will be returned.
+     *
+     * If file is not found anywhere, then :php:class:`Exception_PathFinder` is thrown
+     * unless you set $throws_exception to ``false``, and then method would return null.
      *
      * @param string $type     Type of resource to search surch as "php"
      * @param string $filename Name of the file to search for
@@ -339,10 +339,6 @@ class PathFinder extends AbstractController
      */
     public function search($type, $filename = '', $return = 'relative')
     {
-        /*
-           Similar to locate but returns array with all matches for the specified file
-           in array
-         */
         $matches=array();
         foreach ($this->elements as $location) {
             if(!($location instanceof PathFinder_Location))continue;
@@ -370,11 +366,13 @@ class PathFinder extends AbstractController
         }
         $d->close();
     }
+    /**
+      * Specify type and directory and it will return array of all files
+      * of a matching type inside that directory. This will work even
+      * if specified directory exists inside multiple locations.
+      */
     public function searchDir($type, $directory = '')
     {
-        /*
-           List all files inside particular directory
-         */
         $dirs=$this->search($type, $directory, 'path');
         $files=array();
         foreach ($dirs as $dir) {
@@ -571,6 +569,12 @@ class PathFinder_Location extends AbstractModel
         return $this;
     }
 
+    /**
+     * Adds a new location object which is relative to $this location.
+     *
+     * @param [type] $relative_path [description]
+     * @param array  $contents      [description]
+     */
     public function addRelativeLocation($relative_path, array $contents = array())
     {
         $location = $this->newInstance();
