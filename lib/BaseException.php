@@ -190,12 +190,12 @@ class BaseException extends Exception
             */
 
         $e=$this;
-        $o='<div class="">';
-        $o.= "<h2 class='atk-effect-danger'>".get_class($e).": ". htmlspecialchars($e->getMessage()). ($e->getCode()?' [code: '.$e->getCode().']':'') ."</h2>\n";
+        $o='<div class="atk-layout">';
+        $o.= "<div class='atk-layout-row atk-effect-danger atk-swatch-red   '><div class='atk-wrapper atk-section-small'><h2>".get_class($e).": ". htmlspecialchars($e->getMessage()). ($e->getCode()?' [code: '.$e->getCode().']':'') ."</h2>\n";
+        $o.='</div></div><div class="atk-layout-row"><div class="atk-wrapper atk-section-small">';
         if(@$e->more_info){
-            $o.= '<div class="atk-box-small">Additional information:';
+            $o.= '<h3>Additional information:</h3>';
             $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
-            $o.= '</div>';
         }
         if(method_exists($e,'getMyFile'))$o.= '<div class="atk-effect-info">' . $e->getMyFile() . ':' . $e->getMyLine() . '</div>';
 
@@ -206,7 +206,7 @@ class BaseException extends Exception
             $o.="<h3>This error was triggered by the following error:</h3>";
             $o.=$e->by_exception->getHTML();
         }
-        $o.='</div>';
+        $o.='</div></div>';
 
 
         return $o;
@@ -289,12 +289,18 @@ class BaseException extends Exception
                 $sh=$n;
             }
 
+            $doc='http://book.agiletoolkit.org/';
+            $doc.=$bt['object']::DOC.'.html';
+
+            // add class and method
+            $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
+
             $output .= "<tr><td valign=top align=right class=atk-effect-".($sh==$n?'danger':'info').">".htmlspecialchars(dirname($bt['file']))."/".
                 "<b>".htmlspecialchars(basename($bt['file']))."</b>";
             $output .= ":{$bt['line']}</font>&nbsp;</td>";
             $name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
             if($name)$output .= "<td>".$name."</td>";else $output.="<td></td>";
-            $output .= "<td valign=top class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+            $output .= "<td valign=top ><a href='".$doc."' target='_blank' class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</a></td></tr>\n";
         }
         $output .= "</table></div>\n";
         return $output;
