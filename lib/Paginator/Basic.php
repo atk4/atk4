@@ -34,9 +34,13 @@ class Paginator_Basic extends CompleteLister {
     }
 
     /** Set number of items displayed per page */
-    function ipp($ipp){
-        $this->ipp=$ipp;
+    function setRowsPerPage($rows) {
+        $this->ipp = $rows;
         return $this;
+    }
+    // obsolete, should be removed in 4.4
+    function ipp($rows){
+        return $this->setRowsPerPage($rows);
     }
     /** Set a custom source. Must be an object with foundRows() method */
     function setSource($source){

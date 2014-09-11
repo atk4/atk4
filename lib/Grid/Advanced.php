@@ -141,14 +141,14 @@ class Grid_Advanced extends Grid_Basic
     /**
      * Add default paginator to the grid
      *
-     * @param int $ipp row count per page
+     * @param int $rows row count per page
      * @param array $options optional options array
      *
      * @return $this
      */
-    function enablePaginator($ipp = 25, $options = null)
+    function enablePaginator($rows = 25, $options = null)
     {
-        $this->addPaginator($ipp, $options);
+        $this->addPaginator($rows, $options);
         
         return $this;
     }
@@ -156,7 +156,7 @@ class Grid_Advanced extends Grid_Basic
     /**
      * Adds paginator to the grid
      *
-     * @param int $ipp row count per page
+     * @param int $rows row count per page
      * @param array $options optional options array
      * @param string $class optional paginator class name
      *
@@ -164,7 +164,7 @@ class Grid_Advanced extends Grid_Basic
      *
      * @todo decide, maybe we need to add $spot optional template spot like in addQuickSearch()
      */
-    function addPaginator($ipp = 25, $options = null, $class = null)
+    function addPaginator($rows = 25, $options = null, $class = null)
     {
         // add only once
         // @todo decide, maybe we should destroy and recreate to keep last one
@@ -173,7 +173,7 @@ class Grid_Advanced extends Grid_Basic
         }
         
         $this->paginator = $this->add($class ?: $this->paginator_class, $options);
-        $this->paginator->ipp($ipp);
+        $this->paginator->setRowsPerPage($rows);
         
         return $this->paginator;
     }
