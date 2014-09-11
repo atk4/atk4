@@ -1,47 +1,8 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * Model class improves how you interact with the structured data. When you
- * create
- *
- *
- * Implementation of a Generic Model.
- * @link http://agiletoolkit.org/doc/model
- *
- * Model has fields which you add with addField() and access through get() and set()
- * You can also load and save model through different storage controllers.
- *
- * This model is designed to work with linear, non-SQL resources, if you are looking
- * to have support for joins, ordering, advanced SQL syntax, look into SQL_Model
- *
- * It's recommended that you create your own model class based on generic model where
- * you define fields, but you may also use instance of generic model.
- *
- * Use:
- * class Model_PageCache extends Model {
- *     function init() {
- *         parent::init();
- *         $this->addField('content')->allowHtml(true);
- *     }
- *     function generateContent() {
- *         //complex computation
- *         // ...
- *         $this->set('content',$content);
- *     }
- * }
- *
- *
- * $pc=$this->add('Model_PageCache')->addCache('Memcached');
- * $pc->load($this->api->page);
- *
- * if (!$pc->loaded()) {
- *     $pc->set('page',$this->api->page');
- *     $pc->generateContent();
- *     $pc->save();
- * }
- *
- *
- * @license See http://agiletoolkit.org/about/license
- *
+ * Model class improves how you interact with the structured data. Extend
+ * this class (or :php:class:`Model_SQL`) to define the structure of your
+ * own models, then use object instances to interact with individual records.
  **/
 class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 {
@@ -248,11 +209,8 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * Get the value of a field. If the field is an expression (Field_Calculated)
-     * the value is calculated a runtime
-     *
-     * @param $name null or string
-     * @return mix
+     * Get the value of a model field. If field $name is not specified, then
+     * returns associative hash containing all field data
      */
     public function get($name = null)
     {
