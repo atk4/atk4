@@ -47,7 +47,14 @@ class Grid_Advanced extends Grid_Basic
      *
      * @see addPaginator()
      */
-    protected $paginator = null;
+    public $paginator = null;
+    
+    /**
+     * Paginator class name
+     * 
+     * @see addPaginator()
+     * */
+    public $paginator_class = 'Paginator';
 
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
@@ -146,7 +153,7 @@ class Grid_Advanced extends Grid_Basic
         if ($this->paginator) {
             return $this->paginator;
         }
-        $this->paginator = $this->add('Paginator', $options);
+        $this->paginator = $this->add($this->paginator_class, $options);
         $this->paginator->ipp($ipp);
         return $this;
     }
@@ -568,6 +575,20 @@ class Grid_Advanced extends Grid_Basic
      * @return void
      */
     function format_totals_template($field, $column) {
+        @$this->current_row_html[$field] = '';
+    }
+
+    /**
+     * Additional formatting of checkbox fields column for totals row
+     *
+     * Basically we remove everything from such field
+     * 
+     * @param string $field field name
+     * @param array $column column configuration
+     *
+     * @return void
+     */
+    function format_totals_checkbox($field, $column) {
         @$this->current_row_html[$field] = '';
     }
 

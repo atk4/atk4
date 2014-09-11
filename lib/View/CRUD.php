@@ -55,9 +55,23 @@ class View_CRUD extends View
      * but if you would like to use your custom form, specify it inside
      * associative array as second argument to add()
      *
-     * $this->add('CRUD', array('grid_class'=>'MyGrid'));
+     * $this->add('CRUD', array('form_class'=>'MyForm'));
      */
     public $form_class='Form';
+
+    /**
+     * You can pass additional options for grid using this array
+     *
+     * $this->add('CRUD', array('grid_options'=>array('show_header'=>false)));
+     */
+    public $grid_options=array();
+
+    /**
+     * You can pass additional options for form using this array
+     *
+     * $this->add('CRUD', array('form_options'=>array('js_widget'=>'ui.atk4_form')));
+     */
+    public $form_options=array();
 
     /**
      * Grid will contain an "Add X" button and will allow user to add records
@@ -158,12 +172,12 @@ class View_CRUD extends View
             $this->form = $this
                 ->virtual_page
                 ->getPage()
-                ->add($this->form_class);
+                ->add($this->form_class, $this->form_options);
 
             return;
         }
 
-        $this->grid = $this->add($this->grid_class);
+        $this->grid = $this->add($this->grid_class, $this->grid_options);
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
@@ -331,6 +345,12 @@ class View_CRUD extends View
      * you. Add anything into the page as you see fit. The ID of the record
      * will be inside $crud->id
      *
+     * The format of $options is the following:
+     * array (
+     *   'title'=> 'Click Me'     // Header for the column
+     *   'label'=> 'Click Me'     // Text to put on the button
+     * )
+     * 
      * @param string $name    Unique name, also button and title default
      * @param array  $options Options
      *
@@ -350,7 +370,7 @@ class View_CRUD extends View
 
         if ($this->isEditing('fr_'.$s)) {
 
-            $n=$this->virtual_page->name.'_'.$name;
+            $n=$this->virtual_page->name.'_'.$s;
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];

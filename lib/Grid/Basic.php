@@ -384,6 +384,7 @@ class Grid_Basic extends CompleteLister
             } else {
                 $header_col
                     ->del('sort')
+                    ->tryDel('sortid')
                     ->tryDel('sort_del');
             }
 

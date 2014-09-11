@@ -65,7 +65,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     public $sql_templates=array(
         'select'=>"select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]",
         'insert'=>"insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])",
-        'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])",
+        'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_values])",
         'update'=>"update [table_noalias] set [set] [where]",
         'delete'=>"delete from  [table_noalias] [where]",
         'truncate'=>'truncate table [table_noalias]',
