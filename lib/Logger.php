@@ -322,7 +322,7 @@ class Logger extends AbstractController {
 <head><body>
 <?php  echo $e->getHTML();?>
 </body></head>
-<?
+<?php
             exit;
         }
 
