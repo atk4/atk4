@@ -39,7 +39,7 @@ if [ -f composer.json ]; then
             # Need to make sure composer is not getting upset about it
         fi
 
-        echo "== STEP 4 == Fixing fucking Composer"
+        echo "== STEP 4 == Fixing borked Composer"
         # composer fucks up few things, so fix them
         ( cd vendor/atk4/atk4; git remote rm composer )
         ( cd vendor/atk4/atk4; git checkout 4.3 )

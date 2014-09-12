@@ -31,6 +31,6 @@ class HR extends HtmlElement
     function init()
     {
         parent::init();
-        $this->addClass('hr')->set('');
+        $this->setElement('hr')->set('');
     }
 }

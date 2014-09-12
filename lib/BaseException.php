@@ -27,16 +27,16 @@ class BaseException extends Exception
 
     // Backtrace array
     public $my_backtrace;
-    
+
     // Backtrace shift
     public $shift = 0;
-    
+
     // Classname of exception
     public $name;
 
     // Array with more info
     public $more_info = array();
-    
+
     // Array of available actions
     public $actions;
 
@@ -65,10 +65,10 @@ class BaseException extends Exception
         parent::__construct($msg, $code);
         $this->collectBasicData($code);
     }
-    
+
     /**
      * Collect basic data of exception
-     * 
+     *
      * @param string $code Error code
      *
      * @return void
@@ -80,11 +80,11 @@ class BaseException extends Exception
         array_shift($this->my_backtrace);
         array_shift($this->my_backtrace);
     }
-    
+
     /**
      * Call this to add additional information to the exception you are about
      * to throw.
-     * 
+     *
      * @param string $key
      * @param string $value
      *
@@ -95,16 +95,20 @@ class BaseException extends Exception
         $this->more_info[$key] = $value;
         return $this;
     }
-    
+
     /**
      * Add reference to the object.
      * Do not call this directly, exception() method takes care of that.
-     * 
+     *
      * @param string $t
      */
     function addThis($t)
     {
         return $this->addMoreInfo('Raised by object', $t);
+    }
+
+    function setCode(int $code){
+        $this->code=$code;
     }
 
     /**
@@ -132,7 +136,7 @@ class BaseException extends Exception
         $this->actions[$key] = $descr;
         return $this;
     }
-    
+
     /**
      * Return collected backtrace info
      *
@@ -142,10 +146,10 @@ class BaseException extends Exception
     {
         return $this->my_backtrace;
     }
-    
+
     /**
      * Return filename from backtrace log
-     * 
+     *
      * @return string
      */
     function getMyFile()
@@ -170,10 +174,11 @@ class BaseException extends Exception
      *
      * @return string
      */
-    function getHTML($message = null)
+    function getHTML()
     {
+        /*
         $msg = isset($message) ? ': ' . $message : '';
-        
+
         $html =
             '<h2>' . get_class($this) . $msg . '</h2>' .
             '<p><font color=red>'  . $this->getMessage() . '</font></p>' .
@@ -182,10 +187,127 @@ class BaseException extends Exception
             $this->getDetailedHTML() .
             '' //backtrace($this->shift + 1, $this->getMyTrace())
             ;
-        
-        return $html;
+            */
+
+        $e=$this;
+        $o='<div class="atk-layout">';
+        $o.= "<div class='atk-layout-row atk-effect-danger atk-swatch-red   '><div class='atk-wrapper atk-section-small'><h2>".get_class($e).": ". htmlspecialchars($e->getMessage()). ($e->getCode()?' [code: '.$e->getCode().']':'') ."</h2>\n";
+        $o.='</div></div><div class="atk-layout-row"><div class="atk-wrapper atk-section-small">';
+        if(@$e->more_info){
+            $o.= '<h3>Additional information:</h3>';
+            $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
+        }
+        if(method_exists($e,'getMyFile'))$o.= '<div class="atk-effect-info">' . $e->getMyFile() . ':' . $e->getMyLine() . '</div>';
+
+        if(method_exists($e,'getMyTrace'))$o.= $this->backtrace(3,$e->getMyTrace());
+        else $o.= $this->backtrace(@$e->shift,$e->getTrace());
+
+        if(@$e->by_exception){
+            $o.="<h3>This error was triggered by the following error:</h3>";
+            $o.=$e->by_exception->getHTML();
+        }
+        $o.='</div></div>';
+
+
+        return $o;
     }
-    
+
+    /**
+     * Utility
+     *
+     * @param  [type] $key [description]
+     * @param  [type] $gs  [description]
+     * @param  [type] $ge  [description]
+     * @param  [type] $ls  [description]
+     * @param  [type] $le  [description]
+     * @param  string $ind [description]
+     * @return [type]      [description]
+     */
+    function print_r($key,$gs,$ge,$ls,$le,$ind=' '){
+        $o='';
+        if(strlen($ind)>3)return;
+        if(is_array($key)){
+            $o=$gs;
+            foreach($key as $a=>$b){
+                $o.= $ind.$ls.$a.': '.$this->print_r($b,$gs,$ge,$ls,$le,$ind.' ').$le;
+            }
+            $o.=$ge;
+
+        }else{
+            $o.=$gs?htmlspecialchars($key):$key;
+        }
+        return $o;
+    }
+
+    function backtrace($sh=null,$backtrace=null){
+
+        $output  = '<div class="atk-box-small atk-table atk-table-zebra">';
+        $output .= "<table>\n";
+        $output .= "<tr><th align='right'>File</th><th>Object Name</th><th>Stack Trace</th></tr>";
+        if(!isset($backtrace)) $backtrace=debug_backtrace();
+        $sh-=2;
+
+        $n=0;
+        foreach($backtrace as $bt){
+            $n++;
+            $args = '';
+            if(!isset($bt['args']))continue;
+            foreach($bt['args'] as $a){
+                if(!empty($args)){
+                    $args .= ', ';
+                }
+                switch (gettype($a)) {
+                    case 'integer':
+                    case 'double':
+                        $args .= $a;
+                        break;
+                    case 'string':
+                        $a = htmlspecialchars(substr($a, 0, 128)).((strlen($a) > 128) ? '...' : '');
+                        $args .= "\"$a\"";
+                        break;
+                    case 'array':
+                        $args .= "Array(".count($a).")";
+                        break;
+                    case 'object':
+                        $args .= "Object(".get_class($a).")";
+                        break;
+                    case 'resource':
+                        $args .= "Resource(".strstr((string)$a, '#').")";
+                        break;
+                    case 'boolean':
+                        $args .= $a ? 'True' : 'False';
+                        break;
+                    case 'NULL':
+                        $args .= 'Null';
+                        break;
+                    default:
+                        $args .= 'Unknown';
+                }
+            }
+
+            if(($sh==null && strpos($bt['file'],'/atk4/lib/')===false) || (!is_int($sh) && $bt['function']==$sh)){
+                $sh=$n;
+            }
+
+            $doc='http://book.agiletoolkit.org/';
+            $doc.=$bt['object']::DOC.'.html';
+
+            // add class and method
+            $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
+
+            $output .= "<tr><td valign=top align=right class=atk-effect-".($sh==$n?'danger':'info').">".htmlspecialchars(dirname($bt['file']))."/".
+                "<b>".htmlspecialchars(basename($bt['file']))."</b>";
+            $output .= ":{$bt['line']}</font>&nbsp;</td>";
+            $name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
+            if($name)$output .= "<td>".$name."</td>";else $output.="<td></td>";
+            $output .= "<td valign=top ><a href='".$doc."' target='_blank' class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</a></td></tr>\n";
+        }
+        $output .= "</table></div>\n";
+        return $output;
+    }
+
+
+
     /**
      * Returns Textual representation of the exception
      *
@@ -210,7 +332,7 @@ class BaseException extends Exception
 
     /**
      * Redefine this function to add additional HTML output
-     * 
+     *
      * @return string
      */
     function getDetailedHTML()

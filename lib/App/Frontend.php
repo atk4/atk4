@@ -37,6 +37,13 @@ class App_Frontend extends App_Web {
         parent::initLayout();
         $this->addLayout('Content');
     }
+    /**
+     * Pages with a specified prefix will loaded from a specified namespace.
+     *
+     * @param  [type] $prefix [description]
+     * @param  [type] $ns     [description]
+     * @return [type]         [description]
+     */
     function routePages($prefix,$ns=null){
         if(!$ns)$ns=$prefix;
         $this->namespace_routes[$prefix]=$this->normalizeClassName($ns);
@@ -130,11 +137,21 @@ class App_Frontend extends App_Web {
             if(method_exists($this->page_object,'page_index'))$this->page_object->page_index();
         }
     }
-    /** This method is called as a last resort, when page is not found. It receives the exception with the actual error */
+    /**
+     * This method is called as a last resort, when page is not found. It receives the exception with the actual error
+     *
+     * @param  [type] $e [description]
+     * @return [type]    [description]
+     */
     function pageNotFound($e){
         throw $e;
     }
-    /** Attempts to load static page. Raises exception if not found */
+    /**
+     * Attempts to load static page. Raises exception if not found
+     *
+     * @param  [type] $page [description]
+     * @return [type]       [description]
+     */
     protected function loadStaticPage($page){
         $layout = $this->layout ?: $this;
         try{
@@ -153,25 +170,48 @@ class App_Frontend extends App_Web {
     }
     // }}}
 
-    // {{{ Obsolete functions
-    /** @obsolete - does nothing */
-    function execute(){
-        try{
-            parent::execute();
-        }catch(Exception $e){
-            $this->caughtException($e);
+    function caughtException($e) {
+        if ($e instanceof Exception_Migration) {
+
+            try {
+
+                // The mesage is for user. Let's display it nicely.
+
+                $this->app->pathfinder->addLocation(array('public'=>'.'))
+                   ->setCDN('http://www4.agiletoolkit.org/atk4');
+
+                $l=$this->app->add('Layout_Basic',null,null,array('layout/installer'));
+                $i=$l->add('View')->addClass('atk-align-center');
+                $i->add('H1')->set($e->getMessage());
+
+                if ($e instanceof Exception_Migration) {
+                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. Your project may require some minor tweaks before you can use 4.3.');
+                }
+
+                $b=$i->add('Button')->addClass('atk-swatch-green');
+                $b->set(array('Migration Guide','icon'=>'book'));
+                $b->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
+
+                if ($this->app->template && $this->app->template->hasTag('Layout')) {
+                    $t=$this->app->template;
+                } else {
+                    $t=$this->add('GiTemplate');
+                    $t->loadTemplate('html');
+                }
+
+                $t->setHTML('Layout',$l->getHTML());
+                $t->trySet('css','http://css.agiletoolkit.org/framework/css/installer.css');
+                echo $t->render();
+
+                exit;
+            } catch (BaseException $e){
+                echo 'here';
+                $this->app->add('Logger');
+                return parent::caughtException($e);
+            }
+
+
         }
+        return parent::caughtException($e);
     }
-    /** @obsolete */
-    function getRSSURL($rss,$args=array()){
-        $tmp=array();
-        foreach($args as $arg=>$val){
-            if(!isset($val) || $val===false)continue;
-            if(is_array($val)||is_object($val))$val=serialize($val);
-            $tmp[]="$arg=".urlencode($val);
-        }
-        return
-            $rss.'.xml'.($tmp?'?'.join('&',$tmp):'');
-    }
-    // }}}
 }

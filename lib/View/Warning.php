@@ -16,9 +16,10 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class View_Warning extends View_Box {
-    public $class="ui-state-highlight";
     function init(){
         parent::init();
-        $this->template->trySetHTML('Icon','<i class="ui-icon ui-icon-alert"></i>');    // change default icon
+        $this->addClass('atk-effect-warning');
+        $this->template->set('label',$this->app->_('Warning').': ');
+        $this->addIcon('attention');
     }
 }

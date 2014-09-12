@@ -12,7 +12,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class View_Button extends View_HtmlElement
+class View_Button extends View
 {
     // Menu class
     public $menu_class = 'Menu_jUI';
@@ -183,13 +183,13 @@ class View_Button extends View_HtmlElement
         $this->owner->add('Order')->move($but, 'after', $this)->now();
 
         // Not very pretty, but works well
-        $but->jsButton()
+        $but
             ->js(true)
             ->removeClass('ui-corner-all')
             ->addClass('ui-corner-right')
             ->css('margin-left','-2px');
 
-        $this->jsButton()
+        $this
             ->js(true)
             ->removeClass('ui-corner-all')
             ->addClass('ui-corner-left')
@@ -274,7 +274,7 @@ class View_Button extends View_HtmlElement
             $cl->confirm($message);
         }
 
-        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')));
+        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')),true);
 
         return isset($_GET[$this->name]);
     }
@@ -292,7 +292,7 @@ class View_Button extends View_HtmlElement
         if ($this->isClicked($confirm_msg)) {
 
             // TODO: add try catch here
-            $ret = call_user_func($callback, $this);
+            $ret = call_user_func($callback, $this, $_POST);
 
             // if callback response is JS, then execute it
             if ($ret instanceof jQuery_Chain) {
@@ -300,35 +300,8 @@ class View_Button extends View_HtmlElement
             }
 
             // blank chain otherwise
-            $this->js()->execute();
+            $this->js()->univ()->successMessage(is_string($ret)?$ret:'Success')->execute();
         }
-    }
-    // }}}
-
-
-
-    // {{{ Obsolete
-    /** @obsolete */
-    function setAction($js = null, $page = null)
-    {
-        throw $this->exception('setAction() is now obsolete. use onClick() or redirect() method');
-        return $this;
-    }
-    /** @obsolete */
-    function redirect($page)
-    {
-        return $this->js('click')->redirect($this->api->url($page));
-    }
-    /** @obsolete */
-    function submitForm($form)
-    {
-        throw $this->exception('submitForm() is obsolete, use button->js("click",$form->js()->submit());');
-        return $this->js('click', $form->js()->submit());
-    }
-    /** @obsolete Use addMenu instead */
-    function useMenu()
-    {
-       return $this->addMenu();
     }
     // }}}
 }

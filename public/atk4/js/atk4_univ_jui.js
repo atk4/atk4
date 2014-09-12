@@ -130,31 +130,38 @@ $.each({
         this.dialogConfirm('Attention!','<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+text,null,
                            $.extend({buttons:{'Ok':function(){ $(this).dialog('close');if(fn)fn()}}},options));
     },
-    message: function(msg,icon){
-        if($.ui.atk4_notify && $('#atk-growl-holder').length){
-            $('#atk-growl-holder').atk4_notify().atk4_notify('message',msg,icon);
-            return;
+    message: function(msg,html){
+        html.find('span').text(msg);
+
+        html.find('.do-close').click(function(e){e.preventDefault();html.remove();});
+
+        var dest=$("body>.atk-layout");
+        if(dest.length){
+            html.prependTo(dest);
+            return html;
+        }else{
+            alert(msg);
+            return false;
         }
     },
     successMessage: function(msg){
-        var html="";
-
-        if($.ui.atk4_notify && $('#atk-growl-holder').length){
-            $('#atk-growl-holder').atk4_notify().atk4_notify('successMessage',msg);
-            return;
-        }
-
-        return alert(msg);
+        var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
+    <div class="atk-swatch-green atk-cells atk-padding-small">\
+      <div class="atk-cell atk-jackscrew"><i class="icon-info"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
+      <div class="atk-cell"><a href="javascript: void()" class="do-close"><i class="icon-cancel"></i></a></div>\
+    </div>\
+  </div>');
+        this.message(msg,html);
+        setTimeout(function() { html.remove();},8000);
     },
     errorMessage: function(msg){
-        var html="";
-
-        if($.ui.atk4_notify && $('#atk-growl-holder').length){
-            $('#atk-growl-holder').atk4_notify().atk4_notify('errorMessage',msg);
-            return;
-        }
-
-        return alert(msg);
+        var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
+    <div class="atk-swatch-red atk-cells atk-padding-small">\
+      <div class="atk-cell atk-jackscrew"><i class="icon-attention"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
+      <div class="atk-cell"><a href="javascript: void()" class="do-close"><i class="icon-cancel"></i></a></div>\
+    </div>\
+  </div>');
+        this.message(msg,html);
     },
     closeDialog: function(){
         var r=this.getFrameOpener();

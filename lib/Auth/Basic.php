@@ -126,7 +126,7 @@ class Auth_Basic extends AbstractController {
             // after this model is saved, re-cache the info
             $tmp=$m->get();
             unset($tmp[$t->password_field]);
-            if($t->api instanceof ApiWeb)$t->memorize('info',$tmp);
+            if($t->api instanceof App_Web)$t->memorize('info',$tmp);
         });
 
         $this->addEncryptionHook($this->model);
@@ -505,19 +505,17 @@ class Auth_Basic extends AbstractController {
     /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form,
      * add template/default/page/login.html */
     function createForm($page){
-        $form=$page->add('Form_Stacked',array('nolabels'=>true));
-
-        $form->addClass('atk-form-stacked');
+        $form=$page->add('Form',null,null,array('form/minimal'));
 
         $email=$this->model->hasField($this->login_field);
-        $email=$email?$email->caption:'E-mail';
+        $email=$email?$email->caption():'E-mail';
 
         $password=$this->model->hasField($this->password_field);
-        $password=$password?$password->caption:'Password';
+        $password=$password?$password->caption():'Password';
 
-        $form->addField('Line','username',$email)->template->del('label_div');
-        $form->addField('Password','password',$password)->template->del('label_div');
-        $form->addSubmit('Login');
+        $form->addField('Line','username',$email);
+        $form->addField('Password','password',$password);
+        $form->addSubmit('Login')->addClass('atk-jackscrew')->addClass('atk-swatch-green');
 
         //$form->add('View',null,'button_row_left')
             //->addClass('atk-jackscrew');
@@ -527,13 +525,13 @@ class Auth_Basic extends AbstractController {
     /** Do not override this function. */
     function showLoginForm(){
 
+        $this->app->template->trySet('page_title','Login');
         if($this->api->layout && $this->login_layout_class){
             $this->api->layout->destroy();
             $this->api->add($this->login_layout_class);
             $this->api->page_object=$p=$this->api->layout->add('Page',null,null,array('page/login'));
         }else{
             $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
-
         }
 
 

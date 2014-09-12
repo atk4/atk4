@@ -107,7 +107,11 @@ class App_Web extends App_CLI {
             stripslashes_array($_COOKIE);
         }
     }
-    /** Sends default headers. Re-define to send your own headers */
+    /**
+     * Sends default headers. Re-define to send your own headers
+     *
+     * @return [type] [description]
+     */
     function sendHeaders(){
         header("Content-Type: text/html; charset=utf-8");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");               // Date in the past
@@ -116,7 +120,11 @@ class App_Web extends App_CLI {
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");                                     // HTTP/1.0
     }
-    /** Call this method if you want to see execution time on the bottom of your pages */
+    /**
+     * Call this method if you want to see execution time on the bottom of your pages
+     *
+     * @return [type] [description]
+     */
     function showExecutionTime(){
         $self=$this;
         $this->addHook('post-render-output',array($this,'_showExecutionTime'));
@@ -136,15 +144,31 @@ class App_Web extends App_CLI {
     private $_license_checksum=null;
     private $_license='unlicensed';
 
-    /** This function will return type of the license used: agpl, single, multi */
+    /**
+     * This function will return type of the license used: agpl, single, multi
+     *
+     * @return [type] [description]
+     */
     final function license(){
         return $this->_license;
     }
-    /** This function will return installation signature. It is used by add-ons
-        when communicating with agiletoolkit.org to detect tampering with license system. */
+    /**
+     * This function will return installation signature. It is used by add-ons
+     * when communicating with agiletoolkit.org to detect tampering with
+     * license system.
+     *
+     * @return [type] [description]
+     */
     final function license_checksum(){
+        /** OBSOLETE **/
         return $this->_license_checksum;
     }
+    /**
+     * Performs certificate / license check
+     *
+     * @param  [type] $product [description]
+     * @return [type]          [description]
+     */
     final function licenseCheck($product){
         /* An average Agile Toolkit developer can earn cost of Agile Toolkit in less than
             3 work hours. Your honest purchase is really necessary to keep Agile Toolkit
@@ -255,12 +279,22 @@ class App_Web extends App_CLI {
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
     public $sticky_get_arguments = array();
-    /** Make current get argument with specified name automatically appended to all generated URLs */
-    function stickyGET($name){
+    /**
+     * Make current get argument with specified name automatically appended to all generated URLs
+     *
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+    function stickyGet($name){
         $this->sticky_get_arguments[$name]=@$_GET[$name];
         return $_GET[$name];
     }
-    /** Remove sticky GET which was set by stickyGET */
+    /**
+     * Remove sticky GET which was set by stickyGET
+     *
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
     function stickyForget($name){
         unset($this->sticky_get_arguments[$name]);
     }
@@ -268,6 +302,24 @@ class App_Web extends App_CLI {
     function getStickyArguments(){
         return $this->sticky_get_arguments;
     }
+
+    function get($name){
+        return $_GET[$name];
+    }
+
+    function addStylesheet($file,$ext='.css',$locate='css'){
+        //$file=$this->api->locateURL('css',$file.$ext);
+        if(@$this->included[$locate.'-'.$file.$ext]++)return;
+
+        if(strpos($file,'http')!==0 && $file[0]!='/'){
+            $url=$this->locateURL($locate,$file.$ext);
+        }else $url=$file;
+
+        $this->template->appendHTML('js_include',
+                '<link type="text/css" href="'.$url.'" rel="stylesheet" />'."\n");
+        return $this;
+    }
+
 
     // }}}
 
@@ -308,6 +360,7 @@ class App_Web extends App_CLI {
         $this->rendered['sub-elements']=array();
         try {
             $this->hook('pre-render');
+            $this->hook('beforeRender');
             $this->recursiveRender();
             if(isset($_GET['cut_object']))
                 throw new BaseException("Unable to cut object with name='".$_GET['cut_object']."'. It wasn't initialized");
@@ -351,6 +404,7 @@ class App_Web extends App_CLI {
     /** Render only specified object or object with specified name */
     function cut($object){
         $_GET['cut_object']=is_object($object)?$object->name:$object;
+        return $this;
     }
     /** Perform instant redirect to another page */
     function redirect($page=null,$args=array()){
@@ -373,9 +427,15 @@ class App_Web extends App_CLI {
     }
     /** Called on all templates in the system, populates some system-wide tags */
     function setTags($t){
-        // absolute path to base location
-        $t->trySet('atk_path',$q=
-            $this->app->pathfinder->atk_public->getURL().'/');
+
+        // Determine Location to atk_public
+        if ($this->app->pathfinder && $this->app->pathfinder->atk_public) {
+            $q=$this->app->pathfinder->atk_public->getURL();
+        } else {
+            $q='http://www4.agiletoolkit.org/atk4';
+        }
+
+        $t->trySet('atk_path',$q.'/');
         $t->trySet('base_path',$q=$this->app->pm->base_path);
 
         // We are using new capability of SMlite to process tags individually
@@ -416,10 +476,12 @@ class App_Web extends App_CLI {
     function _locatePage($path){
         return $this->url($path);
     }
-    /** Only show $object in the final rendering */
+    /**
+     * Only show $object in the final rendering
+     * @obsolete and should be removed in 4.4
+     */
     function renderOnly($object){
-        $_GET['cut_object']=$object->name;
-        return $this;
+        return $this->cut($object);
     }
     // }}}
 
@@ -430,6 +492,10 @@ class App_Web extends App_CLI {
         if($this->layout_initialized)throw $this->exception('Please do not call initLayout() directly from init()','Obsolete');
         $this->layout_initialized=true;
     }
+
+    // TOOD: layouts need to be simplified and obsolete, because we have have other layouts now.
+    // doc/layouts
+    //
     /** Register new layout, which, if has method and tag in the template, will be rendered */
     function addLayout($name){
         if(!$this->template)return;
@@ -458,7 +524,7 @@ class App_Web extends App_CLI {
     }
     /** Default template for the application. Redefine to add your own rules. */
     function defaultTemplate(){
-        return array('shared');
+        return array('html');
     }
     // }}}
 }

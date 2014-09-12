@@ -19,32 +19,23 @@
 class HelloWorld extends AbstractView
 {
     // message text
-    private $message;
+    private $message = 'Hello, World';
 
     /**
-     * Initialization.
-     * Sets default message text.
-     */
-    function init()
-    {
-        parent::init();
-        $this->message = 'Hello world';
-    }
-    /**
      * Set custom message text
-     * 
+     *
      * @param string $msg Message text
-     * 
+     *
      * @return void
      */
     function setMessage($msg)
     {
         $this->message = $msg;
     }
-    
+
     /**
      * Render message
-     * 
+     *
      * @return void
      */
     function render()

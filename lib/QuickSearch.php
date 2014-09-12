@@ -48,6 +48,8 @@ class QuickSearch extends Filter
         $this->template->trySet('fieldset', 'atk-row');
         $this->template->tryDel('button_row');
 
+        $this->addClass('atk-col-3');
+
         // add field
         $this->search_field = $this->addField('Line', 'q', '')->setAttr('placeholder','Search')->setNoSave();
 

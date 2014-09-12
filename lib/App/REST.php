@@ -27,7 +27,7 @@ class App_REST extends App_CLI
             // Extra 24-hour protection
             parent::init();
 
-            $this->add('Logger');
+            $this->logger = $this->add('Logger');
             $this->add('Controller_PageManager')
                 ->parseRequestedURL();
 
@@ -39,7 +39,7 @@ class App_REST extends App_CLI
 
             // Add-ons may define additional endpoints for your API, but
             // you must activate them explicitly.
-            $this->pathfinder->base_location->defineContents(['endpoint'=>'endpoint']);
+            $this->pathfinder->base_location->defineContents(array('endpoint'=>'endpoint'));
 
         } catch (Exception $e) {
             $this->caughtException($e);
@@ -64,25 +64,29 @@ class App_REST extends App_CLI
         if ($_GET['format'] == 'json_pretty') {
             header('Content-type: application/json');
             echo json_encode($data, JSON_PRETTY_PRINT);
-            exit;
+            return;
         }
         if ($_GET['format'] == 'html') {
             echo '<pre>';
             echo json_encode($data, JSON_PRETTY_PRINT);
-            exit;
+            return;
         }
         header('Content-type: application/json');
 
         if($data===null)$data=array();
         echo json_encode($data);
-        exit;
+        return;
     }
     /**
      * main
      *
      * @return [type] [description]
      */
-    public function main()
+    function main(){
+        $this->execute();
+        $this->hook('saveDelayedModels');
+    }
+    public function execute()
     {
         try {
             try {
@@ -103,8 +107,9 @@ class App_REST extends App_CLI
                         'type'=>'API_Error'
                         );
                 }
+                $this->caughtException($e);
                 $this->encodeOutput($error, null);
-                exit;
+                return;
             }
 
 
@@ -135,10 +140,15 @@ class App_REST extends App_CLI
                         ;
                 }
 
+                $this->logRequest($method, $args);
+
                 // Perform the desired action
                 $this->encodeOutput($this->endpoint->$method($args));
 
+                $this->logSuccess();
+
             } catch (Exception $e) {
+                $this->caughtException($e);
                 http_response_code($e->getCode()?:500);
 
                 $error = array(
@@ -155,5 +165,18 @@ class App_REST extends App_CLI
         } catch (Exception $e) {
             $this->caughtException($e);
         }
+    }
+    /**
+     * Override to extend the logging
+     *
+     * @param  [type] $method [description]
+     * @param  [type] $args   [description]
+     * @return [type]         [description]
+     */
+    function logRequest($method, $args) {
+
+    }
+    function logSuccess(){
+
     }
 }

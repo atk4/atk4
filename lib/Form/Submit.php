@@ -25,13 +25,15 @@
 class Form_Submit extends Button {
     public $no_save=null;
 
+    public $form;
+
     function init(){
         parent::init();
         $this->template->trySet('type','submit');
-        if($this->owner->js_widget){
+        if($this->form->js_widget){
             $this->js('click',array(
-                        $this->owner->js()->find('input[name=ajax_submit]')->val($this->short_name),
-                        $this->owner->js()->submit()
+                        $this->form->js()->find('input[name=ajax_submit]')->val($this->short_name),
+                        $this->form->js()->submit()
                         ));
         }
     }

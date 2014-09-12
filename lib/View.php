@@ -62,8 +62,8 @@ class View extends AbstractView
         return $this;
     }
 
-    
-    /** 
+
+    /**
      * Replace all CSS classes with new ones.
      * Multiple CSS classes can also be set if passed as space separated
      * string or array of class names.
@@ -79,7 +79,7 @@ class View extends AbstractView
         return $this;
     }
     /**
-     * Add CSS class to element. Previously added classes are not affected. 
+     * Add CSS class to element. Previously added classes are not affected.
      * Multiple CSS classes can also be added if passed as space separated
      * string or array of class names.
      *
@@ -110,12 +110,16 @@ class View extends AbstractView
             if(is_array($value)){
                 continue;
             }
+            if($value === true){
+                $this->template->append($append_to_tag, ' atk-'.$key);
+                continue;
+            }
             $this->template->append($append_to_tag, ' atk-'.$key.'-'.$value);
         }
         return $this;
     }
 
-    /** 
+    /**
      * Remove CSS class from element, if it was added with setClass
      * or addClass.
      *
@@ -131,7 +135,7 @@ class View extends AbstractView
         return $this;
     }
 
-    /** 
+    /**
      * Set inline CSS style of element. Old styles will be removed.
      * Multiple CSS styles can also be set if passed as array.
      *
@@ -147,7 +151,7 @@ class View extends AbstractView
         return $this;
     }
 
-    /** 
+    /**
      * Add inline CSS style to element.
      * Multiple CSS styles can also be set if passed as array.
      *
@@ -167,7 +171,7 @@ class View extends AbstractView
         $this->template->append('style', ';'.$property.':'.$style);
         return $this;
     }
-    /** 
+    /**
      * Remove inline CSS style from element, if it was added with setStyle
      * or addStyle.
      *
@@ -184,12 +188,12 @@ class View extends AbstractView
         if (!$st) {
             return $this;
         }
-        
+
         // if only one style, then put it in array
         if (!is_array($st)) {
             $st = array($st);
         }
-        
+
         // remove all styles and set back the ones which don't match property
         $this->template->del('style');
         foreach ($st as $k=>$rule) {
@@ -215,9 +219,10 @@ class View extends AbstractView
      */
     function set($text)
     {
+
         if(!is_array($text))return $this->setText($text);
 
-        if($text[0])$this->setText($text[0]);
+        if(!is_null($text[0]))$this->setText($text[0]);
 
         // If icon is defined, it will either insert it into
         // a designated spot or will combine it with text
@@ -228,8 +233,25 @@ class View extends AbstractView
                     ->set($text['icon']);
             }else{
                 $this->add('Icon')->set($text['icon']);
-                $this->add('HTML')->set('&nbsp;');
-                $this->add('Text')->set($text[0]);
+                if($text[0]){
+                    $this->add('HTML')->set('&nbsp;');
+                    $this->add('Text')->set($text[0]);
+                }
+            }
+
+            unset($text['icon']);
+        }
+        if($text['icon-r']){
+
+            if($this->template->hasTag('icon-r')) {
+                $this->add('Icon',null,'icon')
+                    ->set($text['icon']);
+            }else{
+                if($text[0]){
+                    $this->add('Text')->set($text[0]);
+                    $this->add('HTML')->set('&nbsp;');
+                }
+                $this->add('Icon')->set($text['icon-r']);
             }
 
             unset($text['icon']);

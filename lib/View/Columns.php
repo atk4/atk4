@@ -17,7 +17,7 @@
 /**
  * Implementation of columns
  *
- * Use: 
+ * Use:
  *
  * 12-GS:
  *  $cols=$this->add('Columns');
@@ -34,9 +34,11 @@
  *  $cols=$this->add('Columns');
  *  $cols->addColumn()->add('LoremIpsum');
  *  $cols->addColumn()->add('LoremIpsum');
+
+ *  $cols->addClass('atk-cells-gutter-large')
  *
  * @license See http://agiletoolkit.org/about/license
- * 
+ *
 **/
 class View_Columns extends View {
     public $mode='auto';      // 'auto', 'grid' or 'pct'
@@ -45,37 +47,25 @@ class View_Columns extends View {
      * Argument can be numeric for 12GS, percent for flexi design or omitted for equal columns
      */
     function addColumn($width='auto'){
-        $c=$this->add('View_Columns_Column',null,'Columns');
+        $c=$this->add('View');
         if(is_numeric($width)){
             $this->mode='grid';
-            $c->addClass('col span_'.$width);
+            $c->addClass('atk-col-'.$width);
+            return $c;
         }elseif(substr($width,-1)=='%'){
-            if($this->mode!='pct'){
-                $this->template->trySet('class','atk-flexy');
-            }
             $this->mode='pct';
             $c->addStyle('width',$width);
         }
+        $this->template->trySet('row_class','atk-cells');
+        $c->addClass('atk-cell');
         return $c;
     }
-    function recursiveRender(){
-        // if auto mode, then calculate equal widths for columns
-        if($this->mode=='auto'){
-            $cnt=0;
-            foreach($this->elements as $el)
-               if($el instanceof View_Columns_Column) $cnt++;
-
-            if($cnt)
-               foreach($this->elements as $el)
-                  if($el instanceof View_Columns_Column){
-                     $el->setStyle('width',round(100/$cnt,2).'%');
-                  }
-            $this->template->trySet('class','atk-flexy');
-        }
-        return parent::recursiveRender();
+    function setGutter($size=''){
+        if ($size) $size='-'.$size;
+        $this->addClass('atk-cells-gutter'.$size);
+        return $this;
     }
     function defaultTemplate(){
         return array('view/columns');
     }
 }
-class View_Columns_Column extends HtmlElement {}

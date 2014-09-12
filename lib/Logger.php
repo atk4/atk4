@@ -194,7 +194,7 @@ class Logger extends AbstractController {
                         'We were unable to deal with your request. '.
                         'Please retry later.');
         }
-        
+
         $this->log_dir=$this->api->getConfig('logger/log_dir',
             "/var/log/atk4/".$this->api->name);
 
@@ -313,6 +313,19 @@ class Logger extends AbstractController {
             echo $this->public_error_message;
             exit;
         }
+
+        if(method_exists($e,'getHTML')){
+?><!DOCTYPE html>
+<html lang="en"><head>
+    <title>Exception: <?php echo htmlspecialchars($e->getMessage())?></title>
+    <link href="http://css.agiletoolkit.org/css/theme.css" rel="stylesheet" media="all"/>
+<head><body>
+<?php  echo $e->getHTML();?>
+</body></head>
+<?php
+            exit;
+        }
+
         if($_GET[$this->name.'_debug']=='rendertree'){
             echo '<h2>Object Tree</h2>';
             try{
@@ -371,6 +384,9 @@ class Logger extends AbstractController {
             }
             $o.=$ge;
 
+        }elseif($key instanceof Closure){
+            $o.='[closure]';
+
         }else{
             $o.=$gs?htmlspecialchars($key):$key;
         }
@@ -391,7 +407,7 @@ class Logger extends AbstractController {
             return true;
         }
     }
-    function outputDebug($caller,$msg,$shift=0){
+    function outputDebug($front,$caller,$msg,$shift=0){
         // first, let's see if we should log this
         $frame=$this->findFrame('debug');
         if($this->log_output){
@@ -531,7 +547,7 @@ class Logger extends AbstractController {
     }
     function backtrace($sh=null,$backtrace=null){
         $output = "<div >\n";
-        // TODO: allow extending backtrace option, so that 
+        // TODO: allow extending backtrace option, so that
         $output .= "<b>Stack trace:</b><br /><table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
         $output .= "<tr><th align='right'>File</th><th>&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>";
         if(!isset($backtrace)) $backtrace=debug_backtrace();

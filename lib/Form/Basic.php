@@ -47,8 +47,6 @@ class Form_Basic extends View implements ArrayAccess {
 
     public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
     protected $loaded_from_db = false;  // if true, update() will try updating existing row. if false - it would insert new
-    public $onsubmit = null;
-    public $onload = null;
     protected $ajax_submits=array();    // contains AJAX instances assigned to buttons
     protected $get_field=null;          // if condition was passed to a form through GET, contains a GET field name
     protected $conditions=array();
@@ -58,6 +56,13 @@ class Form_Basic extends View implements ArrayAccess {
 
     public $default_exception='Exception_ValidityCheck';
     public $default_controller='Controller_MVCForm';
+
+    /**
+     * Normally form fields are inserted using a form template. If you
+     *
+     * @var [type]
+     */
+    public $search_for_field_spots;
 
     public $dq = null;
     function init(){
@@ -82,7 +87,16 @@ class Form_Basic extends View implements ArrayAccess {
         $this->api->addHook('submitted',$this);
 
 
+        $this->addHook('afterAdd',$this);
     }
+    function afterAdd($p,$c){
+        if ($c instanceof AbstractView) {
+            $c->addHook('afterAdd',$this);
+            $c->addMethod('addField',$this);
+            $c->addMethod('addSubmit',$this);
+        }
+    }
+
     protected function getChunks(){
         // commonly replaceable chunks
         $this->grabTemplateChunk('form_comment');
@@ -139,8 +153,27 @@ class Form_Basic extends View implements ArrayAccess {
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError',$field->short_name,$msg)->execute();
     }
-    function addField($type, $options, $caption = null, $attr = null)
+    function error($field,$text=null){
+        $this->getElement($field)->displayFieldError($text);
+    }
+    function addField($type, $options = null, $caption = null, $attr = null)
     {
+
+        $insert_into = $this->layout ?: $this;
+
+        if (is_object($type) && $type instanceof AbstractView && !($type instanceof Form_Field)) {
+
+            // using callback on a sub-view
+            $insert_into = $type;
+            list(,$type,$options,$caption,$attr)=func_get_args();
+
+        }
+
+        if ($options === null) {
+            $options = $type;
+            $type = 'Line';
+        }
+
         if (is_array($options)) {
             $name = isset($options["name"]) ? $options["name"] : null;
         } else {
@@ -175,33 +208,47 @@ class Form_Basic extends View implements ArrayAccess {
         }
         $class = $this->api->normalizeClassName($class, 'Form_Field');
 
-        // TODO: this is workaround, must properly fix cloneRegion
-        $template=$this->template->cloneRegion('form_line');
-        $last_field = $this->add($class, $options, null, $template)
+        if ($insert_into === $this) {
+            $template=$this->template->cloneRegion('form_line');
+            $field = $this->add($class, $options, null, $template);
+        } else {
+            if ($insert_into->template->hasTag($name)) {
+                $template=$this->template->cloneRegion('field_input');
+                $options['show_input_only']=true;
+                $field = $insert_into->add($class, $options, $name);
+            } else {
+                $template=$this->template->cloneRegion('form_line');
+                $field = $insert_into->add($class, $options, null, $template);
+            }
+
+            // Keep Reference, for $form->getElement().
+            $this->elements[$options['name']]=$field;
+        }
 
 
-            ->setCaption($caption);
-        $last_field->setForm($this);
-        $last_field->template->trySet('field_type', strtolower($type));
-        $last_field->setAttr($attr);
+        $field->setCaption($caption);
+        $field->setForm($this);
+        $field->template->trySet('field_type', strtolower($type));
 
-        return $last_field;
+        if($attr) {
+            if($this->app->compat) {
+                $field->setAttr($attr);
+            }else{
+                throw $this->exception('4th argument to addField is obsolete');
+            }
+        }
+
+        return $field;
     }
     function importFields($model,$fields=undefined){
         $this->add($this->default_controller)->importFields($model,$fields);
     }
-
-    function addComment($comment){
-        if(!isset($this->template_chunks['form_comment']))
-            throw new BaseException('Form\'s template ('.$this->template->loaded_template.') does not support comments');
-        return $this->add('Html')->set(
-                $this->template_chunks['form_comment']->set('comment',$comment)->render()
-                );
-    }
     function addSeparator($class='',$attr=array()){
         if(!isset($this->template_chunks['form_separator']))return $this->add('View')->addClass($class);
         $c = clone $this->template_chunks['form_separator'];
-        $c->trySet('fieldset_class',$class);
+        $c->trySet('fieldset_class','atk-cell '.$class);
+        $this->template->trySet('fieldset_class','atk-cell');
+        $this->template->trySet('form_class','atk-cells atk-cells-gutter-large');
 
         if (is_array($attr) && !empty($attr)) {
             foreach($attr as $k => $v) {
@@ -278,18 +325,36 @@ class Form_Basic extends View implements ArrayAccess {
         return $this->get();
     }
     function addSubmit($label='Save',$name=null){
-        $submit = $this->add('Form_Submit',$name,'form_buttons')
-            ->setIcon('ok')
-            ->setLabel($label)
+
+
+        if (is_object($label) && $label instanceof AbstractView && !($label instanceof Form_Field)) {
+            // using callback on a sub-view
+            $insert_into = $label;
+            list(,$label,$name)=func_get_args();
+            $submit = $insert_into->add('Form_Submit', array('name'=>$name, 'form'=>$this));
+        }else{
+            if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
+               $submit = $this->layout->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'FormButtons');
+            } else {
+                $submit = $this->add('Form_Submit', array('name'=>$name, 'form'=>$this), 'form_buttons');
+            }
+        }
+
+        $submit
+            //->setIcon('ok') - removed as per dmity's request
+            ->set($label)
             ->setNoSave();
 
         return $submit;
     }
     function addButton($label='Button',$name=null){
-        $button = $this->add('Button',$name,'form_buttons')
-            ->setLabel($label);
-
-       return $button;
+        if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
+           $button = $this->layout->add('Button', $name, 'FormButtons');
+        } else {
+            $button = $this->add('Button',$name,'form_buttons');
+        }
+        $button->setLabel($label);
+        return $button;
     }
 
     function loadData(){
@@ -303,7 +368,9 @@ class Form_Basic extends View implements ArrayAccess {
     function isLoadedFromDB(){
         return $this->loaded_from_db;
     }
-    function update(){
+    /* obsolete in 4.3 - use save() */
+    function update() { return $this->save(); }
+    function save(){
         // TODO: start transaction here
         try{
 
@@ -354,6 +421,7 @@ class Form_Basic extends View implements ArrayAccess {
                     foreach ($output as $row){
                         if ($row){
                             $has_output = true;
+                            $output=$row;
                             break;
                         }
                     }
@@ -364,7 +432,13 @@ class Form_Basic extends View implements ArrayAccess {
                 /* TODO: need logic re-check here + test scripts */
                 //if(!is_array($output))$output=array($output);
                 // already array
-                if($has_output)$this->js(null,$output)->execute();
+                if($has_output) {
+                    if($output instanceof jQuery_Chain) {
+                        $this->js(null, $output)->execute();
+                    }elseif(is_string($output)) {
+                        $this->js(null, $this->js()->reload())->univ()->successMessage($output)->execute();
+                    }
+                }
             }
         }catch (BaseException $e){
             if($e instanceof Exception_ValidityCheck){
@@ -407,15 +481,16 @@ class Form_Basic extends View implements ArrayAccess {
         $this->isSubmitted();
     }
     function setLayout($template){
-        // Instead of building our own Content we will take it from
-        // pre-defined template and insert fields into there
-        $this->layout = $this->template_chunks['custom_layout']=($template instanceof SMLite)?$template:$this->add('SMLite')->loadTemplate($template);
-        $this->template_chunks['custom_layout']->trySet('_name',$this->name);
-        $this->template->trySet('form_class_layout',$c='form_'.basename($template));
+        if (!$template instanceof AbstractView) {
+            if (is_string($template)) {
+                $template = $this->add('View',null,null,array($template));
+            } else {
+                $template = $this->add('View',null,null,$template);
+            }
+        }
+
+        $this->layout=$template;
         return $this;
-    }
-    function setFormClass($class){
-        return $this->setClass($class);
     }
     function render(){
         // Assuming, that child fields already inserted their HTML code into 'form'/Content using 'form_line'
@@ -426,41 +501,19 @@ class Form_Basic extends View implements ArrayAccess {
             $this->js(true)->_load($this->js_widget)->$fn($this->js_widget_arguments);
         }
 
-        if(isset($this->template_chunks['custom_layout'])){
-            foreach($this->elements as $key=>$val){
-                if($val instanceof Form_Field){
-                    $attr=$this->template_chunks['custom_layout']->get($key);
-                    if(is_array($attr))$attr=join(' ',$attr);
-                    if($attr)$val->setAttr('style',$attr);
-
-                    if(!$this->template_chunks['custom_layout']->is_set($key)){
-                        $this->js(true)->univ()->log('No field in layout: '.$key);
-                    }
-                    $this->template_chunks['custom_layout']->trySetHTML($key,$val->getInput());
-
-                    if($this->errors[$key]){
-                        $this->template_chunks['custom_layout']
-                            ->trySet($key.'_error',$val->error_template
-                                ->set('field_error_str',$this->errors[$key])->render());
-                    }
-                }
-            }
-            $this->template->setHTML('Content',$this->template_chunks['custom_layout']->render());
-        }
-        $this->output($r=$this->template_chunks['form']->render());
+        return parent::render();
     }
     function hasField($name){
+        if(!$this->app->compat)throw $this->exception('Use $form->hasElement instead','_Obsolete');
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
     function isClicked($name){
         if(is_object($name))$name=$name->short_name;
         return $_POST['ajax_submit']==$name || isset($_POST[$this->name . "_" . $name]);
     }
-    function error($field,$text){
-        $this->getElement($field)->displayFieldError($text);
-    }
     /* external error management */
     function setFieldError($field, $name){
+        if(!$this->app->compat)throw $this->exception('4.3','_Obsolete');
         $this->errors[$field] = (isset($this->errors[$field])?$this->errors[$field]:'') . $name;
     }
 

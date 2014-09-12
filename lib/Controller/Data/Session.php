@@ -14,8 +14,8 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-/* 
-Implements connectivity between Model and Session 
+/*
+Implements connectivity between Model and Session
 */
 class Controller_Data_Session extends Controller_Data_Array {
 

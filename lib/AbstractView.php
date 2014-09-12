@@ -129,7 +129,7 @@ abstract class AbstractView extends AbstractObject
      * Converting View into string will render recursively and produce HTML.
      * If argument is passed, JavaScript will be added into on_ready section
      * of your document like when rendered normally. Note that you might
-     * require to destroy object if you don't want it's HTML to appear normally 
+     * require to destroy object if you don't want it's HTML to appear normally
      *
      * @param boolean $destroy    Destroy object preventing it from rendering
      * @param boolean $execute_js Also capture JavaScript chains of object
@@ -155,7 +155,7 @@ abstract class AbstractView extends AbstractObject
 
     // {{{ Template Setup
 
-    /** 
+    /**
      * Called automatically during init for template initalization
      *
      * @param string       $template_spot   Where object's output goes
@@ -261,7 +261,7 @@ abstract class AbstractView extends AbstractObject
      * tag of its parent view. You can specify a different tag as 3rd argument
      * for the add() method. If you wish for object to use different tag by
      * default, you can override this method.
-     * 
+     *
      * @return string Tag / Spot in $this->owner->template
      */
     function defaultSpot()
@@ -285,7 +285,7 @@ abstract class AbstractView extends AbstractObject
      * When cut_object is specified in the GET arguments, then output
      * of HTML would be limited to object with matching $name or $short_name.
      *
-     * This method will be called instead of default render() and it will 
+     * This method will be called instead of default render() and it will
      * stop rendering process and output object's HTML once it finds
      * a suitable object. Exception_StopRender is used to terminate
      * rendering process and bubble up to the APP. This exception is
@@ -358,7 +358,7 @@ abstract class AbstractView extends AbstractObject
     }
 
     /**
-     * Default rendering method. Generates HTML presentation of $this view. 
+     * Default rendering method. Generates HTML presentation of $this view.
      * For most views, rendering the $this->template would be sufficient.
      *
      * If your view requires to do some heavy-duty work, please be sure to do
@@ -404,6 +404,8 @@ abstract class AbstractView extends AbstractObject
                 && !empty($this->owner->template)
             ) {
                 $this->owner->template->append($this->spot, $txt, false);
+            } elseif ($this->owner instanceof App_CLI) {
+                echo $txt;
             }
         }
     }
@@ -538,7 +540,7 @@ abstract class AbstractView extends AbstractObject
         }
         return $js;
     }
-    
+
     function getJSID(){
         return str_replace('/', '_', $this->name);
     }
@@ -578,7 +580,7 @@ abstract class AbstractView extends AbstractObject
      * instead. You can execute both if you embed $js inside returned
      * chain.
      *
-     * The third argument passed to your method contains 
+     * The third argument passed to your method contains
      */
     function on($event, $selector=null, $js=null){
 
@@ -617,7 +619,7 @@ abstract class AbstractView extends AbstractObject
         $fired=false;
 
         $this->app->jui->addHook(
-            'pre-getJS', 
+            'pre-getJS',
             function($app) use($event,$selector,$ret_js,$on_chain,&$fired) {
                 if($fired)return;
                 $fired=true;

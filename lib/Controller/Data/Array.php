@@ -24,7 +24,7 @@ class Controller_Data_Array extends Controller_Data {
         }
 
 
-        $model->addMethod('push',$this);
+        if(!$model->hasMethod('push'))$model->addMethod('push',$this);
 
         // convert single dimension arrays
         reset($table);
@@ -123,7 +123,7 @@ class Controller_Data_Array extends Controller_Data {
                 if (!$this->isValid($row, $c)) {
                     $valid = false;
                     break;
-                }   
+                }
             }
             if ($valid === true) {
                 $ids[] = $id;

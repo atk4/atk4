@@ -74,8 +74,9 @@ class Endpoint_REST extends AbstractModel
         // Based od authentication data, return a valid model
         if(!$this->model_class)return false;
 
-        $m=$this->app->add('Model_'.$this->model_class);
-        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false) {
+        //$m=$this->app->add('Model_'.$this->model_class);
+        $m = $this->setModel($this->model_class);
+        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false && $this->user) {
             // if not authenticated, blow up
             $m->addCondition($this->user_id_field, $this->user->id);
         }
@@ -195,28 +196,54 @@ class Endpoint_REST extends AbstractModel
     }
 
     /**
-     * [insert description]
+     * Because it's not really defined which of the two is used for updating
+     * the resource, Agile Toolkit will support put_post identically. Both
+     * of the requests are idempotent.
      *
-     * @param [type] $data [description]
+     * As you extend this class and redefine methods, you should properly
+     * use POST or PUT. See http://stackoverflow.com/a/2691891/204819
      *
+     * @param  [type] $data [description]
      * @return [type]       [description]
      */
-    public function post($data)
-    {
+    function put_post($data){
+
         $m=$this->model;
 
-        if(!$this->allow_add)throw $this->exception('Adding is not allowed');
-
-        if($m->loaded()) throw $this->exception('Not a valid request for this resource URL');
-
-        $data=$this->_input($data, $this->allow_add);
+        if($m->loaded()){
+            if(!$this->allow_edit)throw $this->exception('Editing is not allowed');
+            $data=$this->_input($data, $this->allow_edit);
+        }else{
+            if(!$this->allow_add)throw $this->exception('Adding is not allowed');
+            $data=$this->_input($data, $this->allow_add);
+        }
 
         return $this->outputOne($m->set($data)->save()->get());
     }
 
     /**
-     * [save description]
+     * Create a new entry in the collection. The new entry's URI is assigned
+     * automatically and is usually returned by the operation.
      *
+     * @param Array $data POST Data
+     * @link http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
+     *
+     * @return [type]       [description]
+     */
+    public function post($data)
+    {
+
+
+        //if($m->loaded()) throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
+
+        return $this->put_post($data);
+    }
+
+    /**
+     * Replace the addressed member of the collection, or if it doesn't exist,
+     * create it.
+     *
+     * @link http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
      * @param [type] $data [description]
      *
      * @return [type]       [description]
@@ -225,14 +252,9 @@ class Endpoint_REST extends AbstractModel
     {
         $m=$this->model;
 
-        if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
+        //if(!$m->loaded())throw $this->exception('Replacing of the whole collection is not supported. element URI');
 
-        if(!$this->allow_edit)throw $this->exception('Editing is not allowed');
-
-        $data=$this->_input($data, $this->allow_edit);
-
-
-        return $this->outputOne($m->set($data)->save()->get());
+        return $this->put_post($data);
     }
 
     /**

@@ -24,7 +24,7 @@
  */
 class Page extends AbstractView {
 
-    /** 
+    /**
      * Specify page title which will be used inside the <title> tag in the main
      * api template.
      *
@@ -44,7 +44,7 @@ class Page extends AbstractView {
      */
     public $metas = array();
 
-    /** 
+    /**
      * Errors generated on the page are primarily there to alert the user,
      * although they are not logic-related and page shouldn't do validation
      * either.
@@ -105,8 +105,10 @@ class Page extends AbstractView {
                     $title = $title . $t;
                 }
             }
-        } else {
+        } elseif($this->title) {
             $title = $this->title;
+        } elseif($this->app->title) {
+            $title = $this->app->title;
         }
         if (trim($title)) {
             $this->app->template->trySet('page_title',$title);
@@ -135,12 +137,12 @@ class Page extends AbstractView {
                 'page'=>null
             ));
         }
-        $this->title[]=array('name'=>$title,'page'=>$page);
+        array_unshift($this->title,array('name'=>$title,'page'=>$page));
         return $this;
     }
     function addBreadCrumb() {
             $t = $this->title;
-            if(!is_array($t)) { 
+            if(!is_array($t)) {
 
                 $last_title=$t;
                 if($this->app->layout && $this->title) {

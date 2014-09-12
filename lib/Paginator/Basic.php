@@ -49,12 +49,12 @@ class Paginator_Basic extends CompleteLister {
         }else{
             $this->skip=@$_GET[$this->skip_var]+0;
         }
-        
+
         // Start iterating early ($source = DSQL of model)
         if($source instanceof SQL_Model){
             $source = $source->_preexec();
         }
-        
+
         if($source instanceof DB_dsql){
             $source->limit($this->ipp, $this->skip);
             $source->calcFoundRows();
@@ -62,7 +62,7 @@ class Paginator_Basic extends CompleteLister {
 
         }elseif($source instanceof Model){
             $this->source = $source->setLimit($this->ipp,$this->skip);
-            
+
         }else{
             // NOTE: no limiting enabled for unknown data source
             $this->source =& $source;
@@ -72,12 +72,12 @@ class Paginator_Basic extends CompleteLister {
 
         // get data source
         if (! $this->source) {
-            
+
             // force grid sorting implemented in Grid_Advanced
             if($this->owner instanceof Grid_Advanced) {
                 $this->owner->getIterator();
             }
-            
+
             // set data source for Paginator
             if ($this->owner->model) {
                 $this->setSource($this->owner->model);
@@ -104,7 +104,7 @@ class Paginator_Basic extends CompleteLister {
 
         // no need for paginator if there is only one page
         if($this->total_pages<=1)return $this->destroy();
-        
+
         if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
             if($this->memorize){
@@ -146,7 +146,7 @@ class Paginator_Basic extends CompleteLister {
                 ->set('<')
                 ;
         }else $first=null;
-        
+
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
                 ->setElement('a')
@@ -195,7 +195,7 @@ class Paginator_Basic extends CompleteLister {
         }
 
          */
-        
+
 
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
             $data[]=array(
@@ -204,7 +204,7 @@ class Paginator_Basic extends CompleteLister {
                 'cur'=>$p==$this->cur_page?$this->template->get('cur'):'',
                 'label'=>$p
             );
-        } 
+        }
 
         if($this->ajax_reload){
             $this->js('click',$this->owner->js()->reload(array($this->skip_var=>$this->js()->_selectorThis()->attr('data-skip'))))
@@ -218,6 +218,6 @@ class Paginator_Basic extends CompleteLister {
         return array('paginator42','paginator');
     }
     function defaultSpot(){
-        return 'paginator';
+        return 'Paginator';
     }
 }

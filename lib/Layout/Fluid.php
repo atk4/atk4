@@ -10,10 +10,33 @@
  */
 class Layout_Fluid extends Layout_Basic {
 
-    public $header_wrap;
-    public $header;
-    public $footer_wrap;
+    /**
+     * Pointns to a user_menu object
+     *
+     * @var [type]
+     */
+    public $user_menu;
+
+    /**
+     * Points to a footer, if initialized
+     *
+     * @var [type]
+     */
     public $footer;
+
+    /**
+     * Points to menu left-menu if initialized
+     *
+     * @var [type]
+     */
+    public $menu;
+
+    /**
+     * Points to top menu
+     *
+     * @var [type]
+     */
+    public $top_menu;
 
     function defaultTemplate() {
         return array('layout/fluid');
@@ -21,9 +44,14 @@ class Layout_Fluid extends Layout_Basic {
 
     function init(){
         parent::init();
-        if ($this->template->hasTag('User_Menu')) {
-            $u=$this->add('Menu_Horizontal',null,'User_Menu');
-            $u->addMenu('John Smith')->addItem('Logout');
+        if ($this->template->hasTag('UserMenu')) {
+            if(isset($this->app->auth)){
+                $u=$this->add('Menu_Horizontal',null,'UserMenu');
+                $u->addMenu('John Smith')->addItem('Logout','logout');
+            } else {
+                $this->template->tryDel('UserMenu');
+                $this->template->tryDel('user_icon');
+            }
         }
     }
 
@@ -36,10 +64,10 @@ class Layout_Fluid extends Layout_Basic {
     }
 
     function addMenu($class = 'Menu_Vertical', $options=null) {
-        return $this->add($class,$options,'Main_Menu');
+        return $this->menu = $this->add($class,$options,'Main_Menu');
     }
 
     function addFooter($class = 'View') {
-        return $this->footer = $this->add($class,null,'Footer_Content');
+        return $this->footer = $this->footer = $this->add($class,null,'Footer_Content');
     }
 }

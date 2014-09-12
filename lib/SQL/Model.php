@@ -47,12 +47,12 @@
  * }else throw $user->exception('User with such email already exists');
  *
  * @license See http://agiletoolkit.org/about/license
- * 
+ *
 **/
 class SQL_Model extends Model implements Serializable {
 
     /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
-    protected $dsql; 
+    protected $dsql;
     public $field_class='Field';
 
     /** If you wish that alias is used for the table when selected, you can define it here.
@@ -70,7 +70,7 @@ class SQL_Model extends Model implements Serializable {
     public $fast=null;          // set this to true to speed up model, but sacrifice some of the consistency
 
     // {{{ Basic Functionality, query initialization and actual field handling
-   
+
     /** Initialization of ID field, which must always be defined */
     function __construct(){
         if($this->entity_code){
@@ -90,19 +90,20 @@ class SQL_Model extends Model implements Serializable {
         if($this->owner instanceof Field_Reference && $this->owner->owner->relations){
             $this->relations =& $this->owner->owner->relations;
         }
-
-        $this->addField($this->id_field)->system(true);
     }
     function addField($name,$actual_field=null){
-        if($this->hasElement($name))throw $this->exception('Field with this name is already defined')
+        if ($this->hasElement($name)) {
+            if($name == $this->id_field) return $this->getElement($name);
+            throw $this->exception('Field with this name is already defined')
             ->addMoreInfo('field',$name);
+        }
         if($name=='deleted' && isset($this->api->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
 
         // $f=parent::addField($name);
         $f = $this->add($this->field_class,$name);
-        // 
+        //
 
         if(!is_null($actual_field))$f->actual($actual_field);
         return $f;
@@ -113,7 +114,7 @@ class SQL_Model extends Model implements Serializable {
             ->addThis($this)
             ;
     }
-    /** Initializes base query for this model. 
+    /** Initializes base query for this model.
      * @link http://agiletoolkit.org/doc/modeltable/dsql */
     function initQuery(){
         if(!$this->table)throw $this->exception('$table property must be defined');
@@ -137,7 +138,7 @@ class SQL_Model extends Model implements Serializable {
             $this->dsql=clone $this->dsql;
         }
     }
-    /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model. 
+    /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model.
      * Use for statements you are going to execute manually. */
     function dsql(){
         return clone $this->_dsql();
@@ -305,7 +306,7 @@ class SQL_Model extends Model implements Serializable {
      * BTW, you can mix these too :)
      * [[field,cond,value], dsql, [field,cond,value], ...]
      * will become (field=value OR dsql OR field=value)
-     * 
+     *
      * Value also can be DSQL expression, so following will work nicely:
      * [dsql,'>',dsql] will become (dsql > dsql)
      * [dsql, dsql] will become (dsql = dsql)
@@ -349,7 +350,7 @@ class SQL_Model extends Model implements Serializable {
             $field = $or;
             $cond = $value = undefined;
         }
-        
+
         // You may pass DSQL expression as a first argument
         if ($field instanceof DB_dsql) {
             $dsql->where($field, $cond, $value);
@@ -377,12 +378,12 @@ class SQL_Model extends Model implements Serializable {
         if ($cond === '=') {
             $field->defaultValue($value)->system(true)->editable(false);
         }
-        
+
         $f = $field->actual_field ?: $field->short_name;
-        
+
         if ($field->calculated()) {
             // TODO: should we use expression in where?
-            
+
             $dsql->where($field->getExpr(), $cond, $value);
             //$dsql->having($f, $cond, $value);
             //$field->updateSelectQuery($this->dsql);
@@ -438,7 +439,7 @@ class SQL_Model extends Model implements Serializable {
     }
     // }}}
 
-    // {{{ Iterator support 
+    // {{{ Iterator support
 
     /* False: finished iterating. True, reset not yet fetched. Object=DSQL */
     protected $_iterating=false;
@@ -505,9 +506,9 @@ class SQL_Model extends Model implements Serializable {
     }
     /**
      * Returns dynamic query selecting number of entries in the database
-     * 
+     *
      * @param string $alias Optional alias of count expression
-     * 
+     *
      * @return DSQL
      */
     function count($alias = null)
@@ -520,9 +521,9 @@ class SQL_Model extends Model implements Serializable {
     }
     /**
      * Returns dynamic query selecting sum of particular field or fields
-     * 
+     *
      * @param string|array|Field $field
-     * 
+     *
      * @return DSQL
      */
     function sum($field)
@@ -547,15 +548,15 @@ class SQL_Model extends Model implements Serializable {
         return $q;
     }
     /** @obsolete same as loaded() - returns if any record is currently loaded. */
-    function isInstanceLoaded(){ 
-        return $this->loaded(); 
+    function isInstanceLoaded(){
+        return $this->loaded();
     }
     /** Loads the first matching record from the model */
     function loadAny(){
         try{
             return $this->_load(null);
         }catch(BaseException $e){
-            throw $this->exception('No matching records found');
+            throw $this->exception('No matching records found',null,404);
         }
     }
     /** Try to load a matching record for the model. Will not raise exception if no records are found */
@@ -662,7 +663,7 @@ class SQL_Model extends Model implements Serializable {
         return $this;
     }
     /** @obsolete Backward-compatible. Will attempt to load but will not fail */
-    function loadData($id=null){ 
+    function loadData($id=null){
         if($id)$this->tryLoad($id);
         return $this;
     }
@@ -810,7 +811,7 @@ class SQL_Model extends Model implements Serializable {
         $this->data = $this->dirty = array();
         $this->id = null;
         $this->hook('afterUnload');
-        // 
+        //
 
         $this->hook('afterUnload');
         return $this;
@@ -874,13 +875,13 @@ class SQL_Model extends Model implements Serializable {
         if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
             ->addMoreInfo('name',$name);
 
-        if($value!==undefined 
+        if($value!==undefined
             && (
-                is_object($value) 
+                is_object($value)
                 || is_object($this->data[$name])
                 || is_array($value)
                 || is_array($this->data[$name])
-                || (string)$value!=(string)$this->data[$name] // this is not nice.. 
+                || (string)$value!=(string)$this->data[$name] // this is not nice..
                 || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
                 || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
             )
@@ -965,7 +966,7 @@ function setDirty($name)
         return $this;
     }
     function isDirty($name){
-        return $this->dirty[$name] || 
+        return $this->dirty[$name] ||
             (!$this->loaded() && $this->getElement($name)->has_default_value);
     }
     function reset()
@@ -1028,7 +1029,7 @@ function each($callable)
     }
 
 function newField($name){
-        return $this->addField($name); 
+        return $this->addField($name);
     }
     function hasField($name){
         return $this->hasElement($name);
@@ -1067,7 +1068,7 @@ function _ref($ref,$class,$field,$val){
         $m=$this->add($m);
         if($rest)$m=$m->_ref($rest);
         $this->_refGlue();
-        
+
 
         if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
             ->addMoreInfo('name',$ref);

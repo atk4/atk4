@@ -4,7 +4,7 @@
  * Do not directly inherit from this class, instead use one of
  * AbstractModel, AbstractController or AbstractView
  *
- * @link http://agiletoolkit.org/learn/intro
+ * @link http://agiletoolkit.org/doc/core-features/objects
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -18,6 +18,8 @@
  =====================================================ATK4=*/
 abstract class AbstractObject
 {
+    const DOC = 'core-features/objects';
+
     /** Reference to the current model. Read only. Use setModel() */
     public $model;
 
@@ -84,7 +86,9 @@ abstract class AbstractObject
      */
     public $auto_track_element = false;
 
-    /** To make sure you have called parent::init() properly */
+    /**
+     * To make sure you have called parent::init() properly
+     */
     public $_initialized = false;
 
     /**
@@ -136,7 +140,7 @@ abstract class AbstractObject
      *
      * @return void
      */
-    function destroy($recursive=true)
+    function destroy($recursive = true)
     {
         if($recursive) foreach ($this->elements as $el) {
             if ($el instanceof AbstractObject) {
@@ -348,6 +352,9 @@ abstract class AbstractObject
                 ->addMoreInfo('object_name', $element->name)
                 ->addMoreInfo('class', get_class($element));
         }
+
+        // Great hook to affect children recursively
+        $this->hook('afterAdd', array($element));
 
         return $element;
     }
@@ -587,7 +594,7 @@ abstract class AbstractObject
         }
 
         $e = new $type($message, $code);
-        if (! ($e instanceof BaseException) ) {
+        if (!($e instanceof BaseException)) {
             throw $e;
         }
         $e->owner = $this;
@@ -611,7 +618,8 @@ abstract class AbstractObject
     function fatal($error, $shift = 0)
     {
         return $this->upCall(
-            'outputFatal', array (
+            'outputFatal',
+            array (
                 $error,
                 $shift
             )
@@ -636,7 +644,7 @@ abstract class AbstractObject
          */
         $args=func_get_args();
         array_shift($args);
-        $this->_info[]=vsprintf($msg,$args);
+        $this->_info[]=vsprintf($msg, $args);
     }
 
     /**
@@ -662,7 +670,7 @@ abstract class AbstractObject
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
         ) {
-            $this->app->outputDebug($this, $msg, $file, $line );
+            $this->app->outputDebug($this, $msg, $file, $line);
         }
     }
 
@@ -678,7 +686,8 @@ abstract class AbstractObject
     function warning($msg, $shift = 0)
     {
         $this->upCall(
-            'outputWarning', array (
+            'outputWarning',
+            array (
                 $msg,
                 $shift
             )
@@ -706,7 +715,8 @@ abstract class AbstractObject
                 array (
                     $this,
                     $type
-                ), $args
+                ),
+                $args
             );
         }
         if (!$this->owner) {
@@ -796,8 +806,9 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
-                    foreach ($this->hooks[$hook_spot] as $prio => $_data) {
-                        foreach ($_data as $data) {
+                    $hook_backup = $this->hooks[$hook_spot];
+                    while ($_data = array_pop($this->hooks[$hook_spot])) {
+                        foreach ($_data as $key => &$data) {
 
                             // Our extension
                             if (is_string($data[0])
@@ -833,6 +844,8 @@ abstract class AbstractObject
                             $return[] = $result;
                         }
                     }
+
+                    $this->hooks[$hook_spot] = $hook_backup;
                 }
             }
         } catch (Exception_Hook $e) {
@@ -874,7 +887,8 @@ abstract class AbstractObject
             return $ret[0];
         }
         throw $this->exception(
-            "Method is not defined for this object", 'Logic'
+            "Method is not defined for this object",
+            'Logic'
         )
             ->addMoreInfo('class', get_class($this))
             ->addMoreInfo("method", $method)

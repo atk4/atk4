@@ -10,7 +10,6 @@ class Controller_Addon extends AbstractController {
 
     public $namespace = __NAMESPACE__;
 
-    public $base_path = null;
     public $addon_base_path=null;
 
     public $has_assets=false;
@@ -35,10 +34,8 @@ class Controller_Addon extends AbstractController {
             throw $this->exception('Addon name must be specified in it\'s Controller');
 
         $this->namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
-        $this->addon_base_path='vendor/'.$this->addon_name;
-        if ( !is_dir($this->addon_base_path)) {
-            $this->addon_base_path='../shared/addons/'.$this->addon_name;
-        }
+
+        $this->addon_base_path=$this->api->locatePath('addons',$this->namespace);
 
         if (count($this->addon_private_locations) || count($this->addon_public_locations)) {
             $this->addAddonLocations($this->base_path);
@@ -69,7 +66,8 @@ class Controller_Addon extends AbstractController {
      * explicitly from init() if necessary.
      */
     function addLocation($contents,$public_contents=null) {
-        $this->location = $this->api->pathfinder->base_location->addRelativeLocation($this->addon_base_path,$contents);
+        $this->location = $this->app->pathfinder->addLocation($contents);
+        $this->location->setBasePath($this->addon_base_path);
 
 
         // If class has assets, those have probably been installed

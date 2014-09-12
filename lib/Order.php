@@ -16,7 +16,7 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 /*
- * This is class for ordering elements. 
+ * This is class for ordering elements.
  *
  */
 
@@ -111,7 +111,7 @@ class Order extends AbstractController {
         return $this;
     }
     function later(){
-        $this->api->addHook('pre-render',array($this,'now'));
+        $this->api->addHook('beforeRender',array($this,'now'));
         return $this;
     }
 }
