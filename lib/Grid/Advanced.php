@@ -52,9 +52,23 @@ class Grid_Advanced extends Grid_Basic
     /**
      * Paginator class name
      * 
-     * @see addPaginator()
+     * @see enablePaginator()
      * */
     public $paginator_class = 'Paginator';
+
+    /**
+     * QuickSearch object
+     *
+     * @see addQuickSearch()
+     */
+    public $quick_search = null;
+    
+    /**
+     * QuickSearch class name
+     * 
+     * @see enableQuickSearch()
+     * */
+    public $quick_search_class = 'QuickSearch';
 
     /**
      * $tdparam property is an array with cell parameters specified in td tag.
@@ -125,37 +139,83 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Adds QuickSearch
-     * 
-     * @param array $fields array of fieldnames used in quick search
-     * @param string $class optional quick search object class
+     * Add default paginator to the grid
+     *
+     * @param int $rows row count per page
      * @param array $options optional options array
-     *
-     * @return QuickSearch
-     */
-    function addQuickSearch($fields,$class='QuickSearch',$options=null){
-        return $this->add($class,$options,'quick_search')
-            ->useWith($this)
-            ->useFields($fields);
-    }
-
-    /**
-     * Adds paginator to the grid
-     *
-     * @param int $ipp row count per page
-     * @param array $options
      *
      * @return $this
      */
-    function addPaginator($ipp = 25, $options = null)
+    function enablePaginator($rows = 25, $options = null)
     {
-        // adding ajax paginator
+        $this->addPaginator($rows, $options);
+        
+        return $this;
+    }
+    
+    /**
+     * Adds paginator to the grid
+     *
+     * @param int $rows row count per page
+     * @param array $options optional options array
+     * @param string $class optional paginator class name
+     *
+     * @return Paginator
+     *
+     * @todo decide, maybe we need to add $spot optional template spot like in addQuickSearch()
+     */
+    function addPaginator($rows = 25, $options = null, $class = null)
+    {
+        // add only once
+        // @todo decide, maybe we should destroy and recreate to keep last one
         if ($this->paginator) {
             return $this->paginator;
         }
-        $this->paginator = $this->add($this->paginator_class, $options);
-        $this->paginator->ipp($ipp);
+        
+        $this->paginator = $this->add($class ?: $this->paginator_class, $options);
+        $this->paginator->setRowsPerPage($rows);
+        
+        return $this->paginator;
+    }
+
+    /**
+     * Adds default QuickSearch to the grid
+     * 
+     * @param array $fields array of fieldnames used in quick search
+     * @param array $options optional options array
+     *
+     * @return $this
+     */
+    function enableQuickSearch($fields, $options = null)
+    {
+        $this->addQuickSearch($fields, $options);
+        
         return $this;
+    }
+
+    /**
+     * Adds QuickSearch to the grid
+     * 
+     * @param array $fields array of fieldnames used in quick search
+     * @param array $options optional options array
+     * @param string $class optional quick search object class
+     * @param string $spot optional template spot
+     *
+     * @return QuickSearch
+     */
+    function addQuickSearch($fields, $options = null, $class = null, $spot = null)
+    {
+        // add only once
+        // @todo decide, maybe we should destroy and recreate to keep last one
+        if ($this->quick_search) {
+            return $this->quick_search;
+        }
+        
+        $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search')
+            ->useWith($this)
+            ->useFields($fields);
+
+        return $this->quick_search;
     }
 
     /**

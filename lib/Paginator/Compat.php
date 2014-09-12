@@ -72,9 +72,13 @@ class Paginator_Compat extends AbstractView {
             // hmm.. i wonder what ? :)
         }
     }
-    function ipp($ipp){
-        $this->ipp=$ipp;
+    function setRowsPerPage($rows) {
+        $this->ipp = $rows;
         return $this;
+    }
+    // obsolete, should be removed in 4.4
+    function ipp($rows){
+        return $this->setRowsPerPage($rows);
     }
     function pageRange($pageRange){
         $this->range=$pageRange;
