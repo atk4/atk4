@@ -1211,7 +1211,8 @@ class Grid_Advanced extends Grid_Basic
         $this->columns[$field]['button_class'] = 'atk-delete-button';
 
         // if this was clicked, then delete record
-        if ($id = @$_GET[$this->name.'_'.$field]) {
+        if (isset($_GET[$this->name.'_'.$field])) {
+            $id = $_GET[$this->name.'_'.$field];
             
             // delete record
             $this->_performDelete($id);

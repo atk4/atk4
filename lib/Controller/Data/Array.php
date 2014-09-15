@@ -137,7 +137,7 @@ class Controller_Data_Array extends Controller_Data{
     }
     function save($model,$id=null){
         $t =& $model->_table[$this->short_name];
-        $id = $id?:$model->id;
+        $id = ($id === null ? $model->id : $id);
         
         if(is_null($id)){
             if($this->sequential_id){
@@ -160,7 +160,7 @@ class Controller_Data_Array extends Controller_Data{
         return $id;
     }
     function delete($model,$id=null){
-        $id = $id?:$model->id;
+        $id = ($id === null ? $model->id : $id);
         
         unset($model->_table[$this->short_name][$id]);
         $model->unload();
