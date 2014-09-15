@@ -503,8 +503,14 @@ class Form_Basic extends View implements ArrayAccess {
 
         return parent::render();
     }
+    /**
+     * OBSOLETE: use getElement()
+     *
+     * @param  [type]  $name [description]
+     * @return boolean       [description]
+     */
     function hasField($name){
-        if(!$this->app->compat)throw $this->exception('Use $form->hasElement instead','_Obsolete');
+        if(!@$this->app->compat)throw $this->exception('Use $form->hasElement instead','_Obsolete');
         return isset($this->elements[$name])?$this->elements[$name]:false;
     }
     function isClicked($name){

@@ -175,7 +175,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * Set value of fields only if the value is really changed
+     * Set value of fields. If only a single argument is specified
+     * and it is a hash, will use keys as property names and set values
+     * accordingly.
      *
      * @param $name array or string
      * @param $value null or value
@@ -429,21 +431,18 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * Set the controller data, the controlelr source and load the model id $id is specified
-     *
-     * @param $controller
-     * @param $table
-     * @param $id
-     * @return $this
+     * Associate model with a specified data source. The controller could be
+     * either a string (postfix for Controller_Data_..) or a class. One data
+     * controller may be used with multiple models.
+     * If the $table argument is not specified then :php:attr:`Model::table`
+     * will be used to find out name of the table / collection
      */
     public function setSource($controller, $table = null, $id = null)
     {
         $this->setControllerData($controller);
         $this->setControllerSource($table);
 
-        if ($id) {
-            $this->load($id);
-        }
+        if($id) throw $this->exception('Do not specify $id to setSource, it is obsolete', 'Obsolete');
 
         return $this;
     }
@@ -950,6 +949,12 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return null;
     }
+    /**
+     * Traverses reference of relation
+     *
+     * @param  [type] $ref1 [description]
+     * @return [type]       [description]
+     */
     public function ref($ref1)
     {
         list($ref,$rest)=explode('/', $ref1, 2);
