@@ -61,7 +61,7 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
     /** The class prefix used by addField */
     public $field_class='Field';
 
-    /** If true, model will now allow to set values for non-existant fields */
+    /** If true, model will not allow to set values for non-existant fields */
     public $strict_fields=false;
 
     /** Caption is used on buttons of CRUD and other views which operate with this model.

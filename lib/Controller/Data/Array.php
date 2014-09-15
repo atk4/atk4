@@ -110,7 +110,7 @@ class Controller_Data_Array extends Controller_Data{
     }
     function tryLoad($model,$id){
         $t =& $model->_table[$this->short_name];
-        if(is_object($id))return;
+        if(is_null($id))return;
 
         if(@$model->id_field){
             if ( !isset($t[$id]) 
