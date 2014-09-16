@@ -33,14 +33,14 @@ class Controller_Data_Array extends Controller_Data{
 
     /**
      * By default new records are added with the ID being sequential. If you set
-     * this to false, then model IDs will be assigned using unique identifiers.
+     * this to false, then model IDs will be filled with unique identifiers.
      */
     public $sequential_id = true;
     
     /**
      * Maximum ID value. Used when $sequential_id = true.
      */
-    protected $max_id = 0;
+    protected $max_id = null;
     
     /**
      * Variables to hold record count and offset for setLimit functionality
@@ -56,7 +56,7 @@ class Controller_Data_Array extends Controller_Data{
         if(!$data || $data===undefined)$data=array();
         parent::setSource($model,$data);
 
-        if(!$model->hasElement($model->id_field)) {
+        if(@$model->id_field && !$model->hasElement($model->id_field)) {
             $model->addField($model->id_field)->system(true);
         }
 
@@ -74,11 +74,11 @@ class Controller_Data_Array extends Controller_Data{
             $value=$cond;
             $cond='=';
         }
-        foreach($model->_table[$this->short_name] as $row){
+        foreach($model->_table[$this->short_name] as $key=>$row){
             if($row[$field]==$value){
                 $model->data=$row;
                 $model->dirty=array();
-                $model->id=$row[$model->id_field];
+                $model->id = @$model->id_field ? $row[$model->id_field] : $key;
                 return $this;
             }
         }
@@ -92,7 +92,7 @@ class Controller_Data_Array extends Controller_Data{
 
         $model->data=$row;
         $model->dirty=array();
-        $model->id=$model->id_field?$row[$model->id_field]:$id;
+        $model->id = @$model->id_field ? $row[$model->id_field] : $id;
 
         return $this;
     }
@@ -110,7 +110,7 @@ class Controller_Data_Array extends Controller_Data{
     }
     function tryLoad($model,$id){
         $t =& $model->_table[$this->short_name];
-        if(is_object($id))return;
+        if(is_null($id))return;
 
         if(@$model->id_field){
             if ( !isset($t[$id]) 
@@ -137,40 +137,51 @@ class Controller_Data_Array extends Controller_Data{
     }
     function save($model,$id=null){
         $t =& $model->_table[$this->short_name];
-        $id = $id?:$model->id;
+        $id = ($id === null ? $model->id : $id);
         
         if(is_null($id)){
             if($this->sequential_id){
-                // calculate initial max_id in case we already have some initial
-                // data somehow set, but not with save().
-                if (!$this->max_id && !empty($t)) {
-                    $this->max_id = max(array_keys($t));
+
+                // if max_id is not initialized
+                if (is_null($this->max_id)) {
+                    if (empty($t)) {
+                        // first record
+                        // NOTE: this should always be zero-based !!!
+                        $id = $this->max_id = 0;
+                    } else {
+                        // get next available sequence value
+                        // NOTE: this only works if your array keys are the same as ID field
+                        $this->max_id = max(array_keys($t));
+                        $id = ++$this->max_id;
+                    }
+                } else {
+                    // simply next sequence value
+                    $id = ++$this->max_id;
                 }
-                
-                $id = ++$this->max_id;
-            }else{
-                $id = uniqid();
+
+            } else {
+                // if no sequential IDs enabled, then generate unique ID
+                // NOTE: uniqid() can have collisions even with more entropy!!!
+                $id = uniqid('', true);
             }
-            if($model->id_field){
-                $model->data[$model->id_field]=$id;
+
+            // actually save id field in models record
+            if (@$model->id_field) {
+                $model->data[$model->id_field] = $id;
             }
         }
-        $t[$id]=$model->data;
+
+        // actual save
+        // NOTE: this breaks if your array keys is not the same as ID field value
+        $t[$id] = $model->data;
         
         return $id;
     }
     function delete($model,$id=null){
-        $id = $id?:$model->id;
+        $id = ($id === null ? $model->id : $id);
         
         unset($model->_table[$this->short_name][$id]);
         $model->unload();
-        
-        // Imants: if we delete last element, then roll back sequence ID by one.
-        // Disabled because sequence should only go forward and no backwards.
-        // It's like AutoIncrement in MySQL, or Sequence in Oracle.
-        // if ($this->sequential_id && $this->max_id == $id) {
-        //     $this->max_id--;
-        // }
         
         return $this;
     }
@@ -179,7 +190,7 @@ class Controller_Data_Array extends Controller_Data{
         
         // Reset max id. Works like Truncate in MySQL or Oracle.
         if ($this->sequential_id) {
-            $this->max_id = 0;
+            $this->max_id = null;
         }
         
         return $this;
@@ -302,7 +313,10 @@ class Controller_Data_Array extends Controller_Data{
         if (@$model->id_field && isset($model->data[$model->id_field])) {
             $model->id = $model->data[$model->id_field];
         }
-        $model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
+        
+        // Imants: this is wrong, next() shouldn't do this anyway and additional checking for $model->id_field is needed
+        //         issue here is actually with bad support of id=0 and mixing array key with id field
+        //$model->set("id", $model->id); // romans, revise please - otherwise, array based source not working properly
         return $model;
     }
     function getActualFields(){
