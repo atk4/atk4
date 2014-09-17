@@ -68,7 +68,7 @@ class App_Web extends App_CLI {
         $this->getLogger();
 
         // Verify Licensing
-        $this->licenseCheck('atk4');
+        //$this->licenseCheck('atk4');
 
         // send headers, no caching
         $this->sendHeaders();
@@ -137,76 +137,6 @@ class App_Web extends App_CLI {
     /** @ignore */
     function _showExecutionTimeJS(){
         echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
-    }
-    // }}}
-
-    // {{{ License checking function
-    private $_license_checksum=null;
-    private $_license='unlicensed';
-
-    /**
-     * This function will return type of the license used: agpl, single, multi
-     *
-     * @return [type] [description]
-     */
-    final function license(){
-        return $this->_license;
-    }
-    /**
-     * This function will return installation signature. It is used by add-ons
-     * when communicating with agiletoolkit.org to detect tampering with
-     * license system.
-     *
-     * @return [type] [description]
-     */
-    final function license_checksum(){
-        /** OBSOLETE **/
-        return $this->_license_checksum;
-    }
-    /**
-     * Performs certificate / license check
-     *
-     * @param  [type] $product [description]
-     * @return [type]          [description]
-     */
-    final function licenseCheck($product){
-        /* An average Agile Toolkit developer can earn cost of Agile Toolkit in less than
-            3 work hours. Your honest purchase is really necessary to keep Agile Toolkit
-            development alive. Please do not tamper with licensing mechanisms. Thank you!
-            */
-        $id=$this->app->getConfig('license/'.$product.'/id',false);
-        if(!$id)return false;
-
-        $type=$this->app->getConfig('license/'.$product.'/type',false);
-
-        $data=$_SERVER['HTTP_HOST'].'|'.$id.'|'.$type;
-
-        if($type=='agpl'){
-            $data.='|'.$this->app->getConfig('license/'.$product.'/repo',false);
-        }
-
-        $this->app->_license_checksum=md5($data);
-        if(!function_exists('openssl_get_publickey'))return false;
-
-        $cert=$this->app->getConfig('license/'.$product.'/public',
-            dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'cert'.
-            DIRECTORY_SEPARATOR.'atk4.crt');
-
-        $signature=$this->app->getConfig('license/'.$product.'/certificate',false);
-        if(!$signature)return false;
-
-        $cert=openssl_get_publickey(file_get_contents($cert));
-        if(!$cert)return false;
-
-        $result = openssl_verify($data,base64_decode($signature),$cert);
-        openssl_free_key($cert);
-
-        if($result==1 && $product=='atk4'){
-            $this->_license=$type;
-            return true;   // certificate matched
-        }
-
-        return false;
     }
     // }}}
 
