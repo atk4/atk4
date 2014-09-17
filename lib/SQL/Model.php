@@ -719,7 +719,7 @@ class SQL_Model extends Model implements Serializable {
 
             $f->updateInsertQuery($insert);
         }
-        $this->hook('beforeInsert',array($insert));
+        $this->hook('beforeInsert',array(&$insert));
         //delayed is not supported by INNODB, but what's worse - it shows error.
         //if($this->_save_as===false)$insert->option_insert('delayed');
         $id = $insert->insert();
