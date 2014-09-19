@@ -289,11 +289,15 @@ class BaseException extends Exception
                 $sh=$n;
             }
 
-            $doc='http://book.agiletoolkit.org/';
-            $doc.=$bt['object']::DOC.'.html';
+            if(is_object($bt['object'])) {
+                $doc='http://book.agiletoolkit.org/';
+                $doc.=$bt['object']::DOC.'.html';
+                // add class and method
+                $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
+            } else {
+                $doc='http://book.agiletoolkit.org/';
+            }
 
-            // add class and method
-            $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
 
             $output .= "<tr><td valign=top align=right class=atk-effect-".($sh==$n?'danger':'info').">".htmlspecialchars(dirname($bt['file']))."/".
                 "<b>".htmlspecialchars(basename($bt['file']))."</b>";
