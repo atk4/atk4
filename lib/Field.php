@@ -413,9 +413,9 @@ class Field extends AbstractModel
 
             $this->owner->addHook('beforeUpdate,beforeInsert',function($m,&$data)use($t) {
                 // De-Normalize boolean data
-                $val = (int)(!$data[$this->short_name]);
+                $val = (int)(!$data->get($this->short_name));
                 if(!isset($t[$val]))return;  // do nothing
-                $data[$this->short_name]=$t[$val];
+                $data->set($this->short_name,$t[$val]);
             });
 
         }
