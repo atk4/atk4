@@ -176,23 +176,19 @@ class BaseException extends Exception
      */
     function getHTML()
     {
-        /*
-        $msg = isset($message) ? ': ' . $message : '';
-
-        $html =
-            '<h2>' . get_class($this) . $msg . '</h2>' .
-            '<p><font color=red>'  . $this->getMessage() . '</font></p>' .
-            '<p><font color=blue>' . $this->getMyFile() . ':' .
-            $this->getMyLine() . '</font></p>' .
-            $this->getDetailedHTML() .
-            '' //backtrace($this->shift + 1, $this->getMyTrace())
-            ;
-            */
-
         $e=$this;
+
+        $o='';
         $o='<div class="atk-layout">';
-        $o.= "<div class='atk-layout-row atk-effect-danger atk-swatch-red   '><div class='atk-wrapper atk-section-small'><h2>".get_class($e).": ". htmlspecialchars($e->getMessage()). ($e->getCode()?' [code: '.$e->getCode().']':'') ."</h2>\n";
-        $o.='</div></div><div class="atk-layout-row"><div class="atk-wrapper atk-section-small">';
+
+        $o.=$this->getHTMLHeader();
+
+        $o.=$this->getHTMLSolution();
+
+        //$o.=$this->getHTMLBody();
+
+
+        $o.='<div class="atk-layout-row"><div class="atk-wrapper atk-section-small">';
         if(@$e->more_info){
             $o.= '<h3>Additional information:</h3>';
             $o.= $this->print_r($e->more_info,'<ul>','</ul>','<li>','</li>',' ');
@@ -210,6 +206,40 @@ class BaseException extends Exception
 
 
         return $o;
+    }
+
+
+    function getHeader()
+    {
+        return get_class($this).": ". htmlspecialchars($this->getMessage()). ($this->getCode()?' [code: '.$this->getCode().']':'');
+    }
+    function getHTMLHeader()
+    {
+
+        return
+        "<div class='atk-layout-row atk-effect-danger atk-swatch-red'>".
+        "<div class='atk-wrapper atk-section-small atk-align-center'><h2>".
+        $this->getHeader().
+        "</h2>\n".
+        '</div></div>';
+    }
+
+    function getSolution(){
+        return null;
+    }
+
+    function getHTMLSolution()
+    {
+        $solution = $this->getSolution();
+        if(!$solution)return '';
+        list($label,$url)=$solution;
+        return
+        "<div class='atk-layout-row atk-effect-info'>".
+        "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'><a href='".$url.
+        "'class='atk-button atk-swatch-yellow'>".
+        $label.
+        "</a>\n".
+        '</div></div>';
     }
 
     /**
@@ -239,11 +269,42 @@ class BaseException extends Exception
         return $o;
     }
 
+    /**
+     * Classes define a DOC constant which points to a on-line resource
+     * containing documentation for given class. This method will
+     * return full URL for the specified object.
+     *
+     * @return [type] [description]
+     */
+    function getDocURL($o)
+    {
+        if(!is_object($o))return false;
+
+        if(!$o instanceof AbstractObject)return false;
+
+        /*$refl = new ReflectionClass($o);
+        $parent = $refl->getParentClass();
+
+
+        if($parent) {
+            // check to make sure property is overriden in child
+            $const = $parent->getConstants();
+        var_Dump($const);
+            if ($const['DOC'] == $o::DOC) return false;
+        }
+        */
+
+        $url=$o::DOC;
+        if(substr($url,0,4)!='http')return 'http://book.agiletoolkit.org/'.$url.'.html';
+
+        return $url;
+    }
+
     function backtrace($sh=null,$backtrace=null){
 
         $output  = '<div class="atk-box-small atk-table atk-table-zebra">';
         $output .= "<table>\n";
-        $output .= "<tr><th align='right'>File</th><th>Object Name</th><th>Stack Trace</th></tr>";
+        $output .= "<tr><th align='right'>File</th><th>Object Name</th><th>Stack Trace</th><th>Help</th></tr>";
         if(!isset($backtrace)) $backtrace=debug_backtrace();
         $sh-=2;
 
@@ -289,22 +350,25 @@ class BaseException extends Exception
                 $sh=$n;
             }
 
-            if(is_object($bt['object'])) {
-                $doc='http://book.agiletoolkit.org/';
-                $doc.=$bt['object']::DOC.'.html';
-                // add class and method
-                $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
-            } else {
-                $doc='http://book.agiletoolkit.org/';
-            }
 
+            $doc = $this->getDocURL($bt['object']);
+            if($doc) $doc.='#'.get_class($bt['object']).'::'.$bt['function'];
 
             $output .= "<tr><td valign=top align=right class=atk-effect-".($sh==$n?'danger':'info').">".htmlspecialchars(dirname($bt['file']))."/".
                 "<b>".htmlspecialchars(basename($bt['file']))."</b>";
             $output .= ":{$bt['line']}</font>&nbsp;</td>";
             $name=(!isset($bt['object']->name))?get_class($bt['object']):$bt['object']->name;
             if($name)$output .= "<td>".$name."</td>";else $output.="<td></td>";
-            $output .= "<td valign=top ><a href='".$doc."' target='_blank' class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</a></td></tr>\n";
+            $output .= "<td valign=top class=atk-effect-".($sh==$n?'danger':'success').">".get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</td>";
+
+            if($doc){
+                $output .="<td><a href='".$doc."' target='_blank'><i class='icon-book'></i></a></td>";
+
+            }else{
+                $output .= '<td>&nbsp;</td>';
+
+            }
+            $output.='</tr>';
         }
         $output .= "</table></div>\n";
         return $output;
