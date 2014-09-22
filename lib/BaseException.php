@@ -37,8 +37,11 @@ class BaseException extends Exception
     // Array with more info
     public $more_info = array();
 
+    // Plain text recommendation on how the poblem can be solved
+    public $recommendation=false;
+
     // Array of available actions
-    public $actions;
+    public $actions = array();
 
     // Link to another exception which caused this one
     public $by_exception=null;
@@ -133,6 +136,11 @@ class BaseException extends Exception
      */
     function addAction($key, $descr)
     {
+        if(is_array($key)){
+            $this->recommendation = $descr;
+            $this->actions = array_merge($this->actions,$key);
+            return $this;
+        }
         $this->actions[$key] = $descr;
         return $this;
     }
@@ -225,21 +233,33 @@ class BaseException extends Exception
     }
 
     function getSolution(){
-        return null;
+        return $this->actions;
     }
 
     function getHTMLSolution()
     {
         $solution = $this->getSolution();
+        $recommendation = '<h3>'.$this->recommendation.'</h3>';
         if(!$solution)return '';
         list($label,$url)=$solution;
         return
         "<div class='atk-layout-row atk-effect-info'>".
-        "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'><a href='".$url.
-        "'class='atk-button atk-swatch-yellow'>".
-        $label.
-        "</a>\n".
+        "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'>".
+        $recommendation.
+        $this->getHTMLActions().
         '</div></div>';
+    }
+
+    function getHTMLActions() {
+        $o='';
+        foreach($this->actions as $label=>$url){
+
+            $o.="<a href='".$url.
+            "'class='atk-button atk-swatch-yellow'>".
+            $label.
+            "</a>\n";
+        }
+        return $o;
     }
 
     /**
@@ -416,6 +436,6 @@ class BaseException extends Exception
      */
     function getAdditionalMessage()
     {
-        return '';
+        return $this->recommendation;
     }
 }
