@@ -21,6 +21,9 @@
 class Controller_Data_RESTFul extends Controller_Data {
     public $transport_class = 'PestJSON';
 
+    protected $update_mode = 'PUT';
+    protected $insert_mode = 'POST';
+
     function setSource($model, $table) {
 
         if(!$model->collection_uri)throw $this->exception('Define $collection_uri in your model');
@@ -101,14 +104,13 @@ class Controller_Data_RESTFul extends Controller_Data {
         $model->id = $model->data[$model->id_field];
     }
 
-
     // Saving, updating and deleting data
     function save($model, $id, $data) {
         if (is_null($id)) { // insert
-            $model->data = $this->sendCollectionRequest($model, 'POST', $data);
+            $model->data = $this->sendCollectionRequest($model, $this->insert_mode, $data);
             $model->id = $model->data?$model->data[$model->id_field]:null;
         } else { // update
-            $model->data = $this->sendItemRequest($model, $id, 'PUT', $data);
+            $model->data = $this->sendItemRequest($model, $id, $this->update_mode, $data);
             $model->id = $model->data?$model->data[$model->id_field]:null;
         }
         return $model->id;
