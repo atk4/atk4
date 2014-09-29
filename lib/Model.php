@@ -195,12 +195,19 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             throw $this->exception('You must define the second argument');
         }
 
-        if ($this->strict_fields && !$this->hasElement($name)) {
+        $field=$this->hasElement($name);
+
+        if ($this->strict_fields && !$field) {
             throw $this->exception('No such field', 'Logic')
                 ->addMoreInfo('field', $name);
         }
 
+        if($field){
+            $value = $field->normalizeValue($value);
+        }
+
         if (($value !== $this->data[$name]) || (is_null($value) && !array_key_exists($name, $this->data))) {
+            var_dump('setting dirty on ',$name, 'because ', $value, $this->data[$name]);
             $this->data[$name] = $value;
             $this->setDirty($name);
         }
