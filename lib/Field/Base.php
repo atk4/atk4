@@ -5,7 +5,7 @@ class Field_Base extends AbstractObject {
 
     protected $table=null;
     public $actual_field=null;
-    
+
     public $type='string';
     public $readonly=false;
     public $system=false;
@@ -99,7 +99,7 @@ class Field_Base extends AbstractObject {
      */
     function type($t = UNDEFINED)
     {
-        return $this->setterGetter('type', $t);
+        return $this->setterGetter('type', strtolower($t));
     }
 
     /**
@@ -260,8 +260,8 @@ class Field_Base extends AbstractObject {
      * You might be using add-ons or might have created your own field class.
      * If you would like to use it to present the field, use display(). If you
      * specify string it will be used by all views, otherwise specify it as
-     * associtive array: 
-     * 
+     * associtive array:
+     *
      *     $field->display(array('form'=>'line','grid'=>'button'));
      *
      * @param mixed $t new value
@@ -277,7 +277,7 @@ class Field_Base extends AbstractObject {
      * In most cases $model['field'] would match "field" inside a database. In
      * some cases, however, you would want to use different database field. This
      * can happen when you join multiple tables and 'field' appears in multiple
-     * tables. 
+     * tables.
      *
      * You can specify actual field when you declare a field within a model:
      *
@@ -408,7 +408,7 @@ class Field_Base extends AbstractObject {
     }
 
     /**
-     * What to display when nothing is selected or entered? This will be 
+     * What to display when nothing is selected or entered? This will be
      * displayed on a drop-down when no value is selected: ("Choose ..")
      * if you are using this setting with a text field it will set a
      * placeholder HTML property.
@@ -475,6 +475,30 @@ class Field_Base extends AbstractObject {
      * @return array current value if $t=UNDEFINED
      */
     function enum($t){ return $this->listData(array_combine($t,$t)); }
+
+
+    /**
+     * Converts specified value to a native type, which is then
+     * returned and will be stored in the model->data
+     *
+     * @param  [type] $v [description]
+     * @return [type]    [description]
+     */
+    function normalizeValue($v){
+        $t = $this->type();
+        switch($t){
+            case 'int':return (int)$v;
+            case 'boolean':return (boolean)$v;
+            case 'timestamp':
+                var_dump($v);
+                if(is_int($v))return $v;
+                if($v instanceof Date)return $v;
+                if(is_string($v))return strtotime($v);
+                break;
+        }
+
+        return $v;
+    }
 
     /* If is set, It containes the correct table that stores this field. Used in join environment */
     function table($t=UNDEFINED) {

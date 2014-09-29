@@ -27,6 +27,14 @@ class Form_Field_DatePicker extends Form_Field_Line {
 
         $this->addCalendarIcon();
     }
+    function loadPOST() {
+        if(isset($_POST[$this->name])){
+            $v = $_POST[$this->name];
+            $v = DateTime::createFromFormat($this->api->getConfig('locale/date','d/m/Y'), $v);
+            $this->set($v);
+        } else $this->set($this->default_value);
+        $this->normalize();
+    }
     function addCalendarIcon() {
         $this->addButton('',array('options'=>array('text'=>false)))
             ->setHtml('')
@@ -58,16 +66,23 @@ class Form_Field_DatePicker extends Form_Field_Line {
         // value can be valid date format, as in config['locale']['date']
         if(!$value)return parent::set(null);
         if(is_int($value)){
-            return parent::set(date('Y-m-d',$value));
+            return parent::set($value);
         }
+        if(is_object($value)){
+            return parent::set($value->getTimestamp());
+        }
+
+        // Convert Legacy formats, in case it's being set
         @list($d,$m,$y)=explode('/',$value);
         if($y)$value=join('/',array($m,$d,$y));
         elseif($m)$value=join('/',array($m,$d));
-        $value=date('Y-m-d',strtotime($value));
+        $value=strtotime($value);
+
         return parent::set($value);
     }
     function get(){
         $value=parent::get();
+        var_dump($value);
         // date cannot be empty string
         if($value=='')return null;
         return $value;
