@@ -45,6 +45,13 @@ class Grid_Basic extends CompleteLister
     /** Should we show header line */
     public $show_header = true;
 
+    /**
+     * Grid buttons
+     *
+     * @see addButton()
+     */
+    public $buttonset = null;
+
     /** No records message. See setNoRecords() */
     protected $no_records_message = "No matching records found";
 
@@ -65,6 +72,24 @@ class Grid_Basic extends CompleteLister
      */
     function initWidget()
     {
+    }
+
+    /**
+     * Adds button
+     *
+     * @param string $label label of button
+     * @param string $class optional name of button class
+     *
+     * @return Button
+     */
+    function addButton($label, $class = 'Button')
+    {
+        if (!$this->buttonset) {
+            $this->buttonset = $this->add('ButtonSet', null, 'grid_buttons')->setClass('atk-actions');
+        }
+        return $this->buttonset
+            ->add($class, 'gbtn'.count($this->elements))
+            ->set($label);
     }
 
     // {{{ Columns

@@ -32,13 +32,6 @@ class Grid_Advanced extends Grid_Basic
     private $totals_title_field = null;
     private $totals_title = "";
 
-    /**
-     * Grid buttons
-     *
-     * @see addButton()
-     */
-    public $buttonset = null;
-
     /** Static data source? */
     public $data = null;
 
@@ -48,10 +41,10 @@ class Grid_Advanced extends Grid_Basic
      * @see addPaginator()
      */
     public $paginator = null;
-    
+
     /**
      * Paginator class name
-     * 
+     *
      * @see enablePaginator()
      * */
     public $paginator_class = 'Paginator';
@@ -62,10 +55,10 @@ class Grid_Advanced extends Grid_Basic
      * @see addQuickSearch()
      */
     public $quick_search = null;
-    
+
     /**
      * QuickSearch class name
-     * 
+     *
      * @see enableQuickSearch()
      * */
     public $quick_search_class = 'QuickSearch';
@@ -120,23 +113,6 @@ class Grid_Advanced extends Grid_Basic
 
     // {{{ Misc features
 
-    /**
-     * Adds button
-     *
-     * @param string $label label of button
-     * @param string $class optional name of button class
-     *
-     * @return Button
-     */
-    function addButton($label, $class = 'Button')
-    {
-        if (!$this->buttonset) {
-            $this->buttonset = $this->add('ButtonSet', null, 'grid_buttons')->setClass('atk-actions');
-        }
-        return $this->buttonset
-            ->add($class, 'gbtn'.count($this->elements))
-            ->set($label);
-    }
 
     /**
      * Add default paginator to the grid
@@ -149,10 +125,10 @@ class Grid_Advanced extends Grid_Basic
     function enablePaginator($rows = 25, $options = null)
     {
         $this->addPaginator($rows, $options);
-        
+
         return $this;
     }
-    
+
     /**
      * Adds paginator to the grid
      *
@@ -171,16 +147,16 @@ class Grid_Advanced extends Grid_Basic
         if ($this->paginator) {
             return $this->paginator;
         }
-        
+
         $this->paginator = $this->add($class ?: $this->paginator_class, $options);
         $this->paginator->setRowsPerPage($rows);
-        
+
         return $this->paginator;
     }
 
     /**
      * Adds default QuickSearch to the grid
-     * 
+     *
      * @param array $fields array of fieldnames used in quick search
      * @param array $options optional options array
      *
@@ -189,13 +165,13 @@ class Grid_Advanced extends Grid_Basic
     function enableQuickSearch($fields, $options = null)
     {
         $this->addQuickSearch($fields, $options);
-        
+
         return $this;
     }
 
     /**
      * Adds QuickSearch to the grid
-     * 
+     *
      * @param array $fields array of fieldnames used in quick search
      * @param array $options optional options array
      * @param string $class optional quick search object class
@@ -210,7 +186,7 @@ class Grid_Advanced extends Grid_Basic
         if ($this->quick_search) {
             return $this->quick_search;
         }
-        
+
         $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search')
             ->useWith($this)
             ->useFields($fields);
