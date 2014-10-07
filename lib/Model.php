@@ -670,7 +670,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             $this->hook('beforeInsert', array(&$source));
         }
 
-        $this->id = $this->controller->save($this, $this->id, $source);
+        if ($this->controller) {
+            $this->id = $this->controller->save($this, $this->id, $source);
+        }
 
         if ($is_update) {
             $this->hook('afterUpdate');
