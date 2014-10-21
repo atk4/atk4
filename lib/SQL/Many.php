@@ -21,7 +21,7 @@ class SQL_Many extends AbstractModel {
     public $our_field=null;
     public $auto_track_element=true;
     public $relation=null;
-    public $table_alias=null; // Disabled
+    public $table_alias=null;
 
     function set($model,$their_field=null,$our_field=null,$relation=null){
         $this->model_name=is_string($model)?$model:get_class($model);
@@ -53,7 +53,12 @@ class SQL_Many extends AbstractModel {
     }
     function restoreConditions(){
         if(!$this->model){
-            $this->model=$this->add($this->model_name);//,array('table_alias'=>$this->table_alias)); // adding new model
+            // adding new model
+            if ($this->table_alias) {
+                $this->model=$this->add($this->model_name,array('table_alias'=>$this->table_alias));
+            } else {
+                $this->model=$this->add($this->model_name);
+            }
             $this->saveConditions();
         }
         $this->model->_dsql()->args['where']=$this->orig_conditions;
