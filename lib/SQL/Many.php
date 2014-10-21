@@ -38,6 +38,8 @@ class SQL_Many extends AbstractModel {
 
         $this->our_field=$our_field?:$this->owner->id_field;
 
+        //$this->table_alias=substr($this->short_name,0,3);
+
         return $this;
     }
     function from($m){
@@ -51,7 +53,12 @@ class SQL_Many extends AbstractModel {
     }
     function restoreConditions(){
         if(!$this->model){
-            $this->model=$this->add($this->model_name,array('table_alias'=>$this->table_alias)); // adding new model
+            // adding new model
+            if ($this->table_alias) {
+                $this->model=$this->add($this->model_name,array('table_alias'=>$this->table_alias));
+            } else {
+                $this->model=$this->add($this->model_name);
+            }
             $this->saveConditions();
         }
         $this->model->_dsql()->args['where']=$this->orig_conditions;
