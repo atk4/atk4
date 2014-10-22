@@ -187,6 +187,7 @@ $.widget("ui.atk4_uploader", {
 	},
 	uploadComplete: function(data){
 		// This method is called when iFrame upload is complete
+		$(this.options.form).atk4_form('clearError', this.element);
 		if(!data){
 			console.error('File upload was completed but no action was defined.'); 
 			return;
