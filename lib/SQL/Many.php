@@ -38,8 +38,6 @@ class SQL_Many extends AbstractModel {
 
         $this->our_field=$our_field?:$this->owner->id_field;
 
-        //$this->table_alias=substr($this->short_name,0,3);
-
         return $this;
     }
     function from($m){
