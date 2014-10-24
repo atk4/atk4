@@ -28,7 +28,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
             if($descr instanceof AbstractView){
                 $descr=$descr->getHTML();
             }else{
-                $descr=htmlspecialchars($descr);
+                $descr=htmlspecialchars($descr, ENT_COMPAT, ini_get("default_charset")?:'UTF-8', false);
             }
 
             $output.=
