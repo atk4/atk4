@@ -14,7 +14,7 @@ class Form_Field_Text extends Form_Field {
     function getInput($attr=array()){
         return
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
-            htmlspecialchars($this->value,ENT_COMPAT,'ISO-8859-1',false).
+            htmlspecialchars($this->value, ENT_COMPAT, ini_get("default_charset")?:'UTF-8', false).
             $this->getTag('/textarea');
     }
 }

@@ -224,7 +224,7 @@ class Form_Field_DateSelector extends Form_Field {
                             'value'=>$value,
                             'selected'=>$value == $this->c_day,
                             ))
-                .htmlspecialchars($descr)
+                .htmlspecialchars($descr, ENT_COMPAT, ini_get("default_charset")?:'UTF-8', false)
                 .$this->getTag('/option');
         }
         $d.=$this->getTag('/select').'&nbsp;';
@@ -242,7 +242,7 @@ class Form_Field_DateSelector extends Form_Field {
                             'value'=>$value,
                             'selected'=>$value == $this->c_month
                             ))
-                .htmlspecialchars($descr)
+                .htmlspecialchars($descr, ENT_COMPAT, ini_get("default_charset")?:'UTF-8', false)
                 .$this->getTag('/option');
         }
         $m.=$this->getTag('/select').'&nbsp;';
@@ -260,7 +260,7 @@ class Form_Field_DateSelector extends Form_Field {
                             'value'=>$value,
                             'selected'=>$value == $this->c_year
                             ))
-                .htmlspecialchars($descr)
+                .htmlspecialchars($descr, ENT_COMPAT, ini_get("default_charset")?:'UTF-8', false)
                 .$this->getTag('/option');
         }
         $y.=$this->getTag('/select');
