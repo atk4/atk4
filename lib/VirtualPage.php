@@ -204,7 +204,7 @@ class VirtualPage extends AbstractController
         $grid->addColumn('template', $name, $buttontext?:$title)
             ->setTemplate(
                 '<button type="button" class="pb_'.$name.'">'.
-                htmlspecialchars(
+                $this->api->encodeHtmlChars(
                     $buttontext?:$title?:ucwords(
                         str_replace('_', ' ', $name)
                     )
