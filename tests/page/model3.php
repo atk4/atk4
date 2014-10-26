@@ -5,13 +5,13 @@ class page_model3 extends Page_Tester {
         "Test_create"=>'[]',
         "Test_source"=>'{"controller_data_array":[]}',
         "Test_field"=>'{"controller_data_array":[]}',
-        "Test_save"=>'{"controller_data_array":{"1":{"name":"John","id":1}}}',
-        "Test_save2"=>'{"controller_data_array":{"1":{"name":"John","id":1},"2":{"name":"Susan","id":2}}}',
-        "Test_savelater"=>'{"controller_data_array":{"1":{"name":"John","id":1}}}',
-        "Test_savelater2"=>'{"controller_data_array":{"1":{"name":"John","id":1},"2":{"name":"Susan","id":2}}}',
-        "Test_save3"=>'{"name":"Susan","id":2}',
-        "Test_load"=>'{"name":"John","id":1}',
-        "Test_loadby"=>'{"name":"John","id":1}'
+        "Test_save"=>'{"controller_data_array":[{"name":"John","id":0}]}',
+        "Test_save2"=>'{"controller_data_array":[{"name":"John","id":0},{"name":"Susan","id":1}]}',
+        "Test_savelater"=>'{"controller_data_array":[{"name":"John","id":0}]}',
+        "Test_savelater2"=>'{"controller_data_array":[{"name":"John","id":0},{"name":"Susan","id":1}]}',
+        "Test_save3"=>'{"name":"Susan","id":1}',
+        "Test_load"=>'{"name":"John","id":0}',
+        "Test_loadby"=>'{"name":"John","id":0}'
     );
     function prepare(){
         return array();
@@ -50,7 +50,6 @@ class page_model3 extends Page_Tester {
 
         $m->set('name','Susan');
         $m->save();
-
         return json_encode($m->_table);
     }
     function test_savelater(){
@@ -63,7 +62,6 @@ class page_model3 extends Page_Tester {
 
         $m->set('name','Susan');
         $m->saveLater();
-
         return json_encode($m->_table);
     }
     function test_savelater2(){
@@ -107,7 +105,7 @@ class page_model3 extends Page_Tester {
         $m->set('name','Susan');
         $m->save();
 
-        $m->load(1);
+        $m->load(0);
 
         return json_encode($m->get());
     }
