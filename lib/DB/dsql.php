@@ -65,7 +65,7 @@ class DB_dsql extends AbstractModel implements Iterator {
     public $sql_templates=array(
         'select'=>"select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]",
         'insert'=>"insert [options_insert] into [table_noalias] ([set_fields]) values ([set_values])",
-        'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_value])",
+        'replace'=>"replace [options_replace] into [table_noalias] ([set_fields]) values ([set_values])",
         'update'=>"update [table_noalias] set [set] [where]",
         'delete'=>"delete from  [table_noalias] [where]",
         'truncate'=>'truncate table [table_noalias]',
@@ -1111,13 +1111,25 @@ class DB_dsql extends AbstractModel implements Iterator {
     /**
      * Defines insert query option, such as IGNORE
      *
-     * @param string|expresion $option Option to put after SELECT
+     * @param string|expresion $option Option to put after INSERT
      *
      * @return DB_dsql $this
      */
     function option_insert($option)
     {
         return $this->_setArray($option, 'options_insert');
+    }
+
+    /**
+     * Defines replace query option, such as IGNORE
+     *
+     * @param string|expresion $option Option to put after REPLACE
+     *
+     * @return DB_dsql $this
+     */
+    function option_replace($option)
+    {
+        return $this->_setArray($option, 'options_replace');
     }
 
     /**
@@ -1131,6 +1143,19 @@ class DB_dsql extends AbstractModel implements Iterator {
             return '';
         }
         return implode(' ', $this->args['options_insert']);
+    }
+
+    /**
+     * Renders [options_replace]
+     *
+     * @return string rendered SQL chunk
+     */
+    function render_options_replace()
+    {
+        if (!$this->args['options_replace']) {
+            return '';
+        }
+        return implode(' ', $this->args['options_replace']);
     }
     // }}}
     // {{{  call() and function execution
