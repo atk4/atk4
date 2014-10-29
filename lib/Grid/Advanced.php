@@ -987,7 +987,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row[$field] = $text;
 
         $this->setTDParam($field, 'title',
-            htmlspecialchars($this->current_row[$field.'_original']));
+            $this->api->encodeHtmlChars($this->current_row[$field.'_original']));
     }
 
     /**

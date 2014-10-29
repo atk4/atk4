@@ -617,5 +617,26 @@ class App_CLI extends AbstractView
         }
         return $name;
     }
+    /**
+     * Encodes HTML special chars, but not already encoded ones by default
+     *
+     * @param string $s
+     * @param int $flags
+     * @param string $encoding
+     * @param bool $double_encode
+     *
+     * @return string
+     */
+    function encodeHtmlChars($s, $flags = undefined, $encode = undefined, $double_encode = false)
+    {
+        if ($flags === undefined) {
+            $flags = ENT_COMPAT;
+        }
+        if ($encode === undefined) {
+            $encode = ini_get("default_charset") ?: 'UTF-8';
+        }
+
+        return htmlspecialchars($s, $flags, $encode, $double_encode);
+    }
     // }}}
 }

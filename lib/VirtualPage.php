@@ -141,7 +141,7 @@ class VirtualPage extends AbstractController
                 $page = $self->getPage();
                 $page->id=$_GET[$self->name.'_id'];
                 $self->api->stickyGET($self->name.'_id');
-                
+
                 try {
                     call_user_func($method, $page, $self);
                 } catch (Exception $e){
@@ -149,7 +149,7 @@ class VirtualPage extends AbstractController
                     // are already executing from post-init, so
                     // it's fine to ignore it.
                 }
-                
+
                 //Imants: most likely forgetting is not needed, because we stop execution anyway
                 //$self->api->stickyForget($self->name.'_id');
                 //$self->api->stickyForget($self->name);
@@ -221,7 +221,7 @@ class VirtualPage extends AbstractController
         $grid->addColumn('template', $name, $buttontext?:$title)
             ->setTemplate(
                 '<button type="button" class="atk-button-small pb_'.$name.'">'.
-                    $icon.htmlspecialchars($buttontext['descr']).
+                    $icon.$this->app->encodeHtmlChars($buttontext['descr']).
                 '</button>'
             );
 
