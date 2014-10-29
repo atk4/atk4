@@ -206,7 +206,7 @@ abstract class Form_Field extends AbstractView {
         $this->normalize();
     }
     function normalize(){
-        /* Normalization will make sure that entry conforms to the field type. 
+        /* Normalization will make sure that entry conforms to the field type.
            Possible trimming, rounding or length enforcements may happen. */
         $this->hook('normalize');
     }
@@ -380,7 +380,7 @@ abstract class Form_Field extends AbstractView {
             if($val === false) continue;
             if($val === true) $tmp[] = "$key";
             elseif($key === '')$tag=$val;
-            else $tmp[] = "$key=\"".htmlspecialchars($val)."\"";
+            else $tmp[] = "$key=\"".$this->api->encodeHtmlChars($val)."\"";
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }

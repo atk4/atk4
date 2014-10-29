@@ -31,7 +31,7 @@ class Form_Field_DropDown extends Form_Field_ValueList {
             // Check if a separator is not needed identified with _separator<
             $output.=
                 $this->getOption($value)
-                .htmlspecialchars($descr)
+                .$this->api->encodeHtmlChars($descr)
                 .$this->getTag('/option');
         }
         $output.=$this->getTag('/select');
