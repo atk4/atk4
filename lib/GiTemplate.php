@@ -628,6 +628,23 @@ class GiTemplate extends AbstractModel implements ArrayAccess {
         if($region)return $this->recursiveRender($this->get($region));
         return $this->recursiveRender($this->template);
     }
+    function renderRegion(&$chunk){
+        $result = ''; // you can replace this with array() for debug purposes
+        if(!is_array($chunk))return $chunk;
+        foreach($chunk as $key=>$_chunk){
+            $tmp=$this->renderRegion($_chunk);
+            if(is_array($result)){
+                $result[]=$tmp;
+            }else{
+                if(is_array($tmp)){
+                    $result=array($result,$tmp);
+                }else{
+                    $result.=$tmp;
+                }
+            }
+        }
+        return $result;
+    }
     function recursiveRender(&$template){
         $s='';
         foreach($template as $val){
