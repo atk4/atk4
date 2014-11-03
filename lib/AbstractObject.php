@@ -1143,10 +1143,10 @@ abstract class AbstractObject
     //
     // -------------------------------------------------------------
 
-    protected $perform_atk4_core_tests = true;
+    protected $perform_atk4_core_tests = false;
     protected $test_function_starts_with = 'atk4_test_';
 
-    function runTests($perform_atk4_core_tests=true) {
+    function runTests($perform_atk4_core_tests=false) {
         $this->perform_atk4_core_tests = $perform_atk4_core_tests;
         $existing_tests = $this->getTestList();
         $this->executeTests($existing_tests);
@@ -1190,7 +1190,7 @@ abstract class AbstractObject
             throw $e;
             echo "\n.... --+++ Test $test_name has been completed with errors \n";
         }
-        $this->perform_atk4_core_tests = true;
+        $this->perform_atk4_core_tests = false;
     }
     // TESTING FUNCTIONS ---------------------------------------------------
 
