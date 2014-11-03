@@ -317,7 +317,7 @@ dialogBox: function(options){
 		width: 1000,
 		position: { my:'top',at:'top+100','of':window },
 		autoOpen:false,
-		beforeclose: function(){
+		beforeClose: function(){
 			if($(this).is('.atk4_loader')){
 				if(!$(this).atk4_loader('remove'))return false;
 			}
