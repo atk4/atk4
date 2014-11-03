@@ -261,12 +261,14 @@ class SMlite extends AbstractModel {
     function append($tag,$value,$encode=true){
         if($value instanceof URL)$value=$value->__toString();
         // Temporary here until we finish testing
-        if($encode && $value!=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8') && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through append()')
-            ->addMoreInfo('val',var_export($value,true))
-            ->addMoreInfo('enc',var_export(htmlspecialchars($value,ENT_NOQUOTES,'UTF-8'),true))
-            //->addAction('ignore','Ignore tag'.$tag)
-            ;
-        if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
+        if($encode && $value!=$this->api->encodeHtmlChars($value,ENT_NOQUOTES) && $this->api->getConfig('html_injection_debug',false)) {
+            throw $this->exception('Attempted to supply html string through append()')
+                ->addMoreInfo('val',var_export($value,true))
+                ->addMoreInfo('enc',var_export($this->api->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                //->addAction('ignore','Ignore tag'.$tag)
+                ;
+        }
+        if($encode)$value=$this->api->encodeHtmlChars($value,ENT_NOQUOTES);
         if($this->isTopTag($tag)){
             $this->template[]=$value;
             return $this;
@@ -278,7 +280,7 @@ class SMlite extends AbstractModel {
         foreach($this->tags[$tag] as $key=>$_){
 
             if(!is_array($this->tags[$tag][$key])){
-                //throw new BaseException("Problem appending '".htmlspecialchars($value)."' to '$tag': key=$key");
+                //throw new BaseException("Problem appending '".$this->api->encodeHtmlChars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
             }
             $this->tags[$tag][$key][]=$value;
@@ -354,12 +356,14 @@ class SMlite extends AbstractModel {
         if($value instanceof URL)$value=$value->__toString();
         if(is_array($value))return $this;
 
-        if($encode && $value!=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8') && $this->api->getConfig('html_injection_debug',false))throw $this->exception('Attempted to supply html string through set()')
-            ->addMoreInfo('val',var_export($value,true))
-            ->addMoreInfo('enc',var_export(htmlspecialchars($value,ENT_NOQUOTES,'UTF-8'),true))
-            //->addAction('ignore','Ignore tag'.$tag)
-            ;
-        if($encode)$value=htmlspecialchars($value,ENT_NOQUOTES,'UTF-8');
+        if($encode && $value!=$this->api->encodeHtmlChars($value,ENT_NOQUOTES) && $this->api->getConfig('html_injection_debug',false)) {
+            throw $this->exception('Attempted to supply html string through set()')
+                ->addMoreInfo('val',var_export($value,true))
+                ->addMoreInfo('enc',var_export($this->api->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                //->addAction('ignore','Ignore tag'.$tag)
+                ;
+        }
+        if($encode)$value=$this->api->encodeHtmlChars($value,ENT_NOQUOTES);
         if($this->isTopTag($tag)){
             $this->template=$value;
             return $this;

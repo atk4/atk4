@@ -314,6 +314,28 @@ class Logger extends AbstractController {
             exit;
         }
 
+        if(PHP_SAPI === 'cli'){
+            if(posix_isatty(STDOUT)){
+                $red="\033[0;31m";
+                $yellow="\033[1;33m";
+                $end="\033[0m";
+            }else{
+                $red=$end=$yellow="";
+            }
+
+            if(isset($e->more_info)){
+                echo "==[ ";
+                echo get_class($e).": ". $red.$e->getMessage().$end." ]===========\n\n";
+                echo "Additional information:\n".
+                    $this->print_r(
+                        $e->more_info,'','',$yellow.'* '.$end,"\n",' ');
+            }else{
+                echo $red.$e->getMessage().$end."\n";
+            }
+
+            exit;
+        }
+
         if(method_exists($e,'getHTML')){
 ?><!DOCTYPE html>
 <html lang="en"><head>

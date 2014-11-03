@@ -406,7 +406,7 @@ abstract class Form_Field extends AbstractView {
             if($val === false) continue;
             if($val === true) $tmp[] = "$key";
             elseif($key === '')$tag=$val;
-            else $tmp[] = "$key=\"".htmlspecialchars($val)."\"";
+            else $tmp[] = "$key=\"".$this->api->encodeHtmlChars($val)."\"";
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }

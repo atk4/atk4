@@ -100,7 +100,7 @@ class Field_Reference extends Field {
             if(!$m->loaded()){
                 $m->addHook('afterSave',function($m)use($t){
                         $t->set($m->id);
-                        $t->owner->save();
+                        $t->owner->saveLater();
                         });
             }
             return $m;
