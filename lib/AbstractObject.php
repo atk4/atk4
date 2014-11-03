@@ -1128,4 +1128,103 @@ abstract class AbstractObject
     {
         return array('name');
     }
+
+
+
+
+
+
+
+
+
+    // -------------------------------------------------------------
+    //
+    //                     TESTING FUNCTIONS
+    //
+    // -------------------------------------------------------------
+
+    protected $perform_atk4_tests = true;
+    protected $test_function_starts_with = 'atk4_test_';
+
+    function runTests($argv,$perform_atk4_tests=true) {
+        $this->perform_atk4_tests = $perform_atk4_tests;
+        $existing_tests = $this->getTestList();
+        $tests_to_be_executed = $this->getTestsToBeExecuted($existing_tests,$argv);
+        $this->executeTests($tests_to_be_executed);
+    }
+
+    /**
+     * @return array
+     * Looking for all tests in your Test app.
+     */
+    protected function getTestList() {
+        $this_class = get_class($this);
+        $reflection = new ReflectionClass($this_class);
+        $test_methods = array();
+
+        foreach ($reflection->getMethods() as $m) {
+            if ($m->class == $this_class || $this->perform_atk4_tests) {
+                if (strpos($m,$this->test_function_starts_with) !== false) {
+                    $test_methods[] = $m->name;
+                }
+            }
+        }
+
+        return $test_methods;
+    }
+
+    /**
+     * @param $existing_tests
+     * @param $argv
+     * @return array
+     * @throws BaseException
+     *
+     * Lets you execute not all tests
+     * Usage: php text.php list of tests to be executed separated by whitespace
+     */
+    protected function getTestsToBeExecuted($existing_tests,$argv) {
+
+        array_shift($argv); // remove script name
+
+        //  No command line args? Les't execute all tests.
+        if (count($argv) == 0) {
+            return $existing_tests;
+        }
+
+        $list = array();
+
+        foreach ($argv as $t) {
+            $t_full_name = $this->test_function_starts_with . $t;
+            if (!in_array($t_full_name,$existing_tests)) {
+                throw $this->exception('There is no test with name "'.$t.'"');
+            }
+            $list[] = $t_full_name;
+        }
+
+        return $list;
+    }
+
+    protected function executeTests($tests) {
+        echo "\n";
+        foreach ($tests as $t) {
+            echo "------------------------------------------------------";
+            echo "\n.... <<<-- Executing test $t \n\n";
+            $this->executeTest($t);
+        }
+    }
+
+    protected function executeTest($test_name) {
+        try {
+            $this->$test_name();
+            echo "\n.... -->>> Test $test_name has been completed \n";
+        } catch (Exception $e) {
+            $this->getLogger()->logCaughtException($e);
+            throw $e;
+            echo "\n.... --+++ Test $test_name has been completed with errors \n";
+        }
+        $this->perform_atk4_tests = true;
+    }
+    // TESTING FUNCTIONS ---------------------------------------------------
+
+
 }
