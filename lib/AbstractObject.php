@@ -1187,7 +1187,6 @@ abstract class AbstractObject
             echo "\n.... -->>> Test $test_name has been completed \n";
         } catch (Exception $e) {
             $this->getLogger()->logCaughtException($e);
-            throw $e;
             echo "\n.... --+++ Test $test_name has been completed with errors \n";
         }
         $this->perform_atk4_core_tests = false;
