@@ -1143,11 +1143,11 @@ abstract class AbstractObject
     //
     // -------------------------------------------------------------
 
-    protected $perform_atk4_tests = true;
+    protected $perform_atk4_core_tests = true;
     protected $test_function_starts_with = 'atk4_test_';
 
-    function runTests($perform_atk4_tests=true) {
-        $this->perform_atk4_tests = $perform_atk4_tests;
+    function runTests($perform_atk4_core_tests=true) {
+        $this->perform_atk4_core_tests = $perform_atk4_core_tests;
         $existing_tests = $this->getTestList();
         $this->executeTests($existing_tests);
     }
@@ -1162,7 +1162,7 @@ abstract class AbstractObject
         $test_methods = array();
 
         foreach ($reflection->getMethods() as $m) {
-            if ($m->class == $this_class || $this->perform_atk4_tests) {
+            if ($m->class == $this_class || $this->perform_atk4_core_tests) {
                 if (strpos($m,$this->test_function_starts_with) !== false) {
                     $test_methods[] = $m->name;
                 }
@@ -1190,7 +1190,7 @@ abstract class AbstractObject
             throw $e;
             echo "\n.... --+++ Test $test_name has been completed with errors \n";
         }
-        $this->perform_atk4_tests = true;
+        $this->perform_atk4_core_tests = true;
     }
     // TESTING FUNCTIONS ---------------------------------------------------
 
