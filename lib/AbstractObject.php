@@ -1164,7 +1164,7 @@ abstract class AbstractObject
         foreach ($reflection->getMethods() as $m) {
             if ($m->class == $this_class || $this->perform_atk4_core_tests) {
                 if (strpos($m,$this->test_function_starts_with) !== false) {
-                    $test_methods[] = $m->name;
+                    $test_methods[$m->name] = $m->class;
                 }
             }
         }
@@ -1172,24 +1172,123 @@ abstract class AbstractObject
         return $test_methods;
     }
 
-    protected function executeTests($tests) {
-        echo "\n";
-        foreach ($tests as $t) {
-            echo "------------------------------------------------------";
-            echo "\n.... <<<-- Executing test $t \n\n";
-            $this->executeTest($t);
+    private static $test_counter = 0;
+    protected function executeTests( $tests ) {
+        $this->preTest();
+        if (self::$test_counter++ == 0) echo "\n";
+        foreach ($tests as $t => $class) {
+            $this->addLine();
+            $this->addDots();
+            echo ">>> Executing $class::$t() \n";
+            $this->executeTest($t,$class);
+        }
+        $this->postTest();
+    }
+
+    protected function executeTest( $test_name, $class, $param_array=array() ) {
+
+        try {
+            $this->testMethod($this, $test_name, $param_array);
+            $this->addDots();
+            echo "<<< Test $class::$test_name() has been completed \n";
+        } catch (Exception $e) {
+            $this->app->getLogger()->logCaughtException($e);
+            $this->addDots();
+            echo "+++ Test $class::$test_name() has been completed with errors \n";
         }
     }
 
-    protected function executeTest($test_name) {
-        try {
-            $this->$test_name();
-            echo "\n.... -->>> Test $test_name has been completed \n";
-        } catch (Exception $e) {
-            $this->getLogger()->logCaughtException($e);
-            echo "\n.... --+++ Test $test_name has been completed with errors \n";
+    private function addLine() {
+        if (is_a($this,'App_TestCLI')) {
+            echo "------------------------------------------------------\n";
         }
-        $this->perform_atk4_core_tests = false;
+    }
+
+    private function addDots() {
+        if (!is_a($this,'App_TestCLI')) {
+            echo ".  .  . ";
+        }
+    }
+
+    // this let to test private methods
+    private function testMethod( $instance, $name, $param_array=array() ) {
+        $class = new ReflectionClass($instance);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method->invokeArgs($instance, $param_array);
+    }
+
+    protected function preTest() {
+        // redefine this method to do something before executing class tests
+    }
+
+    protected function postTest() {
+        // redefine this method to do something after executing class tests
+    }
+
+    protected function logTestError($error_message) {
+
+    }
+
+
+
+    // Asserts  ~~~~~~~~~~~
+
+    protected function fails($msg) {
+        throw new Exception($msg);
+    }
+
+    public function assertArrayEquals($actual, $expected) {
+        if (!($actual == $expected))
+            throw $this->exception("assertArrayEquals fail")->addMoreInfo("expected", json_encode($expected, true))
+                ->addMoreInfo("actual", json_encode($actual, true));
+    }
+    public function assertStringEquals($actual, $expected) {
+        if (!($actual == $expected))
+            throw $this->exception("assertStringEquals fail")->addMoreInfo("expected", $expected)
+                ->addMoreInfo("actual", $actual);
+    }
+    public function assertIsNull($actual) {
+        if (!is_null($actual))
+            throw $this->exception("assertIsNull fail")->addMoreInfo("actual", $actual);
+    }
+    public function assertIsNotEmpty($actual) {
+        if (empty($actual))
+            throw $this->exception("assertIsNotEmpty fail")->addMoreInfo("actual", $actual);
+    }
+    public function assertBooleanEquals($actual, $expected) {
+        if (!($actual == $expected))
+            throw $this->exception("assertBooleanEquals fail")
+                ->addMoreInfo("expected", $expected ? 'true' : 'false')
+                ->addMoreInfo("actual", $actual ? 'true' : 'false');
+    }
+    public function assertNotEmpty($data) {
+        if (empty($data))
+            $this->fails('Found data empty');
+    }
+    public function assertEmpty($data) {
+        if (!empty($data))
+            $this->fails('Found data not empty');
+    }
+    public function assertEquals($expected, $actual) {
+        if ($expected !== $actual)
+            $this->fails("Expected: '" . print_r($expected, true) . "' given: '" . print_r($actual, true) . "'");
+    }
+    public function assertSame($expected, $actual) {
+        if ($expected != $actual)
+            $this->fails("Expected: '" . print_r($expected, true) . "' given: '" . print_r($actual, true) . "'");
+    }
+    public function assertTrue($bool, $msg) {
+        if ($bool !== true)
+            $this->fails($msg);
+    }
+    public function assertFalse($bool, $msg) {
+        if ($bool !== false)
+            $this->fails($msg);
+    }
+    public function assertNotEquals($expected, $actual) {
+        if ($expected === $actual)
+            $this->fails("assertNotEquals: '" . print_r($expected, true) . "' given: '" . print_r($actual, true) . "'");
     }
     // TESTING FUNCTIONS ---------------------------------------------------
 

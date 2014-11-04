@@ -29,10 +29,10 @@ class App_TestCLI extends App_CLI {
 
         foreach ($argv as $t) {
             $t_full_name = $this->test_function_starts_with . $t;
-            if (!in_array($t_full_name,$existing_tests)) {
+            if (!array_key_exists($t_full_name,$existing_tests)) {
                 throw $this->exception('There is no test with name "'.$t.'"');
             }
-            $list[] = $t_full_name;
+            $list[$t_full_name] = $existing_tests[$t_full_name];
         }
 
         return $list;
