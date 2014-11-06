@@ -1188,7 +1188,7 @@ abstract class AbstractObject
     protected function executeTest( $test_name, $class, $param_array=array() ) {
 
         try {
-            $this->testMethod($this, $test_name, $param_array);
+            $this->testPrivateMethod($this, $test_name, $param_array);
             $this->addDots();
             echo "<<< Test $class::$test_name() has been completed \n";
         } catch (Exception $e) {
@@ -1211,7 +1211,7 @@ abstract class AbstractObject
     }
 
     // this let to test private methods
-    private function testMethod( $instance, $name, $param_array=array() ) {
+    public function testPrivateMethod( $instance, $name, $param_array=array() ) {
         $class = new ReflectionClass($instance);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
