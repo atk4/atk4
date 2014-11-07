@@ -1111,4 +1111,1274 @@ function _ref($ref,$class,$field,$val){
         $this->data=$data['data'];
     }
 
+
+
+
+
+    // TESTS
+
+
+    function atk4_test_AddField() {
+        $model = $this->add(get_class($this));
+        $fieldName = 'field_name';
+        $field = $model->addField($fieldName);
+        $this->assertTrue($field instanceof $model->field_class, 'Field is not a valid instance');
+        $this->assertTrue(isset($model->elements[$fieldName]), 'Field not append to model\'s element');
+    }
+    function atk4_test_AddTwiceField() {
+        $model = $this->add(get_class($this));
+        $fieldName = 'field_name';
+        $model->addField($fieldName);
+        $e = $this->assertThrowException('BaseException',$model,'addField',array($fieldName));
+        $this->assertEquals($fieldName, $e->more_info['field']);
+    }
+    function atk4_test_Set() {
+        $model = $this->add(get_class($this));
+        $fieldName = 'field_name';
+        $fieldValue = 'field_value';
+        $model->addField($fieldName);
+        $model->set($fieldName, $fieldValue);
+        $this->assertEquals($fieldValue, $model->data[$fieldName], 'Model set different value');
+        $this->assertTrue($model->isDirty($fieldName), 'Field isn\'t set to dirty');
+    }
+    function atk4_test_SetWithArray() {
+        $model = $this->add(get_class($this));
+        $model->set(array('field1' => 'value1', 'field2' => 'value2'));
+        $this->assertEquals('value1', $model->data['field1'], 'Model set different value');
+        $this->assertEquals('value2', $model->data['field2'], 'Model set different value');
+        $this->assertTrue($model->isDirty('field1'), 'Field isn\'t set to dirty');
+        $this->assertTrue($model->isDirty('field2'), 'Field isn\'t set to dirty');
+    }
+    function atk4_test_SetInexistentField() {
+        $model = $this->add(get_class($this), array('strict_fields' => true));
+        $e = $this->assertThrowException('Exception_Logic', $model, 'set', array('inexistentField', 'value'));
+        $this->assertEquals('inexistentField', $e->more_info['name']);
+    }
+
+
+    // TODO doesn't work as expected
+    /*function atk4_test_SetToSameValue() {
+        $model = $this->add(get_class($this));
+        $model->data['field1'] = 'value1';
+        $model->set('field1', 'value1');
+        $this->assertFalse($model->isDirty('field1'), 'Model field is dirty');
+    }*/
+
+    // TODO doesn't work as expected. Throwing Exception_Logic: No such field
+    /*function atk4_test_SetNullFieldStrict() {
+        $model = $this->add(get_class($this), array('strict_fields' => true));
+        $model->set(array('field1' => null, 'field2' => 2, 'field3' => 3));
+        $this->assertTrue(array_key_exists('field1', $model->data), 'Model not set');
+        $this->assertEquals(null, $model->data['field1']);
+    }*/
+
+    // TODO doesn't throw expected exception :(
+    /*function atk4_test_SetOnlyKey() {
+        $model = $this->add(get_class($this));
+        $e = $this->assertThrowException('BaseException', $model, 'set', array('field1'));
+        $this->assertEquals('inexistentField', $e->more_info['name']);
+    }*/
+
+    function atk4_test_Get() {
+        $model = $this->add(get_class($this));
+        $model->data['field1'] = 'value1';
+        $this->assertEquals('value1', $model->get('field1'));
+    }
+
+    function atk4_test_GetInesistentFieldNoStrict() {
+        $model = $this->add(get_class($this));
+        $value = $model->get('inexistentField');
+        $this->assertEquals(null, $value);
+    }
+
+    function atk4_test_GetInesistentFieldStrict() {
+        $model = $this->add(get_class($this), array('strict_fields' => true));
+        $e = $this->assertThrowException('Exception_Logic', $model, 'get', array('inexistentField'));
+        $this->assertEquals('inexistentField', $e->more_info['field']);
+    }
+
+    // TODO throws Exception_Logic: No such field which seems to be wrong
+    /*function atk4_test_GetNullFieldStrict() {
+        $model = $this->add(get_class($this), array('strict_fields' => true));
+        $model->set(array('field1' => null, 'field2' => 2, 'field3' => 3));
+        $this->assertEquals(null, $model->get('field1'));
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetCalculated() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $expr = $model->addExpression('concatenate',
+            function($model, $data) {
+                return $data['field1'] . ' ' . $data['field2'];
+            });
+        $model->loadAny();
+        $expected = array(
+            'field1' => 'value1.2',
+            'field2' => 'value2.2',
+            'field3' => 'value3.2',
+            'concatenate' => 'value1.2 value2.2',
+        );
+        $this->assertEquals($expected, $model->get());
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetOnlyCalculated() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $expr = $model->addExpression('concatenate',
+            function($model, $data) {
+                return $data['field1'] . ' ' . $data['field2'];
+            });
+        $model->loadAny();
+        $this->assertEquals('value1.2 value2.2', $model->get('concatenate'));
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetDefaultValue() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->getElement('field2')->defaultValue('defaultValue');
+        $this->assertEquals('defaultValue', $model->get('field2'));
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetNoDefaultValueStrictMode() {
+        $model = $this->add(get_class($this), array('strict_fields' => true));
+        $model->setControllerSource(self::$exampleData);
+        $this->assertThrowException('BaseException', $model, 'get', array('field2'));
+    }*/
+
+    // TODO Exception: Expected true on isset
+    /*function atk4_test_ArrayAccess() {
+        $model = $this->add(get_class($this));
+        $model->set('field1', 'value1111');
+        $this->assertEquals('value1111', $model['field1']);
+        $model['field2'] = 'value2222';
+        $this->assertEquals('value2222', $model->data['field2']);
+        $this->assertTrue(isset($model['field2']), 'Expected true on isset');
+        $this->assertFalse(isset($model['field3']), 'Expected false on isset');
+        $model->getElement('field3')->defaultValue('defaultValue');
+        $this->assertTrue(isset($model['field3']), 'Expected true on isset');
+        $model->set('field3', 'value3333');
+        $this->assertEquals('value3333', $model['field3']);
+        unset($model['field3']);
+        $this->assertEquals('defaultValue', $model->get('field3'));
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetTitleField() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $this->assertEquals('field3', $model->getTitleField());
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_GetTitleFieldNull() {
+        $model = $this->add(get_class($this), array('title_field' => null));
+        $model->setControllerSource(self::$exampleData);
+        $this->assertEquals('field1', $model->getTitleField());
+    }*/
+
+
+    function atk4_test_getActualFields() {
+        if (!isset($this->expected_fields)) {
+            echo "            INFO :: Set \$this->expected_fields in your model to use this test.\n";
+            return;
+        }
+        $model = $this->add(get_class($this));
+        $actualFields = $model->getActualFields();
+        $this->assertEquals($this->expected_fields, $actualFields);
+    }
+
+    // TODO seems like this test shouldn't work but it work for some strange reason
+    function atk4_test_GetSetActualFields() {
+        $model = $this->add(get_class($this));
+        $expected = array('field1', 'field3');
+        $model->setActualFields($expected);
+        $actualFields = $model->getActualFields();
+        $this->assertEquals($expected, $actualFields);
+    }
+
+    // TODO ErrorException: Runtime Notice: [/vendor/atk4/atk4/lib/SQL/<b>Model.php</b>:957]Argument 1 passed to SQL_Model::setActualFields() must be of the type array, none given, called in /vendor/atk4/atk4/lib/SQL/Model.php on line 1305 and defined
+    /*function atk4_test_SetAllActualFields() {
+        $model = $this->add(get_class($this));
+        $model->setActualFields();
+        $actualFields = $model->getActualFields();
+        $expected = array('field1', 'field2', 'field3');
+        $this->assertEquals($expected, $actualFields);
+    }*/
+
+    // TODO ErrorException: Runtime Notice: [/vendor/atk4/atk4/lib/SQL/<b>Model.php</b>:957]Argument 1 passed to SQL_Model::setActualFields() must be of the type array, string given, called in /vendor/atk4/atk4/lib/SQL/Model.php on line 1314 and defined
+    /*function atk4_test_GroupActualFields() {
+        $model = $this->add(get_class($this));
+        $model->setActualFields('group1');
+        $actualFields = $model->getActualFields();
+        $expected = array('field1', 'field2');
+        $this->assertEquals($expected, $actualFields);
+    }*/
+
+    // TODO ErrorException: Runtime Notice: [/vendor/atk4/atk4/lib/SQL/<b>Model.php</b>:957]Argument 1 passed to SQL_Model::setActualFields() must be of the type array, string given, called in /vendor/atk4/atk4/lib/SQL/Model.php on line 1324 and defined
+    /*function atk4_test_CommaSeparatedGroupActualFields() {
+        $model = $this->add(get_class($this));
+        $model->addField('field4')->group('group3');
+        $model->setActualFields('group1,group3');
+        $actualFields = $model->getActualFields();
+        $expected = array('field1', 'field2', 'field4');
+        $this->assertEquals($expected, $actualFields);
+    }*/
+
+    // TODO ErrorException: Runtime Notice: [/vendor/atk4/atk4/lib/SQL/<b>Model.php</b>:957]Argument 1 passed to SQL_Model::setActualFields() must be of the type array, string given, called in /vendor/atk4/atk4/lib/SQL/Model.php on line 1334 and defined
+    /*function atk4_test_ExpludeGroupActualFields() {
+        $model = $this->add(get_class($this));
+        $model->addField('field4')->group('group3');
+        $model->setActualFields('all,-group3');
+        $actualFields = $model->getActualFields();
+        $expected = array('field1', 'field2', 'field3');
+        $this->assertEquals($expected, $actualFields);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_SetSource() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $this->assertTrue($model->controller instanceof Controller_Data, 'Controller wrong type');
+    }*/
+
+    function atk4_test_SetSourceInvalidController() {
+        $model = $this->add(get_class($this));
+        $this->assertThrowException('BaseException', $model, 'setSource', array($this, self::$exampleData));
+    }
+
+    function atk4_test_SetControllerSource() {
+        $model = $this->add(get_class($this));
+        $model->controller = null;
+        $this->assertThrowException('BaseException', $model, 'setControllerSource', array(array()));
+    }
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_Load() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->load('value1.1');
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertEquals('value1.1', $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadFail() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->controller->foundOnLoad = false;
+        $this->assertThrowException('BaseException', $model, 'load', array('inexistentValue'));
+        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadHooks() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $model->load('value1.1');
+        $this->assertEquals(2, $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadHooksFail() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->controller->foundOnLoad = false;
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $this->assertThrowException('BaseException', $model, 'load', array('inexistentValue'));
+        $this->assertEquals(1, $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadLoadedModel() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->id = 'value1.2';
+        $model->load('value1.1');
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertEquals('value1.1', $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->load('value1.2');
+        $this->assertEquals('value1.2', $model->get('field1'));
+        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadFailDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->controller->foundOnLoad = false;
+        $model->tryLoad('value1.2');
+        $this->assertThrowException('BaseException', $model, 'load', array('inexistentValue'));
+        $this->assertTrue($model->isDirty('field1'), 'Load don\'t erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoad() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->tryLoad('value1.1');
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertEquals('value1.1', $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadFail() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->controller->foundOnLoad = false;
+        $model->tryLoad('inexistentId');
+        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadLoadedModel() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->id = 'value1.2';
+        $model->tryLoad('value1.1');
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertEquals('value1.1', $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadLoadedModelFail() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->id = 'value1.2';
+        $model->controller->foundOnLoad = false;
+        $model->tryLoad('inexistentId');
+        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadHook() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $model->tryLoad('value1.1');
+        $this->assertEquals(2, $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadHookFail() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->controller->foundOnLoad = false;
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $model->tryLoad('inexistentId');
+        $this->assertEquals(1, $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->tryLoad('value1.2');
+        $this->assertEquals('value1.2', $model->get('field1'));
+        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadFailDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->controller->foundOnLoad = false;
+        $model->tryLoad('value1.2');
+        $this->assertEquals('value11.11', $model->get('field1'));
+        $this->assertTrue($model->isDirty('field1'), 'Load erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadAny() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->loadAny();
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertNotEmpty($model->id);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_LoadAnyFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $this->assertThrowException('BaseException', $model, 'loadAny');
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadAnyLoadedModel() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->id = 'value1.2';
+        $model->loadAny();
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertNotEmpty($model->id);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_LoadAnyLoadedModelFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $model->id = 'value1.2';
+        $this->assertThrowException('BaseException', $model, 'loadAny');
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadAnyHooks() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $tmp = array();
+        $self = $this;
+        $model->addHook('beforeLoad',
+            function() use (&$tmp, $self) {
+                $args = func_get_args();
+                $self->assertEquals('loadAny', $args[1]);
+                $self->assertEquals(array(), $args[2]);
+                $tmp[] = 'beforeLoad';
+            });
+        $model->addHook('afterLoad',
+            function() use (&$tmp, $self) {
+                $args = func_get_args();
+                $self->assertEquals(1, count($args));
+                $tmp[] = 'afterLoad';
+            });
+        $model->loadAny();
+        $this->assertEquals(array('beforeLoad', 'afterLoad'), $tmp);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_LoadAnyHooksFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $tmp = array();
+        $self = $this;
+        $model->addHook('beforeLoad',
+            function() use (&$tmp, $self) {
+                $args = func_get_args();
+                $self->assertEquals('loadAny', $args[1]);
+                $self->assertEquals(array(), $args[2]);
+                $tmp[] = 'beforeLoad';
+            });
+        $model->addHook('afterLoad',
+            function() use (&$tmp, $self) {
+                $args = func_get_args();
+                $self->assertEquals(1, count($args));
+                $tmp[] = 'afterLoad';
+            });
+        $this->assertThrowException('BaseException', $model, 'loadAny');
+        $this->assertEquals(array('beforeLoad'), $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadAnyDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->loadAny();
+        $this->assertEquals('value1.2', $model->get('field1'));
+        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadAnyFailDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->controller->foundOnLoad = false;
+        $this->assertThrowException('BaseException', $model, 'loadAny');
+        $this->assertTrue($model->isDirty('field1'), 'Load erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadAny() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->tryLoadAny();
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertNotEmpty($model->id);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_TryLoadAnyFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $model->tryLoadAny();
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadAnyLoadedModel() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->id = 'value1.2';
+        $model->tryLoadAny();
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertNotEmpty($model->id);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_TryLoadAnyLoadedModelFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $model->id = 'value1.2';
+        $model->tryLoadAny();
+        $this->assertEquals(null, $model->id);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadAnyHooks() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $model->tryLoadAny();
+        $this->assertEquals(2, $tmp);
+    }*/
+
+    // TODO Exception_PathFinder: File not found App_CLI->locatePath("php", "Controller/Data/Foo.php")
+    /*function atk4_test_TryLoadAnyHooksFail() {
+        $model = $this->add(get_class($this));
+        $model->setSource('Foo', array());
+        $model->controller->foundOnLoad = false;
+        $tmp = 0;
+        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+        $model->tryLoadAny();
+        $this->assertEquals(1, $tmp);
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadAnyDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->tryLoadAny();
+        $this->assertEquals('value1.2', $model->get('field1'));
+        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_TryLoadAnyFailDirty() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->set('field1', 'value11.11');
+        $model->controller->foundOnLoad = false;
+        $model->tryLoadAny();
+        $this->assertTrue($model->isDirty('field1'), 'Load erase dirty array');
+    }*/
+
+    // TODO throws BaseException: Call setControllerData before
+    /*function atk4_test_LoadBy() {
+        $model = $this->add(get_class($this));
+        $model->setControllerSource(self::$exampleData);
+        $model->loadBy('field2', '=', 'value2.1');
+        $this->assertTrue($model->loaded(), 'Model must be loaded');
+        $this->assertNotEmpty($model->id);
+    }*/
+
+//    function atk4_test_LoadByFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $this->assertThrowException('BaseException', $model, 'loadBy', array('field1', '=', 'inexisten'));
+//        $this->assertEquals(null, $model->id);
+//    }
+//    function atk4_test_LoadByLoadedModel() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->id = 'value1.2';
+//        $model->loadBy('field2', '=', 'value2.1');
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertNotEmpty($model->id);
+//    }
+//    function atk4_test_LoadByLoadedModelFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $model->id = 'value1.2';
+//        $this->assertThrowException('BaseException', $model, 'loadBy', array('field1', '=', 'inexisten'));
+//        $this->assertEquals(null, $model->id);
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_LoadByHooks() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = 0;
+//        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+//        $model->loadBy('field2', '=', 'value2.1');
+//        $this->assertEquals(2, $tmp);
+//    }
+//    function atk4_test_LoadByHooksFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $tmp = 0;
+//        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+//        $this->assertThrowException('BaseException', $model, 'loadBy', array('field1', '=', 'inexisten'));
+//        $this->assertEquals(1, $tmp);
+//    }
+//    function atk4_test_LoadByDirty() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->set('field1', 'value11.11');
+//        $model->loadBy('field2', '=', 'value2.1');
+//        $this->assertEquals('value1.2', $model->get('field1'));
+//        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+//    }
+//    function atk4_test_LoadByFailDirty() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->set('field1', 'value11.11');
+//        $model->controller->foundOnLoad = false;
+//        $this->assertThrowException('BaseException', $model, 'loadBy', array('field1', '=', 'inexisten'));
+//        $this->assertTrue($model->isDirty('field1'), 'Load erase dirty array');
+//    }
+//    function atk4_test_TryLoadBy() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertNotEmpty($model->id);
+//    }
+//    function atk4_test_TryLoadByFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $model->tryLoadBy('field1', '=', 'inexisten');
+//        $this->assertEquals(null, $model->id);
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_TryLoadByLoadedModel() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->id = 'value1.2';
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertNotEmpty($model->id);
+//    }
+//    function atk4_test_TryLoadByLoadedModelFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $model->id = 'value1.2';
+//        $model->tryLoadBy('field1', '=', 'inexisten');
+//        $this->assertEquals(null, $model->id);
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_TryLoadByArgument() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->tryLoadBy('field2', 'value2.2');
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertEquals('value2.2', $model->get('field2'));
+//    }
+//    function atk4_test_TryLoadByHooks() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = 0;
+//        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertEquals(2, $tmp);
+//    }
+//    function atk4_test_TryLoadByHooksFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', array());
+//        $model->controller->foundOnLoad = false;
+//        $tmp = 0;
+//        $model->addHook('beforeLoad,afterLoad', function() use (&$tmp) { $tmp += 1; });
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertEquals(1, $tmp);
+//    }
+//    function atk4_test_TryLoadByDirty() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->set('field1', 'value11.11');
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertEquals('value1.2', $model->get('field1'));
+//        $this->assertFalse($model->isDirty('field1'), 'Load don\'t erase dirty array');
+//    }
+//    function atk4_test_TryLoadByFailDirty() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->set('field1', 'value11.11');
+//        $model->controller->foundOnLoad = false;
+//        $model->tryLoadBy('field2', '=', 'value2.1');
+//        $this->assertTrue($model->isDirty('field1'), 'Load erase dirty array');
+//    }
+//    function atk4_test_Unload() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', self::$exampleData, 'value1.1');
+//        $model->unload();
+//        $this->assertFalse($model->loaded(), 'Model is already loaded');
+//        $this->assertEquals(null, $model->id, 'Id is already set');
+//    }
+//    function atk4_test_UnloadHooks() {
+//        $model = $this->add(get_class($this));
+//        $model->setSource('Foo', self::$exampleData, 'value1.1');
+//        $tmp = 0;
+//        $model->addHook('beforeUnload,afterUnload', function() use (&$tmp) { $tmp += 1; });
+//        $model->unload();
+//
+//        $this->assertEquals(2, $tmp);
+//    }
+//    function atk4_test_UnloadHooksNotLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = 0;
+//        $model->addHook('beforeUnload,afterUnload', function() use (&$tmp) { $tmp += 1; });
+//        $model->unload();
+//
+//        $this->assertEquals(1, $tmp);
+//    }
+//    function atk4_test_Insert() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $fields = array(
+//            'field1' => 'newValue1',
+//            'field2' => 'newValue2',
+//        );
+//        $model->set($fields)->save('newValue1');
+//        $this->assertEquals($fields, $model->get());
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertEmpty($model->dirty);
+//    }
+//    function atk4_test_Update() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $fields = array(
+//            'field2' => 'newValue2',
+//        );
+//        $model->set($fields)->save('newValue1');
+//        $this->assertEquals($fields['field2'], $model->get('field2'));
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertEmpty($model->dirty);
+//    }
+//    function atk4_test_SaveAndUnload() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $fields = array(
+//            'field2' => 'newValue2',
+//        );
+//        $model->set($fields)->saveAndUnload('newValue1');
+//        $this->assertEmpty($model->data);
+//        $this->assertFalse($model->loaded(), 'Model must be unloaded');
+//        $this->assertEmpty($model->dirty);
+//    }
+//    function atk4_test_InsertHook() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = 0;
+//        $model->addHook('beforeSave,beforeUpdate,beforeInsert,afterUpdate,afterInsert,afterSave', function() use (&$tmp) { $tmp += 1; });
+//        $tmp1 = 0;
+//        $model->addHook('beforeSave,beforeInsert,afterInsert,afterSave', function() use (&$tmp1) { $tmp1 += 1; });
+//        $fields = array(
+//            'field2' => 'newValue2',
+//        );
+//        $model->set($fields)->save();
+//        $this->assertEquals(4, $tmp);
+//        $this->assertEquals(4, $tmp1);
+//    }
+//    function atk4_test_UpdateHook() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = 0;
+//        $model->addHook('beforeSave,beforeUpdate,beforeInsert,afterUpdate,afterInsert,afterSave', function() use (&$tmp) { $tmp += 1; });
+//        $tmp1 = 0;
+//        $model->addHook('beforeSave,beforeUpdate,afterUpdate,afterSave', function() use (&$tmp1) { $tmp1 += 1; });
+//
+//        $fields = array(
+//            'field2' => 'newValue2',
+//        );
+//        $model->set($fields)->save();
+//        $this->assertEquals(4, $tmp);
+//    }
+//    function atk4_test_Delete() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->delete('value1.1');
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_DeleteModelLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $model->delete();
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_DeleteModelLoadedWithId() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $this->assertThrowException('BaseException', $model, 'delete', array('value1.2'));
+//        $this->assertTrue($model->loaded(), 'Model must not loaded');
+//    }
+//    function atk4_test_DeleteModelLoadedWithSameId() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $model->delete('value1.1');
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_DeleteNothing() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $this->assertThrowException('BaseException', $model, 'delete');
+//        $this->assertFalse($model->loaded(), 'Model must be not loaded');
+//    }
+//    function atk4_test_DeleteAll() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = array();
+//        $model->addHook('beforeDeleteAll',
+//            function() use (&$tmp) {
+//                $tmp[] = 'beforeDeleteAll';
+//            });
+//        $model->addHook('afterDeleteAll',
+//            function() use (&$tmp) {
+//                $tmp[] = 'afterDeleteAll';
+//            });
+//        $model->deleteAll();
+//        $this->assertEquals(array('beforeDeleteAll', 'afterDeleteAll'), $tmp);
+//    }
+//    function atk4_test_DeleteAllLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $tmp = array();
+//        $model->addHook('beforeDeleteAll',
+//            function() use (&$tmp) {
+//                $tmp[] = 'beforeDeleteAll';
+//            });
+//        $model->addHook('afterDeleteAll',
+//            function() use (&$tmp) {
+//                $tmp[] = 'afterDeleteAll';
+//            });
+//        $model->deleteAll();
+//        $this->assertEquals(array('beforeDeleteAll', 'afterDeleteAll'), $tmp);
+//    }
+//    function atk4_test_Reload() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        $oldValue = $model->get('field1');
+//        $model->set('field1', 'value1111');
+//        $model->reload();
+//        $this->assertEquals($oldValue, $model->get('field1'));
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//    }
+//    function atk4_test_ReloadUnloadedModel() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $this->assertThrowException('BaseException', $model, 'reload');
+//    }
+//    function atk4_test_Iterable() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        foreach($model as $n => $row) {
+//            $this->assertTrue($model->loaded(), 'Model must be loaded');
+//            $this->assertEquals($row, $model->data);
+//            $this->assertEquals(self::$exampleData[$n], $row);
+//        }
+//        $this->assertEquals(4, $model->controller->next);
+//        $this->assertEquals(1, $model->controller->rewind);
+//    }
+//    function atk4_test_IterableLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->load('value1.1');
+//        foreach($model as $n => $row) {
+//            $this->assertTrue($model->loaded(), 'Model must be loaded');
+//            $this->assertEquals($row, $model->data);
+//            $this->assertEquals(self::$exampleData[$n], $row);
+//        }
+//        $this->assertEquals(4, $model->controller->next);
+//        $this->assertEquals(1, $model->controller->rewind);
+//    }
+//    function atk4_test_IterableHook() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $tmp = array();
+//        $self = $this;
+//        $model->addHook('beforeLoad',
+//            function() use (&$tmp, $self) {
+//                $args = func_get_args();
+//                $self->assertEquals('iterating', $args[1]);
+//                $self->assertEquals(null, $args[2]);
+//                $tmp[] = 'beforeLoad';
+//            });
+//        $model->addHook('afterLoad',
+//            function() use (&$tmp, $self) {
+//                $args = func_get_args();
+//                $self->assertEquals(1, count($args));
+//                $tmp[] = 'afterLoad';
+//            });
+//        foreach($model as $n => $row) { }
+//        $this->assertEquals(7, count($tmp));
+//        $this->assertEquals('beforeLoad', $tmp[0]);
+//        $this->assertEquals('afterLoad', $tmp[1]);
+//        $this->assertEquals('beforeLoad', $tmp[2]);
+//        $this->assertEquals('afterLoad', $tmp[3]);
+//        $this->assertEquals('beforeLoad', $tmp[4]);
+//        $this->assertEquals('afterLoad', $tmp[5]);
+//        $this->assertEquals('beforeLoad', $tmp[6]);
+//    }
+//    function atk4_test_AddCondition() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->addCondition('field1', 'value1.1');
+//        $this->assertTrue(isset($model->conditions[0]), 'Model doesn\'t store condition');
+//        $this->assertEquals(1, count($model->conditions));
+//        $this->assertEquals(array('field1', '=', 'value1.1'), $model->conditions[0]);
+//    }
+//    function atk4_test_AddConditionArray() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->addCondition(array(
+//            array('field1', 'value1.1'),
+//            array('field1', '>', 'value2.1')));
+//        $this->assertTrue(isset($model->conditions[0][1]), 'Model doesn\'t store condition');
+//        $this->assertEquals(2, count($model->conditions));
+//        $this->assertEquals(array('field1', '=', 'value1.1'), $model->conditions[0]);
+//        $this->assertEquals(array('field1', '>', 'value2.1'), $model->conditions[1]);
+//    }
+//    function atk4_test_AddConditionOnlyKey() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $this->assertThrowException('BaseException', $model, 'addCondition', array('field1'));
+//        $this->assertEquals(0, count($model->conditions));
+//    }
+//    function atk4_test_AddConditionUnsupported() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->controller->supportConditions = false;
+//        $this->assertThrowException('Exception_NotImplemented', $model, 'addCondition', array('field1', 'value1.1'));
+//    }
+//    function atk4_test_AddConditionOperatorUnsupport() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $e = $this->assertThrowException('Exception_NotImplemented', $model, 'addCondition', array('field1', 'unsupportOperator', 'value1.1'));
+//        $this->assertEquals('Unsupport operator', $e->getMessage());
+//        $this->assertEquals('unsupportOperator', $e->more_info['operator']);
+//    }
+//    function atk4_test_SetLimit() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->setLimit(3, 45);
+//        $this->assertEquals(array(3, 45), $model->limit);
+//    }
+//    function atk4_test_DefaultLimit() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $this->assertEquals(array(null, null), $model->limit);
+//    }
+//    function atk4_test_SetLimitUnsupported() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->controller->supportLimit = false;
+//        $this->assertThrowException('Exception_NotImplemented', $model, 'setLimit', array(4));
+//    }
+//    function atk4_test_SetOrder() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->setOrder('field1', 'desc');
+//        $this->assertEquals(array('field1', 'desc'), $model->order);
+//    }
+//    function atk4_test_DefaultOrder() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $this->assertEquals(array(null, null), $model->order);
+//    }
+//    function atk4_test_SetOrderUnsupported() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->controller->supportOrder = false;
+//        $this->assertThrowException('Exception_NotImplemented', $model, 'setOrder', array('field1'));
+//    }
+//    function atk4_test_Count() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $count = $model->count();
+//        $this->assertEquals(3, $count);
+//    }
+//    function atk4_test_CountBuiltin() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $count = count($model);
+//        $this->assertEquals(3, $count);
+//    }
+//    function atk4_test_CountUnsupported() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerData('Empty');
+//        $this->assertThrowException('Exception_NotImplemented', $model, 'count');
+//    }
+//    function atk4_test_EachWithString() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->each('eachFunction');
+//        $this->assertEquals(3, count($model->eachArguments));
+//        foreach ($model->eachArguments as $arg) {
+//            $this->assertEmpty($arg);
+//        }
+//    }
+//    function atk4_test_EachWithCallable() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->each(array($model, 'eachFunction'));
+//        $this->assertEquals(3, count($model->eachArguments));
+//        foreach ($model->eachArguments as $arg) {
+//            $this->assertEquals(1, count($arg));
+//            $this->assertEquals($model, $arg[0]);
+//        }
+//    }
+//    function atk4_test_EachWithCallableBreak() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->stopAt = 3;
+//        $model->each(array($model, 'eachFunction'));
+//        $this->assertEquals(2, count($model->eachArguments));
+//        foreach ($model->eachArguments as $arg) {
+//            $this->assertEquals(1, count($arg));
+//            $this->assertEquals($model, $arg[0]);
+//        }
+//    }
+//    function atk4_test_HasMany() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasMany(get_class($this));
+//        $expected = array(
+//            get_class($this) => array(
+//                get_class($this),
+//                UNDEFINED,
+//                UNDEFINED,
+//            ));
+//        $this->assertEquals($expected, $model->_references);
+//    }
+//    function atk4_test_HasManyAllParamters() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasMany(get_class($this), 'other_field', 'my_field', 'reference_name');
+//        $expected = array(
+//            'reference_name' => array(
+//                get_class($this),
+//                'other_field',
+//                'my_field',
+//            ));
+//        $this->assertEquals($expected, $model->_references);
+//    }
+//    function atk4_test_HasManyRefNotLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasMany(get_class($this), 'field1', 'field2', 'parent');
+//        $referencedModel = $model->ref('parent');
+//        $this->assertTrue($referencedModel instanceof Model_TestModel, 'Return a wrong model type');
+//        $expected = array(
+//            array('field1', '=', null)
+//        );
+//        $this->assertEquals($expected, $referencedModel->conditions);
+//    }
+//    function atk4_test_HasManyRefLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasMany(get_class($this), 'field1', 'field2', 'parent');
+//        $model->load('value2.1');
+//        $referencedModel = $model->ref('parent');
+//        $this->assertTrue($referencedModel instanceof Model_TestModel, 'Return a wrong model type');
+//        $expected = array(
+//            array('field1', '=', $model->get('field2'))
+//        );
+//        $this->assertEquals($expected, $referencedModel->conditions);
+//    }
+//    function atk4_test_HasOne() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasOne(get_class($this));
+//        $expected = array(
+//            'model_testmodel_id' => get_class($model)
+//        );
+//        $this->assertEquals($expected, $model->_references);
+//    }
+//    function atk4_test_HasOneAllParameter() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $model->hasOne(get_class($this), 'field2');
+//        $expected = array(
+//            'field2' => get_class($model)
+//        );
+//        $this->assertEquals($expected, $model->_references);
+//    }
+//    function atk4_test_HasOneNewField() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $field = $model->hasOne(get_class($this), 'field4');
+//        $this->assertTrue($model->getElement('field4') instanceof Field_Base, 'Model doesn\'t create new field');
+//        $this->assertTrue(is_string($field->getModel()), 'Model field hasn\'t model');
+//    }
+//    function atk4_test_HasOneRefNoLoaded() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $field = $model->hasOne(get_class($this), 'parent_id');
+//        $referencedModel = $model->ref('parent_id');
+//        $this->assertTrue($referencedModel instanceof Model_TestModel, 'Returned a wrong model type');
+//        $this->assertFalse($referencedModel->loaded(), 'Expected a unloaded model');
+//    }
+//    function atk4_test_HasOneRefNoLoaded2() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $field = $model->hasOne(get_class($this), 'parent_id');
+//        $model->set('parent_id', 'value1.3');
+//        $data = self::$exampleData;
+//        $model->addHook('beforeRefLoad', function($model, $refModel, $id) use ($data) {
+//            $refModel->setControllerSource($data);
+//        });
+//        $referencedModel = $model->ref('parent_id');
+//        $this->assertTrue($referencedModel instanceof Model_TestModel, 'Returned a wrong model type');
+//        $this->assertTrue($referencedModel->loaded(), 'Expected a unloaded model');
+//        $this->assertEquals('value1.3', $referencedModel->id);
+//    }
+//    function atk4_test_RefFail() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $e = $this->assertThrowException('BaseException', $model, 'ref', array('UnexistentField'));
+//        $this->assertEquals($model, $e->more_info['model']);
+//        $this->assertEquals('UnexistentField', $e->more_info['ref']);
+//        $this->assertFalse($model->hasElement('UnexistentField'), 'Model have UnexistentField');
+//    }
+//    function atk4_test_HasOneForeignField() {
+//        $model = $this->add(get_class($this));
+//        $data = self::$exampleData;
+//        $data[0]['parent_id'] = 'value1.2';
+//        $data[1]['parent_id'] = 'value1.3';
+//        $data[2]['parent_id'] = 'value1.1';
+//        $model->setControllerSource($data);
+//        $hasOneField = $model->hasOne(get_class($this), 'parent_id');
+//        $hasOneField->addHook('beforeForeignLoad', function($field, $model, $id) use ($data) {
+//            $model->setControllerSource($data);
+//        });
+//        $model->load('value1.1');
+//        $this->assertEquals($data[0]['parent_id'], $model->get('parent_id'));
+//        $this->assertEquals($data[1]['field3'], $model->get('parent'));
+//    }
+//    function atk4_test_GetRows() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $rows = $model->getRows();
+//        foreach($model as $n => $row) {
+//            $this->assertEquals($row, $rows[$n]);
+//        }
+//    }
+//    function atk4_test_GetRowsWithCalculated() {
+//        $model = $this->add('Model_ComplexModel');
+//        $rows = $model->getRows();
+//        $expected = Model_ComplexModel::$exampleSource;
+//        foreach($model as $n => $row) {
+//            $this->assertTrue(isset($rows[$n]['parent']), 'Calculated field not valued');
+//            unset($rows[$n]['parent']);
+//            $this->assertEquals($expected[$n], $rows[$n]);
+//        }
+//    }
+//    function atk4_test_GetRowsWithArgument() {
+//        $model = $this->add(get_class($this));
+//        $model->setControllerSource(self::$exampleData);
+//        $rows = $model->getRows(array('field1', 'field2'));
+//        foreach($rows as $row) {
+//            $this->assertTrue(isset($row['field1']), 'Expected a valued field1');
+//            $this->assertTrue(isset($row['field2']), 'Expected a valued field2');
+//            $this->assertFalse(array_key_exists('field3', $row), 'field3 must be not returned');
+//        }
+//    }
+//    function atk4_test_Clone() {
+//        $model = $this->add('Model_ComplexModel');
+//        $model->addCondition('id', '>', 4);
+//        $model->setOrder('title');
+//        $model->setLimit(2, 4);
+//        $clonedModel = clone $model;
+//        $model->addField('field4');
+//        $model->addCondition('id', '>', 6);
+//        $model->setOrder('description');
+//        $model->setLimit(1, 3);
+//        $this->assertEquals($model->owner, $clonedModel->owner);
+//        $this->assertEquals(1, count($clonedModel->conditions));
+//        $this->assertEquals(array('title', null), $clonedModel->order);
+//        $this->assertEquals(array(2, 4), $clonedModel->limit);
+//        $this->assertFalse($clonedModel->hasElement('field4'), 'Copied a field addded after the cloning...');
+//        $this->assertEquals(array_keys($model->_expressions), array_keys($clonedModel->_expressions));
+//    }
+//    function atk4_test_Reset() {
+//        $model = $this->add('Model_ComplexModel');
+//        $model->addCondition('id', '>', 4);
+//        $model->setOrder('title');
+//        $model->setLimit(2, 4);
+//        $model->loadAny();
+//        $model->reset();
+//        $this->assertEmpty($model->conditions);
+//        $this->assertEmpty($model->order);
+//        $this->assertEmpty($model->limit);
+//        $this->assertEmpty($model->data);
+//        $this->assertEmpty($model->_table);
+//        $this->assertEmpty($model->id);
+//    }
+//    function atk4_test_ComplexExample() {
+//        $model = $this->add('Model_ComplexModel');
+//        $model->load(1);
+//        $this->assertTrue($model->loaded(), 'Model must be loaded');
+//        $this->assertEquals(6, $model->get('parent_id'));
+//        $this->assertEquals('Title6', $model->get('parent'));
+//        $parentModel = $model->ref('parent_id');
+//        $this->assertTrue($parentModel->loaded(), 'Model must be loaded');
+//        $this->assertEquals(6, $parentModel->id);
+//        $this->assertEquals($model->get('parent_id'), $parentModel->id);
+//        $this->assertEquals('Title6', $parentModel->get('title'));
+//        $this->assertEquals(5, $parentModel->get('parent_id'));
+//        $this->assertEquals('Title5', $parentModel->get('parent'));
+//        $gFatherModel = $model->ref('parent_id/parent_id');
+//        $this->assertTrue($gFatherModel->loaded(), 'Model must be loaded');
+//        $this->assertEquals(5, $gFatherModel->id);
+//        $this->assertEquals($parentModel->get('parent_id'), $gFatherModel->id);
+//        $this->assertEquals('Title5', $gFatherModel->get('title'));
+//        $this->assertEquals(4, $gFatherModel->get('parent_id'));
+//        $this->assertEquals('Title4', $gFatherModel->get('parent'));
+//        $childModel = $gFatherModel->ref('Model_ComplexModel');
+//        $this->assertFalse($childModel->loaded(), 'Model must be not loaded');
+//        // The Controller_DataFoo controller don't really load the real row
+//        $childModel->loadAny();
+//        $this->assertEquals(2, $childModel->id);
+//        $expected = array(
+//            array('parent_id', '=', $gFatherModel->id)
+//        );
+//        $this->assertEquals($expected, $childModel->conditions);
+//        $this->assertThrowException('BaseException', $gFatherModel, 'ref', array('Model_ComplexModel/Model_ComplexModel'));
+//    }
+    static private $exampleData = array(
+        array('field1' => 'value1.1', 'field2' => 'value2.1', 'field3' => 'value3.1'),
+        array('field1' => 'value1.2', 'field2' => 'value2.2', 'field3' => 'value3.2'),
+        array('field1' => 'value1.3', 'field2' => 'value2.3', 'field3' => 'value3.3'),
+    );
+
 }

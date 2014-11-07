@@ -1214,7 +1214,7 @@ abstract class AbstractObject
     public function testPrivateMethod( $instance, $name, $param_array=array() ) {
         $class = new ReflectionClass($instance);
         $method = $class->getMethod($name);
-        $method->setAccessible(true);
+        if ($method->isPrivate() || $method->isProtected()) $method->setAccessible(true);
         return $method->invokeArgs($instance, $param_array);
     }
 
@@ -1234,8 +1234,8 @@ abstract class AbstractObject
 
     // Asserts  ~~~~~~~~~~~
 
-    protected function fails($msg) {
-        throw new Exception($msg);
+    protected function fails($msg,$ex_type='Exception') {
+        throw new $ex_type($msg);
     }
 
     public function assertArrayEquals($actual, $expected) {
@@ -1289,6 +1289,18 @@ abstract class AbstractObject
     public function assertNotEquals($expected, $actual) {
         if ($expected === $actual)
             $this->fails("assertNotEquals: '" . print_r($expected, true) . "' given: '" . print_r($actual, true) . "'");
+    }
+    public function assertThrowException($exceptionType, $obj, $method, $args=array()) {
+        try {
+            //echo "pre call_user_func_array(array($obj, $method), $args) ";
+            //call_user_func_array(array($obj, $method), $args);
+            $this->testPrivateMethod($obj, $method, $args);
+        } catch (Exception $e) {
+            if (!($e instanceof $exceptionType))
+                $this->fails($exceptionType . ' expected. Found: ' . get_class($e) . ': ' . $e->getMessage());
+            return $e;
+        }
+        $this->fails($exceptionType . ' expected. Not thrown',$exceptionType);
     }
     // TESTING FUNCTIONS ---------------------------------------------------
 
