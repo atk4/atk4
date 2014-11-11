@@ -58,6 +58,7 @@ class View_Popover extends View {
 // Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
 // TODO: merge JS chains by putting them into combined chain.
 function array_extend($a, $b) {
+    if (!$b) return $a;
     foreach($b as $k=>$v) {
         if( is_array($v) ) {
             if( !isset($a[$k]) ) {
