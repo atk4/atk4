@@ -333,7 +333,7 @@ class Logger extends AbstractController {
                 echo $red.$e->getMessage().$end."\n";
             }
 
-            exit;
+            exit($e->getCode()?:255);
         }
 
         if(method_exists($e,'getHTML')){
