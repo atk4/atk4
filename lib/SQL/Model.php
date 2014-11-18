@@ -375,7 +375,7 @@ class SQL_Model extends Model implements Serializable {
             $value = $field->getBooleanValue($value);
         }
 
-        if ($cond === '=') {
+        if ($cond === '=' && !is_array($value)) {
             $field->defaultValue($value)->system(true)->editable(false);
         }
 
