@@ -181,10 +181,6 @@ class View_CRUD extends View
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
-
-        if ($this->allow_add) {
-            $this->add_button = $this->grid->addButton('Add');
-        }
     }
 
     /**
@@ -412,6 +408,7 @@ class View_CRUD extends View
         } elseif ($this->isEditing()) return;
 
         // Configure Add Button on Grid and JS
+        $this->add_button = $this->grid->addButton('Add');
         $this->add_button->js('click')->univ()
             ->frameURL(
                 $this->api->_($this->entity_name===false
