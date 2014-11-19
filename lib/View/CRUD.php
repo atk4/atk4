@@ -258,6 +258,8 @@ class View_CRUD extends View
             if ($this->configureAdd($fields)) {
                 return $model;
             }
+        } else {
+            $this->add_button->destroy();
         }
 
         if ($this->allow_edit) {
