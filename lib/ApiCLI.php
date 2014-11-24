@@ -312,12 +312,47 @@ class ApiCLI extends AbstractView
         }
         return $this->logger;
     }
-    /** Is executed if exception is raised during execution. Re-define to have custom handling of exceptions system-wide */
-    function caughtException($e){
-        $this->hook('caught-exception',array($e));
-        echo get_class($e),": ".$e->getMessage();
-        exit;
+
+    /**
+     * Is executed if exception is raised during execution.
+     * Re-define to have custom handling of exceptions system-wide
+     */
+    function caughtException($e)
+    {
+        $this->hook('caught-exception', array($e));
+        echo get_class($e), ": ".$e->getMessage().PHP_EOL;
+        if (!empty($e->more_info))
+        {
+            $max_len = max(array_map('strlen', array_keys($e->more_info))) + 2;
+            foreach ($e->more_info as $key => $val)
+            {
+                $key = str_pad($key.':', $max_len, ' ', STR_PAD_RIGHT);
+                echo "  $key $val".PHP_EOL;
+            }
+    	}
+	    if(isset($e->my_backtrace))
+    	{
+            echo PHP_EOL."Backtrace:".PHP_EOL;
+            $key_len = max(array_map('strlen', array_keys($e->my_backtrace)));
+            $line_no_len = max(array_map(function($i)
+                {
+                    return strlen($i['line']);
+                }, $e->my_backtrace));
+            foreach ($e->my_backtrace as $key => $val)
+            {
+                $key = str_pad($key, $key_len, ' ', STR_PAD_LEFT);
+                $line_no = str_pad($val['line'], $line_no_len, ' ', STR_PAD_LEFT);
+                echo "$key: $line_no -> ".$val['file'].PHP_EOL;
+            }
+        }
+        $errCode = intval($e->getCode()); // May not be an integer
+        if($errCode>0){ // if getCode doesn't return an integer maybe this will be zero?
+        	exit($errCode);
+        }else{
+        	exit(1); // indicates that execution was not successful
+        }
     }
+    
     /** @obsolete */
     function outputWarning($msg,$shift=0){
         if($this->hook('output-warning',array($msg,$shift)))return true;
