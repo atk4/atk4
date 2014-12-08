@@ -172,8 +172,8 @@ class View_CRUD extends View
                 ->virtual_page
                 ->getPage()
                 ->add($this->form_class, $this->form_options);
-                
-                return;
+
+            return;
         }
 
         $this->grid = $this->add($this->grid_class, $this->grid_options);
