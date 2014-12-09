@@ -153,22 +153,21 @@ class View_CRUD extends View
         $this->virtual_page = $this->add('VirtualPage', array(
             'frame_options'=>$this->frame_options
         ));
-
+        $page_mode = $this->virtual_page->isActive();
         $name_id = $this->virtual_page->name.'_id';
 
-        /*
+        /* @obsolete 'edit' parameter
         if ($_GET['edit'] && !isset($_GET[$name_id])) {
             $_GET[$name_id] = $_GET['edit'];
         }
          */
-
 
         if (isset($_GET[$name_id])) {
             $this->api->stickyGET($name_id);
             $this->id = $_GET[$name_id];
         }
 
-        if ($this->isEditing()) {
+        if ($page_mode=='edit' || $page_mode=='add') {
             $this->form = $this
                 ->virtual_page
                 ->getPage()
@@ -181,10 +180,6 @@ class View_CRUD extends View
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
-
-        if ($this->allow_add) {
-            $this->add_button = $this->grid->addButton('Add');
-        }
     }
 
     /**
@@ -258,8 +253,6 @@ class View_CRUD extends View
             if ($this->configureAdd($fields)) {
                 return $model;
             }
-        } elseif (isset($this->add_button)) {
-            $this->add_button->destroy();
         }
 
         if ($this->allow_edit) {
@@ -414,6 +407,7 @@ class View_CRUD extends View
         } elseif ($this->isEditing()) return;
 
         // Configure Add Button on Grid and JS
+        $this->add_button = $this->grid->addButton('Add');
         $this->add_button->js('click')->univ()
             ->frameURL(
                 $this->api->_($this->entity_name===false
