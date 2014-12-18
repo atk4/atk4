@@ -145,7 +145,7 @@ $.each({
         }
     },
     successMessage: function(msg){
-        var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000; right:10px; display:none">\
+        var html=$('<div class="atk-layout-row" style="position: relative; z-index: 1000; right:10px;  display:none">\
     <div class="atk-swatch-green atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-info"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
       <div class="atk-cell"><a href="javascript: void()" class="do-close"><i class="icon-cancel"></i></a></div>\
@@ -155,7 +155,7 @@ $.each({
         setTimeout(function() { html.fadeOut();},5000);
     },
     errorMessage: function(msg){
-        var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000; right: 10px; display:none">\
+        var html=$('<div class="atk-layout-row" style="position: relative; z-index: 1000; right: 10px; display:none">\
     <div class="atk-swatch-red atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-attention"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
       <div class="atk-cell"><a href="javascript: void()" class="do-close"><i class="icon-cancel"></i></a></div>\
