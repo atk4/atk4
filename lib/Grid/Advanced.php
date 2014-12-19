@@ -693,6 +693,12 @@ class Grid_Advanced extends Grid_Basic
      */
     function format_expander($field, $column)
     {
+
+        $class = $this->columns[$field]['button_class'].' button_'.$field;
+        $icon = isset($this->columns[$field]['icon'])
+                    ? $this->columns[$field]['icon']
+                    : '';
+                    
         if (!@$this->current_row[$field]) {
             $this->current_row[$field] = $column['descr'];
         }
@@ -706,7 +712,7 @@ class Grid_Advanced extends Grid_Basic
         $class = $key . 'expander';
 
         @$this->current_row_html[$field] =
-            '<input type="checkbox" '.
+            '<button type="button" '.
                 'class="'.$class.'" '.
                 'id="'.$id.'" '.
                 'rel="'.$this->api->url(
@@ -720,8 +726,9 @@ class Grid_Advanced extends Grid_Basic
                         $this->columns[$field]['refid'].'_id' => $this->model->id
                     )
                 ).'" '.
-            '/>'.
-            '<label for="'.$id.'">' . $this->current_row[$field] . '</label>';
+            '>'.
+            $this->current_row[$field] . 
+            '</button>';
     }
     // }}}
 
