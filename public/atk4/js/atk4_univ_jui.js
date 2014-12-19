@@ -162,6 +162,7 @@ $.each({
     </div>\
   </div>');
         this.message(msg,html);
+        setTimeout(function() { html.fadeOut();},5000);
     },
     closeDialog: function(){
         var r=this.getFrameOpener();
