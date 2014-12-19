@@ -228,7 +228,11 @@ class PathFinder extends AbstractController
         }
 
         // Add sandbox if it is found
-        $this->addSandbox();
+        try{
+          $this->addSandbox();
+        }catch(ErrorException $e){
+
+        }
     }
 
     public function addSandbox()
