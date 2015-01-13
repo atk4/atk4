@@ -106,9 +106,6 @@ class Paginator_Basic extends CompleteLister {
         $this->cur_page=floor($this->skip / $this->ipp) +1;
         $this->total_pages = ceil($this->found_rows / $this->ipp);
 
-        // no need for paginator if there is only one page
-        if($this->total_pages<=1)return $this->destroy();
-        
         if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
             if($this->memorize){
@@ -125,6 +122,9 @@ class Paginator_Basic extends CompleteLister {
             }
         }
 
+        // no need for paginator if there is only one page
+        if($this->total_pages<=1)return $this->destroy();
+        
         if($this->cur_page>1){
             $this->add('View',null,'prev')
                 ->setElement('a')
