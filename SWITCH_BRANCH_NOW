@@ -1,0 +1,25 @@
+Hi there, Agile Toolkit User
+
+
+Our "master" branch is transitioning from 4.2 to 4.3 version.
+
+
+Because I don't want to confuse you, I have temporarily left
+"master" branch in this VOID space. Now you can decide which version
+of Agile Toolkit you are willing to use.
+
+1. If you are willing to use 4.2, then switch to branch "4.2":
+
+  git fetch --all
+  git checkout 4.2
+
+2. If you want to work on a new project using 4.3 version, visit
+
+  http://www4.agiletoolkit.org/
+
+and download package from there. (there is also 4.3 branch)
+
+
+
+Romans
+(author of Agile Toolkit)
