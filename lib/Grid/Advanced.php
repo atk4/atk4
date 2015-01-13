@@ -755,7 +755,7 @@ class Grid_Advanced extends Grid_Basic
      *
      * @return void
      */
-    function init_real($field)
+    function init_float($field)
     {
         @$this->columns[$field]['thparam'] .= ' style="text-align: right"';
     }
@@ -767,7 +767,7 @@ class Grid_Advanced extends Grid_Basic
      *
      * @return void
      */
-    function format_real($field)
+    function format_float($field)
     {
         $precision = 2;
         $m = (float) $this->current_row[$field];
@@ -777,6 +777,16 @@ class Grid_Advanced extends Grid_Basic
                 : number_format($m, $precision);
         $this->setTDParam($field, 'align', 'right');
         $this->setTDParam($field, 'style/white-space', 'nowrap');
+    }
+
+    function init_real($field)
+    {
+        return $this->init_float($field);
+    }
+
+    function format_real($field)
+    {
+        return $this->format_float($field);
     }
 
     /**
@@ -838,6 +848,19 @@ class Grid_Advanced extends Grid_Basic
         } else {
             $this->current_row_html[$field] = '';
         }
+    }
+
+    /**
+     * Format field as object
+     *
+     * @param string $field
+     *
+     * @return void
+     */
+    function format_object($field)
+    {
+        $this->current_row[$field] = (string)$this->current_row[$field];
+        return $this->format_shorttext($field);
     }
 
     /**
@@ -987,7 +1010,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row[$field] = $text;
 
         $this->setTDParam($field, 'title',
-            $this->api->encodeHtmlChars($this->current_row[$field.'_original']));
+            $this->api->encodeHtmlChars('huj = "'.$this->current_row[$field.'_original'],ENT_QUOTES));
     }
 
     /**
