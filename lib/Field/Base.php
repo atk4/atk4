@@ -5,7 +5,7 @@ class Field_Base extends AbstractObject {
 
     protected $table=null;
     public $actual_field=null;
-    
+
     public $type='string';
     public $readonly=false;
     public $system=false;
@@ -260,8 +260,8 @@ class Field_Base extends AbstractObject {
      * You might be using add-ons or might have created your own field class.
      * If you would like to use it to present the field, use display(). If you
      * specify string it will be used by all views, otherwise specify it as
-     * associtive array: 
-     * 
+     * associtive array:
+     *
      *     $field->display(array('form'=>'line','grid'=>'button'));
      *
      * @param mixed $t new value
@@ -277,7 +277,7 @@ class Field_Base extends AbstractObject {
      * In most cases $model['field'] would match "field" inside a database. In
      * some cases, however, you would want to use different database field. This
      * can happen when you join multiple tables and 'field' appears in multiple
-     * tables. 
+     * tables.
      *
      * You can specify actual field when you declare a field within a model:
      *
@@ -408,7 +408,7 @@ class Field_Base extends AbstractObject {
     }
 
     /**
-     * What to display when nothing is selected or entered? This will be 
+     * What to display when nothing is selected or entered? This will be
      * displayed on a drop-down when no value is selected: ("Choose ..")
      * if you are using this setting with a text field it will set a
      * placeholder HTML property.
@@ -489,4 +489,25 @@ class Field_Base extends AbstractObject {
         return $value;
     }
 
+    /** Converts true/false into boolean representation according to the "enum" */
+    function getBooleanValue($value){
+        if($value===null)return null;
+        if($this->listData){
+            reset($this->listData);
+            list($junk,$yes_value)=each($this->listData);
+            @list($junk,$no_value)=each($this->listData);
+            if($no_value===null)$no_value='';
+            /* not to convert N to Y */
+            if ($yes_value == $value){
+                return $yes_value;
+            }
+            if ($no_value == $value){
+                return $no_value;
+            }
+        }else{
+            $yes_value=1;$no_value=0;
+        }
+
+        return $value?$yes_value:$no_value;
+    }
 }
