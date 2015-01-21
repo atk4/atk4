@@ -131,7 +131,7 @@ For most web frameworks this is as far as you get, but with Agile Toolkit this i
 
 ## License
 
-Agile Toolkit is distributed under Affero GNU Public License for personal, private and open-source projects. For commercial projects you should purchase an inexpensive life-time license.
+Agile Toolkit is distributed under MIT License.
 
 ** Your support will ensure the longevity of Agile Toolkit **
 
