@@ -698,7 +698,9 @@ class Grid_Advanced extends Grid_Basic
         $icon = isset($this->columns[$field]['icon'])
                     ? $this->columns[$field]['icon']
                     : '';
-                    
+        if($icon)
+            $icon = "<i class='icon-$icon'></i> ";
+
         if (!@$this->current_row[$field]) {
             $this->current_row[$field] = $column['descr'];
         }
@@ -727,7 +729,7 @@ class Grid_Advanced extends Grid_Basic
                     )
                 ).'" '.
             '>'.
-            $this->current_row[$field] . 
+            $icon. (!isset($this->columns[$field]['icon_only'])? $this->current_row[$field]:'') .
             '</button>';
     }
     // }}}
