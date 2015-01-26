@@ -30,7 +30,11 @@ class Paginator_Basic extends CompleteLister {
 
     function init(){
         parent::init();
-        if(!$this->skip_var)$this->skip_var=$this->name.'_skip';
+        
+        if (!$this->skip_var) {
+            $this->skip_var = $this->name . '_skip';
+        }
+        $this->skip_var = $this->_shorten($this->skip_var);
     }
 
     /** Set number of items displayed per page */
