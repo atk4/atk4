@@ -78,7 +78,7 @@ class View_CRUD extends View
      *
      * $this->add('CRUD', array('allow_add'=>false')); // to disable
      */
-    protected $allow_add=true;
+    public $allow_add=true;
 
     /**
      * Grid will contain "EDIT" button for each row allowing usir to edit
@@ -86,7 +86,7 @@ class View_CRUD extends View
      *
      * $this->add('CRUD', array('allow_edit'=>false')); // to disable
      */
-    protected $allow_edit=true;
+    public $allow_edit=true;
 
     /**
      * Grid will contain a "DELETE" button for each row. If you don't want
@@ -94,7 +94,7 @@ class View_CRUD extends View
      *
      * $this->add('CRUD', array('allow_del'=>false')); // to disable
      */
-    protected $allow_del=true;
+    public $allow_del=true;
 
     /**
      * For ->setModel('User'), your add button would contain "Add User". If
@@ -269,6 +269,8 @@ class View_CRUD extends View
             if ($this->configureAdd($fields)) {
                 return $model;
             }
+        } elseif (isset($this->add_button)) {
+            $this->add_button->destroy();
         }
 
         if ($this->allow_edit) {

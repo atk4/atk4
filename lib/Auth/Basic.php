@@ -75,7 +75,16 @@ class Auth_Basic extends AbstractController {
         $this->info=$this->recall('info',false);
 
     }
-    /** Create an array model and specify it for authentication as a quick way to get authentication working */
+
+    /**
+     * Configure this Auth controller with a generic Model based on static
+     * collection of user/password combinations. Use this method if you
+     * only want one or few accounts to access the system.
+     *
+     * @param  mixed $user Either string username or associative array with data
+     * @param  mixed $pass Password if username is string
+     * @return $this
+     */
     function allow($user,$pass=null){
         // creates fictional model to allow specified user and password
         // TODO: test this
@@ -89,7 +98,17 @@ class Auth_Basic extends AbstractController {
         $this->setModel($m);
         return $this;
     }
-    /** Specify user model */
+    /**
+     * Associate model with authentication class. Username / password
+     * check will be performed against the model in the following steps:
+     * Model will attempt to load record where login_field matches
+     * specified. Password is then loaded and verified using configured
+     * encryption method.
+     *
+     * @param [type] $model          [description]
+     * @param string $login_field    [description]
+     * @param string $password_field [description]
+     */
     function setModel($model,$login_field='email',$password_field='password'){
         parent::setModel($model);
         $this->login_field=$login_field;
@@ -138,8 +157,11 @@ class Auth_Basic extends AbstractController {
 
         return $this->model;
     }
-    /** Adds a hook to specified model which will encrypt password before save. Do not call
-     * on api->auth->model, because that model already has the hook */
+    /**
+     * Adds a hook to specified model which will encrypt password before save.
+     * This method will be applied on $this->model, so you should not call
+     * it manually. You can call it on a fresh model, however.
+     */
     function addEncryptionHook($model){
         // If model is saved, encrypt password
         $t=$this;
@@ -167,8 +189,10 @@ class Auth_Basic extends AbstractController {
     function getAll(){
         return $this->info;
     }
-    /** Specify page or array of pages which will exclude authentication. Add your registration page here
-     * or page containing terms and conditions */
+    /**
+     * Specify page or array of pages which will exclude authentication. Add your registration page here
+     * or page containing terms and conditions
+     */
     function allowPage($page){
         if(is_array($page)){
             foreach($page as $p)$this->allowPage($p);
@@ -180,12 +204,31 @@ class Auth_Basic extends AbstractController {
     function getAllowedPages(){
         return $this->allowed_pages;
     }
+    /**
+     * Verifies if the specified page is allowed to be accessed without
+     * authentication.
+     *
+     * @param  [type]  $page [description]
+     * @return boolean       [description]
+     */
     function isPageAllowed($page){
         if($this->hook('isPageAllowed',array($page))===true)return true;
         return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
     }
-    /** Specifies how password will be encrypted when stored. Some values are "sha256/salt", "md5", "rot13". If you
-     * don't call this, passwords will be stored in plain-text */
+
+    /**
+     * Specifies how password will be encrypted when stored. It's recommended
+     * that you do not specify encryption method, in which case a built-in
+     * password_hash() will be used, which is defined by PHP.
+     *
+     * Some other values are "sha256/salt", "md5", "rot13". Note that
+     * if your application is already using 'md5' or 'sha1', you can
+     * remove the argument entirely and your user passwords will keep
+     * working and wil automatically be "upgraded" to password_hash
+     * when used.
+     *
+     * If you are having trouble with authentication, use auth->debug()
+     */
     function usePasswordEncryption($method='php'){
         $this->password_encryption=$method;
         return $this;
@@ -214,12 +257,14 @@ class Auth_Basic extends AbstractController {
             default: throw $this->exception('No such encryption method')->addMoreInfo('encryption',$this->password_encryption);
         }
     }
-    /** Call this function to perform a check for logged in user. This will also display a login-form
+    /**
+     * Call this function to perform a check for logged in user. This will also display a login-form
      * and will verify user's credential. If you want to handle log-in form on your own, use
      * auth->isLoggedIn() to check and redirect user to a login page.
      *
      * check() returns true if user have just logged in and will return "null" for requests when user
-     * continues to use his session. Use that to perform some calculation on log-in */
+     * continues to use his session. Use that to perform some calculation on log-in
+     */
     function check(){
 
         if($this->isPageAllowed($this->api->page))return null;      // no authentication is required
@@ -264,14 +309,14 @@ class Auth_Basic extends AbstractController {
         $this->info[$key]=$val;
         return $this;
     }
-    /** Returns if user is authenticated or not. For more info on user see auth->model */
+    /**
+      * This function determines - if user is already logged in or not. It does it by
+      * looking at $this->info, which was loaded during init() from session.
+      */
     function isLoggedIn(){
-        /*
-         * This function determines - if user is already logged in or not. It does it by
-         * looking at $this->info, which was loaded during init() from session.
-         */
         return $this->model->loaded();
     }
+
     /**
      * This function verifies credibility of supplied authenication data.
      * It will search based on user and verify the password. It's also
@@ -421,7 +466,9 @@ class Auth_Basic extends AbstractController {
         $this->forget('url');$this->forget('args');
         return $url;
     }
-    /** Rederect to page user tried to access before authentication was requested */
+    /**
+     * Rederect to page user tried to access before authentication was requested
+     */
     function loginRedirect(){
         $this->debug("to Index");
         $this->api->redirect($this->getURL());
@@ -435,7 +482,9 @@ class Auth_Basic extends AbstractController {
         $this->hook('loggedIn',array($user,$pass));
         $this->api->redirect($this->getURL());
     }
-    /** Store model in session data so that it can be retrieved faster */
+    /**
+     * Store model in session data so that it can be retrieved faster
+     */
     function memorizeModel(){
         if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
 
@@ -455,13 +504,17 @@ class Auth_Basic extends AbstractController {
 
         $this->hook('login');
     }
-    /** Manually Log in as specified users. Will not perform password check or redirect */
+    /**
+     * Manually Log in as specified users. Will not perform password check or redirect
+     */
     function loginByID($id){
         $this->model->load($id);
         $this->memorizeModel();
         return $this;
     }
-    /** Manually Log in with specified condition */
+    /**
+     * Manually Log in with specified condition
+     */
     function loginBy($field,$value){
         $this->model->tryLoadBy($field,$value);
         $this->memorizeModel();

@@ -764,7 +764,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         return $this;
     }
 
-    /** Unloads then loads current record back. Use this if you have added new fields */
+    /**
+     * Unloads then loads current record back. Use this if you have added new fields
+     */
     public function reload()
     {
         return $this->load($this->id);

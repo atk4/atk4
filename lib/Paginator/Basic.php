@@ -30,7 +30,11 @@ class Paginator_Basic extends CompleteLister {
 
     function init(){
         parent::init();
-        if(!$this->skip_var)$this->skip_var=$this->name.'_skip';
+        
+        if (!$this->skip_var) {
+            $this->skip_var = $this->name . '_skip';
+        }
+        $this->skip_var = $this->_shorten($this->skip_var);
     }
 
     /** Set number of items displayed per page */
@@ -106,9 +110,6 @@ class Paginator_Basic extends CompleteLister {
         $this->cur_page=floor($this->skip / $this->ipp) +1;
         $this->total_pages = ceil($this->found_rows / $this->ipp);
 
-        // no need for paginator if there is only one page
-        if($this->total_pages<=1)return $this->destroy();
-
         if($this->cur_page>$this->total_pages || ($this->cur_page==1 && $this->skip!=0)){
             $this->cur_page=1;
             if($this->memorize){
@@ -125,22 +126,10 @@ class Paginator_Basic extends CompleteLister {
             }
         }
 
+        // no need for paginator if there is only one page
+        if($this->total_pages<=1)return $this->destroy();
 
-        // generate source for Paginator Lister (pages, links, labels etc.)
-        $data=array();
-
-
-        /*
         if($this->cur_page>1){
-
-            $data[]=array(
-                'href'=>$this->api->url($this->base_page,array($this->skip_var=>$pn=($p-1)*$this->ipp)),
-                'pn'=>$pn,
-                'cur'=>$p==$this->cur_page?$this->template->get('cur'):'',
-                'label'=>'«'
-            );
-
-
             $this->add('View',null,'prev')
                 ->setElement('a')
                 ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
@@ -149,7 +138,7 @@ class Paginator_Basic extends CompleteLister {
                 ->setAttr('data-skip',$pn)
                 ->set('<')
                 ;
-        }else $first=null;
+        }
 
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
@@ -198,14 +187,19 @@ class Paginator_Basic extends CompleteLister {
             }
         }
 
-         */
+        // generate source for Paginator Lister (pages, links, labels etc.)
+        $data=array();
 
+        //setting cur as array seems not working in atk4.3. String is working
+        $tplcur = $this->template->get('cur');
+        $tplcur = (isset($tplcur[0])) ? $tplcur[0] : '';
 
-        foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p){
-            $data[]=array(
+        foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p)
+        {
+        	$data[]=array(
                 'href'=>$this->api->url($this->base_page,array($this->skip_var=>$pn=($p-1)*$this->ipp)),
                 'pn'=>$pn,
-                'cur'=>$p==$this->cur_page?$this->template->get('cur'):'',
+                'cur'=>$p==$this->cur_page?$tplcur:'',
                 'label'=>$p
             );
         }
