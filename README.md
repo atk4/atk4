@@ -45,7 +45,7 @@ Source:
             ->execute();
     }
 
-Congratulations. You have now created a fully AJAX / PHP form fully protected from SQL / HTML / JS injection based on jQuery UI theme and Bootstrap-compatible 12-column flexible grid system.
+Congratulations. You have now created a fully AJAX / PHP form, fully protected from SQL / HTML / JS injection, based on jQuery UI theme and Bootstrap-compatible 12-column flexible grid system.
 
 Mini-Tutorial
 ----
@@ -126,8 +126,8 @@ For most web frameworks this is as far as you get, but with Agile Toolkit this i
 ## Further Reading
 
  * [http://agiletoolkit.org/](http://agiletoolkit.org) - Official website
- * [http://stackoverflow.com/questions/tagged/atk4?sort=newest&pagesize=50](#atk4 on Stack Overflow) - Questions and Answers
- * [https://groups.google.com/forum/?fromgroups#!forum/agile-toolkit-devel](Discussion group on Google Groups)
+ * [#atk4 on Stack Overflow](http://stackoverflow.com/questions/tagged/atk4?sort=newest&pagesize=50) - Questions and Answers
+ * [Discussion group on Google Groups](https://groups.google.com/forum/?fromgroups#!forum/agile-toolkit-devel)
 
 ## License
 
