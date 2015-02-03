@@ -184,16 +184,17 @@ class PathFinder extends AbstractController
 
         if ($this->api->hasMethod('addSharedLocations')) {
             $this->api->addSharedLocations($this, $base_directory);
+        }else{
+          // Add shared locations
+          if (is_dir(dirname($base_directory).'/shared')) {
+              $this->shared_location=$this->addLocation(array(
+                  'php'=>'lib',
+                  'addons'=>'addons',
+                  'template'=>$templates_folder,
+              ))->setBasePath(dirname($base_directory).'/shared');
+          }
         }
 
-        // Add shared locations
-        if (is_dir(dirname($base_directory).'/shared')) {
-            $this->shared_location=$this->addLocation(array(
-                'php'=>'lib',
-                'addons'=>'addons',
-                'template'=>$templates_folder,
-            ))->setBasePath(dirname($base_directory).'/shared');
-        }
 
         $atk_base_path=dirname(dirname(__FILE__));
 
@@ -227,7 +228,11 @@ class PathFinder extends AbstractController
         }
 
         // Add sandbox if it is found
-        $this->addSandbox();
+        try{
+          $this->addSandbox();
+        }catch(ErrorException $e){
+
+        }
     }
 
     public function addSandbox()

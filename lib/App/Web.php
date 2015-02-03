@@ -303,7 +303,7 @@ class App_Web extends App_CLI {
         }catch(Exception $e){
             if($e instanceof Exception_Stop){
                 $this->hook('cut-output');
-                echo $e->result;
+                echo @$e->result;
                 $this->hook('post-render-output');
                 return;
             }
