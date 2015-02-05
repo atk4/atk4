@@ -5,6 +5,7 @@ class ApiCLI extends AbstractView {
 	public $logger=null;	// TODO: protect this
 	protected $pathfinder_class='PathFinder';
 	public $skin='jui';	// for PathFinder not to produce warnings
+	public $url_object_count=0;
 
 
 	function __construct($realm=null){
