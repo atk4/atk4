@@ -8,8 +8,8 @@ function lowlevel_error($error,$lev=null){
 	 * This function will be called for low level fatal errors
 	 */
 	echo "<font color=red>Low level error:</font> $error in <b>".caller_lookup()."()</b><br><br>Backtrace:<pre>";
-	$backtrace="backtrace disabled, it cashes browser";
-	//$backtrace=print_r(debug_backtrace(),true);
+	//$backtrace="backtrace disabled, it cashes browser";
+	$backtrace=print_r(debug_backtrace(),true);
 	// restricting output by X symbols
 	$x=4096; //4k
 	if(strlen($backtrace)>$x)$backtrace=substr($backtrace,0,$x).
@@ -31,7 +31,8 @@ function error_handler($errno, $errstr, $errfile, $errline){
 					E_USER_ERROR          => "User Error",
 					E_USER_WARNING        => "User Warning",
 					E_USER_NOTICE         => "User Notice",
-					4096                  => "Runtime Notice"
+					4096                  => "Runtime Notice",
+					8192                  => "Other Error"
 					);
 
 	if((error_reporting() & $errno)!=0) {
