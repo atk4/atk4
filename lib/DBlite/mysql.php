@@ -32,7 +32,7 @@ class DBlite_mysql extends DBlite {
 			$this->settings=$this->parseDSN($dsn);
 
 		// Then let's do real connect
-		$this->handle=mysql_connect(
+		$this->handle=@mysql_connect(
 									 $this->settings['hostspec'],
 									 $this->settings['username'],
 									 $this->settings['password'],
