@@ -806,9 +806,10 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
+                    ksort($this->hooks[$hook_spot]); // lower priority is called sooner
                     $hook_backup = $this->hooks[$hook_spot];
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
-                        foreach ($_data as $key => &$data) {
+                        foreach ($_data as $priority => &$data) {
 
                             // Our extension
                             if (is_string($data[0])
