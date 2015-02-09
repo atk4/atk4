@@ -764,7 +764,7 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
-                    ksort($this->hooks[$hook_spot]); // lower priority is called sooner
+                    krsort($this->hooks[$hook_spot]); // lower priority is called sooner
                     foreach ($this->hooks[$hook_spot] as $prio => $_data) {
                         foreach ($_data as $data) {
 
