@@ -449,7 +449,7 @@ class Auth_Basic extends AbstractController {
     }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
     function memorizeURL(){
-        if(!$this->recall('page',false)){
+        if($this->api->page !== 'index' && !$this->recall('page',false)){
             $this->memorize('page',$this->api->page);
             $g=$_GET;unset($g['page']);
             $this->memorize('args',$g);
@@ -463,7 +463,7 @@ class Auth_Basic extends AbstractController {
         if($p=='login')return $this->api->url('/');
 
         $url=$this->api->url($p, $this->recall('args',null));
-        $this->forget('url');$this->forget('args');
+        $this->forget('page');$this->forget('args');
         return $url;
     }
     /**
