@@ -890,33 +890,6 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return $result;
     }
-
-    /**
-     * A handy shortcut for foreach () { .. } code. Make your callable return
-     * "false" if you would like to break the loop.
-     *
-     * @param callable $callable will be executed for each member
-     *
-     * @return AbstractObject $this
-     */
-    public function each($callable)
-    {
-        if (is_string($callable)) {
-            foreach ($this as $value) {
-                $this->$callable();
-            }
-
-            return $this;
-        }
-
-        foreach ($this as $value) {
-            if (call_user_func($callable, $this) === false) {
-                break;
-            }
-        }
-
-        return $this;
-    }
     // }}}
 
 
