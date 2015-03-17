@@ -56,6 +56,7 @@ class Controller_Migrator_MySQL extends AbstractController {
                 }
             }
         }
+        return $this;
     }
 
 
