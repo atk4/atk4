@@ -39,14 +39,12 @@ class Form_Field_DatePicker extends Form_Field_Line {
         // we need it in locale format
 
         $this->js(true)->datepicker(array_merge(array(
-                        'duration'=>0,
-                        'showOn'=>'none',
-            //          'buttonImage'=>$this->api->locateURL('images','calendar.gif'),
-                //      'buttonImageOnly'=> true,
-                        'changeMonth'=>true,
-                        'changeYear'=>true,
-                        'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
-                        ),$this->options));
+                    'duration'=>0,
+                    'showOn'=>'none',
+                    'changeMonth'=>true,
+                    'changeYear'=>true,
+                    'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
+                    ),$this->options));
 
         return parent::getInput(array_merge(
                     array(
