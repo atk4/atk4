@@ -1,0 +1,25 @@
+/**
+ *  Agile Toolkit CSS Framework (c) 2013-2014 v0.904
+ *  http://www4.agiletoolkit.org/css
+ *  Theme: Minimal
+ */
+
+@import 'less/agiletoolkit.less';
+
+
+// Important: list .createViewport functions in the right order based on @min and @max values otherwise styles get overridden
+.createViewport(
+    @wrapperMargin: @margin,
+    @colsGutter: @margin,
+    @cols: 12,
+    @viewportMinWidth:769px
+);
+
+.createViewport(@class: 'tablet', @viewportMaxWidth:768px, @cols:6, @colsGutter: 30px, @stackLayout:true, @wrapperMargin: 20px);
+.createViewport(@class: 'mobile', @viewportMaxWidth:479px, @cols:3, @colsGutter: 20px,  @stackLayout:true, @wrapperMargin: 20px);
+
+
+
+@bodySize:             0.8rem;
+@bodyBaseline:         1.3;
+@baselineDestroyer:    0.7rem;
