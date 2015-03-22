@@ -36,6 +36,13 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public $table=null;
 
     /**
+     * Defines aleas for the table, for drivers such as SQL to make your
+     * queries prettier. Not really required.
+     */
+    public $table_alias=null;
+
+
+    /**
      * Controllers store some custom information in here under key equal to
      * their name. This allows us to use single controller object with
      * multiple objects.
@@ -769,8 +776,13 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /** Adds a new condition for this model */
     public function addCondition($field, $operator = UNDEFINED, $value = UNDEFINED)
     {
+        if (!$this->controller) {
+            throw $this->exception('Controller for this model is not set', 'NotImplemented');
+
+        }
         if (!@$this->controller->supportConditions) {
-            throw $this->exception('The controller doesn\'t support conditions', 'NotImplemented');
+            throw $this->exception('The controller doesn\'t support conditions', 'NotImplemented')
+                ->addMoreInfo('controller',$this->controller);
         }
         if (is_array($field)) {
             foreach ($field as $value) {
@@ -877,33 +889,6 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         }
 
         return $result;
-    }
-
-    /**
-     * A handy shortcut for foreach () { .. } code. Make your callable return
-     * "false" if you would like to break the loop.
-     *
-     * @param callable $callable will be executed for each member
-     *
-     * @return AbstractObject $this
-     */
-    public function each($callable)
-    {
-        if (is_string($callable)) {
-            foreach ($this as $value) {
-                $this->$callable();
-            }
-
-            return $this;
-        }
-
-        foreach ($this as $value) {
-            if (call_user_func($callable, $this) === false) {
-                break;
-            }
-        }
-
-        return $this;
     }
     // }}}
 

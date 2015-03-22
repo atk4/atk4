@@ -17,6 +17,9 @@
 class App_Installer extends App_Web {
     public $page_class = 'Page';
     public $page_options = null;
+
+    protected $show_intro = false;
+
     function init(){
         parent::init();
 
@@ -66,8 +69,12 @@ class App_Installer extends App_Web {
 
         }
         if(!$_GET['step']){
+
+            if($this->show_intro) {
+                return $this->showIntro($this->makePage('init'));
+            }
+
             $this->app->redirect($this->stepURL('first'));
-            //return $this->showIntro($this->makePage('init'));
         }
 
         $this->initStep($this->s_current);
@@ -83,8 +90,6 @@ class App_Installer extends App_Web {
         return $this->$step_method($page);
     }
     function showIntro($p){
-
-        return;
 
         $p->add('H1')->set('Welcome to Web Software');
         $p->add('P')->set('Thank you for downloading this software. This wizard will guide you through the installation procedure.');

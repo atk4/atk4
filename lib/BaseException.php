@@ -283,6 +283,8 @@ class BaseException extends Exception
             }
             $o.=$ge;
 
+        }elseif(is_object($key)){
+            $o.='Object '.get_class($key);
         }else{
             $o.=$gs?htmlspecialchars($key):$key;
         }

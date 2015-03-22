@@ -765,7 +765,6 @@ abstract class AbstractObject
         }
 
         $this->hooks[$hook_spot][$priority][] = array($callable,$arguments);
-        ksort($this->hooks[$hook_spot]);
 
         return $this;
     }
@@ -806,9 +805,10 @@ abstract class AbstractObject
         try {
             if (isset ($this->hooks[$hook_spot])) {
                 if (is_array($this->hooks[$hook_spot])) {
+                    krsort($this->hooks[$hook_spot]); // lower priority is called sooner
                     $hook_backup = $this->hooks[$hook_spot];
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
-                        foreach ($_data as $key => &$data) {
+                        foreach ($_data as $prio => &$data) {
 
                             // Our extension
                             if (is_string($data[0])
@@ -1046,6 +1046,104 @@ abstract class AbstractObject
         }
         return $this;
     }
+
+    /**
+     * This method will find private methods started with test_ in
+     * the current class and will execute each method in succession
+     * by passing $t argument to it. Before each test execution
+     * takes place, $t->prepareForTest($test) will be called. It must
+     * return non-false for test to be carried out.
+     *
+     * $test will be an array containing keys for 'name', 'object' and
+     * 'class'
+     */
+    function runTests(Tester $tester = null)
+    {
+
+        $test = array('object'=>$this->name, 'class'=>get_class($this));
+
+        foreach(get_class_methods($this) as $method){
+            if(strpos($method,'test_')===0){
+                $test['name']=substr($method,5);
+            }else continue;
+
+            if($tester && $tester->prepareForTest($test)===false) continue;
+
+
+            if($tester){
+                $r = $tester->results;
+                $r->unload();
+                $r->set($test);
+            }
+
+            // Proceed with test
+            $me=memory_get_peak_usage();
+            $ms=microtime(true);
+            $this->_ticks=0;
+            declare(ticks=1);
+            register_tick_function(array($this,'_ticker'));
+
+            // Execute here
+            try{
+                $result = $this->$method($tester);
+            }catch (Exception $e){
+
+                unregister_tick_function(array($this,'_ticker'));
+                $time=microtime(true)-$ms;
+                $memory=(memory_get_peak_usage())-$me;
+                $ticks=$this->_ticks;
+
+
+
+                if($e instanceof Exception_SkipTests) {
+
+                    if($tester){
+                        $r['exception']='SKIPPED';
+                        $r->saveAndUnload();
+                    }
+
+
+                    return array(
+                        'skipped'=>$e->getMessage()
+                        );
+                }
+
+                if($tester){
+                    $r['time']=$time;
+                    $r['memory']=$memory;
+                    $r['ticks']=$ticks;
+                    $r['exception']=$e;
+                    $r->saveAndUnload();
+                }
+
+                continue;
+            }
+
+            // Unregister
+            unregister_tick_function(array($this,'_ticker'));
+            $time=microtime(true)-$ms;
+            $memory=(memory_get_peak_usage())-$me;
+            $ticks=$this->_ticks-3;     // there are always minimum of 3 ticks
+
+
+            if($tester){
+                $r['time']=$time;
+                $r['memory']=$memory;
+                $r['ticks']=$ticks;
+                $r['is_success']=true;
+                $r['result']=$result;
+                $r->saveAndUnload();
+            }
+
+        }
+
+    }
+    private $_ticks;
+    public function _ticker(){
+        $this->_ticks++;
+    }
+
+
 
     /**
      * Method used internally for shortening object names.

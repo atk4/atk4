@@ -1,18 +1,10 @@
 {
     "name": "atk4/atk4",
     "type": "library",
-    "version": "4.3.x",
+    "version": "4.3.0",
+    "license": "MIT",
     "keywords": ["framework","atk4"],
     "homepage": "https://agiletoolkit.org/",
-    "dist": {
-        "url": "http://agiletoolkit.org/distfiles/agiletoolkit-4.2.4.zip",
-        "type": "zip"
-    },
-    "source": {
-        "url": "https://github.com/atk4/atk4.git",
-        "type": "git",
-        "reference": "origin/4.3"
-    },
     "autoload": {
         "psr-0": {"": "lib/"},
         "files": ["/lib/static.php"]

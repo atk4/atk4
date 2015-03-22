@@ -27,13 +27,34 @@ Alternatively, if you are a very hardcore developer, add the following code insi
         "atk4/atk4": "4.3.*@dev"
     }
 
+
+Example
+----
+To help you understand some key principles of Agile Toolkit, copy the following example into `page/index.php` and place inside the init() method.
+
+![Message to Romans](doc/message_to_romans.png)
+
+Source:
+
+    $form = $this->add('Form');
+    $form->addField('line', 'subject')->validateNotNull();
+    $form->addField('password','password');
+    $form->addSubmit();
+    
+    if ($form->isSubmitted()) {
+        $this->js()->univ()
+            ->dialogOK('Hello World','Subject: '.$form['subject'])
+            ->execute();
+    }
+
+Congratulations. You have now created a fully AJAX / PHP form, fully protected from SQL / HTML / JS injection, based on jQuery UI theme and Bootstrap-compatible 12-column flexible grid system.
+
+
 ## License
 
-Agile Toolkit Framework code (listed in this repository) distributed under MIT
-License and can be used without restrictions. Installer, Deployer and other
-development tools included in downloadable bundle from www.agiletoolkit.org
-are closed-source and are designed to support development and support of commercial
-add-ons for Agile Toolkit.
+Agile Toolkit is distributed under MIT License.
+
+** Your support will ensure the longevity of Agile Toolkit **
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8fd43ffe5d4a0d14183ea27487362660 "githalytics.com")](http://githalytics.com/atk4/atk4)
 

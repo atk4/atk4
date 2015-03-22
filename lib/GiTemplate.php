@@ -128,6 +128,8 @@ class GiTemplate extends AbstractModel implements ArrayAccess {
      */
     public $origin_filename = null;
 
+    public $template_file = null;
+
     public $template_type=null;  // redefine or set in config
 
     // }}}
