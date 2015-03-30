@@ -5978,7 +5978,7 @@ ul[class*=atk-menu].atk-menu-vertical > li *[class*=atk-menu]:not(.atk-menu-sepa
 }
 .atk-jackscrew,
 .atk-expand {
-  width: 100%;
+  width: 100% !important;
 }
 .atk-clear-fix {
   *zoom: 1;
