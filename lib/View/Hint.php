@@ -16,12 +16,16 @@
    See LICENSE or LICENSE_COM for more information
 =====================================================ATK4=*/
 class View_Hint extends View_Box {
-    function defaultTemplate(){
-        return array('view/hint');
+
+    function init(){
+        parent::init();
+        $this->addClass('atk-effect-info');
+        $this->template->set('label',$this->app->_('Hint').': ');
+        $this->addIcon('info');
     }
-    /* Set hint title */
+
     function setTitle($title){
-        $this->template->set('title',$title);
+        $this->template->set('label',$title);
         return $this;
     }
 }
