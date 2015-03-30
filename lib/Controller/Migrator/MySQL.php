@@ -16,6 +16,28 @@
 class Controller_Migrator_MySQL extends AbstractController {
     public $db=null;
 
+    const DOC = 'controller/migrator';
+
+
+    function init(){
+        parent::init();
+
+        if(is_null($this->db))$this->db=$this->app->db;
+        if(!$this->db)$this->db = $this->app->dbConnect();
+
+        if($this->db->type!='mysql')throw $this->exception('Migrator can only be used with MySQL database')
+            ->addMoreInfo('type',$this->db->type);
+    }
+
+    /**
+     * Create necessary table in SQL for tracking progress.
+     */
+    function create(){
+        $this->db->dsql()->expr('create table if not exists `[table]` '.
+            '(id int not null primary key auto_increment, name varchar(255), unique key(name), status enum("ok","fail"))',
+            ['table'=>'_db_update'])->execute();
+    }
+
     /**
      * Find migrations and execute them in order.
      *
@@ -24,12 +46,7 @@ class Controller_Migrator_MySQL extends AbstractController {
      */
     function migrate(){
         // find migrations
-        if(is_null($this->db))$this->db=$this->app->db;
-        if(!$this->db)$this->db = $this->app->dbConnect();
         $folders = $this->app->pathfinder->search('dbupdates');
-        $this->db->dsql()->expr('create table if not exists `[table]` '.
-            '(id int not null primary key auto_increment, name varchar(255), unique key(name), status enum("ok","fail"))',
-            ['table'=>'_db_update'])->execute();
         // todo - sort files in folders
         foreach($folders as $dir){
             $files = scandir($dir);
