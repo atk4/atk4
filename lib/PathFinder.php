@@ -200,6 +200,7 @@ class PathFinder extends AbstractController
         $this->atk_location=$this->addLocation(array(
             'php'=>'lib',
             'template'=>$templates_folder,
+            'tests'=>'tests',
             'mail'=>'mail',
         ))
             ->setBasePath($atk_base_path)
