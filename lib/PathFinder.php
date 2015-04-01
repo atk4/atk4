@@ -347,7 +347,7 @@ class PathFinder extends AbstractController
 
             if (is_string($path)) {
                 // file found!
-                $matches[]=$location->base_path.'/'.$path;
+                $matches[]=$path;
             }
         }
 
