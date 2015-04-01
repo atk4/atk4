@@ -46,7 +46,7 @@ class Controller_Migrator_MySQL extends AbstractController {
      */
     function migrate(){
         // find migrations
-        $folders = $this->app->pathfinder->search('dbupdates');
+        $folders = $this->app->pathfinder->search('dbupdates','','path');
         // todo - sort files in folders
         foreach($folders as $dir){
             $files = scandir($dir);
