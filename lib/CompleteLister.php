@@ -3,7 +3,7 @@
  * CompleteLister is very similar to regular Lister, but will use
  * <?rows?><?row?>blah<?/?><?/?> structure inside template.
  * Also adds support for calculating totals.
- * 
+ *
  * @link http://agiletoolkit.org/doc/lister
  *
  * Use:
@@ -69,7 +69,7 @@ class CompleteLister extends Lister
      * onRender  - calculate totals only for rendered rows on rendering phase
      * onRequest - grand totals, works for SQL_Many models only, creates 1
      *             additional DB request
-     * 
+     *
      * @private Should be changed using addTotals and addGrandTotals methods only
      */
     protected $totals_type = null;
@@ -246,6 +246,12 @@ class CompleteLister extends Lister
 
             if($this->current_row instanceof Model){
                 $this->current_row=$this->current_row->get();
+            }elseif(!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)){
+                // Looks like we won't be abel to access current_row as array, so we will
+                // copy it's value inside $this->current instead and produce an empty array
+                // to be filled out by a custom iterators
+                $this->current = $this->current_row;
+                $this->current_row = get_object_vars($this->current);
             }
 
             $this->current_row_html=array();
@@ -266,7 +272,7 @@ class CompleteLister extends Lister
             $this->renderDataRow();
 
         }
-        
+
         // calculate grand totals if needed
         if ($this->totals_type == 'onRequest') {
             $this->updateGrandTotals();
@@ -278,7 +284,7 @@ class CompleteLister extends Lister
         // render totals row
         $this->renderTotalsRow();
     }
-    
+
     /**
      * Render data row
      *
@@ -337,11 +343,13 @@ class CompleteLister extends Lister
     {
         parent::formatRow();
 
-        $this->odd_even =
-            $this->odd_even == $this->odd_css_class
-                ? $this->even_css_class
-                : $this->odd_css_class;
-        $this->current_row['odd_even'] = $this->odd_even;
+        if(is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
+            $this->odd_even =
+                $this->odd_even == $this->odd_css_class
+                    ? $this->even_css_class
+                    : $this->odd_css_class;
+            $this->current_row['odd_even'] = $this->odd_even;
+        }
     }
 
     /**
@@ -391,7 +399,7 @@ class CompleteLister extends Lister
      * Calculate grand totals of all rows
      *
      * Called one time on rendering phase - before renderRows() call.
-     * 
+     *
      * @return void
      */
     function updateGrandTotals()
@@ -404,7 +412,7 @@ class CompleteLister extends Lister
 
         // select as sub-query
         $sub_q = $m->dsql()->del('limit')->del('order');
-        
+
         $q = $this->api->db->dsql();//->debug();
         $q->table($sub_q, 'grandTotals'); // alias is mandatory if you pass table as DSQL
         foreach ($fields as $field) {
