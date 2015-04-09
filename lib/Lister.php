@@ -33,7 +33,10 @@ class Lister extends View
     /** For other iterators, this variable will be used */
     public $iter = null;
 
-    /** Points to current row before it's being outputted. Used in formatRow() */
+    /** Points to the current record returned by iterator. Can be array or object. */
+    public $current = null;
+
+    /** Points to hash for current row before it's being outputted. Used in formatRow() */
     public $current_row = array();
 
     /** Similar to $current_row, but will be used for direct HTML output, no escaping. Use with care. */
@@ -62,7 +65,7 @@ class Lister extends View
                 throw $this->exception('Use setModel() for Models');
             } elseif ($source instanceof Controller) {
                 throw $this->exception('Use setController() for Controllers');
-            } elseif ($source instanceof Iterator) {
+            } elseif ($source instanceof Iterator or $source instanceof Closure) {
                 $this->iter=$source;
                 return $this;
             }
@@ -98,6 +101,9 @@ class Lister extends View
         if (is_null($i = $this->model ?: $this->dq ?: $this->iter)) {
             throw $this->exception('Please specify data source with setSource or setModel');
         }
+        if ($i instanceof Closure) {
+            $i = call_user_func($i);
+        }
         return $i;
     }
 
@@ -113,7 +119,14 @@ class Lister extends View
 
             if($this->current_row instanceof Model){
                 $this->current_row=$this->current_row->get();
+            }elseif(!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)){
+                // Looks like we won't be abel to access current_row as array, so we will
+                // copy it's value inside $this->current instead and produce an empty array
+                // to be filled out by a custom iterators
+                $this->current = $this->current_row;
+                $this->current_row = get_object_vars($this->current);
             }
+
 
             $this->formatRow();
             $this->output($this->rowRender($this->template));
