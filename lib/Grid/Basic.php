@@ -499,7 +499,10 @@ class Grid_Basic extends CompleteLister
         }
 
         foreach ($this->columns as $field => $column) {
-            $this->current_row[$field.'_original'] = @$this->current_row[$field];
+
+            if(is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
+                $this->current_row[$field.'_original'] = @$this->current_row[$field];
+            }
 
             // if model field has listData structure, then get value instead of key
             if ($this->model && $f=$this->model->hasElement($field)) {
@@ -528,6 +531,9 @@ class Grid_Basic extends CompleteLister
      */
     function executeFormatters($field, $column, $formatter_prefix = 'format_', $silent = false)
     {
+        if(is_object($column['type']) && $column['type'] instanceof Closure){
+            return $this->current_row[$field] = call_user_func($column['type'], $this->current);
+        }
         $formatters = explode(',', $column['type']);
         foreach ($formatters as $formatter) {
             if (!$formatter) {
