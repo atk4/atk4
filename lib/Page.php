@@ -140,6 +140,17 @@ class Page extends AbstractView {
         array_unshift($this->title,array('name'=>$title,'page'=>$page));
         return $this;
     }
+    function addCrumbReverse($title,$page=null){
+        // First, convert the main page
+        if(is_string($this->title)) {
+            $this->title=array(array(
+                'name'=>$this->title,
+                'page'=>null
+            ));
+        }
+        array_push($this->title,array('name'=>$title,'page'=>$page));
+        return $this;
+    }
     function addBreadCrumb() {
             $t = $this->title;
             if(!is_array($t)) {
