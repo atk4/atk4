@@ -14,9 +14,6 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-/* 
-Implements connectivity between Model and Session 
-*/
 class Controller_Data_PathFinder extends Controller_Data {
 
     function save($model, $id, $data) {
