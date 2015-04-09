@@ -152,6 +152,7 @@ class PathFinder extends AbstractController
         $this->base_location=$this->addLocation(array(
             'php'=>'lib',
             'page'=>'page',
+            'tests'=>'tests',
             'template'=>$templates_folder,
             'mail'=>'mail',
             'logs'=>'logs',
