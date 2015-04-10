@@ -95,7 +95,7 @@ class Controller_Tester extends Page {
                     if(method_exists($test_obj,'prepare_'.$m)){
                         $input=$test_obj->{'prepare_'.$m}($vari,$method);
                     }else{
-                        if(($test_obj instanceof \AbstarctObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')){
+                        if(($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')){
                             $input=$test_obj->prepare($vari,$method);
                         }else $input=null;
                     }
@@ -148,7 +148,7 @@ class Controller_Tester extends Page {
 
                     $exception++;
 
-                    $ms=microtime(true)-$ms;
+                    //$ms=microtime(true)-$ms;
                     $me=($mend=memory_get_peak_usage())-$me;
                 }
 
@@ -203,7 +203,7 @@ class Controller_Tester extends Page {
                     if(method_exists($test_obj,'prepare_'.$m)){
                         $input=$test_obj->{'prepare_'.$m}($vari,$method);
                     }else{
-                        if(($test_obj instanceof \AbstarctObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')){
+                        if(($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')){
                             $input=$test_obj->prepare($vari,$method);
                         }else $input=null;
                     }
