@@ -29,6 +29,9 @@ class Field_Base extends AbstractObject {
     public $placeholder=null;
     public $emptyText=null; // ???
 
+    // Callbacks
+    public $onField=null;
+
 
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"
@@ -420,6 +423,20 @@ class Field_Base extends AbstractObject {
     function emptyText($t = UNDEFINED)
     {
         return $this->setterGetter('emptyText', $t);
+    }
+
+
+    /**
+     * Pass a callback to onField() which is executed with the argument
+     * containing a field view, when model is associated with a form.
+     *
+     * @param callback $c new value
+     *
+     * @return string current value if $t=UNDEFINED
+     */
+    function onField($c = UNDEFINED)
+    {
+        return $this->setterGetter('onField', $c);
     }
 
     /**

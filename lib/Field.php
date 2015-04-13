@@ -47,6 +47,8 @@ class Field extends AbstractModel
     public $relation=null;
     public $actual_field=null;
 
+    public $onField=null;
+
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"
      * constant. This method is used by all other sette-getters
@@ -277,8 +279,8 @@ class Field extends AbstractModel
      * You might be using add-ons or might have created your own field class.
      * If you would like to use it to present the field, use display(). If you
      * specify string it will be used by all views, otherwise specify it as
-     * associtive array: 
-     * 
+     * associtive array:
+     *
      *     $field->display(array('form'=>'line','grid'=>'button'));
      *
      * @param mixed $t new value
@@ -294,7 +296,7 @@ class Field extends AbstractModel
      * In most cases $model['field'] would match "field" inside a database. In
      * some cases, however, you would want to use different database field. This
      * can happen when you join multiple tables and 'field' appears in multiple
-     * tables. 
+     * tables.
      *
      * You can specify actual field when you declare a field within a model:
      *
@@ -424,7 +426,7 @@ class Field extends AbstractModel
     }
 
     /**
-     * What to display when nothing is selected or entered? This will be 
+     * What to display when nothing is selected or entered? This will be
      * displayed on a drop-down when no value is selected: ("Choose ..")
      * if you are using this setting with a text field it will set a
      * placeholder HTML property.
@@ -436,6 +438,19 @@ class Field extends AbstractModel
     function emptyText($t = UNDEFINED)
     {
         return $this->setterGetter('emptyText', $t);
+    }
+
+    /**
+     * Pass a callback to onField() which is executed with the argument
+     * containing a field view, when model is associated with a form.
+     *
+     * @param callback $c new value
+     *
+     * @return string current value if $t=UNDEFINED
+     */
+    function onField($c = UNDEFINED)
+    {
+        return $this->setterGetter('onField', $c);
     }
 
     /**
@@ -600,8 +615,8 @@ class Field extends AbstractModel
         }
         return $this->owner->add($fld)->setModel(str_replace('Model_','',$m));
     }
-    function datatype($v=undefined){ 
-        return $this->type($v); 
+    function datatype($v=undefined){
+        return $this->type($v);
     }
     function calculated($v=undefined){
         if($v===undefined)return false;
