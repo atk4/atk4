@@ -129,6 +129,10 @@ class Controller_MVCForm extends AbstractController
             $form_field->setEmptyText($field->emptyText());
         }
 
+        if($field->onField()){
+            call_user_func($field->onField(), $form_field);
+        }
+
         return $form_field;
     }
     /** Copies model field values into form */
