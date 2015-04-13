@@ -96,13 +96,13 @@ class Controller_PageManager extends AbstractController {
 
         $url=parse_url($url);
 
-        $scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : ''; 
-        $host     = isset($url['host']) ? $url['host'] : ''; 
-        $port     = isset($url['port']) ? ':' . $url['port'] : ''; 
-        $user     = isset($url['user']) ? $url['user'] : ''; 
-        $pass     = isset($url['pass']) ? ':' . $url['pass']  : ''; 
-        $pass     = ($user || $pass) ? "$pass@" : ''; 
-        $path     = isset($url['path']) ? $url['path'] : ''; 
+        $scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : '';
+        $host     = isset($url['host']) ? $url['host'] : '';
+        $port     = isset($url['port']) ? ':' . $url['port'] : '';
+        $user     = isset($url['user']) ? $url['user'] : '';
+        $pass     = isset($url['pass']) ? ':' . $url['pass']  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = isset($url['path']) ? $url['path'] : '';
 
         if (substr($path,-1) != '/') {
             $path.='/';
@@ -177,6 +177,9 @@ class Controller_PageManager extends AbstractController {
 
         if(strpos($page,'.')!==false)throw $this->exception('Page may not contain periods (.)')
             ->addMoreInfo('page',$page);
+
+        // Preserve actual page
+        $this->page = $page;
 
         // We have now arrived at the page as per specification.
         $this->api->page=str_replace('/','_',$page);
