@@ -77,6 +77,13 @@ http://mysite:123/install/dir/my/page.html
         $this->absolute=true;
         return $this;
     }
+
+    private $_current=false;
+    function isCurrent(){
+        return $this->_current;
+    }
+
+
     /** [private] automatically called with 1st argument of api->url() */
     function setPage($page=null){
         // The following argument formats are supported:
@@ -126,6 +133,7 @@ http://mysite:123/install/dir/my/page.html
         if($destination==='')$destination=@$this->api->index_page;
 
         $this->page=$destination;
+        $this->_current = $this->page == $this->app->page;
         return $this;
     }
     /** Set additional arguments */
