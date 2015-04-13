@@ -93,6 +93,7 @@ class App_Frontend extends App_Web {
                 // page not found, trying to load static content
                 try{
                     $this->loadStaticPage($this->page);
+                    if($this->layout)$this->layout->template->tryDel('has_page_title');
                 }catch(PathFinder_Exception $e2){
 
                     $class_parts=explode('_',$page);
