@@ -669,7 +669,7 @@ class Exception_Template extends BaseException {
         $keys=array_keys($this->owner->tags);
         if($keys)$this->addMoreInfo('keys',implode(', ',$keys));
 
-        if($this->owner->source)$this->addMoreInfo('source',$this->owner->source);
+        if(@$this->owner->source)$this->addMoreInfo('source',$this->owner->source);
     }
     function setTag($t){
         $this->addMoreInfo('tag',$t);
