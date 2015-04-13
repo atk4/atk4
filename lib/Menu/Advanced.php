@@ -40,7 +40,10 @@ abstract class Menu_Advanced extends View
 
         if ($action) {
             if (is_string($action) || is_array($action) || $action instanceof URL) {
-                $i->template->set('url',$this->api->url($action));
+                $i->template->set('url',$url = $this->api->url($action));
+                if($url->isCurrent()){
+                    $i->addClass('active');
+                }
             } else {
                 $this->on('click',$action);
             }
@@ -93,26 +96,22 @@ abstract class Menu_Advanced extends View
         return $i;
     }
 
-    public function setModel($m)
+    public function setModel($m, $options=array())
     {
         $m=parent::setModel($m);
         foreach ($m as $model) {
 
             // check subitems
-            if (@$model->hierarchy_controller && $model[$model->hierarchy_controller->child_ref.'_cnt']) {
-                $m=$this->addMenu($model['name']);
+            if (@$model->hierarchy_controller && $model[strtolower($model->hierarchy_controller->child_ref).'_cnt']) {
+                $m=$this->addMenu($model[$options['title_field']?:$m->title_field]);
                 foreach ($model->ref($model->hierarchy_controller->child_ref) as $child) {
-                    $m->addItem($child['name'],$child['page']);
+                    $m->addItem($options['title_field']?:$child[$options['title_field']?:$model->title_field],$child['page']);
                 }
-
             } else {
-
-                $this->addItem($model['name'],$model['page']);
-
+                $this->addItem($model[$options['title_field']?:$model->title_field],$model['page']);
             }
-
         }
-
+        return $m;
     }
 
     // compatibility
