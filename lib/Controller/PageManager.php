@@ -157,6 +157,7 @@ class Controller_PageManager extends AbstractController {
         // 4. We now look at RequestURI and extract base_path from the beginning
         if(isset($_GET['page'])){
             $page=$_GET['page'];
+            $this->page = $page;
         }else{
             $request_uri=$this->getRequestURI();
             if(strpos($request_uri,$path)!==0){
@@ -166,6 +167,9 @@ class Controller_PageManager extends AbstractController {
             }
             $page=substr($request_uri,strlen($path));
             if(!$page)$page='index';
+
+            // Preserve actual page
+            $this->page = $page;
 
             // Remove postfix from page if any
             $page=preg_replace('/\..*$/','',$page);
@@ -178,8 +182,6 @@ class Controller_PageManager extends AbstractController {
         if(strpos($page,'.')!==false)throw $this->exception('Page may not contain periods (.)')
             ->addMoreInfo('page',$page);
 
-        // Preserve actual page
-        $this->page = $page;
 
         // We have now arrived at the page as per specification.
         $this->api->page=str_replace('/','_',$page);
