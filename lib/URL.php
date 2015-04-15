@@ -79,7 +79,15 @@ http://mysite:123/install/dir/my/page.html
     }
 
     private $_current=false;
-    function isCurrent(){
+    private $_current_sub=false;
+
+    /**
+     * Detects if the URL matches current page. If
+     * $include_sub is set to true, then it will also
+     * detect to match sub-pages too.
+     */
+    function isCurrent($include_sub = false){
+        if($include_sub)return $this->_current_sub;
         return $this->_current;
     }
 
@@ -134,6 +142,7 @@ http://mysite:123/install/dir/my/page.html
 
         $this->page=$destination;
         $this->_current = $this->page == $this->app->page;
+        $this->_current_sub = $this->page == substr($this->app->page,0,strlen($this->page));
         return $this;
     }
     /** Set additional arguments */
