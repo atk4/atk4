@@ -55,8 +55,9 @@ class Controller_Data_Array extends Controller_Data {
                     ->addMoreInfo('id', $data[$model->id_field]);
             }
         } else { // update
-            unset($model->_table[$this->short_name][$oldId]);
-            $newId = $data[$model->id_field];
+            //unset($model->_table[$this->short_name][$oldId]);
+            $newId = $id; //$data[$model->id_field];
+            $data = array_merge($model->_table[$this->short_name][$newId], $data);
         }
         $data[$model->id_field] = $newId;
         $model->_table[$this->short_name][$newId] = $data;
