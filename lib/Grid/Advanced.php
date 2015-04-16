@@ -424,8 +424,13 @@ class Grid_Advanced extends Grid_Basic
         $totals_columns = array_keys($this->totals) ?: array();
         foreach ($this->columns as $field=>$column) {
 
-            // process formatters (additional to default formatters)
-            $this->executeFormatters($field, $column, 'format_totals_', true);
+            if (in_array($field, $totals_columns)) {
+                // process formatters (additional to default formatters)
+                $this->executeFormatters($field, $column, 'format_totals_', true);
+            } else {
+                // show empty cell if totals are not calculated for this column
+                @$this->current_row_html[$field] = '';
+            }
  
             // totals title displaying
             if ($field == $this->totals_title_field) {
