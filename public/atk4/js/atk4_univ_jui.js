@@ -135,7 +135,7 @@ $.each({
 
         html.find('.do-close').click(function(e){e.preventDefault();html.remove();});
 
-        var dest=$("body>.atk-layout");
+        var dest=$("body");
         if(dest.length){
             html.prependTo(dest);
             return html;
