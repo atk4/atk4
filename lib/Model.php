@@ -908,25 +908,30 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if ($field_class === UNDEFINED) {
             $field_class = $this->defaultHasOneFieldClass;
         }
-        $tmp = $this->api->normalizeClassName($model, 'Model');
-        $tmp = new $tmp(); // avoid recursion
 
         if ($our_field === UNDEFINED) {
+            // guess our field
+            $tmp = $this->api->normalizeClassName($model, 'Model');
+            $tmp = new $tmp(); // avoid recursion
             $refFieldName = ( $tmp->table ?: strtolower(get_class($this)) ) . '_id';
         } else {
             $refFieldName = $our_field;
         }
         $displayFieldName = preg_replace('/_id$/', '', $our_field);
 
-        if (!$this->hasElement($refFieldName)) {
-            $this->addField($refFieldName);
-        }
-        $expr = $this->addExpression($displayFieldName, $model, $field_class)
-            ->setModel($model)
-            ->setForeignFieldName($refFieldName);
-        $this->_references[$refFieldName] = $model;
+        $field = $this->addField($refFieldName);
 
-        return $expr;
+        if (!$this->controller->supportExpressions) {
+            $expr = $this->addExpression($displayFieldName, $model, $field_class)
+                ->setModel($model)
+                ->setForeignFieldName($refFieldName);
+            $this->_references[$refFieldName] = $model;
+
+            return $expr;
+        }
+
+        return $field;
+
     }
     public function hasMany($model, $their_field = UNDEFINED, $our_field = UNDEFINED, $reference_name = null)
     {
