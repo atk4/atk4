@@ -30,7 +30,7 @@ class Paginator_Basic extends CompleteLister {
 
     function init(){
         parent::init();
-        
+
         if (!$this->skip_var) {
             $this->skip_var = $this->name . '_skip';
         }
@@ -101,7 +101,7 @@ class Paginator_Basic extends CompleteLister {
             $this->source->preexec();
             $this->found_rows=$this->source->foundRows();
         }elseif($this->source instanceof Model){
-            $this->found_rows=$this->source->count();
+            $this->found_rows=(string)$this->source->count();
         }else{
             $this->found_rows=count($this->source);
         }
@@ -136,9 +136,9 @@ class Paginator_Basic extends CompleteLister {
                     $pn=max(0,$this->skip-$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
-                ->set('<')
+                ->set('« Prev')
                 ;
-        }
+        }else($this->template->tryDel('prev'));
 
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
@@ -147,9 +147,9 @@ class Paginator_Basic extends CompleteLister {
                     $pn=$this->skip+$this->ipp
                 )))
                 ->setAttr('data-skip',$pn)
-                ->set('>')
+                ->set('Next »')
                 ;
-        }
+        }else($this->template->tryDel('next'));
 
         // First page
         if($this->cur_page>$this->range+1){
