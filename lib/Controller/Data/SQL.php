@@ -219,7 +219,7 @@ class Controller_Data_SQL extends Controller_Data {
             }
         }
 
-        if($model->limit){
+        if($model->limit && $model->limit[0]){
             $dsql->limit($model->limit[0], $model->limit[1]);
         }
 
