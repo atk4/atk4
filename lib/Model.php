@@ -992,7 +992,11 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         $m = $this->add($this->api->normalizeClassName($class, 'Model'));
 
         if ($field) { // HasMany
-            $m->addCondition($field, $val);
+            if($m->supportConditions){
+                $m->addCondition($field, $val);
+            }else{
+                throw $this->exception('Related model does not supprot conditions');
+            }
         }
 
         return $m;
