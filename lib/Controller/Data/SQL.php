@@ -223,6 +223,12 @@ class Controller_Data_SQL extends Controller_Data {
             $dsql->limit($model->limit[0], $model->limit[1]);
         }
 
+        if($model->order){
+            foreach($model->order as $o){
+                $dsql->order($o[0], $o[1]);
+            }
+        }
+
         $this->updateConditions($model, $dsql);
 
         return $dsql;
