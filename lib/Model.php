@@ -100,7 +100,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      *
      * TODO: must support multiple touples for multiple field sorting
      */
-    public $order = array(null, null);
+    public $order = array();
 
     /**
      * More internal classes which are used by hasOne, and addExpression
@@ -821,7 +821,23 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if (!$this->controller->supportOrder) {
             throw $this->exception('The controller doesn\'t support order', 'NotImplemented');
         }
-        $this->order = array($field, $desc);
+
+        if(is_string($field) && strpos($field,',')!==false){
+            $field=explode(',',$field);
+        }
+        if(is_array($field)){
+            if(!is_null($desc))
+                throw $this->exception('If first argument is array, second argument must not be used');
+
+            foreach(array_reverse($field) as $o)$this->setOrder($o);
+            return $this;
+        }
+
+        if(is_null($desc) && is_string($field) && strpos($field,' ')!==false){
+            list($field,$desc)=array_map('trim',explode(' ',trim($field),2));
+        }
+
+        $this->order[] = array($field, $desc);
 
         return $this;
     }
