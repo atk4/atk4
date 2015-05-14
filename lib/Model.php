@@ -444,12 +444,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * If the $table argument is not specified then :php:attr:`Model::table`
      * will be used to find out name of the table / collection
      */
-    public function setSource($controller, $table = null, $id = null)
+    public function setSource($controller, $table = null)
     {
         $this->setControllerData($controller);
         $this->setControllerSource($table);
-
-        if($id) throw $this->exception('Do not specify $id to setSource, it is obsolete', 'Obsolete');
 
         return $this;
     }
@@ -651,8 +649,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         return $ret;
     }
 
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create
-     * record with new ID. */
+    /**
+     * Saves record with current controller. Ues $this->id as primary key. If
+     * not set, new record iscreated.
+     */
     public function save()
     {
         $this->hook('beforeSave', array($this->id));
@@ -695,7 +695,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         return $this;
     }
 
-    /** Save model and don't try to load it back */
+    /**
+     * Save model and don't try to load it back
+     */
     public function saveAndUnload($id = undefined)
     {
         // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
@@ -726,7 +728,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         $this->saveDelayedModels();
     }
 
-    /*
+    /**
      * Delete a record. If the model is loaded, delete the current id.
      * If not loaded, load model through the $id parameter and delete
      */
@@ -751,7 +753,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return $this;
     }
-    /** Deletes all records associated with this model. */
+
+    /**
+     * Deletes all records associated with this model.
+     */
     public function deleteAll()
     {
         if ($this->loaded()) {
