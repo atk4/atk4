@@ -306,7 +306,7 @@ class View_CRUD extends View
         
         if ($this->isEditing('ex_'.$s)) {
 
-            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
+            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_'.$this->model->id_field;
             if ($_GET[$idfield]) {
                 $this->id = $_GET[$idfield];
                 $this->api->stickyGET($idfield);
