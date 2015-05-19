@@ -175,6 +175,10 @@ class Controller_Tester extends Page {
         }else{
             $this->proper_responses = @$test_obj->proper_responses;
 
+            if($test_obj instanceof AbstractObject){
+                $this->add($test_obj);
+            }
+
         }
 
         $tested=array();
@@ -213,6 +217,7 @@ class Controller_Tester extends Page {
                         $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
                         return;
                     }
+                    throw $e;
                 }
 
                 $this->input=$input;

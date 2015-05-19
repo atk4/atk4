@@ -619,16 +619,7 @@ class Field extends AbstractModel
         return $this->type($v);
     }
     function calculated($v=undefined){
-        if($v===undefined)return false;
-        if($v===false)return $this;
-
-        $this->destroy();
-        $fld = $this->add('Field_Expression');
-
-        foreach((Array)$this as $key=>$val){
-            $fld->$key=$val;
-        }
-        return $this->owner->add($fld)->set($v);
+        throw $this->exception('calculated() field proyerty is obsolete. Use addExpression() instead');
     }
 
 }
