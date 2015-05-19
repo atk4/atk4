@@ -332,7 +332,7 @@ class View_CRUD extends View
                 $this->api->stickyGET($n);
             }
 
-            $idfield=$this->model->table.'_id';
+            $idfield=$this->model->table.'_'.$this->model->id_field;
             if ($_GET[$idfield]) {
                 $this->id = $_GET[$idfield];
                 $this->api->stickyGET($idfield);
@@ -358,7 +358,7 @@ class View_CRUD extends View
             $this->grid->addColumn('expander', 'ex_'.$s, $options['label'] ?: $s);
             $this->grid->columns['ex_'.$s]['page']
                 = $this->virtual_page->getURL('ex_'.$s);
-            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
+            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_'.$this->model->id_field;
         }
 
         if ($this->isEditing()) {
