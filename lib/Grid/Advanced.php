@@ -722,7 +722,7 @@ class Grid_Advanced extends Grid_Basic
                         'cut_page' => 1,
                         // TODO: id is obsolete
                         //'id' => $this->model->id,
-                        $this->columns[$field]['refid'].'_id' => $this->model->id
+                        $this->columns[$field]['refid'].'_'.$this->model->id => $this->model->id
                     )
                 ).'" '.
             '/>'.
