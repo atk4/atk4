@@ -384,6 +384,9 @@ class Controller_Validator_Abstract extends \AbstractController {
             $this->pushRule(substr($rule,1));
             return 'eq';
         }
+        if(substr($rule,0,1)==='$'){
+            $this->get(substr($rule,1));
+        }
 
         return $rule;
     }
