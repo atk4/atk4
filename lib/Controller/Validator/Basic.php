@@ -147,9 +147,10 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
             if($a <= $target) return $this->fail('Must be greater than {{arg1}}', $target);
 
         } else {
+            return $this->fail('Must be a numeric value {{arg1}}', $target);
 
-            $len = $this->mb_str_len($a);
-            if($len <= $target) return $this->fail('Must be greater than {{arg1}} characters long', $target);
+            //$len = $this->mb_str_len($a);
+            //if($len <= $target) return $this->fail('Must be greater than {{arg1}} characters long', $target);
         }
     }
 

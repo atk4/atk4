@@ -22,7 +22,7 @@
  * SQL_Model and have them appear as a read-only fields.
  *
  * Use:
- * $model->addExpression('age','year(now())-year(birthdate)');  
+ * $model->addExpression('age','year(now())-year(birthdate)');
  * // Below example achieves the same,but it prefixes age with proper table name
  * $model->addExpression('age',
  *      'year(now())-year('.$model->getElement('adatege').')');
@@ -33,7 +33,7 @@
  * $myctl=$this->add('Controller_MiscMySQL');
  * $model->addExpression('date_formatted',array($myctl,'dateExpr1'));
  *
- * or 
+ * or
  * // or by using closure and extra argument
  * $myctl=$this->add('Controller_MiscMySQL');
  * $model->addExpression('date_formatted',
@@ -45,7 +45,7 @@
  *
  *
  * @license See http://agiletoolkit.org/about/license
- * 
+ *
  */
 class Field_Expression extends Field {
     public $expr=null;
@@ -65,7 +65,7 @@ class Field_Expression extends Field {
             $q = call_user_func($this->expr,$this->owner,$this->owner->dsql(),$this);
             if($q instanceof DB_dsql) return $q;
             //if($q instanceof DB_dsql)$q=$q->render();
-            return '('.$q.')';
+            return $this->owner->dsql()->expr($q);
         }
 
         if($this->expr instanceof DB_dsql)return $this->expr;
@@ -79,7 +79,7 @@ class Field_Expression extends Field {
             return $select->field($expr,$this->short_name);
         }
         return $select->field($select->expr($expr), $this->short_name);
-        
+
     }
     function updateInsertQuery($insert){
         return $this;
