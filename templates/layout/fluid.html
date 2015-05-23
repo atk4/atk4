@@ -26,8 +26,10 @@
     </div>{/Header}
   </div>
   <div class="atk-layout-row atk-layout-fluid">
-    <div class="atk-layout atk-layout-cell">{$LeftSidebar}
-      <div style="{$left-column-style}" class="atk-layout-column {left-column-class}atk-swatch-ink{/}">{$Main_Menu}</div>
+    <div class="atk-layout atk-layout-cell">
+      {$LeftSidebar}
+      {has_main_menu}
+      <div style="{$left-column-style}" class="atk-layout-column {left-column-class}atk-swatch-ink{/}">{$Main_Menu}</div>{/has_main_menu}
       <div class="atk-layout-column fluid atk-padding atk-jackscrew">{has_page_title}
         <h2 class="atk-push-small">{page_title}Page Title{/}</h2>{/}
         {$Content}
