@@ -2,7 +2,7 @@
 <div id="{$_name}" class="atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}
   <div class="atk-box-small {$pannel_class}">{$quick_search}
     <div class="atk-actions">{$grid_buttons}</div>
-  </div>{Pannel}
+  </div>{/Pannel}
   <table>{header}
     <thead>{cols}{col}
       <th id="{$sortid}"><a href="javascript:void(0)">
@@ -22,16 +22,15 @@
       <tr>
         <td class="atk-padding-large atk-align-center"><span class="atk-label atk-effect-warning"><span class="icon-attention">&nbsp;{$not_found_message}</span></span></td>
       </tr>{/}
-    </tbody>
+    </tbody>{totals}
     <tfoot>
-      {totals}
       <tr class="totals">
         {cols}{col}
         <td {$tdparam}>
         {$content}
         </td>
         {/}{/}
-      </tr>{/}
-    </tfoot>
+      </tr>
+    </tfoot>{/}
   </table>{$Paginator}
 </div>
