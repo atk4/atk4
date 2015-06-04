@@ -35,13 +35,21 @@ class View_ModelDetails extends Grid_Basic
         $this->source_set=true;
         return parent::setSource($data);
     }
+    function setModel($model, $actual_fields = UNDEFINED)
+    {
+        $m=parent::setModel($model);
+        if($actual_fields!=UNDEFINED)$m->setActualFields($actual_fields);
+        return $m;
+    }
     function render(){
         if(!$this->source_set){
             if (!$this->model->loaded()) {
                 throw $this->exception('Specified model must be loaded');
             }
             $data = array();
-            foreach ($this->model->elements as $key => $field) {
+            foreach ($this->model->getActualFields() as $key ) {
+                $field = $this->model->hasElement($key);
+                if(!$field)continue;
                 if ($field instanceof Field || $field instanceof Field_Base) {
                     $data[]=array(
                         'id'=>$key,
