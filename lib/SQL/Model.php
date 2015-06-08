@@ -646,7 +646,7 @@ class SQL_Model extends Model implements Serializable {
 
             if(@!$data){
                 if($ignore_missing)return $this; else {
-                    throw $this->exception('Record could not be loaded',null,'Exception_NoRecord')
+                    throw $this->exception('Record could not be loaded','Exception_NoRecord')
                     ->addMoreInfo('model',$this)
                     ->addMoreInfo('id',$id)
                 ;
