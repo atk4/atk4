@@ -555,7 +555,7 @@ class SQL_Model extends Model implements Serializable {
     function loadAny(){
         try{
             return $this->_load(null);
-        }catch(BaseException $e){
+        }catch(Exception_NoRecord $e){
             throw $this->exception('No matching records found',null,404);
         }
     }
@@ -646,7 +646,7 @@ class SQL_Model extends Model implements Serializable {
 
             if(@!$data){
                 if($ignore_missing)return $this; else {
-                    throw $this->exception('Record could not be loaded')
+                    throw $this->exception('Record could not be loaded',null,'Exception_NoRecord')
                     ->addMoreInfo('model',$this)
                     ->addMoreInfo('id',$id)
                 ;
