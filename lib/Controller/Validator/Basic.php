@@ -19,7 +19,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
     function rule_required($a)
     {
         if ($a==='' || $a===false) {
-            return $this->fail('Must not be empty');
+            return $this->fail('must not be empty');
         }
     }
 
@@ -27,47 +27,11 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
     function rule_len($a)
     {
         if(!is_string($a)) {
-            return $this->fail('Is not a string');
+            return $this->fail('must be a string');
         }
 
+        $this->prefix='length of ';
         return strlen($a);
-    }
-
-    /**
-     * Test that value is unique in table
-     *
-     * IMPORTANT NOTE:
-     *
-     * You will normally want to set the ->on('beforeInsert')
-     * hook to run this rule, otherwise record updates will
-     * be blocked.
-     */
-
-    // TODO: FOR REMOVAL
-    //
-    // This is absolutely out of place and makes too many
-    // asumptions about the way how it's used. I agree it is
-    // a useful field, but it is still out of place.
-    function rule_unique($a,$field)
-    {
-        /*
-
-        // TODO: why is this not working?
-
-        if(!$this->owner instanceof Model)
-            throw $this->exception('Use with Model only');
-         */
-
-        $table = $this->owner->table;
-
-        $q = $this->api->db->dsql();
-
-        $result = $q->table($table)
-                ->where($field, $a)
-                ->field($field)
-                ->getOne();
-
-        if($result !== null) return $this->fail('Value "{{arg1}}" already exists', $a);
     }
 
     /**
@@ -79,10 +43,10 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     function rule_regex($a)
     {
-        $opt['regexp'] = $this->pullRule();
+        $opt['regexp'] = '/^'.$this->pullRule().'$/';
 
-        if( ! filter_var($a, FILTER_VALIDATE_REGEXPR, $opt)){
-            return $this->fail('Not a valid value');
+        if( ! filter_var($a, FILTER_VALIDATE_REGEXP, ['options'=>$opt])){
+            return $this->fail('does not match the pattern');
         }
     }
 
@@ -95,7 +59,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
     function rule_in($a)
     {
         $vals = $this->prep_in_vals($a);
-        if(!in_array($a, $vals)) return $this->fail('Not a valid value');;
+        if(!in_array($a, $vals)) return $this->fail('has an invalid value');;
     }
 
     /**
@@ -105,7 +69,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
     function rule_not_in($a)
     {
         $vals = $this->prep_in_vals($a);
-        if(in_array($a, $vals)) return $this->fail('Not a valid value');;
+        if(in_array($a, $vals)) return $this->fail('has an invalid value');;
     }
 
     /* \section Value Comparison Rules: absolute value */
@@ -120,216 +84,60 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     function rule_between($a)
     {
-        $min=$this->pullRule();
-        $max=$this->pullRule();
+        $min=$this->pullRule(true);
+        $max=$this->pullRule(true);
 
         if(is_numeric($a)){
 
-            if($a < $min || $a > $max) return $this->fail('Must be between {{arg1}} and {{arg2}}', $min, $max);
+            if($a < $min || $a > $max) return $this->fail('must be between {{arg1}} and {{arg2}}', $min, $max);
 
         } else {
 
-            $len = $this->mb_str_len($a);
-            if($len < $min || $len > $max) return $this->fail('Must be between {{arg1}} and {{arg2}} characters long', $min, $max);
+            return $this->fail('Must be a numeric value');
+
         }
     }
 
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
     function rule_gt($a)
     {
-        $target=$this->pullRule();
-
-        if(is_numeric($a)){
-
-            if($a <= $target) return $this->fail('Must be greater than {{arg1}}', $target);
-
-        } else {
-            return $this->fail('Must be a numeric value {{arg1}}', $target);
-
-            //$len = $this->mb_str_len($a);
-            //if($len <= $target) return $this->fail('Must be greater than {{arg1}} characters long', $target);
-        }
+        $target=$this->pullRule(true);
+        if($a <= $target) return $this->fail('must be greater than {{arg1}}', $target);
+        return $a;
     }
 
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
+    function rule_lt($a)
+    {
+        $target=$this->pullRule(true);
+        if($a >= $target) return $this->fail('must be less than {{arg1}}', $target);
+        return $a;
+    }
+
     function rule_gte($a)
     {
-        $target=$this->pullRule();
-
-        if(is_numeric($a)){
-
-            if($a < $target) return $this->fail('Must be greater than or equal to {{arg1}}', $target);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len < $target) return $this->fail('Must be greater than or equal to {{arg1}} characters long', $target);
-        }
+        $target=$this->pullRule(true);
+        if($a < $target) return $this->fail('must not be less than {{arg1}}', $target);
+        return $a;
     }
 
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
+    function rule_lte($a)
+    {
+        $target=$this->pullRule(true);
+        if($a > $target) return $this->fail('must not be greater than {{arg1}}', $target);
+        return $a;
+    }
+
     function rule_eq($a)
     {
         $target=$this->pullRule();
-
-        if(is_numeric($a)){
-
-            if($a !== $target) return $this->fail('Must equal {{arg1}}', $target);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len !== $target) return $this->fail('Must equal {{arg1}} characters long', $target);
-        }
+        if($a !== $target) return $this->fail('must be exactly {{arg1}}', $target);
+        return $a;
     }
 
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_lt($a)
-    {
-        $target=$this->pullRule();
-
-        if(is_numeric($a)){
-
-            if($a >= $target) return $this->fail('Must be less than {{arg1}}, $target');
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len >= $target) return $this->fail('Must be less than {{arg1}} characters long', $target);
-        }
-    }
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_lte($a)
-    {
-        $target=$this->pullRule();
-
-        if(is_numeric($a)){
-
-            if($a > $target) return $this->fail('Must be less than or equal to {{arg1}}, $target');
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len > $target) return $this->fail('Must be less than or equal to {{arg1}} characters long', $target);
-        }
-    }
-
-    /* \section Value Comparison Rules: field value */
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_gtf($a)
-    {
-        $field=$this->pullRule();
-        $target=$this->get($field);
-
-        if(is_numeric($a)){
-
-            if($a <= $target) return $this->fail('Must be greater than field {{arg1}}, $field');
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len <= $target) return $this->fail('Must be longer than field {{arg1}}', $field);
-        }
-    }
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_gtef($a)
-    {
-        $field=$this->pullRule();
-        $target=$this->get($field);
-
-        if(is_numeric($a)){
-
-            if($a < $target) return $this->fail('Must be greater than or equal to field {{arg1}}', $field);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len < $target) return $this->fail('Must be longer than or equal to field {{arg1}}', $field);
-        }
-    }
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
     function rule_eqf($a)
     {
-        $field=$this->pullRule();
-        $target=$this->get($field);
-
-        if(is_numeric($a)){
-
-            if($a !== $target) return $this->fail('Must equal field {{arg1}}', $field);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len !== $target) return $this->fail('Must equal length of field {{arg1}}', $field);
-        }
-    }
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_ltf($a)
-    {
-        $field=$this->pullRule();
-        $target=$this->get($field);
-
-        if(is_numeric($a)){
-
-            if($a >= $target) return $this->fail('Must be less than field{{arg1}}', $field);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len >= $target) return $this->fail('Must be shorter than field {{arg1}}', $field);
-        }
-    }
-
-    /**
-     * Overloaded: checks value for numbers,
-     * string-length for other values.
-     */
-    function rule_ltef($a)
-    {
-        $field=$this->pullRule();
-        $target=$this->get($field);
-
-        if(is_numeric($a)){
-
-            if($a > $target) return $this->fail('Must be less than or equal to field {{arg1}}', $field);
-
-        } else {
-
-            $len = $this->mb_str_len($a);
-            if($len > $target) return $this->fail('Must shorter than or equal to field {{arg1}}', $field);
-        }
+        $target=$this->pullRule(true);
+        if($a !== $target) return $this->fail('must be exactly {{arg1}}', $target);
+        return $a;
     }
 
     /* \section Value Test Rules: Numeric */
@@ -339,12 +147,12 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     function rule_number($a)
     {
-        if( ! is_numeric($a)) return $this->fail('Must be a number: eg 12.34 or 1234');
+        if( ! is_numeric($a)) return $this->fail('must be a number');
     }
 
     function rule_decimal($a)
     {
-        if( ! preg_match('/^[0-9]+\.[0-9]+$/', $a)) return $this->fail('Must be a decimal number: eg 12.34');
+        if( ! preg_match('/^[0-9]+\.[0-9]+$/', $a)) return $this->fail('must be a decimal number: eg 12.34');
     }
 
     /**
@@ -373,62 +181,30 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     function rule_alpha($a)
     {
-        $msg = 'Must contain only letters';
-        if(!preg_match('/^([A-Za-z])+$/', $a)) return $this->fail($msg);
-    }
-
-    /**
-     * Test for unicode letter characters
-     *
-     * Should work even is PCRE compiled
-     * without "--enable-unicode-properties".
-     */
-    function rule_alpha_unicode($a)
-    {
-        $msg = 'Must contain only letters';
-        if(!preg_match('/(*UTF8)^([\p{L}])+$/u', $a)) return $this->fail($msg);
+        $msg = 'must contain only letters';
+        if(!preg_match('/^([A-Za-z])*$/', $a)) return $this->fail($msg);
     }
 
     /**
      * Test for A-Za-z0-9
      */
-    function rule_alpha_num($a)
+    function rule_alphanum($a)
     {
-        $msg = 'Must contain only digits and letters';
-        if(!preg_match('/^([a-zA-Z0-9])+$/', $a)) return $this->fail($msg);
+        $msg = 'must contain only digits and letters';
+        if(!preg_match('/^([a-zA-Z0-9])*$/', $a)) return $this->fail($msg);
     }
 
-    /**
-     * Test for unicode letter characters and digits
-     *
-     * Should work even is PCRE compiled
-     * without "--enable-unicode-properties".
-     */
-    function rule_alpha_num_unicode($a)
+    function rule_type($a)
     {
-        $msg = 'Must contain only letters and numbers';
-        if(!preg_match('/(*UTF8)^^([\p{L}0-9])+$/u', $a)) return $this->fail($msg);
+        $this->prefix='type of ';
+        return gettype($a);
     }
 
-    /**
-     * Test for A-Za-z0-9_-
-     */
-    function rule_alpha_num_dash($a)
+    function rule_class($a)
     {
-        $msg = 'Must contain only letters, numbers and dashes';
-        if(!preg_match('/^([a-zA-Z0-9_-])+$/', $a)) return $this->fail($msg);
-    }
-
-    /**
-     * Test for unicode letter characters and digits
-     *
-     * Should work even is PCRE compiled
-     * without "--enable-unicode-properties".
-     */
-    function rule_alpha_num_dash_unicode($a)
-    {
-        $msg = 'Must contain only letters, numbers and dashes';
-        if(!preg_match('/(*UTF8)^([\p{L}0-9_-])+$/u', $a)) return $this->fail($msg);
+        if(!is_object($a))return $this->fail('is not an object');
+        $this->prefix='class of ';
+        return get_class($a);
     }
 
     /* \section Value Test Rules: Boolean */
@@ -1312,7 +1088,9 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     protected function prep_in_vals($a)
     {
-        $vals=explode(',', $this->pullRule());
+        $vals = $this->pullRule();
+        if(is_array($vals))return $vals;
+        $vals=explode(',', $vals);
         array_walk($vals, function($val){ return trim($val);});
        // create_function('&$val', '$val = trim($val);'));
         return $vals;
