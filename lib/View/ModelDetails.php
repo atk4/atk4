@@ -40,6 +40,7 @@ class View_ModelDetails extends Grid_Basic
         $m=parent::setModel($model);
         if($actual_fields!=UNDEFINED)$m->setActualFields($actual_fields);
         return $m;
+    }
     function precacheTemplate(){
         parent::precacheTemplate();
         $this->row_t->set('tdparam_value','');
