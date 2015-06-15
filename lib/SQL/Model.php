@@ -260,8 +260,8 @@ class SQL_Model extends Model implements Serializable {
         return $this->getElement($name)->ref($load);
     }
     /** Returns Model with SQL join usable for subqueries. */
-    function refSQL($name){
-        return $this->getElement($name)->refSQL();
+    function refSQL($name,$load=null){
+        return $this->getElement($name)->refSQL($load);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
     function getRef($name,$load=null){
