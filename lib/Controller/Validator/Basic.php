@@ -43,7 +43,9 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
      */
     function rule_regex($a)
     {
-        $opt['regexp'] = '/^'.$this->pullRule().'$/';
+        $rule = $this->pullRule();
+        if($rule[0]!='/') $rule = '/^'.$rule.'*$/';
+        $opt['regexp'] = $rule;
 
         if( ! filter_var($a, FILTER_VALIDATE_REGEXP, ['options'=>$opt])){
             return $this->fail('does not match the pattern');
