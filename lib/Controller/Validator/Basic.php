@@ -538,7 +538,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
 
     function rule_to_lower($a)
     {
-        return $this->mb_str_to_lower($a);
+        return  strtolower($a);
     }
 
     function rule_to_upper($a)
