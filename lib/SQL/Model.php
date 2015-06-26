@@ -381,13 +381,13 @@ class SQL_Model extends Model implements Serializable {
 
         $f = $field->actual_field ?: $field->short_name;
 
-        //if ($field->calculated()) {
+        if ($field instanceof Field_Expression) {
             // TODO: should we use expression in where?
 
-        //    $dsql->where($field->getExpr(), $cond, $value);
+            $dsql->where($field->getExpr(), $cond, $value);
             //$dsql->having($f, $cond, $value);
             //$field->updateSelectQuery($this->dsql);
-        if ($field->relation) {
+        } elseif ($field->relation) {
             $dsql->where($field->relation->short_name . '.' . $f, $cond, $value);
         } elseif ($this->relations) {
             $dsql->where(($this->table_alias ?: $this->table) . '.' . $f, $cond, $value);
