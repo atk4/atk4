@@ -381,7 +381,7 @@ class SQL_Model extends Model implements Serializable {
 
         $f = $field->actual_field ?: $field->short_name;
 
-        if ($field->calculated()) {
+        if ($field instanceof Field_Expression) {
             // TODO: should we use expression in where?
 
             $dsql->where($field->getExpr(), $cond, $value);
