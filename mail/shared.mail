@@ -1,7 +1,7 @@
 {headers}
 From: {$from_formatted}
 MIME-Version: 1.0
-Content-Type: multipart/alternative; boundary="{$boundary}"
+Content-Type: {mailtype}multipart/alternative{/}; boundary="{$boundary}"
 {$ExtraHeaders}{/}
 
 {body}This is a multipart message in MIME format.
