@@ -1,0 +1,20 @@
+
+<style>
+  .my-console {
+    background: black;
+    color: white;
+    min-height: 10em;
+    max-height: 30em;
+    overflow-y: scroll;
+    overflow-x: hidden
+  
+  }
+  .my-console::-webkit-scrollbar {
+    display: none
+  }
+  
+</style>
+<!-- background: black; color: white; min-height: 5em; max-height: 30em; overflow-y: scroll; overflow-x: hidden; -webkit-scrollbar: none; border: 0px-->
+<div id="{$_name}" class="{$class}">
+  <pre style="{$style}" id="{$_name}_console" class="{pre-style}my-console atk-box-small{/}"></pre>
+</div>

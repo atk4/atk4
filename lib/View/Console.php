@@ -15,7 +15,6 @@
  * Finally - you can supply several streams which cosole will read
  * from and output to the browser until streams are closed.
  */
-namespace sandbox;
 class View_Console extends \View {
     public $process = null;     // ProcessIO, if set
     public $streams = [];     // PHP stream if set.
@@ -46,8 +45,10 @@ class View_Console extends \View {
         if(!is_null($id))echo "id: $id\n";
 
         $text = "data: ".json_encode($text)."\n\n";
+        $this->_out_encoding=false;
         echo $text;
         flush();
+        $this->_out_encoding=true;
     }
 
     /**
@@ -81,9 +82,21 @@ class View_Console extends \View {
     /**
      * Displays output in the console
      */
-    function out($str){
-        $data = ['text'=>rtrim($str, "\n")];
+    function out($str,$opt=array()){
+        $data = array_merge($opt,['text'=>rtrim($str, "\n")]);
+        //if($color)$data['style']='color: '.$color;
         $this->sseMessageJSON($data);
+    }
+
+    private $_out_encoding=true;
+    function _out($str){
+        if(!$this->_out_encoding)return $str;
+        return "data: ".json_encode(['text'=>rtrim($str, "\n")])."\n\n";
+    }
+
+    private $destruct_send = false;
+    function __destruct(){
+        if($this->destruct_send)$this->out('--[ <i class="icon-ok"></i> DONE ]--------');
     }
 
     function render(){
@@ -93,6 +106,7 @@ class View_Console extends \View {
             header('Cache-Control: private');
             header('Content-Encoding: none;');
             header("Pragma: no-cache");
+            $this->destruct_send=true;
 
 
             if (ob_get_level()) ob_end_clean();
@@ -139,7 +153,10 @@ class View_Console extends \View {
 
             if($this->callback){
                 try {
+                    $c = $this;
+                    ob_start([$this,'_out'],1);
                     call_user_func($this->callback, $this);
+                    ob_end_flush();
                 }catch(Exception $e){
                     $this->err('Exception: '.($e instanceof BaseException?$e->getText():$e->getMessage()));
                 }
@@ -207,6 +224,6 @@ EOF
     }
 
     function defaultTemplate(){
-        return array('sandbox/console');
+        return array('view/console');
     }
 }

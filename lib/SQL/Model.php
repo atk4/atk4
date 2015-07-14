@@ -454,6 +454,7 @@ class SQL_Model extends Model implements Serializable {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->stmt=null;
             $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }

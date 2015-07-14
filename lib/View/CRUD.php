@@ -450,24 +450,44 @@ class View_CRUD extends View
         $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
-            if ($show_toolbar && !$this->id) {
-                $this->model->unload();
-            } elseif ($show_column && $this->id) {
-                $this->model->load($this->id);
-            } else {
-                return ;
-            }
 
-            if (isset($options['args'])) {
-                $params = $options['args'];
-            } elseif (!method_exists($this->model, $method_name)) {
-                // probably a dynamic method
-                $params = array();
-            } else {
-                $reflection = new ReflectionMethod($this->model, $method_name);
+            $c = $this->virtual_page->getPage()->add('View_Console');
+            $self = $this;
 
-                $params = $reflection->getParameters();
-            }
+            // Callback for the function
+            $c->set(function($c)use($show_toolbar,$show_column,$options,$self,$method_name){
+                if ($show_toolbar && !$self->id) {
+                    $self->model->unload();
+                } elseif ($show_column && $self->id) {
+                    $c->out('Loading record '.$self->id,['class'=>'atk-effect-info']);
+                    $self->model->load($self->id);
+                } else {
+                    return ;
+                }
+
+                $ret=$self->model->$method_name();
+
+                $c->out('Returned: '.json_encode($ret),['class'=>'atk-effect-success']);
+
+                /*
+                if (isset($options['args'])) {
+                    $params = $options['args'];
+                } elseif (!method_exists($self->model, $method_name)) {
+                    // probably a dynamic method
+                    $params = array();
+                } else {
+                    $reflection = new ReflectionMethod($self->model, $method_name);
+
+                    $params = $reflection->getParameters();
+                }
+                */
+            });
+
+            return;
+
+
+
+
 
             $has_parameters=(bool) $params;
             foreach ($params as $i => $param) {
@@ -502,7 +522,7 @@ class View_CRUD extends View
             return true;
         } elseif ($this->isEditing()) return;
 
-        $frame_options = array_merge(array('width'=>'300px','dialogClass'=>'atk-align-center'), $this->frame_options ?: array());
+        $frame_options = array_merge(array(), $this->frame_options ?: array());
 
         if ($show_column) {
             $this
