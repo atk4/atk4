@@ -273,7 +273,7 @@ class Controller_Tester extends Page {
                 $k=$key.'_'.$row['name'];
                 if($this->proper_responses[$k]==$result && isset($this->proper_responses[$k])){
                     $row[$key.'_res']='<font color="green">PASS</font><br/>'.htmlspecialchars($result);
-                }elseif($this->proper_responses[$k]){
+                }elseif(isset($this->proper_responses[$k])){
                     $row[$key.'_res']='<font color="red">'.htmlspecialchars($result).'</font><br/>'.
                         var_export($this->proper_responses[$k],true);
                 }

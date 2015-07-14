@@ -68,6 +68,12 @@ class Controller_Validator_Abstract extends \AbstractController {
      */
     public $active_field;
 
+    /**
+     * When transformivg value (such as len) - will contain a
+     * modifier to the error message
+     */
+    public $prefix = '';
+
     // {{{ Initialization method
     function init()
     {
@@ -282,9 +288,12 @@ class Controller_Validator_Abstract extends \AbstractController {
 
     /**
      * Pulls next rule out of the rule stack (current_ruleset)
+     * May allow alias ($name)
      */
-    function pullRule(){
-        return $this->consumed[]=array_shift($this->current_ruleset);
+    function pullRule($alias = false){
+        $v = array_shift($this->current_ruleset);
+        if($alias && $v[0] == '$')$v = $this->get(substr($v,1));
+        return $this->consumed[]=$v;
     }
 
     /**
@@ -382,7 +391,11 @@ class Controller_Validator_Abstract extends \AbstractController {
 
         if(substr($rule,0,1)==='='){
             $this->pushRule(substr($rule,1));
-            return 'eq';
+            return 'eqf';
+        }
+        if(substr($rule,0,1)==='['){
+            $this->pushRule($rule);
+            return 'regex';
         }
         if(substr($rule,0,1)==='$'){
             $this->get(substr($rule,1));
@@ -396,7 +409,7 @@ class Controller_Validator_Abstract extends \AbstractController {
     function fail()
     {
         $args =  func_get_args();
-        $str = array_shift($args);
+        $str = ucfirst($this->prefix.$this->active_field.' '.lcfirst(array_shift($args)));
 
         // Insert any args into placeholders
 

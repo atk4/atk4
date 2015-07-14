@@ -145,6 +145,7 @@ class VirtualPage extends AbstractController
                 try {
                     call_user_func($method, $page, $self);
                 } catch (Exception $e){
+                    throw $e;
                     // exception occured possibly due to a nested page. We
                     // are already executing from post-init, so
                     // it's fine to ignore it.

@@ -335,6 +335,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function applySorting($i, $field, $desc)
     {
+        if(!$field)return;
         if ($i instanceof DB_dsql) {
             $i->order($field, $desc);
         } elseif ($i instanceof SQL_Model) {
@@ -1343,7 +1344,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row['_link'] =
             $this->api->url($page, array($attr =>
                 $this->columns[$field]['id_value']
-                ? $this->current_row[$this->columns[$field]['id_value'].'_original']
+                ? ($this->model[$this->columns[$field]['id_value']]?:$this->current_row[$this->columns[$field]['id_value'].'_original'])
                 : $this->current_id));
 
         if (!$this->current_row[$field]) {
