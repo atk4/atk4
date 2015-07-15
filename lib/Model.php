@@ -942,7 +942,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         $field = $this->addField($refFieldName);
 
-        if (!$this->controller->supportExpressions) {
+        if (!@$this->controller->supportExpressions) {
             $expr = $this->addExpression($displayFieldName, $model, $field_class)
                 ->setModel($model)
                 ->setForeignFieldName($refFieldName);
