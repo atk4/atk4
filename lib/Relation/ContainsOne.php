@@ -12,6 +12,8 @@ class Relation_ContainsOne extends Field {
             $this->encode = function($t){ return json_encode($t); };
             $this->decode = function($t){ return json_decode($t,true); };
         }
+
+        $this->system(true);
     }
 
     function ref(){
@@ -28,6 +30,7 @@ class Relation_ContainsOne extends Field {
         }
 
         $model->data = $this->owner[$this->short_name];
+        $model->id = 1;
         if($this->decode)$model->data = call_user_func($this->decode,$model->data);
 
         $self = $this;
