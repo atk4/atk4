@@ -254,6 +254,26 @@ class SQL_Model extends Model implements Serializable {
             ->set($model,$their_field,$our_field);
         return $rel;
     }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
+    }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
         if(!$name)return $this;

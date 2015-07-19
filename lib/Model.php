@@ -964,6 +964,26 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return null;
     }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
+    }
     /**
      * Traverses reference of relation
      *
