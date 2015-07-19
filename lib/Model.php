@@ -995,9 +995,15 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         list($ref,$rest)=explode('/', $ref1, 2);
 
         if (!isset($this->_references[$ref])) {
-            throw $this->exception('Reference is not defined')
-                ->addMoreInfo('model', $this)
-                ->addMoreInfo('ref', $ref);
+
+            $e = $this->hasElement($ref);
+            if($e && $e->hasMethod('ref')){
+                return $e->ref();
+            }else{
+                throw $this->exception('Reference is not defined')
+                    ->addMoreInfo('model', $this)
+                    ->addMoreInfo('ref', $ref);
+            }
         }
 
         $class = $this->_references[$ref];
