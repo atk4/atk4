@@ -1,10 +1,5 @@
 /**
- *  Agile Toolkit CSS Framework (c) 2013-2014 v0.904
- *  http://www4.agiletoolkit.org/css
- *  Theme: Playground (Based on default)
- */
-/**
- * Agile Toolkit CSS Framework (c) 2013-2014 v0.913
+ * Agile Toolkit CSS Framework (c) 2013-2014 v0.914
  *  http://www4.agiletoolkit.org/css
  */
 /*! jQuery UI - v1.10.3 - 2013-12-23
@@ -12,7 +7,7 @@
 * Includes: jquery.ui.core.css, jquery.ui.resizable.css, jquery.ui.selectable.css, jquery.ui.accordion.css, jquery.ui.autocomplete.css, jquery.ui.datepicker.css, jquery.ui.menu.css, jquery.ui.progressbar.css, jquery.ui.slider.css, jquery.ui.tabs.css, jquery.ui.tooltip.css, jquery.ui.theme.css
 * To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Segoe%20UI%2CHelvetica%2CArial%2Csans-serif&fwDefault=bold&fsDefault=1.1em&cornerRadius=6px&bgColorHeader=9fda58&bgTextureHeader=gloss_wave&bgImgOpacityHeader=85&borderColorHeader=000000&fcHeader=222222&iconColorHeader=1f1f1f&bgColorContent=000000&bgTextureContent=gloss_wave&bgImgOpacityContent=55&borderColorContent=4a4a4a&fcContent=ffffff&iconColorContent=9fda58&bgColorDefault=0a0a0a&bgTextureDefault=glass&bgImgOpacityDefault=40&borderColorDefault=1b1613&fcDefault=b8ec79&iconColorDefault=b8ec79&bgColorHover=000000&bgTextureHover=glass&bgImgOpacityHover=60&borderColorHover=000000&fcHover=96f226&iconColorHover=b8ec79&bgColorActive=4c4c4c&bgTextureActive=flat&bgImgOpacityActive=0&borderColorActive=696969&fcActive=ffffff&iconColorActive=ffffff&bgColorHighlight=f1fbe5&bgTextureHighlight=glass&bgImgOpacityHighlight=55&borderColorHighlight=8cce3b&fcHighlight=030303&iconColorHighlight=000000&bgColorError=f6ecd5&bgTextureError=gloss_wave&bgImgOpacityError=95&borderColorError=f1ac88&fcError=74736d&iconColorError=cd0a0a&bgColorOverlay=262626&bgTextureOverlay=diagonals_small&bgImgOpacityOverlay=50&opacityOverlay=30&bgColorShadow=303030&bgTextureShadow=flat&bgImgOpacityShadow=0&opacityShadow=50&thicknessShadow=6px&offsetTopShadow=-6px&offsetLeftShadow=-6px&cornerRadiusShadow=12px
 * Copyright 2013 jQuery Foundation and other contributors; Licensed MIT */
-@import '../css/libs/fontello.css';
+@import 'fontello.css';
 .ui-helper-hidden {
   display: none;
 }
@@ -2034,19 +2029,19 @@ table {
   width: 1em;
 }
 .ui-icon.ui-icon-triangle-1-s:before {
-  content: '\e870';
+  content: '\e8b0';
 }
 .ui-icon.ui-icon-triangle-1-e:before {
-  content: '\e873';
+  content: '\e8ae';
 }
 .ui-icon.ui-icon-circle-triangle-e:before {
-  content: '\ea61';
+  content: '\e8ae';
 }
 .ui-icon.ui-icon-circle-triangle-w:before {
-  content: '\ea60';
+  content: '\e8ad';
 }
 .ui-icon.ui-icon-closethick:before {
-  content: '\e97b';
+  content: '\e821';
 }
 html,
 body,
@@ -2078,6 +2073,7 @@ body,
 .atk-layout > .atk-layout-row > .atk-layout-column {
   display: table-cell;
   height: auto;
+  vertical-align: top;
   width: 1px;
 }
 .atk-layout > .atk-layout-column.atk-layout-fluid,
@@ -2154,17 +2150,17 @@ h6 + .atk-form {
 .atk-size-zetta {
   font-size: 3.7063259rem;
 }
+h1,
 .atk-size-exa {
   font-size: 2.91376382rem;
 }
 .atk-size-peta {
   font-size: 2.2906835rem;
 }
-h1,
+h2,
 .atk-size-tera {
   font-size: 1.8008429rem;
 }
-h2,
 .atk-size-giga {
   font-size: 1.59672895rem;
 }
@@ -2204,7 +2200,8 @@ h6 {
 .atk-text-bold {
   font-weight: bold;
 }
-.atk-text-medium {
+.atk-text-medium,
+.atk-text-semibold {
   font-weight: 600;
 }
 .atk-text-normal {
@@ -2307,6 +2304,14 @@ ol.atk-list-inline li {
 ul.atk-list-inline li:first-child .atk-sep,
 ol.atk-list-inline li:first-child .atk-sep {
   display: none;
+}
+ul.atk-list-nomargin,
+ol.atk-list-nomargin,
+ul.atk-list-nomargin ul,
+ol.atk-list-nomargin ul,
+ul.atk-list-nomargin ol,
+ol.atk-list-nomargin ol {
+  padding-left: 1em;
 }
 p {
   margin: 0 0 1.6rem 0;
@@ -2590,7 +2595,7 @@ label.atk-input-label em {
   margin-bottom: 0;
 }
 body {
-  background: #f5f6f7;
+  background: #ffffff;
 }
 .atk-background-cover {
   background-attachment: fixed;
@@ -2881,7 +2886,7 @@ a:focus {
 }
 .atk-banner .atk-box.atk-banner-cogs:after,
 .atk-banner .atk-box.atk-banner-cogs:before {
-  content: '\ea8a';
+  content: '\e800';
   display: inline-block;
   font-family: fontello;
   height: 1em;
@@ -3354,7 +3359,6 @@ ul[class*=atk-menu].atk-menu-vertical > li *[class*=atk-menu]:not(.atk-menu-sepa
   -moz-border-radius: 5px;
   border-radius: 5px;
   display: inline;
-  font-weight: bold;
   padding: 0.2em 0.4em;
   white-space: nowrap;
 }
@@ -3795,27 +3799,27 @@ input.atk-shape-circle.ui-button {
 }
 *[class*=atk-effect].atk-label.atk-effect-danger,
 *[class*=atk-effect][class*=atk-box].atk-effect-danger {
-  color: #4c4549;
-  background-color: #ffd5d1;
-  border-color: #ffd5d1;
+  background-color: #ffeae8;
+  border-color: #ffeae8;
+  color: #991b10;
 }
 *[class*=atk-effect].atk-label.atk-effect-warning,
 *[class*=atk-effect][class*=atk-box].atk-effect-warning {
-  color: #4c4d47;
-  background-color: #fdedcc;
-  border-color: #fdedcc;
+  background-color: #fef6e6;
+  border-color: #fef6e6;
+  color: #946400;
 }
 *[class*=atk-effect].atk-label.atk-effect-success,
 *[class*=atk-effect][class*=atk-box].atk-effect-success {
-  color: #3f4f4a;
-  background: #d3f3d3;
-  border-color: #d3f3d3;
+  background: #e9f9e9;
+  border-color: #e9f9e9;
+  color: #167616;
 }
 *[class*=atk-effect].atk-label.atk-effect-info,
 *[class*=atk-effect][class*=atk-box].atk-effect-info {
-  color: #3f4e56;
-  background-color: #d5eef7;
-  border-color: #d5eef7;
+  background-color: #eaf7fb;
+  border-color: #eaf7fb;
+  color: #1a6781;
 }
 *[class*=atk-effect].atk-effect-danger input[type="text"],
 *[class*=atk-effect].atk-effect-danger input[type="url"],
@@ -3872,11 +3876,6 @@ input.atk-shape-circle.ui-button {
 *[class*=atk-show-] {
   display: none !important;
 }
-/**
- *  Agile Toolkit CSS Framework (c) 2013-2014 v0.912
- *  http://www4.agiletoolkit.org/css
- *  Theme: Default
- */
 /**
  *  Agile Toolkit CSS Framework (c) 2013-2014 v0.912
  *  http://www4.agiletoolkit.org/css
@@ -4763,46 +4762,4 @@ a.atk-swatch-blue:not(.atk-text-inherit):hover,
 }
 .atk-swatch-blue-text {
   color: #0095ff;
-}
-#atk-footer {
-  border-top: 1px solid #dadde0;
-}
-section {
-  margin-top: 4.8rem;
-}
-section h2:first-child {
-  border-bottom: 1px solid #dadde0;
-  color: #bec4c9;
-  font-weight: 300;
-}
-section:first-child {
-  margin-top: 0;
-}
-#example-swatches .row + .row {
-  margin-top: 1em;
-}
-#example-effects-box .atk-box-small {
-  margin-bottom: 0;
-}
-#example-styling-shapes .atk-padding {
-  height: 100px;
-  width: 100%;
-}
-#example-styling-shapes .atk-padding.atk-shape-circle {
-  width: 100px;
-}
-#example-icons #icons-library {
-  white-space: nowrap;
-}
-#example-icons #toggler {
-  display: block;
-}
-#example-icons .i-code {
-  display: none;
-}
-#example-widgets-mediablocks img {
-  height: 100px;
-}
-#example-widgets-popover .atk-row > .atk-col-4 > .atk-box > *[class*=atk-popover] {
-  position: relative;
 }
