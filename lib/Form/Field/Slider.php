@@ -21,7 +21,7 @@ class Form_Field_Slider extends Form_Field_Number {
     public $step = 1;
     public $left = 'Min';
     public $right = 'Max';
-    
+
     function setStep($n){
         $this->step = $n;
         return $this;
@@ -43,12 +43,12 @@ class Form_Field_Slider extends Form_Field_Number {
                         )->change()
                     ));
         $this->setAttr('style','display: none');
-        
-        return '<table width="100%" border="0"><tr>'.
-            '<td align="left">'.$this->left.'</td>'.
-            '<td align="right">'.$this->right.'</td>'.
-            '</tr><tr>'.
-            '<td colspan=2>'.parent::getInput().'<div id="'.$s.'"></div></td>'.
-            '</tr></table>';
+
+        return '<div class="atk-cells"><div class="atk-cell atk-align-left">'.
+            $this->left.'</div>'.
+            '<div class="atk-cell atk-align-right">'.$this->right.'</div>'.
+            '</div>'.
+            ''.parent::getInput().'<div id="'.$s.'"></div>'.
+            '';
     }
 }
