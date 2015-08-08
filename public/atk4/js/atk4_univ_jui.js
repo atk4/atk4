@@ -144,7 +144,7 @@ $.each({
             return false;
         }
     },
-    successMessage: function(msg){
+    successMessage: function(msg,time){
         var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
     <div class="atk-swatch-green atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-info"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
@@ -152,9 +152,9 @@ $.each({
     </div>\
   </div>');
         this.message(msg,html);
-        setTimeout(function() { html.remove();},8000);
+        setTimeout(function() { html.remove();},time?time:8000);
     },
-    errorMessage: function(msg){
+    errorMessage: function(msg,time){
         var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
     <div class="atk-swatch-red atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-attention"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
@@ -162,6 +162,7 @@ $.each({
     </div>\
   </div>');
         this.message(msg,html);
+        if(time)setTimeout(function() { html.remove();},time);
     },
     closeDialog: function(){
         var r=this.getFrameOpener();
