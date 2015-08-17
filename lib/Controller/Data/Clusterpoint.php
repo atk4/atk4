@@ -41,10 +41,10 @@ class Controller_Data_Clusterpoint extends Controller_Data {
             $query = [$query];
         }
 
-        return $this->sendRawRequest($model,'/_search',['query'=>$this->xml_encode($query)]);
+        return $this->_advancedCommand($model,'/_search',['query'=>$this->xml_encode($query)]);
     }
 
-    function sendRawRequest($model,$url,$data=null){
+    function _advancedCommand($model,$url,$data=null){
         if($model->debug) {
             echo '<font color="blue">'.
                 htmlspecialchars("$url == (".json_encode($data).")").
@@ -109,11 +109,37 @@ class Controller_Data_Clusterpoint extends Controller_Data {
     }
 
     function save($model, $id, $data){
+        if(is_null($id)){
+            $id = uniqid();
+            $method = 'post';
+        }else{
+            $method = 'put';
+        }
 
+        $cp = $model->cp();
+        $res = $cp->$method('/'.$id, $data);
+
+        //$newid = $res['documents'][0];
+        //if($newid != $id)throw $this->exception('Save failed');
+        $model->id = $id;
     }
 
-    function delete($model, $id) {}
+    function delete($model, $id) {
+        $res = $model->cp()->delete('/'.$id);
+        $model->unload();
+    }
 
-    function prefetchAll($model) {}
+    function prefetchAll($model) {
+        $data = $this->_search($model, '*');
+        return $data['documents'];
+    }
+
+    function loadCurrent($model,&$cursor) {
+        if(!$cursor){
+            return $model->unload();
+        }
+        $model->data = array_shift($cursor);
+        $model->id = $model->data[$model->id_field];
+    }
 
 }
