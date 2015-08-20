@@ -93,6 +93,10 @@ abstract class Controller_Data extends AbstractController {
         return $this;
     }
 
+    function &d($model){
+        return $model->_table[$this->short_name];
+    }
+
     /**
      * Writes record containing $data into the data store under id=$id.
      * If the ID field can vary, consult $model->id_field. You do not have
