@@ -340,7 +340,6 @@ class Logger extends AbstractController {
 ?><!DOCTYPE html>
 <html lang="en"><head>
     <title>Exception: <?php echo htmlspecialchars($e->getMessage())?></title>
-    <link href="http://css.agiletoolkit.org/css/theme.css" rel="stylesheet" media="all"/>
 <head><body>
 <?php  echo $e->getHTML();?>
 </body></head>
