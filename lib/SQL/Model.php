@@ -254,6 +254,26 @@ class SQL_Model extends Model implements Serializable {
             ->set($model,$their_field,$our_field);
         return $rel;
     }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
+    }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
         if(!$name)return $this;
@@ -381,13 +401,13 @@ class SQL_Model extends Model implements Serializable {
 
         $f = $field->actual_field ?: $field->short_name;
 
-        //if ($field->calculated()) {
+        if ($field instanceof Field_Expression) {
             // TODO: should we use expression in where?
 
-        //    $dsql->where($field->getExpr(), $cond, $value);
+            $dsql->where($field->getExpr(), $cond, $value);
             //$dsql->having($f, $cond, $value);
             //$field->updateSelectQuery($this->dsql);
-        if ($field->relation) {
+        } elseif ($field->relation) {
             $dsql->where($field->relation->short_name . '.' . $f, $cond, $value);
         } elseif ($this->relations) {
             $dsql->where(($this->table_alias ?: $this->table) . '.' . $f, $cond, $value);
@@ -454,6 +474,7 @@ class SQL_Model extends Model implements Serializable {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->stmt=null;
             $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }

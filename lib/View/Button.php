@@ -302,6 +302,7 @@ class View_Button extends View
             // blank chain otherwise
             $this->js()->univ()->successMessage(is_string($ret)?$ret:'Success')->execute();
         }
+        return $this;
     }
     // }}}
 }

@@ -188,6 +188,9 @@ abstract class AbstractObject
     function _removeElement($short_name)
     {
         unset($this->elements[$short_name]);
+        if($this->_element_name_counts[$short_name] === 1){
+            unset($this->_element_name_counts[$short_name]);
+        }
         return $this;
     }
 

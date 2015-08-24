@@ -320,6 +320,13 @@ abstract class AbstractView extends AbstractObject
 
         }
 
+        if ($this->model
+            && is_object($this->model)
+            && $this->model->loaded()
+        ) {
+            $this->modelRender();
+        }
+
         foreach ($this->elements as $key => $obj) {
             if ($obj instanceof AbstractView) {
                 $obj->recursiveRender();
@@ -344,6 +351,17 @@ abstract class AbstractView extends AbstractObject
         }
         // if template wasn't cut, we move all JS chains to parent
 
+    }
+
+    /**
+     * When model is specified for a view, values of the model is
+     * inserted inside the template if corresponding tags exist.
+     * This is used as default values and filled out before
+     * the actual render kicks in.
+     */
+    function modelRender()
+    {
+        $this->template->set($this->model->get());
     }
     /**
      * Append our chains to owner's chains. JS chains bubble up to
@@ -375,12 +393,6 @@ abstract class AbstractView extends AbstractObject
         if (!($this->template)) {
             throw $this->exception("You should specify template for this object")
                 ->addMoreInfo('object', $this->name);
-        }
-        if ($this->model
-            && is_object($this->model)
-            && $this->model->loaded()
-        ) {
-            $this->template->set($this->model->get());
         }
         $this->output(($render = $this->template->render()));
         if (@$this->debug) {

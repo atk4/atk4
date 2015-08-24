@@ -942,7 +942,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         $field = $this->addField($refFieldName);
 
-        if (!$this->controller->supportExpressions) {
+        if (!@$this->controller->supportExpressions) {
             $expr = $this->addExpression($displayFieldName, $model, $field_class)
                 ->setModel($model)
                 ->setForeignFieldName($refFieldName);
@@ -964,6 +964,26 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return null;
     }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
+    }
     /**
      * Traverses reference of relation
      *
@@ -975,9 +995,15 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         list($ref,$rest)=explode('/', $ref1, 2);
 
         if (!isset($this->_references[$ref])) {
-            throw $this->exception('Reference is not defined')
-                ->addMoreInfo('model', $this)
-                ->addMoreInfo('ref', $ref);
+
+            $e = $this->hasElement($ref);
+            if($e && $e->hasMethod('ref')){
+                return $e->ref();
+            }else{
+                throw $this->exception('Reference is not defined')
+                    ->addMoreInfo('model', $this)
+                    ->addMoreInfo('ref', $ref);
+            }
         }
 
         $class = $this->_references[$ref];

@@ -45,7 +45,7 @@ abstract class Menu_Advanced extends View
                     $i->addClass('active');
                 }
             } else {
-                $this->on('click',$action);
+                $i->on('click',$action);
             }
         }
 
