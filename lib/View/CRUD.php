@@ -299,6 +299,7 @@ class View_CRUD extends View
      * array (
      *   'view_class' => 'CRUD',  // Which View to use inside expander
      *   'view_options' => ..     // Second arg when adding view.
+     *   'view_model' => model or callback // Use custom model for sub-View, by default ref($name) will be used
      *   'fields' => array()      // Used as second argument for setModel()
      *   'extra_fields' => array() // Third arguments to setModel() used by CRUDs
      *   'label'=> 'Click Me'     // Label for a button inside a grid
@@ -347,8 +348,14 @@ class View_CRUD extends View
                 $options['view_options']
             );
 
+            $this->model->load($this->id);
             $subview->setModel(
-                $this->model->load($this->id)->ref($name),
+                $options['view_model']
+                    ? (is_callable($options['view_model'])
+                        ? call_user_func($options['view_model'], $this->model)
+                        : $options['view_model']
+                    )
+                    : $this->model->ref($name),
                 $options['fields'],
                 $options['grid_fields'] ?: $options['extra_fields']
             );
