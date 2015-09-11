@@ -141,8 +141,11 @@ http://mysite:123/install/dir/my/page.html
         if($destination==='')$destination=@$this->api->index_page;
 
         $this->page=$destination;
-        $this->_current = $this->page == $this->app->page;
-        $this->_current_sub = $this->page == substr($this->app->page,0,strlen($this->page));
+
+        list($p,$ap) = str_replace('/','_',[$this->page,$this->app->page]);
+
+        $this->_current = $p == $ap;
+        $this->_current_sub = $p == substr($ap,0,strlen($p));
         return $this;
     }
     /** Set additional arguments */
