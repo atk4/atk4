@@ -308,6 +308,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess {
      * would read and set multiple region values from $_GET array.
      */
     function set($tag,$value=null,$encode=true){
+        if(!$tag)return $this;
         if(is_array($tag)){
             if(is_null($value)){
                 foreach($tag as $s=>$v){
