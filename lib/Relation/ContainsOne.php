@@ -30,7 +30,7 @@ class Relation_ContainsOne extends Field {
         }
 
         $model->data = $this->owner[$this->short_name];
-        $model->id = (boolean)$model->data;
+        $model->id = $model->data?1:null;
         if($this->decode)$model->data = call_user_func($this->decode,$model->data);
 
         $self = $this;
