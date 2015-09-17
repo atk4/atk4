@@ -145,7 +145,7 @@ class DB extends AbstractController
     }
     // }}}
 
-    // {{{ Query execution and data fetching 
+    // {{{ Query execution and data fetching
     /**
      * Sometimes for whatever reason DSQL is not what you want to do. I really
      * don't understand your circumstances in which you would want to use
@@ -205,7 +205,7 @@ class DB extends AbstractController
     /**
      * Executes query and returns first column of first row. This is quick and
      * speedy way to get the results of simple queries.
-     * 
+     *
      * Consider using DSQL:
      * echo $this->api->db->dsql()->expr('select now()')->getOne();
      *
@@ -272,7 +272,7 @@ class DB extends AbstractController
         }
         return false;
     }
-    
+
     /**
      * Each occurance of beginTransaction() must be matched with commit().
      * Only when same amount of commits are executed, the ACTUAL commit will be
@@ -294,6 +294,20 @@ class DB extends AbstractController
             return $this->dbh->commit();
         }
         return false;
+    }
+
+
+    public function atomic($f)
+    {
+        $this->beginTransaction();
+        try{
+            $res = call_user_func($f);
+            $this->commit();
+            return $res;
+        }catch(Exception $e){
+            $this->rollBack();
+            throw $e;
+        }
     }
 
     /**
