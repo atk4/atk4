@@ -94,6 +94,21 @@ abstract class Controller_Data extends AbstractController {
     }
 
     /**
+     * Controllers (extending from this class) are stateless by their nature
+     * and should be able to work with many different models. Sometimes you
+     * do want to stare some data, though. Model reserves property _table
+     * to be used by various controllers, but for easier access you can
+     * simply call method data($model) which will return an array that
+     * you can use for storing your own data.
+     */
+    function &data($model){
+        if(!isset($model->_table[$this->short_name])){
+            $model->_table[$this->short_name] = array();
+        }
+        return $model->_table[$this->short_name];
+    }
+
+    /**
      * Writes record containing $data into the data store under id=$id.
      * If the ID field can vary, consult $model->id_field. You do not have
      * to worry about default fileds, because their values will automatically

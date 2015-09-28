@@ -8,9 +8,6 @@ class Controller_Data_Clusterpoint extends Controller_Data {
 
     public $transport_class = 'PestJSON';
 
-    function &d($model){
-        return $model->_table[$this->short_name];
-    }
 
     /**
      * This method is called by a model to initialize Clusterpoint connection
@@ -44,7 +41,7 @@ class Controller_Data_Clusterpoint extends Controller_Data {
 
 
     function search($model,$query,$args = []){
-        $d = $this->d($model);
+        $d = $this->data($model);
         $d['search'] = $query;
     }
 
@@ -54,9 +51,21 @@ class Controller_Data_Clusterpoint extends Controller_Data {
             $query = [$query];
         }
 
-        $d = $this->d($model);
+        $d = $this->data($model);
 
-        return $this->_advancedCommand($model,'/_search',['query'=>$d['search'].$this->xml_encode($query)]);
+        $cmd = [
+                'query'=>$d['search'].$this->xml_encode($query)
+            ];
+
+        // we permit limiting by 0 records.
+        if($model->limit && ($model->limit[0]) || $model->limit[0] === 0) {
+            $cmd['limit'] = $model->limit[0];
+        }
+        if($model->limit && $model->limit[1]) {
+            $cmd['skip'] = $model->limit[1];
+        }
+
+        return $this->_advancedCommand($model,'/_search',$cmd);
     }
 
     /**
@@ -140,7 +149,11 @@ class Controller_Data_Clusterpoint extends Controller_Data {
 
         $res = [];
 
-        $res[0] = 'gowrav';
+        $d = $this->data($model);
+        if(isset($d['search'])){
+            $res[0] =$d['search'];
+        }
+
         foreach($conditions as $rule){
             list($field, $op, $value) = $rule;
             switch($op){
