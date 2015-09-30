@@ -2,19 +2,17 @@
 <div style="{$style}" id="{$_name}" class="atk-form {$class}">
   <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
   {Layout}
-  <div class="atk-cells atk-cells-gutter atk-push-small">
-    {Content}
-    {form_line}
-    <div class="atk-form-row atk-cell atk-form-row-{$field_type} {$row_class}">
-      <div class="atk-form-field {$field_class}">
-        {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
-        {$field_hint}
-        {field_error}
-        <p class="atk-form-error"><span class="atk-size-micro">atk-effect-danger {$field_error_str}</span></p>{/}
-      </div>
-    </div>{/}
-    {/Content}
-  </div>
+  {Content}
+  {form_line}
+  <div class="atk-form-row atk-cell atk-form-row-{$field_type} {$row_class}">
+    <div class="atk-form-field {$field_class}">
+      {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
+      {$field_hint}
+      {field_error}
+      <p class="atk-form-error"><span class="atk-size-micro">atk-effect-danger {$field_error_str}</span></p>{/}
+    </div>
+  </div>{/}
+  {/Content}
   <p class="field-error-template atk-form-error"><span class="field-error-text">{$field_error_str}</span></p>{button_row}
   <div class="atk-actions {$buttons_class}">{$form_buttons}</div>{/}
   {/Layout}
