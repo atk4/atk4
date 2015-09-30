@@ -8,5 +8,7 @@ abstract class Field_Calculated extends Field_Base {
         return $this;
     }
 
+    function updateSelectQuery(){ return $this; }
+
     abstract function getValue($model, $data);
 }
