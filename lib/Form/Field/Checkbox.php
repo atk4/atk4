@@ -14,7 +14,7 @@ class Form_Field_Checkbox extends Form_Field {
     function setValueList($list){
 
         // Model must convert it properly
-        return $this;
+        //return $this;
 
 
         /* otherwise type("boolean")->enum(array("Y","N")) won't work */
