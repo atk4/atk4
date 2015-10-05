@@ -298,6 +298,11 @@ abstract class Form_Field extends AbstractView {
         return $this;
     }
     function render(){
+
+        if(!$this->template){
+            throw $this->exception('Field template was not properly loaded')
+                ->addMoreInfo('name',$this->name);
+        }
         if($this->show_input_only){
             $this->output($this->getInput());
             return;
@@ -422,4 +427,3 @@ abstract class Form_Field extends AbstractView {
         return array('form_field');
     }
 }
-
