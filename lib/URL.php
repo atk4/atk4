@@ -142,7 +142,7 @@ http://mysite:123/install/dir/my/page.html
 
         $this->page=$destination;
 
-        list($p,$ap) = str_replace('/','_',[$this->page,$this->app->page]);
+        list($p,$ap) = str_replace('/','_',array($this->page,$this->app->page));
 
         $this->_current = $p == $ap;
         $this->_current_sub = $p == substr($ap,0,strlen($p));
