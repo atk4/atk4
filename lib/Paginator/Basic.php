@@ -28,6 +28,14 @@ class Paginator_Basic extends CompleteLister {
     public $source=null;        // Set with setSource()
     public $base_page=null;     // let's redefine page nicely
 
+    /**
+      * use_calc_found_rows instructs how to calculate total number of rows
+      * in this model. By default (null) $model->count() will be used for
+      * models and use_calc_found_rows will be used for DSQL data sources.
+      */
+    public $use_calc_found_rows = null; // This can be painfully slow sometimes
+        //
+
     function init(){
         parent::init();
 
@@ -60,12 +68,13 @@ class Paginator_Basic extends CompleteLister {
 
         // Start iterating early ($source = DSQL of model)
         if($source instanceof SQL_Model){
+            if(is_null($this->use_calc_found_rows))$this->use_calc_found_rows=false;
             $source = $source->_preexec();
         }
 
         if($source instanceof DB_dsql){
             $source->limit($this->ipp, $this->skip);
-            $source->calcFoundRows();
+            if($this->use_calc_found_rows !== false)$source->calcFoundRows();
             $this->source = $source;
 
         }elseif($source instanceof Model){
