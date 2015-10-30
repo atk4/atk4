@@ -157,6 +157,13 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract {
         if( ! preg_match('/^[0-9]+\.[0-9]+$/', $a)) return $this->fail('must be a decimal number: eg 12.34');
     }
 
+    function rule_phone($a)
+    {
+        if(strlen(preg_replace('/[^0-9]/','',$a))<6){
+            return $this->fail('must contain valid phone number');
+        }
+    }
+
     /**
      * Checks for a specific number of
      * decimal places
