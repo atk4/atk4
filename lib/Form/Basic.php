@@ -57,6 +57,8 @@ class Form_Basic extends View implements ArrayAccess {
     public $default_exception='Exception_ValidityCheck';
     public $default_controller='Controller_MVCForm';
 
+    public $validator=null;
+
     /**
      * Normally form fields are inserted using a form template. If you
      *
@@ -523,6 +525,12 @@ class Form_Basic extends View implements ArrayAccess {
         $this->errors[$field] = (isset($this->errors[$field])?$this->errors[$field]:'') . $name;
     }
 
+    function validate($rule){
+        if(!$this->validator){
+            $this->validator = $this->add('Controller_Validator');
+        }
+        $this->validator->is($rule)->on('validate');
+    }
 
     /**
      * Compatibility. TODO remove in 4.4

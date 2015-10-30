@@ -236,12 +236,19 @@ abstract class Form_Field extends AbstractView {
            Possible trimming, rounding or length enforcements may happen. */
         $this->hook('normalize');
     }
-    function validate(){
-        // NoSave and disabled fields should not be validated
-        if($this->disabled || $this->no_save)return true;
-        // we define "validate" hook, so actual validators could hook it here
-        // and perform their checks
-        if(is_bool($result = $this->hook('validate')))return $result;
+
+    /**
+      * This method has been refactored to integrate with Controller_Validator
+      */
+    function validate($rule = null){
+        if(is_null($rule)){
+            throw $this->exception('Incorrect usage of field validation');
+        }
+        if(is_string($rule))$rule = $this->short_name.'|'.$rule;
+        if(is_array($rule))array_unsift($rule,$this->short_name);
+
+        $this->form->validate($rule);
+        return $this;
     }
     /** @private - handles field validation callback output */
     function _validateField($caller,$condition,$msg){
