@@ -464,7 +464,6 @@ class SQL_Model extends Model implements Serializable {
     /* False: finished iterating. True, reset not yet fetched. Object=DSQL */
     protected $_iterating=false;
     function rewind(){
-        if($this->_iterating instanceof DB_dsql && $this->_iterating->preexec)return;
         $this->_iterating=true;
     }
     function _preexec(){
@@ -507,8 +506,7 @@ class SQL_Model extends Model implements Serializable {
             $this->_iterating=$this->selectQuery();
         }
         */
-        if($this->_iterating===true || ($this->_iterating instanceof DB_dsql && $this->_iterating->preexec)){
-            if($this->_iterating instanceof DB_dsql)$this->_iterating->preexec = false;
+        if($this->_iterating===true){
             $this->next();
         }
         return $this->loaded();
