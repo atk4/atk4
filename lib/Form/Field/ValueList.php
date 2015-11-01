@@ -37,7 +37,7 @@ abstract class Form_Field_ValueList extends Form_Field
 
     function setForm($form){
         parent::setForm($form);
-        $this->form->addHook('validate',[$this,'validateValidItem']);
+        $this->form->addHook('validate',array($this,'validateValidItem'));
     }
 
     /**
