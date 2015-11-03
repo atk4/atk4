@@ -523,6 +523,9 @@ abstract class AbstractObject
             $this->app->initializeSession(false);
         }
 
+        // Prevent notice generation when using custom session handler
+        if(!isset($_SESSION))return $this;
+
         if (is_null($key)) {
             unset ($_SESSION['o'][$this->name]);
             unset ($_SESSION['s'][$this->name]);
