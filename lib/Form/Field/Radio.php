@@ -45,7 +45,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
                             $this->attr,
                             $attr
                             ))
-                ."<label for='".$this->name.'_'.$value."'>".$descr."</label></div>";
+                ."<label class='atk-padding-xsmall' for='".$this->name.'_'.$value."'>".$descr."</label></div>";
         }
         $output .= '</div>';
         return $output;
