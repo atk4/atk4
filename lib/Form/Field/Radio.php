@@ -15,12 +15,6 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Form_Field_Radio extends Form_Field_ValueList {
-    function validate(){
-        if(!isset($this->value_list[$this->value]) && (!$this->value && $this->empty_value)){
-            $this->displayFieldError("Value ".$this->value." is not one of offered values");
-        }
-        return parent::validate();
-    }
     function getInput($attr=array()){
         $output = '<div id="'.$this->name.'" class="atk-form-options">';
         foreach($this->getValueList() as $value=>$descr){
