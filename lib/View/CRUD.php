@@ -466,7 +466,7 @@ class View_CRUD extends View
                 if ($show_toolbar && !$self->id) {
                     $self->model->unload();
                 } elseif ($show_column && $self->id) {
-                    $c->out('Loading record '.$self->id,['class'=>'atk-effect-info']);
+                    $c->out('Loading record '.$self->id,array('class'=>'atk-effect-info'));
                     $self->model->load($self->id);
                 } else {
                     return ;
@@ -474,7 +474,7 @@ class View_CRUD extends View
 
                 $ret=$self->model->$method_name();
 
-                $c->out('Returned: '.json_encode($ret),['class'=>'atk-effect-success']);
+                $c->out('Returned: '.json_encode($ret),array('class'=>'atk-effect-success'));
 
                 /*
                 if (isset($options['args'])) {
