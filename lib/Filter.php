@@ -90,12 +90,13 @@ class Filter extends Form
     /**
      * Add Save and Reset buttons
      * 
-     * @return void
+     * @return Filter $this
      */
     function addButtons()
     {
         $this->save = $this->addSubmit('Save');
         $this->reset = $this->addSubmit('Reset');
+        return $this;
     }
     
     /**
