@@ -51,7 +51,7 @@ class Filter extends Form
         {
             if($field instanceof Form_Field)
             {
-                $field->set($val = $this->recall($x));
+                $field->set($this->recall($x));
 
                 if($field->no_save || !$field->get()) {
                     continue;
@@ -79,7 +79,7 @@ class Filter extends Form
     {
         // memorize() method doesn't memorize anything if value is null
         foreach ($this->get() as $field=>$value) {
-            if ($this->isClicked('Clear') || is_null($value)) {
+            if ( (isset($this->reset) && $this->isClicked($this->reset)) || is_null($value)) {
                 $this->forget($field);
             } else {
                 $this->memorize($field, $value);
@@ -90,12 +90,13 @@ class Filter extends Form
     /**
      * Add Save and Reset buttons
      * 
-     * @return void
+     * @return Filter $this
      */
     function addButtons()
     {
         $this->save = $this->addSubmit('Save');
         $this->reset = $this->addSubmit('Reset');
+        return $this;
     }
     
     /**
