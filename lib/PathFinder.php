@@ -538,7 +538,7 @@ class PathFinder_Location extends AbstractModel
      */
     public function setBaseURL($url)
     {
-        $this->base_url = preg_replace('#[\\\\+|/+]+#', '/', $url);
+        $this->base_url = preg_replace('#[\\\\|/]+#', '/', $url);
 
         return $this;
     }
