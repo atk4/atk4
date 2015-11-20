@@ -533,32 +533,31 @@ class PathFinder_Location extends AbstractModel
 
     /**
      * Set a new BaseURL
+     * 
+     * something like /my/app
      */
     public function setBaseURL($url)
     {
-        /*
-           something like /my/app
-         */
-        $url=preg_replace('|//|', '/', $url);
-        $this->base_url=$url;
+        $this->base_url = preg_replace('#\\|//#', '/', $url);
 
         return $this;
     }
 
     public function setCDN($url)
     {
-        $this->base_url=$url;
-        $this->is_cdn=true;
+        $this->setBaseURL($url);
+        $this->is_cdn = true;
+        
+        return $this;
     }
 
     /**
-     * Set a new BaseURL
+     * Set a new BasePath
+     * 
+     * something like /home/web/public_html
      */
     public function setBasePath($path)
     {
-        /*
-           something like /home/web/public_html
-         */
         $this->base_path=$path;
 
         return $this;
