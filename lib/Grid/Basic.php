@@ -101,7 +101,7 @@ class Grid_Basic extends CompleteLister
      * @param string $name
      * @param string $descr
      *
-     * @return $this
+     * @return $this || Controller_Grid_Format_Abstract
      */
     function addColumn($formatters, $name = null, $descr = null)
     {
@@ -291,7 +291,7 @@ class Grid_Basic extends CompleteLister
      * @param mixed $formatter
      * @param array $options
      *
-     * @return $this
+     * @return $this || Controller_Grid_Format_Abstract
      */
     function addFormatter($field, $formatter, $options = null)
     {
