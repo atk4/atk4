@@ -325,7 +325,7 @@ class Grid_Basic extends CompleteLister
             $addon = $this->getElement($formatter.'_'.$field);
             if (! $addon instanceof Controller_Grid_Format) {
                 throw $this->exception('Grid formatter class should extend Controller_Grid_Format class')
-                    ->addMoreInfo('formater', $subtype);
+                    ->addMoreInfo('formater', $formatter);
             }
             $addon->initField($field, $descr);
             return $addon;
@@ -551,7 +551,7 @@ class Grid_Basic extends CompleteLister
             if ($this->hasMethod($m = $formatter_prefix . $formatter)) {
                 // formatter method is included in this class
                 $this->$m($field, $column);
-            } elseif (strpos($formatter, '/')) {
+            } elseif (strpos($formatter, '\\') || strpos($formatter, '/')) {
                 // add-on support:
                 // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
                 $this->getElement($formatter.'_'.$field)
