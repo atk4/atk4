@@ -155,6 +155,10 @@ class Grid_Basic extends CompleteLister
                 }
 
                 $addon = $this->getElement($subtype.'_'.$name);
+                if (! $addon instanceof Controller_Grid_Format) {
+                    throw $this->exception('Grid formatter class should extend Controller_Grid_Format class')
+                        ->addMoreInfo('formater', $subtype);
+                }
                 $addon->initField($name, $descr);
                 return $addon;
 
@@ -319,6 +323,10 @@ class Grid_Basic extends CompleteLister
             }
 
             $addon = $this->getElement($formatter.'_'.$field);
+            if (! $addon instanceof Controller_Grid_Format) {
+                throw $this->exception('Grid formatter class should extend Controller_Grid_Format class')
+                    ->addMoreInfo('formater', $subtype);
+            }
             $addon->initField($field, $descr);
             return $addon;
 
