@@ -145,7 +145,7 @@ class Grid_Basic extends CompleteLister
         // TODO call addFormatter instead!
         $subtypes = explode(',', $formatters);
         foreach ($subtypes as $subtype) {
-            if (strpos($subtype, '/')) {
+            if (strpos($subtype, '\\') || strpos($subtype, '/')) {
 
                 // add-on functionality:
                 // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
@@ -310,7 +310,7 @@ class Grid_Basic extends CompleteLister
         $descr = $this->columns[$field];
 
 
-        if (strpos($formatter, '/')) {
+        if (strpos($formatter, '\\') || strpos($formatter, '/')) {
             // add-on functionality:
             // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
             if (!$this->elements[$formatter.'_'.$field]) {
