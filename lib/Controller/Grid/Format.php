@@ -3,6 +3,8 @@ abstract class Controller_Grid_Format extends AbstractController{
     /**
      * Initialize field
      *
+     * Note: $this->owner is Grid object
+     * 
      * @param string $name Field name
      * @param string $descr Field title
      *
@@ -14,6 +16,8 @@ abstract class Controller_Grid_Format extends AbstractController{
     /**
      * Format output of cell in particular row
      *
+     * Note: $this->owner is Grid object
+     * 
      * @param string $field Field name
      * @param array $column Array [type=>string, descr=>string]
      *
