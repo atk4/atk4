@@ -25,7 +25,7 @@ class Controller_Data_PathFinder extends Controller_Data {
     }
     function loadById($model, $id) {
         try {
-            $model->data = $this->api->pathfinder->locate($model->_table[$this->short_name],$id,'array');
+            $model->data = $this->app->pathfinder->locate($model->_table[$this->short_name],$id,'array');
         }catch(Exception_PathFinder $e){
             throw $this->exception('Requested file not found','NotFound')
                 ->by($e);
@@ -47,7 +47,7 @@ class Controller_Data_PathFinder extends Controller_Data {
     // TODO: testing
     function prefetchAll($model) {
         $d = $this->d($model);
-        $dirs = $this->api->pathfinder->search($d[0],$d['path_prefix'],'path');
+        $dirs = $this->app->pathfinder->search($d[0],$d['path_prefix'],'path');
         $colls=array();
 
         foreach($dirs as $dir){

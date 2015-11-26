@@ -53,7 +53,7 @@ class Field_SQL_Relation extends Field_Base {
         if ($this->behaviour === 'ignore') {
             return;
         }
-        $dsql = $this->api->db->dsql();
+        $dsql = $this->app->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
 
         foreach ($model->dirty as $key => $value) {
@@ -74,7 +74,7 @@ class Field_SQL_Relation extends Field_Base {
         if ($this->behaviour === 'ignore') {
             return;
         }
-        $dsql = $this->api->db->dsql();
+        $dsql = $this->app->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
 
         foreach ($model->dirty as $key => $value) {
@@ -95,7 +95,7 @@ class Field_SQL_Relation extends Field_Base {
         if ($this->behaviour === 'ignore') {
             return;
         }
-        $dsql = $this->api->db->dsql();
+        $dsql = $this->app->db->dsql();
         $dsql->table($this->rightTable, $this->joinAlias);
         $dsql->where($this->rightField, $model->get($this->leftField))->delete();
     }

@@ -161,7 +161,7 @@ class Test_Objects1 extends AbstractController {
     function test_add9_hook($t){
         $result = "FAIL";
 
-        $app = new ApiCLI();
+        $app = new App_CLI();
         $app->addHook('beforeObjectInit',function()use(&$result){ $result = "OK"; });
         $t = $app->add('MyObject');
 
@@ -234,9 +234,9 @@ class Test_Objects1 extends AbstractController {
         return $t->testmethod()==42;
     }
     function test_addGlobalMethod($t){
-        $t->api->addGlobalMethod('testmethod_gl',array($this,'myfunc2'));
+        $t->app->addGlobalMethod('testmethod_gl',array($this,'myfunc2'));
         $res=($x=$t->testmethod_gl())==45;
-        $t->api->removeGlobalMethod('testmethod');
+        $t->app->removeGlobalMethod('testmethod');
         return $res;
     }
 }

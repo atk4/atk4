@@ -47,7 +47,7 @@ class Menu_Compat extends AbstractView {
         $this->items[]=$this->last_item=$this->add('MenuItem',$this->short_name."_$href",'Item')
             ->setProperty(array(
                         'page'=>$href,
-                        'href'=>$this->api->url($href),
+                        'href'=>$this->app->url($href),
                         'label'=>$label,
                         'class'=>$this->isCurrent($href)?$this->current_menu_class:$this->inactive_menu_class,
                        ));
@@ -55,7 +55,7 @@ class Menu_Compat extends AbstractView {
         return $this;
     }
     protected function getDefaultHref($label){
-        $href=$this->api->normalizeName($label,'');
+        $href=$this->app->normalizeName($label,'');
         if($label[0]==';'){
             $label=substr($label,1);
             $href=';'.$href;
@@ -64,8 +64,10 @@ class Menu_Compat extends AbstractView {
     }
     function isCurrent($href){
         // returns true if item being added is current
-        $href=str_replace('/','_',$href);
-        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page;
+        $href = str_replace('/', '_', $href);
+        return $href == $this->app->page
+            || $href == ';' . $this->app->page
+            || $href . $this->app->getConfig('url_postfix','') == $this->app->page;
     }
     /*function insertMenuItem($index,$label,$href=null){
       $tail=array_slice($this->data,$index);

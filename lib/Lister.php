@@ -83,7 +83,7 @@ class Lister extends View implements ArrayAccess
         }
 
         // Set manually
-        $this->dq = $this->api->db->dsql();
+        $this->dq = $this->app->db->dsql();
         $this->dq
             ->table($source)
             ->field($fields ?: '*');

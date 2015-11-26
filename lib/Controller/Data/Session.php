@@ -20,7 +20,7 @@ Implements connectivity between Model and Session
 class Controller_Data_Session extends Controller_Data_Array {
 
     function setSource($model, $data) {
-        $this->api->initializeSession();
+        $this->app->initializeSession();
         if($data===undefined || $data === null) {
             $data='-';
         }

@@ -22,7 +22,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
             if($descr instanceof AbstractView){
                 $descr=$descr->getHTML();
             }else{
-                $descr=$this->api->encodeHtmlChars($descr);
+                $descr=$this->app->encodeHtmlChars($descr);
             }
 
             $output.=

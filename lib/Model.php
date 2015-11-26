@@ -413,7 +413,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function setControllerData($controller)
     {
         if (is_string($controller)) {
-            $controller = $this->api->normalizeClassName($controller, 'Data');
+            $controller = $this->app->normalizeClassName($controller, 'Data');
         } elseif (!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
@@ -455,7 +455,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /** Cache controller is used to attempt and load data a little faster then the primary controller */
     public function addCache($controller, $table = null, $priority = 5)
     {
-        $controller=$this->api->normalizeClassName($controller, 'Data');
+        $controller=$this->app->normalizeClassName($controller, 'Data');
 
         return $this->setController($controller)
             ->addHooks($this, $priority)
@@ -712,7 +712,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function saveLater()
     {
         $this->_save_later=true;
-        $this->api->addHook('saveDelayedModels', $this);
+        $this->app->addHook('saveDelayedModels', $this);
 
         return $this;
     }
@@ -932,7 +932,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         if ($our_field === UNDEFINED) {
             // guess our field
-            $tmp = $this->api->normalizeClassName($model, 'Model');
+            $tmp = $this->app->normalizeClassName($model, 'Model');
             $tmp = new $tmp(); // avoid recursion
             $refFieldName = ( $tmp->table ?: strtolower(get_class($this)) ) . '_id';
         } else {
@@ -956,7 +956,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     public function hasMany($model, $their_field = UNDEFINED, $our_field = UNDEFINED, $reference_name = null)
     {
-        $class = $this->api->normalizeClassName($model, 'Model');
+        $class = $this->app->normalizeClassName($model, 'Model');
         if (is_null($reference_name)) {
             $reference_name=$model;
         }
@@ -1036,7 +1036,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     private function _ref($class, $field, $val)
     {
-        $m = $this->add($this->api->normalizeClassName($class, 'Model'));
+        $m = $this->add($this->app->normalizeClassName($class, 'Model'));
 
         if ($field) { // HasMany
             if($m->supportConditions){

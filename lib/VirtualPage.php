@@ -81,7 +81,7 @@ class VirtualPage extends AbstractController
      */
     function getURL($arg = 'true')
     {
-        return $this->api->url(null, array($this->name => $arg));
+        return $this->app->url(null, array($this->name => $arg));
     }
 
     /**
@@ -137,10 +137,10 @@ class VirtualPage extends AbstractController
         $self=$this;
 
         if ($this->isActive($arg)) {
-            $this->api->addHook('post-init', function () use ($method, $self) {
+            $this->app->addHook('post-init', function () use ($method, $self) {
                 $page = $self->getPage();
                 $page->id=$_GET[$self->name.'_id'];
-                $self->api->stickyGET($self->name.'_id');
+                $self->app->stickyGET($self->name.'_id');
 
                 try {
                     call_user_func($method, $page, $self);
@@ -154,8 +154,8 @@ class VirtualPage extends AbstractController
                 }
 
                 //Imants: most likely forgetting is not needed, because we stop execution anyway
-                //$self->api->stickyForget($self->name.'_id');
-                //$self->api->stickyForget($self->name);
+                //$self->app->stickyForget($self->name.'_id');
+                //$self->app->stickyForget($self->name);
             });
             throw $this->exception('', 'StopInit');
         }
@@ -176,16 +176,16 @@ class VirtualPage extends AbstractController
             return $this->page;
         }
 
-        $this->api->page_object->destroy(false);
+        $this->app->page_object->destroy(false);
 
 
-        $this->api->page_object = $this->page = $this->api->add(
+        $this->app->page_object = $this->page = $this->app->add(
             $this->page_class,
             $this->name,
             null,
             $this->page_template
         );
-        $this->api->stickyGET($this->name);
+        $this->app->stickyGET($this->name);
         return $this->page;
     }
 

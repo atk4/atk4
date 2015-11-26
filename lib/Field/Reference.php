@@ -24,7 +24,7 @@ class Field_Reference extends Field {
         if(is_object($model))return abstractObject::setModel($model);
 
         $this->model_name=is_string($model)?$model:get_class($model);
-        $this->model_name=$this->api->normalizeClassName($this->model_name,'Model');
+        $this->model_name=$this->app->normalizeClassName($this->model_name,'Model');
 
         if($display_field)$this->display_field=$display_field;
 

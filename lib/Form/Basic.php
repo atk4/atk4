@@ -84,9 +84,9 @@ class Form_Basic extends View implements ArrayAccess {
         // controls on the form. BTW, if you want to have default values such as
         // loaded from the table, then intialize $this->data array to default
         // values of those fields.
-        $this->api->addHook('pre-exec',array($this,'loadData'));
-        $this->api->addHook('pre-render-output',array($this,'lateSubmit'));
-        $this->api->addHook('submitted',$this);
+        $this->app->addHook('pre-exec',array($this,'loadData'));
+        $this->app->addHook('pre-render-output',array($this,'lateSubmit'));
+        $this->app->addHook('submitted',$this);
 
 
         $this->addHook('afterAdd',$this);
@@ -117,7 +117,7 @@ class Form_Basic extends View implements ArrayAccess {
         $this->template_chunks['form']->del('form_buttons');
         $this->template_chunks['form']->trySet('form_name',$this->name.'_form');
         $this->template_chunks['form']
-            ->set('form_action',$this->api->url(null,array('submit'=>$this->name)));
+            ->set('form_action',$this->app->url(null,array('submit'=>$this->name)));
 
         return $this;
     }
@@ -188,7 +188,7 @@ class Form_Basic extends View implements ArrayAccess {
         }
 
         /* normalzie name and put name back in options array */
-        $name = $this->api->normalizeName($name);
+        $name = $this->app->normalizeName($name);
         if (is_array($options)){
             $options["name"] = $name;
         } else {
@@ -208,7 +208,7 @@ class Form_Basic extends View implements ArrayAccess {
             case 'timepickr':    $class = 'TimePicker';   break;
             default:             $class = $type;
         }
-        $class = $this->api->normalizeClassName($class, 'Form_Field');
+        $class = $this->app->normalizeClassName($class, 'Form_Field');
 
         if ($insert_into === $this) {
             $template=$this->template->cloneRegion('form_line');
@@ -293,7 +293,7 @@ class Form_Basic extends View implements ArrayAccess {
                 $db_fields[]=$key;
             }
         }
-        $this->dq = $this->api->db->dsql()
+        $this->dq = $this->app->db->dsql()
             ->table($table)
             ->field('*',$table)
             ->limit(1);
@@ -379,7 +379,7 @@ class Form_Basic extends View implements ArrayAccess {
             if($this->hook('update'))return $this;
 
             if(!($m=$this->getModel()))throw new BaseException("Can't save, model not specified");
-            if(!is_null($this->get_field))$this->api->stickyForget($this->get_field);
+            if(!is_null($this->get_field))$this->app->stickyForget($this->get_field);
             foreach($this->elements as $short_name => $element){
                 if($element instanceof Form_Field)if(!$element->no_save){
                     //if(is_null($element->get()))

@@ -123,7 +123,7 @@ class Field extends AbstractModel
 
     /**
      * Sets field caption which will be used by forms, grids and other view
-     * elements as a label. The caption will be localized through api->_
+     * elements as a label. The caption will be localized through $app->_()
      *
      * @param string $t new value
      *

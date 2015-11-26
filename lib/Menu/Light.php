@@ -45,7 +45,7 @@ class Menu_Light extends AbstractView {
         $c=$this->template->get('current');
         $this->template->del('current');
 
-        $parts=explode('_',$this->api->page);
+        $parts=explode('_',$this->app->page);
 
         $matched=false;
         while($parts){

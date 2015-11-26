@@ -132,7 +132,7 @@ class View_Button extends View
     function link($page, $args = array())
     {
         $this->setElement('a');
-        $this->setAttr('href', $this->api->url($page, $args));
+        $this->setAttr('href', $this->app->url($page, $args));
 
         return $this;
     }
@@ -274,7 +274,7 @@ class View_Button extends View
             $cl->confirm($message);
         }
 
-        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')),true);
+        $cl->ajaxec($this->app->url(null, array($this->name => 'clicked')),true);
 
         return isset($_GET[$this->name]);
     }

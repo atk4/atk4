@@ -11,7 +11,10 @@ class Menu_Objective extends View {
     function isCurrent($href){
         // returns true if item being added is current
         if(!is_object($href))$href=str_replace('/','_',$href);
-        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page||(string)$href==(string)$this->api->url();
+        return $href == $this->app->page
+            || $href == ';' . $this->app->page
+            || $href . $this->app->getConfig('url_postfix','') == $this->app->page
+            || (string)$href == (string)$this->app->url();
     }
 
     function addMenuItem($page,$label=null){
@@ -27,7 +30,7 @@ class Menu_Objective extends View {
             return $li;
         }
 
-        $a->setAttr('href',$this->api->url($page));
+        $a->setAttr('href',$this->app->url($page));
 
         if($this->isCurrent($page) && $this->current_menu_class){
             $li->addClass($this->current_menu_class);
@@ -38,8 +41,7 @@ class Menu_Objective extends View {
 
     function addSubMenu($name){
         $li=$this->add('View')
-            ->setElement('li')
-            ;
+            ->setElement('li');
         $li->add('Text')->set($name);
         return $li
             ->add(get_class($this));

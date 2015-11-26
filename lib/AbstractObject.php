@@ -77,7 +77,7 @@ abstract class AbstractObject
     /** Always points to current Application */
     public $app;
 
-    /** Obsolete - for compatibility, use ->app instead */
+    /** Obsolete - for compatibility with ATK 4.2 and lower, use ->app instead */
     public $api;
 
     /**
@@ -243,7 +243,8 @@ abstract class AbstractObject
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
             if (!$class->app) {
-                $class->api = $class->app = $this->app;
+                $class->api = // compatibility with ATK 4.2 and lower
+                    $class->app = $this->app;
             }
             $class->short_name = $this->_unique_element($class->short_name);
             $class->name = $this->_shorten($this->name . '_' . $class->short_name);
@@ -323,7 +324,8 @@ abstract class AbstractObject
         }
 
         $element->owner = $this;
-        $element->api = $element->app = $this->app;
+        $element->api = // compatibility with ATK 4.2 and lower
+            $element->app = $this->app;
         $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
 
@@ -604,7 +606,8 @@ abstract class AbstractObject
             throw $e;
         }
         $e->owner = $this;
-        $e->api = $e->app = $this->app;
+        $e->api = // compatibility with ATK 4.2 and lower
+            $e->app = $this->app;
         $e->init();
 
         return $e;

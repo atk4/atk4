@@ -132,7 +132,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page>1){
             $this->add('View',null,'prev')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
+                ->setAttr('href',$this->app->url($this->base_page,$u=array($this->skip_var=>
                     $pn=max(0,$this->skip-$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
@@ -143,7 +143,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page<$this->total_pages){
             $this->add('View',null,'next')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
+                ->setAttr('href',$this->app->url($this->base_page,$u=array($this->skip_var=>
                     $pn=$this->skip+$this->ipp
                 )))
                 ->setAttr('data-skip',$pn)
@@ -155,7 +155,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page>$this->range+1){
             $this->add('View',null,'first')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
+                ->setAttr('href',$this->app->url($this->base_page,$u=array($this->skip_var=>
                     $pn=max(0,0)
                 )))
                 ->setAttr('data-skip',$pn)
@@ -173,7 +173,7 @@ class Paginator_Basic extends CompleteLister {
         if($this->cur_page<$this->total_pages-$this->range){
             $this->add('View',null,'last')
                 ->setElement('a')
-                ->setAttr('href',$this->api->url($this->base_page,$u=array($this->skip_var=>
+                ->setAttr('href',$this->app->url($this->base_page,$u=array($this->skip_var=>
                     $pn=max(0,($this->total_pages-1)*$this->ipp)
                 )))
                 ->setAttr('data-skip',$pn)
@@ -197,7 +197,7 @@ class Paginator_Basic extends CompleteLister {
         foreach(range(max(1,$this->cur_page-$this->range), min($this->total_pages, $this->cur_page+$this->range)) as $p)
         {
         	$data[]=array(
-                'href'=>$this->api->url($this->base_page,array($this->skip_var=>$pn=($p-1)*$this->ipp)),
+                'href'=>$this->app->url($this->base_page,array($this->skip_var=>$pn=($p-1)*$this->ipp)),
                 'pn'=>$pn,
                 'cur'=>$p==$this->cur_page?$tplcur:'',
                 'label'=>$p

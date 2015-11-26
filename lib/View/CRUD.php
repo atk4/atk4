@@ -170,7 +170,7 @@ class View_CRUD extends View
          */
 
         if (isset($_GET[$name_id])) {
-            $this->api->stickyGET($name_id);
+            $this->app->stickyGET($name_id);
             $this->id = $_GET[$name_id];
         }
 
@@ -322,7 +322,7 @@ class View_CRUD extends View
 
         // if(!$this->grid || $this->grid instanceof Dummy)return;
 
-        $s = $this->api->normalizeName($name);
+        $s = $this->app->normalizeName($name);
 
         if ($this->isEditing('ex_'.$s)) {
 
@@ -330,13 +330,13 @@ class View_CRUD extends View
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
-                $this->api->stickyGET($n);
+                $this->app->stickyGET($n);
             }
 
             $idfield=$this->model->table.'_'.$this->model->id_field;
             if ($_GET[$idfield]) {
                 $this->id = $_GET[$idfield];
-                $this->api->stickyGET($idfield);
+                $this->app->stickyGET($idfield);
             }
 
             $view_class = (is_null($options['view_class'])) ?
@@ -401,7 +401,7 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        $s = $this->api->normalizeName($name);
+        $s = $this->app->normalizeName($name);
 
         if ($this->isEditing('fr_'.$s)) {
 
@@ -409,7 +409,7 @@ class View_CRUD extends View
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
-                $this->api->stickyGET($n);
+                $this->app->stickyGET($n);
             }
 
             return $this->virtual_page->getPage();
@@ -544,7 +544,7 @@ class View_CRUD extends View
             // Configure Add Button on Grid and JS
             $button->js('click')->univ()
                 ->frameURL(
-                    $this->api->_($this->entity_name.'::'.$descr),
+                    $this->app->_($this->entity_name.'::'.$descr),
                     $this->virtual_page->getURL($method_name),
                     $frame_options
                 );
@@ -583,7 +583,7 @@ class View_CRUD extends View
         // Configure Add Button on Grid and JS
         $this->add_button->js('click')->univ()
             ->frameURL(
-                $this->api->_(
+                $this->app->_(
                     $this->entity_name===false
                     ? 'New Record'
                     : 'Adding new '.$this->entity_name
@@ -656,7 +656,7 @@ class View_CRUD extends View
         try {
             $form->update();
             $self = $this;
-            $this->api->addHook('pre-render', function () use ($self) {
+            $this->app->addHook('pre-render', function () use ($self) {
                 $self->formSubmitSuccess()->execute();
             });
         } catch (Exception_ValidityCheck $e) {

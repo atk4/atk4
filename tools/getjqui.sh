@@ -12,7 +12,7 @@ trap "echo 'cleanup'; rm -rf tmp" EXIT
     unzip jquery-ui-$v.custom.zip
     mv jquery-ui-$v.custom/js/jquery-ui-$v.custom.min.js ../jquery-ui-$v.min.js
 
-echo "        else(\$v=\$this->api->getConfig('js/jqueryui','jquery-ui-$v.min'));  // bundled jQueryUI version" > line
+echo "        else(\$v=\$this->app->getConfig('js/jqueryui','jquery-ui-$v.min'));  // bundled jQueryUI version" > line
 vim -e ../../../lib/jUI.php <<EOF
 /\/\/ bundled jQueryUI version/
 d

@@ -26,7 +26,7 @@ class Page extends AbstractView {
 
     /**
      * Specify page title which will be used inside the <title> tag in the main
-     * api template.
+     * application template.
      *
      * If array is specified in here, then it is considered to be a breadcrumb
      * in the following format:

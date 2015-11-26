@@ -4,7 +4,7 @@
  * base URI, sets up path manager with the URI locations, determines
  * which page was requested
  *
- * This class works with PathFinder, ApiWeb, and Location.
+ * This class works with PathFinder, App_Web, and Location.
  *
  * Terminology:
  *
@@ -21,7 +21,7 @@
  * whrough URL access.
  *
  *
- * you can access variabless below through $this->api->pm->base_url
+ * you can access variabless below through $this->app->pm->base_url
  * concatinate them to get full URL
  *
  * @link http://agiletoolkit.org/learn/intro
@@ -85,7 +85,7 @@ class Controller_PageManager extends AbstractController {
     function init(){
         parent::init();
 
-        $this->api->pm=$this;
+        $this->app->pm=$this;
         // Firstly, the original URL is retrieved. This function should
         // take care of all possible rewrite engines and bring up a real
         // URL which matches the one in the browser. Also e will need to
@@ -110,7 +110,7 @@ class Controller_PageManager extends AbstractController {
 
         $this->base_url = $scheme.$user.$pass.$host.$port;
         $this->base_path = $path;
-        $this->api->page = 'index';
+        $this->app->page = 'index';
 
         return $this;
     }
@@ -124,7 +124,7 @@ class Controller_PageManager extends AbstractController {
     function parseRequestedURL(){
         // This is the re-constructions of teh proper URL.
         // 1. Schema
-        $url=$this->api->getConfig('atk/base_url',null);
+        $url=$this->app->getConfig('atk/base_url',null);
         if(is_null($url)){
             // Detect it
             $url = 'http';
@@ -184,16 +184,16 @@ class Controller_PageManager extends AbstractController {
 
 
         // We have now arrived at the page as per specification.
-        $this->api->page=str_replace('/','_',$page);
+        $this->app->page=str_replace('/','_',$page);
 
-        $this->template_filename=$this->api->page;
+        $this->template_filename=$this->app->page;
         if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
 
     }
     function debug(){
         $this->debug=true;
         parent::debug("base_path=".$this->base_path);
-        parent::debug("page=".$this->api->page);
+        parent::debug("page=".$this->app->page);
         parent::debug("template_filename=".$this->template_filename);
     }
     function getRequestURI(){

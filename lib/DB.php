@@ -64,12 +64,12 @@ class DB extends AbstractController
             $dsn = 'dsn';
         }
         if (is_string($dsn)) {
-            $new_dsn = $this->api->getConfig($dsn, 'no_config');
+            $new_dsn = $this->app->getConfig($dsn, 'no_config');
             if ($new_dsn != 'no_config') {
                 $dsn = $new_dsn;
             }
             if ($dsn == 'dsn') {
-                $this->api->getConfig($dsn); // throws exception
+                $this->app->getConfig($dsn); // throws exception
             }
             if (is_string($dsn)) {
                 // Backward-compatible DSN parsing
@@ -207,7 +207,7 @@ class DB extends AbstractController
      * speedy way to get the results of simple queries.
      *
      * Consider using DSQL:
-     * echo $this->api->db->dsql()->expr('select now()')->getOne();
+     * echo $this->app->db->dsql()->expr('select now()')->getOne();
      *
      * @param string $query  SQL Query
      * @param arary  $params PDO-params

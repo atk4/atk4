@@ -57,7 +57,7 @@ class Form_Field_CheckboxList extends Form_Field_ValueList
                         'value'=>$value,
                         'checked'=>in_array($value,$current_values)
                     ),$this->attr,$attr)) .
-                '<label for="'.$this->name.'_'.$value.'">'.$this->api->encodeHtmlChars($descr).'</label>' .
+                '<label for="'.$this->name.'_'.$value.'">'.$this->app->encodeHtmlChars($descr).'</label>' .
                 '</td>';
             $i++;
             $column++;

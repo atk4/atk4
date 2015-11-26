@@ -178,8 +178,8 @@ class TMail_Compat extends AbstractController{
         if(is_null($this->body)){
             $this->set('body','');
             // this is unnormal situation, notifying developer
-            $this->api->logger->logLine("Email body is null: ".$this->get('from')." >> ".
-                    date($this->api->getConfig('locale/timestamp','Y-m-d H:i:s')."\n"),null,'error');
+            $this->app->logger->logLine("Email body is null: ".$this->get('from')." >> ".
+                    date($this->app->getConfig('locale/timestamp','Y-m-d H:i:s')."\n"),null,'error');
         }
         //if(!isset($this->mime['text'])&&!isset($this->mime['html'])){
         $this->setBody(is_object($this->body)?$this->body->render():$this->body);
@@ -367,7 +367,7 @@ class TMail_Compat extends AbstractController{
             return;
         }
         // checking if from is set
-        if(!$this->get('from'))$this->set('from',$this->api->getConfig('mail/from','nobody@agiletoolkit.org'));
+        if(!$this->get('from'))$this->set('from',$this->app->getConfig('mail/from','nobody@agiletoolkit.org'));
         // send an email with defined parameters
         $this->headers['X-B64']=base64_encode($address);
         mail($address, $this->get('subject',false),

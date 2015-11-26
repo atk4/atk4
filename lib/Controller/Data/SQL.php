@@ -65,7 +65,7 @@ class Controller_Data_SQL extends Controller_Data {
         if (empty($dsql->args['set'])) {
             return $id; // is it correct?
         }
-        $this->api->db->beginTransaction();
+        $this->app->db->beginTransaction();
         if (is_null($id)) {
             $id = $dsql->insert();
         } else {
@@ -83,9 +83,9 @@ class Controller_Data_SQL extends Controller_Data {
         $dsql->stmt=null;
         $model->tryLoad($id);
         if ($model->loaded()) {
-            $this->api->db->commit();
+            $this->app->db->commit();
         } else {
-            $this->api->db->rollback();
+            $this->app->db->rollback();
             throw $model->exception('Record with specified id was not found');
         }
         return $id;
@@ -171,7 +171,7 @@ class Controller_Data_SQL extends Controller_Data {
             throw $this->exception('$table property must be defined');
         }
 
-        $model->dsql = $model->api->db->dsql();
+        $model->dsql = $model->app->db->dsql();
         $model->dsql->debug =& $model->debug;
         $model->dsql->table($model->table,$model->table_alias);
         $model->dsql->default_field=$model->dsql->expr('*,'.
