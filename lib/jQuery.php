@@ -42,7 +42,7 @@ class jQuery extends AbstractController {
 
         $this->app->template->del('js_include');
 
-        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
+        /* $config['js']['jquery']='https://code.jquery.com/jquery-2.1.4.min.js'; // to use CDN */
         if($v=$this->app->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
         else($v=$this->app->getConfig('js/jquery','jquery-2.0.3.min'));   // bundled jQuery version
 
