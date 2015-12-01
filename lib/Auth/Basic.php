@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * A basic authentication class. Include inside your API or
+ * A basic authentication class. Include inside your APP or
  * on a page. You may have multiple Auth instances. Supports
  * 3rd party plugins.
  *
@@ -24,7 +24,7 @@
  * $auth->setModel('User');
  * $auth->check();
  *
- * Auth accessible from anywhere through $this->api->auth;
+ * Auth accessible from anywhere through $this->app->auth;
  *
  * Auth has several extensions, enable them like this:
  *
@@ -62,9 +62,9 @@ class Auth_Basic extends AbstractController {
         parent::init();
 
         // Register as auth handler, if it's not set yet
-        if(@!$this->api->auth)$this->api->auth=$this;
+        if(@!$this->app->auth)$this->app->auth=$this;
 
-        if (!$this->api->hasMethod('initializeSession') && !session_id()) {
+        if (!$this->app->hasMethod('initializeSession') && !session_id()) {
             // No session support
             return;
         }
@@ -145,14 +145,14 @@ class Auth_Basic extends AbstractController {
             // after this model is saved, re-cache the info
             $tmp=$m->get();
             unset($tmp[$t->password_field]);
-            if($t->api instanceof App_Web)$t->memorize('info',$tmp);
+            if($t->app instanceof App_Web)$t->memorize('info',$tmp);
         });
 
         $this->addEncryptionHook($this->model);
 
-        if(strtolower($this->api->page)=='logout'){
+        if(strtolower($this->app->page)=='logout'){
             $this->logout();
-            $this->api->redirect('/');
+            $this->app->redirect('/');
         }
 
         return $this->model;
@@ -174,7 +174,7 @@ class Auth_Basic extends AbstractController {
         });
     }
     function destroy(){
-        unset($this->api->auth);
+        unset($this->app->auth);
         parent::destroy();
     }
     /** Auth memorizes data about a logged-in user in session. You can either use this function to access
@@ -246,7 +246,7 @@ class Auth_Basic extends AbstractController {
                 return password_hash($password,$this->hash_algo,$this->hash_options);
             case'sha256/salt':
                        if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
-                       $key=$this->api->getConfig('auth/key',$this->api->name);
+                       $key=$this->app->getConfig('auth/key',$this->app->name);
                        if($this->password_encryption)$this->debug("Using key ".$key);
                        return hash_hmac('sha256',
                                  $password.$salt,
@@ -267,7 +267,7 @@ class Auth_Basic extends AbstractController {
      */
     function check(){
 
-        if($this->isPageAllowed($this->api->page))return null;      // no authentication is required
+        if($this->isPageAllowed($this->app->page))return null;      // no authentication is required
 
         // Check if user's session contains autentication information
         if(!$this->isLoggedIn()){
@@ -449,8 +449,8 @@ class Auth_Basic extends AbstractController {
     }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
     function memorizeURL(){
-        if($this->api->page !== 'index' && !$this->recall('page',false)){
-            $this->memorize('page',$this->api->page);
+        if($this->app->page !== 'index' && !$this->recall('page',false)){
+            $this->memorize('page',$this->app->page);
             $g=$_GET;unset($g['page']);
             $this->memorize('args',$g);
         }
@@ -460,9 +460,9 @@ class Auth_Basic extends AbstractController {
         $p=$this->recall('page');
 
         // If there is a login page, no need to return to it
-        if($p=='login')return $this->api->url('/');
+        if($p=='login')return $this->app->url('/');
 
-        $url=$this->api->url($p, $this->recall('args',null));
+        $url=$this->app->url($p, $this->recall('args',null));
         $this->forget('page');$this->forget('args');
         return $url;
     }
@@ -471,7 +471,7 @@ class Auth_Basic extends AbstractController {
      */
     function loginRedirect(){
         $this->debug("to Index");
-        $this->api->redirect($this->getURL());
+        $this->app->redirect($this->getURL());
     }
     /**
      * This function is always executed after successfull login through a normal means (login form or plugin)
@@ -480,7 +480,7 @@ class Auth_Basic extends AbstractController {
      */
     function loggedIn($user=null,$pass=null){ //$username,$password,$memorize=false){
         $this->hook('loggedIn',array($user,$pass));
-        $this->api->redirect($this->getURL());
+        $this->app->redirect($this->getURL());
     }
     /**
      * Store model in session data so that it can be retrieved faster
@@ -545,7 +545,7 @@ class Auth_Basic extends AbstractController {
 
         $this->model->unload();
 
-        // maybe can use $this->api->destroySession() here instead?
+        // maybe can use $this->app->destroySession() here instead?
         $this->forget('info');
         $this->forget('id');
 
@@ -579,12 +579,12 @@ class Auth_Basic extends AbstractController {
     function showLoginForm(){
 
         $this->app->template->trySet('page_title','Login');
-        if($this->api->layout && $this->login_layout_class){
-            $this->api->layout->destroy();
-            $this->api->add($this->login_layout_class);
-            $this->api->page_object=$p=$this->api->layout->add('Page',null,null,array('page/login'));
+        if($this->app->layout && $this->login_layout_class){
+            $this->app->layout->destroy();
+            $this->app->add($this->login_layout_class);
+            $this->app->page_object=$p=$this->app->layout->add('Page',null,null,array('page/login'));
         }else{
-            $this->api->page_object=$p=$this->api->add('Page',null,null,array('page/login'));
+            $this->app->page_object=$p=$this->app->add('Page',null,null,array('page/login'));
         }
 
 
@@ -612,18 +612,18 @@ class Auth_Basic extends AbstractController {
     /** Do not override this function. */
     function processLogin(){
         $this->memorizeURL();
-        $this->api->template->tryDel('Menu');
+        $this->app->template->tryDel('Menu');
         $p=$this->showLoginForm();
 
-        $this->api->hook('post-init');
-        $this->api->hook('pre-exec');
+        $this->app->hook('post-init');
+        $this->app->hook('pre-exec');
 
         if(isset($_GET['submit']) && $_POST){
-            $this->api->hook('submitted');
+            $this->app->hook('submitted');
         }
 
-        $this->api->hook('post-submit');
-        $this->api->execute();
+        $this->app->hook('post-submit');
+        $this->app->execute();
         exit;
     }
 }

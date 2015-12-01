@@ -43,12 +43,12 @@ class Form_Field_DatePicker extends Form_Field_Line {
                     'showOn'=>'none',
                     'changeMonth'=>true,
                     'changeYear'=>true,
-                    'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
+                    'dateFormat'=>$this->app->getConfig('locale/date_js','dd/mm/yy')
                     ),$this->options));
 
         return parent::getInput(array_merge(
                     array(
-                        'value'=>$this->value?(date($this->api->getConfig('locale/date','d/m/Y'),strtotime($this->value))):'',
+                        'value'=>$this->value?(date($this->app->getConfig('locale/date','d/m/Y'),strtotime($this->value))):'',
                          ),$attr
                     ));
     }

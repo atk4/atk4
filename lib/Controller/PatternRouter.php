@@ -10,7 +10,7 @@
  *   ->route();
  *
  * if REQUEST_URI is "/news/some-name-of-your-news/", then router would:
- * 1) set $this->api->page to "news_item"
+ * 1) set $this->app->page to "news_item"
  * 2) set $_GET["u"] to "news/some-name-of-your-news/"
  * uri.
  *
@@ -24,8 +24,8 @@ class Controller_PatternRouter extends AbstractController {
 
     function init(){
         parent::init();
-        $this->api->router = $this;
-        $this->api->addHook('buildURL',$this);
+        $this->app->router = $this;
+        $this->app->addHook('buildURL',$this);
     }
 
     function buildURL($junk,$url){
@@ -100,11 +100,11 @@ class Controller_PatternRouter extends AbstractController {
         return $this;
     }
     /**
-     * Perform the necessary changes in the API's page. After this
-     * you can still get the orginal page in api->page_orig.
+     * Perform the necessary changes in the APP's page. After this
+     * you can still get the orginal page in app->page_orig.
      */
     function route(){
-        $this->api->page_orig = $this->api->page;
+        $this->app->page_orig = $this->app->page;
 
         foreach ($this->links as $page=>$args) {
 
@@ -112,12 +112,12 @@ class Controller_PatternRouter extends AbstractController {
             $page=str_replace('/','_',$page);
 
             // Exact match, no more routing needed
-            if($this->api->page==$page)return $this;
+            if($this->app->page==$page)return $this;
 
             $page.='_';
 
-            if (substr($this->api->page, 0, strlen($page)) == $page) {
-                $rest = explode('_',substr($this->api->page,strlen($page)));
+            if (substr($this->app->page, 0, strlen($page)) == $page) {
+                $rest = explode('_',substr($this->app->page,strlen($page)));
 
                 reset($args);
                 foreach($rest as $arg){
@@ -130,11 +130,11 @@ class Controller_PatternRouter extends AbstractController {
                     $_GET[$key]=$arg;
                 }
 
-                $this->api->page=substr($page,0,-1);
+                $this->app->page=substr($page,0,-1);
                 return $this;
             }
 
-            //$misc=explode()$this->api->page = substr
+            //$misc=explode()$this->app->page = substr
         }
 
 
@@ -142,7 +142,7 @@ class Controller_PatternRouter extends AbstractController {
         $r=$_SERVER["REQUEST_URI"];
         foreach ($this->rules as $rule){
             if (preg_match("/" . $rule[0] . "/", $r, $t)){
-                $this->api->page = $rule[1];
+                $this->app->page = $rule[1];
                 if ($rule[2]){
                     foreach ($rule[2] as $k => $v){
                         $_GET[$v] = $t[$k+1];

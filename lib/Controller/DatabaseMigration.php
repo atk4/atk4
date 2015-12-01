@@ -17,7 +17,7 @@
 class Controller_DatabaseMigration extends AbstractController {
     function executeMigrations(){
         // TODO: check in pathfinder 
-        $dbupdates = $this->api->pathfinder->search('dbupdates');
+        $dbupdates = $this->app->pathfinder->search('dbupdates');
 
         $results=array();
         foreach($dbupdates as $dir){

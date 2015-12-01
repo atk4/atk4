@@ -28,14 +28,14 @@ class Controller_Addon extends AbstractController {
 
     function init() {
         parent::init();
-        $this->api->requires('atk',$this->atk_version);
+        $this->app->requires('atk',$this->atk_version);
 
         if(!$this->addon_name)
             throw $this->exception('Addon name must be specified in it\'s Controller');
 
         $this->namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
 
-        $this->addon_base_path=$this->api->locatePath('addons',$this->namespace);
+        $this->addon_base_path=$this->app->locatePath('addons',$this->namespace);
 
         if (count($this->addon_private_locations) || count($this->addon_public_locations)) {
             $this->addAddonLocations($this->base_path);
@@ -47,18 +47,18 @@ class Controller_Addon extends AbstractController {
      * from init() if necessary.
      */
     function routePages($page_prefix) {
-        //if ($this->api instanceof api_Frontend) {
-            $this->api->routePages($page_prefix, $this->namespace);
+        //if ($this->app instanceof App_Frontend) {
+            $this->app->routePages($page_prefix, $this->namespace);
        // }
     }
 
     function addAddonLocations($base_path) {
-        $this->api->pathfinder->addLocation($this->addon_private_locations)
+        $this->app->pathfinder->addLocation($this->addon_private_locations)
                 ->setBasePath($base_path.'/../'.$this->addon_obj->get('addon_full_path'));
 
-        $this->api->pathfinder->addLocation($this->addon_public_locations)
+        $this->app->pathfinder->addLocation($this->addon_public_locations)
                 ->setBasePath($base_path.'/'.$this->addon_obj->get('addon_public_symlink'))
-                ->setBaseURL($this->api->url('/').$this->addon_obj->get('addon_symlink_name'));
+                ->setBaseURL($this->app->url('/').$this->addon_obj->get('addon_symlink_name'));
     }
 
     /**
@@ -83,7 +83,7 @@ class Controller_Addon extends AbstractController {
                 );
             }
 
-            $this->location = $this->api->pathfinder->public_location->addRelativeLocation($this->addon_base_path,$contents);
+            $this->location = $this->app->pathfinder->public_location->addRelativeLocation($this->addon_base_path,$contents);
         }
 
         return $this->location;
@@ -97,7 +97,7 @@ class Controller_Addon extends AbstractController {
         // Creates symlink inside /public/my-addon/ to /vendor/my/addon/public
 
         // TODO: if $this->namespace contains slash, then created
-        // this folder under $api->pathfinder->public_location
+        // this folder under $app->pathfinder->public_location
         //
         // TODO: create a symlink such as $this->namespace pointing
         // to
@@ -127,7 +127,7 @@ class Controller_Addon extends AbstractController {
      * user will be stored in configuration file.
      */
     function licenseCheck($type,$software='atk',$pubkey=null,$pubkey_md5=null) {
-        // TODO: move stuff here from ApiWeb -> licenseCheck
+        // TODO: move stuff here from App_Web -> licenseCheck
         //
         // TODO: we might need to hardcode hey signature or MD
     }

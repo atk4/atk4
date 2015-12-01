@@ -14,7 +14,7 @@ class Form_Field_Text extends Form_Field {
     function getInput($attr=array()){
         return
             parent::getInput(array_merge(array(''=>'textarea'),$attr)).
-            $this->api->encodeHtmlChars($this->value).
+            $this->app->encodeHtmlChars($this->value).
             $this->getTag('/textarea');
     }
 }

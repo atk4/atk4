@@ -89,7 +89,7 @@ class CompleteLister extends Lister
         parent::init();
         if (!$this->template->hasTag($this->item_tag)) {
 
-            if(@$this->api->compat_42 and $this instanceof Menu_Basic) {
+            if(@$this->app->compat_42 and $this instanceof Menu_Basic) {
                 // look for MenuItem
 
                 $default = $this->item_tag;
@@ -413,7 +413,7 @@ class CompleteLister extends Lister
         // select as sub-query
         $sub_q = $m->dsql()->del('limit')->del('order');
 
-        $q = $this->api->db->dsql();//->debug();
+        $q = $this->app->db->dsql();//->debug();
         $q->table($sub_q, 'grandTotals'); // alias is mandatory if you pass table as DSQL
         foreach ($fields as $field) {
             $q->field($q->sum($field), $field);

@@ -152,10 +152,10 @@ class GiTemplate extends AbstractModel implements ArrayAccess {
     // Template creation, interface functions
     function init(){
         parent::init();
-        $this->cache=&$this->api->smlite_cache;
+        $this->cache=&$this->app->smlite_cache;
         $this->settings=array_merge(
             $this->getDefaultSettings(),
-            $this->api->getConfig('template',array())
+            $this->app->getConfig('template',array())
         );
     }
 
@@ -486,8 +486,8 @@ class GiTemplate extends AbstractModel implements ArrayAccess {
         /*
          * Find template location inside search directory path
          */
-        if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
-        $f=$this->api->locatePath($this->template_type?:$this->settings['template_type'],$template_name.$this->settings['extension']);
+        if(!$this->app)throw new Exception_InitError('You should use add() to add objects!');
+        $f=$this->app->locatePath($this->template_type?:$this->settings['template_type'],$template_name.$this->settings['extension']);
         return $this->origin_filename=$f;
     }
     function loadTemplate($template_name,$ext=null){

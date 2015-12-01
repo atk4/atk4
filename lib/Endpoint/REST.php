@@ -25,10 +25,6 @@ class Endpoint_REST extends AbstractModel
     public $allow_edit=false;
     public $allow_delete=false;
 
-    public $app;
-    public $api;
-
-
     /**
      * init
      *

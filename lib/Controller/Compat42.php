@@ -52,7 +52,7 @@ class Controller_Compat42 extends AbstractController {
             'public'=>'atk4/public/atk4',
             'js'=>'atk4/public/atk4/js',
         ));
-        $this->app->pathfinder->base_location->setBaseURL($this->api->pm->base_url);
+        $this->app->pathfinder->base_location->setBaseURL($this->app->pm->base_url);
         return $this;
     }
 }

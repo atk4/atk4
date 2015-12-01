@@ -114,9 +114,9 @@ class Grid_Basic extends CompleteLister
             $descr = ucwords(str_replace('_', ' ', $name));
         }
         if (is_array($descr)) {
-            $descr['descr'] = $this->api->_($descr['descr']);
+            $descr['descr'] = $this->app->_($descr['descr']);
         } else {
-            $descr = $this->api->_($descr);
+            $descr = $this->app->_($descr);
         }
 
         $this->columns[$name] = array('type' => $formatters);
@@ -150,7 +150,7 @@ class Grid_Basic extends CompleteLister
                 // add-on functionality:
                 // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
                 if (!$this->elements[$subtype.'_'.$name]) {
-                    $addon = $this->api->normalizeClassName($subtype, 'Controller_Grid_Format');
+                    $addon = $this->app->normalizeClassName($subtype, 'Controller_Grid_Format');
                     $this->elements[$subtype.'_'.$name] = $this->add($addon);
                 }
 
@@ -318,7 +318,7 @@ class Grid_Basic extends CompleteLister
             // add-on functionality:
             // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
             if (!$this->elements[$formatter.'_'.$field]) {
-                $addon = $this->api->normalizeClassName($formatter, 'Controller_Grid_Format');
+                $addon = $this->app->normalizeClassName($formatter, 'Controller_Grid_Format');
                 $this->elements[$formatter.'_'.$field] = $this->add($addon, $formatter);
             }
 
@@ -464,13 +464,13 @@ class Grid_Basic extends CompleteLister
         $this->template->setHTML('header', $this->show_header ? $header->render() : '');
 
         // data row
-        $this->row_t = $this->api
+        $this->row_t = $this->app
             ->add('GiTemplate')
             ->loadTemplateFromString($row->render());
 
         // totals row
         if (isset($t_row) && $this->totals_t) {
-            $this->totals_t = $this->api
+            $this->totals_t = $this->app
                 ->add('GiTemplate')
                 ->loadTemplateFromString($t_row->render());
         }

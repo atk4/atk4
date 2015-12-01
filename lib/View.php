@@ -20,7 +20,7 @@
  *
  *  $this->add('View')
  *      ->setElement('a')
- *      ->setAttr('href', $this->api->url('reminder'))
+ *      ->setAttr('href', $this->app->url('reminder'))
  *      ->addClass('password_reminder')
  *      ->set('Forgot your password?');
  *
@@ -276,7 +276,7 @@ class View extends AbstractView
      */
     function setText($text)
     {
-        $this->template->trySet('Content', $this->api->_($text));
+        $this->template->trySet('Content', $this->app->_($text));
         return $this;
     }
     /**

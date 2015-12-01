@@ -99,7 +99,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             $this->to_stringing=false;
             return $output;
         } catch (Exception $e) {
-            $this->api->caughtException($e);
+            $this->app->caughtException($e);
             //return "Exception: ".$e->getMessage();
         }
 
@@ -571,9 +571,9 @@ class DB_dsql extends AbstractModel implements Iterator {
             if ($alias===$field) {
                 $alias=UNDEFINED;
             }
-            /**/$this->api->pr->start('dsql/render/field/consume');
+            /**/$this->app->pr->start('dsql/render/field/consume');
             $field=$this->consume($field);
-            /**/$this->api->pr->stop();
+            /**/$this->app->pr->stop();
             if (!$field) {
                 $field=$table;
                 $table=UNDEFINED;
@@ -870,7 +870,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $_foreign_alias = null
     ) {
         // Compatibility mode
-        if (isset($this->api->compat)) {
+        if (isset($this->app->compat)) {
             if (strpos($foreign_table, ' ')) {
                 list($foreign_table, $alias)=explode(' ', $foreign_table);
                 $foreign_table=array($alias => $foreign_table);
@@ -1563,12 +1563,12 @@ class DB_dsql extends AbstractModel implements Iterator {
     function execute()
     {
         try {
-            /**/$this->api->pr->start('dsql/execute/render');
+            /**/$this->app->pr->start('dsql/execute/render');
             $q=$this->render();
-            /**/$this->api->pr->next('dsql/execute/query');
+            /**/$this->app->pr->next('dsql/execute/query');
             $this->stmt=$this->owner->query($q, $this->params);
             $this->template=$this->mode=null;
-            /**/$this->api->pr->stop();
+            /**/$this->app->pr->stop();
             return $this;
         } catch (PDOException $e) {
             throw $this->exception('Database Query Failed')
@@ -1924,7 +1924,7 @@ class DB_dsql extends AbstractModel implements Iterator {
      */
     function _render()
     {
-        /**/$this->api->pr->start('dsql/render');
+        /**/$this->app->pr->start('dsql/render');
         if (is_null($this->template)) {
             $this->SQLTemplate('select');
         }
@@ -1932,7 +1932,7 @@ class DB_dsql extends AbstractModel implements Iterator {
         $res= preg_replace_callback(
             '/\[([a-z0-9_]*)\]/',
             function ($matches) use ($self) {
-                /**/$self->api->pr->next('dsql/render/'.$matches[1], true);
+                /**/$self->app->pr->next('dsql/render/'.$matches[1], true);
                 $fx='render_'.$matches[1];
                 if (isset($self->args['custom'][$matches[1]])) {
                     return $self->consume($self->args['custom'][$matches[1]], false);
@@ -1944,7 +1944,7 @@ class DB_dsql extends AbstractModel implements Iterator {
             },
                 $this->template
             );
-        /**/$this->api->pr->stop(null, true);
+        /**/$this->app->pr->stop(null, true);
         return $res;
     }
     // }}}

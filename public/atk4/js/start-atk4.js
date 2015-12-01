@@ -7,7 +7,7 @@
 
  Usage:
 
- // in $api->init():
+ // in $app->init():
 
   $this->add('jUI');
   $this->js(true)->_load('start-atk4');

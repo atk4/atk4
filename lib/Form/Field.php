@@ -49,7 +49,7 @@ abstract class Form_Field extends AbstractView {
     function init(){
         parent::init();
         if(@$_GET[$this->owner->name.'_cut_field']==$this->name){
-            $this->api->addHook('pre-render',array($this,'_cutField'));
+            $this->app->addHook('pre-render',array($this,'_cutField'));
         }
 
         /** TODO: finish refactoring
@@ -77,7 +77,7 @@ abstract class Form_Field extends AbstractView {
         // this method is used by ui.atk4_form, when doing reloadField();
         unset($_GET['cut_object']);
         $this->recursiveRender();
-        if($this->api->jquery)$this->api->jquery->getJS($this);
+        if($this->app->jquery)$this->app->jquery->getJS($this);
         throw new Exception_StopRender(
             $this->template->renderRegion($this->template->tags['before_field']).
             $this->getInput().
@@ -96,7 +96,7 @@ abstract class Form_Field extends AbstractView {
         return $this->mandatory;
     }
     function setCaption($_caption){
-        $this->caption=$this->api->_($_caption);
+        $this->caption=$this->app->_($_caption);
         if ($this->show_input_only || !$this->template->hasTag('field_caption')) {
             $this->setAttr('placeholder',$this->caption);
         }
@@ -255,7 +255,7 @@ abstract class Form_Field extends AbstractView {
         $ret=call_user_func($condition,$this);
 
         if($ret===false){
-            if(is_null($msg))$msg=$this->api->_('Error in ').$this->caption;
+            if(is_null($msg))$msg=$this->app->_('Error in ').$this->caption;
             $this->displayFieldError($msg);
         }elseif(is_string($ret)){
             $this->displayFieldError($ret);
@@ -281,9 +281,9 @@ abstract class Form_Field extends AbstractView {
     function validateNotNULL($msg=null){
         $this->setMandatory();
         if($msg && $msg!==true){
-            $msg=$this->api->_($msg);
+            $msg=$this->app->_($msg);
         }else{
-            $msg=sprintf($this->api->_('%s is a mandatory field'),$this->caption);
+            $msg=sprintf($this->app->_('%s is a mandatory field'),$this->caption);
         }
         $this->validateField(array($this,'_validateNotNull'),$msg);
         return $this;
@@ -418,7 +418,7 @@ abstract class Form_Field extends AbstractView {
             if($val === false) continue;
             if($val === true) $tmp[] = "$key";
             elseif($key === '')$tag=$val;
-            else $tmp[] = "$key=\"".$this->api->encodeHtmlChars($val)."\"";
+            else $tmp[] = "$key=\"".$this->app->encodeHtmlChars($val)."\"";
         }
         return "<$tag ".join(' ',$tmp).$postfix.">".($value?$value."</$tag>":"");
     }

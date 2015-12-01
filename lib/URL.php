@@ -1,6 +1,6 @@
 <?php
 /***********************************************************
-  When $api->url() is called, this object is used to avoid
+  When $app->url() is called, this object is used to avoid
   double-encoding. Return URL when converting to string.
 
   Reference:
@@ -33,20 +33,20 @@ class URL extends AbstractModel {
     function init(){
         parent::init();
 
-        if (!isset($this->api->pm)) {
+        if (!isset($this->app->pm)) {
             throw $this->exception('You must initialize PageManager first');
         }
 
-        if (!$this->api->pm->base_url) {
+        if (!$this->app->pm->base_url) {
             throw $this->exception('PageManager is did not parse request URL. Use either parseRequestedURL or setURL (if you are in CLI application)');
         }
 
         $this->addStickyArguments();
-        $this->extension=$this->api->getConfig('url_postfix',$this->extension);
+        $this->extension=$this->app->getConfig('url_postfix',$this->extension);
     }
-    /** [private] add arguments set as sticky through API */
+    /** [private] add arguments set as sticky through APP */
     function addStickyArguments(){
-        $sticky=$this->api->getStickyArguments();
+        $sticky=$this->app->getStickyArguments();
         $args=array();
 
         if($sticky && is_array($sticky)){
@@ -92,7 +92,7 @@ http://mysite:123/install/dir/my/page.html
     }
 
 
-    /** [private] automatically called with 1st argument of api->url() */
+    /** [private] automatically called with 1st argument of $app->url() */
     function setPage($page=null){
         // The following argument formats are supported:
         //
@@ -102,13 +102,13 @@ http://mysite:123/install/dir/my/page.html
         // './page' = set page relatively to current page
         // '..' = parent page
         // '../page' = page besides our own (foo/bar -> foo/page)
-        // 'index' = properly points to the index page defined in API
+        // 'index' = properly points to the index page defined in APP
         // '/admin/' = will not be converted
 
         $destination='';
 
         //if(substr($page,-1)=='/'){
-            //return $this->setBaseURL(str_replace('//','/',$this->api->pm->base_path.$page));
+            //return $this->setBaseURL(str_replace('//','/',$this->app->pm->base_path.$page));
         //}
         if(is_null($page))$page='.';
         $path=explode('/',$page);
@@ -116,13 +116,13 @@ http://mysite:123/install/dir/my/page.html
         foreach($path as $component){
             if($component=='')continue;
             if($component=='.' && $destination==''){
-                if($this->api->page=='index')continue;
-                $destination=str_replace('_','/',$this->api->page);
+                if($this->app->page=='index')continue;
+                $destination=str_replace('_','/',$this->app->page);
                 continue;
             }
 
             if($component=='..'){
-                if(!$destination)$destination=str_replace('_','/',$this->api->page);
+                if(!$destination)$destination=str_replace('_','/',$this->app->page);
                 $tmp=explode('/',$destination);
                 array_pop($tmp);
                 $destination=join('/',$tmp);
@@ -130,7 +130,7 @@ http://mysite:123/install/dir/my/page.html
             }
 
             if($component=='index' && $destination==''){
-                $destination=$this->api->index_page;
+                $destination=$this->app->index_page;
                 continue;
             }
 
@@ -138,7 +138,7 @@ http://mysite:123/install/dir/my/page.html
             $destination=$destination?$destination.'/'.$component:$component;
 
         }
-        if($destination==='')$destination=@$this->api->index_page;
+        if($destination==='')$destination=@$this->app->index_page;
 
         $this->page=$destination;
 
@@ -187,10 +187,10 @@ http://mysite:123/install/dir/my/page.html
         $url='';
 
         // add absolute if necessary
-        if($this->absolute)$url.=$this->api->pm->base_url;
+        if($this->absolute)$url.=$this->app->pm->base_url;
 
         // add base path
-        $url.=$this->api->pm->base_path;
+        $url.=$this->app->pm->base_path;
 
         return $url;
     }
@@ -214,13 +214,13 @@ http://mysite:123/install/dir/my/page.html
 
         // Optional hook, which can change properties for page and arguments
         // based on some routing logic
-        $url=$this->api->hook('buildURL',array($this));
+        $url=$this->app->hook('buildURL',array($this));
         if(is_string($url))return $url;
 
         $url=$this->getBaseURL();
         if($this->page && $this->page!='index'){
             // add prefix if defined in config
-            $url.=$this->api->getConfig('url_prefix','');
+            $url.=$this->app->getConfig('url_prefix','');
 
             $url.=$this->page;
             $url.=$this->getExtension();

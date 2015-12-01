@@ -19,7 +19,7 @@ abstract class page_DefaultAbout extends Page {
     var $about_this;
     function init(){
         parent::init();
-        $this->api->addHook('post-init',array($this,'aboutFramework'));
+        $this->app->addHook('post-init',array($this,'aboutFramework'));
     }
     function aboutframework(){
         $msg=$this->add('Frame')->setTitle('About Agile Toolkit');

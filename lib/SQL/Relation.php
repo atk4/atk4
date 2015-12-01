@@ -161,7 +161,7 @@ class SQL_Relation extends AbstractModel {
             try{
             $this->dsql->del('field')->where($this->f2,$this->id)->delete();
             }catch(Exception $e){
-                $this->api->caughtException($e);
+                $this->app->caughtException($e);
             }
         }elseif($this->delete_behaviour=='ignore'){
             //$this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->update();

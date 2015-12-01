@@ -20,6 +20,6 @@
  */
 class Exception_Stop extends BaseException{
     function __construct($msg=null){
-        parent::__construct($msg?:'This exception must be ignored in API');
+        parent::__construct($msg?:'This exception must be ignored in APP');
     }
 }

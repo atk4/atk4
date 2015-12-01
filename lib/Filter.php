@@ -24,7 +24,7 @@ class Filter extends Form
         parent::init();
 
         // set default values on non-yet initialized fields
-        $this->api->addHook('post-init', array($this, 'postInit'));
+        $this->app->addHook('post-init', array($this, 'postInit'));
     }
     
     /**

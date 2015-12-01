@@ -1,15 +1,15 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
  * Base class for Command-Line Applications. The purpose of Application class
- * is to initialize all the other classes and aid their connectivity. API
- * class can be accessed from any object through $this->api property.
+ * is to initialize all the other classes and aid their connectivity. APP
+ * class can be accessed from any object through $this->app property.
  *
- * API classes are derrived from AbstractView because normally they would have
+ * APP classes are derrived from AbstractView because normally they would have
  * a template and will be able to render themselves consistently to any other
  * view in the system. Although App_CLI does not do any rendering, it's descendants
  * do
  *
- * @link http://agiletoolkit.org/doc/api
+ * @link http://agiletoolkit.org/doc/app
 *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4
@@ -25,7 +25,7 @@ class App_CLI extends AbstractView
 {
     /**
      * In a typical application, one connection to the database is enough for
-     * majority of applications. Calling $api->dbConnect will read Database
+     * majority of applications. Calling $app->dbConnect will read Database
      * data from config file and store it in $db property. If you requires
      * a more advanced connectivity or multiple connections, you can manually
      * initialize more database connections.
@@ -68,7 +68,7 @@ class App_CLI extends AbstractView
     public $config_files_loaded = array();
 
     /**
-     * Without logger, API will dump out errors and exceptions in a very brief
+     * Without logger, APP will dump out errors and exceptions in a very brief
      * and straigtforward way. Logger is a controller which enhances error
      * output and in most cases you do need one. Logger can be further configured
      * to either output detailed errors or show brief message instead.
@@ -84,7 +84,7 @@ class App_CLI extends AbstractView
 
     /**
      * PathFinder is a controller which is responsible for locating resources,
-     * such as PHP includes, JavaScript files, templates, etc. API Initializes
+     * such as PHP includes, JavaScript files, templates, etc. APP Initializes
      * PathFinder as soon as possible, then defines "Locations" which describe
      * type of data found in different folders.
      */
@@ -108,7 +108,7 @@ class App_CLI extends AbstractView
 
 
     /**
-     * This is a major version of Agile Toolkit. The API of Agile Toolkit is
+     * This is a major version of Agile Toolkit. The APP of Agile Toolkit is
      * very well established and changes rarely. Your application would generally
      * be compatible throughout the same major version of Agile Tooolkit.
      *
@@ -168,7 +168,7 @@ class App_CLI extends AbstractView
 
     /**
      * This is the default locale for the application. You change this manually
-     * inside application API class or use some controller which will pull this
+     * inside application APP class or use some controller which will pull this
      * variable out of the URL. This variable will be respected throughout the
      * framework
      */
@@ -199,8 +199,8 @@ class App_CLI extends AbstractView
         }
         $this->owner = $this;
         $this->name  = $realm;
-        $this->api   = // compatibility
-        $this->app   = $this;
+        $this->api   = // compatibility with ATK 4.2 and lower
+            $this->app   = $this;
 
         // Profiler is a class for benchmarking your application. All calls to pr
         /**/$this->pr=new Dummy();

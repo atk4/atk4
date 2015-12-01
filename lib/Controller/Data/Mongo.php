@@ -11,18 +11,14 @@ class Controller_Data_Mongo extends Controller_Data {
 
         if(!$table)$table=$model->table;
 
-        if(@!$this->api->mongoclient){
-            $m=new MongoClient($this->api->getConfig('mongo/url',null));
-
-            $db=$this->api->getConfig('mongo/db');
-
-
-            $this->api->mongoclient=$m->$db;
-
+        if(@!$this->app->mongoclient){
+            $m = new MongoClient($this->app->getConfig('mongo/url',null));
+            $db = $this->app->getConfig('mongo/db');
+            $this->app->mongoclient = $m->$db;
         }
 
         parent::setSource($model,array(
-            'db'=>$this->api->mongoclient->$table,
+            'db'=>$this->app->mongoclient->$table,
             'conditions'=>array(),
             'collection'=>$table
         ));

@@ -38,7 +38,7 @@ class Layout_Basic extends View {
     function init() {
         parent::init();
 
-        $this->api->layout = $this;
+        $this->app->layout = $this;
     }
     function addRow($spot) {
         return $this->add('View',null,$spot)->addClass('atk-layout-row');

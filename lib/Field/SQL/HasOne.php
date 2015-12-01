@@ -4,7 +4,7 @@ class Field_SQL_HasOne extends Field_SQL_Expression {
     function getExpression($model) {
         $refModel = $this->getModel();
         if (is_string($refModel)) {
-            $refModel = $this->api->normalizeClassName($refModel, 'Model');
+            $refModel = $this->app->normalizeClassName($refModel, 'Model');
         }
         $refModel = $this->add($refModel);
 

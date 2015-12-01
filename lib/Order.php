@@ -111,7 +111,7 @@ class Order extends AbstractController {
         return $this;
     }
     function later(){
-        $this->api->addHook('beforeRender',array($this,'now'));
+        $this->app->addHook('beforeRender',array($this,'now'));
         return $this;
     }
 }
