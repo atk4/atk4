@@ -880,6 +880,7 @@ abstract class AbstractObject
                 }
             }
         } catch (Exception_Hook $e) {
+            $this->hooks[$hook_spot] = $hook_backup;
             return $e->return_value;
         }
         return $return;
