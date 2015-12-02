@@ -95,6 +95,10 @@ class PathFinder extends AbstractController
             }
         }, true, true);
 
+        if (defined('PHPUNIT_COMPOSER_INSTALL')) {
+            // Do not report error if class fails to load
+            return false;
+        }
         // If we couldn't load the class, let's throw exception
         spl_autoload_register(function ($class) use ($self) {
             try {
@@ -533,7 +537,7 @@ class PathFinder_Location extends AbstractModel
 
     /**
      * Set a new BaseURL
-     * 
+     *
      * something like /my/app
      */
     public function setBaseURL($url)
@@ -547,13 +551,13 @@ class PathFinder_Location extends AbstractModel
     {
         $this->setBaseURL($url);
         $this->is_cdn = true;
-        
+
         return $this;
     }
 
     /**
      * Set a new BasePath
-     * 
+     *
      * something like /home/web/public_html
      */
     public function setBasePath($path)
