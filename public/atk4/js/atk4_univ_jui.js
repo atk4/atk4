@@ -13,6 +13,9 @@ $.each({
         }
         $.data(dialog.get(0),'opener',this.jquery);
         $.data(dialog.get(0),'options',options);
+        $(window).resize(function() {
+            dialog.dialog("option", "position", {my: "center", at: "center", of: window});
+        });
 
         return dialog;
     },
@@ -188,10 +191,10 @@ $.ui.dialog.prototype._create = function(){
 
 /**
  * _allowInteraction fix to accommodate windowed editors
- * 
+ *
  * This is blocker issue if you want to open CKEditor or TinyMCE editor dialog
  * from JUI dialog because JUI doesn't give focus outside of it's dialog window.
- 
+
  * @url http://bugs.jqueryui.com/ticket/9087#comment:39
  * @url https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/#using-_super-and-_superapply-to-access-parents
  * @note Tested on jQuery UI v1.11.x
