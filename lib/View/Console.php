@@ -23,6 +23,18 @@ class View_Console extends \View {
 
     public $callback = null;
 
+
+    function afterAdd($me,$o)
+    {
+        $this->app->addHook('output-debug', function($junk,$o,$msg){
+            if($o instanceof DB) $this->breakHook(true);
+            $this->out(get_class($o).': '.$msg);
+            $this->breakHook(true);
+
+        },[],1);
+    }
+
+
     /**
      * Sends text through SSE channel. Text may contain newlines
      * which will be transmitted proprely. Optionally you can
@@ -155,6 +167,9 @@ class View_Console extends \View {
                 try {
                     $c = $this;
                     ob_start([$this,'_out'],1);
+
+                    $this->addHook('afterAdd', $this);
+
                     call_user_func($this->callback, $this);
                     ob_end_flush();
                 }catch(Exception $e){
