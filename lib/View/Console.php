@@ -124,6 +124,7 @@ class View_Console extends \View {
             if (ob_get_level()) ob_end_clean();
 
 
+            $this->out('--[ <i class="icon-spinner"></i> Executing... ]--------');
             // If the process is running, it will have
             // stdout we can read:
             if($this->process){
