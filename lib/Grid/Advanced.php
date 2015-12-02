@@ -1016,7 +1016,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row[$field] = $text;
 
         $this->setTDParam($field, 'title',
-            $this->api->encodeHtmlChars(strip_tags($this->current_row[$field.'_original']),ENT_QUOTES));
+            $this->app->encodeHtmlChars(strip_tags($this->current_row[$field.'_original']),ENT_QUOTES));
     }
 
     /**
