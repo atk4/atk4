@@ -104,6 +104,20 @@ abstract class AbstractObject
         $this->_initialized = true;
     }
 
+    /**
+     * This is default constructor of ATK4. Please do not re-define it
+     * and avoid calling it directly. Always use add() and init() methods.
+     * @param array $options will initialize class properties
+     */
+    function __construct($options = array())
+    {
+        foreach ($options as $key => $val) {
+            if ($key !== 'name') {
+                $this->$key = $val;
+            }
+        }
+    }
+
     /* \section Object Management Methods */
     /**
      * Clones associated controller and model. If cloning views, add them to
@@ -309,18 +323,12 @@ abstract class AbstractObject
         ) {
             $this->app->pathfinder->loadClass($class);
         }*/
-        $element = new $class_name_nodash();
+        $element = new $class_name_nodash($options);
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception(
                 "You can add only classes based on AbstractObject"
             );
-        }
-
-        foreach ($options as $key => $val) {
-            if ($key !== 'name') {
-                $element->$key = $val;
-            }
         }
 
         $element->owner = $this;
