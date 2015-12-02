@@ -61,6 +61,21 @@ class PathFinder extends AbstractController
     public $default_exception='Exception_PathFinder';
 
     /**
+     * To be a good citizen of composer's auto-loading we need to be silent
+     * about missing classes and let PHP handle the error. When we are
+     * dealing with a novice users, they tend to struggle to understand
+     * which file is missing or not.
+     *
+     * By default Agile Toolkit will report autoloading errors if the file
+     * couldn't be found by any of the autoloaders. To prevent this, you should
+     * pass ['report_autoload_errors'=>false] as second argument to initialization
+     * of this class.
+     *
+     * @var boolean
+     */
+    protected $report_autoload_errors = true;
+
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -95,10 +110,8 @@ class PathFinder extends AbstractController
             }
         }, true, true);
 
-        if (defined('PHPUNIT_COMPOSER_INSTALL')) {
-            // Do not report error if class fails to load
-            return false;
-        }
+        if (!$this->report_autoload_errors) return;
+
         // If we couldn't load the class, let's throw exception
         spl_autoload_register(function ($class) use ($self) {
             try {
