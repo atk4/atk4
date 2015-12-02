@@ -304,5 +304,26 @@ class View_Button extends View
         }
         return $this;
     }
+
+
+    /**
+     * Add click handler on button, that will execute callback. Similar to
+     * onClick, however output from callback execution will appear in a
+     * dialog window with a console.
+     *
+     * @param  [type] $callabck    [description]
+     * @param  [type] $confirm_msg [description]
+     * @return [type]              [description]
+     */
+    function onClickConsole($callback, $title = null, $confirm_msg=null)
+    {
+        if(is_null($title))$title = $this->template->get('Content');
+
+        $this->virtual_page = $this->add('VirtualPage',['type'=>'frameURL'])->bindEvent($title);
+        $this->virtual_page->set(function($p)use($callback){
+            $p->add('View_Console')->set($callback);
+        });
+
+    }
     // }}}
 }
