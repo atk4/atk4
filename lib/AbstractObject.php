@@ -224,8 +224,12 @@ abstract class AbstractObject
      * Creates new object and adds it as a child of current object.
      * Returns new object.
      *
-     * @param string       $class           Name of the new class
-     * @param array|string $options         Short name or array of properties
+     * @param array|string $class           Name of the new class. Can also be
+     *                                      array with 0=>name and rest of array
+     *                                      will be considered as $options
+     * @param array|string $options         Short name or array of properties.
+     *                                      0=>name will be used as a short-name
+     *                                      of your object.
      * @param string       $template_spot   Tag where output will appear
      * @param array|string $template_branch Redefine template
      *
@@ -238,6 +242,16 @@ abstract class AbstractObject
         $template_spot = null,
         $template_branch = null
     ) {
+        if (is_array($class)){
+            if (!$class[0]) {
+                throw $this->exception('When passing class as array, use ["Class", "option"=>123] format')
+                    ->addMoreInfo('class', $class);
+            }
+            $o = $class;
+            $class = $o[0];
+            unset($o[0]);
+            $options = $options?array_merge($options, $o):$o;
+        }
 
         if (is_string($options)) {
             $options = array('name' => $options);
