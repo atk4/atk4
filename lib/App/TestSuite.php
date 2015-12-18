@@ -9,7 +9,7 @@ class App_TestSuite extends App_CLI {
     protected $pathfinder_class=['PathFinder','report_autoload_errors'=>false];
 
     function dbConnect(){
-        throw $this->exceptoin('Preventing you from connecting to live DB');
+        throw $this->exception('Preventing you from connecting to live DB');
     }
 
 }
