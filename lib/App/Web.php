@@ -35,13 +35,13 @@ class App_Web extends App_CLI {
 
 
     // {{{ Start-up
-    function __construct($realm=null,$skin='default'){
+    function __construct($realm=null,$skin='default',$options=array()){
         $this->start_time=time()+microtime();
 
         $this->skin=$skin;
         try {
 
-            parent::__construct($realm);
+            parent::__construct($realm,$options);
         }catch (Exception $e){
 
             // This exception is used to abort initialisation of the objects but when
