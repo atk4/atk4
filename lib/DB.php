@@ -332,8 +332,17 @@ class DB extends AbstractController
      */
     public function rollBack()
     {
-        $this->transaction_depth = 0;
-        return $this->dbh->rollBack();
+        $this->transaction_depth--;
+
+        // This means we rolled something back and now we lost track of commits
+        if ($this->transaction_depth < 0) {
+            $this->transaction_depth = 0;
+        }
+
+        if ($this->transaction_depth == 0) {
+            return $this->dbh->rollBack();
+        }
+        return false;
     }
     // }}}
 }
