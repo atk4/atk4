@@ -72,11 +72,12 @@ class SQL_Model extends Model implements Serializable {
     // {{{ Basic Functionality, query initialization and actual field handling
 
     /** Initialization of ID field, which must always be defined */
-    function __construct(){
+    function __construct($options = array()){
         if($this->entity_code){
             $this->table=$this->entity_code;
             unset($this->entity_code);
         }
+        parent::__construct($options);
     }
     /**
      * {@inheritdoc}

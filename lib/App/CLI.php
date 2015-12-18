@@ -192,8 +192,9 @@ class App_CLI extends AbstractView
      *
      * @param string $realm Will become $app->name
      */
-    function __construct($realm = null)
+    function __construct($realm = null, $options = array())
     {
+        parent::__construct($options);
         if (!$realm) {
             $realm=get_class($this);
         }
