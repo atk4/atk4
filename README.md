@@ -58,3 +58,7 @@ Agile Toolkit is distributed under MIT License.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8fd43ffe5d4a0d14183ea27487362660 "githalytics.com")](http://githalytics.com/atk4/atk4)
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/atk4/atk4/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
