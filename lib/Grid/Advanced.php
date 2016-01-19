@@ -1292,7 +1292,7 @@ class Grid_Advanced extends Grid_Basic
     function setTemplate($template, $field=null)
     {
         if($field === null)$field=$this->last_column;
-        $this->columns[$field]['template'] = $this->add('SMlite')
+        $this->columns[$field]['template'] = $this->add('GiTemplate')
             ->loadTemplateFromString($template);
 
         return $this;
@@ -1327,7 +1327,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_link($field)
     {
-        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>',$field);
+        $this->setTemplate('<a href="{$_link}"><?$'.$field.'?></a>',$field);
     }
 
     /**
