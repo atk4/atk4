@@ -275,14 +275,14 @@ class Grid_Basic extends CompleteLister
      *
      * @return $this
      */
-    function setFormatter($field, $formatter)
+    function setFormatter($field, $formatter, $options = null)
     {
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
 
         $this->columns[$field]['type'] = '';
-        $this->addFormatter($field, $formatter);
+        $this->addFormatter($field, $formatter, $options);
         $this->last_column = $field;
 
         return $this;
