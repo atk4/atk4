@@ -1327,7 +1327,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_link($field)
     {
-        $this->setTemplate('<a href="{$_link}"><?$'.$field.'?></a>',$field);
+        $this->setTemplate('<a href="{$_link}">{$'.$field.'}</a>',$field);
     }
 
     /**
