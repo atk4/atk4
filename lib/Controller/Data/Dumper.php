@@ -20,7 +20,7 @@ class Controller_Data_Dumper extends Controller_Data {
     protected $watchedController = null;
 
     function setWatchedControllerData($model, $controller) {
-        $controller = $this->api->normalizeClassName($controller,'Data');
+        $controller = $this->app->normalizeClassName($controller,'Data');
         $this->watchedController = $model->setController($controller);
     }
     function getLog($toClean=true) {

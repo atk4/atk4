@@ -21,9 +21,11 @@ class Field_Reference extends Field {
     public $table_alias=null;
 
     function setModel($model,$display_field=null){
+        if(is_object($model))return abstractObject::setModel($model);
+
         $this->model_name=is_string($model)?$model:get_class($model);
-        $this->model_name=$this->api->normalizeClassName($this->model_name,'Model');
-        
+        $this->model_name=$this->app->normalizeClassName($this->model_name,'Model');
+
         if($display_field)$this->display_field=$display_field;
 
         if($display_field!==false){
@@ -38,7 +40,9 @@ class Field_Reference extends Field {
         return $this;
     }
     function getModel(){
-        if(!$this->model)$this->model=$this->add($this->model_name);
+        if(!$this->model){
+            $this->model=$this->add($this->model_name);
+        }
         if($this->display_field)$this->model->title_field=$this->display_field;
         if($this->table_alias)$this->model->table_alias=$this->table_alias;
         return $this->model;
@@ -135,8 +139,11 @@ class Field_Reference extends Field {
         if($this->display_field){
             $title=$this->model->dsql()->del('fields');
             $this->model->getElement($this->display_field)->updateSelectQuery($title);
-        }else{
+        }elseif($this->model->hasMethod('titleQuery')){
             $title=$this->model->titleQuery();
+        }else{
+            // possibly references non-sql model, so just display field value
+            return $this->owner->dsql()->bt($this->short_name);
         }
         $title->del('order')
             ->where($this,$title->getField($this->model->id_field));

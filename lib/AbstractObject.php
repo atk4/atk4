@@ -77,7 +77,7 @@ abstract class AbstractObject
     /** Always points to current Application */
     public $app;
 
-    /** Obsolete - for compatibility, use ->app instead */
+    /** Obsolete - for compatibility with ATK 4.2 and lower, use ->app instead */
     public $api;
 
     /**
@@ -102,6 +102,20 @@ abstract class AbstractObject
          * This method is called for initialization
          */
         $this->_initialized = true;
+    }
+
+    /**
+     * This is default constructor of ATK4. Please do not re-define it
+     * and avoid calling it directly. Always use add() and init() methods.
+     * @param array $options will initialize class properties
+     */
+    function __construct($options = array())
+    {
+        foreach ($options as $key => $val) {
+            if ($key !== 'name') {
+                $this->$key = $val;
+            }
+        }
     }
 
     /* \section Object Management Methods */
@@ -188,6 +202,9 @@ abstract class AbstractObject
     function _removeElement($short_name)
     {
         unset($this->elements[$short_name]);
+        if($this->_element_name_counts[$short_name] === 1){
+            unset($this->_element_name_counts[$short_name]);
+        }
         return $this;
     }
 
@@ -207,8 +224,12 @@ abstract class AbstractObject
      * Creates new object and adds it as a child of current object.
      * Returns new object.
      *
-     * @param string       $class           Name of the new class
-     * @param array|string $options         Short name or array of properties
+     * @param array|string $class           Name of the new class. Can also be
+     *                                      array with 0=>name and rest of array
+     *                                      will be considered as $options
+     * @param array|string $options         Short name or array of properties.
+     *                                      0=>name will be used as a short-name
+     *                                      of your object.
      * @param string       $template_spot   Tag where output will appear
      * @param array|string $template_branch Redefine template
      *
@@ -221,6 +242,16 @@ abstract class AbstractObject
         $template_spot = null,
         $template_branch = null
     ) {
+        if (is_array($class)){
+            if (!$class[0]) {
+                throw $this->exception('When passing class as array, use ["Class", "option"=>123] format')
+                    ->addMoreInfo('class', $class);
+            }
+            $o = $class;
+            $class = $o[0];
+            unset($o[0]);
+            $options = $options?array_merge($options, $o):$o;
+        }
 
         if (is_string($options)) {
             $options = array('name' => $options);
@@ -240,7 +271,8 @@ abstract class AbstractObject
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
             if (!$class->app) {
-                $class->api = $class->app = $this->app;
+                $class->api = // compatibility with ATK 4.2 and lower
+                    $class->app = $this->app;
             }
             $class->short_name = $this->_unique_element($class->short_name);
             $class->name = $this->_shorten($this->name . '_' . $class->short_name);
@@ -305,7 +337,7 @@ abstract class AbstractObject
         ) {
             $this->app->pathfinder->loadClass($class);
         }*/
-        $element = new $class_name_nodash();
+        $element = new $class_name_nodash($options);
 
         if (!($element instanceof AbstractObject)) {
             throw $this->exception(
@@ -313,14 +345,9 @@ abstract class AbstractObject
             );
         }
 
-        foreach ($options as $key => $val) {
-            if ($key !== 'name') {
-                $element->$key = $val;
-            }
-        }
-
         $element->owner = $this;
-        $element->api = $element->app = $this->app;
+        $element->api = // compatibility with ATK 4.2 and lower
+            $element->app = $this->app;
         $element->name = $this->_shorten($this->name . '_' . $short_name);
         $element->short_name = $short_name;
 
@@ -520,6 +547,9 @@ abstract class AbstractObject
             $this->app->initializeSession(false);
         }
 
+        // Prevent notice generation when using custom session handler
+        if(!isset($_SESSION))return $this;
+
         if (is_null($key)) {
             unset ($_SESSION['o'][$this->name]);
             unset ($_SESSION['s'][$this->name]);
@@ -598,7 +628,8 @@ abstract class AbstractObject
             throw $e;
         }
         $e->owner = $this;
-        $e->api = $e->app = $this->app;
+        $e->api = // compatibility with ATK 4.2 and lower
+            $e->app = $this->app;
         $e->init();
 
         return $e;
@@ -849,6 +880,7 @@ abstract class AbstractObject
                 }
             }
         } catch (Exception_Hook $e) {
+            $this->hooks[$hook_spot] = $hook_backup;
             return $e->return_value;
         }
         return $return;

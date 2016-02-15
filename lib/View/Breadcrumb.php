@@ -14,13 +14,13 @@ class View_Breadcrumb extends CompleteLister {
             }
             $this->max_depth--;
 
-            $page=$this->api->url(join('/',$tmp));
+            $page=$this->app->url(join('/',$tmp));
         }
 
 
 
         if($page){
-            $this->current_row_html['crumb'] = '<a href="'.$this->api->url($page).'">'.
+            $this->current_row_html['crumb'] = '<a href="'.$this->app->url($page).'">'.
                 htmlspecialchars($this->model['name']).
                 '</a>';
         }else{

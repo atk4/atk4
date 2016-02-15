@@ -1,7 +1,7 @@
-.atk-box.atk-col-4.atk-move-center
+div
   .atk-push.atk-align-center
     a.atk-text-reset(href='javascript:void(0)')
-        img(src='{public}images/logo-gray.svg{/}', title='Agile Toolkit', width='96')
+        img(src='{public}images/logo-login.png{/}', title='Agile Toolkit', height='48')
   {Content}
 
   {LoginForm}
@@ -28,7 +28,7 @@
             {field_error}
 
             .atk-form-error
-                span.atk-size-micro atk-effect-danger {$field_error_str}
+                span.atk-size-micro.atk-effect-danger {$field_error_str}
             {/}
 
         {/}
@@ -81,4 +81,3 @@
   // a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-twitter(href='#')
     span.icon-twitter
     | Sign in with Twitter
-

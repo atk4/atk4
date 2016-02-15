@@ -15,6 +15,7 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Controller_Data_PathFinder extends Controller_Data {
+    public $path_prefix = '';
 
     function save($model, $id, $data) {
         throw $this->exception('Unable to save into pathfinder');
@@ -24,7 +25,7 @@ class Controller_Data_PathFinder extends Controller_Data {
     }
     function loadById($model, $id) {
         try {
-            $model->data = $this->api->pathfinder->locate($model->_table[$this->short_name],$id,'array');
+            $model->data = $this->app->pathfinder->locate($model->_table[$this->short_name],$id,'array');
         }catch(Exception_PathFinder $e){
             throw $this->exception('Requested file not found','NotFound')
                 ->by($e);
@@ -45,23 +46,38 @@ class Controller_Data_PathFinder extends Controller_Data {
     }
     // TODO: testing
     function prefetchAll($model) {
-        $dirs = $this->api->pathfinder->search($model->_table[$this->short_name],'','path');
+        $d = $this->d($model);
+        $dirs = $this->app->pathfinder->search($d[0],$d['path_prefix'],'path');
         $colls=array();
-
 
         foreach($dirs as $dir){
 
             // folder will contain collections
-            $d=dir($dir);
-            while(false !== ($file=$d->read())){
+            $dd=dir($dir);
+            while(false !== ($file=$dd->read())){
+
+                // skip current folder and hidden files
                 if($file[0]=='.')continue;
-                if(is_dir($dir.'/'.$file)){
-                    $colls[]=array(
-                        'base_path'=>$dir.'/'.$file,
-                        'name'=>$file,
-                        'id'=>$file,
-                    );
+
+                // skip folders in general
+                if(is_dir($dir.'/'.$file))continue;
+
+                // do we strip extensios?
+                if($d['strip_extension']){
+                    // remove any extension
+                    $basefile = pathinfo($file, PATHINFO_FILENAME);
+                    $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+                    if($d['strip_extension']!==true){
+                        if($ext !== $d['strip_extension'])continue;
+                    }
+                    $file = $basefile;
                 }
+                $colls[]=array(
+                    'base_path'=>$dir.'/'.$file,
+                    'name'=>$file,
+                    'id'=>$file,
+                );
             }
         }
 

@@ -41,6 +41,10 @@ class View_ModelDetails extends Grid_Basic
         if($actual_fields!=UNDEFINED)$m->setActualFields($actual_fields);
         return $m;
     }
+    function precacheTemplate(){
+        parent::precacheTemplate();
+        $this->row_t->set('tdparam_value','');
+    }
     function render(){
         if(!$this->source_set){
             if (!$this->model->loaded()) {

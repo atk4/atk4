@@ -2,23 +2,22 @@
     <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
 
     {Layout}
-    .atk-cells.atk-cells-gutter.atk-push-small
-        {Content}
-        {form_line}
-        div.atk-form-row.atk-cell(class="atk-form-row-{$field_type} {$row_class}")
-            .atk-form-field(class="{$field_class}")
-                {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
+    {Content}
+    {form_line}
+    div.atk-form-row.atk-cell(class="atk-form-row-{$field_type} {$row_class}")
+        .atk-form-field(class="{$field_class}")
+            {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
 
-                {$field_hint}
-                {field_error}
+            {$field_hint}
+            {field_error}
 
-                p.atk-form-error
-                    span.atk-size-micro atk-effect-danger {$field_error_str}
-                {/}
+            p.atk-form-error
+                span.atk-size-micro atk-effect-danger {$field_error_str}
+            {/}
 
-        {/}
+    {/}
 
-        {/Content}
+    {/Content}
     p.field-error-template.atk-form-error
         span.field-error-text {$field_error_str}
 

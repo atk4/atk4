@@ -407,15 +407,10 @@ class BaseException extends Exception
     {
         $text = '';
         $args = array();
-        foreach ($this->more_info as $key => $value) {
-            if (is_array($value)) {
-                $value = 'Array()';
-            }
-            $args[] = $key . '=' . $value;
-        }
+        $more_info = $this->print_r($this->more_info,'[',']','',',',' ');
 
         $text .= get_class($this) . ': ' . $this->getMessage() .
-                 ' (' . join(', ', $args) . ')';
+                 ' (' . $more_info . ')';
         $text .= ' in ' . $this->getMyFile() . ':' . $this->getMyLine();
         return $text;
     }

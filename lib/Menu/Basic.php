@@ -64,7 +64,7 @@ class Menu_Basic extends CompleteLister {
             $label=ucwords(str_replace('_',' ',$page));
         }
         $id=$this->name.'_i'.count($this->items);
-        $label=$this->api->_($label);
+        $label=$this->app->_($label);
         $js_page=null;
         if($page instanceof jQuery_Chain){
             $js_page="#";
@@ -74,7 +74,7 @@ class Menu_Basic extends CompleteLister {
         $this->items[]=array(
             'id'=>$id,
             'page'=>$page,
-            'href'=>$js_page?:$this->api->url($page),
+            'href'=>$js_page?:$this->app->url($page),
             'label'=>$label,
             $this->class_tag=>$this->isCurrent($page)?$this->current_menu_class:$this->inactive_menu_class,
         );
@@ -86,7 +86,7 @@ class Menu_Basic extends CompleteLister {
         return $f->add('Menu_jUI');
     }
     protected function getDefaultHref($label){
-        $href=$this->api->normalizeName($label,'');
+        $href=$this->app->normalizeName($label,'');
         if($label[0]==';'){
             $label=substr($label,1);
             $href=';'.$href;
@@ -96,7 +96,10 @@ class Menu_Basic extends CompleteLister {
     function isCurrent($href){
         // returns true if item being added is current
         if(!is_object($href))$href=str_replace('/','_',$href);
-        return $href==$this->api->page||$href==';'.$this->api->page||$href.$this->api->getConfig('url_postfix','')==$this->api->page||(string)$href==(string)$this->api->url();
+        return $href == $this->app->page
+            || $href == ';' . $this->app->page
+            || $href . $this->app->getConfig('url_postfix','') == $this->app->page
+            || (string)$href == (string)$this->app->url();
     }
     function render(){
         $this->setSource($this->items);

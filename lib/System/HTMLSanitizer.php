@@ -49,7 +49,7 @@ class System_HTMLSanitizer extends AbstractController {
 
         // Next we need to transform our XML using XSLT
         $xslt = new DOMDocument();
-        $xslt_file = $this->api->locatePath('xslt','htmlsanitize.xml');
+        $xslt_file = $this->app->locatePath('xslt','htmlsanitize.xml');
         $xslt->load($xslt_file);
 
         $proc = new XSLTProcessor();

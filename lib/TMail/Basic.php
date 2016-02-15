@@ -34,7 +34,7 @@ class TMail_Basic extends AbstractModel {
 
         $this->boundary=str_replace('.','',uniqid('atk4tmail',true));
 
-        if($t=$this->api->getConfig('tmail/transport',false)){
+        if($t=$this->app->getConfig('tmail/transport',false)){
             $this->addTransport($t);
         }
     }
@@ -46,7 +46,7 @@ class TMail_Basic extends AbstractModel {
         return array('shared');
     }
     function addTransport($t){
-        return $this->add($this->api->normalizeClassName($t,'TMail_Transport'));
+        return $this->add($this->app->normalizeClassName($t,'TMail_Transport'));
     }
     function addPart($p){
         return $this->add('TMail_Part_'.$p);
@@ -114,7 +114,7 @@ class TMail_Basic extends AbstractModel {
     }
     function send($to,$from=null){
         if(is_null($from) && isset($this->args['from']))$from=$this->args['from'];
-        if(is_null($from))$from=$this->api->getConfig('tmail/from');
+        if(is_null($from))$from=$this->app->getConfig('tmail/from');
 
         if(!isset($this->args['from_formatted']))$this->args['from_formatted']=$from;
         if(!isset($this->args['to_formatted']))$this->args['to_formatted']=$to;

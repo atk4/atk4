@@ -19,7 +19,7 @@
  * If you use XML API, change $transport_class to 'PestXML';
  */
 class Controller_Data_RESTFul extends Controller_Data {
-    public $transport_class = 'PestJSON';
+    public $transport_class = 'PestJSON'; // PestJSON | PestXML
 
     protected $update_mode = 'PUT';
     protected $insert_mode = 'POST';

@@ -34,6 +34,6 @@ class Text extends AbstractView {
         $this->html=$html;
     }
     function render(){
-        $this->output($this->html ?: $this->api->encodeHtmlChars($this->text, ENT_NOQUOTES));
+        $this->output($this->html ?: $this->app->encodeHtmlChars($this->text, ENT_NOQUOTES));
     }
 }

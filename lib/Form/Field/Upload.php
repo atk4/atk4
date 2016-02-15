@@ -67,7 +67,7 @@ $this->add('Form')->setModel($model);
 
  * Example4: Use of your custom model
  
-$this->api->stickyGET('user_id');
+$this->app->stickyGET('user_id');
 $myfile=$this->add('filestore/Image');
 $myfile->join('user_images.file_id')->addCondition('user_id',$_GET['user_id']);
 $form->addField('Upload','photo')
@@ -144,7 +144,7 @@ class Form_Field_Upload extends Form_Field {
                     $model->import($this->getFilePath());
                     $model->save();
                 }catch(Exception $e){
-                    $this->api->logger->logCaughtException($e);
+                    $this->app->logger->logCaughtException($e);
 
                     if($e instanceof Exception_ForUser){
                         // nicer error for user
@@ -158,10 +158,10 @@ class Form_Field_Upload extends Form_Field {
 
                     echo '<script>$=window.top.$;';
                     $_POST['ajax_submit']=1;
-                    $this->api->addHook('post-js-execute',function(){ 
+                    $this->app->addHook('post-js-execute',function(){ 
                         echo ';</script>';
                     });
-                    $this->api->caughtException($e);
+                    $this->app->caughtException($e);
 
                 }
 

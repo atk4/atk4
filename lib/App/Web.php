@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * App_Web extends an api of CommandLine applications with knowlnedge of HTML
+ * App_Web extends an APP of CommandLine applications with knowledge of HTML
  * templates, understanding of pages and routing.
  *
  * @link http://agiletoolkit.org/learn/understand/api
@@ -35,13 +35,13 @@ class App_Web extends App_CLI {
 
 
     // {{{ Start-up
-    function __construct($realm=null,$skin='default'){
+    function __construct($realm=null,$skin='default',$options=array()){
         $this->start_time=time()+microtime();
 
         $this->skin=$skin;
         try {
 
-            parent::__construct($realm);
+            parent::__construct($realm,$options);
         }catch (Exception $e){
 
             // This exception is used to abort initialisation of the objects but when
@@ -146,7 +146,7 @@ class App_Web extends App_CLI {
         $this->hook('caught-exception',array($e));
         throw $e;
         echo "<font color=red>Problem with your request.</font>";
-        echo "<p>Please use 'Logger' class for more sophisticated output<br>\$api-&gt;add('Logger');</p>";
+        echo "<p>Please use 'Logger' class for more sophisticated output<br>\$app-&gt;add('Logger');</p>";
         exit;
     }
 
@@ -238,7 +238,7 @@ class App_Web extends App_CLI {
     }
 
     function addStylesheet($file,$ext='.css',$locate='css'){
-        //$file=$this->api->locateURL('css',$file.$ext);
+        //$file=$this->app->locateURL('css',$file.$ext);
         if(@$this->included[$locate.'-'.$file.$ext]++)return;
 
         if(strpos($file,'http')!==0 && $file[0]!='/'){
@@ -303,7 +303,7 @@ class App_Web extends App_CLI {
         }catch(Exception $e){
             if($e instanceof Exception_Stop){
                 $this->hook('cut-output');
-                echo $e->result;
+                echo @$e->result;
                 $this->hook('post-render-output');
                 return;
             }
@@ -317,7 +317,7 @@ class App_Web extends App_CLI {
         if(isset($this->app->jquery) && $this->app->jquery)$this->app->jquery->getJS($this);
 
         if(!($this->template)){
-            throw new BaseException("You should specify template for API object");
+            throw new BaseException("You should specify template for APP object");
         }
 
         $this->hook('pre-render-output');

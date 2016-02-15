@@ -100,7 +100,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      *
      * TODO: must support multiple touples for multiple field sorting
      */
-    public $order = array(null, null);
+    public $order = array();
 
     /**
      * More internal classes which are used by hasOne, and addExpression
@@ -413,7 +413,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function setControllerData($controller)
     {
         if (is_string($controller)) {
-            $controller = $this->api->normalizeClassName($controller, 'Data');
+            $controller = $this->app->normalizeClassName($controller, 'Data');
         } elseif (!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
@@ -444,12 +444,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * If the $table argument is not specified then :php:attr:`Model::table`
      * will be used to find out name of the table / collection
      */
-    public function setSource($controller, $table = null, $id = null)
+    public function setSource($controller, $table = null)
     {
         $this->setControllerData($controller);
         $this->setControllerSource($table);
-
-        if($id) throw $this->exception('Do not specify $id to setSource, it is obsolete', 'Obsolete');
 
         return $this;
     }
@@ -457,7 +455,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /** Cache controller is used to attempt and load data a little faster then the primary controller */
     public function addCache($controller, $table = null, $priority = 5)
     {
-        $controller=$this->api->normalizeClassName($controller, 'Data');
+        $controller=$this->app->normalizeClassName($controller, 'Data');
 
         return $this->setController($controller)
             ->addHooks($this, $priority)
@@ -651,8 +649,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         return $ret;
     }
 
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create
-     * record with new ID. */
+    /**
+     * Saves record with current controller. Ues $this->id as primary key. If
+     * not set, new record iscreated.
+     */
     public function save()
     {
         $this->hook('beforeSave', array($this->id));
@@ -695,7 +695,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         return $this;
     }
 
-    /** Save model and don't try to load it back */
+    /**
+     * Save model and don't try to load it back
+     */
     public function saveAndUnload($id = undefined)
     {
         // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
@@ -710,7 +712,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function saveLater()
     {
         $this->_save_later=true;
-        $this->api->addHook('saveDelayedModels', $this);
+        $this->app->addHook('saveDelayedModels', $this);
 
         return $this;
     }
@@ -726,7 +728,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         $this->saveDelayedModels();
     }
 
-    /*
+    /**
      * Delete a record. If the model is loaded, delete the current id.
      * If not loaded, load model through the $id parameter and delete
      */
@@ -751,7 +753,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
         return $this;
     }
-    /** Deletes all records associated with this model. */
+
+    /**
+     * Deletes all records associated with this model.
+     */
     public function deleteAll()
     {
         if ($this->loaded()) {
@@ -821,7 +826,23 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if (!$this->controller->supportOrder) {
             throw $this->exception('The controller doesn\'t support order', 'NotImplemented');
         }
-        $this->order = array($field, $desc);
+
+        if(is_string($field) && strpos($field,',')!==false){
+            $field=explode(',',$field);
+        }
+        if(is_array($field)){
+            if(!is_null($desc))
+                throw $this->exception('If first argument is array, second argument must not be used');
+
+            foreach(array_reverse($field) as $o)$this->setOrder($o);
+            return $this;
+        }
+
+        if(is_null($desc) && is_string($field) && strpos($field,' ')!==false){
+            list($field,$desc)=array_map('trim',explode(' ',trim($field),2));
+        }
+
+        $this->order[] = array($field, $desc);
 
         return $this;
     }
@@ -908,35 +929,60 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if ($field_class === UNDEFINED) {
             $field_class = $this->defaultHasOneFieldClass;
         }
-        $tmp = $this->api->normalizeClassName($model, 'Model');
-        $tmp = new $tmp(); // avoid recursion
 
         if ($our_field === UNDEFINED) {
+            // guess our field
+            $tmp = $this->app->normalizeClassName($model, 'Model');
+            $tmp = new $tmp(); // avoid recursion
             $refFieldName = ( $tmp->table ?: strtolower(get_class($this)) ) . '_id';
         } else {
             $refFieldName = $our_field;
         }
         $displayFieldName = preg_replace('/_id$/', '', $our_field);
 
-        if (!$this->hasElement($refFieldName)) {
-            $this->addField($refFieldName);
-        }
-        $expr = $this->addExpression($displayFieldName, $model, $field_class)
-            ->setModel($model)
-            ->setForeignFieldName($refFieldName);
-        $this->_references[$refFieldName] = $model;
+        $field = $this->addField($refFieldName);
 
-        return $expr;
+        if (!@$this->controller->supportExpressions) {
+            $expr = $this->addExpression($displayFieldName, $model, $field_class)
+                ->setModel($model)
+                ->setForeignFieldName($refFieldName);
+            $this->_references[$refFieldName] = $model;
+
+            return $expr;
+        }
+
+        return $field;
+
     }
     public function hasMany($model, $their_field = UNDEFINED, $our_field = UNDEFINED, $reference_name = null)
     {
-        $class = $this->api->normalizeClassName($model, 'Model');
+        $class = $this->app->normalizeClassName($model, 'Model');
         if (is_null($reference_name)) {
             $reference_name=$model;
         }
         $this->_references[$reference_name] = array($class, $their_field, $our_field);
 
         return null;
+    }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
     }
     /**
      * Traverses reference of relation
@@ -949,9 +995,15 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         list($ref,$rest)=explode('/', $ref1, 2);
 
         if (!isset($this->_references[$ref])) {
-            throw $this->exception('Reference is not defined')
-                ->addMoreInfo('model', $this)
-                ->addMoreInfo('ref', $ref);
+
+            $e = $this->hasElement($ref);
+            if($e && $e->hasMethod('ref')){
+                return $e->ref();
+            }else{
+                throw $this->exception('Reference is not defined')
+                    ->addMoreInfo('model', $this)
+                    ->addMoreInfo('ref', $ref);
+            }
         }
 
         $class = $this->_references[$ref];
@@ -984,10 +1036,14 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     private function _ref($class, $field, $val)
     {
-        $m = $this->add($this->api->normalizeClassName($class, 'Model'));
+        $m = $this->add($this->app->normalizeClassName($class, 'Model'));
 
         if ($field) { // HasMany
-            $m->addCondition($field, $val);
+            if($m->supportConditions){
+                $m->addCondition($field, $val);
+            }else{
+                throw $this->exception('Related model does not supprot conditions');
+            }
         }
 
         return $m;

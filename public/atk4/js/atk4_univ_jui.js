@@ -13,6 +13,9 @@ $.each({
         }
         $.data(dialog.get(0),'opener',this.jquery);
         $.data(dialog.get(0),'options',options);
+        $(window).resize(function() {
+            dialog.dialog("option", "position", {my: "center", at: "center", of: window});
+        });
 
         return dialog;
     },
@@ -144,7 +147,7 @@ $.each({
             return false;
         }
     },
-    successMessage: function(msg){
+    successMessage: function(msg,time){
         var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
     <div class="atk-swatch-green atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-info"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
@@ -152,9 +155,9 @@ $.each({
     </div>\
   </div>');
         this.message(msg,html);
-        setTimeout(function() { html.remove();},8000);
+        setTimeout(function() { html.remove();},time?time:8000);
     },
-    errorMessage: function(msg){
+    errorMessage: function(msg,time){
         var html=$('<div class="atk-layout-row" style="position: fixed; z-index: 1000">\
     <div class="atk-swatch-red atk-cells atk-padding-small">\
       <div class="atk-cell atk-jackscrew"><i class="icon-attention"></i>&nbsp;<span>Agile Toolkit failed to automatically renew certificate.</span></div>\
@@ -162,6 +165,7 @@ $.each({
     </div>\
   </div>');
         this.message(msg,html);
+        if(time)setTimeout(function() { html.remove();},time);
     },
     closeDialog: function(){
         var r=this.getFrameOpener();
@@ -185,3 +189,35 @@ $.ui.dialog.prototype._create = function(){
 
 
 
+/**
+ * _allowInteraction fix to accommodate windowed editors
+ *
+ * This is blocker issue if you want to open CKEditor or TinyMCE editor dialog
+ * from JUI dialog because JUI doesn't give focus outside of it's dialog window.
+
+ * @url http://bugs.jqueryui.com/ticket/9087#comment:39
+ * @url https://learn.jquery.com/jquery-ui/widget-factory/extending-widgets/#using-_super-and-_superapply-to-access-parents
+ * @note Tested on jQuery UI v1.11.x
+ */
+$.widget( "ui.dialog", $.ui.dialog, {
+    _allowInteraction: function( event ) {
+        if ( this._super( event ) ) {
+            return true;
+        }
+
+        // address interaction issues with general iframes with the dialog
+        if ( event.target.ownerDocument != this.document[ 0 ] ) {
+            return true;
+        }
+
+        // address interaction issues with dialog window
+        if ( !!$( event.target ).closest( ".cke_dialog, .mce-window, .moxman-window" ).length ) {
+            return true;
+        }
+
+        // address interaction issues with iframe based drop downs in IE
+        if ( !!$( event.target ).closest( ".cke" ).length ) {
+            return true;
+        }
+    }
+});

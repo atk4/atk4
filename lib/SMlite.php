@@ -161,10 +161,10 @@ class SMlite extends AbstractModel {
     function init(){
         parent::init();
         $path=array();
-        $this->cache=&$this->api->smlite_cache;
+        $this->cache=&$this->app->smlite_cache;
 
         $this->settings=$this->getDefaultSettings();
-        $this->settings['extension']=$this->api->getConfig('smlite/extension','.html');
+        $this->settings['extension']=$this->app->getConfig('smlite/extension','.html');
     }
     function __clone(){
         if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
@@ -207,9 +207,9 @@ class SMlite extends AbstractModel {
             $new->template=unserialize(serialize($this->tags[$tag][0]));
             if(is_string($new->template))$new->template=array($new->template);
         }catch(PDOException $e){
-            var_Dump($this->tags);
             throw $this->exception('PDO got stuck in template')
-                ->addMoreInfo('tag',$tag);
+                ->addMoreInfo('tag', $tag)
+                ->addMoreInfo('tags', var_export($this->tags, true));
         }
         $new->top_tag=$tag;
         $new->settings=$this->settings;
@@ -222,9 +222,7 @@ class SMlite extends AbstractModel {
          * This function is used for debug. It will output all tag names inside
          * current templates
          */
-        echo "<pre>";
-        var_Dump(array_keys($this->tags));
-        echo "</pre>";
+        echo "<pre>" . var_export(array_keys($this->tags), true) . "</pre>";
     }
 
     // Operation with regions inside template
@@ -261,14 +259,14 @@ class SMlite extends AbstractModel {
     function append($tag,$value,$encode=true){
         if($value instanceof URL)$value=$value->__toString();
         // Temporary here until we finish testing
-        if($encode && $value!=$this->api->encodeHtmlChars($value,ENT_NOQUOTES) && $this->api->getConfig('html_injection_debug',false)) {
+        if($encode && $value!=$this->app->encodeHtmlChars($value,ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug',false)) {
             throw $this->exception('Attempted to supply html string through append()')
                 ->addMoreInfo('val',var_export($value,true))
-                ->addMoreInfo('enc',var_export($this->api->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                ->addMoreInfo('enc',var_export($this->app->encodeHtmlChars($value,ENT_NOQUOTES),true))
                 //->addAction('ignore','Ignore tag'.$tag)
                 ;
         }
-        if($encode)$value=$this->api->encodeHtmlChars($value,ENT_NOQUOTES);
+        if($encode)$value=$this->app->encodeHtmlChars($value,ENT_NOQUOTES);
         if($this->isTopTag($tag)){
             $this->template[]=$value;
             return $this;
@@ -280,7 +278,7 @@ class SMlite extends AbstractModel {
         foreach($this->tags[$tag] as $key=>$_){
 
             if(!is_array($this->tags[$tag][$key])){
-                //throw new BaseException("Problem appending '".$this->api->encodeHtmlChars($value)."' to '$tag': key=$key");
+                //throw new BaseException("Problem appending '".$this->app->encodeHtmlChars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
             }
             $this->tags[$tag][$key][]=$value;
@@ -296,11 +294,11 @@ class SMlite extends AbstractModel {
      */
     function setMessage($tag,$args=array()){
         if(!is_array($args))$args=array($args);
-        $fmt=$this->api->_($this->get($tag));
+        $fmt=$this->app->_($this->get($tag));
 
         // Try to analyze format and see which formatter to use
         if (class_exists('MessageFormatter',false) && strpos($fmt,'{')!==null) {
-            $fmt=new MessageFormatter($this->api->locale,$fmt);
+            $fmt=new MessageFormatter($this->app->locale,$fmt);
             $str=$fmt->format($args);
         }
         // Else, perhaps it's a sprintf?
@@ -356,14 +354,14 @@ class SMlite extends AbstractModel {
         if($value instanceof URL)$value=$value->__toString();
         if(is_array($value))return $this;
 
-        if($encode && $value!=$this->api->encodeHtmlChars($value,ENT_NOQUOTES) && $this->api->getConfig('html_injection_debug',false)) {
+        if($encode && $value!=$this->app->encodeHtmlChars($value,ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug',false)) {
             throw $this->exception('Attempted to supply html string through set()')
                 ->addMoreInfo('val',var_export($value,true))
-                ->addMoreInfo('enc',var_export($this->api->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                ->addMoreInfo('enc',var_export($this->app->encodeHtmlChars($value,ENT_NOQUOTES),true))
                 //->addAction('ignore','Ignore tag'.$tag)
                 ;
         }
-        if($encode)$value=$this->api->encodeHtmlChars($value,ENT_NOQUOTES);
+        if($encode)$value=$this->app->encodeHtmlChars($value,ENT_NOQUOTES);
         if($this->isTopTag($tag)){
             $this->template=$value;
             return $this;
@@ -464,8 +462,8 @@ class SMlite extends AbstractModel {
         /*
          * Find template location inside search directory path
          */
-        if(!$this->api)throw new Exception_InitError('You should use add() to add objects!');
-        $f=$this->api->locatePath($this->template_type,$template_name.$this->settings['extension']);
+        if(!$this->app)throw new Exception_InitError('You should use add() to add objects!');
+        $f=$this->app->locatePath($this->template_type,$template_name.$this->settings['extension']);
         $this->origin_filename=$f;
         return join('',file($f));
     }
@@ -482,7 +480,7 @@ class SMlite extends AbstractModel {
         /*
          * Load template from file
          */
-        if(!$this->api)throw new Exception('Broken Link');
+        if(!$this->app)throw new Exception('Broken Link');
         if($this->cache[$template_name.$ext]){
             $this->template=unserialize($this->cache[$template_name.$ext]);
             $this->rebuildTags();

@@ -23,24 +23,28 @@ abstract class Form_Field_ValueList extends Form_Field
 {
     // array of available values
     public $value_list = array();
-    
+
     // default empty text message
     public $default_empty_text = 'Please, select ...';
-    
+
     // current empty text message and ID
     public $empty_text = null;
     protected $empty_value = ''; // don't change this value
-    
+
     // value separator, for internal use
     protected $separator = ',';
 
 
+    function setForm($form){
+        parent::setForm($form);
+        $this->form->addHook('validate',array($this,'validateValidItem'));
+    }
 
     /**
      * Sets model of form field
      *
      * @param Model $m
-     * 
+     *
      * @return Model
      */
     function setModel($m)
@@ -83,11 +87,9 @@ abstract class Form_Field_ValueList extends Form_Field
      *
      * @return boolean
      */
-    function validate()
+    function validateValidItem()
     {
-        if (!$this->value) {
-            return parent::validate();
-        }
+        if (!$this->value) return;
 
         // load allowed values in values_list
         // @todo Imants: Actually we don't need to load all values from Model in
@@ -96,7 +98,7 @@ abstract class Form_Field_ValueList extends Form_Field
         //       something like that to limit array size and time spent on
         //       parsing all DB records in Model.
         $this->getValueList();
-        
+
         $values = explode($this->separator, $this->value);
         foreach ($values as $v) {
             if (!isset($this->value_list[$v])) {
@@ -104,8 +106,6 @@ abstract class Form_Field_ValueList extends Form_Field
                 return parent::validate();
             }
         }
-        
-        return parent::validate();
     }
 
     /**
@@ -119,7 +119,7 @@ abstract class Form_Field_ValueList extends Form_Field
         if ($this->model) {
             $id = $this->model->id_field;
             $title = $this->model->getTitleField();
-            
+
             $this->value_list = array();
             foreach ($this->model as $row) {
                 $this->value_list[(string)$row[$id]] = $row[$title];
@@ -130,7 +130,7 @@ abstract class Form_Field_ValueList extends Form_Field
         if ($this->empty_text && !isset($this->value_list[$this->empty_value])) {
             $this->value_list = array($this->empty_value => $this->empty_text) + $this->value_list;
         }
-        
+
         return $this->value_list;
     }
 
@@ -146,13 +146,13 @@ abstract class Form_Field_ValueList extends Form_Field
             $data = join($this->separator, $data);
         }
         $data = trim($data, $this->separator);
-        
+
         if (get_magic_quotes_gpc()) {
             $this->set(stripslashes($data));
         } else {
             $this->set($data);
         }
-        
+
         return parent::normalize();
     }
 }

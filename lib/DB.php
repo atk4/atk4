@@ -64,12 +64,12 @@ class DB extends AbstractController
             $dsn = 'dsn';
         }
         if (is_string($dsn)) {
-            $new_dsn = $this->api->getConfig($dsn, 'no_config');
+            $new_dsn = $this->app->getConfig($dsn, 'no_config');
             if ($new_dsn != 'no_config') {
                 $dsn = $new_dsn;
             }
             if ($dsn == 'dsn') {
-                $this->api->getConfig($dsn); // throws exception
+                $this->app->getConfig($dsn); // throws exception
             }
             if (is_string($dsn)) {
                 // Backward-compatible DSN parsing
@@ -145,7 +145,7 @@ class DB extends AbstractController
     }
     // }}}
 
-    // {{{ Query execution and data fetching 
+    // {{{ Query execution and data fetching
     /**
      * Sometimes for whatever reason DSQL is not what you want to do. I really
      * don't understand your circumstances in which you would want to use
@@ -205,9 +205,9 @@ class DB extends AbstractController
     /**
      * Executes query and returns first column of first row. This is quick and
      * speedy way to get the results of simple queries.
-     * 
+     *
      * Consider using DSQL:
-     * echo $this->api->db->dsql()->expr('select now()')->getOne();
+     * echo $this->app->db->dsql()->expr('select now()')->getOne();
      *
      * @param string $query  SQL Query
      * @param arary  $params PDO-params
@@ -272,7 +272,7 @@ class DB extends AbstractController
         }
         return false;
     }
-    
+
     /**
      * Each occurance of beginTransaction() must be matched with commit().
      * Only when same amount of commits are executed, the ACTUAL commit will be
@@ -294,6 +294,20 @@ class DB extends AbstractController
             return $this->dbh->commit();
         }
         return false;
+    }
+
+
+    public function atomic($f)
+    {
+        $this->beginTransaction();
+        try{
+            $res = call_user_func($f);
+            $this->commit();
+            return $res;
+        }catch(Exception $e){
+            $this->rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -318,8 +332,17 @@ class DB extends AbstractController
      */
     public function rollBack()
     {
-        $this->transaction_depth = 0;
-        return $this->dbh->rollBack();
+        $this->transaction_depth--;
+
+        // This means we rolled something back and now we lost track of commits
+        if ($this->transaction_depth < 0) {
+            $this->transaction_depth = 0;
+        }
+
+        if ($this->transaction_depth == 0) {
+            return $this->dbh->rollBack();
+        }
+        return false;
     }
     // }}}
 }

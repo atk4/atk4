@@ -90,7 +90,7 @@ class App_REST extends App_CLI
     {
         try {
             try {
-                $file = $this->api->locatePath('endpoint', str_replace('_', '/', $this->page) . '.php');
+                $file = $this->app->locatePath('endpoint', str_replace('_', '/', $this->page) . '.php');
                 include_once $file;
 
                 $this->pm->base_path = '/';
@@ -117,8 +117,8 @@ class App_REST extends App_CLI
 
                 $class = "endpoint_" . $this->page;
                 $this->endpoint = $this->add($class);
-                $this->endpoint->app = $this;
-                $this->endpoint->api = $this; // compatibility
+                $this->endpoint->api = // compatibility with ATK 4.2 and lower
+                    $this->endpoint->app = $this;
 
                 $method=strtolower($_SERVER['REQUEST_METHOD']);
                 $raw_post = file_get_contents("php://input");

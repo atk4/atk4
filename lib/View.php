@@ -20,7 +20,7 @@
  *
  *  $this->add('View')
  *      ->setElement('a')
- *      ->setAttr('href', $this->api->url('reminder'))
+ *      ->setAttr('href', $this->app->url('reminder'))
  *      ->addClass('password_reminder')
  *      ->set('Forgot your password?');
  *
@@ -234,7 +234,7 @@ class View extends AbstractView
             }else{
                 $this->add('Icon')->set($text['icon']);
                 if($text[0]){
-                    $this->add('HTML')->set('&nbsp;');
+                    $this->add('Html')->set('&nbsp;');
                     $this->add('Text')->set($text[0]);
                 }
             }
@@ -249,7 +249,7 @@ class View extends AbstractView
             }else{
                 if($text[0]){
                     $this->add('Text')->set($text[0]);
-                    $this->add('HTML')->set('&nbsp;');
+                    $this->add('Html')->set('&nbsp;');
                 }
                 $this->add('Icon')->set($text['icon-r']);
             }
@@ -276,7 +276,7 @@ class View extends AbstractView
      */
     function setText($text)
     {
-        $this->template->trySet('Content', $this->api->_($text));
+        $this->template->trySet('Content', $this->app->_($text));
         return $this;
     }
     /**

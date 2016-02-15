@@ -132,7 +132,7 @@ class View_Button extends View
     function link($page, $args = array())
     {
         $this->setElement('a');
-        $this->setAttr('href', $this->api->url($page, $args));
+        $this->setAttr('href', $this->app->url($page, $args));
 
         return $this;
     }
@@ -274,7 +274,7 @@ class View_Button extends View
             $cl->confirm($message);
         }
 
-        $cl->ajaxec($this->api->url(null, array($this->name => 'clicked')),true);
+        $cl->ajaxec($this->app->url(null, array($this->name => 'clicked')),true);
 
         return isset($_GET[$this->name]);
     }
@@ -302,6 +302,28 @@ class View_Button extends View
             // blank chain otherwise
             $this->js()->univ()->successMessage(is_string($ret)?$ret:'Success')->execute();
         }
+        return $this;
+    }
+
+
+    /**
+     * Add click handler on button, that will execute callback. Similar to
+     * onClick, however output from callback execution will appear in a
+     * dialog window with a console.
+     *
+     * @param  [type] $callabck    [description]
+     * @param  [type] $confirm_msg [description]
+     * @return [type]              [description]
+     */
+    function onClickConsole($callback, $title = null, $confirm_msg=null)
+    {
+        if(is_null($title))$title = $this->template->get('Content');
+
+        $this->virtual_page = $this->add('VirtualPage',['type'=>'frameURL'])->bindEvent($title);
+        $this->virtual_page->set(function($p)use($callback){
+            $p->add('View_Console')->set($callback);
+        });
+
     }
     // }}}
 }

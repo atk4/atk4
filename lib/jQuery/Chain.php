@@ -147,7 +147,7 @@ class jQuery_Chain extends AbstractModel {
      */
     function execute(){
         if(isset($_POST['ajax_submit']) || $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest'){
-            //if($this->api->jquery)$this->api->jquery->getJS($this->owner);
+            //if($this->app->jquery)$this->app->jquery->getJS($this->owner);
 
             if(headers_sent($file,$line)){
                 echo "<br/>Direct output (echo or print) detected on $file:$line. <a target='_blank' "
@@ -155,10 +155,10 @@ class jQuery_Chain extends AbstractModel {
             }
 
 
-            $x=$this->api->template->get('document_ready');
+            $x=$this->app->template->get('document_ready');
             if(is_array($x))$x=join('',$x);
             echo $this->_render();
-            $this->api->hook('post-js-execute');
+            $this->app->hook('post-js-execute');
             exit;
         }else{
             throw $this->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
@@ -260,7 +260,7 @@ class jQuery_Chain extends AbstractModel {
      * @return this
      */
     function redirect($page = null, $arg = null) {
-        $url = $this->api->url($page, $arg);
+        $url = $this->app->url($page, $arg);
         return $this->univ()->_fn('redirect', array($url));
     }
     /**
@@ -283,7 +283,7 @@ class jQuery_Chain extends AbstractModel {
         }
         $obj = $this->owner;
         if (!$url) {
-            $url = $this->api->url(null, array('cut_object' => $obj->name));
+            $url = $this->app->url(null, array('cut_object' => $obj->name));
         }
         return $this->univ()->_fn('reload', array($url, $arg, $fn, $interval));
     }
@@ -330,12 +330,12 @@ class jQuery_Chain extends AbstractModel {
     }
     /* Specify requirement for stylesheet. Will load dynamically. */
     function _css($file){
-        $this->api->jquery->addStylesheet($file);
+        $this->app->jquery->addStylesheet($file);
         return $this;
     }
     /* Specify requirement for extra javascript include. Will load dynamically. */
     function _load($file){
-        $this->api->jquery->addInclude($file);
+        $this->app->jquery->addInclude($file);
         return $this;
     }
 }

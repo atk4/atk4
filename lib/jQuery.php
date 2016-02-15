@@ -30,27 +30,27 @@ class jQuery extends AbstractController {
     function init(){
         parent::init();
 
-        $this->api->jquery=$this;
+        $this->app->jquery=$this;
 
-        if(!$this->api->template)return;
+        if(!$this->app->template)return;
 
-        if(!$this->api->template->is_set('js_include'))
+        if(!$this->app->template->is_set('js_include'))
             throw $this->exception('Tag js_include must be defined in shared.html');
-        if(!$this->api->template->is_set('document_ready'))
+        if(!$this->app->template->is_set('document_ready'))
             throw $this->exception('Tag document_ready must be defined in shared.html');
 
 
-        $this->api->template->del('js_include');
+        $this->app->template->del('js_include');
 
-        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
-        if($v=$this->api->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
-        else($v=$this->api->getConfig('js/jquery','jquery-2.0.3.min'));   // bundled jQuery version
+        /* $config['js']['jquery']='https://code.jquery.com/jquery-2.1.4.min.js'; // to use CDN */
+        if($v=$this->app->getConfig('js/versions/jquery',null))$v='jquery-'.$v;
+        else($v=$this->app->getConfig('js/jquery','jquery-2.0.3.min'));   // bundled jQuery version
 
         $this->addInclude($v);
 
         // Controllers are not rendered, but we need to do some stuff manually
-        $this->api->addHook('pre-render-output',array($this,'postRender'));
-        $this->api->addHook('cut-output',array($this,'cutRender'));
+        $this->app->addHook('pre-render-output',array($this,'postRender'));
+        $this->app->addHook('cut-output',array($this,'cutRender'));
     }
     /* Locate javascript file and add it to HTML's head section */
     function addInclude($file,$ext='.js'){
@@ -60,10 +60,10 @@ class jQuery extends AbstractController {
         if(@$this->included['js-'.$file.$ext]++)return;
 
         if(strpos($file,'http')!==0 && $file[0]!='/'){
-            $url=$this->api->locateURL('js',$file.$ext);
+            $url=$this->app->locateURL('js',$file.$ext);
         }else $url=$file;
 
-        $this->api->template->appendHTML('js_include',
+        $this->app->template->appendHTML('js_include',
                 '<script type="text/javascript" src="'.$url.'"></script>'."\n");
         return $this;
     }
@@ -72,21 +72,21 @@ class jQuery extends AbstractController {
         return $this->addStaticStylesheet($file,$ext,$locate);
     }
     function addStaticStylesheet($file,$ext='.css',$locate='css'){
-        //$file=$this->api->locateURL('css',$file.$ext);
+        //$file=$this->app->locateURL('css',$file.$ext);
         if(@$this->included[$locate.'-'.$file.$ext]++)return;
 
         if(strpos($file,'http')!==0 && $file[0]!='/'){
-            $url=$this->api->locateURL($locate,$file.$ext);
+            $url=$this->app->locateURL($locate,$file.$ext);
         }else $url=$file;
 
-        $this->api->template->appendHTML('js_include',
+        $this->app->template->appendHTML('js_include',
                 '<link type="text/css" href="'.$url.'" rel="stylesheet" />'."\n");
         return $this;
     }
     /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */
     function addOnReady($js){
         if(is_object($js))$js=$js->getString();
-        $this->api->template->appendHTML('document_ready', $js.";\n");
+        $this->app->template->appendHTML('document_ready', $js.";\n");
         return $this;
     }
     /* [private] use $object->js() instead */
@@ -96,14 +96,14 @@ class jQuery extends AbstractController {
     }
     /* [private] When partial render is done, this function includes JS for rendered region */
     function cutRender(){
-        $x=$this->api->template->get('document_ready');
+        $x=$this->app->template->get('document_ready');
         if(is_array($x))$x=join('',$x);
         if(!empty($x)) echo '<script type="text/javascript">'.$x.'</script>';
         return;
     }
     /* [private] .. ? */
     function postRender(){
-        //echo nl2br(htmlspecialchars("Dump: \n".$this->api->template->renderRegion($this->api->template->tags['js_include'])));
+        //echo nl2br(htmlspecialchars("Dump: \n".$this->app->template->renderRegion($this->app->template->tags['js_include'])));
     }
     /* [private] Collect JavaScript chains from specified object and add them into onReady section */
     function getJS($obj){

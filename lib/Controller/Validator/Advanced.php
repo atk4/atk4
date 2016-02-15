@@ -38,7 +38,7 @@ class Controller_Validator_Advanced extends Controller_Validator_Basic {
     }
 
     function checkByCrackLib($password){
-        $cl=$this->api->getConfig('cracklib',null);
+        $cl=$this->app->getConfig('cracklib',null);
         if($cl===null) {
             if(is_executable($t='/usr/sbin/cracklib-check'))$cl=$t;
             elseif(is_executable($t='/usr/local/sbin/cracklib-check'))$cl=$t;

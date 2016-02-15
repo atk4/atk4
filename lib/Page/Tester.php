@@ -44,7 +44,7 @@ class Page_Tester extends Page {
             return;    // used for multi-page testing
         }
         $this->grid=$this->add('Grid');
-        $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->api->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
+        $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->app->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
 
         $this->setVariance(array('Test'));
 
@@ -252,7 +252,7 @@ class Page_Tester extends Page {
                         ->setAttr('href','#')
                         ->set('More details')
                         ->js('click')->univ()->frameURL('Exception Details for test '.$row['name'],
-                        $this->api->url(null,array('tester_details'=>$row['name'],'vari'=>$vari)))
+                        $this->app->url(null,array('tester_details'=>$row['name'],'vari'=>$vari)))
                         ;
 
                     $result.=$ll->getHTML();

@@ -46,8 +46,9 @@ class Layout_Fluid extends Layout_Basic {
         parent::init();
         if ($this->template->hasTag('UserMenu')) {
             if(isset($this->app->auth)){
-                $u=$this->add('Menu_Horizontal',null,'UserMenu');
-                $u->addMenu('John Smith')->addItem('Logout','logout');
+                $this->user_menu = $this->add('Menu_Horizontal',null,'UserMenu')
+                    ->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
+                $this->user_menu->addItem('Logout','logout');
             } else {
                 $this->template->tryDel('UserMenu');
                 $this->template->tryDel('user_icon');

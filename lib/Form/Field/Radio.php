@@ -15,12 +15,6 @@
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
 class Form_Field_Radio extends Form_Field_ValueList {
-    function validate(){
-        if(!isset($this->value_list[$this->value]) && (!$this->value && $this->empty_value)){
-            $this->displayFieldError("Value ".$this->value." is not one of offered values");
-        }
-        return parent::validate();
-    }
     function getInput($attr=array()){
         $output = '<div id="'.$this->name.'" class="atk-form-options">';
         foreach($this->getValueList() as $value=>$descr){
@@ -28,7 +22,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
             if($descr instanceof AbstractView){
                 $descr=$descr->getHTML();
             }else{
-                $descr=$this->api->encodeHtmlChars($descr);
+                $descr=$this->app->encodeHtmlChars($descr);
             }
 
             $output.=
@@ -45,7 +39,7 @@ class Form_Field_Radio extends Form_Field_ValueList {
                             $this->attr,
                             $attr
                             ))
-                ."<label for='".$this->name.'_'.$value."'>".$descr."</label></div>";
+                ."<label class='atk-padding-xsmall' for='".$this->name.'_'.$value."'>".$descr."</label></div>";
         }
         $output .= '</div>';
         return $output;

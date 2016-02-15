@@ -6,6 +6,7 @@ class Controller_Data_SQL extends Controller_Data {
     public $supportOrder = true;
     public $supportRef = true;
     public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
+    public $supportExpressions = true;
 
     public $auto_track_element=true;
 
@@ -64,7 +65,7 @@ class Controller_Data_SQL extends Controller_Data {
         if (empty($dsql->args['set'])) {
             return $id; // is it correct?
         }
-        $this->api->db->beginTransaction();
+        $this->app->db->beginTransaction();
         if (is_null($id)) {
             $id = $dsql->insert();
         } else {
@@ -82,9 +83,9 @@ class Controller_Data_SQL extends Controller_Data {
         $dsql->stmt=null;
         $model->tryLoad($id);
         if ($model->loaded()) {
-            $this->api->db->commit();
+            $this->app->db->commit();
         } else {
-            $this->api->db->rollback();
+            $this->app->db->rollback();
             throw $model->exception('Record with specified id was not found');
         }
         return $id;
@@ -170,7 +171,7 @@ class Controller_Data_SQL extends Controller_Data {
             throw $this->exception('$table property must be defined');
         }
 
-        $model->dsql = $model->api->db->dsql();
+        $model->dsql = $model->app->db->dsql();
         $model->dsql->debug =& $model->debug;
         $model->dsql->table($model->table,$model->table_alias);
         $model->dsql->default_field=$model->dsql->expr('*,'.
@@ -179,6 +180,22 @@ class Controller_Data_SQL extends Controller_Data {
         );
         $model->dsql->id_field = $model->id_field;
         return clone $model->dsql;
+    }
+
+    /**
+     * Returns dynamic query selecting number of entries in the database
+     *
+     * @param string $alias Optional alias of count expression
+     *
+     * @return DSQL
+     */
+    function count($model, $alias = null)
+    {
+        // prepare new query
+        $q = $this->getDsqlForSelect($model)->del('fields')->del('order')->del('limit');
+
+        // add expression field to query
+        return $q->field($q->count(), $alias);
     }
 
     protected function getDsqlForSelect($model, $dsql=null) {
@@ -200,8 +217,20 @@ class Controller_Data_SQL extends Controller_Data {
             } elseif(in_array($el->short_name, $actualFields)) {
                 $this->updateQuery($model, $el, $dsql);
             }
-
         }
+
+        if($model->limit && $model->limit[0]){
+            $dsql->limit($model->limit[0], $model->limit[1]);
+        }
+
+        if($model->order){
+            foreach($model->order as $o){
+                $dsql->order($o[0], $o[1]);
+            }
+        }
+
+        $this->updateConditions($model, $dsql);
+
         return $dsql;
     }
 
@@ -215,7 +244,6 @@ class Controller_Data_SQL extends Controller_Data {
     private function getDsqlFromModel($model, $dsql=null) {
         $dsql = $this->getDsqlForSelect($model, $dsql);
 
-        $this->updateConditions($model, $dsql);
         return $dsql;
     }
 }

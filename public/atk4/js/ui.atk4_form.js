@@ -273,7 +273,7 @@ jQuery.widget("ui.atk4_form", {
 
 		if(!this.template['field_error'].length){
 			// no template, use alert;
-			alert(error);
+			$.univ().errorMessage(error);
 			return;
 		}
 

@@ -4,6 +4,7 @@ abstract class Menu_Advanced extends View
 {
     public $swatch='ink';
     public $hover_swatch=null;
+    public $highlight_subpages = false;
 
     /**
      * Adds a title to your menu.
@@ -40,12 +41,12 @@ abstract class Menu_Advanced extends View
 
         if ($action) {
             if (is_string($action) || is_array($action) || $action instanceof URL) {
-                $i->template->set('url',$url = $this->api->url($action));
-                if($url->isCurrent()){
+                $i->template->set('url',$url = $this->app->url($action));
+                if($url->isCurrent($this->highlight_subpages)){
                     $i->addClass('active');
                 }
             } else {
-                $this->on('click',$action);
+                $i->on('click',$action);
             }
         }
 

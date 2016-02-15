@@ -170,7 +170,7 @@ class View_CRUD extends View
          */
 
         if (isset($_GET[$name_id])) {
-            $this->api->stickyGET($name_id);
+            $this->app->stickyGET($name_id);
             $this->id = $_GET[$name_id];
         }
 
@@ -299,6 +299,7 @@ class View_CRUD extends View
      * array (
      *   'view_class' => 'CRUD',  // Which View to use inside expander
      *   'view_options' => ..     // Second arg when adding view.
+     *   'view_model' => model or callback // Use custom model for sub-View, by default ref($name) will be used
      *   'fields' => array()      // Used as second argument for setModel()
      *   'extra_fields' => array() // Third arguments to setModel() used by CRUDs
      *   'label'=> 'Click Me'     // Label for a button inside a grid
@@ -321,7 +322,7 @@ class View_CRUD extends View
 
         // if(!$this->grid || $this->grid instanceof Dummy)return;
 
-        $s = $this->api->normalizeName($name);
+        $s = $this->app->normalizeName($name);
 
         if ($this->isEditing('ex_'.$s)) {
 
@@ -329,13 +330,13 @@ class View_CRUD extends View
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
-                $this->api->stickyGET($n);
+                $this->app->stickyGET($n);
             }
 
-            $idfield=$this->model->table.'_id';
+            $idfield=$this->model->table.'_'.$this->model->id_field;
             if ($_GET[$idfield]) {
                 $this->id = $_GET[$idfield];
-                $this->api->stickyGET($idfield);
+                $this->app->stickyGET($idfield);
             }
 
             $view_class = (is_null($options['view_class'])) ?
@@ -347,8 +348,14 @@ class View_CRUD extends View
                 $options['view_options']
             );
 
+            $this->model->load($this->id);
             $subview->setModel(
-                $this->model->load($this->id)->ref($name),
+                $options['view_model']
+                    ? (is_callable($options['view_model'])
+                        ? call_user_func($options['view_model'], $this->model)
+                        : $options['view_model']
+                    )
+                    : $this->model->ref($name),
                 $options['fields'],
                 $options['grid_fields'] ?: $options['extra_fields']
             );
@@ -358,7 +365,7 @@ class View_CRUD extends View
             $this->grid->addColumn('expander', 'ex_'.$s, $options['label'] ?: $s);
             $this->grid->columns['ex_'.$s]['page']
                 = $this->virtual_page->getURL('ex_'.$s);
-            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_id';
+            $idfield=$this->grid->columns['ex_'.$s]['refid'].'_'.$this->model->id_field;
         }
 
         if ($this->isEditing()) {
@@ -394,7 +401,7 @@ class View_CRUD extends View
             throw $this->exception('Must be array');
         }
 
-        $s = $this->api->normalizeName($name);
+        $s = $this->app->normalizeName($name);
 
         if ($this->isEditing('fr_'.$s)) {
 
@@ -402,7 +409,7 @@ class View_CRUD extends View
 
             if ($_GET[$n]) {
                 $this->id = $_GET[$n];
-                $this->api->stickyGET($n);
+                $this->app->stickyGET($n);
             }
 
             return $this->virtual_page->getPage();
@@ -450,24 +457,44 @@ class View_CRUD extends View
         $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
-            if ($show_toolbar && !$this->id) {
-                $this->model->unload();
-            } elseif ($show_column && $this->id) {
-                $this->model->load($this->id);
-            } else {
-                return ;
-            }
 
-            if (isset($options['args'])) {
-                $params = $options['args'];
-            } elseif (!method_exists($this->model, $method_name)) {
-                // probably a dynamic method
-                $params = array();
-            } else {
-                $reflection = new ReflectionMethod($this->model, $method_name);
+            $c = $this->virtual_page->getPage()->add('View_Console');
+            $self = $this;
 
-                $params = $reflection->getParameters();
-            }
+            // Callback for the function
+            $c->set(function($c)use($show_toolbar,$show_column,$options,$self,$method_name){
+                if ($show_toolbar && !$self->id) {
+                    $self->model->unload();
+                } elseif ($show_column && $self->id) {
+                    $c->out('Loading record '.$self->id,array('class'=>'atk-effect-info'));
+                    $self->model->load($self->id);
+                } else {
+                    return ;
+                }
+
+                $ret=$self->model->$method_name();
+
+                $c->out('Returned: '.json_encode($ret),array('class'=>'atk-effect-success'));
+
+                /*
+                if (isset($options['args'])) {
+                    $params = $options['args'];
+                } elseif (!method_exists($self->model, $method_name)) {
+                    // probably a dynamic method
+                    $params = array();
+                } else {
+                    $reflection = new ReflectionMethod($self->model, $method_name);
+
+                    $params = $reflection->getParameters();
+                }
+                */
+            });
+
+            return;
+
+
+
+
 
             $has_parameters=(bool) $params;
             foreach ($params as $i => $param) {
@@ -502,7 +529,7 @@ class View_CRUD extends View
             return true;
         } elseif ($this->isEditing()) return;
 
-        $frame_options = array_merge(array('width'=>'300px','dialogClass'=>'atk-align-center'), $this->frame_options ?: array());
+        $frame_options = array_merge(array(), $this->frame_options ?: array());
 
         if ($show_column) {
             $this
@@ -517,7 +544,7 @@ class View_CRUD extends View
             // Configure Add Button on Grid and JS
             $button->js('click')->univ()
                 ->frameURL(
-                    $this->api->_($this->entity_name.'::'.$descr),
+                    $this->app->_($this->entity_name.'::'.$descr),
                     $this->virtual_page->getURL($method_name),
                     $frame_options
                 );
@@ -556,7 +583,7 @@ class View_CRUD extends View
         // Configure Add Button on Grid and JS
         $this->add_button->js('click')->univ()
             ->frameURL(
-                $this->api->_(
+                $this->app->_(
                     $this->entity_name===false
                     ? 'New Record'
                     : 'Adding new '.$this->entity_name
@@ -629,7 +656,7 @@ class View_CRUD extends View
         try {
             $form->update();
             $self = $this;
-            $this->api->addHook('pre-render', function () use ($self) {
+            $this->app->addHook('pre-render', function () use ($self) {
                 $self->formSubmitSuccess()->execute();
             });
         } catch (Exception_ValidityCheck $e) {

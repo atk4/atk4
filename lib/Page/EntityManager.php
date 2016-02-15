@@ -35,7 +35,7 @@ class Page_EntityManager extends Page {
     function init(){
         parent::init();
         if(!@$_GET['entitymanager'])$_GET['entitymanager']=$this->name;
-        $this->api->stickyGET('entitymanager');
+        $this->app->stickyGET('entitymanager');
         if(!isset($this->add_actual_fields))$this->add_actual_fields=$this->edit_actual_fields;
         if(!$this->c){
             if($this->controller){
@@ -52,7 +52,7 @@ class Page_EntityManager extends Page {
 
     function initMainPage(){
         $this->grid=$g=$this->add('MVCGrid','grid');
-        $g->js(true)->atk4_loader(array('url'=>$this->api->url(null,array('cut_object'=>$g->name))));
+        $g->js(true)->atk4_loader(array('url'=>$this->app->url(null,array('cut_object'=>$g->name))));
 
 
         if($this->grid_actual_fields)
@@ -63,7 +63,7 @@ class Page_EntityManager extends Page {
         if($this->allow_edit)
             $g->addColumn('expander_widget', 'edit', $this->read_only?'View':'Edit');
         if($this->allow_add){
-            $g->addButton('Add')->js('click')->univ()->dialogURL('Add new',$this->api->url('./edit'));
+            $g->addButton('Add')->js('click')->univ()->dialogURL('Add new',$this->app->url('./edit'));
         }
         if($this->allow_delete){
             $g->addColumn('confirm','delete');

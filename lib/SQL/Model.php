@@ -72,11 +72,12 @@ class SQL_Model extends Model implements Serializable {
     // {{{ Basic Functionality, query initialization and actual field handling
 
     /** Initialization of ID field, which must always be defined */
-    function __construct(){
+    function __construct($options = array()){
         if($this->entity_code){
             $this->table=$this->entity_code;
             unset($this->entity_code);
         }
+        parent::__construct($options);
     }
     /**
      * {@inheritdoc}
@@ -85,7 +86,7 @@ class SQL_Model extends Model implements Serializable {
     {
         parent::init();
 
-        if(!$this->db)$this->db=$this->api->db;
+        if(!$this->db)$this->db=$this->app->db;
 
         if($this->owner instanceof Field_Reference && $this->owner->owner->relations){
             $this->relations =& $this->owner->owner->relations;
@@ -97,7 +98,7 @@ class SQL_Model extends Model implements Serializable {
             throw $this->exception('Field with this name is already defined')
             ->addMoreInfo('field',$name);
         }
-        if($name=='deleted' && isset($this->api->compat)){
+        if($name=='deleted' && isset($this->app->compat)){
             return $this->add('Field_Deleted',$name)->enum(array('Y','N'));
         }
 
@@ -153,7 +154,7 @@ class SQL_Model extends Model implements Serializable {
     }
     /** Completes initialization of dsql() by adding fields and expressions. */
     function selectQuery($fields=null){
-        /**/$this->api->pr->start('selectQuery/getActualF');
+        /**/$this->app->pr->start('selectQuery/getActualF');
 
         $actual_fields=$fields?:$this->getActualFields();
 
@@ -163,14 +164,14 @@ class SQL_Model extends Model implements Serializable {
 
         $this->_selectQuery=$select=$this->_dsql()->del('fields');
 
-        /**/$this->api->pr->next('selectQuery/addSystemFields');
+        /**/$this->app->pr->next('selectQuery/addSystemFields');
         // add system fields into select
         foreach($this->elements as $el)if($el instanceof Field){
             if($el->system() && !in_array($el->short_name,$actual_fields)){
                 $actual_fields[]=$el->short_name;
             }
         }
-        /**/$this->api->pr->next('selectQuery/updateQuery');
+        /**/$this->app->pr->next('selectQuery/updateQuery');
 
         // add actual fields
         foreach($actual_fields as $field){
@@ -179,7 +180,7 @@ class SQL_Model extends Model implements Serializable {
 
             $field->updateSelectQuery($select);
         }
-        /**/$this->api->pr->stop();
+        /**/$this->app->pr->stop();
         return $select;
     }
     /** Return query for a specific field. All other fields are ommitted. */
@@ -235,7 +236,7 @@ class SQL_Model extends Model implements Serializable {
 
         if(!$our_field){
             if(!is_object($model)){
-                $tmp=$this->api->normalizeClassName($model,'Model');
+                $tmp=$this->app->normalizeClassName($model,'Model');
                 $tmp=new $tmp; // avoid recursion
             }else $tmp=$model;
             $our_field=($tmp->table).'_id';
@@ -253,6 +254,26 @@ class SQL_Model extends Model implements Serializable {
         $rel=$this->add('SQL_Many',$as_field?:$model)
             ->set($model,$their_field,$our_field);
         return $rel;
+    }
+    /** Defines contained model for field */
+    function containsOne($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    function containsMany($field, $model) {
+        if(is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if($e = $this->hasElement(is_string($field)?$field:$field['name']))$e->destroy();
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
     }
     /** Traverses references. Use field name for hasOne() relations. Use model name for hasMany() */
     function ref($name,$load=null){
@@ -454,6 +475,7 @@ class SQL_Model extends Model implements Serializable {
     function next(){
         if($this->_iterating===true){
             $this->_iterating=$this->selectQuery();
+            $this->_iterating->stmt=null;
             $this->_iterating->rewind();
             $this->hook('beforeLoad',array($this->_iterating));
         }
@@ -497,11 +519,11 @@ class SQL_Model extends Model implements Serializable {
 
     /** Loads all matching data into array of hashes */
     function getRows($fields=null){
-        /**/$this->api->pr->start('getRows/selecting');
+        /**/$this->app->pr->start('getRows/selecting');
         $a=$this->selectQuery($fields);
-        /**/$this->api->pr->next('getRows/fetching');
+        /**/$this->app->pr->next('getRows/fetching');
         $a=$a->get();
-        $this->api->pr->stop();
+        $this->app->pr->stop();
         return $a;
     }
     /**
@@ -619,20 +641,20 @@ class SQL_Model extends Model implements Serializable {
     }
     /** Internal loading funciton. Do not use. OK to override. */
     protected function _load($id,$ignore_missing=false){
-        /**/$this->api->pr->start('load/selectQuery');
+        /**/$this->app->pr->start('load/selectQuery');
         $this->unload();
         $load = $this->selectQuery();
-        /**/$this->api->pr->next('load/clone');
+        /**/$this->app->pr->next('load/clone');
         $p='';if($this->relations)$p=($this->table_alias?:$this->table).'.';
-        /**/$this->api->pr->next('load/where');
+        /**/$this->app->pr->next('load/where');
         if(!is_null($id))$load->where($p.$this->id_field,$id);
 
-        /**/$this->api->pr->next('load/beforeLoad');
+        /**/$this->app->pr->next('load/beforeLoad');
         $this->hook('beforeLoad',array($load,$id));
 
 
         if(!$this->loaded()){
-            /**/$this->api->pr->next('load/get');
+            /**/$this->app->pr->next('load/get');
             $s=$load->stmt;
             $l=$load->args['limit'];
             $load->stmt=null;
@@ -641,7 +663,7 @@ class SQL_Model extends Model implements Serializable {
             $load->args['limit']=$l;
 
             if(!is_null($id))array_pop($load->args['where']);    // remove where condition
-            /**/$this->api->pr->next('load/ending');
+            /**/$this->app->pr->next('load/ending');
             $this->reset();
 
             if(@!$data){
@@ -658,7 +680,7 @@ class SQL_Model extends Model implements Serializable {
         }
 
         $this->hook('afterLoad');
-        /**/$this->api->pr->stop();
+        /**/$this->app->pr->stop();
 
         return $this;
     }
@@ -680,7 +702,7 @@ class SQL_Model extends Model implements Serializable {
     /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
     function saveAs($model){
         if(is_string($model)){
-            $model=$this->api->normalizeClassName($model,'Model');
+            $model=$this->app->normalizeClassName($model,'Model');
             $model=$this->add($model);
         }
         $this->_save_as=$model;
@@ -915,7 +937,7 @@ class SQL_Model extends Model implements Serializable {
         return $this->data[$name];
     }
 
-function getActualFields($group = undefined)
+    function getActualFields($group = undefined)
     {
         if($group===undefined && $this->actual_fields) {
             return $this->actual_fields;
@@ -954,13 +976,13 @@ function getActualFields($group = undefined)
 
 
 
-function setActualFields(array $fields)
+    function setActualFields(array $fields)
     {
         $this->actual_fields = $fields;
         return $this;
     }
 
-function setDirty($name)
+    function setDirty($name)
     {
         $this->dirty[$name] = true;
         return $this;
@@ -987,9 +1009,9 @@ function setDirty($name)
         unset($this->dirty[$name]);
     }
 
-function setSource($controller, $table=null, $id=null){
+    function setSource($controller, $table=null, $id=null){
         if(is_string($controller)){
-            $controller=$this->api->normalizeClassName($controller,'Data');
+            $controller=$this->app->normalizeClassName($controller,'Data');
         } elseif(!$controller instanceof Controller_Data){
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
@@ -1000,14 +1022,14 @@ function setSource($controller, $table=null, $id=null){
         if($id)$this->load($id);
         return $this;
     }
-function addCache($controller, $table=null, $priority=5){
-        $controller=$this->api->normalizeClassName($controller,'Data');
+    function addCache($controller, $table=null, $priority=5){
+        $controller=$this->app->normalizeClassName($controller,'Data');
         return $this->setController($controller)
             ->addHooks($this,$priority)
             ->setSource($this,$table);
     }
 
-function each($callable)
+    function each($callable)
     {
         if (!($this instanceof Iterator)) {
             throw $this->exception('Calling each() on non-iterative model');
@@ -1028,7 +1050,7 @@ function each($callable)
         return $this;
     }
 
-function newField($name){
+    function newField($name){
         return $this->addField($name);
     }
     function hasField($name){
@@ -1037,9 +1059,9 @@ function newField($name){
     function getField($f){
         return $this->getElement($f);
     }
-function _ref($ref,$class,$field,$val){
+    function _ref($ref,$class,$field,$val){
         $m=$this
-            ->add($this->api->normalizeClassName($class,'Model'))
+            ->add($this->app->normalizeClassName($class,'Model'))
             ->ref($ref);
 
         // For one to many relation, create condition, otherwise do nothing,

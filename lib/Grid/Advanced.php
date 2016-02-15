@@ -401,8 +401,13 @@ class Grid_Advanced extends Grid_Basic
         $totals_columns = array_keys($this->totals) ?: array();
         foreach ($this->columns as $field=>$column) {
 
-            // process formatters (additional to default formatters)
-            $this->executeFormatters($field, $column, 'format_totals_', true);
+            if (in_array($field, $totals_columns)) {
+                // process formatters (additional to default formatters)
+                $this->executeFormatters($field, $column, 'format_totals_', true);
+            } else {
+                // show empty cell if totals are not calculated for this column
+                @$this->current_row_html[$field] = '';
+            }
 
             // totals title displaying
             if ($field == $this->totals_title_field) {
@@ -667,7 +672,7 @@ class Grid_Advanced extends Grid_Basic
             } elseif ($this->dq) {
                 $refid = $this->dq->args['table'];
             } else {
-                $refid = preg_replace('/.*_/', '', $this->api->page);
+                $refid = preg_replace('/.*_/', '', $this->app->page);
             }
 
             $this->columns[$field]['refid'] = $refid;
@@ -703,14 +708,14 @@ class Grid_Advanced extends Grid_Basic
         // bypass rendering of sub-elements.
         // $this->current_row[$field] = $this->add('Button',null,false)
         $key   = $this->name . '_' . $field . '_';
-        $id    = $key . $this->api->normalizeName($this->model->id);
+        $id    = $key . $this->app->normalizeName($this->model->id);
         $class = $key . 'expander';
 
         @$this->current_row_html[$field] =
             '<input type="checkbox" '.
                 'class="'.$class.'" '.
                 'id="'.$id.'" '.
-                'rel="'.$this->api->url(
+                'rel="'.$this->app->url(
                     $column['page'] ?: './'.$field,
                     array(
                         'expander' => $field,
@@ -718,7 +723,7 @@ class Grid_Advanced extends Grid_Basic
                         'cut_page' => 1,
                         // TODO: id is obsolete
                         //'id' => $this->model->id,
-                        $this->columns[$field]['refid'].'_id' => $this->model->id
+                        $this->columns[$field]['refid'].'_'.$this->model->id_field => $this->model->id
                     )
                 ).'" '.
             '/>'.
@@ -844,7 +849,7 @@ class Grid_Advanced extends Grid_Basic
         if ($this->current_row[$field] && $this->current_row[$field] !== 'N') {
             $this->current_row_html[$field] =
                 '<div align=center>'.
-                    '<i class="icon-check">'.$this->api->_('yes').'</i>'.
+                    '<i class="icon-check">'.$this->app->_('yes').'</i>'.
                 '</div>';
         } else {
             $this->current_row_html[$field] = '';
@@ -877,7 +882,7 @@ class Grid_Advanced extends Grid_Basic
             $this->current_row[$field] = '-';
         } else {
             $this->current_row[$field] = date(
-                $this->api->getConfig('locale/date', 'd/m/Y'),
+                $this->app->getConfig('locale/date', 'd/m/Y'),
                 strtotime($this->current_row[$field])
             );
         }
@@ -893,7 +898,7 @@ class Grid_Advanced extends Grid_Basic
     function format_time($field)
     {
         $this->current_row[$field] = date(
-            $this->api->getConfig('locale/time', 'H:i:s'),
+            $this->app->getConfig('locale/time', 'H:i:s'),
             strtotime($this->current_row[$field])
         );
     }
@@ -913,19 +918,19 @@ class Grid_Advanced extends Grid_Basic
         } else {
             if ($d instanceof MongoDate) {
                 $this->current_row[$field] = date(
-                    $this->api->getConfig('locale/datetime', 'd/m/Y H:i:s'),
+                    $this->app->getConfig('locale/datetime', 'd/m/Y H:i:s'),
                     $d->sec
                 );
             } elseif (is_numeric($d)) {
                 $this->current_row[$field] = date(
-                    $this->api->getConfig('locale/datetime', 'd/m/Y H:i:s'),
+                    $this->app->getConfig('locale/datetime', 'd/m/Y H:i:s'),
                     $d
                 );
             } else {
                 $d = strtotime($d);
                 $this->current_row[$field] = $d
                     ? date(
-                        $this->api->getConfig('locale/datetime', 'd/m/Y H:i:s'),
+                        $this->app->getConfig('locale/datetime', 'd/m/Y H:i:s'),
                         $d
                     )
                     : '-';
@@ -1011,7 +1016,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row[$field] = $text;
 
         $this->setTDParam($field, 'title',
-            $this->api->encodeHtmlChars($this->current_row[$field.'_original'],ENT_QUOTES));
+            $this->app->encodeHtmlChars(strip_tags($this->current_row[$field.'_original']),ENT_QUOTES));
     }
 
     /**
@@ -1083,7 +1088,7 @@ class Grid_Advanced extends Grid_Basic
     function init_button($field)
     {
         $this->on('click','.do-'.$field)->univ()->ajaxec(array(
-            $this->api->url(),
+            $this->app->url(),
             $field=>$a=$this->js()->_selectorThis()->data('id'),
             $this->name.'_'.$field => $a
             ));
@@ -1104,7 +1109,7 @@ class Grid_Advanced extends Grid_Basic
     function init_confirm($field)
     {
         $this->on('click','.do-'.$field)->univ()->confirm('Are you sure?')->ajaxec(array(
-            $this->api->url(),
+            $this->app->url(),
             $field=>$a=$this->js()->_selectorThis()->data('id'),
             $this->name.'_'.$field => $a
         ));
@@ -1195,7 +1200,7 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row_html[$field] =
             '<button type="button" class="'.$class.'" '.
                 'onclick="value=prompt(\''.$message.'\');$(this).univ().ajaxec(\'' .
-                    $this->api->url(null, array(
+                    $this->app->url(null, array(
                         $field => $this->current_id,
                         $this->name.'_'.$field => $this->current_id
                     )) .
@@ -1234,7 +1239,7 @@ class Grid_Advanced extends Grid_Basic
 
         // move button column at the end (to the right)
         $self = $this;
-        $this->api->addHook('post-init', function() use($self, $field) {
+        $this->app->addHook('post-init', function() use($self, $field) {
             if ($self->hasColumn($field)) {
                 $self->addOrder()->move($field, 'last')->now();
             }
@@ -1287,7 +1292,7 @@ class Grid_Advanced extends Grid_Basic
     function setTemplate($template, $field=null)
     {
         if($field === null)$field=$this->last_column;
-        $this->columns[$field]['template'] = $this->add('SMlite')
+        $this->columns[$field]['template'] = $this->add('GiTemplate')
             ->loadTemplateFromString($template);
 
         return $this;
@@ -1322,7 +1327,7 @@ class Grid_Advanced extends Grid_Basic
      */
     function init_link($field)
     {
-        $this->setTemplate('<a href="<?$_link?>"><?$'.$field.'?></a>',$field);
+        $this->setTemplate('<a href="{$_link}">{$'.$field.'}</a>',$field);
     }
 
     /**
@@ -1337,9 +1342,9 @@ class Grid_Advanced extends Grid_Basic
         $page = $this->columns[$field]['page'] ?: './'.$field;
         $attr = $this->columns[$field]['id_field'] ?: 'id';
         $this->current_row['_link'] =
-            $this->api->url($page, array($attr =>
+            $this->app->url($page, array($attr =>
                 $this->columns[$field]['id_value']
-                ? $this->current_row[$this->columns[$field]['id_value'].'_original']
+                ? ($this->model[$this->columns[$field]['id_value']]?:$this->current_row[$this->columns[$field]['id_value'].'_original'])
                 : $this->current_id));
 
         if (!$this->current_row[$field]) {

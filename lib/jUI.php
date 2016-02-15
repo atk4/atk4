@@ -21,10 +21,10 @@ class jUI extends jQuery {
     function init(){
 
         parent::init();
-        if (@$this->api->jui) {
+        if (@$this->app->jui) {
             throw $this->exception('Do not add jUI twice');
         }
-        $this->api->jui=$this;
+        $this->app->jui=$this;
 
         $this->addDefaultIncludes();
 
@@ -33,9 +33,9 @@ class jUI extends jQuery {
     function addDefaultIncludes(){
         $this->addInclude('start-atk4');
 
-        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
-        if($v=$this->api->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
-        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.11.beta2.min'));  // bundled jQueryUI version
+        /* $config['js']['jqueryui']='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js'; // to use CDN */
+        if($v=$this->app->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
+        else($v=$this->app->getConfig('js/jqueryui','jquery-ui-1.11.beta2.min'));  // bundled jQueryUI version
 
         $this->addInclude($v);
 
@@ -49,7 +49,7 @@ class jUI extends jQuery {
             parent::addOnReady('$.atk4.includeJS("'.$file.'")');
             return $this;
         }
-        $url=$this->api->locateURL('js',$file.$ext);
+        $url=$this->app->locateURL('js',$file.$ext);
 
         if(!$this->atk4_initialised){
             return parent::addInclude($file,$ext);
@@ -59,7 +59,7 @@ class jUI extends jQuery {
         return $this;
     }
     function addStylesheet($file,$ext='.css',$template=false){
-        $url=$this->api->locateURL('css',$file.$ext);
+        $url=$this->app->locateURL('css',$file.$ext);
         if(!$this->atk4_initialised || $template){
             return parent::addStylesheet($file,$ext);
         }
@@ -72,7 +72,7 @@ class jUI extends jQuery {
             return parent::addOnReady($js);
         }
 
-        $this->api->template->append('document_ready', "$.atk4(function(){ ".$js."; });\n");
+        $this->app->template->append('document_ready', "$.atk4(function(){ ".$js."; });\n");
         return $this;
     }
 }

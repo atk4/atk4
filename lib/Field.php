@@ -123,7 +123,7 @@ class Field extends AbstractModel
 
     /**
      * Sets field caption which will be used by forms, grids and other view
-     * elements as a label. The caption will be localized through api->_
+     * elements as a label. The caption will be localized through $app->_()
      *
      * @param string $t new value
      *
@@ -415,7 +415,7 @@ class Field extends AbstractModel
 
             $this->owner->addHook('beforeUpdate,beforeInsert',function($m,&$data)use($t) {
                 // De-Normalize boolean data
-                $val = (int)(!$data->get($this->short_name));
+                $val = (int)(!$m->get($this->short_name));
                 if(!isset($t[$val]))return;  // do nothing
                 $data->set($this->short_name,$t[$val]);
             });
@@ -619,16 +619,7 @@ class Field extends AbstractModel
         return $this->type($v);
     }
     function calculated($v=undefined){
-        if($v===undefined)return false;
-        if($v===false)return $this;
-
-        $this->destroy();
-        $fld = $this->add('Field_Expression');
-
-        foreach((Array)$this as $key=>$val){
-            $fld->$key=$val;
-        }
-        return $this->owner->add($fld)->set($v);
+        throw $this->exception('calculated() field proyerty is obsolete. Use addExpression() instead');
     }
 
 }

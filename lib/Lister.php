@@ -25,7 +25,7 @@
 
    See LICENSE or LICENSE_COM for more information
  =====================================================ATK4=*/
-class Lister extends View
+class Lister extends View implements ArrayAccess
 {
     /** If lister data is retrieved from the SQL database, this will contain dynamic query. */
     public $dq = null;
@@ -83,7 +83,7 @@ class Lister extends View
         }
 
         // Set manually
-        $this->dq = $this->api->db->dsql();
+        $this->dq = $this->app->db->dsql();
         $this->dq
             ->table($source)
             ->field($fields ?: '*');
@@ -172,6 +172,22 @@ class Lister extends View
         $this->hook('formatRow');
     }
 
+    // {{{ ArrayAccess support
+    function offsetExists($name){
+        return isset($this->current_row[$name]);
+    }
+    function offsetGet($name){
+        return $this->current_row[$name];
+    }
+    function offsetSet($name,$val){
+        $this->current_row[$name] = $val;
+        $this->set($name,$val);
+    }
+    function offsetUnset($name){
+        unset($current_row[$name]);
+    }
+    // }}}
+    //
     /**
      * Sets default template
      *

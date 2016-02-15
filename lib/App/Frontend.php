@@ -1,6 +1,6 @@
 <?php // vim:ts=4:sw=4:et:fdm=marker
 /**
- * This is the most appropriate API file for your web application. It builds on
+ * This is the most appropriate APP file for your web application. It builds on
  * top of App_Web and introduces concept of "Pages" on top of "Layout" concept
  * defined in App_Web.
  *

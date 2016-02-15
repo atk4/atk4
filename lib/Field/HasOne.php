@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Denormalized field implementation for foreign table for non-relational
+ * models.
+ */
 class Field_HasOne extends Field_Calculated {
     private $foreignName;
 

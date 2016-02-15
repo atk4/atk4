@@ -50,7 +50,7 @@ class Controller_Tester extends Page {
             return;    // used for multi-page testing
         }
         //$this->grid=$this->add('Grid');
-        $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->api->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
+        $this->grid->addColumn('template','name')->setTemplate('<a href="'.$this->app->url(null,array('testonly'=>'')).'<?$name?>"><?$name?></a>');
 
         $this->setVariance(array('Test'));
 
@@ -175,6 +175,10 @@ class Controller_Tester extends Page {
         }else{
             $this->proper_responses = @$test_obj->proper_responses;
 
+            if($test_obj instanceof AbstractObject){
+                $this->add($test_obj);
+            }
+
         }
 
         $tested=array();
@@ -213,6 +217,7 @@ class Controller_Tester extends Page {
                         $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
                         return;
                     }
+                    throw $e;
                 }
 
                 $this->input=$input;
@@ -252,7 +257,7 @@ class Controller_Tester extends Page {
                         ->setAttr('href','#')
                         ->set('More details')
                         ->js('click')->univ()->frameURL('Exception Details for test '.$row['name'],
-                        $this->api->url(null,array('tester_details'=>$row['name'],'vari'=>$vari)))
+                        $this->app->url(null,array('tester_details'=>$row['name'],'vari'=>$vari)))
                         ;
 
                     $result.=$ll->getHTML();
@@ -268,7 +273,7 @@ class Controller_Tester extends Page {
                 $k=$key.'_'.$row['name'];
                 if($this->proper_responses[$k]==$result && isset($this->proper_responses[$k])){
                     $row[$key.'_res']='<font color="green">PASS</font><br/>'.htmlspecialchars($result);
-                }elseif($this->proper_responses[$k]){
+                }elseif(isset($this->proper_responses[$k])){
                     $row[$key.'_res']='<font color="red">'.htmlspecialchars($result).'</font><br/>'.
                         var_export($this->proper_responses[$k],true);
                 }

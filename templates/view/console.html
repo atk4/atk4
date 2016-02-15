@@ -1,0 +1,24 @@
+
+<style>
+  .my-console {
+    background: black;
+    color: white;
+    min-height: 10em;
+    max-height: 30em;
+    overflow-y: scroll;
+    overflow-x: hidden
+  
+  }
+  .my-console::-webkit-scrollbar {
+    display: none
+  }
+  
+  .my-console::selection {
+    background: white;
+    color: blue;
+  }
+  
+</style>
+<div id="{$_name}" class="{$class}">
+  <pre style="{$style}" id="{$_name}_console" class="{pre-style}my-console atk-box-small{/}"></pre>
+</div>

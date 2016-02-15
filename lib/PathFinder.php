@@ -61,12 +61,27 @@ class PathFinder extends AbstractController
     public $default_exception='Exception_PathFinder';
 
     /**
+     * To be a good citizen of composer's auto-loading we need to be silent
+     * about missing classes and let PHP handle the error. When we are
+     * dealing with a novice users, they tend to struggle to understand
+     * which file is missing or not.
+     *
+     * By default Agile Toolkit will report autoloading errors if the file
+     * couldn't be found by any of the autoloaders. To prevent this, you should
+     * pass ['report_autoload_errors'=>false] as second argument to initialization
+     * of this class.
+     *
+     * @var boolean
+     */
+    protected $report_autoload_errors = true;
+
+    /**
      * {@inheritdoc}
      */
     public function init()
     {
         parent::init();
-        $this->api->pathfinder=$this;
+        $this->app->pathfinder=$this;
 
         $this->addDefaultLocations();
 
@@ -95,6 +110,8 @@ class PathFinder extends AbstractController
             }
         }, true, true);
 
+        if (!$this->report_autoload_errors) return;
+
         // If we couldn't load the class, let's throw exception
         spl_autoload_register(function ($class) use ($self) {
             try {
@@ -105,7 +122,7 @@ class PathFinder extends AbstractController
                 // add PHP verion check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
                 throw $e;
-                $self->api->caughtException($e);
+                $self->app->caughtException($e);
             }
         });
     }
@@ -129,18 +146,18 @@ class PathFinder extends AbstractController
      */
     public function addDefaultLocations()
     {
-        // api->addAllLocations will override creation of all locations
-        // api->addDefaultLocations - will let you add high-priority locations
-        // api->addSharedLocations - will let you add low-priority locations
-        if ($this->api->hasMethod('addAllLocations')) {
-            return $this->api->addAllLocations();
+        // app->addAllLocations - will override creation of all locations
+        // app->addDefaultLocations - will let you add high-priority locations
+        // app->addSharedLocations - will let you add low-priority locations
+        if ($this->app->hasMethod('addAllLocations')) {
+            return $this->app->addAllLocations();
         }
 
         $base_directory=getcwd();
 
         /// Add base location - where our private files are
-        if ($this->api->hasMethod('addDefaultLocations')) {
-            $this->api->addDefaultLocations($this, $base_directory);
+        if ($this->app->hasMethod('addDefaultLocations')) {
+            $this->app->addDefaultLocations($this, $base_directory);
         }
 
         $templates_folder=array('template','templates');
@@ -159,7 +176,7 @@ class PathFinder extends AbstractController
             'dbupdates'=>'doc/dbupdates',
         ))->setBasePath($base_directory);
 
-        if (@$this->api->pm) {
+        if (@$this->app->pm) {
             // Add public location - assets, but only if
             // we hav PageManager to identify it's location
             if (is_dir($base_directory.'/public')) {
@@ -169,22 +186,22 @@ class PathFinder extends AbstractController
                     'css'=>'css',
                 ))
                     ->setBasePath($base_directory.'/public')
-                    ->setBaseURL($this->api->pm->base_path);
+                    ->setBaseURL($this->app->pm->base_path);
             } else {
                 $this->base_location
-                    ->setBaseURL($this->api->pm->base_path);
+                    ->setBaseURL($this->app->pm->base_path);
                 $this->public_location = $this->base_location;
                 $this->public_location->defineContents(array('js'=>'templates/js','css'=>'templates/css'));
             }
 
-            if (basename($this->api->pm->base_path)=='public') {
+            if (basename($this->app->pm->base_path)=='public') {
                 $this->base_location
-                    ->setBaseURL(dirname($this->api->pm->base_path));
+                    ->setBaseURL(dirname($this->app->pm->base_path));
             }
         }
 
-        if ($this->api->hasMethod('addSharedLocations')) {
-            $this->api->addSharedLocations($this, $base_directory);
+        if ($this->app->hasMethod('addSharedLocations')) {
+            $this->app->addSharedLocations($this, $base_directory);
         }
 
         // Add shared locations
@@ -207,7 +224,7 @@ class PathFinder extends AbstractController
             ->setBasePath($atk_base_path)
             ;
 
-        if (@$this->api->pm) {
+        if (@$this->app->pm) {
             if ($this->app->compat_42 && is_dir($this->public_location->base_path.'/atk4/public/atk4')) {
                 $this->atk_public=$this->public_location->addRelativeLocation('atk4/public/atk4');
             } elseif (is_dir($this->public_location->base_path.'/atk4')) {
@@ -246,9 +263,9 @@ class PathFinder extends AbstractController
             if ($this->sandbox) continue;
             if (file_exists($k)) {
                 if (is_dir($k)) {
-                    $this->sandbox = $this->api->pathfinder->base_location->addRelativeLocation($v);
+                    $this->sandbox = $this->app->pathfinder->base_location->addRelativeLocation($v);
                 } else {
-                    $this->sandbox = $this->api->pathfinder->addLocation()->setBasePath($v);
+                    $this->sandbox = $this->app->pathfinder->addLocation()->setBasePath($v);
                 }
                 break;
             }
@@ -270,7 +287,7 @@ class PathFinder extends AbstractController
     public function addLocation($contents = array(), $old_contents = null)
     {
 
-        if ($old_contents && @$this->api->compat_42) {
+        if ($old_contents && @$this->app->compat_42) {
             return $this->base_location->addRelativeLocation($contents, $old_contents);
         }
 
@@ -393,9 +410,9 @@ class PathFinder extends AbstractController
     {
         $origClassName = str_replace('-', '', $className);
 
-        /**/$this->api->pr->start('pathfinder/loadClass ');
+        /**/$this->app->pr->start('pathfinder/loadClass ');
 
-        /**/$this->api->pr->next('pathfinder/loadClass/convertpath ');
+        /**/$this->app->pr->next('pathfinder/loadClass/convertpath ');
         $className = ltrim($className, '\\');
         $nsPath = '';
         $namespace = '';
@@ -406,16 +423,16 @@ class PathFinder extends AbstractController
         }
         $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
-        /**/$this->api->pr->next('pathfinder/loadClass/locate ');
+        /**/$this->app->pr->next('pathfinder/loadClass/locate ');
         try {
             if ($namespace) {
                 if (strpos($className, 'page_')===0) {
-                    $path=$this->api->locatePath(
+                    $path=$this->app->locatePath(
                         'addons',
                         $nsPath.DIRECTORY_SEPARATOR.$classPath
                     );
                 } else {
-                    $path=$this->api->locatePath(
+                    $path=$this->app->locatePath(
                         'addons',
                         $nsPath.DIRECTORY_SEPARATOR
                         .'lib'.DIRECTORY_SEPARATOR.$classPath
@@ -423,12 +440,12 @@ class PathFinder extends AbstractController
                 }
             } else {
                 if (strpos($className, 'page_')===0) {
-                    $path=$this->api->locatePath(
+                    $path=$this->app->locatePath(
                         'page',
                         substr($classPath, 5)
                     );
                 } else {
-                    $path=$this->api->locatePath(
+                    $path=$this->app->locatePath(
                         'php',
                         $classPath
                     );
@@ -447,17 +464,17 @@ class PathFinder extends AbstractController
             throw new PathFinder_Exception('addon', $path, $prefix);
         }
 
-        /**/$this->api->pr->next('pathfinder/loadClass/include ');
-        /**/$this->api->pr->start('php parsing');
+        /**/$this->app->pr->next('pathfinder/loadClass/include ');
+        /**/$this->app->pr->start('php parsing');
         include_once $path;
-        /**/$this->api->pr->stop();
+        /**/$this->app->pr->stop();
         if(!class_exists($origClassName, false) && !interface_exists($origClassName, false))
             throw $this->exception('Class is not defined in file')
                 ->addMoreInfo('file', $path)
                 ->addMoreInfo('namespace', $namespace)
                 ->addMoreInfo('class', $className)
                 ;
-        /**/$this->api->pr->stop();
+        /**/$this->app->pr->stop();
 
         return $path;
     }
@@ -533,32 +550,31 @@ class PathFinder_Location extends AbstractModel
 
     /**
      * Set a new BaseURL
+     *
+     * something like /my/app
      */
     public function setBaseURL($url)
     {
-        /*
-           something like /my/app
-         */
-        $url=preg_replace('|//|', '/', $url);
-        $this->base_url=$url;
+        $this->base_url = preg_replace('#[\\\\|/]+#', '/', $url);
 
         return $this;
     }
 
     public function setCDN($url)
     {
-        $this->base_url=$url;
-        $this->is_cdn=true;
+        $this->setBaseURL($url);
+        $this->is_cdn = true;
+
+        return $this;
     }
 
     /**
-     * Set a new BaseURL
+     * Set a new BasePath
+     *
+     * something like /home/web/public_html
      */
     public function setBasePath($path)
     {
-        /*
-           something like /home/web/public_html
-         */
         $this->base_path=$path;
 
         return $this;
