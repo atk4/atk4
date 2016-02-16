@@ -8,8 +8,6 @@ Agile Toolkit is a Web UI framework and collection of usable widgets. It allows 
  * Forums: http://forum.agiletoolkit.org
  * Docs: http://book.agiletoolkit.org
 
-[![Build Status](https://travis-ci.org/atk4/atk4.png?branch=master)](https://travis-ci.org/atk4/atk4)
-
 Overview
 ----
 Agile Toolkit has introduced three new principles in web development:
@@ -56,11 +54,7 @@ Congratulations. You have now created a fully AJAX / PHP form, fully protected f
 
 Agile Toolkit is distributed under MIT License.
 
-** Your support will ensure the longevity of Agile Toolkit **
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8fd43ffe5d4a0d14183ea27487362660 "githalytics.com")](http://githalytics.com/atk4/atk4)
+**Your support will ensure the longevity of Agile Toolkit**
 
 
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/atk4/atk4/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
