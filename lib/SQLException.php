@@ -44,7 +44,7 @@ class SQLException extends BaseException { // used if DBlite error is occured
         $html.= '<p>' . $this->getMessage() . '</p>';
         $html.= '<p><font color=blue>' . $this->getMyFile() . ':' . $this->getMyLine() . '</font></p>';
         $html.=$this->getDetailedHTML();
-        $html.= backtrace($this->shift+1,$this->getMyTrace());
+        $html.= $this->backtrace($this->shift+1,$this->getMyTrace());
         return $html;
     }
 }
