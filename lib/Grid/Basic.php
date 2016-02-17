@@ -12,7 +12,7 @@
  *  $grid=$this->add('Grid');
  *  $grid->setModel('User');
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4

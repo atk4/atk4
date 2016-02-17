@@ -23,7 +23,7 @@
  *
  *  $tabs->addTabURL('./details','Details');    // AJAX tab
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  * 
 **/
 class View_Tabs_jUItabs extends View_Tabs {

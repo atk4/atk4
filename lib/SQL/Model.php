@@ -46,7 +46,7 @@
  *     return $user->set('email',$email)->save();
  * }else throw $user->exception('User with such email already exists');
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *
 **/
 class SQL_Model extends Model implements Serializable {
