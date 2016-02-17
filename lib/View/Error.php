@@ -20,7 +20,7 @@
  * Use:
  *  $this->add('View_Error')->set('Error Text');
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *
 **/
 class View_Error extends View_Box {

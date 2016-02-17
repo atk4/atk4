@@ -193,8 +193,10 @@ class Field extends AbstractModel
     }
 
     /**
-     * Asterisk will be displayed by the form (if field is include in "actual"
-     * fields. This property will not affect the direct use of the field inside
+     * Mandatory setting will affect the way how field is presented by views.
+     * For example, form can display asterisk near the field or add additional
+     * validation.
+     * This property will not affect the direct use of the field inside
      * model. If you would like that your model complains about empty fields,
      * you should edit beforeSave hook.
      *

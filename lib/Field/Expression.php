@@ -44,7 +44,7 @@
  * NOTE: MiscMySQL is fictional controller.
  *
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *
  */
 class Field_Expression extends Field {

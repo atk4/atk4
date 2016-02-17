@@ -37,7 +37,7 @@
 
  *  $cols->addClass('atk-cells-gutter-large')
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *
 **/
 class View_Columns extends View {

@@ -13,7 +13,7 @@
  *  <h4><?$name?></h4>
  *  <p><?$desc?></p>
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *//*
 ==ATK4===================================================
    This file is part of Agile Toolkit 4

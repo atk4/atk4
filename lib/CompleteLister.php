@@ -25,7 +25,7 @@
  *    <?$row_count?> user<?$plural_s?>.
  *  <?/?>
  *
- * @license See http://agiletoolkit.org/about/license
+ * @license See https://github.com/atk4/atk4/blob/master/LICENSE
  *
  *//*
 ==ATK4===================================================
