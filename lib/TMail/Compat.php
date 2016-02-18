@@ -140,7 +140,7 @@ class TMail_Compat extends AbstractController{
      */
     function setBodyType($type){
         if($type=='html'||$type=='text'||$type='both')$this->body_type=$type;
-        else throw new MailException("Unsupported body type: $type");
+        else throw new Exception_TMail("Unsupported body type: $type");
         return $this;
     }
     function set($tag,$value){
@@ -288,7 +288,7 @@ class TMail_Compat extends AbstractController{
      * This method does NOT accept SMlite object as a parameter.
      */
     function setBody($body){
-        if(is_object($body))throw new MailException("Body cannot be an object");
+        if(is_object($body))throw new Exception_TMail("Body cannot be an object");
         switch($this->body_type){
             case 'text':
                 $this->plain_text=$body;
@@ -317,7 +317,7 @@ class TMail_Compat extends AbstractController{
      */
     function attachFile($file,$type,$name=null,$asstring=false){
         $content=$asstring?$file:file_get_contents($file);
-        if(!$content)throw new MailException("Error reading attachment: ".($asstring?$name:$file));
+        if(!$content)throw new Exception_TMail("Error reading attachment: ".($asstring?$name:$file));
         if(is_null($name)){
             if($asstring)$name='file_'.count($this->mime);
             else $name=basename($file);
@@ -377,4 +377,3 @@ class TMail_Compat extends AbstractController{
                 '-f '.$this->get('from',false).' '.$add_params);
     }
 }
-class MailException extends BaseException{}
