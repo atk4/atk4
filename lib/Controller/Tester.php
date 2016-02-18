@@ -246,10 +246,7 @@ class Controller_Tester extends Page {
                         throw $e;
                     }
 
-
-                    $result='Exception: '.(method_exists($e,'getText')?
-                        $e->getText():
-                        $e->getMessage());
+                    $result = 'Exception: ' . ($e instanceof BaseException ? $e->getText() : $e->getMessage());
 
                     $ll=$this->add('P',$row['name']);
                     $v=$ll->add('View')

@@ -208,7 +208,11 @@ class BaseException extends Exception
 
         if(@$e->by_exception){
             $o.="<h3>This error was triggered by the following error:</h3>";
-            $o.=$e->by_exception->getHTML();
+            if ($e->by_exception instanceof BaseException) {
+                $o .= $e->by_exception->getHTML();
+            } elseif($e->by_exception instanceof Exception) {
+                $o .= $e->by_exception->getMessage();
+            }
         }
         $o.='</div></div>';
 

@@ -152,7 +152,7 @@ class Form_Field_Upload extends Form_Field {
                         //.', error: '.$this->getFileError()); //more user friendly
                     }
 
-                    if(is_subclass_of($e, 'BaseException')){
+                    if($e instanceof BaseException){
                         $e->addMoreInfo('upload_error',$this->getFileError());
                     }
 
@@ -248,7 +248,7 @@ class Form_Field_Upload extends Form_Field {
                     $c->tryLoad($id);
                     $c->delete();
                     $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles',array($id))->execute();
-                } catch (Exception $e){
+                } catch (BaseException $e){
                     $this->js()->univ()->alert("Could not delete image - " . $e->getMessage())->execute();
                 }
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();

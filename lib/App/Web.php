@@ -362,7 +362,7 @@ class App_Web extends App_CLI {
         if ($this->app->pathfinder && $this->app->pathfinder->atk_public) {
             $q=$this->app->pathfinder->atk_public->getURL();
         } else {
-            $q='http://www4.agiletoolkit.org/atk4';
+            $q='http://www.agiletoolkit.org/';
         }
 
         $t->trySet('atk_path',$q.'/');
@@ -375,7 +375,7 @@ class App_Web extends App_CLI {
             $t->eachTag($tag='js',array($this,'_locateJS'));
             $t->eachTag($tag='css',array($this,'_locateCSS'));
             $t->eachTag($tag='page',array($this,'_locatePage'));
-        } catch (Exception $e) {
+        } catch (BaseException $e) {
             throw $e
                 ->addMoreInfo('processing_tag',$tag)
                 ->addMoreInfo('template',$t->template_file)
