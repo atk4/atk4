@@ -86,7 +86,6 @@ LoremIpsum.php
 Menu/Basic.php
 Menu/Light.php
 Menu.php
-ObsoleteException.php
 Order.php
 P.php
 Page/EntityManager.php

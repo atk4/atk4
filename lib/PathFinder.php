@@ -451,7 +451,7 @@ class PathFinder extends AbstractController
                     );
                 }
             }
-        } catch (PathFinder_Exception $e) {
+        } catch (Exception_PathFinder $e) {
             $e
                 ->addMoreInfo('class', $className)
                 ->addMoreInfo('namespace', $namespace)
@@ -461,7 +461,7 @@ class PathFinder extends AbstractController
         }
 
         if (!is_readable($path)) {
-            throw new PathFinder_Exception('addon', $path, $prefix);
+            throw new Exception_PathFinder('addon', $path, $prefix);
         }
 
         /**/$this->app->pr->next('pathfinder/loadClass/include ');
@@ -478,12 +478,6 @@ class PathFinder extends AbstractController
 
         return $path;
     }
-}
-class PathFinder_Exception extends BaseException
-{
-}
-class Exception_PathFinder extends Pathfinder_Exception
-{
 }
 
 /**

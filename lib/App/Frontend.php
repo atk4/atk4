@@ -87,14 +87,14 @@ class App_Frontend extends App_Web {
 
             try{
                 $this->app->pathfinder->loadClass($ns.$class);
-            }catch(PathFinder_Exception $e){
+            }catch(Exception_PathFinder $e){
 
 
                 // page not found, trying to load static content
                 try{
                     $this->loadStaticPage($this->page);
                     if($this->layout)$this->layout->template->tryDel('has_page_title');
-                }catch(PathFinder_Exception $e2){
+                }catch(Exception_PathFinder $e2){
 
                     $class_parts=explode('_',$page);
                     $funct_parts=array();
@@ -109,7 +109,7 @@ class App_Frontend extends App_Web {
                         if($in=='page_')$in='page_index';
                         try {
                             $this->app->pathfinder->loadClass($in);
-                        }catch(PathFinder_Exception $e3){
+                        }catch(Exception_PathFinder $e3){
                             continue;
                         }
                         // WorkAround for PHP5.2.12+ PHP bug #51425
@@ -160,7 +160,7 @@ class App_Frontend extends App_Web {
             $this->template->findTemplate($t);
 
             $this->page_object=$layout->add($this->page_class,$page,'Content',array($t));
-        }catch(PathFinder_Exception $e2){
+        }catch(Exception_PathFinder $e2){
 
             $t='page/'.strtolower($page);
             $this->template->findTemplate($t);
