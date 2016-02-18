@@ -1,15 +1,26 @@
 language: php
+
 php:
-  - 5.5
   - 5.4
-  - 5.3
+  - 5.5
+  - 5.6
+  - 7.0
   - hhvm
-script: (cd tests; php run_tests.php)
+
 services: mongodb
+
+matrix:
+  allow_failures:
+    - php 7.0
+    - php hhvm
+
 before_script:
-  - mysql -e 'create database myapp_test'
-  - mysql myapp_test < tests/test.sql
+#  - mysql -e 'create database myapp_test'
+#  - mysql myapp_test < tests/test.sql
   - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  
+script: (cd tests; php run_tests.php)
+
 notifications:
   irc:
     channels:
@@ -19,6 +30,3 @@ notifications:
   email: false
   flowdock:
     - secure: Iyvr9KzrWbZ4CPoJA23+WzPrCLYo1QDll0Ka69qkma9E1YsoC/ysmdjFZvQBGM2odVk7AShfGiSWo3ndng+BbOIA8QsGfGQdydoLh4El1JBKm4oQbinDF9wbRHhNk4vJOkqIObUZcDZbQcO9Vm65jQQkyxmJ5RlbrpwnP4UsjXc=
-matrix:
-  allow_failures:
-    - hhvm
