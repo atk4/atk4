@@ -474,7 +474,7 @@ class View_CRUD extends View
 
                 $ret=$self->model->$method_name();
 
-                $c->out('Returned: '.json_encode($ret),array('class'=>'atk-effect-success'));
+                $c->out('Returned: '.json_encode($ret, JSON_UNESCAPED_UNICODE),array('class'=>'atk-effect-success'));
 
                 /*
                 if (isset($options['args'])) {
@@ -511,7 +511,7 @@ class View_CRUD extends View
                 } else {
                     $this->virtual_page->getPage()->js(true, $this->js_reload);
                     if(is_object($ret))$ret=(string) $ret;
-                    $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret));
+                    $this->virtual_page->getPage()->add('P')->set('Returned: '.json_encode($ret, JSON_UNESCAPED_UNICODE));
                 }
                 $this->virtual_page->getPage()->add('Button')->set(array('Close', 'icon'=>'cross', 'swatch'=>'green'))
                     ->js('click')->univ()->closeDialog();
@@ -523,7 +523,7 @@ class View_CRUD extends View
             if ($this->form->isSubmitted()) {
                 $ret=call_user_func_array(array($this->model, $method_name), array_values($this->form->get()));
                 if(is_object($ret))$ret=(string) $ret;
-                $this->js(null, $this->js()->reload())->univ()->successMessage('Returned: '.json_encode($ret))->closeDialog()->execute();
+                $this->js(null, $this->js()->reload())->univ()->successMessage('Returned: '.json_encode($ret, JSON_UNESCAPED_UNICODE))->closeDialog()->execute();
             }
 
             return true;
