@@ -77,7 +77,6 @@ HR.php
 HtmlElement.php
 Icon.php
 InfoWindow.php
-IOException.php
 jQuery/Chain.php
 jQuery.php
 jUI.php

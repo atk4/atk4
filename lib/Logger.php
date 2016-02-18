@@ -560,7 +560,7 @@ class Logger extends AbstractController {
         $new_file = (file_exists($full_filename))?false:true;
         $log_file="log_$severity"."_file";
         $this->$log_file=fopen($full_filename,"a");
-        if(!$this->$log_file)throw new IOException("Cannot open $severity log file");
+        if(!$this->$log_file)throw new BaseException("Cannot open $severity log file");
         if ($new_file) chmod($full_filename,0777); //
     }
     function writeLogMessage(){
