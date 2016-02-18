@@ -81,7 +81,7 @@ class Page extends AbstractView {
         // See if we can locate the page
         try{
             $p=$this->app->locate('templates',$page_name.'.html');
-        }catch(PathFinder_Exception $e){
+        }catch(Exception_PathFinder $e){
             return array('page');
         }
         return array($page_name,'_top');
