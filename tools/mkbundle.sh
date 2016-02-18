@@ -99,7 +99,6 @@ Paginator.php
 PathFinder.php
 QuickSearch.php
 SMlite.php
-SMliteException.php
 SQLAuth.php
 SQLException.php
 static.php
