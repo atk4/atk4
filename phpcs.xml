@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="ATK4">
+    <description>The PSR-2 (ATK4 modification) coding standard.</description>
+
+    <!-- Help: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml#the-annotated-sample-file -->
+
+    <!-- Include the whole PSR-2 standard except some particular restrictions -->
+    <rule ref="PSR2">
+
+        <!-- Class names MUST be declared in StudlyCaps. -->
+        <exclude name="Squiz.Classes.ValidClassName"/>
+
+        <!-- Method names MUST be declared in camelCase(). -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName"/>
+
+        <!-- All classes MUST have at least top level namespace -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+
+        <!-- Arguments with default values must be at the end of the argument list -->
+        <exclude name="PEAR.Functions.ValidDefaultValue.NotAtEnd"/>
+
+    </rule>
+</ruleset>
