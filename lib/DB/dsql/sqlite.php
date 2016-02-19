@@ -1,41 +1,35 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-class DB_dsql_sqlite extends DB_dsql {
-    function init()
+<?php
+/**
+ * Undocumented.
+ */
+class DB_dsql_sqlite extends DB_dsql
+{
+    public function init()
     {
         parent::init();
-        $this->sql_templates['describe']="pragma table_info([table_noalias])";
+        $this->sql_templates['describe'] = 'pragma table_info([table_noalias])';
     }
-    function concat(){
-        $t=clone $this;
-        $t->template="([concat])";
-        $t->args['concat']=func_get_args();
+    public function concat()
+    {
+        $t = clone $this;
+        $t->template = '([concat])';
+        $t->args['concat'] = func_get_args();
+
         return $t;
     }
-    function render_concat(){
-        $x=array();
-        foreach($this->args['concat'] as $arg){
-            $x[]=is_object($arg)?
-                $this->consume($arg):
+    public function render_concat()
+    {
+        $x = array();
+        foreach ($this->args['concat'] as $arg) {
+            $x[] = is_object($arg) ?
+                $this->consume($arg) :
                 $this->escape($arg);
         }
-        return implode(' || ',$x);
+
+        return implode(' || ', $x);
     }
-    function random(){
+    public function random()
+    {
         return $this->expr('random()');
     }
 }

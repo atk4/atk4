@@ -1,10 +1,15 @@
 <?php
-class Form_Stacked extends Form {
-
-    function init(){
+/**
+ * Undocumented
+ */
+class Form_Stacked extends Form
+{
+    public function init()
+    {
         parent::init();
     }
-    function defaultTemplate(){
+    public function defaultTemplate()
+    {
         return array('form');
     }
 }

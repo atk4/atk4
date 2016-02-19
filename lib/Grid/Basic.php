@@ -1,4 +1,4 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * This is a Basic Grid implementation, which produces fully
  * functional HTML grid capable of filtering, sorting, paginating
@@ -6,24 +6,10 @@
  * Basic Grid no longer implements the column formatters, instead
  * they have been moved into Grid_Advanced.
  *
- * @link http://agiletoolkit.org/doc/grid
- *
  * Use:
  *  $grid=$this->add('Grid');
  *  $grid->setModel('User');
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- *//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+ */
 class Grid_Basic extends CompleteLister
 {
     /** Grid columns */
@@ -46,21 +32,19 @@ class Grid_Basic extends CompleteLister
     public $show_header = true;
 
     /**
-     * Grid buttons
+     * Grid buttons.
      *
      * @see addButton()
      */
     public $buttonset = null;
 
     /** No records message. See setNoRecords() */
-    protected $no_records_message = "No matching records found";
+    protected $no_records_message = 'No matching records found';
 
     /**
-     * Initialization
-     *
-     * @return void
+     * Initialization.
      */
-    function init()
+    public function init()
     {
         parent::init();
         $this->initWidget();
@@ -70,23 +54,24 @@ class Grid_Basic extends CompleteLister
      * You might want Grid to be enchanced with a widget. Initialize it here
      * or define this as empty function to avoid.
      */
-    function initWidget()
+    public function initWidget()
     {
     }
 
     /**
-     * Adds button
+     * Adds button.
      *
      * @param string $label label of button
      * @param string $class optional name of button class
      *
      * @return Button
      */
-    function addButton($label, $class = 'Button')
+    public function addButton($label, $class = 'Button')
     {
         if (!$this->buttonset) {
             $this->buttonset = $this->add('ButtonSet', null, 'grid_buttons')->setClass('atk-actions');
         }
+
         return $this->buttonset
             ->add($class, 'gbtn'.count($this->elements))
             ->set($label);
@@ -95,15 +80,15 @@ class Grid_Basic extends CompleteLister
     // {{{ Columns
 
     /**
-     * Add column to grid
+     * Add column to grid.
      *
-     * @param mixed $formatters
+     * @param mixed  $formatters
      * @param string $name
      * @param string $descr
      *
      * @return $this || Controller_Grid_Format
      */
-    function addColumn($formatters, $name = null, $descr = null)
+    public function addColumn($formatters, $name = null, $descr = null)
     {
         if ($name === null) {
             $name = $formatters;
@@ -127,18 +112,20 @@ class Grid_Basic extends CompleteLister
             $this->columns[$name]['descr'] = $descr;
         }
 
-        if($this->columns[$name]['icon']) {
-            if($this->columns[$name]['icon'][0]!='<') {
-                $this->columns[$name]['icon']='<i class="icon-'.
+        if ($this->columns[$name]['icon']) {
+            if ($this->columns[$name]['icon'][0] != '<') {
+                $this->columns[$name]['icon'] = '<i class="icon-'.
                     $this->columns[$name]['icon'].'"></i>&nbsp;';
-            }else throw $this->exception('obsolete way of using icon. Do not specify HTML code, but juts the icon');
+            } else {
+                throw $this->exception('obsolete way of using icon. Do not specify HTML code, but juts the icon');
+            }
         }
-
 
         $this->last_column = $name;
 
         if (!is_string($formatters) && is_callable($formatters)) {
             $this->columns[$name]['fx'] = $formatters;
+
             return $this;
         }
 
@@ -155,13 +142,13 @@ class Grid_Basic extends CompleteLister
                 }
 
                 $addon = $this->getElement($subtype.'_'.$name);
-                if (! $addon instanceof Controller_Grid_Format) {
+                if (!$addon instanceof Controller_Grid_Format) {
                     throw $this->exception('Grid formatter class should extend Controller_Grid_Format class')
                         ->addMoreInfo('formater', $subtype);
                 }
                 $addon->initField($name, $descr);
-                return $addon;
 
+                return $addon;
             } elseif (!$this->hasMethod($m = 'init_'.$subtype)) {
                 if (!$this->hasMethod($m = 'format_'.$subtype)) {
                     // exception if formatter doesn't exist
@@ -178,38 +165,39 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Set column as "last column"
+     * Set column as "last column".
      *
      * @param string $name
      *
      * @return $this
      */
-    function getColumn($name)
+    public function getColumn($name)
     {
         $this->last_column = $name;
+
         return $this;
     }
 
     /**
-     * Check if we have such column
+     * Check if we have such column.
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    function hasColumn($name)
+    public function hasColumn($name)
     {
         return isset($this->columns[$name]);
     }
 
     /**
-     * Remove column from grid
+     * Remove column from grid.
      *
      * @param string $name
      *
      * @return $this
      */
-    function removeColumn($name)
+    public function removeColumn($name)
     {
         unset($this->columns[$name]);
         if ($this->last_column == $name) {
@@ -220,15 +208,16 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Set caption of column
+     * Set caption of column.
      *
      * @param string $name
      *
      * @return $this
      */
-    function setCaption($name)
+    public function setCaption($name)
     {
         $this->columns[$this->last_column]['descr'] = $name;
+
         return $this;
     }
 
@@ -237,21 +226,19 @@ class Grid_Basic extends CompleteLister
     // {{{ Misc
 
     /**
-     * Import fields using controller
+     * Import fields using controller.
      *
      * @param Model $model
      * @param array $fields
-     *
-     * @return void
      */
-    function importFields($model, $fields = undefined)
+    public function importFields($model, $fields = undefined)
     {
         $this->add($this->default_controller)
             ->importFields($model, $fields);
     }
 
     /**
-     * Set message to show when no records are retrieved
+     * Set message to show when no records are retrieved.
      *
      * @param string $message
      *
@@ -260,6 +247,7 @@ class Grid_Basic extends CompleteLister
     public function setNoRecordsMessage($message)
     {
         $this->no_records_message = $message;
+
         return $this;
     }
 
@@ -268,14 +256,14 @@ class Grid_Basic extends CompleteLister
     // {{{ Formatters
 
     /**
-     * Replace current formatter for field
+     * Replace current formatter for field.
      *
      * @param string $field
-     * @param mixed $formatter
+     * @param mixed  $formatter
      *
      * @return $this
      */
-    function setFormatter($field, $formatter, $options = null)
+    public function setFormatter($field, $formatter, $options = null)
     {
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
@@ -289,15 +277,15 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Add extra formatter to existing field
+     * Add extra formatter to existing field.
      *
      * @param string $field
-     * @param mixed $formatter
-     * @param array $options
+     * @param mixed  $formatter
+     * @param array  $options
      *
      * @return $this || Controller_Grid_Format
      */
-    function addFormatter($field, $formatter, $options = null)
+    public function addFormatter($field, $formatter, $options = null)
     {
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
@@ -313,7 +301,6 @@ class Grid_Basic extends CompleteLister
         }
         $descr = $this->columns[$field];
 
-
         if (strpos($formatter, '\\') || strpos($formatter, '/')) {
             // add-on functionality:
             // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
@@ -323,13 +310,13 @@ class Grid_Basic extends CompleteLister
             }
 
             $addon = $this->getElement($formatter.'_'.$field);
-            if (! $addon instanceof Controller_Grid_Format) {
+            if (!$addon instanceof Controller_Grid_Format) {
                 throw $this->exception('Grid formatter class should extend Controller_Grid_Format class')
                     ->addMoreInfo('formater', $formatter);
             }
             $addon->initField($field, $descr);
-            return $addon;
 
+            return $addon;
         } elseif ($this->hasMethod($m = 'init_'.$formatter)) {
             // execute formatter
             $this->$m($field, $descr);
@@ -339,13 +326,11 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Default formatter
+     * Default formatter.
      *
      * @param string $field
-     *
-     * @return void
      */
-    function format_text($field)
+    public function format_text($field)
     {
     }
 
@@ -354,13 +339,11 @@ class Grid_Basic extends CompleteLister
     // {{{ Rendering
 
     /**
-     * Render grid rows
+     * Render grid rows.
      *
      * Extends renderRows method of CompleteLister
-     *
-     * @return void
      */
-    function renderRows()
+    public function renderRows()
     {
         // precache template chunks
         $this->precacheTemplate();
@@ -378,11 +361,9 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Precaches template chunks
-     *
-     * @return void
+     * Precaches template chunks.
      */
-    function precacheTemplate()
+    public function precacheTemplate()
     {
         // Extract template chunks from grid template
 
@@ -424,7 +405,7 @@ class Grid_Basic extends CompleteLister
                     ->trySet('sortid', $sel = $this->name.'_sort_'.$name)
                     ->setHTML('sort', $header_sort->render());
 
-                $this->js('click', $this->js()->reload(array($this->name.'_sort'=>$s[1])))
+                $this->js('click', $this->js()->reload(array($this->name.'_sort' => $s[1])))
                     ->_selector('#'.$sel);
             } else {
                 $header_col
@@ -477,11 +458,11 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Default template
+     * Default template.
      *
      * @return array
      */
-    function defaultTemplate()
+    public function defaultTemplate()
     {
         return array('grid');
     }
@@ -491,13 +472,11 @@ class Grid_Basic extends CompleteLister
     // {{{ Formatting
 
     /**
-     * Format grid row
+     * Format grid row.
      *
      * Extends formatRow method of CompleteLister
-     *
-     * @return void
      */
-    function formatRow()
+    public function formatRow()
     {
         // execute CompleteLister row formating
         parent::formatRow();
@@ -507,13 +486,12 @@ class Grid_Basic extends CompleteLister
         }
 
         foreach ($this->columns as $field => $column) {
-
-            if(is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
+            if (is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
                 $this->current_row[$field.'_original'] = @$this->current_row[$field];
             }
 
             // if model field has listData structure, then get value instead of key
-            if ($this->model && $f=$this->model->hasElement($field)) {
+            if ($this->model && $f = $this->model->hasElement($field)) {
                 if ($f->type() !== 'boolean' && $values = $f->listData()) {
                     $this->current_row[$field] = $values[$this->current_row[$field]];
                 }
@@ -528,18 +506,16 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
-     * Format field value using appropriate formatters
+     * Format field value using appropriate formatters.
      *
-     * @param string $field field name
-     * @param array $column column configuration
+     * @param string $field            field name
+     * @param array  $column           column configuration
      * @param string $formatter_prefix prefix of formatter methods
-     * @param boolean $silent don't throw exception if formatter not found
-     *
-     * @return void
+     * @param bool   $silent           don't throw exception if formatter not found
      */
-    function executeFormatters($field, $column, $formatter_prefix = 'format_', $silent = false)
+    public function executeFormatters($field, $column, $formatter_prefix = 'format_', $silent = false)
     {
-        if(is_object($column['type']) && $column['type'] instanceof Closure){
+        if (is_object($column['type']) && $column['type'] instanceof Closure) {
             return $this->current_row[$field] = call_user_func($column['type'], $this->current);
         }
         $formatters = explode(',', $column['type']);
@@ -548,7 +524,7 @@ class Grid_Basic extends CompleteLister
                 continue;
             }
 
-            if ($this->hasMethod($m = $formatter_prefix . $formatter)) {
+            if ($this->hasMethod($m = $formatter_prefix.$formatter)) {
                 // formatter method is included in this class
                 $this->$m($field, $column);
             } elseif (strpos($formatter, '\\') || strpos($formatter, '/')) {
@@ -557,27 +533,24 @@ class Grid_Basic extends CompleteLister
                 $this->getElement($formatter.'_'.$field)
                     ->formatField($field, $column);
             } else {
-                if (! $silent) {
-                    throw new BaseException("Grid does not know how to format type: ".$formatter);
+                if (!$silent) {
+                    throw new BaseException('Grid does not know how to format type: '.$formatter);
                 }
             }
         }
     }
 
     /**
-     * Apply TD parameters in appropriate template
+     * Apply TD parameters in appropriate template.
      *
      * You can pass row template too. That's useful to set up totals rows, for example.
      *
-     * @param string $field Fieldname
+     * @param string $field        Fieldname
      * @param SQLite $row_template Optional row template
-     *
-     * @return void
      */
-    function applyTDParams($field, &$row_template = null)
+    public function applyTDParams($field, &$row_template = null)
     {
     }
 
     // }}}
-
 }
