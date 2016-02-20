@@ -1,10 +1,16 @@
 <?php
-class Layout_Footer extends View {
-    function init() {
+/**
+ * Undocumented
+ */
+class Layout_Footer extends View
+{
+    public function init()
+    {
         parent::init();
         $this->setElement('footer');
     }
-    function getJSID() {
+    public function getJSID()
+    {
         return 'atk-footer';
     }
 }

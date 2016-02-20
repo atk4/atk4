@@ -1,9 +1,12 @@
 <?php
-class Mongo_Field extends Field {
-    function init(){
+/**
+ * Undocumented
+ */
+class Mongo_Field extends Field
+{
+    public function init()
+    {
         parent::init();
         $this->type('reference_id');
-
-
     }
 }
