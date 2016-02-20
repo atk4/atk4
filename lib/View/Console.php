@@ -15,7 +15,8 @@
  * Finally - you can supply several streams which cosole will read
  * from and output to the browser until streams are closed.
  */
-class View_Console extends \View {
+class View_Console extends \View
+{
     public $process = null;     // ProcessIO, if set
     public $streams = [];     // PHP stream if set.
 
@@ -23,28 +24,31 @@ class View_Console extends \View {
 
     public $callback = null;
 
-
-    function afterAdd($me,$o)
+    public function afterAdd($me, $o)
     {
-        $this->app->addHook('output-debug', function($junk,$o,$msg){
-            if($o instanceof DB) $this->breakHook(true);
+        $this->app->addHook('output-debug', function ($junk, $o, $msg) {
+            if ($o instanceof DB) {
+                $this->breakHook(true);
+            }
             $this->out(get_class($o).': '.$msg);
             $this->breakHook(true);
 
-        },[],1);
+        }, [], 1);
     }
-
 
     /**
      * Sends text through SSE channel. Text may contain newlines
      * which will be transmitted proprely. Optionally you can
      * specify ID also.
      */
-    function sseMessageLine($text, $id=null){
-        if(!is_null($id))echo "id: $id\n";
+    public function sseMessageLine($text, $id = null)
+    {
+        if (!is_null($id)) {
+            echo "id: $id\n";
+        }
 
         $text = explode("\n", $text);
-        $text = "data: ".join("\ndata: ", $text)."\n\n";
+        $text = 'data: '.implode("\ndata: ", $text)."\n\n";
         echo $text;
         flush();
     }
@@ -53,128 +57,148 @@ class View_Console extends \View {
      * Sends text or structured data through SSE channel encoded
      * in JSON format. You may supply id argument.
      */
-    function sseMessageJSON($text, $id=null){
-        if(!is_null($id))echo "id: $id\n";
+    public function sseMessageJSON($text, $id = null)
+    {
+        if (!is_null($id)) {
+            echo "id: $id\n";
+        }
 
-        $text = "data: ".json_encode($text)."\n\n";
-        $this->_out_encoding=false;
+        $text = 'data: '.json_encode($text)."\n\n";
+        $this->_out_encoding = false;
         echo $text;
         flush();
-        $this->_out_encoding=true;
+        $this->_out_encoding = true;
     }
 
     /**
-     * Evaluates piece of code
+     * Evaluates piece of code.
      *
-     * @param  [type] $callback function($console)
+     * @param [type] $callback function($console)
      */
-    function set($callback){
+    public function set($callback)
+    {
         $this->callback = $callback;
+
         return $this;
     }
 
     /**
-     * Displays error on the console (in red)
+     * Displays error on the console (in red).
      */
-    function err($str){
-        $data = ['text'=>rtrim($str, "\n")];
-        $data['style']='color: #f88';
+    public function err($str)
+    {
+        $data = ['text' => rtrim($str, "\n")];
+        $data['style'] = 'color: #f88';
         $this->sseMessageJSON($data);
     }
 
     /**
-     * Add ability to send javascript
+     * Add ability to send javascript.
      */
-    function jsEval($str){
-        if(is_object($str))$str = $str->_render();
-        $data = ['js'=>$str];
+    public function jsEval($str)
+    {
+        if (is_object($str)) {
+            $str = $str->_render();
+        }
+        $data = ['js' => $str];
         $this->sseMessageJSON($data);
     }
 
     /**
-     * Displays output in the console
+     * Displays output in the console.
      */
-    function out($str,$opt=array()){
-        $data = array_merge($opt,['text'=>rtrim($str, "\n")]);
+    public function out($str, $opt = array())
+    {
+        $data = array_merge($opt, ['text' => rtrim($str, "\n")]);
         //if($color)$data['style']='color: '.$color;
         $this->sseMessageJSON($data);
     }
 
-    private $_out_encoding=true;
-    function _out($str){
-        if(!$this->_out_encoding)return $str;
-        return "data: ".json_encode(['text'=>rtrim($str, "\n")])."\n\n";
+    private $_out_encoding = true;
+    public function _out($str)
+    {
+        if (!$this->_out_encoding) {
+            return $str;
+        }
+
+        return 'data: '.json_encode(['text' => rtrim($str, "\n")])."\n\n";
     }
 
     private $destruct_send = false;
-    function __destruct(){
-        if($this->destruct_send)$this->out('--[ <i class="icon-ok"></i> DONE ]--------');
+    public function __destruct()
+    {
+        if ($this->destruct_send) {
+            $this->out('--[ <i class="icon-ok"></i> DONE ]--------');
+        }
     }
 
-    function render(){
-        if($_GET['sse_'.$this->name]){
+    public function render()
+    {
+        if ($_GET['sse_'.$this->name]) {
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
             header('Cache-Control: private');
             header('Content-Encoding: none;');
-            header("Pragma: no-cache");
-            $this->destruct_send=true;
+            header('Pragma: no-cache');
+            $this->destruct_send = true;
 
-
-            if (ob_get_level()) ob_end_clean();
-
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
 
             $this->out('--[ <i class="icon-spinner"></i> Executing... ]--------');
             // If the process is running, it will have
             // stdout we can read:
-            if($this->process){
+            if ($this->process) {
                 // fetch streams
-                if(!$this->process->pipes['out']){
+                if (!$this->process->pipes['out']) {
                     throw $this->exception('If you associate console with the process, you should execute it.');
                 }
                 $this->addStream($this->process->pipes['out']);
-                $this->addStream($this->process->pipes['err'],'ERR','#f88');
+                $this->addStream($this->process->pipes['err'], 'ERR', '#f88');
             }
 
-            while($this->streams){
+            while ($this->streams) {
                 $read = $this->streams; // copy
                 $write = $except = [];
 
-                if (($foo=stream_select($read, $write, $except, 5))!== false){
-                    foreach($read as $socket){
+                if (($foo = stream_select($read, $write, $except, 5)) !== false) {
+                    foreach ($read as $socket) {
                         $data = fgets($socket);
-                        if($data === false){
-                            if(($key = array_search($socket, $this->streams)) !== false) {
+                        if ($data === false) {
+                            if (($key = array_search($socket, $this->streams)) !== false) {
                                 unset($this->streams[$key]);
                             }
                             continue;
                         }
-                        $data = ['text'=>rtrim($data, "\n")];
+                        $data = ['text' => rtrim($data, "\n")];
 
-                        $s=(string)$socket;
-                        if($this->prefix[$s]){
-                            $data['text']=$this->prefix[$s].": ".$data['text'];
+                        $s = (string) $socket;
+                        if ($this->prefix[$s]) {
+                            $data['text'] = $this->prefix[$s].': '.$data['text'];
                         }
-                        if($this->color[$s]){
-                            $data['style']='color: '.$this->color[$s];
+                        if ($this->color[$s]) {
+                            $data['style'] = 'color: '.$this->color[$s];
                         }
 
-                        if($data) $this->sseMessageJSON($data);
+                        if ($data) {
+                            $this->sseMessageJSON($data);
+                        }
                     }
                 }
             }
 
-            if($this->callback){
+            if ($this->callback) {
                 try {
                     $c = $this;
-                    ob_start([$this,'_out'],1);
+                    ob_start([$this, '_out'], 1);
 
                     $this->addHook('afterAdd', $this);
 
                     call_user_func($this->callback, $this);
                     ob_end_flush();
-                }catch(Exception $e){
-                    $this->err('Exception: '.($e instanceof BaseException?$e->getText():$e->getMessage()));
+                } catch (Exception $e) {
+                    $this->err('Exception: '.($e instanceof BaseException ? $e->getText() : $e->getMessage()));
                 }
                 exit;
             }
@@ -182,16 +206,14 @@ class View_Console extends \View {
             exit;
         }
 
-        $url=$this->app->url(null,array('sse_'.$this->name=>true));
-        $key=$this->getJSID().'_console';
-
+        $url = $this->app->url(null, array('sse_'.$this->name => true));
+        $key = $this->getJSID().'_console';
 
         // TODO: implement this:
         // http://www.qlambda.com/2012/10/smoothly-scroll-element-inside-div-with.html
 
-
         parent::render();
-        $j=$this->getJSID();
+        $j = $this->getJSID();
         $this->output(<<<EOF
 <script>
 var source_$j = new EventSource("$url");
@@ -223,23 +245,27 @@ EOF
         );
     }
 
-    function addStream($stream, $prefix=null, $color=null){
+    public function addStream($stream, $prefix = null, $color = null)
+    {
         $this->streams[] = $stream;
 
-        if(!is_null($prefix)){
-            $this->prefix[(string)$stream] = $prefix;
+        if (!is_null($prefix)) {
+            $this->prefix[(string) $stream] = $prefix;
         }
-        if(!is_null($color)){
-            $this->color[(string)$stream] = $color;
+        if (!is_null($color)) {
+            $this->color[(string) $stream] = $color;
         }
+
         return $this;
     }
 
-    function getProcessIO(){
+    public function getProcessIO()
+    {
         return $this->process = $this->add('System_ProcessIO');
     }
 
-    function defaultTemplate(){
+    public function defaultTemplate()
+    {
         return array('view/console');
     }
 }
