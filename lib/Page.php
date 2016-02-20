@@ -80,7 +80,7 @@ class Page extends AbstractView {
         $page_name='page/'.strtolower($this->short_name);
         // See if we can locate the page
         try{
-            $p=$this->app->locate('templates',$page_name.'.html');
+            $p=$this->app->locate('template',$page_name.'.html');
         }catch(Exception_PathFinder $e){
             return array('page');
         }
