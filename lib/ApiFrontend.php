@@ -1,2 +1,7 @@
 <?php
-class ApiFrontend extends App_Frontend {}
+/**
+ * Undocumented.
+ */
+class ApiFrontend extends App_Frontend
+{
+}

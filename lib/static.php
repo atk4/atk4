@@ -1,86 +1,91 @@
-<?php // vim:ts=4:sw=4:et
+<?php
 /**
  * Contains static functions. Agile Toolkit does not generally use
  * static functions, so please do not use any functions here.
- *
- * More Info
- *  @link http://agiletoolkit.org/learn/learn/understand/api
- *  @link http://agiletoolkit.org/doc/apicli
  */
-/*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
 
 // Let's see if static is already loaded. It's a common problem when
 // We using old-style 'include.php' which includes both agile toolkit and
 // Composer
-if(defined('AGILE_TOOLKIT_STATIC_LOADED')) {
+if (defined('AGILE_TOOLKIT_STATIC_LOADED')) {
     trigger_error('Please include either "atk4/loader.php" or "vendor/autoload.php" and only once.');
 }
-define('AGILE_TOOLKIT_STATIC_LOADED',true);
+define('AGILE_TOOLKIT_STATIC_LOADED', true);
 
-if(!defined('undefined'))define('undefined', '_atk4_undefined_value');
-if(!defined('UNDEFINED'))define('UNDEFINED', '_atk4_undefined_value');
+if (!defined('undefined')) {
+    define('undefined', '_atk4_undefined_value');
+}
+if (!defined('UNDEFINED')) {
+    define('UNDEFINED', '_atk4_undefined_value');
+}
 
-if(!function_exists('error_handler')){
-    function error_handler($errno, $errstr, $errfile, $errline){
-        $errorType = Array (
-                E_ERROR             => "Error",             // 1
-                E_WARNING           => "Warning",           // 2
-                E_PARSE             => "Parsing Error",     // 4
-                E_NOTICE            => "Notice",            // 8
-                E_CORE_ERROR        => "Core Error",        // 16
-                E_CORE_WARNING      => "Core Warning",      // 32
-                E_COMPILE_ERROR     => "Compile Error",     // 64
-                E_COMPILE_WARNING   => "Compile Warning",   // 128
-                E_USER_ERROR        => "User Error",        // 256
-                E_USER_WARNING      => "User Warning",      // 512
-                E_USER_NOTICE       => "User Notice",       // 1024
-                E_STRICT            => "PHP suggestions",   // 2048
-                E_RECOVERABLE_ERROR => "Runtime Notice",    // 4096
-                E_DEPRECATED        => "Deprecated Notice", // 8192
-                E_USER_DEPRECATED   => "User Deprecated Notice", // 16384
-                E_ALL               => "All Errors",        // 32767
+if (!function_exists('error_handler')) {
+    function error_handler($errno, $errstr, $errfile, $errline)
+    {
+        $errorType = array(
+                E_ERROR => 'Error',             // 1
+                E_WARNING => 'Warning',           // 2
+                E_PARSE => 'Parsing Error',     // 4
+                E_NOTICE => 'Notice',            // 8
+                E_CORE_ERROR => 'Core Error',        // 16
+                E_CORE_WARNING => 'Core Warning',      // 32
+                E_COMPILE_ERROR => 'Compile Error',     // 64
+                E_COMPILE_WARNING => 'Compile Warning',   // 128
+                E_USER_ERROR => 'User Error',        // 256
+                E_USER_WARNING => 'User Warning',      // 512
+                E_USER_NOTICE => 'User Notice',       // 1024
+                E_STRICT => 'PHP suggestions',   // 2048
+                E_RECOVERABLE_ERROR => 'Runtime Notice',    // 4096
+                E_DEPRECATED => 'Deprecated Notice', // 8192
+                E_USER_DEPRECATED => 'User Deprecated Notice', // 16384
+                E_ALL => 'All Errors',        // 32767
                 );
 
-        if((error_reporting() & $errno)!=0) {
-            $errfile=dirname($errfile).'/<b>'.basename($errfile).'</b>';
-            $str="<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
+        if ((error_reporting() & $errno) != 0) {
+            $errfile = dirname($errfile).'/<b>'.basename($errfile).'</b>';
+            $str = "<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
 
             switch ($errno) {
                 case 2: // E_WARNING
-                    if(strpos($errstr,'mysql_connect')!==false)break;
+                    if (strpos($errstr, 'mysql_connect') !== false) {
+                        break;
+                    }
+                    // no-break
                 case 8: // E_NOTICE
-                    if(strpos($errstr,'Undefined offset')===0)break;
-                    if(strpos($errstr,'Undefined index')===0)break;
+                    if (strpos($errstr, 'Undefined offset') === 0) {
+                        break;
+                    }
+                    if (strpos($errstr, 'Undefined index') === 0) {
+                        break;
+                    }
+                    // no-break
                 case 2048: // E_STRICT
-                    if(strpos($errstr,'var: Deprecated')===0)break;
-                    if(strpos($errstr,'Declaration of ')===0)break;
-                    if(strpos($errstr,'Non-static method')===0)break;
+                    if (strpos($errstr, 'var: Deprecated') === 0) {
+                        break;
+                    }
+                    if (strpos($errstr, 'Declaration of ') === 0) {
+                        break;
+                    }
+                    if (strpos($errstr, 'Non-static method') === 0) {
+                        break;
+                    }
+                    // no-break
                 case 8192: // E_DEPRECATED
-                    if(substr($errstr,-13)=='is deprecated')break;
+                    if (substr($errstr, -13) == 'is deprecated') {
+                        break;
+                    }
+                    // no-break
                 default:
                     // throw consistently all errors into exceptions
-                    throw new ErrorException($errorType[$errno].': ['.$errfile.':'.$errline.']'. $errstr, 0, $errno, $errfile, $errline);
-                    break;
+                    throw new ErrorException($errorType[$errno].': ['.$errfile.':'.$errline.']'.$errstr, 0, $errno, $errfile, $errline);
             }
         }
     }
-    set_error_handler("error_handler");
+    set_error_handler('error_handler');
 };
 
-
-
 // From: https://raw.github.com/ircmaxell/password_compat/master/lib/password.php
-/**
+/*
  * A Compatibility library with PHP 5.5's simplified password hashing API.
  *
  * @author Anthony Ferrara <ircmaxell@php.net>
@@ -89,12 +94,11 @@ if(!function_exists('error_handler')){
  */
 
 if (!defined('PASSWORD_BCRYPT')) {
-
     define('PASSWORD_BCRYPT', 1);
     define('PASSWORD_DEFAULT', PASSWORD_BCRYPT);
 
     /**
-     * Hash the password using the specified algorithm
+     * Hash the password using the specified algorithm.
      *
      * @param string $password The password to hash
      * @param int    $algo     The algorithm to use (Defined by PASSWORD_* constants)
@@ -102,60 +106,67 @@ if (!defined('PASSWORD_BCRYPT')) {
      *
      * @return string|false The hashed password, or false on error.
      */
-    function password_hash($password, $algo, array $options = array()) {
+    function password_hash($password, $algo, array $options = array())
+    {
         if (!function_exists('crypt')) {
-            trigger_error("Crypt must be loaded for password_hash to function", E_USER_WARNING);
-            return null;
+            trigger_error('Crypt must be loaded for password_hash to function', E_USER_WARNING);
+
+            return;
         }
         if (!is_string($password)) {
-            trigger_error("password_hash(): Password must be a string", E_USER_WARNING);
-            return null;
+            trigger_error('password_hash(): Password must be a string', E_USER_WARNING);
+
+            return;
         }
         if (!is_int($algo)) {
-            trigger_error("password_hash() expects parameter 2 to be long, " . gettype($algo) . " given", E_USER_WARNING);
-            return null;
+            trigger_error('password_hash() expects parameter 2 to be long, '.gettype($algo).' given', E_USER_WARNING);
+
+            return;
         }
         switch ($algo) {
-        case PASSWORD_BCRYPT:
-            // Note that this is a C constant, but not exposed to PHP, so we don't define it here.
-            $cost = 10;
-            if (isset($options['cost'])) {
-                $cost = $options['cost'];
-                if ($cost < 4 || $cost > 31) {
-                    trigger_error(sprintf("password_hash(): Invalid bcrypt cost parameter specified: %d", $cost), E_USER_WARNING);
-                    return null;
+            case PASSWORD_BCRYPT:
+                // Note that this is a C constant, but not exposed to PHP, so we don't define it here.
+                $cost = 10;
+                if (isset($options['cost'])) {
+                    $cost = $options['cost'];
+                    if ($cost < 4 || $cost > 31) {
+                        trigger_error(sprintf('password_hash(): Invalid bcrypt cost parameter specified: %d', $cost), E_USER_WARNING);
+                        return;
+                    }
                 }
-            }
-            $required_salt_len = 22;
-            $hash_format = sprintf("$2y$%02d$", $cost);
-            break;
-        default:
-            trigger_error(sprintf("password_hash(): Unknown password hashing algorithm: %s", $algo), E_USER_WARNING);
-            return null;
+                $required_salt_len = 22;
+                $hash_format = sprintf('$2y$%02d$', $cost);
+                break;
+            default:
+                trigger_error(sprintf('password_hash(): Unknown password hashing algorithm: %s', $algo), E_USER_WARNING);
+                return;
         }
         if (isset($options['salt'])) {
             switch (gettype($options['salt'])) {
-            case 'NULL':
-            case 'boolean':
-            case 'integer':
-            case 'double':
-            case 'string':
-                $salt = (string) $options['salt'];
-                break;
-            case 'object':
-                if (method_exists($options['salt'], '__tostring')) {
+                case 'NULL':
+                case 'boolean':
+                case 'integer':
+                case 'double':
+                case 'string':
                     $salt = (string) $options['salt'];
                     break;
-                }
-            case 'array':
-            case 'resource':
-            default:
-                trigger_error('password_hash(): Non-string salt parameter supplied', E_USER_WARNING);
-                return null;
+                case 'object':
+                    if (method_exists($options['salt'], '__tostring')) {
+                        $salt = (string) $options['salt'];
+                        break;
+                    }
+                    // no-break
+                case 'array':
+                case 'resource':
+                default:
+                    trigger_error('password_hash(): Non-string salt parameter supplied', E_USER_WARNING);
+
+                    return;
             }
             if (strlen($salt) < $required_salt_len) {
-                trigger_error(sprintf("password_hash(): Provided salt is too short: %d expecting %d", strlen($salt), $required_salt_len), E_USER_WARNING);
-                return null;
+                trigger_error(sprintf('password_hash(): Provided salt is too short: %d expecting %d', strlen($salt), $required_salt_len), E_USER_WARNING);
+
+                return;
             } elseif (0 == preg_match('#^[a-zA-Z0-9./]+$#D', $salt)) {
                 $salt = str_replace('+', '.', base64_encode($salt));
             }
@@ -191,7 +202,7 @@ if (!defined('PASSWORD_BCRYPT')) {
             }
             if (!$buffer_valid || strlen($buffer) < $raw_length) {
                 $bl = strlen($buffer);
-                for ($i = 0; $i < $raw_length; $i++) {
+                for ($i = 0; $i < $raw_length; ++$i) {
                     if ($i < $bl) {
                         $buffer[$i] = $buffer[$i] ^ chr(mt_rand(0, 255));
                     } else {
@@ -200,11 +211,10 @@ if (!defined('PASSWORD_BCRYPT')) {
                 }
             }
             $salt = str_replace('+', '.', base64_encode($buffer));
-
         }
         $salt = substr($salt, 0, $required_salt_len);
 
-        $hash = $hash_format . $salt;
+        $hash = $hash_format.$salt;
 
         $ret = crypt($password, $hash);
 
@@ -231,7 +241,8 @@ if (!defined('PASSWORD_BCRYPT')) {
      *
      * @return array The array of information about the hash.
      */
-    function password_get_info($hash) {
+    function password_get_info($hash)
+    {
         $return = array(
             'algo' => 0,
             'algoName' => 'unknown',
@@ -240,14 +251,15 @@ if (!defined('PASSWORD_BCRYPT')) {
         if (substr($hash, 0, 4) == '$2y$' && strlen($hash) == 60) {
             $return['algo'] = PASSWORD_BCRYPT;
             $return['algoName'] = 'bcrypt';
-            list($cost) = sscanf($hash, "$2y$%d$");
+            list($cost) = sscanf($hash, '$2y$%d$');
             $return['options']['cost'] = $cost;
         }
+
         return $return;
     }
 
     /**
-     * Determine if the password hash needs to be rehashed according to the options provided
+     * Determine if the password hash needs to be rehashed according to the options provided.
      *
      * If the answer is true, after validating the password using password_verify, rehash it.
      *
@@ -255,35 +267,39 @@ if (!defined('PASSWORD_BCRYPT')) {
      * @param int    $algo    The algorithm used for new password hashes
      * @param array  $options The options array passed to password_hash
      *
-     * @return boolean True if the password needs to be rehashed.
+     * @return bool True if the password needs to be rehashed.
      */
-    function password_needs_rehash($hash, $algo, array $options = array()) {
+    function password_needs_rehash($hash, $algo, array $options = array())
+    {
         $info = password_get_info($hash);
         if ($info['algo'] != $algo) {
             return true;
         }
         switch ($algo) {
-        case PASSWORD_BCRYPT:
-            $cost = isset($options['cost']) ? $options['cost'] : 10;
-            if ($cost != $info['options']['cost']) {
-                return true;
-            }
-            break;
+            case PASSWORD_BCRYPT:
+                $cost = isset($options['cost']) ? $options['cost'] : 10;
+                if ($cost != $info['options']['cost']) {
+                    return true;
+                }
+                break;
         }
+
         return false;
     }
 
     /**
-     * Verify a password against a hash using a timing attack resistant approach
+     * Verify a password against a hash using a timing attack resistant approach.
      *
      * @param string $password The password to verify
      * @param string $hash     The hash to verify against
      *
-     * @return boolean If the password matches the hash
+     * @return bool If the password matches the hash
      */
-    function password_verify($password, $hash) {
+    function password_verify($password, $hash)
+    {
         if (!function_exists('crypt')) {
-            trigger_error("Crypt must be loaded for password_verify to function", E_USER_WARNING);
+            trigger_error('Crypt must be loaded for password_verify to function', E_USER_WARNING);
+
             return false;
         }
         $ret = crypt($password, $hash);
@@ -292,7 +308,7 @@ if (!defined('PASSWORD_BCRYPT')) {
         }
 
         $status = 0;
-        for ($i = 0; $i < strlen($ret); $i++) {
+        for ($i = 0; $i < strlen($ret); ++$i) {
             $status |= (ord($ret[$i]) ^ ord($hash[$i]));
         }
 

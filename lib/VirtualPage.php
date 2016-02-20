@@ -1,16 +1,5 @@
 <?php
 /**
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/**
  * Normal pages are added by Application and are tied to the certain URL as
  * dictated by the Application class. Sometimes, however, you would have a need
  * to create page within a page. That's when you are building your custom View
@@ -62,24 +51,23 @@
  */
 class VirtualPage extends AbstractController
 {
-    public $type='frameURL';
-    public $page_template=null;
-    public $page_class='Page';
+    public $type = 'frameURL';
+    public $page_template = null;
+    public $page_class = 'Page';
 
-    public $frame_options=null;
+    public $frame_options = null;
 
     protected $page;
 
-
     /**
      * Return the URL which would trigger execution of the associated
-     * code within a separate page
+     * code within a separate page.
      *
      * @param string $arg Argument to pass to the page
      *
      * @return URL object
      */
-    function getURL($arg = 'true')
+    public function getURL($arg = 'true')
     {
         return $this->app->url(null, array($this->name => $arg));
     }
@@ -90,20 +78,21 @@ class VirtualPage extends AbstractController
      *
      * @param string $arg Optionally ask for specific argument
      *
-     * @return boolean|string
+     * @return bool|string
      */
-    function isActive($arg = null)
+    public function isActive($arg = null)
     {
         if ($arg && isset($_GET[$this->name])) {
             return $_GET[$this->name] == $arg;
         }
+
         return isset($_GET[$this->name]) ? $_GET[$this->name] : false;
     }
 
     /**
      * Bind owner's event (click by default) to a JavaScript chain
      * which would open a new frame (or dialog, depending on $type
-     * property), and execute associated code inside it
+     * property), and execute associated code inside it.
      *
      * @param string $title    Title of the frame
      * @param string $event    JavaScript event
@@ -111,11 +100,14 @@ class VirtualPage extends AbstractController
      *
      * @return VirtualPage $this
      */
-    function bindEvent($title = '', $event = 'click', $selector = null)
+    public function bindEvent($title = '', $event = 'click', $selector = null)
     {
-        $t=$this->type;
-        if (is_null($event)) $event = 'click';
-        $this->owner->on($event, $selector)->univ()->$t($title,$this->getURL(),$this->frame_options);
+        $t = $this->type;
+        if (is_null($event)) {
+            $event = 'click';
+        }
+        $this->owner->on($event, $selector)->univ()->$t($title, $this->getURL(), $this->frame_options);
+
         return $this;
     }
 
@@ -128,25 +120,26 @@ class VirtualPage extends AbstractController
      *
      * @return VirtualPage $this
      */
-    function set($method_or_arg, $method = null)
+    public function set($method_or_arg, $method = null)
     {
+        $method = is_callable($method_or_arg) ? $method_or_arg : $method;
+        $arg = is_callable($method_or_arg) ? null : $method_or_arg;
 
-        $method = is_callable($method_or_arg)?$method_or_arg:$method;
-        $arg    = is_callable($method_or_arg)?null:$method_or_arg;
-
-        $self=$this;
+        $self = $this;
 
         if ($this->isActive($arg)) {
             $this->app->addHook('post-init', function () use ($method, $self) {
                 $page = $self->getPage();
-                $page->id=$_GET[$self->name.'_id'];
+                $page->id = $_GET[$self->name.'_id'];
                 $self->app->stickyGET($self->name.'_id');
 
                 try {
                     call_user_func($method, $page, $self);
-                } catch (Exception $e){
+                } catch (Exception $e) {
                     // post-init cannot catch StopInit
-                    if($e instanceof Exception_StopInit) return;
+                    if ($e instanceof Exception_StopInit) {
+                        return;
+                    }
                     throw $e;
                     // exception occured possibly due to a nested page. We
                     // are already executing from post-init, so
@@ -159,6 +152,7 @@ class VirtualPage extends AbstractController
             });
             throw $this->exception('', 'StopInit');
         }
+
         return $this;
     }
 
@@ -168,7 +162,7 @@ class VirtualPage extends AbstractController
      *
      * @return Page page to be displayed
      */
-    function getPage()
+    public function getPage()
     {
         // Remove original page
 
@@ -178,7 +172,6 @@ class VirtualPage extends AbstractController
 
         $this->app->page_object->destroy(false);
 
-
         $this->app->page_object = $this->page = $this->app->add(
             $this->page_class,
             $this->name,
@@ -186,6 +179,7 @@ class VirtualPage extends AbstractController
             $this->page_template
         );
         $this->app->stickyGET($this->name);
+
         return $this->page;
     }
 
@@ -199,43 +193,46 @@ class VirtualPage extends AbstractController
      *
      * @return VirtualPage $this
      */
-    function addColumn($name, $title = null, $buttontext = null, $grid = null)
+    public function addColumn($name, $title = null, $buttontext = null, $grid = null)
     {
         if (!$grid) {
-            $grid=$this->owner;
+            $grid = $this->owner;
         }
 
-        if(!is_array($buttontext)) {
+        if (!is_array($buttontext)) {
             $buttontext = array();
         }
-        if(!$buttontext['descr'])$buttontext['descr']=$title?:ucwords(str_replace('_', ' ', $name));
-
-        $icon='';
-        if($buttontext['icon']) {
-            if($buttontext['icon'][0]!='<') {
-                $icon.='<i class="icon-'.
-                    $buttontext['icon'].'"></i>';
-            }else{
-                $icon.=$buttontext['icon'];
-            }
-            $icon.='&nbsp;';
+        if (!$buttontext['descr']) {
+            $buttontext['descr'] = $title ?: ucwords(str_replace('_', ' ', $name));
         }
 
-        $grid->addColumn('template', $name, $buttontext?:$title)
+        $icon = '';
+        if ($buttontext['icon']) {
+            if ($buttontext['icon'][0] != '<') {
+                $icon .= '<i class="icon-'.
+                    $buttontext['icon'].'"></i>';
+            } else {
+                $icon .= $buttontext['icon'];
+            }
+            $icon .= '&nbsp;';
+        }
+
+        $grid->addColumn('template', $name, $buttontext ?: $title)
             ->setTemplate(
                 '<button type="button" class="atk-button-small pb_'.$name.'">'.
                     $icon.$this->app->encodeHtmlChars($buttontext['descr']).
                 '</button>'
             );
 
-        $grid->columns[$name]['thparam'].=' style="width: 40px; text-align: center"';
+        $grid->columns[$name]['thparam'] .= ' style="width: 40px; text-align: center"';
 
         //$grid->js(true)->_selector('#'.$grid->name.' .pb_'.$name)->button();
-        $t=$this->type;
+        $t = $this->type;
         $grid->js('click')->_selector('#'.$grid->name.' .pb_'.$name)->univ()
             ->$t($title, array($this->getURL($name),
-                $this->name.'_id'=>$grid->js()->_selectorThis()->closest('tr')->attr('data-id')
+                $this->name.'_id' => $grid->js()->_selectorThis()->closest('tr')->attr('data-id'),
             ), $this->frame_options);
+
         return $this;
     }
 }

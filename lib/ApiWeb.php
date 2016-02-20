@@ -1,2 +1,7 @@
 <?php
-class ApiWeb extends App_Web {}
+/**
+ * Undocumented.
+ */
+class ApiWeb extends App_Web
+{
+}

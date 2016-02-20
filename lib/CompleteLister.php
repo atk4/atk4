@@ -1,10 +1,8 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * CompleteLister is very similar to regular Lister, but will use
  * <?rows?><?row?>blah<?/?><?/?> structure inside template.
  * Also adds support for calculating totals.
- *
- * @link http://agiletoolkit.org/doc/lister
  *
  * Use:
  *  $list = $this->add('CompleteLister');
@@ -24,20 +22,7 @@
  *  <?totals?>
  *    <?$row_count?> user<?$plural_s?>.
  *  <?/?>
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- *
- *//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+ */
 class CompleteLister extends Lister
 {
     /** Used template tags */
@@ -68,7 +53,7 @@ class CompleteLister extends Lister
      * null      - no totals calculation
      * onRender  - calculate totals only for rendered rows on rendering phase
      * onRequest - grand totals, works for SQL_Many models only, creates 1
-     *             additional DB request
+     *             additional DB request.
      *
      * @private Should be changed using addTotals and addGrandTotals methods only
      */
@@ -80,50 +65,49 @@ class CompleteLister extends Lister
     // {{{ Initialization
 
     /**
-     * Initialization
+     * Initialization.
      *
      * @retun void
      */
-    function init()
+    public function init()
     {
         parent::init();
         if (!$this->template->hasTag($this->item_tag)) {
-
-            if(@$this->app->compat_42 and $this instanceof Menu_Basic) {
+            if (@$this->app->compat_42 and $this instanceof Menu_Basic) {
                 // look for MenuItem
 
                 $default = $this->item_tag;
 
-                $this->item_tag='MenuItem';
-                $this->container_tag='Item';
+                $this->item_tag = 'MenuItem';
+                $this->container_tag = 'Item';
                 if (!$this->template->hasTag($this->item_tag)) {
                     throw $this->template->exception('Template must have "'.$default.'" tag')
-                        ->addMoreInfo('compat','Also tried for compatibility reason "'.$this->item_tag.'" tag');
+                        ->addMoreInfo('compat', 'Also tried for compatibility reason "'.$this->item_tag.'" tag');
                 }
-            }else{
+            } else {
                 throw $this->template->exception('Template must have "'.$this->item_tag.'" tag');
             }
         }
 
         $this->row_t = $this->template->cloneRegion($this->item_tag);
 
-        if($this->template->hasTag('sep')) {
+        if ($this->template->hasTag('sep')) {
             $this->sep_html = $this->template->get('sep');
         }
     }
 
     /**
-     * Default template
+     * Default template.
      *
      * @return array
      */
-    function defaultTemplate()
+    public function defaultTemplate()
     {
         return array('view/completelister');
     }
 
     /**
-     * Enable totals calculation for specified array of fields
+     * Enable totals calculation for specified array of fields.
      *
      * If particular fields not specified, then all field totals are calculated.
      * If you only need to count records, then pass null and no fields will be calculated.
@@ -136,13 +120,13 @@ class CompleteLister extends Lister
      *
      * @return $this
      */
-    function addTotals($fields = UNDEFINED)
+    public function addTotals($fields = UNDEFINED)
     {
         return $this->_addTotals($fields, 'onRender');
     }
 
     /**
-     * Enable totals calculation for specified array of fields
+     * Enable totals calculation for specified array of fields.
      *
      * If particular fields not specified, then all field totals are calculated.
      * If you only need to count records, then pass null and no fields will be calculated.
@@ -154,34 +138,34 @@ class CompleteLister extends Lister
      *
      * @return $this
      */
-    function addGrandTotals($fields = UNDEFINED)
+    public function addGrandTotals($fields = UNDEFINED)
     {
         if (!$this->getIterator() instanceof SQL_Model) {
-            throw $this->exception("Grand Totals can be used only with SQL_Model data source");
+            throw $this->exception('Grand Totals can be used only with SQL_Model data source');
         }
 
         return $this->_addTotals($fields, 'onRequest');
     }
 
     /**
-     * Disable totals calculation
+     * Disable totals calculation.
      *
      * @return $this
      */
-    function removeTotals()
+    public function removeTotals()
     {
         return $this->addTotals();
     }
 
     /**
      * Private method to enable / disable totals calculation for specified array
-     * of fields
+     * of fields.
      *
      * If particular fields not specified, then all field totals are calculated.
      * If you only need to count records, then pass null and no fields will be calculated.
      *
-     * @param array $fields optional array of fieldnames
-     * @param string $type type of totals calculation (null|onRender|onRequest)
+     * @param array  $fields optional array of fieldnames
+     * @param string $type   type of totals calculation (null|onRender|onRequest)
      *
      * @return $this
      */
@@ -219,22 +203,18 @@ class CompleteLister extends Lister
     // {{{ Rendering
 
     /**
-     * Render lister
-     *
-     * @return void
+     * Render lister.
      */
-    function render()
+    public function render()
     {
         $this->renderRows();
         $this->output($this->template->render());
     }
 
     /**
-     * Render lister rows
-     *
-     * @return void
+     * Render lister rows.
      */
-    function renderRows()
+    public function renderRows()
     {
         $this->odd_even = null;
         $this->total_rows = 0;
@@ -242,11 +222,10 @@ class CompleteLister extends Lister
 
         // render data rows
         $iter = $this->getIterator();
-        foreach ($iter as $this->current_id=>$this->current_row) {
-
-            if($this->current_row instanceof Model){
-                $this->current_row=$this->current_row->get();
-            }elseif(!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)){
+        foreach ($iter as $this->current_id => $this->current_row) {
+            if ($this->current_row instanceof Model) {
+                $this->current_row = $this->current_row->get();
+            } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
                 // Looks like we won't be abel to access current_row as array, so we will
                 // copy it's value inside $this->current instead and produce an empty array
                 // to be filled out by a custom iterators
@@ -254,14 +233,14 @@ class CompleteLister extends Lister
                 $this->current_row = get_object_vars($this->current);
             }
 
-            $this->current_row_html=array();
+            $this->current_row_html = array();
 
-            if($this->sep_html && $this->total_rows) {
+            if ($this->sep_html && $this->total_rows) {
                 $this->renderSeparator();
             }
 
             // calculate rows so far
-            $this->total_rows++;
+            ++$this->total_rows;
 
             // if onRender totals enabled, then update totals
             if ($this->totals_type == 'onRender') {
@@ -270,7 +249,6 @@ class CompleteLister extends Lister
 
             // render data row
             $this->renderDataRow();
-
         }
 
         // calculate grand totals if needed
@@ -286,11 +264,9 @@ class CompleteLister extends Lister
     }
 
     /**
-     * Render data row
-     *
-     * @return void
+     * Render data row.
      */
-    function renderDataRow()
+    public function renderDataRow()
     {
         $this->formatRow();
 
@@ -300,7 +276,7 @@ class CompleteLister extends Lister
         );
     }
 
-    function renderSeparator()
+    public function renderSeparator()
     {
         $this->template->appendHTML(
             $this->container_tag,
@@ -309,11 +285,9 @@ class CompleteLister extends Lister
     }
 
     /**
-     * Render Totals row
-     *
-     * @return void
+     * Render Totals row.
      */
-    function renderTotalsRow()
+    public function renderTotalsRow()
     {
         $this->current_row = $this->current_row_html = array();
         if ($this->totals !== false && $this->totals_t) {
@@ -325,7 +299,7 @@ class CompleteLister extends Lister
                 $this->container_tag,
                 $this->rowRender($this->totals_t)
             );
-        }else{
+        } else {
             $this->template->tryDel('totals');
         }
     }
@@ -335,15 +309,13 @@ class CompleteLister extends Lister
     // {{{ Formatting
 
     /**
-     * Format lister row
-     *
-     * @return void
+     * Format lister row.
      */
-    function formatRow()
+    public function formatRow()
     {
         parent::formatRow();
 
-        if(is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
+        if (is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
             $this->odd_even =
                 $this->odd_even == $this->odd_css_class
                     ? $this->even_css_class
@@ -353,13 +325,11 @@ class CompleteLister extends Lister
     }
 
     /**
-     * Additional formatting for Totals row
+     * Additional formatting for Totals row.
      *
      * @todo This plural_s method suits only English locale !!!
-     *
-     * @return void
      */
-    function formatTotalsRow()
+    public function formatTotalsRow()
     {
         $this->formatRow();
         $this->hook('formatTotalsRow');
@@ -381,28 +351,26 @@ class CompleteLister extends Lister
     // {{{ Totals
 
     /**
-     * Add current rendered row values to totals
+     * Add current rendered row values to totals.
      *
      * Called before each formatRow() call.
-     *
-     * @return void
      */
-    function updateTotals()
+    public function updateTotals()
     {
         foreach ($this->totals as $key => $val) {
-            if(is_object($this->current_row[$key]))continue;
+            if (is_object($this->current_row[$key])) {
+                continue;
+            }
             $this->totals[$key] = $val + $this->current_row[$key];
         }
     }
 
     /**
-     * Calculate grand totals of all rows
+     * Calculate grand totals of all rows.
      *
      * Called one time on rendering phase - before renderRows() call.
-     *
-     * @return void
      */
-    function updateGrandTotals()
+    public function updateGrandTotals()
     {
         // get model
         $m = $this->getIterator();

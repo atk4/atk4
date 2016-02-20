@@ -1,29 +1,15 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+<?php
 /**
  * ==[ About SMlite ]==========================================================
  * This class is a lightweight template engine. It's based around operating with
- * chunks of HTML code and the main aims are:
+ * chunks of HTML code and the main aims are:.
  *
  *  - completely remove any code from templates
  *  - make templates editable with HTML editor
  *
  * @author      Romans <romans@adevel.com>
  * @copyright   LGPL. See http://www.gnu.org/copyleft/lesser.html
+ *
  * @version     1.1
  * @compat      php5 (perhaps php4 untested)
  *
@@ -85,60 +71,61 @@
  * cut out the code from templates (smarty promotes idea about integrating
  * logic inside templates and I decided not to use it for that reason)
  *
-* Inside AModules3, each object have it's own template or may have even several
-* templates. When object is created, it's assigned to region inside template.
-* Later object operates with assigned template.
-*
-* Each object is also assigned to a spot on their parent's template. When
-* object is rendered, it's HTML is inserted into parent's template.
-*
-* ==[ Non-AModules3 integration ]=============================================
-* SMlite have no strict bindings or requirements for AModules3. You are free
-* to use it inside any other library as long as you follow license agreements.
-*/
-
-class SMlite extends AbstractModel {
-
-    var $tags = array();
+ * Inside AModules3, each object have it's own template or may have even several
+ * templates. When object is created, it's assigned to region inside template.
+ * Later object operates with assigned template.
+ *
+ * Each object is also assigned to a spot on their parent's template. When
+ * object is rendered, it's HTML is inserted into parent's template.
+ *
+ * ==[ Non-AModules3 integration ]=============================================
+ * SMlite have no strict bindings or requirements for AModules3. You are free
+ * to use it inside any other library as long as you follow license agreements.
+ */
+class SMlite extends AbstractModel
+{
+    public $tags = array();
     /*
      * This array contains list of all tags found inside template.
      */
 
-    var $top_tag = null;
+    public $top_tag = null;
     /*
      * When cloning region inside a template, it's tag becomes a top_tag of a new
      * template. Since SMlite 1.1 it's present in new template and can be used.
      */
 
-    var $template=array();  // private
+    public $template = array();  // private
     /*
      * This is a parsed contents of the template.
      */
 
-    var $settings=array();
+    public $settings = array();
 
-    /**
+    /*
      * Type of resource to look for pathFinder
      */
-    var $template_type='template';
+    public $template_type = 'template';
 
     /**
-     * list of updated tags with values
+     * list of updated tags with values.
      */
     public $updated_tag_list = array();
 
     private $cache;
 
     /**
-     * Which file template is coming from
+     * Which file template is coming from.
      */
     public $origin_filename = null;
 
-    function getTagVal($tag) {
-        return (isset($this->updated_tag_list[$tag]))?$this->updated_tag_list[$tag]:null;
+    public function getTagVal($tag)
+    {
+        return (isset($this->updated_tag_list[$tag])) ? $this->updated_tag_list[$tag] : null;
     }
 
-    function getDefaultSettings(){
+    public function getDefaultSettings()
+    {
         /*
          * This function specifies default settings for SMlite. Use
          * 2nd argument for constructor to redefine those settings.
@@ -151,82 +138,93 @@ class SMlite extends AbstractModel {
          */
         return array(
                 // by separating them with ':'
-                'ldelim'=>'<?',                // tag delimiter
-                'rdelim'=>'?>',
-                'extension'=>'.html',          // template file extension
+                'ldelim' => '<?',                // tag delimiter
+                'rdelim' => '?>',
+                'extension' => '.html',          // template file extension
                 );
     }
 
     // Template creation, interface functions
-    function init(){
+    public function init()
+    {
         parent::init();
-        $path=array();
-        $this->cache=&$this->app->smlite_cache;
+        $path = array();
+        $this->cache = &$this->app->smlite_cache;
 
-        $this->settings=$this->getDefaultSettings();
-        $this->settings['extension']=$this->app->getConfig('smlite/extension','.html');
+        $this->settings = $this->getDefaultSettings();
+        $this->settings['extension'] = $this->app->getConfig('smlite/extension', '.html');
     }
-    function __clone(){
-        if(!is_null($this->top_tag)&&is_object($this->top_tag))$this->top_tag=clone $this->top_tag;
+    public function __clone()
+    {
+        if (!is_null($this->top_tag) && is_object($this->top_tag)) {
+            $this->top_tag = clone $this->top_tag;
+        }
         // may be some of the following lines are unneeded...
-        $this->template=unserialize(serialize($this->template));
-        $this->tags=unserialize(serialize($this->tags));
-        $this->settings=unserialize(serialize($this->settings));
-        $this->updated_tag_list=unserialize(serialize($this->updated_tag_list));
+        $this->template = unserialize(serialize($this->template));
+        $this->tags = unserialize(serialize($this->tags));
+        $this->settings = unserialize(serialize($this->settings));
+        $this->updated_tag_list = unserialize(serialize($this->updated_tag_list));
         // ...
         $this->rebuildTags();
     }
-    function exception($message = 'Undefined Exception', $type = null, $code = null) {
+    public function exception($message = 'Undefined Exception', $type = null, $code = null)
+    {
         return parent::exception($message, $type, $code)
-            ->addMoreInfo('SMlite_file',$this->origin_filename)
+            ->addMoreInfo('SMlite_file', $this->origin_filename)
             ;
-
     }
-    function cloneRegion($tag){
+    public function cloneRegion($tag)
+    {
         /*
          * Sometimes you will want to put branch into different class. This function will create
          * new class for you.
          */
-        if($this->isTopTag($tag)){
-            $new=$this->newInstance();
-            $new->template=unserialize(serialize($this->template));
-            $new->top_tag=$tag;
-            $new->settings=$this->settings;
+        if ($this->isTopTag($tag)) {
+            $new = $this->newInstance();
+            $new->template = unserialize(serialize($this->template));
+            $new->top_tag = $tag;
+            $new->settings = $this->settings;
             $new->origin_filename = $this->origin_filename;
             $new->rebuildTags();
+
             return $new;
         }
 
-        if(!$this->hasTag($tag)){
-            $o=$this->owner?" for ".$this->owner->__toString():"";
-            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".join(', ',array_keys($this->tags)));
+        if (!$this->hasTag($tag)) {
+            $o = $this->owner ? ' for '.$this->owner->__toString() : '';
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".implode(', ', array_keys($this->tags)));
         }
-        $class_name=get_class($this);
-        $new=$this->add($class_name);
+        $class_name = get_class($this);
+        $new = $this->add($class_name);
         try {
-            $new->template=unserialize(serialize($this->tags[$tag][0]));
-            if(is_string($new->template))$new->template=array($new->template);
-        }catch(PDOException $e){
+            $new->template = unserialize(serialize($this->tags[$tag][0]));
+            if (is_string($new->template)) {
+                $new->template = array($new->template);
+            }
+        } catch (PDOException $e) {
             throw $this->exception('PDO got stuck in template')
                 ->addMoreInfo('tag', $tag)
                 ->addMoreInfo('tags', var_export($this->tags, true));
         }
-        $new->top_tag=$tag;
-        $new->settings=$this->settings;
+        $new->top_tag = $tag;
+        $new->settings = $this->settings;
+
         return $new->rebuildTags();
     }
 
     // Misc functions
-    function dumpTags(){
+    public function dumpTags()
+    {
         /*
          * This function is used for debug. It will output all tag names inside
          * current templates
          */
-        echo "<pre>" . var_export(array_keys($this->tags), true) . "</pre>";
+        echo '<pre>'.var_export(array_keys($this->tags), true).'</pre>';
     }
 
     // Operation with regions inside template
-    function get($tag){
+    public function get($tag)
+    {
         /*
          * Finds tag and returns contents.
          *
@@ -240,13 +238,19 @@ class SMlite extends AbstractModel {
          *
          * If tag is defined multiple times, first region is returned.
          */
-        if($this->isTopTag($tag))return $this->template;
-        $v=$this->tags[$tag][0];
-        if(is_array($v) && count($v)==1)$v=array_shift($v);
+        if ($this->isTopTag($tag)) {
+            return $this->template;
+        }
+        $v = $this->tags[$tag][0];
+        if (is_array($v) && count($v) == 1) {
+            $v = array_shift($v);
+        }
+
         return $v;
     }
-    function appendHTML($tag,$value){
-        return $this->append($tag,$value,false);
+    public function appendHTML($tag, $value)
+    {
+        return $this->append($tag, $value, false);
     }
 
     /**
@@ -256,65 +260,74 @@ class SMlite extends AbstractModel {
      * If tag is used for several regions inside template, they all will be
      * appended with new data.
      */
-    function append($tag,$value,$encode=true){
-        if($value instanceof URL)$value=$value->__toString();
+    public function append($tag, $value, $encode = true)
+    {
+        if ($value instanceof URL) {
+            $value = $value->__toString();
+        }
         // Temporary here until we finish testing
-        if($encode && $value!=$this->app->encodeHtmlChars($value,ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug',false)) {
+        if ($encode && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug', false)) {
             throw $this->exception('Attempted to supply html string through append()')
-                ->addMoreInfo('val',var_export($value,true))
-                ->addMoreInfo('enc',var_export($this->app->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                ->addMoreInfo('val', var_export($value, true))
+                ->addMoreInfo('enc', var_export($this->app->encodeHtmlChars($value, ENT_NOQUOTES), true))
                 //->addAction('ignore','Ignore tag'.$tag)
                 ;
         }
-        if($encode)$value=$this->app->encodeHtmlChars($value,ENT_NOQUOTES);
-        if($this->isTopTag($tag)){
-            $this->template[]=$value;
+        if ($encode) {
+            $value = $this->app->encodeHtmlChars($value, ENT_NOQUOTES);
+        }
+        if ($this->isTopTag($tag)) {
+            $this->template[] = $value;
+
             return $this;
         }
-        if(!isset($this->tags[$tag]) || !is_array($this->tags[$tag])){
+        if (!isset($this->tags[$tag]) || !is_array($this->tags[$tag])) {
             throw $this->exception("Cannot append to tag $tag")
-                ->addMoreInfo('by',$this->owner);
+                ->addMoreInfo('by', $this->owner);
         }
-        foreach($this->tags[$tag] as $key=>$_){
-
-            if(!is_array($this->tags[$tag][$key])){
+        foreach ($this->tags[$tag] as $key => $_) {
+            if (!is_array($this->tags[$tag][$key])) {
                 //throw new BaseException("Problem appending '".$this->app->encodeHtmlChars($value)."' to '$tag': key=$key");
-                $this->tags[$tag][$key]=array($this->tags[$tag][$key]);
+                $this->tags[$tag][$key] = array($this->tags[$tag][$key]);
             }
-            $this->tags[$tag][$key][]=$value;
+            $this->tags[$tag][$key][] = $value;
         }
+
         return $this;
     }
-    function setHTML($tag,$value=null){
-        return $this->set($tag,$value,false);
+    public function setHTML($tag, $value = null)
+    {
+        return $this->set($tag, $value, false);
     }
     /**
      * Provided that the HTML tag contains ICU-compatible message format
-     * string, it will be localized then integrated with passed arguments
+     * string, it will be localized then integrated with passed arguments.
      */
-    function setMessage($tag,$args=array()){
-        if(!is_array($args))$args=array($args);
-        $fmt=$this->app->_($this->get($tag));
+    public function setMessage($tag, $args = array())
+    {
+        if (!is_array($args)) {
+            $args = array($args);
+        }
+        $fmt = $this->app->_($this->get($tag));
 
         // Try to analyze format and see which formatter to use
-        if (class_exists('MessageFormatter',false) && strpos($fmt,'{')!==null) {
-            $fmt=new MessageFormatter($this->app->locale,$fmt);
-            $str=$fmt->format($args);
-        }
-        // Else, perhaps it's a sprintf?
-        elseif (strpos($fmt,'%')!==null) {
-            array_unshift($args,$fmt);
-            $str=call_user_func_array('sprintf',$args);
-        }
-        else {
+        if (class_exists('MessageFormatter', false) && strpos($fmt, '{') !== null) {
+            $fmt = new MessageFormatter($this->app->locale, $fmt);
+            $str = $fmt->format($args);
+        } elseif (strpos($fmt, '%') !== null) {
+            // Else, perhaps it's a sprintf?
+            array_unshift($args, $fmt);
+            $str = call_user_func_array('sprintf', $args);
+        } else {
             throw $this->exception('Unclear how to format this')
-                ->addMoreInfo('fmt',$fmt)
+                ->addMoreInfo('fmt', $fmt)
                 ;
         }
 
-        return $this->set($tag,$str);
+        return $this->set($tag, $str);
     }
-    function set($tag,$value=null,$encode=true){
+    public function set($tag, $value = null, $encode = true)
+    {
         /*
          * This function will replace region refered by $tag to a new content.
          *
@@ -331,104 +344,136 @@ class SMlite extends AbstractModel {
          * ALTERNATIVE USE(3) of this function is to pass 2 arrays. First array
          * will contain tag names and 2nd array will contain their values.
          */
-        if(is_object($tag))$tag=$tag->get();
-        if(is_array($tag)){
-            if(is_null($value)){
-                // USE(2)
-                foreach($tag as $s=>$v){
-                    $this->trySet($s,$v,$encode);
-                }
-                return $this;
-            }
-            if(is_array($value)){
-                // USE(2)
-                reset($tag);reset($value);
-                while(list(,$s)=each($tag)){
-                    list(,$v)=each($value);
-                    $this->set($s,$v,$encode);
-                }
-                return $this;
-            }
-            $this->fatal("Incorrect argument types when calling SMlite::set(). Check documentation.");
+        if (is_object($tag)) {
+            $tag = $tag->get();
         }
-        if($value instanceof URL)$value=$value->__toString();
-        if(is_array($value))return $this;
+        if (is_array($tag)) {
+            if (is_null($value)) {
+                // USE(2)
+                foreach ($tag as $s => $v) {
+                    $this->trySet($s, $v, $encode);
+                }
 
-        if($encode && $value!=$this->app->encodeHtmlChars($value,ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug',false)) {
+                return $this;
+            }
+            if (is_array($value)) {
+                // USE(2)
+                reset($tag);
+                reset($value);
+                while (list(, $s) = each($tag)) {
+                    list(, $v) = each($value);
+                    $this->set($s, $v, $encode);
+                }
+
+                return $this;
+            }
+            $this->fatal('Incorrect argument types when calling SMlite::set(). Check documentation.');
+        }
+        if ($value instanceof URL) {
+            $value = $value->__toString();
+        }
+        if (is_array($value)) {
+            return $this;
+        }
+
+        if ($encode && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug', false)) {
             throw $this->exception('Attempted to supply html string through set()')
-                ->addMoreInfo('val',var_export($value,true))
-                ->addMoreInfo('enc',var_export($this->app->encodeHtmlChars($value,ENT_NOQUOTES),true))
+                ->addMoreInfo('val', var_export($value, true))
+                ->addMoreInfo('enc', var_export($this->app->encodeHtmlChars($value, ENT_NOQUOTES), true))
                 //->addAction('ignore','Ignore tag'.$tag)
                 ;
         }
-        if($encode)$value=$this->app->encodeHtmlChars($value,ENT_NOQUOTES);
-        if($this->isTopTag($tag)){
-            $this->template=$value;
+        if ($encode) {
+            $value = $this->app->encodeHtmlChars($value, ENT_NOQUOTES);
+        }
+        if ($this->isTopTag($tag)) {
+            $this->template = $value;
+
             return $this;
         }
-        if(!isset($this->tags[$tag])||!is_array($this->tags[$tag])){
-            $o=$this->owner?$this->owner->__toString():"none";
-            throw $this->exception("No such tag in template")
-                ->addMoreInfo('tag',$tag)
-                ->addMoreInfo('owner',$o)
-                ->addMoreInfo('tags',join(', ',array_keys($this->tags)));
+        if (!isset($this->tags[$tag]) || !is_array($this->tags[$tag])) {
+            $o = $this->owner ? $this->owner->__toString() : 'none';
+            throw $this->exception('No such tag in template')
+                ->addMoreInfo('tag', $tag)
+                ->addMoreInfo('owner', $o)
+                ->addMoreInfo('tags', implode(', ', array_keys($this->tags)));
         }
-        foreach($this->tags[$tag] as $key=>$_){
-            $this->tags[$tag][$key]=$value;
+        foreach ($this->tags[$tag] as $key => $_) {
+            $this->tags[$tag][$key] = $value;
         }
         $this->updated_tag_list[$tag] = $value;
+
         return $this;
     }
     /** Check if tag is present inside template */
-    function hasTag($tag){
-        if($this->isTopTag($tag))return true;
-        return isset($this->tags[$tag]) && is_array($this->tags[$tag]);
+    public function hasTag($tag)
+    {
+        if ($this->isTopTag($tag)) {
+            return true;
+        }
 
+        return isset($this->tags[$tag]) && is_array($this->tags[$tag]);
     }
-    function is_set($tag){
+    public function is_set($tag)
+    {
         return $this->hasTag($tag);
     }
-    function trySetHTML($tag,$value=null){
-        return $this->trySet($tag,$value,false);
+    public function trySetHTML($tag, $value = null)
+    {
+        return $this->trySet($tag, $value, false);
     }
-    function trySet($tag,$value=null,$encode=true){
+    public function trySet($tag, $value = null, $encode = true)
+    {
         /*
          * Check if tag is present inside template. If it does, execute set();
          * See documentation for set()
          */
-        if(is_array($tag))return $this->set($tag,$value,$encode);
-        return $this->hasTag($tag)?$this->set($tag,$value,$encode):$this;
+        if (is_array($tag)) {
+            return $this->set($tag, $value, $encode);
+        }
+
+        return $this->hasTag($tag) ? $this->set($tag, $value, $encode) : $this;
     }
-    function del($tag){
+    public function del($tag)
+    {
         /*
          * This deletes content of a region, however tag remains and you can still refer to it.
          *
          * If tag is defined multiple times, content of all regions are deleted.
          */
-        if($this->isTopTag($tag)){
+        if ($this->isTopTag($tag)) {
             $this->loadTemplateFromString('<?$'.$tag.'?>');
+
             return $this;
             //return $this->fatal("SMlite::del() is trying to delete top tag: $tag");
         }
-        if(empty($this->tags[$tag])){
-            $o=$this->owner?" for ".$this->owner->__toString():"";
-            $e=$this->exception("No such tag in template")
-                ->addMoreInfo('tag',$tag);
-            if($this->owner)$e->addMoreInfo('owner',$this->owner->__toString());
-            $e->addMoreInfo('tags', join(', ',array_keys($this->tags)));
+        if (empty($this->tags[$tag])) {
+            $o = $this->owner ? ' for '.$this->owner->__toString() : '';
+            $e = $this->exception('No such tag in template')
+                ->addMoreInfo('tag', $tag);
+            if ($this->owner) {
+                $e->addMoreInfo('owner', $this->owner->__toString());
+            }
+            $e->addMoreInfo('tags', implode(', ', array_keys($this->tags)));
             throw $e;
         }
-        foreach($this->tags[$tag] as $key=>$val){
-            $this->tags[$tag][$key]=array();
+        foreach ($this->tags[$tag] as $key => $val) {
+            $this->tags[$tag][$key] = array();
         }
         unset($this->updated_tag_list[$tag]);
+
         return $this;
     }
-    function tryDel($tag){
-        if(is_array($tag))return $this->del($tag);
-        return $this->hasTag($tag)?$this->del($tag):$this;
+    public function tryDel($tag)
+    {
+        if (is_array($tag)) {
+            return $this->del($tag);
+        }
+
+        return $this->hasTag($tag) ? $this->del($tag) : $this;
     }
-    function eachTag($tag,$callable){
+    public function eachTag($tag, $callable)
+    {
         /*
          * This function will execute $callable($text,$tag) for each
          * occurance of $tag. This is handy if one tag appears several times on the page,
@@ -436,75 +481,94 @@ class SMlite extends AbstractModel {
          * will be unique reference to a tag, containing #<num> allowing you to add objects
          * from the functions
          */
-        if(!isset($this->tags[$tag]))return;
+        if (!isset($this->tags[$tag])) {
+            return;
+        }
 
-        foreach($this->tags as $tagx=>$arr){
-            $tag_split=explode('#',$tagx);
-            $t=$tag_split[0];
-            if(!isset($tag_split[1]) || $t!=$tag)continue;
-            $text=$this->tags[$tagx][0][0];
+        foreach ($this->tags as $tagx => $arr) {
+            $tag_split = explode('#', $tagx);
+            $t = $tag_split[0];
+            if (!isset($tag_split[1]) || $t != $tag) {
+                continue;
+            }
+            $text = $this->tags[$tagx][0][0];
             try {
-                $ret=call_user_func($callable,$this->renderRegion($text),$tagx);
+                $ret = call_user_func($callable, $this->renderRegion($text), $tagx);
             } catch (BaseException $e) {
                 $e
-                    ->addMoreInfo('SMlite_tag',$tagx)
-                    ->addMoreInfo('SMlite_file',$this->origin_filename)
+                    ->addMoreInfo('SMlite_tag', $tagx)
+                    ->addMoreInfo('SMlite_file', $this->origin_filename)
                     ;
                 throw $e;
             }
-            if($ret instanceof URL)$ret=$ret->__toString();
-            $x=$this->tags[$tagx][0][0]=$ret;
+            if ($ret instanceof URL) {
+                $ret = $ret->__toString();
+            }
+            $x = $this->tags[$tagx][0][0] = $ret;
         }
     }
 
     // template loading and parsing
-    function findTemplate($template_name){
+    public function findTemplate($template_name)
+    {
         /*
          * Find template location inside search directory path
          */
-        if(!$this->app)throw new Exception_InitError('You should use add() to add objects!');
-        $f=$this->app->locatePath($this->template_type,$template_name.$this->settings['extension']);
-        $this->origin_filename=$f;
-        return join('',file($f));
+        if (!$this->app) {
+            throw new Exception_InitError('You should use add() to add objects!');
+        }
+        $f = $this->app->locatePath($this->template_type, $template_name.$this->settings['extension']);
+        $this->origin_filename = $f;
+
+        return implode('', file($f));
     }
-    function loadTemplateFromString($template_string){
-        $this->template=array();
-        $this->tags=array();
+    public function loadTemplateFromString($template_string)
+    {
+        $this->template = array();
+        $this->tags = array();
         $this->updated_tag_list = array();
 
-        $this->tmp_template=$template_string;
+        $this->tmp_template = $template_string;
         $this->parseTemplate($this->template);
+
         return $this;
     }
-    function loadTemplate($template_name,$ext=null){
+    public function loadTemplate($template_name, $ext = null)
+    {
         /*
          * Load template from file
          */
-        if(!$this->app)throw new Exception('Broken Link');
-        if($this->cache[$template_name.$ext]){
-            $this->template=unserialize($this->cache[$template_name.$ext]);
+        if (!$this->app) {
+            throw new Exception('Broken Link');
+        }
+        if ($this->cache[$template_name.$ext]) {
+            $this->template = unserialize($this->cache[$template_name.$ext]);
             $this->rebuildTags();
+
             return $this;
         }
 
-        if($ext){
-            $tempext=$this->settings['extension'];
-            $this->settings['extension']=$ext;
+        if ($ext) {
+            $tempext = $this->settings['extension'];
+            $this->settings['extension'] = $ext;
         };
         $this->tmp_template = $this->findTemplate($template_name);
 
-        $this->template=array();
-        $this->tags=array();
+        $this->template = array();
+        $this->tags = array();
         $this->updated_tag_list = array();
 
         $this->parseTemplate($this->template);
-        if($ext){ $this->settings['extension']=$tempext; }
+        if ($ext) {
+            $this->settings['extension'] = $tempext;
+        }
 
-        $this->cache[$template_name.$ext]=serialize($this->template);
+        $this->cache[$template_name.$ext] = serialize($this->template);
 
         return $this;
     }
-    function parseTemplate(&$template,$level=0,$pc=0){
+    public function parseTemplate(&$template, $level = 0, $pc = 0)
+    {
         /*
          * private function
          *
@@ -514,145 +578,181 @@ class SMlite extends AbstractModel {
         // TODO when we go into sublevel, we should set the number of
         // the tag so that there is NO double numbers in template COMPLETELY
         // May be this way is dirty, need to look for better solution...
-        $c=pow(100,$level)+$pc;
-        while(strlen($this->tmp_template)){
-            $text = $this->myStrTok($this->tmp_template,$this->settings['ldelim']);
-            if($text!=='')$template[]=$text;
-            $tag=trim($this->myStrTok($this->tmp_template,$this->settings['rdelim']));
-            if(isset($tag)&&$tag){
-                if($tag[0]=='$'){
-                    $tag = substr($tag,1);
-                    $template[$tag.'#'.$c]=array();
-                    $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-                }elseif($tag[0]=='/'){
-                    $tag = substr($tag,1);
+        $c = pow(100, $level) + $pc;
+        while (strlen($this->tmp_template)) {
+            $text = $this->myStrTok($this->tmp_template, $this->settings['ldelim']);
+            if ($text !== '') {
+                $template[] = $text;
+            }
+            $tag = trim($this->myStrTok($this->tmp_template, $this->settings['rdelim']));
+            if (isset($tag) && $tag) {
+                if ($tag[0] == '$') {
+                    $tag = substr($tag, 1);
+                    $template[$tag.'#'.$c] = array();
+                    $this->registerTag($tag, $c, $template[$tag.'#'.$c]);
+                } elseif ($tag[0] == '/') {
+                    $tag = substr($tag, 1);
+
                     return $tag;
-                }elseif(substr($tag,-1)=='/'){
-                    $tag = substr($tag,0,-1);
-                    $template[$tag.'#'.$c]=array();
-                    $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-                }else{
-                    $template[$tag.'#'.$c]=array();
-                    $this->registerTag($tag,$c,$template[$tag.'#'.$c]);
-                    $xtag = $this->parseTemplate($template[$tag.'#'.$c],$level+1,$c);
-                    if($xtag && $tag!=$xtag){
-                        throw $this->exception("Closing tag missmatch.")
-                            ->addMoreInfo('opening',$tag)
-                            ->addMoreInfo('closing',$xtag);
+                } elseif (substr($tag, -1) == '/') {
+                    $tag = substr($tag, 0, -1);
+                    $template[$tag.'#'.$c] = array();
+                    $this->registerTag($tag, $c, $template[$tag.'#'.$c]);
+                } else {
+                    $template[$tag.'#'.$c] = array();
+                    $this->registerTag($tag, $c, $template[$tag.'#'.$c]);
+                    $xtag = $this->parseTemplate($template[$tag.'#'.$c], $level + 1, $c);
+                    if ($xtag && $tag != $xtag) {
+                        throw $this->exception('Closing tag missmatch.')
+                            ->addMoreInfo('opening', $tag)
+                            ->addMoreInfo('closing', $xtag);
                     }
                 }
             }
-            $c++;
+            ++$c;
         }
-        return "end_of_file";
+
+        return 'end_of_file';
     }
-    function registerTag($key,$npk,&$ref){
-        if(!$key)return;
-        if(isset($npk))$this->tags[$key.'#'.$npk][]=&$ref;
-        $this->tags[$key][]=&$ref;
+    public function registerTag($key, $npk, &$ref)
+    {
+        if (!$key) {
+            return;
+        }
+        if (isset($npk)) {
+            $this->tags[$key.'#'.$npk][] = &$ref;
+        }
+        $this->tags[$key][] = &$ref;
     }
-    function isTopTag($tag){
+    public function isTopTag($tag)
+    {
         return
-            (isset($this->top_tag) && ($tag==$this->top_tag)) ||
-            ($tag=='_top');
+            (isset($this->top_tag) && ($tag == $this->top_tag)) ||
+            ($tag == '_top');
     }
 
     // rebuild tags of existing array structure
-    function rebuildTags(){
+    public function rebuildTags()
+    {
         /*
          * This function walks through template and rebuilds list of tags. You need it in case you
          * changed already parsed template.
          */
-        $this->tags=array();
+        $this->tags = array();
         $this->updated_tag_list = array();
         $this->rebuildTagsRegion($this->template);
+
         return $this;
     }
-    function rebuildTagsRegion(&$branch){
-        if(!isset($branch))throw new BaseException("Cannot rebuild tags, because template is empty");
-        if(!is_array($branch))throw $this->exception('System problem with SMLite. Incorrect use of branch');
-        foreach($branch as $key=>$val){
-            if(is_int($key))continue;
-            list($real_key,$junk)=explode('#',$key);
-            $this->registerTag($real_key,null,$branch[$key]);
-            $this->registerTag($key,null,$branch[$key]);
-            if(is_array($branch[$key]))$this->rebuildTagsRegion($branch[$key]);
+    public function rebuildTagsRegion(&$branch)
+    {
+        if (!isset($branch)) {
+            throw new BaseException('Cannot rebuild tags, because template is empty');
+        }
+        if (!is_array($branch)) {
+            throw $this->exception('System problem with SMLite. Incorrect use of branch');
+        }
+        foreach ($branch as $key => $val) {
+            if (is_int($key)) {
+                continue;
+            }
+            list($real_key, $junk) = explode('#', $key);
+            $this->registerTag($real_key, null, $branch[$key]);
+            $this->registerTag($key, null, $branch[$key]);
+            if (is_array($branch[$key])) {
+                $this->rebuildTagsRegion($branch[$key]);
+            }
         }
     }
 
     // Template rendering (array -> string)
-    function render(){
+    public function render()
+    {
         /*
          * This function should be used to convert template into string representation.
          */
         return $this->renderRegion($this->template);
     }
-    function renderRegion(&$chunk){
+    public function renderRegion(&$chunk)
+    {
         $result = ''; // you can replace this with array() for debug purposes
-        if(!is_array($chunk))return $chunk;
-        foreach($chunk as $key=>$_chunk){
-            $tmp=$this->renderRegion($_chunk);
-            if(is_array($result)){
-                $result[]=$tmp;
-            }else{
-                if(is_array($tmp)){
-                    $result=array($result,$tmp);
-                }else{
-                    $result.=$tmp;
+        if (!is_array($chunk)) {
+            return $chunk;
+        }
+        foreach ($chunk as $key => $_chunk) {
+            $tmp = $this->renderRegion($_chunk);
+            if (is_array($result)) {
+                $result[] = $tmp;
+            } else {
+                if (is_array($tmp)) {
+                    $result = array($result, $tmp);
+                } else {
+                    $result .= $tmp;
                 }
             }
         }
+
         return $result;
     }
-    
+
     // For debuging of template. Only allow to debug initial template.
     // In future should be extended somehow with recursiveRender to also allow
     // debugging of templates of entire object tree.
-    function debugRender(){
+    public function debugRender()
+    {
         return $this->debugRenderRegion($this->template);
     }
-    function debugRenderRegion(&$chunk){
+    public function debugRenderRegion(&$chunk)
+    {
         // output templates
         $t = array(
-            'tag-html' =>'<span class="tag-html" style="color:black;">%s</span>',
-            'tag-open' =>
-                '<span class="tag-container" onmouseover="$(this).css(\'background\',\'lightgray\');" onmouseout="$(this).css(\'background\',\'transparent\');">'.
+            'tag-html' => '<span class="tag-html" style="color:black;">%s</span>',
+            'tag-open' => '<span class="tag-container" onmouseover="$(this).css(\'background\',\'lightgray\');" onmouseout="$(this).css(\'background\',\'transparent\');">'.
                     '<span style="color:blue;cursor:pointer;" title="Start tag" onclick="$(this).next().toggle();">[%s]</span>'.
                     '<span>',
-            'tag-close' =>
-                    '</span>'.
+            'tag-close' => '</span>'.
                     '<span style="color:blue;cursor:pointer;" title="End tag" onclick="$(this).prev().toggle();">[/%s]</span>'.
-                '</span>'
+                '</span>',
         );
         $result = '';
-        
+
         // simple HTML
-        if(!is_array($chunk)){
-            $s = preg_replace('/[\n|\r]{1,}/','<br>',htmlentities($chunk));
-            return sprintf($t['tag-html'],$s);
+        if (!is_array($chunk)) {
+            $s = preg_replace('/[\n|\r]{1,}/', '<br>', htmlentities($chunk));
+
+            return sprintf($t['tag-html'], $s);
         }
         // recursion
-        foreach($chunk as $key=>$_chunk){
-            $tag = substr($key,0,strpos($key,'#'));
-            if(!is_numeric($key)) $result.=sprintf($t['tag-open'],$tag);
+        foreach ($chunk as $key => $_chunk) {
+            $tag = substr($key, 0, strpos($key, '#'));
+            if (!is_numeric($key)) {
+                $result .= sprintf($t['tag-open'], $tag);
+            }
             $result .= $this->debugRenderRegion($_chunk);
-            if(!is_numeric($key)) $result.=sprintf($t['tag-close'],$tag);
+            if (!is_numeric($key)) {
+                $result .= sprintf($t['tag-close'], $tag);
+            }
         }
 
         return $result;
     }
 
     // Misc functions
-    function myStrTok(&$string,$tok){
-        if(!$string)return '';
-        $pos = strpos($string,$tok);
-        if($pos===false){
-            $chunk=$string;
-            $string='';
+    public function myStrTok(&$string, $tok)
+    {
+        if (!$string) {
+            return '';
+        }
+        $pos = strpos($string, $tok);
+        if ($pos === false) {
+            $chunk = $string;
+            $string = '';
+
             return $chunk;  // nothing left
         }
-        $chunk = substr($string,0,$pos);
-        $string = substr($string,$pos+strlen($tok));
+        $chunk = substr($string, 0, $pos);
+        $string = substr($string, $pos + strlen($tok));
+
         return $chunk;
     }
 }

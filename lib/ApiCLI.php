@@ -1,2 +1,7 @@
 <?php
-class ApiCLI extends App_CLI {}
+/**
+ * Undocumented.
+ */
+class ApiCLI extends App_CLI
+{
+}
