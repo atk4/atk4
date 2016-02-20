@@ -5,15 +5,6 @@
  * works but allows handling multiple streams and supports
  * exceptions
  */
-
-// obselete, use Exception_System_ProcessIO
-class System_ProcessIO_Exception extends BaseException
-{
-}
-class Exception_System_ProcessIO extends System_ProcessIO_Exception
-{
-}
-
 class System_ProcessIO extends AbstractModel
 {
     // allow us to execute commands in a flexible and easy way
@@ -92,7 +83,7 @@ class System_ProcessIO extends AbstractModel
         $pipes = null;
         $this->process = proc_open($command, $this->descriptorspec, $pipes);
         if (!is_resource($this->process)) {
-            throw new System_ProcessIO_Exception('Failed to execute');
+            throw new Exception_SystemProcessIO('Failed to execute');
         }
         $this->debug('Execute successful');
         $this->debugStatus();
@@ -119,7 +110,7 @@ class System_ProcessIO extends AbstractModel
     public function write($str)
     {
         if (!is_resource($this->pipes['in'])) {
-            throw new System_ProcessIO_Exception("stdin is closed or haven't been opened. Cannot write to process");
+            throw new Exception_SystemProcessIO("stdin is closed or haven't been opened. Cannot write to process");
         }
         $this->debug('writing '.$str.'+newline into stdin');
         fwrite($this->pipes['in'], $str."\n");
@@ -271,71 +262,5 @@ class System_ProcessIO extends AbstractModel
         if (function_exists('proc_nice')) {
             proc_nice($this->process, $nice);
         }
-    }
-}
-
-class System_ProcessIO_Tester
-{
-    public $scripts = array(
-            'basic' => array('exec', 'close'),
-            'readwrite' => array('exec', 'close', 'read_all', 'write_all'),
-            'failure' => array('exec', 'read_stderr'),
-            'advanced' => array('exec', 'write', 'read_line', 'terminate'),
-            );
-    public function test_basic()
-    {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/perl', array('-e', 'Hello|world\n'));
-
-        $out = $p->close();
-
-        $this->expects($out, "Hello|world\n");
-
-        return $p;
-    }
-    public function test_readwrite()
-    {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/sed', 's/l/r/g')
-            ->write_all('Hello world');
-        $out = $p->read_all();
-
-        $this->expects($out, 'Herro worrd');
-
-        return $p;
-    }
-    public function test_failure()
-    {
-        $error = '';
-        try {
-            $p = $this->add('System_ProcessIO')
-                ->exec('/usr/non/existant/path', 'hello world')
-                ->write_all('Hello world');
-            $out = $p->close();
-        } catch (System_ProcessIO_Exception $e) {
-            $error = $e->getMessage();
-            $this->more_info('Expected exception caught', $e);
-        }
-
-        $this->expects($error);
-
-        return $p;
-    }
-    public function test_advanced()
-    {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/sed', 's/l/r/g');
-
-        $p->write('coca cola');
-        $out = $p->read_line();
-        $this->expects($out, 'coca cora');
-
-        $p->write('little love');
-        $out = $p->read_line();
-        $this->expects($out, 'rittre rove');
-
-        $this->terminate();
-
-        return $p;
     }
 }
