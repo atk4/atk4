@@ -512,24 +512,24 @@ class App_Web extends App_CLI
         return isset($_POST['ajax_submit']) || ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest');
     }
 
-    /** @private */
-    protected function _locateTemplate($path)
+    /** @private - NO PRIVATE !!! */
+    public function _locateTemplate($path)
     {
         return $this->locateURL('public', $path);
     }
-    protected function _locatePublic($path)
+    public function _locatePublic($path)
     {
         return $this->locateURL('public', $path);
     }
-    protected function _locateJS($path)
+    public function _locateJS($path)
     {
         return $this->locateURL('js', $path);
     }
-    protected function _locateCSS($path)
+    public function _locateCSS($path)
     {
         return $this->locateURL('css', $path);
     }
-    protected function _locatePage($path)
+    public function _locatePage($path)
     {
         return $this->url($path);
     }
