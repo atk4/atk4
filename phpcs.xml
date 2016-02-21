@@ -20,10 +20,10 @@
         <exclude name="PEAR.Functions.ValidDefaultValue.NotAtEnd"/>
 
         <!-- Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
-        <exclude name="PSR2.Classes.PropertyDeclarationSniff"/>
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
 
         <!-- Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
-        <exclude name="PSR2.Methods.MethodDeclarationSniff"/>
+        <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
 
     </rule>
 </ruleset>
