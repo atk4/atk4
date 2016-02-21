@@ -8,7 +8,7 @@ class Controller_Data_Mongo extends Controller_Data
     public $supportLimit = true;
     public $supportOrder = true;
     public $supportRef = true;
-    public $supportOperators = array(); //'=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
+    public $supportOperators = array();//'='=>true,'>'=>true,'>='=>true,'<='=>true,'<'=>true,'!='=>true,'like'=>true);
 
     public function setSource($model, $table = null)
     {
@@ -110,9 +110,11 @@ class Controller_Data_Mongo extends Controller_Data
                 return $model->id;
             }
             if ($model->debug) {
-                echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.(new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
+                echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.
+                    (new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
             }
-            $db = $this->_get($model, 'db')->update(array($model->id_field => new MongoID($model->id)), array('$set' => $data));
+            $db = $this->_get($model, 'db')
+                ->update(array($model->id_field => new MongoID($model->id)), array('$set' => $data));
 
             return $model->id;
         }
@@ -248,7 +250,8 @@ class Controller_Data_Mongo extends Controller_Data
     public function selectQuery($model)
     {
         if ($model->debug) {
-            echo '<font style="color: blue">db.'.$model->table.'.find('.json_encode($model->_table[$this->short_name]['conditions']).')</font>';
+            echo '<font style="color: blue">db.'.$model->table.'.find('.
+                json_encode($model->_table[$this->short_name]['conditions']).')</font>';
         }
         $c = $this->_get($model, 'db')->find(
             $model->_table[$this->short_name]['conditions']

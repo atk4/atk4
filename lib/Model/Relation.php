@@ -17,8 +17,14 @@ class Model_Relation extends Model
     /**
      * See Field_SQL_Relation.
      */
-    public function join($foreignTable, $leftField = null, $joinKind = null, $joinAlias = null, $relation = null, $behaviour = 'cascade')
-    {
+    public function join(
+        $foreignTable,
+        $leftField = null,
+        $joinKind = null,
+        $joinAlias = null,
+        $relation = null,
+        $behaviour = 'cascade'
+    ) {
         list($rightTable, $rightField) = explode('.', $foreignTable, 2);
         if (is_null($rightField)) {
             $rightField = 'id';

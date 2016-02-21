@@ -30,7 +30,12 @@ class Endpoint_REST extends AbstractModel
     {
         parent::init();
         // first let's see if we authenticate
-        if ($this->authenticate === true || ($this->authenticate !== false && ($this->hasMethod('authenticate') || $this->app->hasMethod('authenticate')))) {
+        if ($this->authenticate === true
+            || (
+                $this->authenticate !== false
+                && ($this->hasMethod('authenticate') || $this->app->hasMethod('authenticate'))
+            )
+        ) {
             $result = false;
             if ($this->hasMethod('authenticate')) {
                 $result = $this->authenticate();
@@ -71,7 +76,11 @@ class Endpoint_REST extends AbstractModel
 
         //$m=$this->app->add('Model_'.$this->model_class);
         $m = $this->setModel($this->model_class);
-        if ($this->user_id_field && $m->hasField($this->user_id_field) && $this->authenticate !== false && $this->user) {
+        if ($this->user_id_field
+            && $m->hasField($this->user_id_field)
+            && $this->authenticate !== false
+            && $this->user
+        ) {
             // if not authenticated, blow up
             $m->addCondition($this->user_id_field, $this->user->id);
         }
@@ -239,8 +248,9 @@ class Endpoint_REST extends AbstractModel
      */
     public function post($data)
     {
-
-        //if($m->loaded()) throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
+        //if($m->loaded()) {
+        //    throw $this->exception('Not a valid request for this resource URL. Must point to collection URI.');
+        //}
 
         return $this->put_post($data);
     }

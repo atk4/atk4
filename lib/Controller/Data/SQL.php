@@ -8,7 +8,15 @@ class Controller_Data_SQL extends Controller_Data
     public $supportLimit = true;
     public $supportOrder = true;
     public $supportRef = true;
-    public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
+    public $supportOperators = array(
+        '=' => true,
+        '>' => true,
+        '>=' => true,
+        '<=' => true,
+        '<' => true,
+        '!=' => true,
+        'like' => true
+    );
     public $supportExpressions = true;
 
     public $auto_track_element = true;
@@ -139,7 +147,12 @@ class Controller_Data_SQL extends Controller_Data
 
         $fieldName = $field->actual() ?: $field->short_name;
         if ($field instanceof Field_SQL_Relation) {
-            $select->join($field->rightTable.'.'.$field->rightField, $field->leftField, $field->joinKind, $field->joinAlias);
+            $select->join(
+                $field->rightTable.'.'.$field->rightField,
+                $field->leftField,
+                $field->joinKind,
+                $field->joinAlias
+            );
         } elseif ($field instanceof Field_SQL_Expression) {
             return $select->field($field->getExpression($model), $field->short_name);
         } else {
@@ -178,7 +191,11 @@ class Controller_Data_SQL extends Controller_Data
                 // TODO: should we use expression in where?
                 $dsql->where($field->getExpression(), $cond[1], $cond[2]);
             } else {
-                $dsql->where(($field->table() ?: ($model->table_alias ?: $model->table)).'.'.$fieldName, $cond[1], $cond[2]);
+                $dsql->where(
+                    ($field->table() ?: ($model->table_alias ?: $model->table)).'.'.$fieldName,
+                    $cond[1],
+                    $cond[2]
+                );
             }
         }
     }

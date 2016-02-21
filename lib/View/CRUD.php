@@ -649,8 +649,12 @@ class View_CRUD extends View
 
         $this
             ->virtual_page
-            ->addColumn('edit', 'Editing '.$this->entity_name, array('descr' => 'Edit', 'icon' => 'pencil'), $this->grid)
-            ;
+            ->addColumn(
+                'edit',
+                'Editing '.$this->entity_name,
+                array('descr' => 'Edit', 'icon' => 'pencil'),
+                $this->grid
+            );
     }
 
     /**

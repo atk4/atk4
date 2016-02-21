@@ -17,6 +17,7 @@
  * in certain circumstances, for example add-on will be able
  * to add it's location if add-on was added to a page.
  */
+// @codingStandardsIgnoreStart
 class PathFinder extends AbstractController
 {
     /**
@@ -699,3 +700,4 @@ class PathFinder_Location extends AbstractModel
         return $attempted_locations;
     }
 }
+// @codingStandardsIgnoreEnd

@@ -200,7 +200,12 @@ class Form_Field_DateSelector extends Form_Field
         if ($this->required) {
             $output .= $this->getTag(
                 'input',
-                array('type' => 'hidden', 'name' => $this->name.'_enabled', 'id' => $this->name.'_enabled', 'value' => 'Y')
+                array(
+                    'type' => 'hidden',
+                    'name' => $this->name.'_enabled',
+                    'id' => $this->name.'_enabled',
+                    'value' => 'Y'
+                )
             );
         } else {
             $attrs = array('type' => 'checkbox',

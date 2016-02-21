@@ -1,9 +1,10 @@
 <?php
 /**
  * This is a Firebird/Interbase driver for Dynamic SQL.
- * To be able to use it in your proyects make sure you have the Firebird PDO driver installed for PHP.
+ * To be able to use it in your projects make sure you have the Firebird PDO driver installed for PHP.
  * For more info see PHP manual: http://php.net/manual/en/ref.pdo-firebird.php
- * Howto for compiling/installing on Linux: http://mapopa.blogspot.com/2009/04/php5-and-firebird-pdo-on-ubuntu-hardy.html.
+ * Howto for compiling/installing on Linux:
+ * http://mapopa.blogspot.com/2009/04/php5-and-firebird-pdo-on-ubuntu-hardy.html.
  */
 class DB_dsql_firebird extends DB_dsql
 {
@@ -11,8 +12,10 @@ class DB_dsql_firebird extends DB_dsql
     public function init()
     {
         parent::init();
-        $this->sql_templates['update'] = 'update [table] set [set] [where]';
-        $this->sql_templates['select'] = 'select [limit] [options] [field] [from] [table] [join] [where] [group] [having] [order]';
+        $this->sql_templates['update'] =
+            'update [table] set [set] [where]';
+        $this->sql_templates['select'] =
+            'select [limit] [options] [field] [from] [table] [join] [where] [group] [having] [order]';
     }
 
     public function SQLTemplate($mode)

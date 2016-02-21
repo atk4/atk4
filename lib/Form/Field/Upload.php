@@ -113,7 +113,10 @@ class Form_Field_Upload extends Form_Field
                     $model = $this->model;
                     $model->set($this->getVolumeIDFieldName(), $model->getAvailableVolumeID());
                     $model->set($this->getOriginalFilenameFieldName(), $this->getOriginalName());
-                    $model->set($this->getTypeIDFieldName(), $model->getFiletypeID($this->getOriginalType(), $model->policy_add_new_type));
+                    $model->set(
+                        $this->getTypeIDFieldName(),
+                        $model->getFiletypeID($this->getOriginalType(), $model->policy_add_new_type)
+                    );
                     $model->import($this->getFilePath());
                     $model->save();
                 } catch (Exception $e) {
@@ -214,7 +217,13 @@ class Form_Field_Upload extends Form_Field
             $files = implode(',', filter_var_array($b, FILTER_VALIDATE_INT));
             if ($files) {
                 $c->addCondition('id', 'in', ($files ? $files : 0));
-                $data = $c->getRows(array('id', 'url', 'thumb_url', $this->getOriginalFilenameFieldName(), $this->getFilesizeFieldName()));
+                $data = $c->getRows(array(
+                    'id',
+                    'url',
+                    'thumb_url',
+                    $this->getOriginalFilenameFieldName(),
+                    $this->getFilesizeFieldName()
+                ));
             } else {
                 $data = array();
             }
@@ -239,11 +248,13 @@ class Form_Field_Upload extends Form_Field
                 try {
                     $c->tryLoad($id);
                     $c->delete();
-                    $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles', array($id))->execute();
+                    $this->js()->_selector('[name='.$this->name.']')
+                        ->atk4_uploader('removeFiles', array($id))->execute();
                 } catch (BaseException $e) {
                     $this->js()->univ()->alert('Could not delete image - '.$e->getMessage())->execute();
                 }
-                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))
+                //    ->_selectorRegion()->closest('tr')->remove()->execute();
             }
         }
 
@@ -272,12 +283,14 @@ class Form_Field_Upload extends Form_Field
                 exit;
 
                 $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles', array($id))->execute();
-                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))->_selectorRegion()->closest('tr')->remove()->execute();
+                //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))
+                //    ->_selectorRegion()->closest('tr')->remove()->execute();
             }
         }
         if ($_GET[$this->name.'_upload_action'] && !$_POST) {
             if (!$this->model) {
-                $this->uploadFailed('You are not using model with upolad field. Please use "isUploaded" and uploadComplete() methods in form submit handler');
+                $this->uploadFailed('You are not using model with upolad field. '.
+                    'Please use "isUploaded" and uploadComplete() methods in form submit handler');
             }
             $this->uploadFailed('Webserver settings have blocked this file. Perhaps post_max_size should incleased ('.
                 $_SERVER['CONTENT_LENGTH'].' sent, '.ini_get('post_max_size').' max)(post: '.json_encode($_POST).
@@ -361,7 +374,7 @@ class Form_Field_Upload extends Form_Field
                 $response = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
                 break;
             case UPLOAD_ERR_FORM_SIZE:
-                $response = 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.';
+                $response = 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in HTML form.';
                 break;
             case UPLOAD_ERR_PARTIAL:
                 $response = 'The uploaded file was only partially uploaded.';

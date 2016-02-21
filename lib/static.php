@@ -12,9 +12,11 @@ if (defined('AGILE_TOOLKIT_STATIC_LOADED')) {
 }
 define('AGILE_TOOLKIT_STATIC_LOADED', true);
 
+// @codingStandardsIgnoreStart
 if (!defined('undefined')) {
     define('undefined', '_atk4_undefined_value');
 }
+// @codingStandardsIgnoreEnd
 if (!defined('UNDEFINED')) {
     define('UNDEFINED', '_atk4_undefined_value');
 }
@@ -43,7 +45,8 @@ if (!function_exists('error_handler')) {
 
         if ((error_reporting() & $errno) != 0) {
             $errfile = dirname($errfile).'/<b>'.basename($errfile).'</b>';
-            $str = "<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> <font color=red>[$errno] <b>$errstr</b></font></font>";
+            $str = "<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:$errline</font> ".
+                "<font color=red>[$errno] <b>$errstr</b></font></font>";
 
             switch ($errno) {
                 case 2: // E_WARNING
@@ -77,7 +80,13 @@ if (!function_exists('error_handler')) {
                     // no-break
                 default:
                     // throw consistently all errors into exceptions
-                    throw new ErrorException($errorType[$errno].': ['.$errfile.':'.$errline.']'.$errstr, 0, $errno, $errfile, $errline);
+                    throw new ErrorException(
+                        $errorType[$errno].': ['.$errfile.':'.$errline.']'.$errstr,
+                        0,
+                        $errno,
+                        $errfile,
+                        $errline
+                    );
             }
         }
     }
@@ -109,18 +118,24 @@ if (!defined('PASSWORD_BCRYPT')) {
     function password_hash($password, $algo, array $options = array())
     {
         if (!function_exists('crypt')) {
-            trigger_error('Crypt must be loaded for password_hash to function', E_USER_WARNING);
-
+            trigger_error(
+                'Crypt must be loaded for password_hash to function',
+                E_USER_WARNING
+            );
             return;
         }
         if (!is_string($password)) {
-            trigger_error('password_hash(): Password must be a string', E_USER_WARNING);
-
+            trigger_error(
+                'password_hash(): Password must be a string',
+                E_USER_WARNING
+            );
             return;
         }
         if (!is_int($algo)) {
-            trigger_error('password_hash() expects parameter 2 to be long, '.gettype($algo).' given', E_USER_WARNING);
-
+            trigger_error(
+                'password_hash() expects parameter 2 to be long, '.gettype($algo).' given',
+                E_USER_WARNING
+            );
             return;
         }
         switch ($algo) {
@@ -130,7 +145,10 @@ if (!defined('PASSWORD_BCRYPT')) {
                 if (isset($options['cost'])) {
                     $cost = $options['cost'];
                     if ($cost < 4 || $cost > 31) {
-                        trigger_error(sprintf('password_hash(): Invalid bcrypt cost parameter specified: %d', $cost), E_USER_WARNING);
+                        trigger_error(
+                            sprintf('password_hash(): Invalid bcrypt cost parameter specified: %d', $cost),
+                            E_USER_WARNING
+                        );
                         return;
                     }
                 }
@@ -138,7 +156,10 @@ if (!defined('PASSWORD_BCRYPT')) {
                 $hash_format = sprintf('$2y$%02d$', $cost);
                 break;
             default:
-                trigger_error(sprintf('password_hash(): Unknown password hashing algorithm: %s', $algo), E_USER_WARNING);
+                trigger_error(
+                    sprintf('password_hash(): Unknown password hashing algorithm: %s', $algo),
+                    E_USER_WARNING
+                );
                 return;
         }
         if (isset($options['salt'])) {
@@ -164,8 +185,14 @@ if (!defined('PASSWORD_BCRYPT')) {
                     return;
             }
             if (strlen($salt) < $required_salt_len) {
-                trigger_error(sprintf('password_hash(): Provided salt is too short: %d expecting %d', strlen($salt), $required_salt_len), E_USER_WARNING);
-
+                trigger_error(
+                    sprintf(
+                        'password_hash(): Provided salt is too short: %d expecting %d',
+                        strlen($salt),
+                        $required_salt_len
+                    ),
+                    E_USER_WARNING
+                );
                 return;
             } elseif (0 == preg_match('#^[a-zA-Z0-9./]+$#D', $salt)) {
                 $salt = str_replace('+', '.', base64_encode($salt));

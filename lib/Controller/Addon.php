@@ -86,7 +86,8 @@ class Controller_Addon extends AbstractController
                 );
             }
 
-            $this->location = $this->app->pathfinder->public_location->addRelativeLocation($this->addon_base_path, $contents);
+            $this->location = $this->app->pathfinder->public_location
+                ->addRelativeLocation($this->addon_base_path, $contents);
         }
 
         return $this->location;

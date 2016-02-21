@@ -42,7 +42,8 @@ class Controller_Tester extends Page
             return;    // used for multi-page testing
         }
         //$this->grid=$this->add('Grid');
-        $this->grid->addColumn('template', 'name')->setTemplate('<a href="'.$this->app->url(null, array('testonly' => '')).'<?$name?>"><?$name?></a>');
+        $this->grid->addColumn('template', 'name')
+            ->setTemplate('<a href="'.$this->app->url(null, array('testonly' => '')).'<?$name?>"><?$name?></a>');
 
         $this->setVariance(array('Test'));
 
@@ -101,7 +102,9 @@ class Controller_Tester extends Page
                     if (method_exists($test_obj, 'prepare_'.$m)) {
                         $input = $test_obj->{'prepare_'.$m}($vari, $method);
                     } else {
-                        if (($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')) {
+                        if (($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare'))
+                            || method_exists($test_obj, 'prepare')
+                        ) {
                             $input = $test_obj->prepare($vari, $method);
                         } else {
                             $input = null;
@@ -221,7 +224,9 @@ class Controller_Tester extends Page
                     if (method_exists($test_obj, 'prepare_'.$m)) {
                         $input = $test_obj->{'prepare_'.$m}($vari, $method);
                     } else {
-                        if (($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare')) || method_exists($test_obj, 'prepare')) {
+                        if (($test_obj instanceof AbstractObject && $test_obj->hasMethod('prepare'))
+                            || method_exists($test_obj, 'prepare')
+                        ) {
                             $input = $test_obj->prepare($vari, $method);
                         } else {
                             $input = null;

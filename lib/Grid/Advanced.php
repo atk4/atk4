@@ -1244,7 +1244,8 @@ class Grid_Advanced extends Grid_Basic
         $attr = $this->columns[$field]['id_field'] ?: 'id';
         $this->current_row['_link'] =
             $this->app->url($page, array($attr => $this->columns[$field]['id_value']
-                ? ($this->model[$this->columns[$field]['id_value']] ?: $this->current_row[$this->columns[$field]['id_value'].'_original'])
+                ? ($this->model[$this->columns[$field]['id_value']]
+                    ?: $this->current_row[$this->columns[$field]['id_value'].'_original'])
                 : $this->current_id, ));
 
         if (!$this->current_row[$field]) {

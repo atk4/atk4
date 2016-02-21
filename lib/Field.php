@@ -612,7 +612,11 @@ class Field extends AbstractModel
         if ($this->type == 'boolean') {
             $val = $this->getBooleanValue($val);
         }
-        if ($val == '' && !$this->mandatory && ($this->listData || $this instanceof Field_Reference) && $this->type != 'boolean') {
+        if ($val == ''
+            && !$this->mandatory
+            && ($this->listData || $this instanceof Field_Reference)
+            && $this->type != 'boolean'
+        ) {
             $val = null;
         }
 
@@ -623,7 +627,8 @@ class Field extends AbstractModel
     {
         $q = $this->owner->_dsql();
 
-        return $q->bt($this->relation ? $this->relation->short_name : $q->main_table).'.'.$q->bt($this->actual_field ?: $this->short_name);
+        return $q->bt($this->relation ? $this->relation->short_name : $q->main_table).'.'.
+            $q->bt($this->actual_field ?: $this->short_name);
     }
 
     /** @obsolete use hasOne instead */

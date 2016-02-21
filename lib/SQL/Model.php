@@ -24,7 +24,10 @@
  **/
 class SQL_Model extends Model implements Serializable
 {
-    /** Master DSQL record which will be cloned by other operations. For low level use only. Use $this->dsql() when in doubt. */
+    /**
+    * Master DSQL record which will be cloned by other operations.
+    * For low level use only. Use $this->dsql() when in doubt.
+    */
     protected $dsql;
     public $field_class = 'Field';
 
@@ -222,9 +225,17 @@ class SQL_Model extends Model implements Serializable
             ->add('Field_Expression', $name)
             ->set($expression);
     }
-    /** Constructs model from multiple tables. Queries will join tables, inserts, updates and deletes will be applied on both tables */
-    public function join($foreign_table, $master_field = null, $join_kind = null, $_foreign_alias = null, $relation = null)
-    {
+    /**
+     * Constructs model from multiple tables.
+     * Queries will join tables, inserts, updates and deletes will be applied on both tables
+     */
+    public function join(
+        $foreign_table,
+        $master_field = null,
+        $join_kind = null,
+        $_foreign_alias = null,
+        $relation = null
+    ) {
         if (!$_foreign_alias) {
             $_foreign_alias = '_'.$foreign_table[0];
         }
@@ -233,9 +244,17 @@ class SQL_Model extends Model implements Serializable
         return $this->relations[$_foreign_alias] = $this->add('SQL_Relation', $_foreign_alias)
             ->set($foreign_table, $master_field, $join_kind, $relation);
     }
-    /** Creates weak join between tables. The foreign table may be absent and will not be automatically deleted */
-    public function leftJoin($foreign_table, $master_field = null, $join_kind = null, $_foreign_alias = null, $relation = null)
-    {
+    /**
+     * Creates weak join between tables.
+     * The foreign table may be absent and will not be automatically deleted.
+     */
+    public function leftJoin(
+        $foreign_table,
+        $master_field = null,
+        $join_kind = null,
+        $_foreign_alias = null,
+        $relation = null
+    ) {
         if (!$join_kind) {
             $join_kind = 'left';
         }
@@ -502,7 +521,7 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** @depreciated use two-argument addCondition. Always keep $field equals to $value for queries and new data */
+    /** @deprecated use two-argument addCondition. Always keep $field equals to $value for queries and new data */
     public function setMasterField($field, $value)
     {
         return $this->addCondition($field, $value);
@@ -685,7 +704,10 @@ class SQL_Model extends Model implements Serializable
 
         return $this->_load($id);
     }
-    /** Similar to loadAny() but will apply condition before loading. Condition is temporary. Fails if record is not loaded. */
+    /**
+     * Similar to loadAny() but will apply condition before loading.
+     * Condition is temporary. Fails if record is not loaded.
+     */
     public function loadBy($field, $cond = undefined, $value = undefined)
     {
         $q = $this->dsql;
@@ -795,7 +817,10 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** Save model into database and try to load it back as a new model of specified class. Instance of new class is returned */
+    /**
+     * Save model into database and try to load it back as a new model of specified class.
+     * Instance of new class is returned.
+     */
     public function saveAs($model)
     {
         if (is_string($model)) {
@@ -808,7 +833,10 @@ class SQL_Model extends Model implements Serializable
 
         return $res;
     }
-    /** Save model into database and load it back. If for some reason it won't load, whole operation is undone */
+    /**
+     * Save model into database and load it back.
+     * If for some reason it won't load, whole operation is undone.
+     */
     public function save()
     {
         $this->_dsql()->owner->beginTransaction();
@@ -1054,7 +1082,8 @@ class SQL_Model extends Model implements Serializable
                 || is_array($this->data[$name])
                 || (string) $value != (string) $this->data[$name] // this is not nice..
                 || $value !== $this->data[$name] // considers case where value = false and data[$name] = null
-                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all (for example in model using array controller)
+                || !isset($this->data[$name]) // considers case where data[$name] is not initialized at all
+                                              //    (for example in model using array controller)
             )
         ) {
             $this->data[$name] = $value;

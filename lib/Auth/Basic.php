@@ -83,7 +83,11 @@ class Auth_Basic extends AbstractController
             return $this;
         }
         $m = $this->add('Model')
-            ->setSource('Array', array(is_array($user) ? $user : array($this->login_field => $user, $this->password_field => $pass)));
+            ->setSource('Array', array(
+                is_array($user)
+                ? $user
+                : array($this->login_field => $user, $this->password_field => $pass)
+            ));
         $m->id_field = $this->login_field;
         $this->setModel($m);
 
@@ -271,7 +275,9 @@ class Auth_Basic extends AbstractController
                 return password_hash($password, $this->hash_algo, $this->hash_options);
             case 'sha256/salt':
                 if (!$salt) {
-                    throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
+                    throw $this->exception(
+                        'sha256 requires salt (2nd argument to encryptPassword and is normaly an email)'
+                    );
                 }
                 $key = $this->app->getConfig('auth/key', $this->app->name);
                 if ($this->password_encryption) {
@@ -286,7 +292,8 @@ class Auth_Basic extends AbstractController
             case 'rot13':
                 return str_rot13($password);
             default:
-                throw $this->exception('No such encryption method')->addMoreInfo('encryption', $this->password_encryption);
+                throw $this->exception('No such encryption method')
+                    ->addMoreInfo('encryption', $this->password_encryption);
         }
     }
     /**
@@ -622,8 +629,11 @@ class Auth_Basic extends AbstractController
 
         return $this;
     }
-    /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form,
-     * add template/default/page/login.html */
+    /**
+     * Creates log-in form.
+     * Override if you want to use your own form. If you need to change template used by a log-in form,
+     * add template/default/page/login.html
+     */
     public function createForm($page)
     {
         $form = $page->add('Form', null, null, array('form/minimal'));

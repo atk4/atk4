@@ -208,7 +208,8 @@ class BaseException extends Exception
 
     public function getHeader()
     {
-        return get_class($this).': '.htmlspecialchars($this->getMessage()).($this->getCode() ? ' [code: '.$this->getCode().']' : '');
+        return get_class($this).': '.htmlspecialchars($this->getMessage()).
+            ($this->getCode() ? ' [code: '.$this->getCode().']' : '');
     }
     public function getHTMLHeader()
     {
@@ -374,7 +375,9 @@ class BaseException extends Exception
                 }
             }
 
-            if (($sh == null && strpos($bt['file'], '/atk4/lib/') === false) || (!is_int($sh) && $bt['function'] == $sh)) {
+            if (($sh == null && strpos($bt['file'], '/atk4/lib/') === false)
+                || (!is_int($sh) && $bt['function'] == $sh)
+            ) {
                 $sh = $n;
             }
 
@@ -383,7 +386,8 @@ class BaseException extends Exception
                 $doc .= '#'.get_class($bt['object']).'::'.$bt['function'];
             }
 
-            $output .= '<tr><td valign=top align=right class=atk-effect-'.($sh == $n ? 'danger' : 'info').'>'.htmlspecialchars(dirname($bt['file'])).'/'.
+            $output .= '<tr><td valign=top align=right class=atk-effect-'.
+                ($sh == $n ? 'danger' : 'info').'>'.htmlspecialchars(dirname($bt['file'])).'/'.
                 '<b>'.htmlspecialchars(basename($bt['file'])).'</b>';
             $output .= ":{$bt['line']}</font>&nbsp;</td>";
             $name = (!isset($bt['object']->name)) ? get_class($bt['object']) : $bt['object']->name;
@@ -392,7 +396,8 @@ class BaseException extends Exception
             } else {
                 $output .= '<td></td>';
             }
-            $output .= '<td valign=top class=atk-effect-'.($sh == $n ? 'danger' : 'success').'>'.get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</td>";
+            $output .= '<td valign=top class=atk-effect-'.($sh == $n ? 'danger' : 'success').'>'.
+                get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</td>";
 
             if ($doc) {
                 $output .= "<td><a href='".$doc."' target='_blank'><i class='icon-book'></i></a></td>";

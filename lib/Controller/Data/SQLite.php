@@ -17,7 +17,9 @@ class Controller_Data_SQLite extends Controller_Data_SQL
         } elseif (isset($model->app->db_sqlite)) {
             $model->dsql = $model->app->db_sqlite->dsql();
         } else {
-            $model->app->db_sqlite = $this->app->dbConnect(array('sqlite:data/main.db', null, null, array(PDO::ATTR_PERSISTENT => false)));
+            $model->app->db_sqlite = $this->app->dbConnect(
+                array('sqlite:data/main.db', null, null, array(PDO::ATTR_PERSISTENT => false))
+            );
             $model->dsql = $model->app->db_sqlite->dsql();
         };
         $model->dsql->id_field = $model->id_field;

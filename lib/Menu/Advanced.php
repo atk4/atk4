@@ -120,7 +120,10 @@ abstract class Menu_Advanced extends View
             if (@$model->hierarchy_controller && $model[strtolower($model->hierarchy_controller->child_ref).'_cnt']) {
                 $m = $this->addMenu($model[$options['title_field'] ?: $m->title_field]);
                 foreach ($model->ref($model->hierarchy_controller->child_ref) as $child) {
-                    $m->addItem($options['title_field'] ?: $child[$options['title_field'] ?: $model->title_field], $child['page']);
+                    $m->addItem(
+                        $options['title_field'] ?: $child[$options['title_field'] ?: $model->title_field],
+                        $child['page']
+                    );
                 }
             } else {
                 $this->addItem($model[$options['title_field'] ?: $model->title_field], $model['page']);

@@ -508,7 +508,8 @@ class GiTemplate extends AbstractModel implements ArrayAccess
         $s = '';
         foreach ($template as $key => $val) {
             if (is_array($val)) {
-                $s .= '<font color="blue">{'.$key.'}</font>'.$this->_getDumpTags($val).'<font color="blue">{/'.$key.'}</font>';
+                $s .= '<font color="blue">{'.$key.'}</font>'.
+                    $this->_getDumpTags($val).'<font color="blue">{/'.$key.'}</font>';
             } else {
                 $s .= htmlspecialchars($val);
             }
@@ -530,7 +531,9 @@ class GiTemplate extends AbstractModel implements ArrayAccess
         if (!$this->app) {
             throw new Exception_InitError('You should use add() to add objects!');
         }
-        $f = $this->app->locatePath($this->template_type ?: $this->settings['template_type'], $template_name.$this->settings['extension']);
+        $f = $this->app->locatePath(
+            $this->template_type ?: $this->settings['template_type'], $template_name.$this->settings['extension']
+        );
 
         return $this->origin_filename = $f;
     }

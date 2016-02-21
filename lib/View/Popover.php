@@ -83,7 +83,12 @@ class View_Popover extends View
                 'my' => $options['my'] ?: 'center top',
                 'at' => $options['at'] ?: 'center bottom+8',
                 'of' => $this->js()->_selectorThis(),
-                //'using'=>$this->js(null,'function(position,data){ $( this ).css( position ); console.log("Position: ",data); var rev={vertical:"horizontal",horizontal:"vertical"}; $(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}')
+                //'using'=>$this->js(
+                //    null,
+                //    'function(position,data){ $( this ).css( position ); console.log("Position: ",data); '.
+                //    'var rev={vertical:"horizontal",horizontal:"vertical"}; '.
+                //    '$(this).find(".arrow").addClass(rev[data.important]+" "+data.vertical+" "+data.horizontal);}'
+                //)
             ),
         ));
     }

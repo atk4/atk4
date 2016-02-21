@@ -42,20 +42,28 @@ class Page extends AbstractView
         $this->template->trySet('_page', $this->short_name);
 
         if (method_exists($this, get_class($this))) {
-            throw $this->exception('Your sub-page name matches your page class name. PHP will assume that your method is constructor.')
+            throw $this->exception('Your sub-page name matches your page class name. '.
+                'PHP will assume that your method is constructor.')
                 ->addMoreInfo('method and class', get_class($this))
                 ;
         }
 
-        if ($this->app instanceof App_Frontend && @$this->app->layout && $this->app->layout->template->hasTag('page_title')) {
+        if ($this->app instanceof App_Frontend
+            && @$this->app->layout
+            && $this->app->layout->template->hasTag('page_title')
+        ) {
             $this->app->addHook('afterInit', array($this, 'addBreadCrumb'));
         }
 
-        if ($this->app instanceof App_Frontend && $this->app->template->hasTag('page_metas')) {
+        if ($this->app instanceof App_Frontend
+            && $this->app->template->hasTag('page_metas')
+        ) {
             $this->app->addHook('afterInit', array($this, 'addMetas'));
         }
 
-        if ($this->app instanceof App_Frontend && $this->app->template->hasTag('page_title')) {
+        if ($this->app instanceof App_Frontend
+            && $this->app->template->hasTag('page_title')
+        ) {
             $this->app->addHook('afterInit', array($this, 'addTitle'));
         }
 

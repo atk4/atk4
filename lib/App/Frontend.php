@@ -214,7 +214,8 @@ class App_Frontend extends App_Web
                 $i->add('H1')->set($e->getMessage());
 
                 if ($e instanceof Exception_Migration) {
-                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. Your project may require some minor tweaks before you can use 4.3.');
+                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. '.
+                        'Your project may require some minor tweaks before you can use 4.3.');
                 }
 
                 $b = $i->add('Button')->addClass('atk-swatch-green');

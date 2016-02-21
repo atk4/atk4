@@ -192,7 +192,8 @@ class SMlite extends AbstractModel
 
         if (!$this->hasTag($tag)) {
             $o = $this->owner ? ' for '.$this->owner->__toString() : '';
-            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".implode(', ', array_keys($this->tags)));
+            throw new BaseException("No such tag ($tag) in template$o. Tags are: ".
+                implode(', ', array_keys($this->tags)));
         }
         $class_name = get_class($this);
         $new = $this->add($class_name);
@@ -266,7 +267,10 @@ class SMlite extends AbstractModel
             $value = $value->__toString();
         }
         // Temporary here until we finish testing
-        if ($encode && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug', false)) {
+        if ($encode
+            && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES)
+            && $this->app->getConfig('html_injection_debug', false)
+        ) {
             throw $this->exception('Attempted to supply html string through append()')
                 ->addMoreInfo('val', var_export($value, true))
                 ->addMoreInfo('enc', var_export($this->app->encodeHtmlChars($value, ENT_NOQUOTES), true))
@@ -287,7 +291,8 @@ class SMlite extends AbstractModel
         }
         foreach ($this->tags[$tag] as $key => $_) {
             if (!is_array($this->tags[$tag][$key])) {
-                //throw new BaseException("Problem appending '".$this->app->encodeHtmlChars($value)."' to '$tag': key=$key");
+                //throw new BaseException("Problem appending '".
+                //      $this->app->encodeHtmlChars($value)."' to '$tag': key=$key");
                 $this->tags[$tag][$key] = array($this->tags[$tag][$key]);
             }
             $this->tags[$tag][$key][] = $value;
@@ -376,7 +381,10 @@ class SMlite extends AbstractModel
             return $this;
         }
 
-        if ($encode && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES) && $this->app->getConfig('html_injection_debug', false)) {
+        if ($encode
+            && $value != $this->app->encodeHtmlChars($value, ENT_NOQUOTES)
+            && $this->app->getConfig('html_injection_debug', false)
+        ) {
             throw $this->exception('Attempted to supply html string through set()')
                 ->addMoreInfo('val', var_export($value, true))
                 ->addMoreInfo('enc', var_export($this->app->encodeHtmlChars($value, ENT_NOQUOTES), true))
@@ -707,11 +715,15 @@ class SMlite extends AbstractModel
         // output templates
         $t = array(
             'tag-html' => '<span class="tag-html" style="color:black;">%s</span>',
-            'tag-open' => '<span class="tag-container" onmouseover="$(this).css(\'background\',\'lightgray\');" onmouseout="$(this).css(\'background\',\'transparent\');">'.
-                    '<span style="color:blue;cursor:pointer;" title="Start tag" onclick="$(this).next().toggle();">[%s]</span>'.
+            'tag-open' => '<span class="tag-container" '.
+                        'onmouseover="$(this).css(\'background\',\'lightgray\');" '.
+                        'onmouseout="$(this).css(\'background\',\'transparent\');">'.
+                    '<span style="color:blue;cursor:pointer;" title="Start tag" '.
+                        'onclick="$(this).next().toggle();">[%s]</span>'.
                     '<span>',
             'tag-close' => '</span>'.
-                    '<span style="color:blue;cursor:pointer;" title="End tag" onclick="$(this).prev().toggle();">[/%s]</span>'.
+                    '<span style="color:blue;cursor:pointer;" title="End tag" '.
+                        'onclick="$(this).prev().toggle();">[/%s]</span>'.
                 '</span>',
         );
         $result = '';

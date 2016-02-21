@@ -30,7 +30,7 @@ class Form_Basic extends View implements ArrayAccess
     public $data = array();
 
     public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
-    protected $loaded_from_db = false;  // if true, update() will try updating existing row. if false - it would insert new
+    protected $loaded_from_db = false;  // true - update() will try updating existing row. false - it would insert new
     protected $ajax_submits = array();    // contains AJAX instances assigned to buttons
     protected $get_field = null;          // if condition was passed to a form through GET, contains a GET field name
     protected $conditions = array();
@@ -89,7 +89,7 @@ class Form_Basic extends View implements ArrayAccess
         // commonly replaceable chunks
         $this->grabTemplateChunk('form_comment');
         $this->grabTemplateChunk('form_separator');
-        $this->grabTemplateChunk('form_line');      // template for form line, must contain field_caption,field_input,field_error
+        $this->grabTemplateChunk('form_line'); // form line template,must contain field_caption,field_input,field_error
         if ($this->template->is_set('hidden_form_line')) {
             $this->grabTemplateChunk('hidden_form_line');
         }

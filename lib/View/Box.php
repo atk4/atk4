@@ -11,7 +11,8 @@ class View_Box extends View
         return $this;
     }
     /**
-     * By default box uses information Icon. You can use addIcon() to override or $this->template->del('Icon') to remove.
+     * By default box uses information Icon.
+     * You can use addIcon() to override or $this->template->del('Icon') to remove.
      *
      * @param [type] $i [description]
      */

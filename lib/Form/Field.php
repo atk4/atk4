@@ -403,7 +403,10 @@ abstract class Form_Field extends AbstractView
                 : ''
         );
         if (is_object($this->mandatory_template)) {
-            $this->template->trySetHTML('field_mandatory', $this->isMandatory() ? $this->mandatory_template->render() : '');
+            $this->template->trySetHTML(
+                'field_mandatory',
+                $this->isMandatory() ? $this->mandatory_template->render() : ''
+            );
         }
         $this->output($this->template->render());
     }

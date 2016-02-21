@@ -118,12 +118,16 @@ class App_Installer extends App_Web
     public function showIntro($p)
     {
         $p->add('H1')->set('Welcome to Web Software');
-        $p->add('P')->set('Thank you for downloading this software. This wizard will guide you through the installation procedure.');
+        $p->add('P')->set('Thank you for downloading this software. '.
+            'This wizard will guide you through the installation procedure.');
 
         if (!is_writable('.')) {
-            $p->add('View_Warning')->setHTML('This installation does not have permissions to create your <b>config.php</b> file for you. You will need to manually create this file');
+            $p->add('View_Warning')->setHTML('This installation does not have permissions to create your '.
+                '<b>config.php</b> file for you. You will need to manually create this file');
         } elseif (file_exists('config.php')) {
-            $p->add('View_Warning')->setHTML('It appears that you already have <b>config.php</b> file in your applicaiton folder. This installation will read defaults from config.php, but it will ultimatelly <b>overwrite</b> it with the new settings.');
+            $p->add('View_Warning')->setHTML('It appears that you already have <b>config.php</b> file in your '.
+                'application folder. This installation will read defaults from config.php, but it will ultimatelly '.
+                '<b>overwrite</b> it with the new settings.');
         }
 
         $p->add('Button')->set('Start')->js('click')->univ()->location($this->stepURL('first'));

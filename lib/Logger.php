@@ -168,7 +168,8 @@ class Logger extends AbstractController
         if (session_id()) {
             $this->forget('debug_log');
         }
-        $this->debug_log .= '[<font color=red>Debug log from '.date('d.m.Y H:m:s').' to '.$_SERVER['QUERY_STRING']."</font>] - debug started<br>\n";
+        $this->debug_log .= '[<font color=red>Debug log from '.date('d.m.Y H:m:s').' to '.
+            $_SERVER['QUERY_STRING']."</font>] - debug started<br>\n";
         $this->debug_added = false;
 
         register_shutdown_function(array($this, 'showDebugInfo'));
@@ -234,7 +235,9 @@ class Logger extends AbstractController
         // Get IP address
         if (isset($_SERVER['REMOTE_ADDR'])) {
             //FIXME: generates warning - array_shift wants variable
-            //$this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"])) : $_SERVER["REMOTE_ADDR"]);
+            //$this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"])
+            //    ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"]))
+            //    : $_SERVER["REMOTE_ADDR"]);
         }
 
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -406,7 +409,8 @@ class Logger extends AbstractController
             $this->caughtException($caller, $e->by_exception);
         }
 
-        echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
+        echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your ".
+            "config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
 
         exit;
     }
@@ -511,11 +515,13 @@ class Logger extends AbstractController
     public function htmlLine($msg, $frame = array(), $prefix = null)
     {
         if (!$frame) {
-            return "<font style='font-family: verdana;  font-size:10px'><font color=blue>warning: </font> <font color=red><b>$msg</b></font></font><br>";
+            return "<font style='font-family: verdana;  font-size:10px'><font color=blue>warning: </font> ".
+                "<font color=red><b>$msg</b></font></font><br>";
         } else {
             $errfile = dirname($frame['file']).'/<b>'.basename($frame['file']).'</b>';
 
-            return "<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:".$frame['line'].'</font> <font color=red>'.($prefix ? "$prefix: " : '')."<b>$msg</b></font></font><br>";
+            return "<font style='font-family: verdana;  font-size:10px'><font color=blue>$errfile:".$frame['line'].
+                '</font> <font color=red>'.($prefix ? "$prefix: " : '')."<b>$msg</b></font></font><br>";
         }
     }
     public function txtLine($msg, $frame = array(), $prefix = null)
@@ -619,7 +625,9 @@ class Logger extends AbstractController
     {
         $output = "<div >\n";
         // TODO: allow extending backtrace option, so that
-        $output .= "<b>Stack trace:</b><br /><table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
+        $output .= "<b>Stack trace:</b><br />".
+            "<table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; ".
+            "font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
         $output .= "<tr><th align='right'>File</th><th>&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>";
         if (!isset($backtrace)) {
             $backtrace = debug_backtrace();
@@ -666,20 +674,21 @@ class Logger extends AbstractController
                 }
             }
 
-            if (($sh == null && strpos($bt['file'], '/atk4/lib/') === false) || (!is_int($sh) && $bt['function'] == $sh)) {
+            if (($sh == null && strpos($bt['file'], '/atk4/lib/') === false)
+                || (!is_int($sh) && $bt['function'] == $sh)
+            ) {
                 $sh = $n;
             }
 
-            $output .= '<tr><td valign=top align=right><font color='.($sh == $n ? 'red' : 'blue').'>'.htmlspecialchars(dirname($bt['file'])).'/'.
+            $output .= '<tr><td valign=top align=right><font color='.($sh == $n ? 'red' : 'blue').'>'.
+                htmlspecialchars(dirname($bt['file'])).'/'.
                 '<b>'.htmlspecialchars(basename($bt['file'])).'</b></font></td>';
-            $output .= '<td valign=top nowrap><font color='.($sh == $n ? 'red' : 'blue').">:{$bt['line']}</font>&nbsp;</td>";
+            $output .= '<td valign=top nowrap><font color='.
+                ($sh == $n ? 'red' : 'blue').">:{$bt['line']}</font>&nbsp;</td>";
             $name = (!isset($bt['object']->name)) ? get_class($bt['object']) : $bt['object']->name;
-            if ($bt['object']) {
-                $output .= '<td>'.$name.'</td>';
-            } else {
-                $output .= '<td></td>';
-            }
-            $output .= '<td valign=top><font color='.($sh == $n ? 'red' : 'green').'>'.get_class($bt['object'])."{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+            $output .= '<td>'.($bt['object'] ? $name : '').'</td>';
+            $output .= '<td valign=top><font color='.($sh == $n ? 'red' : 'green').'>'.get_class($bt['object']).
+                "{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
         }
         $output .= "</table></div>\n";
 
@@ -774,7 +783,10 @@ class Logger extends AbstractController
         $this->filename = $filename;
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->_current_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? array_shift(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])) : $_SERVER['REMOTE_ADDR']);
+            $this->_current_ip =
+                isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+                ? array_shift(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']))
+                : $_SERVER['REMOTE_ADDR'];
         }
     }
 

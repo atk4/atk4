@@ -18,8 +18,10 @@ class SQLException extends BaseException
         $msg = '<p>'.$message.'</p>';
 
         if ($mysql_error) {
-            $msg .= ($last_query == '' ? '' : "<b>Last query:</b> <div style='border: 1px solid black'>".$last_query.'</div>')
-                ."<b>MySQL error:</b> <div style='border: 1px solid black'><font color=red>".$mysql_error.'</font></div>'
+            $msg .= ($last_query == '' ? '' : "<b>Last query:</b> <div style='border: 1px solid black'>".$last_query.
+                '</div>')
+                ."<b>MySQL error:</b> <div style='border: 1px solid black'><font color=red>".$mysql_error.
+                '</font></div>'
                 //."</div><small><address>DBlite v".$this->version."</address></small>\n"
                 ;
         }

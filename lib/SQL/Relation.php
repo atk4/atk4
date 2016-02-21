@@ -54,7 +54,11 @@ class SQL_Relation extends AbstractModel
     public function set($foreign_table, $master_field = null, $join_kind = null, $relation = null)
     {
         // http://dev.mysql.com/doc/refman/5.0/en/join.html
-        $join_types = array('left', 'right', 'inner', 'cross', 'natural', 'left outer', 'right outer', 'natural left', 'natural right', 'natural left outer', 'natural right outer');
+        $join_types = array(
+            'left', 'right', 'inner', 'cross', 'natural',
+            'left outer', 'right outer', 'natural left',
+            'natural right', 'natural left outer', 'natural right outer'
+        );
         if ($join_kind && !in_array(strtolower($join_kind), $join_types)) {
             throw $this->exception('Specify reasonable SQL join type.')
                 ->addMoreInfo('Specified', $join_kind)

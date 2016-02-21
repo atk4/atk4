@@ -19,5 +19,11 @@
         <!-- Arguments with default values must be at the end of the argument list -->
         <exclude name="PEAR.Functions.ValidDefaultValue.NotAtEnd"/>
 
+        <!-- Property names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
+        <exclude name="PSR2.Classes.PropertyDeclarationSniff"/>
+
+        <!-- Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
+        <exclude name="PSR2.Methods.MethodDeclarationSniff"/>
+
     </rule>
 </ruleset>

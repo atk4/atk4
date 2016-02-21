@@ -7,6 +7,7 @@
  *
  * @version     $Id$
  */
+// @codingStandardsIgnoreStart
 class Menu_Compat extends AbstractView
 {
     protected $items = array();
@@ -72,7 +73,12 @@ class Menu_Compat extends AbstractView
       }*/
     public function addSeparator($template = null)
     {
-        $this->items[] = $this->add('MenuSeparator', $this->short_name.'_separator'.count($this->items), 'Item', $template);
+        $this->items[] = $this->add(
+            'MenuSeparator',
+            $this->short_name.'_separator'.count($this->items),
+            'Item',
+            $template
+        );
 
         return $this;
     }
@@ -119,3 +125,4 @@ class MenuSeparator extends AbstractView
         return array(array_shift($owner_template), 'MenuSeparator');
     }
 }
+// @codingStandardsIgnoreEnd

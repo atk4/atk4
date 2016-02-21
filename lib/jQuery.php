@@ -128,7 +128,8 @@ class jQuery extends AbstractController
     /* [private] .. ? */
     public function postRender()
     {
-        //echo nl2br(htmlspecialchars("Dump: \n".$this->app->template->renderRegion($this->app->template->tags['js_include'])));
+        //echo nl2br(htmlspecialchars(
+        //    "Dump: \n".$this->app->template->renderRegion($this->app->template->tags['js_include'])));
     }
     /* [private] Collect JavaScript chains from specified object and add them into onReady section */
     public function getJS($obj)
@@ -144,7 +145,9 @@ class jQuery extends AbstractController
             switch ($key) {
                 case 'never':
                     // send into debug output
-                    //if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
+                    //$s = "if(console)console.log(".
+                    //    "'Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')"
+                    //if(strlen($o)>2) $this->addOnReady($s);
                     continue;
 
                 case 'always':

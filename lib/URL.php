@@ -25,7 +25,8 @@ class URL extends AbstractModel
         }
 
         if (!$this->app->pm->base_url) {
-            throw $this->exception('PageManager is did not parse request URL. Use either parseRequestedURL or setURL (if you are in CLI application)');
+            throw $this->exception('PageManager is did not parse request URL. '.
+                'Use either parseRequestedURL or setURL (if you are in CLI application)');
         }
 
         $this->addStickyArguments();
