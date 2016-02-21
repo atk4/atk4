@@ -235,7 +235,7 @@ abstract class AbstractObject
         if (is_array($class)) {
             if (!$class[0]) {
                 throw $this->exception('When passing class as array, use ["Class", "option"=>123] format')
-                    ->addMoreInfo('class', $class);
+                    ->addMoreInfo('class', var_export($class, true));
             }
             $o = $class;
             $class = $o[0];
@@ -601,7 +601,7 @@ abstract class AbstractObject
      */
     public function exception($message = 'Undefined Exception', $type = null, $code = null)
     {
-        if (!$type) {
+        if ($type === null) {
             $type = $this->default_exception;
         } elseif ($type[0] == '_') {
             if ($this->default_exception == 'BaseException') {
@@ -921,7 +921,7 @@ abstract class AbstractObject
         )
             ->addMoreInfo('class', get_class($this))
             ->addMoreInfo('method', $method)
-            ->addMoreInfo('arguments', $arguments);
+            ->addMoreInfo('arguments', var_export($arguments, true));
     }
 
     /**
@@ -1054,22 +1054,24 @@ abstract class AbstractObject
      */
     public function each($callable)
     {
-        if (!($this instanceof Iterator)) {
-            throw $this->exception('Calling each() on non-iterative object');
-        }
+        if ($this instanceof Iterator) {
 
-        if (is_string($callable)) {
+            if (is_string($callable)) {
+                foreach ($this as $obj) {
+                    $obj->$callable();
+                }
+
+                return $this;
+            }
+
             foreach ($this as $obj) {
-                $obj->$callable();
+                if (call_user_func($callable, $obj) === false) {
+                    break;
+                }
             }
 
-            return $this;
-        }
-
-        foreach ($this as $obj) {
-            if (call_user_func($callable, $obj) === false) {
-                break;
-            }
+        } else {
+            throw $this->exception('Calling each() on non-iterative object');
         }
 
         return $this;
