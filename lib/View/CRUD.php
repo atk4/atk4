@@ -16,6 +16,8 @@ class View_CRUD extends View
      * form all you want.
      *
      * IMPORTANT: check isEditing() method
+     *
+     * @var Form
      */
     public $form = null;
 
@@ -25,6 +27,8 @@ class View_CRUD extends View
      * grid.
      *
      * IMPORTANT: check isEditing() method
+     *
+     * @var Grid
      */
     public $grid = null;
 
@@ -34,6 +38,8 @@ class View_CRUD extends View
      * array as second argument to add().
      *
      * $this->add('CRUD', array('grid_class'=>'MyGrid'));
+     *
+     * @var string
      */
     public $grid_class = 'Grid';
 
@@ -43,6 +49,8 @@ class View_CRUD extends View
      * associative array as second argument to add().
      *
      * $this->add('CRUD', array('form_class'=>'MyForm'));
+     *
+     * @var string
      */
     public $form_class = 'Form';
 
@@ -50,6 +58,8 @@ class View_CRUD extends View
      * You can pass additional options for grid using this array.
      *
      * $this->add('CRUD', array('grid_options'=>array('show_header'=>false)));
+     *
+     * @var array
      */
     public $grid_options = array();
 
@@ -57,6 +67,8 @@ class View_CRUD extends View
      * You can pass additional options for form using this array.
      *
      * $this->add('CRUD', array('form_options'=>array('js_widget'=>'ui.atk4_form')));
+     *
+     * @var array
      */
     public $form_options = array();
 
@@ -64,6 +76,8 @@ class View_CRUD extends View
      * Grid will contain an "Add X" button and will allow user to add records.
      *
      * $this->add('CRUD', array('allow_add'=>false')); // to disable
+     *
+     * @var bool
      */
     public $allow_add = true;
 
@@ -72,6 +86,8 @@ class View_CRUD extends View
      * records.
      *
      * $this->add('CRUD', array('allow_edit'=>false')); // to disable
+     *
+     * @var bool
      */
     public $allow_edit = true;
 
@@ -80,6 +96,8 @@ class View_CRUD extends View
      * thes set this option to false.
      *
      * $this->add('CRUD', array('allow_del'=>false')); // to disable
+     *
+     * @var bool
      */
     public $allow_del = true;
 
@@ -90,12 +108,16 @@ class View_CRUD extends View
      *
      * If you set this to 'false' then CRUD will not attempt to change
      * default label ("Add")
+     *
+     * @var string
      */
     public $entity_name = null;
 
     /**
      * This points to a Button object, which you can change if you want
      * a different label or anything else on it.
+     *
+     * @var Button
      */
     public $add_button;
 
@@ -106,23 +128,31 @@ class View_CRUD extends View
      *
      * If isEditing() then you can add more stuff on this page, by calling
      * virtual_page->getPage()->add('Hello!');
+     *
+     * @var VirtualPage
      */
     public $virtual_page = null;
 
     /**
      * When clicking on EDIT or ADD the frameURL is used. If you want to pass
      * some arguments to it, put your hash here.
+     *
+     * @var array
      */
     public $frame_options = null;
 
     /**
      * This is set to ID of the model when are in editing mode. In theory
      * this can also be 0, so use is_null().
+     *
+     * @var mixed
      */
     public $id = null;
 
     /**
      * Contains reload javascript, used occassionally throughout the object.
+     *
+     * @var jQuery_Chain
      */
     public $js_reload = null;
 
@@ -219,9 +249,9 @@ class View_CRUD extends View
      *
      * {@inheritdoc}
      *
-     * @param string|object $model       Same as parent
-     * @param array         $fields      Specify list of fields for form and grid
-     * @param array         $grid_fields Overide list of fields for the grid
+     * @param string|Model $model       Same as parent
+     * @param array        $fields      Specify list of fields for form and grid
+     * @param array        $grid_fields Overide list of fields for the grid
      *
      * @return AbstractModel $model
      */
@@ -348,7 +378,7 @@ class View_CRUD extends View
             $this->grid->addColumn('expander', 'ex_'.$s, $options['label'] ?: $s);
             $this->grid->columns['ex_'.$s]['page']
                 = $this->virtual_page->getURL('ex_'.$s);
-            $idfield = $this->grid->columns['ex_'.$s]['refid'].'_'.$this->model->id_field;
+            // unused: $idfield = $this->grid->columns['ex_'.$s]['refid'].'_'.$this->model->id_field;
         }
 
         if ($this->isEditing()) {
@@ -371,7 +401,7 @@ class View_CRUD extends View
      * @param string $name    Unique name, also button and title default
      * @param array  $options Options
      *
-     * @return Page|null Returns object if clicked on popup.
+     * @return Page|bool Returns object if clicked on popup.
      */
     public function addFrame($name, $options = array())
     {
@@ -472,6 +502,8 @@ class View_CRUD extends View
 
             return;
 
+            /* unused code below
+
             $has_parameters = (bool) $params;
             foreach ($params as $i => $param) {
                 $this->form->addField($param->name);
@@ -512,6 +544,8 @@ class View_CRUD extends View
             }
 
             return true;
+            */
+
         } elseif ($this->isEditing()) {
             return;
         }
@@ -561,7 +595,7 @@ class View_CRUD extends View
      *
      * @return void|Model If model, then bail out, no greed needed
      */
-    protected function configureAdd($fields)
+    protected function configureAdd($fields = null)
     {
         // We are actually in the frame!
         if ($this->isEditing('add')) {
@@ -599,7 +633,7 @@ class View_CRUD extends View
      *
      * @return void|Model If model, then bail out, no greed needed
      */
-    protected function configureEdit($fields)
+    protected function configureEdit($fields = null)
     {
         // We are actually in the frame!
         if ($this->isEditing('edit')) {

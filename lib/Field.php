@@ -34,6 +34,8 @@ class Field extends AbstractModel
 
     public $onField = null;
 
+    public $relations = array();  // Joins, @see from()
+
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"
      * constant. This method is used by all other sette-getters.
@@ -41,7 +43,7 @@ class Field extends AbstractModel
      * @param string $type  Corresponds to the name of property of a field
      * @param mixed  $value New value for a property.
      *
-     * @return mixed new or current pperty (if value is undefined)
+     * @return mixed|$this new or current property (if value is undefined)
      */
     public function setterGetter($type, $value = UNDEFINED)
     {
@@ -58,7 +60,7 @@ class Field extends AbstractModel
      *
      * @param mixed $value new value
      *
-     * @return Field $this
+     * @return $this
      */
     public function set($value = null)
     {
@@ -102,7 +104,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function type($t = UNDEFINED)
     {
@@ -115,7 +117,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function caption($t = UNDEFINED)
     {
@@ -134,7 +136,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function hint($t = UNDEFINED)
     {
@@ -145,7 +147,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function placeholder($t = UNDEFINED)
     {
@@ -160,7 +162,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function group($t = UNDEFINED)
     {
@@ -174,7 +176,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function readonly($t = UNDEFINED)
     {
@@ -191,7 +193,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function mandatory($t = UNDEFINED)
     {
@@ -217,7 +219,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function editable($t = UNDEFINED)
     {
@@ -231,7 +233,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function allowHTML($t = UNDEFINED)
     {
@@ -244,7 +246,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function searchable($t = UNDEFINED)
     {
@@ -257,7 +259,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function sortable($t = UNDEFINED)
     {
@@ -276,7 +278,7 @@ class Field extends AbstractModel
      *
      * @param mixed $t new value
      *
-     * @return mixed current value if $t=UNDEFINED
+     * @return mixed|$this current value if $t=UNDEFINED
      */
     public function display($t = UNDEFINED)
     {
@@ -305,7 +307,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function actual($t = UNDEFINED)
     {
@@ -320,7 +322,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function system($t = UNDEFINED)
     {
@@ -336,7 +338,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function hidden($t = UNDEFINED)
     {
@@ -349,7 +351,7 @@ class Field extends AbstractModel
      *
      * @param int $t new value
      *
-     * @return int current value if $t=UNDEFINED
+     * @return int|$this current value if $t=UNDEFINED
      */
     public function length($t = UNDEFINED)
     {
@@ -363,7 +365,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function defaultValue($t = UNDEFINED)
     {
@@ -379,7 +381,7 @@ class Field extends AbstractModel
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function visible($t = UNDEFINED)
     {
@@ -395,7 +397,7 @@ class Field extends AbstractModel
      *
      * @param array $t Array( id => val )
      *
-     * @return array current value if $t=UNDEFINED
+     * @return array|$this current value if $t=UNDEFINED
      */
     public function listData($t = UNDEFINED)
     {
@@ -430,7 +432,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function emptyText($t = UNDEFINED)
     {
@@ -443,7 +445,7 @@ class Field extends AbstractModel
      *
      * @param callback $c new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function onField($c = UNDEFINED)
     {
@@ -459,7 +461,7 @@ class Field extends AbstractModel
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function setModel($t = UNDEFINED)
     {
@@ -510,11 +512,11 @@ class Field extends AbstractModel
     /**
      * Binds the field to a relation (returned by join() function).
      *
-     * @param object $m the result of join() function
+     * @param mixed $m the result of join() function
      *
-     * @return self or the relation if $m is undefined
+     * @return $this|object or the relation if $m is undefined
      */
-    public function from($m)
+    public function from($m = undefined)
     {
         if ($m === undefined) {
             return $this->relation;
@@ -526,9 +528,6 @@ class Field extends AbstractModel
 
         return $this;
     }
-
-    // what is alias?
-    //function alias($t=undefined){ return $this->setterGetter('alias',$t); }
 
     /** Modifies specified query to include this particular field */
     public function updateSelectQuery($select)
@@ -587,8 +586,8 @@ class Field extends AbstractModel
         }
         if ($this->listData) {
             reset($this->listData);
-            list($junk, $yes_value) = each($this->listData);
-            @list($junk, $no_value) = each($this->listData);
+            list(, $yes_value) = each($this->listData);
+            @list(, $no_value) = each($this->listData);
             if ($no_value === null) {
                 $no_value = '';
             }
