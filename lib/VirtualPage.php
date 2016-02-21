@@ -186,10 +186,10 @@ class VirtualPage extends AbstractController
     /**
      * Call this if you are adding this inside a grid.
      *
-     * @param string $name       Field Name (must not contain spaces)
-     * @param string $title      Header for the column
-     * @param string $buttontext Text to put on the button
-     * @param string $grid       Specify grid to use, other than $owner
+     * @param string $name             Field Name (must not contain spaces)
+     * @param string $title            Header for the column
+     * @param array|string $buttontext Text to put on the button
+     * @param string $grid             Specify grid to use, other than $owner
      *
      * @return VirtualPage $this
      */
