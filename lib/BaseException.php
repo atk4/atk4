@@ -24,7 +24,7 @@ class BaseException extends Exception
     public $more_info = array();
 
     // Plain text recommendation on how the poblem can be solved
-    public $recommendation = false;
+    public $recommendation;
 
     // Array of available actions
     public $actions = array();
@@ -164,15 +164,12 @@ class BaseException extends Exception
     /**
      * Returns HTML representation of the exception.
      *
-     * @param string $message
-     *
      * @return string
      */
     public function getHTML()
     {
         $e = $this;
 
-        $o = '';
         $o = '<div class="atk-layout">';
 
         $o .= $this->getHTMLHeader();
@@ -232,17 +229,16 @@ class BaseException extends Exception
     {
         $solution = $this->getSolution();
         $recommendation = '<h3>'.$this->recommendation.'</h3>';
-        if (!$solution) {
+        if (empty($solution)) {
             return '';
         }
-        list($label, $url) = $solution;
 
         return
-        "<div class='atk-layout-row atk-effect-info'>".
-        "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'>".
-        $recommendation.
-        $this->getHTMLActions().
-        '</div></div>';
+            "<div class='atk-layout-row atk-effect-info'>".
+            "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'>".
+            $recommendation.
+            $this->getHTMLActions().
+            '</div></div>';
     }
 
     public function getHTMLActions()
@@ -261,14 +257,14 @@ class BaseException extends Exception
     /**
      * Utility.
      *
-     * @param [type] $key [description]
-     * @param [type] $gs  [description]
-     * @param [type] $ge  [description]
-     * @param [type] $ls  [description]
-     * @param [type] $le  [description]
-     * @param string $ind [description]
+     * @param array|object|string $key
+     * @param [type] $gs
+     * @param [type] $ge
+     * @param [type] $ls
+     * @param [type] $le
+     * @param string $ind
      *
-     * @return [type] [description]
+     * @return string
      */
     public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ')
     {
@@ -417,13 +413,10 @@ class BaseException extends Exception
      */
     public function getText()
     {
-        $text = '';
-        $args = array();
         $more_info = $this->print_r($this->more_info, '[', ']', '', ',', ' ');
 
-        $text .= get_class($this).': '.$this->getMessage().
-                 ' ('.$more_info.')';
-        $text .= ' in '.$this->getMyFile().':'.$this->getMyLine();
+        $text = get_class($this).': '.$this->getMessage().' ('.$more_info.')'.
+            ' in '.$this->getMyFile().':'.$this->getMyLine();
 
         return $text;
     }

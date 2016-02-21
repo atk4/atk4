@@ -15,6 +15,8 @@ class App_REST extends App_CLI
 
     public $page;
 
+    public $endpoint;
+
     /**
      * Initialization.
      */
@@ -102,7 +104,7 @@ class App_REST extends App_CLI
                         );
                 }
                 $this->caughtException($e);
-                $this->encodeOutput($error, null);
+                $this->encodeOutput($error);
 
                 return;
             }
@@ -149,12 +151,12 @@ class App_REST extends App_CLI
                     'type' => get_class($e),
                     'more_info' => $e instanceof BaseException ? $e->more_info : null,
                     );
-                array_walk_recursive($error, function (&$item, $key) {
+                array_walk_recursive($error, function (&$item) {
                     if (is_object($item)) {
                         $item = (string) $item;
                     }
                 });
-                $this->encodeOutput($error, null);
+                $this->encodeOutput($error);
             }
         } catch (Exception $e) {
             $this->caughtException($e);
@@ -164,10 +166,8 @@ class App_REST extends App_CLI
     /**
      * Override to extend the logging.
      *
-     * @param [type] $method [description]
-     * @param [type] $args   [description]
-     *
-     * @return [type] [description]
+     * @param string $method
+     * @param array $args
      */
     public function logRequest($method, $args)
     {
@@ -175,8 +175,6 @@ class App_REST extends App_CLI
 
     /**
      * Overwrite to extend the logging.
-     *
-     * @return [type] [description]
      */
     public function logSuccess()
     {

@@ -7,12 +7,12 @@ class Exception_Template extends BaseException
     public function init()
     {
         parent::init();
-        if (@$this->owner->template_file) {
+        if (isset($this->owner) && isset($this->owner->template_file)) {
             $this->addMoreInfo('file', $this->owner->template_file);
         }
 
         $keys = array_keys($this->owner->tags);
-        if ($keys) {
+        if (!empty($keys)) {
             $this->addMoreInfo('keys', implode(', ', $keys));
         }
 

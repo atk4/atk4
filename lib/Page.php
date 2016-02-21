@@ -61,11 +61,17 @@ class Page extends AbstractView
 
         parent::init();
     }
+    /**
+     * Set default template
+     *
+     * @return array|string
+     */
     public function defaultTemplate()
     {
         if (isset($_GET['cut_page'])) {
             return array('page');
         }
+
         $page_name = 'page/'.strtolower($this->short_name);
         // See if we can locate the page
         try {
