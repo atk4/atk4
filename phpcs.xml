@@ -25,5 +25,8 @@
         <!-- Method names SHOULD NOT be prefixed with a single underscore to indicate protected or private visibility. -->
         <exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
 
+        <!-- A file SHOULD declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it SHOULD execute logic with side effects, but SHOULD NOT do both. -->
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+
     </rule>
 </ruleset>
