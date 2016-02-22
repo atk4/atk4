@@ -13,11 +13,9 @@ if (defined('AGILE_TOOLKIT_STATIC_LOADED')) {
 }
 define('AGILE_TOOLKIT_STATIC_LOADED', true);
 
-// @codingStandardsIgnoreStart
 if (!defined('undefined')) {
     define('undefined', '_atk4_undefined_value');
 }
-// @codingStandardsIgnoreEnd
 if (!defined('UNDEFINED')) {
     define('UNDEFINED', '_atk4_undefined_value');
 }
