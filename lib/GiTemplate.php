@@ -532,7 +532,8 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             throw new Exception_InitError('You should use add() to add objects!');
         }
         $f = $this->app->locatePath(
-            $this->template_type ?: $this->settings['template_type'], $template_name.$this->settings['extension']
+            $this->template_type ?: $this->settings['template_type'],
+            $template_name.$this->settings['extension']
         );
 
         return $this->origin_filename = $f;

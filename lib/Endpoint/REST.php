@@ -65,7 +65,7 @@ class Endpoint_REST extends AbstractModel
      * Method returns new instance of the model we will operate on. Instead of
      * using this method, you can use $this->model instead.
      *
-     * @return Model [description]
+     * @return Model
      */
     protected function _model()
     {
@@ -101,9 +101,9 @@ class Endpoint_REST extends AbstractModel
      * Generic method for returning single record item of data, which can be
      * used for filtering or cleaning up.
      *
-     * @param [type] $data [description]
+     * @param object|array $data
      *
-     * @return [type] [description]
+     * @return array
      */
     protected function outputOne($data)
     {
@@ -127,9 +127,9 @@ class Endpoint_REST extends AbstractModel
     /**
      * Generic outptu filtering method for multiple records of data.
      *
-     * @param [type] $data [description]
+     * @param object|array $data
      *
-     * @return [type] [description]
+     * @return array
      */
     protected function outputMany($data)
     {
@@ -148,10 +148,10 @@ class Endpoint_REST extends AbstractModel
     /**
      * Filtering input data.
      *
-     * @param type $data   [description]
-     * @param bool $filter [description]
+     * @param array $data
+     * @param bool $filter
      *
-     * @return [type] [description]
+     * @return array
      */
     protected function _input($data, $filter = true)
     {
@@ -171,7 +171,7 @@ class Endpoint_REST extends AbstractModel
     /**
      * [get description].
      *
-     * @return [type] [description]
+     * @return array
      */
     public function get()
     {
@@ -198,7 +198,7 @@ class Endpoint_REST extends AbstractModel
     /**
      * see get().
      *
-     * @return [type] [description]
+     * @return array
      */
     public function head()
     {
@@ -213,9 +213,9 @@ class Endpoint_REST extends AbstractModel
      * As you extend this class and redefine methods, you should properly
      * use POST or PUT. See http://stackoverflow.com/a/2691891/204819
      *
-     * @param [type] $data [description]
+     * @param array $data
      *
-     * @return [type] [description]
+     * @return array
      */
     public function put_post($data)
     {
@@ -244,7 +244,7 @@ class Endpoint_REST extends AbstractModel
      *
      * @link http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
      *
-     * @return [type] [description]
+     * @return array
      */
     public function post($data)
     {
@@ -261,9 +261,9 @@ class Endpoint_REST extends AbstractModel
      *
      * @link http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
      *
-     * @param [type] $data [description]
+     * @param arra $data
      *
-     * @return [type] [description]
+     * @return array
      */
     public function put($data)
     {
@@ -277,9 +277,9 @@ class Endpoint_REST extends AbstractModel
     /**
      * See put().
      *
-     * @param [type] $data [description]
+     * @param array $data
      *
-     * @return [type] [description]
+     * @return array
      */
     public function patch($data)
     {
@@ -289,7 +289,7 @@ class Endpoint_REST extends AbstractModel
     /**
      * [delete description].
      *
-     * @return [type] [description]
+     * @return bool
      */
     public function delete()
     {

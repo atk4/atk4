@@ -3,6 +3,7 @@
  * Contains static functions. Agile Toolkit does not generally use
  * static functions, so please do not use any functions here.
  */
+// @codingStandardsIgnoreStart
 
 // Let's see if static is already loaded. It's a common problem when
 // We using old-style 'include.php' which includes both agile toolkit and
@@ -342,3 +343,4 @@ if (!defined('PASSWORD_BCRYPT')) {
         return $status === 0;
     }
 }
+// @codingStandardsIgnoreEnd

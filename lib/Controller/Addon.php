@@ -26,6 +26,8 @@ class Controller_Addon extends AbstractController
 
     public $with_pages = false;
 
+    public $location;
+
     public function init()
     {
         parent::init();

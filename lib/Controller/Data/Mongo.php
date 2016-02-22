@@ -113,7 +113,7 @@ class Controller_Data_Mongo extends Controller_Data
                 echo '<font style="color: blue">db.'.$model->table.'.update({_id: '.
                     (new MongoID($model->id)).'},{"$set":'.json_encode($data).'})</font>';
             }
-            $db = $this->_get($model, 'db')
+            $this->_get($model, 'db')
                 ->update(array($model->id_field => new MongoID($model->id)), array('$set' => $data));
 
             return $model->id;
@@ -122,7 +122,7 @@ class Controller_Data_Mongo extends Controller_Data
         if ($model->debug) {
             echo '<font style="color: blue">db.'.$model->table.'.save('.json_encode($data).')</font>';
         }
-        $db = $this->_get($model, 'db')->save($data);
+        $this->_get($model, 'db')->save($data);
         $model->id = (string) $data[$model->id_field] ?: null;
         $model->data = $data;  // will grab defaults here
         if ($model->debug) {

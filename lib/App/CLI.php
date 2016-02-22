@@ -556,7 +556,7 @@ class App_CLI extends AbstractView
      * Load config if necessary and look up corresponding setting.
      *
      * @param string $path
-     * @param string $default_value
+     * @param mixed $default_value
      *
      * @return string
      */

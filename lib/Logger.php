@@ -161,6 +161,11 @@ class Logger extends AbstractController
     public $debug_log = '';           // Will be outputed at the end of the page
     private $debug_added = false;     // no debug messages added yet
 
+    public $filename;
+    public $err_message;
+    public $_current_ip;
+    public $_prev_exec_time;
+
     public function init()
     {
         parent::init();
@@ -763,17 +768,9 @@ class Logger extends AbstractController
         return $output;
     }
 
-    /*
-    // Debug functions
-    var $filename;
-
-    var $err_message;
-
-    var $_current_ip;
-
-    var $_prev_exec_time;
+    /**
+     * Debug functions
      */
-
     public function Debug($filename)
     {
         if (is_null($filename)) {

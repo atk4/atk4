@@ -170,7 +170,8 @@ class jQuery_Chain extends AbstractModel
             $this->app->hook('post-js-execute');
             exit;
         } else {
-            throw $this->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
+            throw $this
+                ->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
         }
     }
     /* [private] used by custom json_encoding */

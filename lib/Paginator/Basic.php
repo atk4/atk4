@@ -199,9 +199,9 @@ class Paginator_Basic extends CompleteLister
         $tplcur = (isset($tplcur[0])) ? $tplcur[0] : '';
 
         $range = range(
-                max(1, $this->cur_page - $this->range),
-                min($this->total_pages, $this->cur_page + $this->range)
-            );
+            max(1, $this->cur_page - $this->range),
+            min($this->total_pages, $this->cur_page + $this->range)
+        );
         foreach ($range as $p) {
             $data[] = array(
                 'href' => $this->app->url($this->base_page, array($this->skip_var => $pn = ($p - 1) * $this->ipp)),
@@ -212,10 +212,12 @@ class Paginator_Basic extends CompleteLister
         }
 
         if ($this->ajax_reload) {
-            $this->js('click', $this->owner->js()->reload(
+            $this->js(
+                'click',
+                $this->owner->js()->reload(
                     array($this->skip_var => $this->js()->_selectorThis()->attr('data-skip'))
-                ))
-                ->_selector('#'.$this->name.' a');
+                )
+            )->_selector('#'.$this->name.' a');
         }
 
         parent::setSource($data);
