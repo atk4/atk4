@@ -1695,7 +1695,7 @@ class DB_dsql extends AbstractModel implements Iterator
             return $this;
         } catch (PDOException $e) {
             throw $this->exception('Database Query Failed')
-                ->addMoreInfo('pdo_error', $e->getMessage()
+                ->addMoreInfo('pdo_error', $e->getMessage())
                 ->addMoreInfo('mode', $this->mode)
                 ->addMoreInfo('params', $this->params)
                 ->addMoreInfo('query', $q)
