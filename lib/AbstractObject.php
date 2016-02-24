@@ -8,10 +8,18 @@ abstract class AbstractObject
 {
     const DOC = 'core-features/objects';
 
-    /** Reference to the current model. Read only. Use setModel() */
+    /**
+     * Reference to the current model. Read only. Use setModel()
+     *
+     * @var AbstractModel
+     */
     public $model;
 
-    /** Reference to the current controller. Read only. Use setController() */
+    /**
+     * Reference to the current controller. Read only. Use setController()
+     *
+     * @var AbstractController
+     */
     public $controller;
 
     /**
@@ -37,47 +45,84 @@ abstract class AbstractObject
      *  ->exception('Blah','NotFound') will return
      *  'Exception_NotFound';
      *
+     * @todo implement test-cases for the above
      *
-     * TODO: implement test-cases for the above
+     * @var string
      */
     public $default_exception = 'BaseException';
 
-    /** Default controller to initialize when calling setModel() */
+    /**
+     * Default controller to initialize when calling setModel()
+     *
+     * @var string
+     */
     public $default_controller = null;
 
-    /** Setting this to true will output additional debug info about object */
+    /**
+     * Setting this to true will output additional debug info about object
+     *
+     * @var boolean
+     */
     public $debug = null;
 
     // {{{ Object hierarchy management
 
-    /** Unique object name */
+    /**
+     * Unique object name
+     *
+     * @var string
+     */
     public $name;
 
-    /** Name of the object in owner's element array */
+    /**
+     * Name of the object in owner's element array
+     *
+     * @var string
+     */
     public $short_name;
 
-    /** short_name => object hash of children objects */
+    /**
+     * short_name => object hash of children objects
+     *
+     * @var array
+     */
     public $elements = array();
 
-    /** Link to object into which we added this object */
+    /**
+     * Link to object into which we added this object
+     *
+     * @var AbstractObject
+     */
     public $owner;
 
-    /** Always points to current Application */
+    /**
+     * Always points to current Application
+     *
+     * @var App_CLI
+     */
     public $app;
 
-    /** Obsolete - for compatibility with ATK 4.2 and lower, use ->app instead */
+    /**
+     * @deprecated 4.3.0 Left for compatibility with ATK 4.2 and lower, use ->app instead
+     */
     public $api;
 
     /**
      * When this object is added, owner->elements[$this->short_name]
      * will be == $this;.
+     *
+     * @var boolean
      */
     public $auto_track_element = false;
 
     /**
      * To make sure you have called parent::init() properly.
+     *
+     * @var boolean
      */
     public $_initialized = false;
+
+
 
     /**
      * Initialize object. Always call parent::init(). Do not call directly.

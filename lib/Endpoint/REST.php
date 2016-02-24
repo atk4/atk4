@@ -261,7 +261,7 @@ class Endpoint_REST extends AbstractModel
      *
      * @link http://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services
      *
-     * @param arra $data
+     * @param array $data
      *
      * @return array
      */

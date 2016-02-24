@@ -25,28 +25,61 @@
  */
 class CompleteLister extends Lister
 {
-    /** Used template tags */
+    /**
+     * @var string Template tag for item
+     */
     protected $item_tag = 'row';
+
+    /**
+     * @var string Template tag for container
+     */
     protected $container_tag = 'rows';
 
-    /** Item ($item_tag) template */
+    /**
+     * @var Template Item ($item_tag) template
+     */
     public $row_t;
 
-    /** Separator */
+    /**
+     * @var array Separator
+     */
     public $sep_html = null;
 
-    /** Will contain accumulated totals for all fields */
+    /**
+     * Will contain accumulated totals for all fields
+     *
+     * @var array|boolean
+     */
     public $totals = false;
 
-    /** After rendering will contain data row count */
-    public $total_rows = false;
+    /**
+     * After rendering will contain data row count
+     *
+     * @var int
+     */
+    public $total_rows;
 
-    /** Will be initialized to "totals" template when _addTotals() is called */
-    public $totals_t = false;
+    /**
+     * Will be initialized to "totals" template when _addTotals() is called
+     *
+     * @var Template
+     */
+    public $totals_t;
 
-    /** Used CSS classes for odd and even rows */
+    /**
+     * @var string Used CSS class for odd rows
+     */
     public $odd_css_class = 'odd';
+
+    /**
+     * @var string Used CSS class for even rows
+     */
     public $even_css_class = 'even';
+
+    /**
+     * @var string Is current odd or even row?
+     */
+    protected $odd_even = null;
 
     /**
      * Type of totals calculation:
@@ -54,13 +87,11 @@ class CompleteLister extends Lister
      * onRender  - calculate totals only for rendered rows on rendering phase
      * onRequest - grand totals, works for SQL_Many models only, creates 1
      *             additional DB request.
+     * Should be changed using addTotals and addGrandTotals methods only
      *
-     * @private Should be changed using addTotals and addGrandTotals methods only
+     * @var string
      */
     protected $totals_type = null;
-
-    /** @private Is current odd or even row? */
-    protected $odd_even = null;
 
     // {{{ Initialization
 

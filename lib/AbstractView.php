@@ -19,6 +19,8 @@ abstract class AbstractView extends AbstractObject
      *
      * @see AbstractObject::add();
      * @see AbstractView::defaultTemplate();
+     *
+     * @var Template
      */
     public $template = false;
 
@@ -31,6 +33,8 @@ abstract class AbstractView extends AbstractObject
      * childs may want to put their data. This property will
      * be set to region's name my call_ajax_render and if it's
      * set, call_ajax_render will echo it and return false.
+     *
+     * @var string
      */
     public $template_flush = false;
 
@@ -42,6 +46,8 @@ abstract class AbstractView extends AbstractObject
      * @see render()
      * @see AbstractObject::add();
      * @see defaultSpot();
+     *
+     * @var string
      */
     public $spot;
 
@@ -50,12 +56,21 @@ abstract class AbstractView extends AbstractObject
      * fields, columns etc corresponding to models meta-data. That is the
      * job of Controller. When you create a custom controller for your view
      * set this property to point at your controller and it will be used.
-     * automatically */
+     * automatically.
+     *
+     * @var string
+     */
     public $default_controller = null;
 
+    /**
+     * @var boolean
+     */
     public $auto_track_element = true;
 
+
+
     // {{{ Basic Operations
+
     /**
      * For safety, you can't clone views. Use $view->newInstance instead.
      */

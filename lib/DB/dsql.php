@@ -7,50 +7,101 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Data accumulated by calling Definition methods, which is then
      * used when rendering.
+     *
+     * @var array
      */
     public $args = array();
 
-    /** List of PDO parametical arguments for a query. Used only during rendering. */
+    /**
+     * List of PDO parametical arguments for a query. Used only during rendering.
+     *
+     * @var array
+     */
     public $params = array();
 
-    /** Manually-specified params */
+    /**
+     * Manually-specified params
+     *
+     * @var array
+     */
     public $extra_params = array();
 
-    /** PDO Statement, if query is prepared. Used by iterator */
+    /**
+     * PDO statement if query is prepared. Used by iterator.
+     *
+     * @var PDOStatement
+     */
     public $stmt = null;
 
-    /** Expression to use when converting to string */
+    /**
+     * Expression to use when converting to string
+     *
+     * @var string
+     */
     public $template = null;
 
     /**
      * You can switch mode with select(), insert(), update() commands.
      * Mode is initialized to "select" by default.
+     *
+     * @var string
      */
     public $mode = null;
 
-    /** Used to determine main table. */
+    /**
+     * Used to determine main table.
+     *
+     * @var boolean|string
+     */
     public $main_table = null;
 
-    /** If no fields are defined, this field is used */
+    /**
+     * If no fields are defined, this field is used.
+     *
+     * @var string
+     */
     public $default_field = '*';
 
+    /**
+     * Class name of default exception
+     *
+     * @var string
+     */
     public $default_exception = 'Exception_DB';
 
-    /** call $q->debug() to turn on debugging or $q->debug(false) to turn ir off. */
+    /**
+     * Call $q->debug() to turn on debugging or $q->debug(false) to turn ir off.
+     *
+     * @var boolean
+     */
     public $debug = false;
 
-    /** prefix for all parameteric variables: a, a_2, a_3, etc */
+    /**
+     * Prefix for all parameteric variables: a, a_2, a_3, etc.
+     *
+     * @var string
+     */
     public $param_base = 'a';
 
-    /** When you convert this object to string, the following happens: */
+    /**
+     * When you convert this object to string, the following happens:
+     *
+     * @var string
+     */
     public $output_mode = 'getOne';
 
-    /** Backtics are added around all fields. Set this to blank string to avoid */
+    /**
+     * Backtics are added around all fields. Set this to blank string to avoid.
+     *
+     * @var string
+     */
     public $bt = '`';
 
     /**
      * Templates are used to construct most common queries. Templates may be
      * changed in vendor-specific implementation of dsql (extending this class).
+     *
+     * @var array Array of templates
      */
     public $sql_templates = array(
         'select' => 'select [options] [field] [from] [table] [join] [where] [group] [having] [order] [limit]',
@@ -61,8 +112,22 @@ class DB_dsql extends AbstractModel implements Iterator
         'truncate' => 'truncate table [table_noalias]',
         'describe' => 'desc [table_noalias]',
     );
-    /** required for non-id based tables */
+    /**
+     * Required for non-id based tables.
+     *
+     * @var string
+     */
     public $id_field;
+
+    /**
+     * @var boolean
+     */
+    private $to_stringing = false;
+
+    /** @var DB Owner of this object */
+    public $owner;
+
+
 
     // {{{ Generic routines
     public function _unique(&$array, $desired = null)
@@ -72,11 +137,17 @@ class DB_dsql extends AbstractModel implements Iterator
 
         return $desired;
     }
+
     public function __clone()
     {
         $this->stmt = null;
     }
-    private $to_stringing = false;
+
+    /**
+     * Convert object to string - generate SQL expression
+     *
+     * @return string
+     */
     public function __toString()
     {
         if ($this->to_stringing) {
@@ -97,7 +168,7 @@ class DB_dsql extends AbstractModel implements Iterator
             //return "Exception: ".$e->getMessage();
         }
 
-        $output = $this->toString();
+        $output = $this->__toString();
         $this->to_stringing = false;
 
         return $output;
@@ -175,8 +246,8 @@ class DB_dsql extends AbstractModel implements Iterator
      * Recursively renders sub-query or expression, combining parameters.
      * If the argument is more likely to be a field, use tick=true.
      *
-     * @param object|string $dsql Expression
-     * @param bool          $tick Preferred quoted style
+     * @param string|Field|DB_dsql $dsql Expression
+     * @param bool                 $tick Preferred quoted style
      *
      * @return string Quoted expression
      */
@@ -319,7 +390,7 @@ class DB_dsql extends AbstractModel implements Iterator
         }
 
         $this->template = $expr;
-        if ($tags) {
+        if (!empty($tags)) {
             $this->setCustom($tags);
         }
         $this->output_mode = 'render';
@@ -878,7 +949,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *  )
      *
      * @param string $foreign_table  Table to join with
-     * @param string $master_field   Field in master table
+     * @param mixed  $master_field   Field in master table
      * @param string $join_kind      'left' or 'inner', etc
      * @param string $_foreign_alias Internal, don't use
      *
@@ -1445,7 +1516,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * Adds backtics around argument. This will allow you to use reserved
      * SQL words as table or field names such as "table".
      *
-     * @param string $s any string
+     * @param mixed $s Any string or array of strings
      *
      * @return string Quoted string
      */
@@ -1476,9 +1547,9 @@ class DB_dsql extends AbstractModel implements Iterator
      * Internal method which can be used by simple param-giving methods such
      * as option(), group(), etc.
      *
-     * @param string $values       hm
-     * @param string $name         hm
-     * @param bool   $parse_commas hm
+     * @param mixed  $values
+     * @param string $name
+     * @param bool   $parse_commas
      *
      * @private
      *
@@ -1624,7 +1695,7 @@ class DB_dsql extends AbstractModel implements Iterator
             return $this;
         } catch (PDOException $e) {
             throw $this->exception('Database Query Failed')
-                ->addPDOException($e)
+                ->addMoreInfo('pdo_error', $e->getMessage()
                 ->addMoreInfo('mode', $this->mode)
                 ->addMoreInfo('params', $this->params)
                 ->addMoreInfo('query', $q)
@@ -1939,13 +2010,14 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string $r Rendered material
      *
-     * @return string debug of the query
+     * @return string SQL syntax of query
      */
     public function getDebugQuery($r = null)
     {
-        if (!$r) {
+        if ($r === null) {
             $r = $this->_render();
         }
+
         $d = $r;
         $pp = array();
         $d = preg_replace('/`([^`]*)`/', '`<font color="black">\1</font>`', $d);
@@ -1979,7 +2051,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * Converts query into string format. This will contain parametric
      * references.
      *
-     * @return string resulting query
+     * @return string Resulting query
      */
     public function render()
     {
@@ -1994,7 +2066,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @private
      *
-     * @return string resulting query
+     * @return string Resulting query
      */
     public function _render()
     {

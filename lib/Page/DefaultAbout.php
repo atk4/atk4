@@ -4,7 +4,6 @@
  */
 abstract class Page_DefaultAbout extends Page
 {
-    public $about_this;
     public function init()
     {
         parent::init();
