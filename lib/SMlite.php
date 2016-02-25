@@ -229,21 +229,21 @@ class SMlite extends AbstractModel
     }
 
     // Operation with regions inside template
+    /**
+     * Finds tag and returns contents.
+     *
+     * THIS FUNTION IS DANGEROUS!
+     *  - if you want a rendered region, use renderRegion()
+     *  - if you want a sub-template use cloneRegion()
+     *
+     *  - if you want to copy part of template to other SMlite object,
+     *   do not forget to call rebuildTags() if you plan to refer them.
+     *   Not calling rebuildTags() will render template properly anyway.
+     *
+     * If tag is defined multiple times, first region is returned.
+     */
     public function get($tag)
     {
-        /*
-         * Finds tag and returns contents.
-         *
-         * THIS FUNTION IS DANGEROUS!
-         *  - if you want a rendered region, use renderRegion()
-         *  - if you want a sub-template use cloneRegion()
-         *
-         *  - if you want to copy part of template to other SMlite object,
-         *   do not forget to call rebuildTags() if you plan to refer them.
-         *   Not calling rebuildTags() will render template properly anyway.
-         *
-         * If tag is defined multiple times, first region is returned.
-         */
         if ($this->isTopTag($tag)) {
             return $this->template;
         }

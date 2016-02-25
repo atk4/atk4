@@ -102,6 +102,14 @@ class App_CLI extends AbstractView
     protected $pathfinder_class = 'PathFinder';
 
     /**
+     * PageManager object
+     *
+     * @see Controller_PageManager::init()
+     * @var Controller_PageManager
+     */
+    public $pm;
+
+    /**
      * Change a different Page Manager class.
      *
      * @var string
@@ -450,7 +458,7 @@ class App_CLI extends AbstractView
      *
      * @param string $class_name
      *
-     * @return AbstractObject
+     * @return Logger
      */
     public function getLogger($class_name = undefined)
     {

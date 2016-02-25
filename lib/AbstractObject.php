@@ -11,14 +11,14 @@ abstract class AbstractObject
     /**
      * Reference to the current model. Read only. Use setModel()
      *
-     * @var AbstractModel
+     * @var Model
      */
     public $model;
 
     /**
      * Reference to the current controller. Read only. Use setController()
      *
-     * @var AbstractController
+     * @var Controller
      */
     public $controller;
 

@@ -34,6 +34,9 @@ class App_Frontend extends App_Web
      */
     public $layout = null;
 
+    /** @var App_Frontend */
+    public $app;
+
     // {{{ Layout Implementation
     /**
      * Content in the global (shared.html) template is rendered by page object.
