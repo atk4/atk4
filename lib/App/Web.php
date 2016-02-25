@@ -32,6 +32,14 @@ class App_Web extends App_CLI
      */
     public $title;
 
+    /**
+     * Authentication object
+     *
+     * @see Auth_Basic::init()
+     * @var Auth_Basic
+     */
+    public $auth;
+
     /** @var App_Web */
     public $app;
     /** @var array For internal use */
