@@ -27,7 +27,7 @@ class Auth_Basic extends AbstractController
      * Info will contain data loaded about authenticated user.
      * This property can be accessed through $this->get() and should not be changed after authentication.
      *
-     * @var array
+     * @var array|bool
      */
     public $info = false;
 
@@ -75,8 +75,10 @@ class Auth_Basic extends AbstractController
      */
     public $login_layout_class = 'Layout_Centered';
 
-    /** @var App_Web */
+    /** @var App_Frontend */
     public $app;
+
+
 
     public function init()
     {
@@ -94,7 +96,7 @@ class Auth_Basic extends AbstractController
 
         // Try to get information from the session. If user is authenticated, information will
         // be available there
-        $this->info = $this->recall('info', false);
+        $this->info = (array) $this->recall('info', false);
     }
 
     /**
@@ -353,7 +355,7 @@ class Auth_Basic extends AbstractController
             case 'php':
                 return password_hash($password, $this->hash_algo, $this->hash_options);
             case 'sha256/salt':
-                if (!$salt) {
+                if ($salt === null) {
                     throw $this->exception(
                         'sha256 requires salt (2nd argument to encryptPassword and is normaly an email)'
                     );
@@ -491,7 +493,10 @@ class Auth_Basic extends AbstractController
         }
 
         // Attempt to load user data by username. If not found, return false
-        $data = $this->model->newInstance()->tryLoadBy($this->login_field, $user);
+        /** @var Model $data User model */
+        $data = $this->model->newInstance();
+
+        $data->tryLoadBy($this->login_field, $user);
         if (!$data->loaded()) {
             $this->debug('user with login '.$user.' could not be loaded');
             if (!$password_existed) {
@@ -525,7 +530,7 @@ class Auth_Basic extends AbstractController
                 } elseif (strlen($hash) == 40) {
                     $this->password_encryption = 'sha1';
                 } else {
-                    $this->password_encryption = false;
+                    $this->password_encryption = null;
                     $this->debug('Unable to identify password hash type, using plain-text matching');
                     /*
                     $this->password_encryption='php';
