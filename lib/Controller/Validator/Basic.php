@@ -156,11 +156,10 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
 
     public function rule_eqf($a)
     {
-        $target = $this->pullRule(true);
-        if ($a !== $target) {
-            return $this->fail('must be exactly {{arg1}}', $target);
+        $target=$this->pullRule(true);
+        if ($a !== $this->get($target)) {
+            return $this->fail('must be same as {{arg1}}', $target);
         }
-
         return $a;
     }
 
