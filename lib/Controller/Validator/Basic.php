@@ -19,7 +19,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
 
     public function rule_required($a)
     {
-        if ($a === '' || $a === false) {
+        if ($a === '' || $a === false || $a === null) {
             return $this->fail('must not be empty');
         }
     }
@@ -128,7 +128,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
     {
         $target = $this->pullRule(true);
         if ($a < $target) {
-            return $this->fail('must not be less than {{arg1}}', $target);
+            return $this->fail('must be at least {{arg1}}', $target);
         }
 
         return $a;
@@ -138,7 +138,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
     {
         $target = $this->pullRule(true);
         if ($a > $target) {
-            return $this->fail('must not be greater than {{arg1}}', $target);
+            return $this->fail('must be not greater than {{arg1}}', $target);
         }
 
         return $a;

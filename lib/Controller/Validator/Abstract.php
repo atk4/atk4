@@ -370,6 +370,7 @@ class Controller_Validator_Abstract extends \AbstractController
 
             // Trim off any leading quote from from
             // the error message
+            if(!$error)$error = $this->pullRule();
             $this->custom_error = preg_replace('/^\'/', '', $error);
         }
 
@@ -425,7 +426,7 @@ class Controller_Validator_Abstract extends \AbstractController
     public function fail()
     {
         $args = func_get_args();
-        $str = ucfirst($this->prefix.($this->caption?:$this->active_field).' '.lcfirst(array_shift($args)));
+        $str = ucfirst($this->prefix.($this->caption?:str_replace('_',' ',$this->active_field)).' '.lcfirst(array_shift($args)));
 
         // Insert any args into placeholders
 
