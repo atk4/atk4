@@ -309,8 +309,8 @@ abstract class Form_Field extends AbstractView
      * Used to be called validate(), this method is called when
      * field should do some of it's basic validation done.
      */
-    function performValidation(){
-
+    public function performValidation()
+    {
     }
 
     /** @private - handles field validation callback output */
