@@ -447,6 +447,7 @@ class Form_Basic extends View implements ArrayAccess
         $this->hook('loadPOST');
         try {
             $this->hook('validate');
+            $this->hook('post-validate');
 
             if (!empty($this->errors)) {
                 return false;
@@ -591,8 +592,9 @@ class Form_Basic extends View implements ArrayAccess
     {
         if (!$this->validator) {
             $this->validator = $this->add('Controller_Validator');
+            $this->validator->on('post-validate');
         }
-        $this->validator->is($rule)->on('validate');
+        $this->validator->is($rule);
     }
 
     /**
