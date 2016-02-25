@@ -84,25 +84,25 @@
  */
 class SMlite extends AbstractModel
 {
-    public $tags = array();
-    /*
+    /**
      * This array contains list of all tags found inside template.
      */
+    public $tags = array();
 
-    public $top_tag = null;
-    /*
+    /**
      * When cloning region inside a template, it's tag becomes a top_tag of a new
      * template. Since SMlite 1.1 it's present in new template and can be used.
      */
+    public $top_tag = null;
 
-    public $template = array();  // private
-    /*
+    /**
      * This is a parsed contents of the template.
      */
+    public $template = array();  // private
 
     public $settings = array();
 
-    /*
+    /**
      * Type of resource to look for pathFinder
      */
     public $template_type = 'template';
@@ -124,18 +124,20 @@ class SMlite extends AbstractModel
         return (isset($this->updated_tag_list[$tag])) ? $this->updated_tag_list[$tag] : null;
     }
 
+    /**
+     * This function specifies default settings for SMlite. Use
+     * 2nd argument for constructor to redefine those settings.
+     *
+     * A small note why I decided on .html extension. I want to
+     * point out that template files are and should be valid HTML
+     * documents. With .html extension those files will be properly
+     * rendered inside web browser, properly understood inside text
+     * editor or will be properly treated with wysiwyg html editors.
+     *
+     * @return array
+     */
     public function getDefaultSettings()
     {
-        /*
-         * This function specifies default settings for SMlite. Use
-         * 2nd argument for constructor to redefine those settings.
-         *
-         * A small note why I decided on .html extension. I want to
-         * point out that template files are and should be valid HTML
-         * documents. With .html extension those files will be properly
-         * rendered inside web browser, properly understood inside text
-         * editor or will be properly treated with wysiwyg html editors.
-         */
         return array(
                 // by separating them with ':'
                 'ldelim' => '<?',                // tag delimiter
@@ -154,6 +156,7 @@ class SMlite extends AbstractModel
         $this->settings = $this->getDefaultSettings();
         $this->settings['extension'] = $this->app->getConfig('smlite/extension', '.html');
     }
+
     public function __clone()
     {
         if (!is_null($this->top_tag) && is_object($this->top_tag)) {
@@ -167,12 +170,14 @@ class SMlite extends AbstractModel
         // ...
         $this->rebuildTags();
     }
+
     public function exception($message = 'Undefined Exception', $type = null, $code = null)
     {
         return parent::exception($message, $type, $code)
             ->addMoreInfo('SMlite_file', $this->origin_filename)
             ;
     }
+
     public function cloneRegion($tag)
     {
         /*
@@ -530,6 +535,10 @@ class SMlite extends AbstractModel
 
         return implode('', file($f));
     }
+    /**
+     * @param string $template_string
+     * @return $this
+     */
     public function loadTemplateFromString($template_string)
     {
         $this->template = array();
@@ -541,6 +550,11 @@ class SMlite extends AbstractModel
 
         return $this;
     }
+    /**
+     * @param  string $template_name
+     * @param  string $ext
+     * @return $this
+     */
     public function loadTemplate($template_name, $ext = null)
     {
         /*
@@ -575,6 +589,12 @@ class SMlite extends AbstractModel
 
         return $this;
     }
+    /**
+     * @param array &$template
+     * @param int $level
+     * @param int $pc
+     * @return string
+     */
     public function parseTemplate(&$template, $level = 0, $pc = 0)
     {
         /*
@@ -632,6 +652,9 @@ class SMlite extends AbstractModel
         }
         $this->tags[$key][] = &$ref;
     }
+    /**
+     * @return boolean
+     */
     public function isTopTag($tag)
     {
         return
@@ -639,19 +662,26 @@ class SMlite extends AbstractModel
             ($tag == '_top');
     }
 
-    // rebuild tags of existing array structure
+    /**
+     * Rebuild tags of existing array structure
+     *
+     * This function walks through template and rebuilds list of tags. You need it in case you
+     * changed already parsed template.
+     *
+     * @return $this
+     */
     public function rebuildTags()
     {
-        /*
-         * This function walks through template and rebuilds list of tags. You need it in case you
-         * changed already parsed template.
-         */
         $this->tags = array();
         $this->updated_tag_list = array();
         $this->rebuildTagsRegion($this->template);
 
         return $this;
     }
+
+    /**
+     * @param array &$branch
+     */
     public function rebuildTagsRegion(&$branch)
     {
         if (!isset($branch)) {
@@ -673,7 +703,11 @@ class SMlite extends AbstractModel
         }
     }
 
-    // Template rendering (array -> string)
+    /**
+     * Template rendering (array -> string)
+     *
+     * @return string|array
+     */
     public function render()
     {
         /*
@@ -681,6 +715,10 @@ class SMlite extends AbstractModel
          */
         return $this->renderRegion($this->template);
     }
+    /**
+     * @param string|array &$chunk
+     * @return string|array
+     */
     public function renderRegion(&$chunk)
     {
         $result = ''; // you can replace this with array() for debug purposes
@@ -706,10 +744,17 @@ class SMlite extends AbstractModel
     // For debuging of template. Only allow to debug initial template.
     // In future should be extended somehow with recursiveRender to also allow
     // debugging of templates of entire object tree.
+    /**
+     * @return string
+     */
     public function debugRender()
     {
         return $this->debugRenderRegion($this->template);
     }
+    /**
+     * @param  string|array &$chunk
+     * @return string
+     */
     public function debugRenderRegion(&$chunk)
     {
         // output templates
@@ -749,7 +794,13 @@ class SMlite extends AbstractModel
         return $result;
     }
 
-    // Misc functions
+    // {{{ Misc functions
+
+    /**
+     * @param  string &$string
+     * @param  string $tok
+     * @return string
+     */
     public function myStrTok(&$string, $tok)
     {
         if (!$string) {
@@ -767,4 +818,6 @@ class SMlite extends AbstractModel
 
         return $chunk;
     }
+
+    // }}}
 }

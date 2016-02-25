@@ -280,8 +280,7 @@ class Controller_Validator_Abstract extends \AbstractController
             $this->active_field = $field;
             $this->prefix = '';
             $this->caption = '';
-            foreach ($rulesets as $rules){
-
+            foreach ($rulesets as $rules) {
                 $this->applyRules($field, $rules);
             }
         }
@@ -370,7 +369,9 @@ class Controller_Validator_Abstract extends \AbstractController
 
             // Trim off any leading quote from from
             // the error message
-            if(!$error)$error = $this->pullRule();
+            if (!$error) {
+                $error = $this->pullRule();
+            }
             $this->custom_error = preg_replace('/^\'/', '', $error);
         }
 
@@ -426,7 +427,8 @@ class Controller_Validator_Abstract extends \AbstractController
     public function fail()
     {
         $args = func_get_args();
-        $str = ucfirst($this->prefix.($this->caption?:str_replace('_',' ',$this->active_field)).' '.lcfirst(array_shift($args)));
+        $str = ucfirst($this->prefix.($this->caption ?: str_replace('_', ' ', $this->active_field)).' '.
+                lcfirst(array_shift($args)));
 
         // Insert any args into placeholders
 
@@ -541,9 +543,10 @@ class Controller_Validator_Abstract extends \AbstractController
     }
     // }}}
 
-    function rule_caption($a)
+    public function rule_caption($a)
     {
         $this->caption = $this->pullRule();
+
         return $a;
     }
 

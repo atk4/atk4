@@ -4,10 +4,25 @@
 */
 class App_Installer extends App_Web
 {
+    /**
+     * Name of page class
+     *
+     * @var string
+     */
     public $page_class = 'Page';
 
+    /**
+     * Page options
+     *
+     * @var array
+     */
     public $page_options = null;
 
+    /**
+     * Should we show intro?
+     *
+     * @var bool
+     */
     protected $show_intro = false;
 
     /**
@@ -85,18 +100,20 @@ class App_Installer extends App_Web
     /**
      * @todo Description
      *
-     * @param [type] $step
+     * @param string $step Unused parameter !!!
      * @param string $template
+     * @return View
      */
     public function makePage($step, $template = 'step/default')
     {
-        return $this->layout->add('Page', null, null, array($template));
+        return $this->layout->add($this->page_class, null, null, array($template));
     }
 
     /**
      * @todo Description
      *
      * @param string $step
+     * @return mixed
      */
     public function initStep($step)
     {
