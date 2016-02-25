@@ -201,7 +201,7 @@ class Form_Basic extends View implements ArrayAccess
             'timepicker' => 'TimePicker',
             );
         $key = strtolower($type);
-        $class = array_key_exists($key, $map) ? $map[$key] : $key;
+        $class = array_key_exists($key, $map) ? $map[$key] : $type;
 
         $class = $this->app->normalizeClassName($class, 'Form_Field');
 
