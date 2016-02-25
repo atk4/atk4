@@ -21,6 +21,7 @@ class App_CLI extends AbstractView
      * initialize more database connections.
      *
      * @see dbConnect()
+     * @var DB
      */
     public $db = null;
 
@@ -30,6 +31,7 @@ class App_CLI extends AbstractView
      *
      * @see getConfig()
      * @see readConfig()
+     * @var array
      */
     public $config = array();
 
@@ -38,6 +40,8 @@ class App_CLI extends AbstractView
      * it's in the same folder, but you can move it one folder up ".." or
      * inside "config" sub-folder by setting value to 'config' to better
      * reflect your application layout.
+     *
+     * @var string
      */
     public $config_location = '.';
 
@@ -49,11 +53,15 @@ class App_CLI extends AbstractView
      * If you are loading additional config later, use readConfig() instead
      *
      * Order of this array is important.
+     *
+     * @var array
      */
     public $config_files = array('config-default', 'config');
 
     /**
      * Contains list of loaded config files.
+     *
+     * @var array
      */
     public $config_files_loaded = array();
 
@@ -64,11 +72,14 @@ class App_CLI extends AbstractView
      * to either output detailed errors or show brief message instead.
      *
      * @see Logger
+     * @var Logger
      */
     public $logger = null;
 
     /**
      * If you want to use your own logger class, redefine this property.
+     *
+     * @param string
      */
     public $logger_class = 'Logger';
 
@@ -77,22 +88,30 @@ class App_CLI extends AbstractView
      * such as PHP includes, JavaScript files, templates, etc. APP Initializes
      * PathFinder as soon as possible, then defines "Locations" which describe
      * type of data found in different folders.
+     *
+     * @var PathFinder
      */
     public $pathfinder = null;
 
     /**
      * If you would want to use your own PathFinder class, you must change
      * this property and include it.
+     *
+     * @var string
      */
     protected $pathfinder_class = 'PathFinder';
 
     /**
      * Change a different Page Manager class.
+     *
+     * @var string
      */
     protected $pagemanager_class = 'Controller_PageManager';
 
     /**
      * Set to array('debug' => true) to debug Page Manager.
+     *
+     * @var array
      */
     protected $pagemanager_options = null;
 
@@ -102,6 +121,7 @@ class App_CLI extends AbstractView
      * be compatible throughout the same major version of Agile Tooolkit.
      *
      * @see requires();
+     * @var string
      */
     public $atk_version = 4.3;
 
@@ -124,6 +144,8 @@ class App_CLI extends AbstractView
      * 4-symbol sequence "/ ** /" (no spaces). If you want to speed up Agile
      * Toolkit further, you can eliminate all lines started with this sequence
      * from your source code.
+     *
+     * @var object
      */
     public $pr;
 
@@ -143,6 +165,8 @@ class App_CLI extends AbstractView
      *
      * We recommend you to increase SUHOSIN get limits if you encounter any
      * problems. Set this value to "false" to turn off name shortening.
+     *
+     * @var int
      */
     public $max_name_length = 60;
 
@@ -150,6 +174,8 @@ class App_CLI extends AbstractView
      * As more names are shortened, the substituted part is being placed into
      * this hash and the value contains the new key. This helps to avoid creating
      * many sequential prefixes for the same character sequenece.
+     *
+     * @var array
      */
     public $unique_hashes = array();
 
@@ -158,6 +184,8 @@ class App_CLI extends AbstractView
      * inside application APP class or use some controller which will pull this
      * variable out of the URL. This variable will be respected throughout the
      * framework.
+     *
+     * @var string
      */
     public $locale = 'en_US';
 
@@ -178,6 +206,7 @@ class App_CLI extends AbstractView
      * of security.
      *
      * @param string $realm Will become $app->name
+     * @param array $options
      */
     public function __construct($realm = null, $options = array())
     {
@@ -306,7 +335,7 @@ class App_CLI extends AbstractView
     /**
      * Find relative path to the resource respective to the current directory.
      *
-     * @param [type] $type     [description]
+     * @param string $type     [description]
      * @param string $filename [description]
      * @param string $return   [description]
      *
@@ -320,7 +349,7 @@ class App_CLI extends AbstractView
     /**
      * Calculate URL pointing to specified resource.
      *
-     * @param [type] $type     [description]
+     * @param string $type     [description]
      * @param string $filename [description]
      *
      * @return [type] [description]
@@ -333,7 +362,7 @@ class App_CLI extends AbstractView
     /**
      * Return full system path to specified resource.
      *
-     * @param [type] $type     [description]
+     * @param string $type     [description]
      * @param string $filename [description]
      *
      * @return [type] [description]
@@ -591,6 +620,7 @@ class App_CLI extends AbstractView
     // }}}
 
     // {{{ Version handling
+    private $version_cache = null;
     /**
      * Determine version of Agile Toolkit or specified plug-in.
      *
@@ -598,7 +628,6 @@ class App_CLI extends AbstractView
      *
      * @return string
      */
-    private $version_cache = null;
     public function getVersion($of = 'atk')
     {
         // TODO: get version of add-on
@@ -739,7 +768,7 @@ class App_CLI extends AbstractView
      *
      * @param string $s
      * @param int    $flags
-     * @param string $encoding
+     * @param string $encode
      * @param bool   $double_encode
      *
      * @return string
