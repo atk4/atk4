@@ -424,13 +424,8 @@ class Controller_Validator_Abstract extends \AbstractController
     // {{{ Methods which are called by the rules
     public function fail()
     {
-<<<<<<< HEAD
         $args = func_get_args();
-        $str = ucfirst($this->prefix.$this->active_field.' '.lcfirst(array_shift($args)));
-=======
-        $args =  func_get_args();
         $str = ucfirst($this->prefix.($this->caption?:$this->active_field).' '.lcfirst(array_shift($args)));
->>>>>>> feature/clean-up-validation
 
         // Insert any args into placeholders
 
