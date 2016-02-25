@@ -1,8 +1,8 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * This is a generic page manager. For web applications it calculates
  * base URI, sets up path manager with the URI locations, determines
- * which page was requested
+ * which page was requested.
  *
  * This class works with PathFinder, App_Web, and Location.
  *
@@ -23,22 +23,9 @@
  *
  * you can access variabless below through $this->app->pm->base_url
  * concatinate them to get full URL
- *
- * @link http://agiletoolkit.org/learn/intro
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-class Controller_PageManager extends AbstractController {
-
-
+ */
+class Controller_PageManager extends AbstractController
+{
     /**
      *  Base URL defines the absolute destination of our server. Because some
      *  other resources may be located outside of our Base Path, we need to
@@ -82,30 +69,31 @@ class Controller_PageManager extends AbstractController {
 
     public $template_filename;
 
-    function init(){
+    public function init()
+    {
         parent::init();
 
-        $this->app->pm=$this;
+        $this->app->pm = $this;
         // Firstly, the original URL is retrieved. This function should
         // take care of all possible rewrite engines and bring up a real
         // URL which matches the one in the browser. Also e will need to
         // determine a relative path for the requested page
     }
 
-    function setURL($url) {
+    public function setURL($url)
+    {
+        $url = parse_url($url);
 
-        $url=parse_url($url);
+        $scheme = isset($url['scheme']) ? $url['scheme'].'://' : '';
+        $host = isset($url['host']) ? $url['host'] : '';
+        $port = isset($url['port']) ? ':'.$url['port'] : '';
+        $user = isset($url['user']) ? $url['user'] : '';
+        $pass = isset($url['pass']) ? ':'.$url['pass']  : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+        $path = isset($url['path']) ? $url['path'] : '';
 
-        $scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : '';
-        $host     = isset($url['host']) ? $url['host'] : '';
-        $port     = isset($url['port']) ? ':' . $url['port'] : '';
-        $user     = isset($url['user']) ? $url['user'] : '';
-        $pass     = isset($url['pass']) ? ':' . $url['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($url['path']) ? $url['path'] : '';
-
-        if (substr($path,-1) != '/') {
-            $path.='/';
+        if (substr($path, -1) != '/') {
+            $path .= '/';
         }
 
         $this->base_url = $scheme.$user.$pass.$host.$port;
@@ -121,82 +109,94 @@ class Controller_PageManager extends AbstractController {
      *
      * See docs: doc/application/routing/parsing
      */
-    function parseRequestedURL(){
+    public function parseRequestedURL()
+    {
         // This is the re-constructions of teh proper URL.
         // 1. Schema
-        $url=$this->app->getConfig('atk/base_url',null);
-        if(is_null($url)){
+        $url = $this->app->getConfig('atk/base_url', null);
+        if (is_null($url)) {
             // Detect it
             $url = 'http';
-            $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT']==443;
-            if($https)$url.='s';
+            $https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443;
+            if ($https) {
+                $url .= 's';
+            }
 
             // 2. Continue building. We are adding hostname next and port.
-            $url .= "://".$_SERVER["SERVER_NAME"];
+            $url .= '://'.$_SERVER['SERVER_NAME'];
             //if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
-            if(($_SERVER["SERVER_PORT"]=="80" && !$https ) || ($_SERVER["SERVER_PORT"]=="443" && $https)){
+            if (($_SERVER['SERVER_PORT'] == '80' && !$https) || ($_SERVER['SERVER_PORT'] == '443' && $https)) {
                 ;
-
-            }else{
-                $url .= ":".$_SERVER['SERVER_PORT'];
+            } else {
+                $url .= ':'.$_SERVER['SERVER_PORT'];
             }
         }
 
         // We have now arrived at base_url as defined
-        $this->base_url=$url;
+        $this->base_url = $url;
 
         // 3. Next we need a base_part of our URL. There are many different
         // variables and approaches we tried it, REDIRECT_URL_ROOT, REDIRECT_URL,
         // etc, however most reliable is $this->unix_dirname(SCRIPT_NAME)
-        $path=$this->unix_dirname($_SERVER['SCRIPT_NAME']);
-        if(substr($path,-1)!='/')$path.='/';
+        $path = $this->unix_dirname($_SERVER['SCRIPT_NAME']);
+        if (substr($path, -1) != '/') {
+            $path .= '/';
+        }
 
         // We have now arrived at base_path as defined
-        $this->base_path=$path;
+        $this->base_path = $path;
 
         // 4. We now look at RequestURI and extract base_path from the beginning
-        if(isset($_GET['page'])){
-            $page=$_GET['page'];
+        if (isset($_GET['page'])) {
+            $page = $_GET['page'];
             $this->page = $page;
-        }else{
-            $request_uri=$this->getRequestURI();
-            if(strpos($request_uri,$path)!==0){
-                throw $this->exception("URL matching problem")
-                    ->addMoreInfo('RequestURI',$request_uri)
-                    ->addMoreInfo('BasePath',$path);
+        } else {
+            $request_uri = $this->getRequestURI();
+            if (strpos($request_uri, $path) !== 0) {
+                throw $this->exception('URL matching problem')
+                    ->addMoreInfo('RequestURI', $request_uri)
+                    ->addMoreInfo('BasePath', $path);
             }
-            $page=substr($request_uri,strlen($path));
-            if(!$page)$page='index';
+            $page = substr($request_uri, strlen($path));
+            if (!$page) {
+                $page = 'index';
+            }
 
             // Preserve actual page
             $this->page = $page;
 
             // Remove postfix from page if any
-            $page=preg_replace('/\..*$/','',$page);
-            $page=preg_replace('/\/$/','',$page);
-            $page=str_replace('/','_',$page);
+            $page = preg_replace('/\..*$/', '', $page);
+            $page = preg_replace('/\/$/', '', $page);
+            $page = str_replace('/', '_', $page);
 
-            if(substr($page,-1)=='_')$page=substr($page,0,-1);
+            if (substr($page, -1) == '_') {
+                $page = substr($page, 0, -1);
+            }
         }
 
-        if(strpos($page,'.')!==false)throw $this->exception('Page may not contain periods (.)')
-            ->addMoreInfo('page',$page);
-
+        if (strpos($page, '.') !== false) {
+            throw $this->exception('Page may not contain periods (.)')
+            ->addMoreInfo('page', $page);
+        }
 
         // We have now arrived at the page as per specification.
-        $this->app->page=str_replace('/','_',$page);
+        $this->app->page = str_replace('/', '_', $page);
 
-        $this->template_filename=$this->app->page;
-        if(substr($this->template_filename,-1)=='/')$this->template_filename.="index";
-
+        $this->template_filename = $this->app->page;
+        if (substr($this->template_filename, -1) == '/') {
+            $this->template_filename .= 'index';
+        }
     }
-    function debug(){
-        $this->debug=true;
-        parent::debug("base_path=".$this->base_path);
-        parent::debug("page=".$this->app->page);
-        parent::debug("template_filename=".$this->template_filename);
+    public function debug()
+    {
+        $this->debug = true;
+        parent::debug('base_path='.$this->base_path);
+        parent::debug('page='.$this->app->page);
+        parent::debug('template_filename='.$this->template_filename);
     }
-    function getRequestURI(){
+    public function getRequestURI()
+    {
         // WARNING. This function URI excludes query string
 
         if (isset($_SERVER['HTTP_X_REWRITE_URL'])) { // IIS
@@ -209,13 +209,18 @@ class Controller_PageManager extends AbstractController {
         } else {
             throw new BaseException('Unable to determine RequestURI. This shouldn\'t be called at all in CLI');
         }
-        $request_uri=explode('?',$request_uri,2);
+        $request_uri = explode('?', $request_uri, 2);
+
         return $request_uri[0];
     }
-    function unix_dirname($path){
-        $chunks=explode('/',$path);
+    public function unix_dirname($path)
+    {
+        $chunks = explode('/', $path);
         array_pop($chunks);
-        if(!$chunks)return '/';
-        return implode('/',$chunks);
+        if (!$chunks) {
+            return '/';
+        }
+
+        return implode('/', $chunks);
     }
 }

@@ -2,7 +2,7 @@
 /**
  * Implements a generic migration controller. This controller will find
  * folder containing "dbupdates", read all the .sql files from there and
- * sequentially apply them on top of your database::
+ * sequentially apply them on top of your database::.
  *
  * $app->add('Controller_Migrator_MySQL');
  *
@@ -13,29 +13,43 @@
  * Database migration statistics is stored in _db_update table which is
  * created if necessary.
  */
-class Controller_Migrator_MySQL extends AbstractController {
-    public $db=null;
+class Controller_Migrator_MySQL extends AbstractController
+{
+    public $db = null;
 
     const DOC = 'controller/migrator';
 
-
-    function init(){
+    public function init()
+    {
         parent::init();
 
-        if(is_null($this->db))$this->db=$this->app->db;
-        if(!$this->db)$this->db = $this->app->dbConnect();
+        if (is_null($this->db)) {
+            $this->db = $this->app->db;
+        }
+        if (!$this->db) {
+            $this->db = $this->app->dbConnect();
+        }
 
-        if($this->db->type!='mysql')throw $this->exception('Migrator can only be used with MySQL database')
-            ->addMoreInfo('type',$this->db->type);
+        if ($this->db->type != 'mysql') {
+            throw $this->exception('Migrator can only be used with MySQL database')
+            ->addMoreInfo('type', $this->db->type);
+        }
     }
 
     /**
      * Create necessary table in SQL for tracking progress.
      */
-    function create(){
-        $this->db->dsql()->expr('create table if not exists `[table]` '.
-            '(id int not null primary key auto_increment, name varchar(255), unique key(name), status enum("ok","fail"))',
-            ['table'=>'_db_update'])->execute();
+    public function create()
+    {
+        $this->db->dsql()->expr(
+            'create table if not exists `[table]` ('.
+                'id int not null primary key auto_increment, '.
+                'name varchar(255), '.
+                'unique key(name), '.
+                'status enum("ok","fail")'.
+            ')',
+            ['table' => '_db_update']
+        )->execute();
     }
 
     /**
@@ -44,48 +58,55 @@ class Controller_Migrator_MySQL extends AbstractController {
      * .. warning:: Use ";" semicolon between full statements. If you leave empty statement
      * between two semilocons MySQL ->exec() seems to fail.
      */
-    function migrate(){
+    public function migrate()
+    {
         // find migrations
-        $folders = $this->app->pathfinder->search('dbupdates','','path');
+        $folders = $this->app->pathfinder->search('dbupdates', '', 'path');
         // todo - sort files in folders
-        foreach($folders as $dir){
+        foreach ($folders as $dir) {
             $files = scandir($dir);
             sort($files);
-            foreach($files as $name) {
-                if(strtolower(substr($name,-4))!='.sql')continue;
+            foreach ($files as $name) {
+                if (strtolower(substr($name, -4)) != '.sql') {
+                    continue;
+                }
                 $q = $this->db->dsql()
                     ->table('_db_update')
-                    ->where('name',strtolower($name))
+                    ->where('name', strtolower($name))
                     ->field('status');
-                if($q->getOne()==='ok')continue;
-                $migration=file_get_contents($dir.'/'.$name);
-                $q->set('name',strtolower($name));
+                if ($q->getOne() === 'ok') {
+                    continue;
+                }
+                $migration = file_get_contents($dir.'/'.$name);
+                $q->set('name', strtolower($name));
                 try {
                     $this->db->dbh->exec($migration);
-                    $q->set('status','ok')->replace();
-                }catch(Exception $e){
-                    $q->set('status','fail')->replace();
-                    if(!$e instanceof BaseException){
+                    $q->set('status', 'ok')->replace();
+                } catch (Exception $e) {
+                    $q->set('status', 'fail')->replace();
+                    if (!$e instanceof BaseException) {
                         $e = $this->exception()
                             ->addMoreInfo('Original error', $e->getMessage());
                     }
-                    throw $e->addMoreInfo('file',$name);
+                    throw $e->addMoreInfo('file', $name);
                 }
             }
         }
+
         return $this;
     }
-
 
     /**
      * Produces and returns a generic model you can supply to your Grid
      * if you want show migration status.
      */
-    function getStatusModel() {
-        $m = $this->add('SQL_Model', ['table'=>'_db_update']);
+    public function getStatusModel()
+    {
+        $m = $this->add('SQL_Model', ['table' => '_db_update']);
         $m->addField('name');
-        $m->addField('status')->enum(['ok','fail']);
+        $m->addField('status')->enum(['ok', 'fail']);
         $m->setSource('SQL');
+
         return $m;
     }
 }

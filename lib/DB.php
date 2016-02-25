@@ -1,8 +1,7 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
- * Implementation of SQL Query Abstraction Layer for Agile Toolkit
+ * Implementation of SQL Query Abstraction Layer for Agile Toolkit.
  *
- * @link http://agiletoolkit.org/doc/dsql
  * @version     3.0
  *
  * History
@@ -13,20 +12,9 @@
  *  1.3         Released a standalone version with code cleanup.
  *  2.0         Many significant changes, reorganized structure, might break compatibility with DBlite 1.X
  *  3.0         Migrated to use of PDO
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+ */
 class DB extends AbstractController
 {
-
     /** Link to PDO database handle */
     public $dbh = null;
 
@@ -47,7 +35,7 @@ class DB extends AbstractController
      * Connect will parse supplied DSN and connect to the database. Please be
      * aware that DSN may contain plaintext password and if you record backtrace
      * it may expose it. To avoid, put your DSN inside a config file under a
-     * custom key and use a string e'g:
+     * custom key and use a string e'g:.
      *
      * $config['my_dsn'] = 'secret';
      * $db->connect('my_dsn');
@@ -58,7 +46,7 @@ class DB extends AbstractController
      *
      * @return DB $this
      */
-    function connect($dsn = null)
+    public function connect($dsn = null)
     {
         if ($dsn === null) {
             $dsn = 'dsn';
@@ -92,7 +80,7 @@ class DB extends AbstractController
                     ';charset=utf8',
                     $matches[2],
                     $matches[4],
-                    array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                    array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'),
                 );
             }
         }
@@ -102,12 +90,12 @@ class DB extends AbstractController
                 @$dsn[0],
                 @$dsn[1],
                 @$dsn[2],
-                @$dsn[3] ?: array(PDO::ATTR_PERSISTENT => true));
+                @$dsn[3] ?: array(PDO::ATTR_PERSISTENT => true)
+            );
         } catch (PDOException $e) {
             throw $this->exception('Database Connection Failed')
                 ->addMoreInfo('PDO error', $e->getMessage())
                 ->addMoreInfo('DSN', $dsn[0]);
-            ;
         }
 
         // Configure PDO to play nice
@@ -119,6 +107,7 @@ class DB extends AbstractController
         $this->dsql_class = isset($dsn['class'])
             ? $dsn['class']
             : 'DB_dsql_'.$this->type;
+
         return $this;
     }
     // }}}
@@ -133,7 +122,7 @@ class DB extends AbstractController
      *
      * @return DB_dsql empty dsql object
      * */
-    function dsql($class = null)
+    public function dsql($class = null)
     {
         $class = $class ?: $this->dsql_class;
         $obj = $this->add($class);
@@ -141,6 +130,7 @@ class DB extends AbstractController
             throw $this->exception('Specified class must be descendant of DB_dsql')
                 ->addMoreInfo('class', $class);
         }
+
         return $obj;
     }
     // }}}
@@ -157,7 +147,7 @@ class DB extends AbstractController
      *
      * @return PDOStatement Newly created statement
      */
-    function query($query, $params = array())
+    public function query($query, $params = array())
     {
         // If user forgot to explicitly connect to database, let's do it for him
         if (!$this->dbh) {
@@ -167,14 +157,14 @@ class DB extends AbstractController
         // There are all sorts of objects used by Agile Toolkit, let's make
         // sure we operate with strings here
         if (is_object($query)) {
-            $query = (string)$query;
+            $query = (string) $query;
         }
 
         // For some weird reason SQLite will fail sometimes to execute query
         // for the first time. We will try it again before complaining about
         // the error, but only if error=17.
         $e = null;
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 2; ++$i) {
             try {
                 $statement = $this->dbh->prepare($query);
 
@@ -192,6 +182,7 @@ class DB extends AbstractController
                 }
 
                 $statement->execute();
+
                 return $statement;
             } catch (PDOException $e) {
                 if ($e->errorInfo[1] === 17 && !$i) {
@@ -214,9 +205,10 @@ class DB extends AbstractController
      *
      * @return string first column of first row
      */
-    function getOne($query, $params = array())
+    public function getOne($query, $params = array())
     {
         $res = $this->query($query, $params)->fetch();
+
         return $res[0];
     }
 
@@ -242,7 +234,7 @@ class DB extends AbstractController
      *
      * @return int|mixed
      */
-    function lastID($statement = null, $table = null)
+    public function lastID($statement = null, $table = null)
     {
         return $this->dbh->lastInsertId();
     }
@@ -265,11 +257,12 @@ class DB extends AbstractController
      */
     public function beginTransaction()
     {
-        $this->transaction_depth++;
+        ++$this->transaction_depth;
         // transaction starts only if it was not started before
         if ($this->transaction_depth == 1) {
             return $this->dbh->beginTransaction();
         }
+
         return false;
     }
 
@@ -279,11 +272,12 @@ class DB extends AbstractController
      * issued to the database.
      *
      * @see beginTransaction()
+     *
      * @return mixed Don't rely on any meaningful return
      */
     public function commit()
     {
-        $this->transaction_depth--;
+        --$this->transaction_depth;
 
         // This means we rolled something back and now we lost track of commits
         if ($this->transaction_depth < 0) {
@@ -293,18 +287,19 @@ class DB extends AbstractController
         if ($this->transaction_depth == 0) {
             return $this->dbh->commit();
         }
+
         return false;
     }
-
 
     public function atomic($f)
     {
         $this->beginTransaction();
-        try{
+        try {
             $res = call_user_func($f);
             $this->commit();
+
             return $res;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $this->rollBack();
             throw $e;
         }
@@ -317,7 +312,8 @@ class DB extends AbstractController
      * Perhaps use a hook for this?
      *
      * @see beginTransaction()
-     * @return boolean if in transactionn
+     *
+     * @return bool if in transactionn
      */
     public function inTransaction()
     {
@@ -325,14 +321,15 @@ class DB extends AbstractController
     }
 
     /**
-     * Rollbacks queries since beginTransaction and resets transaction depth
+     * Rollbacks queries since beginTransaction and resets transaction depth.
      *
      * @see beginTransaction()
+     *
      * @return mixed Don't rely on any meaningful return
      */
     public function rollBack()
     {
-        $this->transaction_depth--;
+        --$this->transaction_depth;
 
         // This means we rolled something back and now we lost track of commits
         if ($this->transaction_depth < 0) {
@@ -342,6 +339,7 @@ class DB extends AbstractController
         if ($this->transaction_depth == 0) {
             return $this->dbh->rollBack();
         }
+
         return false;
     }
     // }}}

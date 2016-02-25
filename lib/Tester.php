@@ -1,13 +1,12 @@
 <?php
-
 /**
  * Tester implements a test-buddy class, which is passed to all your test
  * methods. You can use some of the methods to interract, output data or
  * debug information from outside of your test. This output will only
  * be displayed if any of the assertions fail.
  */
-class Tester extends AbstractObject {
-
+class Tester extends AbstractObject
+{
     /**
      * Contains model with test results.
      */
@@ -19,7 +18,8 @@ class Tester extends AbstractObject {
      */
     public $single_test_only = null;
 
-    function init() {
+    public function init()
+    {
         parent::init();
 
         $m = $this->results = $this->add('Model');
@@ -33,22 +33,19 @@ class Tester extends AbstractObject {
         $m->addField('result')->type('object');
         $m->addfield('debug')->type('text');
 
-        $a=array();
-        $m->setSource('Array',$a);
+        $a = array();
+        $m->setSource('Array', $a);
     }
 
-
-    function prepareForTest()
+    public function prepareForTest()
     {
         // nothnig
     }
 
-
-    function skip()
+    public function skip()
     {
         throw new Exception_SkipTests();
     }
-
 
     private $_assert_options;
 
@@ -69,13 +66,11 @@ class Tester extends AbstractObject {
         assert_options($this->_assert_options);
     }
 
-
     /**
      * Sets the state of your application.
      */
     public function setState($state)
     {
-
     }
 
     /**
@@ -83,9 +78,7 @@ class Tester extends AbstractObject {
      */
     public function verifyState($state)
     {
-
     }
-
 
     /**
      * Outputs some debug information, which is cached until the end
@@ -95,7 +88,7 @@ class Tester extends AbstractObject {
     public function debug($text)
     {
         $this->results['debug'] =
-        $this->results['debug'] . $text . "\n";
+        $this->results['debug'].$text."\n";
     }
 
     /**
@@ -105,9 +98,7 @@ class Tester extends AbstractObject {
      */
     public function info($text)
     {
-
     }
-
 
     /**
      * Similar to a regular Agile Toolkit add method, however will
@@ -117,7 +108,5 @@ class Tester extends AbstractObject {
      */
     public function _add($class)
     {
-
     }
-
 }

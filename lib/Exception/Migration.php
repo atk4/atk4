@@ -1,2 +1,7 @@
 <?php
-class Exception_Migration extends BaseException {}
+/**
+ * Undocumented.
+ */
+class Exception_Migration extends BaseException
+{
+}

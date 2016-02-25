@@ -1,22 +1,9 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * A basic authentication class. Include inside your APP or
  * on a page. You may have multiple Auth instances. Supports
  * 3rd party plugins.
  *
- * @link http://agiletoolkit.org/doc/auth
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/*
  * Use:
  *
  * $auth=$this->add('Auth');
@@ -33,47 +20,47 @@
  *
  * See documentation on "auth" add-on for more information
  *  http://agiletoolkit.org/a/auth
- *
  */
-class Auth_Basic extends AbstractController {
-
-    public $info=false;     // info will contain data loaded about authenticated user. This
+class Auth_Basic extends AbstractController
+{
+    public $info = false;     // info will contain data loaded about authenticated user. This
                             // property can be accessed through $this->get(); and should not
                             // be changed after authentication.
 
-    public $form=null;  // This form is created when user is being asked about authentication.
+    public $form = null;  // This form is created when user is being asked about authentication.
                             // If you are willing to change the way form looks, create it
                             // prior to calling check(). Your form must have compatible field
                             // names: "username" and "password"
 
-    protected $password_encryption=null;         // Which encryption to use. Few are built-in
+    protected $password_encryption = null;         // Which encryption to use. Few are built-in
 
-    protected $allowed_pages=array();
+    protected $allowed_pages = array();
 
-    public $login_field='email';
-    public $password_field='password';
+    public $login_field = 'email';
+    public $password_field = 'password';
 
-    public $hash_algo=PASSWORD_DEFAULT;
-    public $hash_options=array();
+    public $hash_algo = PASSWORD_DEFAULT;
+    public $hash_options = array();
 
-    public $login_layout_class='Layout_Centered';
+    public $login_layout_class = 'Layout_Centered';
 
-    function init(){
+    public function init()
+    {
         parent::init();
 
         // Register as auth handler, if it's not set yet
-        if(@!$this->app->auth)$this->app->auth=$this;
+        if (@!$this->app->auth) {
+            $this->app->auth = $this;
+        }
 
         if (!$this->app->hasMethod('initializeSession') && !session_id()) {
             // No session support
             return;
         }
 
-
         // Try to get information from the session. If user is authenticated, information will
         // be available there
-        $this->info=$this->recall('info',false);
-
+        $this->info = $this->recall('info', false);
     }
 
     /**
@@ -81,21 +68,29 @@ class Auth_Basic extends AbstractController {
      * collection of user/password combinations. Use this method if you
      * only want one or few accounts to access the system.
      *
-     * @param  mixed $user Either string username or associative array with data
-     * @param  mixed $pass Password if username is string
+     * @param mixed $user Either string username or associative array with data
+     * @param mixed $pass Password if username is string
+     *
      * @return $this
      */
-    function allow($user,$pass=null){
+    public function allow($user, $pass = null)
+    {
         // creates fictional model to allow specified user and password
         // TODO: test this
-        if($this->model){
-            $this->model->table[]=array($this->login_field=>$user,$this->password_field=>$pass);
+        if ($this->model) {
+            $this->model->table[] = array($this->login_field => $user, $this->password_field => $pass);
+
             return $this;
         }
-        $m=$this->add('Model')
-            ->setSource('Array',array(is_array($user)?$user:array($this->login_field=>$user,$this->password_field=>$pass)));
-        $m->id_field=$this->login_field;
+        $m = $this->add('Model')
+            ->setSource('Array', array(
+                is_array($user)
+                ? $user
+                : array($this->login_field => $user, $this->password_field => $pass)
+            ));
+        $m->id_field = $this->login_field;
         $this->setModel($m);
+
         return $this;
     }
     /**
@@ -109,48 +104,53 @@ class Auth_Basic extends AbstractController {
      * @param string $login_field    [description]
      * @param string $password_field [description]
      */
-    function setModel($model,$login_field='email',$password_field='password'){
+    public function setModel($model, $login_field = 'email', $password_field = 'password')
+    {
         parent::setModel($model);
-        $this->login_field=$login_field;
-        $this->password_field=$password_field;
+        $this->login_field = $login_field;
+        $this->password_field = $password_field;
 
         // Load model from session
-        if($this->info && $this->recall("id")){
-            if($this->recall('class',false)==get_class($this->model)){
-                $this->debug("Loading model from cache");
+        if ($this->info && $this->recall('id')) {
+            if ($this->recall('class', false) == get_class($this->model)) {
+                $this->debug('Loading model from cache');
                 $this->model->set($this->info);
-                $this->model->dirty=array();
-                $this->model->id=$this->recall('id',null);
-            }else{
+                $this->model->dirty = array();
+                $this->model->id = $this->recall('id', null);
+            } else {
                 // Class changed, re-fetch data from database
-                $this->debug("Class changed, loading from database");
+                $this->debug('Class changed, loading from database');
                 $this->model->tryLoad($this->recall('id'));
-                if(!$this->model->loaded())$this->logout(false);
+                if (!$this->model->loaded()) {
+                    $this->logout(false);
+                }
 
                 $this->memorizeModel();
             }
         }
 
-        $id=$this->hook('tryLogin',array($model,$login_field,$password_field));
+        $id = $this->hook('tryLogin', array($model, $login_field, $password_field));
 
-        if($id && is_numeric($id)){
+        if ($id && is_numeric($id)) {
             $this->model->tryLoad($id);
             $this->memorizeModel();
         }
 
-        $t=$this;
+        $t = $this;
 
         // If model is saved, update our cache too, but don't store password
-        $this->model->addHook('afterSave',function($m)use($t){
+        $this->model->addHook('afterSave', function ($m) use ($t) {
             // after this model is saved, re-cache the info
-            $tmp=$m->get();
+            $tmp = $m->get();
             unset($tmp[$t->password_field]);
-            if($t->app instanceof App_Web)$t->memorize('info',$tmp);
+            if ($t->app instanceof App_Web) {
+                $t->memorize('info', $tmp);
+            }
         });
 
         $this->addEncryptionHook($this->model);
 
-        if(strtolower($this->app->page)=='logout'){
+        if (strtolower($this->app->page) == 'logout') {
             $this->logout();
             $this->app->redirect('/');
         }
@@ -162,58 +162,80 @@ class Auth_Basic extends AbstractController {
      * This method will be applied on $this->model, so you should not call
      * it manually. You can call it on a fresh model, however.
      */
-    function addEncryptionHook($model){
+    public function addEncryptionHook($model)
+    {
         // If model is saved, encrypt password
-        $t=$this;
-        if(@$model->has_encryption_hook)return;
-        $model->has_encryption_hook=true;
-        $model->addHook('beforeSave',function($m)use($t){
-            if($m->isDirty($t->password_field)&&$m[$t->password_field]){
-                $m[$t->password_field]=$t->encryptPassword($m[$t->password_field],$m[$t->login_field]);
+        $t = $this;
+        if (@$model->has_encryption_hook) {
+            return;
+        }
+        $model->has_encryption_hook = true;
+        $model->addHook('beforeSave', function ($m) use ($t) {
+            if ($m->isDirty($t->password_field) && $m[$t->password_field]) {
+                $m[$t->password_field] = $t->encryptPassword($m[$t->password_field], $m[$t->login_field]);
             }
         });
     }
-    function destroy(){
+    public function destroy()
+    {
         unset($this->app->auth);
         parent::destroy();
     }
     /** Auth memorizes data about a logged-in user in session. You can either use this function to access
      * that data or $auth->model (preferred)   $auth->get('username') will always point to the login field
-     * value ofthe user regardless of how your field is named
+     * value ofthe user regardless of how your field is named.
      */
-    function get($property=null,$default=null){
-        if(is_null($property))return $this->info;
-        if(!isset($this->info[$property]))return $default;
+    public function get($property = null, $default = null)
+    {
+        if (is_null($property)) {
+            return $this->info;
+        }
+        if (!isset($this->info[$property])) {
+            return $default;
+        }
+
         return $this->info[$property];
     }
-    function getAll(){
+    public function getAll()
+    {
         return $this->info;
     }
     /**
      * Specify page or array of pages which will exclude authentication. Add your registration page here
-     * or page containing terms and conditions
+     * or page containing terms and conditions.
      */
-    function allowPage($page){
-        if(is_array($page)){
-            foreach($page as $p)$this->allowPage($p);
+    public function allowPage($page)
+    {
+        if (is_array($page)) {
+            foreach ($page as $p) {
+                $this->allowPage($p);
+            }
+
             return $this;
         }
-        $this->allowed_pages[]=$page;
+        $this->allowed_pages[] = $page;
+
         return $this;
     }
-    function getAllowedPages(){
+    public function getAllowedPages()
+    {
         return $this->allowed_pages;
     }
     /**
      * Verifies if the specified page is allowed to be accessed without
      * authentication.
      *
-     * @param  [type]  $page [description]
-     * @return boolean       [description]
+     * @param [type] $page [description]
+     *
+     * @return bool [description]
      */
-    function isPageAllowed($page){
-        if($this->hook('isPageAllowed',array($page))===true)return true;
-        return in_array($page,$this->allowed_pages) || in_array(str_replace('_','/',$page),$this->allowed_pages);
+    public function isPageAllowed($page)
+    {
+        if ($this->hook('isPageAllowed', array($page)) === true) {
+            return true;
+        }
+
+        return in_array($page, $this->allowed_pages) || in_array(str_replace('_', '/', $page), $this->allowed_pages);
     }
 
     /**
@@ -229,32 +251,49 @@ class Auth_Basic extends AbstractController {
      *
      * If you are having trouble with authentication, use auth->debug()
      */
-    function usePasswordEncryption($method='php'){
-        $this->password_encryption=$method;
+    public function usePasswordEncryption($method = 'php')
+    {
+        $this->password_encryption = $method;
+
         return $this;
     }
     /** Manually encrypt password */
-    function encryptPassword($password,$salt=null){
-        if(!is_string($this->password_encryption) && is_callable($this->password_encryption)){
-            $e=$this->password_encryption;
-            return $e($password,$salt);
+    public function encryptPassword($password, $salt = null)
+    {
+        if (!is_string($this->password_encryption) && is_callable($this->password_encryption)) {
+            $e = $this->password_encryption;
+
+            return $e($password, $salt);
         }
-        if($this->password_encryption)$this->debug("Encrypting password: '$password' with ".$this->password_encryption.' salt='.$salt);
-        switch($this->password_encryption){
-            case null: return $password;
-            case'php':
-                return password_hash($password,$this->hash_algo,$this->hash_options);
-            case'sha256/salt':
-                       if(!$salt)throw $this->exception('sha256 requires salt (2nd argument to encryptPassword and is normaly an email)');
-                       $key=$this->app->getConfig('auth/key',$this->app->name);
-                       if($this->password_encryption)$this->debug("Using key ".$key);
-                       return hash_hmac('sha256',
-                                 $password.$salt,
-                                 $key);
-            case'sha1':return sha1($password);
-            case'md5':return md5($password);
-            case'rot13':return str_rot13($password);
-            default: throw $this->exception('No such encryption method')->addMoreInfo('encryption',$this->password_encryption);
+        if ($this->password_encryption) {
+            $this->debug("Encrypting password: '$password' with ".$this->password_encryption.' salt='.$salt);
+        }
+        switch ($this->password_encryption) {
+            case null:
+                return $password;
+            case 'php':
+                return password_hash($password, $this->hash_algo, $this->hash_options);
+            case 'sha256/salt':
+                if (!$salt) {
+                    throw $this->exception(
+                        'sha256 requires salt (2nd argument to encryptPassword and is normaly an email)'
+                    );
+                }
+                $key = $this->app->getConfig('auth/key', $this->app->name);
+                if ($this->password_encryption) {
+                    $this->debug('Using key '.$key);
+                }
+
+                return hash_hmac('sha256', $password.$salt, $key);
+            case 'sha1':
+                return sha1($password);
+            case 'md5':
+                return md5($password);
+            case 'rot13':
+                return str_rot13($password);
+            default:
+                throw $this->exception('No such encryption method')
+                    ->addMoreInfo('encryption', $this->password_encryption);
         }
     }
     /**
@@ -265,26 +304,27 @@ class Auth_Basic extends AbstractController {
      * check() returns true if user have just logged in and will return "null" for requests when user
      * continues to use his session. Use that to perform some calculation on log-in
      */
-    function check(){
-
-        if($this->isPageAllowed($this->app->page))return null;      // no authentication is required
+    public function check()
+    {
+        if ($this->isPageAllowed($this->app->page)) {
+            return;
+        }      // no authentication is required
 
         // Check if user's session contains autentication information
-        if(!$this->isLoggedIn()){
-
+        if (!$this->isLoggedIn()) {
             $this->memorizeURL();
 
             // Brings up additional verification methods, such as cookie
             // authentication, token or OpenID. In case of successful login,
             // breakHook($user_id) must be used
-            $user_id=$this->hook('check');
-            if(!is_array($user_id) && !is_bool($user_id) && $user_id){
+            $user_id = $this->hook('check');
+            if (!is_array($user_id) && !is_bool($user_id) && $user_id) {
                 $this->model->load($user_id);
                 //$this->loggedIn();
                 $this->memorizeModel();
+
                 return true;
             }
-
 
             /*
             $this->debug('User is not authenticated yet');
@@ -294,26 +334,33 @@ class Auth_Basic extends AbstractController {
             }else $this->debug("No permanent cookie");
              */
             $this->processLogin();
+
             return true;
-        }else $this->debug('User is already authenticated');
+        } else {
+            $this->debug('User is already authenticated');
+        }
     }
     /** Add additional info to be stored in user session. */
-    function addInfo($key,$val=null){
-        if(is_null($val) && is_array($key)){
-            foreach($key as $a=>$b){
-                $this->addInfo($a,$b);
+    public function addInfo($key, $val = null)
+    {
+        if (is_null($val) && is_array($key)) {
+            foreach ($key as $a => $b) {
+                $this->addInfo($a, $b);
             }
+
             return;
         }
         $this->debug("Gathered info: $key=$val");
-        $this->info[$key]=$val;
+        $this->info[$key] = $val;
+
         return $this;
     }
     /**
-      * This function determines - if user is already logged in or not. It does it by
-      * looking at $this->info, which was loaded during init() from session.
-      */
-    function isLoggedIn(){
+     * This function determines - if user is already logged in or not. It does it by
+     * looking at $this->info, which was loaded during init() from session.
+     */
+    public function isLoggedIn()
+    {
         return $this->model->loaded();
     }
 
@@ -329,7 +376,7 @@ class Auth_Basic extends AbstractController {
      *
      * This function return false OR the id of the record matching user
      */
-    function verifyCredentials($user, $password)
+    public function verifyCredentials($user, $password)
     {
         $this->debug('verifying credentials for '.$user.' '.$password);
 
@@ -340,10 +387,10 @@ class Auth_Basic extends AbstractController {
 
         // If password field is not defined in the model for security
         // reasons, let's add it for authentication purpose.
-        $password_existed=true;
+        $password_existed = true;
         if (!$this->model->hasElement($this->password_field)) {
             $this->model->addField($this->password_field)->type('password');
-            $password_existed=false;
+            $password_existed = false;
         }
 
         // Attempt to load user data by username. If not found, return
@@ -355,34 +402,35 @@ class Auth_Basic extends AbstractController {
             if (!$password_existed) {
                 $data->getElement($this->password_field)->destroy();
             }
+
             return false;
         }
 
-        $hash=$data[$this->password_field];
+        $hash = $data[$this->password_field];
 
         $this->debug('loaded user entry with hash: '.$hash);
 
         // Verify password first
-        $result=false;
-        $rehash=false;
+        $result = false;
+        $rehash = false;
 
-        if ($this->password_encryption=='php') {
+        if ($this->password_encryption == 'php') {
 
             // Get information about the hash
-            $info=password_get_info($hash);
+            $info = password_get_info($hash);
 
             // Backwards-compatibility with older ATK encryption methods
-            if ($info['algo']==0) {
+            if ($info['algo'] == 0) {
 
                 // Determine type of hash by length
-                if (strlen($hash)==64) {
-                    $this->password_encryption='sha256/salt';
-                } elseif (strlen($hash)==32) {
-                    $this->password_encryption='md5';
-                } elseif (strlen($hash)==40) {
-                    $this->password_encryption='sha1';
+                if (strlen($hash) == 64) {
+                    $this->password_encryption = 'sha256/salt';
+                } elseif (strlen($hash) == 32) {
+                    $this->password_encryption = 'md5';
+                } elseif (strlen($hash) == 40) {
+                    $this->password_encryption = 'sha1';
                 } else {
-                    $this->password_encryption=false;
+                    $this->password_encryption = false;
                     $this->debug('Unable to identify password hash type, using plain-text matching');
                     /*
                     $this->password_encryption='php';
@@ -396,15 +444,15 @@ class Auth_Basic extends AbstractController {
 
                 // Convert password hash
                 $this->debug('Old password found with algo='.$this->password_encryption);
-                $ep=$this->encryptPassword($password,$user);
-                $this->password_encryption='php';
+                $ep = $this->encryptPassword($password, $user);
+                $this->password_encryption = 'php';
 
-                $rehash=true;
-                $result=$hash==$ep;
+                $rehash = true;
+                $result = $hash == $ep;
             } else {
-                $result=password_verify($password,$ep=$data[$this->password_field]);
+                $result = password_verify($password, $ep = $data[$this->password_field]);
                 $this->debug('Native password hash with info: '.json_encode($info));
-                $rehash=password_needs_rehash(
+                $rehash = password_needs_rehash(
                     $hash,
                     $this->hash_algo,
                     $this->hash_options
@@ -415,16 +463,15 @@ class Auth_Basic extends AbstractController {
                 $this->debug('Verify is a SUCCESS');
 
                 if ($rehash) {
-                    $hash=$data[$this->password_field]=$password;
+                    $hash = $data[$this->password_field] = $password;
                     $data->setDirty($this->password_field);
                     $data->save();
                     $this->debug('Rehashed into '.$data[$this->password_field]);
                 }
             }
-
         } else {
-            $ep=$this->encryptPassword($password,$user);
-            $result=$hash==$ep;
+            $ep = $this->encryptPassword($password, $user);
+            $result = $hash == $ep;
             $this->debug('Attempting algo='.$this->password_encryption.' hash='.$hash.' newhash='.$ep);
         }
 
@@ -434,12 +481,13 @@ class Auth_Basic extends AbstractController {
             if (!$password_existed) {
                 $data->getElement($this->password_field)->destroy();
             }
+
             return false;
         }
 
         // Leave record loaded, but hide password
-        $data[$this->password_field]='';
-        $data->dirty[$this->password_field]=false;
+        $data[$this->password_field] = '';
+        $data->dirty[$this->password_field] = false;
 
         return $data[$this->model->id_field];
 
@@ -448,99 +496,124 @@ class Auth_Basic extends AbstractController {
         }
     }
     /** Memorize current URL. Called when the first unsuccessful check is executed. */
-    function memorizeURL(){
-        if($this->app->page !== 'index' && !$this->recall('page',false)){
-            $this->memorize('page',$this->app->page);
-            $g=$_GET;unset($g['page']);
-            $this->memorize('args',$g);
+    public function memorizeURL()
+    {
+        if ($this->app->page !== 'index' && !$this->recall('page', false)) {
+            $this->memorize('page', $this->app->page);
+            $g = $_GET;
+            unset($g['page']);
+            $this->memorize('args', $g);
         }
     }
     /** Return originalally requested URL. */
-    function getURL(){
-        $p=$this->recall('page');
+    public function getURL()
+    {
+        $p = $this->recall('page');
 
         // If there is a login page, no need to return to it
-        if($p=='login')return $this->app->url('/');
+        if ($p == 'login') {
+            return $this->app->url('/');
+        }
 
-        $url=$this->app->url($p, $this->recall('args',null));
-        $this->forget('page');$this->forget('args');
+        $url = $this->app->url($p, $this->recall('args', null));
+        $this->forget('page');
+        $this->forget('args');
+
         return $url;
     }
     /**
-     * Rederect to page user tried to access before authentication was requested
+     * Rederect to page user tried to access before authentication was requested.
      */
-    function loginRedirect(){
-        $this->debug("to Index");
+    public function loginRedirect()
+    {
+        $this->debug('to Index');
         $this->app->redirect($this->getURL());
     }
     /**
-     * This function is always executed after successfull login through a normal means (login form or plugin)
+     * This function is always executed after successfull login through a normal means (login form or plugin).
      *
      * It will create cache model data.
      */
-    function loggedIn($user=null,$pass=null){ //$username,$password,$memorize=false){
-        $this->hook('loggedIn',array($user,$pass));
+    public function loggedIn($user = null, $pass = null)
+    {
+        //$username,$password,$memorize=false){
+        $this->hook('loggedIn', array($user, $pass));
         $this->app->redirect($this->getURL());
     }
     /**
-     * Store model in session data so that it can be retrieved faster
+     * Store model in session data so that it can be retrieved faster.
      */
-    function memorizeModel(){
-        if(!$this->model->loaded())throw $this->exception('Authentication failure','AccessDenied');
+    public function memorizeModel()
+    {
+        if (!$this->model->loaded()) {
+            throw $this->exception('Authentication failure', 'AccessDenied');
+        }
 
         // Don't store password in model / memory / session
-        $this->model['password']=null;
+        $this->model['password'] = null;
         unset($this->model->dirty['password']);
 
         // Cache memory. Should we use controller?
-        $this->info=$this->model->get();
-        $this->info['username']=$this->info[$this->login_field];
+        $this->info = $this->model->get();
+        $this->info['username'] = $this->info[$this->login_field];
 
         if ($this->app->hasMethod('initializeSession') || session_id()) {
-            $this->memorize('info',$this->info);
-            $this->memorize('class',get_class($this->model));
-            $this->memorize('id',$this->model->id);
+            $this->memorize('info', $this->info);
+            $this->memorize('class', get_class($this->model));
+            $this->memorize('id', $this->model->id);
         }
 
         $this->hook('login');
     }
     /**
-     * Manually Log in as specified users. Will not perform password check or redirect
+     * Manually Log in as specified users. Will not perform password check or redirect.
      */
-    function loginByID($id){
+    public function loginByID($id)
+    {
         $this->model->load($id);
         $this->memorizeModel();
+
         return $this;
     }
     /**
-     * Manually Log in with specified condition
+     * Manually Log in with specified condition.
      */
-    function loginBy($field,$value){
-        $this->model->tryLoadBy($field,$value);
+    public function loginBy($field, $value)
+    {
+        $this->model->tryLoadBy($field, $value);
         $this->memorizeModel();
+
         return $this;
     }
     /** Manually Log in as specified users by using login name. */
-    function login($user){
-        if(is_object($user)){
-            if(!$this->model)throw $this->exception('Auth Model should be set');
-            $c=get_class($this->model);
+    public function login($user)
+    {
+        if (is_object($user)) {
+            if (!$this->model) {
+                throw $this->exception('Auth Model should be set');
+            }
+            $c = get_class($this->model);
 
-            if(!$user instanceof $c)throw $this->exception('Specified model with incompatible class')
-                ->addMoreInfo('required',$c)
-                ->addMoreInfo('supplied',get_class($user));
+            if (!$user instanceof $c) {
+                throw $this->exception('Specified model with incompatible class')
+                ->addMoreInfo('required', $c)
+                ->addMoreInfo('supplied', get_class($user));
+            }
 
-            $this->model=$user;
+            $this->model = $user;
             $this->memorizeModel();
+
             return $this;
         }
 
-        $this->model->tryLoadBy($this->login_field,$user);
+        $this->model->tryLoadBy($this->login_field, $user);
         $this->memorizeModel();
+
         return $this;
     }
     /** Manually log out user */
-    function logout(){
+    public function logout()
+    {
         $this->hook('logout');
 
         $this->model->unload();
@@ -549,25 +622,30 @@ class Auth_Basic extends AbstractController {
         $this->forget('info');
         $this->forget('id');
 
-        setcookie(session_name(), '', time()-42000, '/');
+        setcookie(session_name(), '', time() - 42000, '/');
         @session_destroy();
 
-        $this->info=false;
+        $this->info = false;
+
         return $this;
     }
-    /** Creates log-in form. Override if you want to use your own form. If you need to change template used by a log-in form,
-     * add template/default/page/login.html */
-    function createForm($page){
-        $form=$page->add('Form',null,null,array('form/minimal'));
+    /**
+     * Creates log-in form.
+     * Override if you want to use your own form. If you need to change template used by a log-in form,
+     * add template/default/page/login.html
+     */
+    public function createForm($page)
+    {
+        $form = $page->add('Form', null, null, array('form/minimal'));
 
-        $email=$this->model->hasField($this->login_field);
-        $email=$email?$email->caption():'E-mail';
+        $email = $this->model->hasField($this->login_field);
+        $email = $email ? $email->caption() : 'E-mail';
 
-        $password=$this->model->hasField($this->password_field);
-        $password=$password?$password->caption():'Password';
+        $password = $this->model->hasField($this->password_field);
+        $password = $password ? $password->caption() : 'Password';
 
-        $form->addField('Line','username',$email);
-        $form->addField('Password','password',$password);
+        $form->addField('Line', 'username', $email);
+        $form->addField('Password', 'password', $password);
         $form->addSubmit('Login')->addClass('atk-jackscrew')->addClass('atk-swatch-green');
 
         //$form->add('View',null,'button_row_left')
@@ -576,49 +654,50 @@ class Auth_Basic extends AbstractController {
         return $form;
     }
     /** Do not override this function. */
-    function showLoginForm(){
-
-        $this->app->template->trySet('page_title','Login');
-        if($this->app->layout && $this->login_layout_class){
+    public function showLoginForm()
+    {
+        $this->app->template->trySet('page_title', 'Login');
+        if ($this->app->layout && $this->login_layout_class) {
             $this->app->layout->destroy();
             $this->app->add($this->login_layout_class);
-            $this->app->page_object=$p=$this->app->layout->add('Page',null,null,array('page/login'));
-        }else{
-            $this->app->page_object=$p=$this->app->add('Page',null,null,array('page/login'));
+            $this->app->page_object = $p = $this->app->layout->add('Page', null, null, array('page/login'));
+        } else {
+            $this->app->page_object = $p = $this->app->add('Page', null, null, array('page/login'));
         }
 
-
         // hook: createForm use this to build basic login form
-        $this->form=$this->hook('createForm',array($p));
+        $this->form = $this->hook('createForm', array($p));
 
         // If no hook, build standard form
-        if(!is_object($this->form))
-            $this->form=$this->createForm($p);
-
+        if (!is_object($this->form)) {
+            $this->form = $this->createForm($p);
+        }
 
         $this->hook('updateForm');
-        $f=$this->form;
-        if($f->isSubmitted()){
+        $f = $this->form;
+        if ($f->isSubmitted()) {
             $id = $this->verifyCredentials($f->get('username'), $f->get('password'));
-            if($id){
+            if ($id) {
                 $this->loginByID($id);
-                $this->loggedIn($f->get('username'),$f->get('password'));
+                $this->loggedIn($f->get('username'), $f->get('password'));
                 exit;
             }
             $f->getElement('password')->displayFieldError('Incorrect login information');
         }
+
         return $p;
     }
     /** Do not override this function. */
-    function processLogin(){
+    public function processLogin()
+    {
         $this->memorizeURL();
         $this->app->template->tryDel('Menu');
-        $p=$this->showLoginForm();
+        $p = $this->showLoginForm();
 
         $this->app->hook('post-init');
         $this->app->hook('pre-exec');
 
-        if(isset($_GET['submit']) && $_POST){
+        if (isset($_GET['submit']) && $_POST) {
             $this->app->hook('submitted');
         }
 

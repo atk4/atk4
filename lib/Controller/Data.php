@@ -1,28 +1,12 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
+<?php
+/**
+ * Reference implementation for data controller.
  *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/*
-Reference implementation for data controller
-
-Data controllers are used by "Model" class to access their data source.
-Additionally SQL_Model can use data controllers for caching their data
-
-*/
-
-abstract class Controller_Data extends AbstractController {
+ * Data controllers are used by "Model" class to access their data source.
+ * Additionally SQL_Model can use data controllers for caching their data
+ */
+abstract class Controller_Data extends AbstractController
+{
     public $default_exception = 'Exception_DB';
 
     /**
@@ -31,10 +15,9 @@ abstract class Controller_Data extends AbstractController {
      * addCondition, loadBy, tryLoadBy etc. Each of those methods can
      * be supplied with two arguments - the field and value and
      * exact matching will be used. For three-argument use, see
-     * property $supportOperators
+     * property $supportOperators.
      */
     public $supportConditions = false;
-
 
     /**
      * Limit makes it possible to specify count / skip for the
@@ -47,13 +30,13 @@ abstract class Controller_Data extends AbstractController {
      * in either ascending or descending order. Models support
      * ordering on multiple fields. If controller does not
      * support multiple ordering fields, then the last
-     * field to be used for ordering must take precedence
+     * field to be used for ordering must take precedence.
      */
     public $supportOrder = false;
 
     /**
      * Controller can load and store data based on ID field.
-     * This would be supported by most data controllers
+     * This would be supported by most data controllers.
      */
     public $supportRef = false;
 
@@ -88,12 +71,15 @@ abstract class Controller_Data extends AbstractController {
      * to avoid conflicts between different controllers and to allow user to
      * use one controller with multiple models.
      */
-    function setSource($model, $data) {
+    public function setSource($model, $data)
+    {
         $model->_table[$this->short_name] = $data;
+
         return $this;
     }
 
-    function &d($model){
+    public function &d($model)
+    {
         return $model->_table[$this->short_name];
     }
 
@@ -107,7 +93,7 @@ abstract class Controller_Data extends AbstractController {
      * then record must be overwritten. Method must return $id of stored record.
      * This method may throw exceptions.
      */
-	abstract function save($model, $id, $data);
+    abstract public function save($model, $id, $data);
 
     /**
      * Locate and remove record in the storade with specified $id. Return
@@ -116,7 +102,7 @@ abstract class Controller_Data extends AbstractController {
      * to make sure the record is accessible with specified conditions,
      * so you can silently ignore error.
      */
-	abstract function delete($model, $id);
+    abstract public function delete($model, $id);
 
     /**
      * Locate and load data for a specified record. If data backend supports
@@ -124,7 +110,7 @@ abstract class Controller_Data extends AbstractController {
      * to get a list of required fields for a model. When non-array is
      * returned, you should load all fields.
      */
-	abstract function loadById($model, $id);
+    abstract public function loadById($model, $id);
 
     // Those methods may not be available in a model
     // abstract function loadByConditions($model);
@@ -138,15 +124,14 @@ abstract class Controller_Data extends AbstractController {
      * and return array. loadCurrent will automatically array_shift one record
      * on each call.
      */
-    abstract function prefetchAll($model);
+    abstract public function prefetchAll($model);
 
     /**
-     * Load next data row from cursor
+     * Load next data row from cursor.
      */
-    function loadCurrent($model,&$cursor) {
-        $model->data=array_shift($cursor);
-        $model->id=$model->data[$model->id_field];
+    public function loadCurrent($model, &$cursor)
+    {
+        $model->data = array_shift($cursor);
+        $model->id = $model->data[$model->id_field];
     }
-
 }
-

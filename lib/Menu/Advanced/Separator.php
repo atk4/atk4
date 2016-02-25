@@ -1,3 +1,7 @@
 <?php
-class Menu_Advanced_Separator extends Menu_Advanced_Item {
+/**
+ * Undocumented
+ */
+class Menu_Advanced_Separator extends Menu_Advanced_Item
+{
 }

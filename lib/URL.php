@@ -1,36 +1,23 @@
 <?php
-/***********************************************************
-  When $app->url() is called, this object is used to avoid
-  double-encoding. Return URL when converting to string.
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
-class URL extends AbstractModel {
-
+/**
+ * When $app->url() is called, this object is used to avoid
+ * double-encoding. Return URL when converting to string.
+ */
+class URL extends AbstractModel
+{
     // Page is a location of destination page. It have to be absolute and relative to project root
-    public $page=null;
+    public $page = null;
 
-    public $arguments=array();
+    public $arguments = array();
 
-    protected $extension='.html';
+    protected $extension = '.html';
 
-    protected $absolute=false;  // if true then will return full URL (for external documents)
+    protected $absolute = false;  // if true then will return full URL (for external documents)
 
-    public $base_url=null;
+    public $base_url = null;
 
-
-    function init(){
+    public function init()
+    {
         parent::init();
 
         if (!isset($this->app->pm)) {
@@ -38,62 +25,71 @@ class URL extends AbstractModel {
         }
 
         if (!$this->app->pm->base_url) {
-            throw $this->exception('PageManager is did not parse request URL. Use either parseRequestedURL or setURL (if you are in CLI application)');
+            throw $this->exception('PageManager is did not parse request URL. '.
+                'Use either parseRequestedURL or setURL (if you are in CLI application)');
         }
 
         $this->addStickyArguments();
-        $this->extension=$this->app->getConfig('url_postfix',$this->extension);
+        $this->extension = $this->app->getConfig('url_postfix', $this->extension);
     }
     /** [private] add arguments set as sticky through APP */
-    function addStickyArguments(){
-        $sticky=$this->app->getStickyArguments();
-        $args=array();
+    public function addStickyArguments()
+    {
+        $sticky = $this->app->getStickyArguments();
+        $args = array();
 
-        if($sticky && is_array($sticky)){
-            foreach($sticky as $key=>$val){
-                if($val===true){
-                    if(isset($_GET[$key])){
-                        $val=$_GET[$key];
-                    }else{
+        if ($sticky && is_array($sticky)) {
+            foreach ($sticky as $key => $val) {
+                if ($val === true) {
+                    if (isset($_GET[$key])) {
+                        $val = $_GET[$key];
+                    } else {
                         continue;
                     }
                 }
-                if(!isset($args[$key])){
-                    $args[$key]=$val;
+                if (!isset($args[$key])) {
+                    $args[$key] = $val;
                 }
             }
         }
         $this->setArguments($args);
     }
     /** Call this if you want full URL, not relative */
-    function useAbsoluteURL(){
+    public function useAbsoluteURL()
+    {
         /*
            Produced URL will contain absolute, rather than relative address:
 http://mysite:123/install/dir/my/page.html
          */
         return $this->absolute();
     }
-    function absolute() {
-        $this->absolute=true;
+    public function absolute()
+    {
+        $this->absolute = true;
+
         return $this;
     }
 
-    private $_current=false;
-    private $_current_sub=false;
+    private $_current = false;
+    private $_current_sub = false;
 
     /**
      * Detects if the URL matches current page. If
      * $include_sub is set to true, then it will also
      * detect to match sub-pages too.
      */
-    function isCurrent($include_sub = false){
-        if($include_sub)return $this->_current_sub;
+    public function isCurrent($include_sub = false)
+    {
+        if ($include_sub) {
+            return $this->_current_sub;
+        }
+
         return $this->_current;
     }
 
-
     /** [private] automatically called with 1st argument of $app->url() */
-    function setPage($page=null){
+    public function setPage($page = null)
+    {
         // The following argument formats are supported:
         //
         // null = set current page
@@ -105,135 +101,172 @@ http://mysite:123/install/dir/my/page.html
         // 'index' = properly points to the index page defined in APP
         // '/admin/' = will not be converted
 
-        $destination='';
+        $destination = '';
 
         //if(substr($page,-1)=='/'){
             //return $this->setBaseURL(str_replace('//','/',$this->app->pm->base_path.$page));
         //}
-        if(is_null($page))$page='.';
-        $path=explode('/',$page);
-
-        foreach($path as $component){
-            if($component=='')continue;
-            if($component=='.' && $destination==''){
-                if($this->app->page=='index')continue;
-                $destination=str_replace('_','/',$this->app->page);
-                continue;
-            }
-
-            if($component=='..'){
-                if(!$destination)$destination=str_replace('_','/',$this->app->page);
-                $tmp=explode('/',$destination);
-                array_pop($tmp);
-                $destination=join('/',$tmp);
-                continue;
-            }
-
-            if($component=='index' && $destination==''){
-                $destination=$this->app->index_page;
-                continue;
-            }
-
-
-            $destination=$destination?$destination.'/'.$component:$component;
-
+        if (is_null($page)) {
+            $page = '.';
         }
-        if($destination==='')$destination=@$this->app->index_page;
+        $path = explode('/', $page);
 
-        $this->page=$destination;
+        foreach ($path as $component) {
+            if ($component == '') {
+                continue;
+            }
+            if ($component == '.' && $destination == '') {
+                if ($this->app->page == 'index') {
+                    continue;
+                }
+                $destination = str_replace('_', '/', $this->app->page);
+                continue;
+            }
 
-        list($p,$ap) = str_replace('/','_',array($this->page,$this->app->page));
+            if ($component == '..') {
+                if (!$destination) {
+                    $destination = str_replace('_', '/', $this->app->page);
+                }
+                $tmp = explode('/', $destination);
+                array_pop($tmp);
+                $destination = implode('/', $tmp);
+                continue;
+            }
+
+            if ($component == 'index' && $destination == '') {
+                $destination = $this->app->index_page;
+                continue;
+            }
+
+            $destination = $destination ? $destination.'/'.$component : $component;
+        }
+        if ($destination === '') {
+            $destination = @$this->app->index_page;
+        }
+
+        $this->page = $destination;
+
+        list($p, $ap) = str_replace('/', '_', array($this->page, $this->app->page));
 
         $this->_current = $p == $ap;
-        $this->_current_sub = $p == substr($ap,0,strlen($p));
+        $this->_current_sub = $p == substr($ap, 0, strlen($p));
+
         return $this;
     }
     /** Set additional arguments */
-    function set($argument,$value=null){
-        if(!is_array($argument))$argument=array($argument=>$value);
+    public function set($argument, $value = null)
+    {
+        if (!is_array($argument)) {
+            $argument = array($argument => $value);
+        }
+
         return $this->setArguments($argument);
     }
     /** Get value of an argument */
-    function get($argument){
+    public function get($argument)
+    {
         return $this->arguments[$argument];
     }
 
     /** Set arguments to specified array */
-    function setArguments($arguments=array()){
+    public function setArguments($arguments = array())
+    {
         // add additional arguments
-        if(is_null($arguments))$arguments=array();
-        if(!is_array($arguments)){
+        if (is_null($arguments)) {
+            $arguments = array();
+        }
+        if (!is_array($arguments)) {
             throw new BaseException('Arguments must be always an array');
         }
-        $this->arguments=$args=array_merge($this->arguments,$arguments);
-        foreach($args as $arg=>$val){
-            if(is_null($val))unset($this->arguments[$arg]);
+        $this->arguments = $args = array_merge($this->arguments, $arguments);
+        foreach ($args as $arg => $val) {
+            if (is_null($val)) {
+                unset($this->arguments[$arg]);
+            }
         }
+
         return $this;
     }
-    function __toString(){
+    public function __toString()
+    {
         return $this->getURL();
     }
-    function setURL($url){
+    public function setURL($url)
+    {
         return $this->setBaseURL($url);
     }
     /** By default uses detected base_url, but you can use this to redefine */
-    function setBaseURL($base){
-        $this->base_url=$base;
+    public function setBaseURL($base)
+    {
+        $this->base_url = $base;
+
         return $this;
     }
-    function getBaseURL(){
+    public function getBaseURL()
+    {
         // Oherwise - calculate from detected values
-        $url='';
+        $url = '';
 
         // add absolute if necessary
-        if($this->absolute)$url.=$this->app->pm->base_url;
+        if ($this->absolute) {
+            $url .= $this->app->pm->base_url;
+        }
 
         // add base path
-        $url.=$this->app->pm->base_path;
+        $url .= $this->app->pm->base_path;
 
         return $url;
     }
-    function getExtension(){
+    public function getExtension()
+    {
         return $this->extension;
     }
-    function getArguments($url=null){
-        $tmp=array();
-        foreach($this->arguments as $key=>$value){
-            if($value===false)continue;
-            $tmp[]=$key.'='.urlencode($value);
+    public function getArguments($url = null)
+    {
+        $tmp = array();
+        foreach ($this->arguments as $key => $value) {
+            if ($value === false) {
+                continue;
+            }
+            $tmp[] = $key.'='.urlencode($value);
         }
 
-        $arguments='';
-        if($tmp)$arguments=(strpos($url,'?')!==false?'&':'?').join('&',$tmp);
+        $arguments = '';
+        if ($tmp) {
+            $arguments = (strpos($url, '?') !== false ? '&' : '?').implode('&', $tmp);
+        }
 
         return $arguments;
     }
-    function getURL(){
-        if($this->base_url)return $this->base_url.$this->getArguments($this->base_url);
+    public function getURL()
+    {
+        if ($this->base_url) {
+            return $this->base_url.$this->getArguments($this->base_url);
+        }
 
         // Optional hook, which can change properties for page and arguments
         // based on some routing logic
-        $url=$this->app->hook('buildURL',array($this));
-        if(is_string($url))return $url;
-
-        $url=$this->getBaseURL();
-        if($this->page && $this->page!='index'){
-            // add prefix if defined in config
-            $url.=$this->app->getConfig('url_prefix','');
-
-            $url.=$this->page;
-            $url.=$this->getExtension();
+        $url = $this->app->hook('buildURL', array($this));
+        if (is_string($url)) {
+            return $url;
         }
 
+        $url = $this->getBaseURL();
+        if ($this->page && $this->page != 'index') {
+            // add prefix if defined in config
+            $url .= $this->app->getConfig('url_prefix', '');
 
-        $url.=$this->getArguments($url);
+            $url .= $this->page;
+            $url .= $this->getExtension();
+        }
+
+        $url .= $this->getArguments($url);
 
         return $url;
     }
     /** Returns html-encoded URL */
-    function getHTMLURL(){
+    public function getHTMLURL()
+    {
         return htmlentities($this->getURL());
     }
-
 }

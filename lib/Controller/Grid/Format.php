@@ -1,28 +1,30 @@
 <?php
-abstract class Controller_Grid_Format extends AbstractController{
+/**
+ * Undocumented
+ */
+abstract class Controller_Grid_Format extends AbstractController
+{
     /**
-     * Initialize field
+     * Initialize field.
      *
      * Note: $this->owner is Grid object
-     * 
-     * @param string $name Field name
+     *
+     * @param string $name  Field name
      * @param string $descr Field title
-     *
-     * @return void
      */
-    public function initField($name, $descr) {
+    public function initField($name, $descr)
+    {
     }
-    
+
     /**
-     * Format output of cell in particular row
+     * Format output of cell in particular row.
      *
      * Note: $this->owner is Grid object
-     * 
-     * @param string $field Field name
-     * @param array $column Array [type=>string, descr=>string]
      *
-     * @return void
+     * @param string $field  Field name
+     * @param array  $column Array [type=>string, descr=>string]
      */
-    public function formatField($field, $column) {
+    public function formatField($field, $column)
+    {
     }
 }

@@ -1,2 +1,7 @@
 <?php
-class Exception_NoRecord extends BaseException{}
+/**
+ * Undocumented.
+ */
+class Exception_NoRecord extends BaseException
+{
+}

@@ -1,55 +1,52 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-
-class Controller_Data_Array extends Controller_Data {
+<?php
+/**
+ * Undocumented
+ */
+class Controller_Data_Array extends Controller_Data
+{
     public $supportConditions = true;
     public $supportLimit = true;
     public $supportOrder = false;
     public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true);
 
-    function setSource($model, $table) {
+    public function setSource($model, $table)
+    {
         if (!is_array($table)) {
             throw $this->exception('Wrong type: expected array')
                 ->addMoreInfo('source', $table);
         }
 
-
-        if(!$model->hasMethod('push'))$model->addMethod('push',$this);
+        if (!$model->hasMethod('push')) {
+            $model->addMethod('push', $this);
+        }
 
         // convert single dimension arrays
         reset($table);
-        list(,$firstrow) = each($table);
+        list(, $firstrow) = each($table);
 
         if (!is_array($firstrow)) {
             // assuming that this array needs to be converted
             foreach ($table as $key => &$name) {
-                $name=array($model->id_field=>$key, $model->title_field=>$name);
+                $name = array($model->id_field => $key, $model->title_field => $name);
             }
+
             return parent::setSource($model, $table);
         }
 
         $data = array();
         foreach ($table as $key => $row) {
-            $id = isset($row[$model->id_field])?$row[$model->id_field]:$key;
+            $id = isset($row[$model->id_field]) ? $row[$model->id_field] : $key;
             $data[$id] = $row;
         }
+
         return parent::setSource($model, $data);
     }
 
-    function save($model, $id, $data) {
+    public function save($model, $id, $data)
+    {
         $oldId = $id;
         if (is_null($id)) { // insert
-            $newId = $data[$model->id_field] ? : $this->generateNewId($model);
+            $newId = $data[$model->id_field] ?: $this->generateNewId($model);
             if (isset($model->_table[$this->short_name][$newId])) {
                 throw $this->exception('This id is already used. Load the model before')
                     ->addMoreInfo('id', $data[$model->id_field]);
@@ -62,23 +59,29 @@ class Controller_Data_Array extends Controller_Data {
         $data[$model->id_field] = $newId;
         $model->_table[$this->short_name][$newId] = $data;
         $model->data = $data;
+
         return $newId;
     }
 
-    function delete($model, $id) {
+    public function delete($model, $id)
+    {
         unset($model->_table[$this->short_name][$id]);
     }
 
-    function loadById($model, $id) {
+    public function loadById($model, $id)
+    {
         if (isset($model->_table[$this->short_name][$id])) {
             $model->id = $id;
             $model->data = $model->_table[$this->short_name][$id];
+
             return true;
         }
+
         return false;
     }
 
-    function loadByConditions($model) {
+    public function loadByConditions($model)
+    {
         $ids = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions);
         if (!empty($ids)) {
             $id = array_pop($ids);
@@ -87,19 +90,22 @@ class Controller_Data_Array extends Controller_Data {
         }
     }
 
-    function deleteAll($model) {
+    public function deleteAll($model)
+    {
         $ids = $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions);
         foreach ($ids as $id) {
             $this->delete($model, $id);
         }
     }
 
-    function prefetchAll($model) {
+    public function prefetchAll($model)
+    {
         // TODO: miss ordering...
         return $this->getIdsFromConditions($model->_table[$this->short_name], $model->conditions, $model->limit);
     }
 
-    function loadCurrent($model,&$cursor) {
+    public function loadCurrent($model, &$cursor)
+    {
         if (!$this->loadByID($model, array_shift($cursor))) {
             $model->id = null;
             $model->data = array();
@@ -107,7 +113,8 @@ class Controller_Data_Array extends Controller_Data {
     }
 
     // resolve all conditions
-    function getIdsFromConditions($rows, $conditions, $limit=null) {
+    public function getIdsFromConditions($rows, $conditions, $limit = null)
+    {
         $withLimit = !is_null($limit) && (is_array($limit) && !is_null($limit[0]));
         if ($withLimit) {
             $max = is_null($limit[1]) ? $limit[0] : ($limit[0] + $limit[1]);
@@ -136,10 +143,12 @@ class Controller_Data_Array extends Controller_Data {
         if ($withLimit) {
             $ids = array_slice($ids, $limit[0], $limit[1]);
         }
+
         return $ids;
     }
 
-    function isValid($row, $conditions) {
+    public function isValid($row, $conditions)
+    {
         $value = $row[$conditions[0]];
         $op = $conditions[1];
         $expected = $conditions[2];
@@ -163,7 +172,8 @@ class Controller_Data_Array extends Controller_Data {
         }
     }
 
-    function generateNewId($model) {
+    public function generateNewId($model)
+    {
         $ids = array_keys($model->_table[$this->short_name]);
 
         $type = $model->getElement($model->id_field)->type();
@@ -177,10 +187,12 @@ class Controller_Data_Array extends Controller_Data {
                 ->addMoreInfo('support', array('int', 'str'));
         }
     }
-    function count($model) {
+    public function count($model)
+    {
         return count($model->_table[$this->short_name]);
     }
-    function push($model,$row) {
+    public function push($model, $row)
+    {
         $model->_table[$this->short_name][] = $row;
     }
 }
