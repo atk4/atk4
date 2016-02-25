@@ -75,7 +75,7 @@ class Auth_Basic extends AbstractController
      */
     public $login_layout_class = 'Layout_Centered';
 
-    /** @var App_Web */
+    /** @var App_Frontend */
     public $app;
 
 
