@@ -9,10 +9,18 @@ class Field_Reference extends Field
     public $dereferenced_field = null;
     public $table_alias = null;
 
+    /**
+     * Set model
+     *
+     * @param Model|string $model
+     * @param string $display_field
+     *
+     * @return Model
+     */
     public function setModel($model, $display_field = null)
     {
         if (is_object($model)) {
-            return abstractObject::setModel($model);
+            return AbstractObject::setModel($model);
         }
 
         $this->model_name = is_string($model) ? $model : get_class($model);
@@ -126,8 +134,13 @@ class Field_Reference extends Field
             return $m;
         }
     }
+
+    /**
+     * @return SQL_Model
+     */
     public function refSQL()
     {
+        /** @var SQL_Model $q */
         $q = $this->ref('model');
         $q->addCondition($q->id_field, $this);
 

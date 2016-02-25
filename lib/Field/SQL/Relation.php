@@ -13,6 +13,11 @@ class Field_SQL_Relation extends Field_Base
     public $joinAlias;
     protected $behaviour;
 
+    /** @var SQL_Model */
+    public $model;
+
+
+
     public function setModel($model)
     {
         $this->model = $model;
