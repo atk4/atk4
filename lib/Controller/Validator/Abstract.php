@@ -74,6 +74,8 @@ class Controller_Validator_Abstract extends \AbstractController {
      */
     public $prefix = '';
 
+    public $caption = '';
+
     // {{{ Initialization method
     function init()
     {
@@ -279,6 +281,8 @@ class Controller_Validator_Abstract extends \AbstractController {
             $rulesets = $this->getRules($field);
             $this->active_field = $field;
             foreach($rulesets as $rules){
+                $this->prefix='';
+                $this->caption='';
 
                 $this->applyRules($field,$rules);
             }
@@ -409,7 +413,7 @@ class Controller_Validator_Abstract extends \AbstractController {
     function fail()
     {
         $args =  func_get_args();
-        $str = ucfirst($this->prefix.$this->active_field.' '.lcfirst(array_shift($args)));
+        $str = ucfirst($this->prefix.($this->caption?:$this->active_field).' '.lcfirst(array_shift($args)));
 
         // Insert any args into placeholders
 
@@ -521,6 +525,12 @@ class Controller_Validator_Abstract extends \AbstractController {
         $this->current_ruleset=$crs;
     }
     // }}}
+
+    function rule_caption($a)
+    {
+        $this->caption = $this->pullRule();
+        return $a;
+    }
 
     /**
      * The only rule in Validator_Abstract. Will fail.
