@@ -434,7 +434,7 @@ class Auth_Basic extends AbstractController
      */
     public function addInfo($key, $val = null)
     {
-        if (is_array($key) && is_null($val)) {
+        if (is_array($key)) {
             foreach ($key as $a => $b) {
                 $this->addInfo($a, $b);
             }
