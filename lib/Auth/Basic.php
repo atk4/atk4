@@ -811,10 +811,13 @@ class Auth_Basic extends AbstractController
         if ($this->app->layout && $this->login_layout_class) {
             $this->app->layout->destroy();
             $this->app->add($this->login_layout_class);
-            $this->app->page_object = $p = $this->app->layout->add('Page', null, null, array('page/login'));
+            /** @var Page $p */
+            $p = $this->app->layout->add('Page', null, null, array('page/login'));
         } else {
-            $this->app->page_object = $p = $this->app->add('Page', null, null, array('page/login'));
+            /** @var Page $p */
+            $p = $this->app->add('Page', null, null, array('page/login'));
         }
+        $this->app->page_object = $p;
 
         // hook: createForm use this to build basic login form
         $this->form = $this->hook('createForm', array($p));
