@@ -776,7 +776,7 @@ class Auth_Basic extends AbstractController
      * Override if you want to use your own form. If you need to change template used by a log-in form,
      * add template/default/page/login.html.
      *
-     * @param View $page
+     * @param Page $page
      *
      * @return Form
      */
