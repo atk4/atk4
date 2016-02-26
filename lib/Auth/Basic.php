@@ -312,11 +312,10 @@ class Auth_Basic extends AbstractController
      * that you do not specify encryption method, in which case a built-in
      * password_hash() will be used, which is defined by PHP.
      *
-     * Some other values are "sha256/salt", "md5", "rot13". Note that
-     * if your application is already using 'md5' or 'sha1', you can
-     * remove the argument entirely and your user passwords will keep
-     * working and wil automatically be "upgraded" to password_hash
-     * when used.
+     * Some other values are "sha256/salt", "md5", "rot13". Note that if your
+     * application is already using 'md5' or 'sha1', you can remove the
+     * argument entirely and your user passwords will keep working and will
+     * automatically be "upgraded" to password_hash when used.
      *
      * If you are having trouble with authentication, use auth->debug()
      *
@@ -435,14 +434,16 @@ class Auth_Basic extends AbstractController
      */
     public function addInfo($key, $val = null)
     {
-        if (is_null($val) && is_array($key)) {
+        if (is_array($key) && is_null($val)) {
             foreach ($key as $a => $b) {
                 $this->addInfo($a, $b);
             }
-        } else {
-            $this->debug("Gathered info: $key=$val");
-            $this->info[$key] = $val;
+
+            return $this;
         }
+
+        $this->debug("Gathered info: $key=$val");
+        $this->info[$key] = $val;
 
         return $this;
     }
