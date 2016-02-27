@@ -7,7 +7,7 @@ New Functionality:
 
  - included View_Console. Previously was only available in Sandbox.
  - extend Controller_Grid_Format to build your own formatters.
- - Added App_TestSutie for building your own test-suites
+ - Added App_TestSuite for building your own test-suites
  - Added Button::onClickConsole(callback) that will execute callback inside a console in a pop-up.
 
 CRUD and Grid:
@@ -43,11 +43,11 @@ Misc:
  - Menu::addItem() allows 2nd argument to be JS chain
  - successMessage and errorMessage can now contain timer to hide (2nd argument)
  - Lister, Grid: Use $this['name'] inside formatRow() to access $current_row easier
- - Integrate validator: Field->validate(rule) adn Form_Field->validate(rule)
+ - Integrate validator: Field->validate(rule) and Form_Field->validate(rule)
  - improve PathFinder_Location::setCDN(url)
  - Improve compatibility with PHPUnit
  - Pass defaults through constructor
- - Allow first argument to add to contain array: add(['Menu', ['swatch'=>'ink']);
+ - Allow first argument of add method to contain array: add(['Menu', ['swatch'=>'ink']);
  - Allow styling of Tabs
  - Use GiTemplate in format_template and format_link
  
@@ -66,12 +66,12 @@ Major Changes 4.2 to 4.3
 ====
 Note: for diff see: https://github.com/atk4/atk4/compare/4.2.4...4.3.0
 
-Development of 4.3 branch has begun in early 2013. The first stable version has been out 2 years later after a lot of testing and changes. Scroll below if you are looking for changes between dififerent 4.3.X releases.
+Development of 4.3 branch has begun in early 2013. The first stable version has been out 2 years later after a lot of testing and changes. Scroll below if you are looking for changes between different 4.2.X releases.
 
 
-Changed license fromr Affero GPL to MIT
----------------------------------------
-Probably one of the most anticipated changes in the past - allowing you to use Agile Toolkit freely in both open-source, personal and commercial products. We have decided to focus on developing add-on, education and enterprise platforms around Agile Toolkit framework but keep the core product free for all.
+Changed license from Affero GPL to MIT
+--------------------------------------
+Probably one of the most anticipated changes in the past - allowing you to use Agile Toolkit freely in both open-source, personal and commercial products. We have decided to focus on developing add-on, education and enterprise platforms around Agile Toolkit framework, but keep the core product free for all.
 
 In addition to the framework, Documentation (Book) is also distributed under terms of MIT.
 
@@ -79,9 +79,9 @@ Any contribution to Agile Toolkit will be also included and distributed under MI
 
 Comes with Installer
 --------------------
-Starting with 4.3 Agile Toolkit is distirbuted with a "Sandbox" - our extension to Agile Toolkit that will help you install Agile Toolkit but more importantly enable you to use add-ons from your Agile Toolkit platform. This includes both open-source and commercial extensions.
+Starting with 4.3 Agile Toolkit is distributed with a "Sandbox" - our extension to Agile Toolkit that will help you install Agile Toolkit, but more importantly, enable you to use add-ons from your Agile Toolkit platform. This includes both open-source and commercial extensions.
 
-Agile Platform enables developers to distribute high-quality extensions and products but they will only work in conjunction with the Sandbox.
+Agile Platform enables developers to distribute high-quality extensions and products, but they will only work in conjunction with the Sandbox.
 
 If you are looking to run pure MIT framework, you should "request" it through Composer or clone it from Github.
 
@@ -92,20 +92,20 @@ Agile Toolkit 4.2 and prior have always used their own CSS framework. Starting f
 
 The new CSS framework is designed for building any UI both simple and complex. It is included with 4.3 version (although old templates are also found in "compat" folder).
 
-Additionally we rewrote all the templates into JADE, which is compilled and bundled. All the view (forms, buttons etc) templates Agile Toolkit are updated.
+Additionally we rewrote all the templates into JADE, which are compiled and bundled. All the view (forms, buttons etc) templates Agile Toolkit are updated.
 
 Rewrite of Template Engine
 ---------------------------
 
 GiTemplate class is here to replace SMLite. While it offers the same functionality and generally has a same implementation, it significantly improves parse speed by relying on recursive regular expressions. 
 
-You can also use new template thorugh array_access:
+You can also use new template through array_access:
 
 ```
 $this->template['title'] = 'My Title Here';
 ```
 
-The 4.3.0 still has SMLite included and it's used for some of the minor things like format_link and Mail templates, however in a next few minor releases it is replaced with GiTemplate.
+The 4.3.0 still has SMLite included and it's used for some of the minor things like format_link and Mail templates, however in a next few minor releases it will be replaced with GiTemplate.
 
 
 New Template Tag Format
@@ -114,20 +114,20 @@ All the templates have changed to use `{$tag}` format instead of `<?$tag?>` that
 
 New Controller_Data
 -------------------
-The latest versions of 4.2 have introduced support for generic Model and use of generic Controller_Data. This allows you to implement 3rd party data storage systems. The support however is quite limitied and not very usable. 
+The latest versions of 4.2 have introduced support for generic Model and use of generic Controller_Data. This allows you to implement 3rd party data storage systems. The support however is quite limited and not very usable.
 
-In 4.3 Controller_Data is fully re-implemented. The good news is that the new Controller_Data format is much more powerful and simpler to implement. A lot of funcitonality has been moved into Model.
+In 4.3 Controller_Data is fully re-implemented. The good news is that the new Controller_Data format is much more powerful and simpler to implement. A lot of functionality has been moved into Model.
 
-There is also a concept of "Capabilities" which allows your data source to implement only what's needed and the rest of framework can recognize those limitation.
+There is also a concept of "Capabilities" which allows your data source to implement only what's needed and the rest of framework can recognize those limitations.
 
 
-New Declarative Validatior
---------------------------
-In the past Agile Toolkit documentation would instruct you to create your own validation inside model hook or form submisison handler. Now Agile Toolkit bundles a powerful validator.
+New Declarative Validator
+-------------------------
+In the past Agile Toolkit documentation would instruct you to create your own validation inside model hook or form submission handler. Now Agile Toolkit bundles a powerful validator.
 
-The 4.3.0 version includes Controller_Validatior but later versions integrate it into forms and models.
+The 4.3.0 version includes Controller_Validatior, but later versions will integrate it into forms and models.
 
-A typical use would be `$this->addField('phone')->validate('required|phone|len|>5')` which actually adds 3 checks on your field: makes it mandatory, requests it contain a valid phone number and asks it to be at least 5 characters long.
+A typical use would be `$this->addField('phone')->validate('required|phone|len|>5')` which actually adds 3 checks on your field: makes it mandatory, requests it contain a valid phone number and asks it to be more than 5 characters long.
 
 New Pattern Router
 ------------------
@@ -137,11 +137,11 @@ New Pattern Router class allows you to define and use URLs where part of URL wil
 Added MySQL Migrator
 ---------------------
 
-Controller_Migrator_MySQL now allows you to automate of processing database migration scripts from inside PHP. 
+Controller_Migrator_MySQL now allows you to automate processing of database migration scripts from inside PHP.
 
 Added View_Popover
 ------------------
-The new widget can be used to bind pop-over on your buttons and menu items. It will display a box with loadable contens on your page which can contain either form or menu.
+The new widget can be used to bind pop-over on your buttons and menu items. It will display a box with loadable contents on your page which can contain either form or menu.
 
 Added View_Console
 ------------------
@@ -192,19 +192,19 @@ jQuery has added on() method to handle events more efficiently. Agile Toolkit ha
 $lister->on('click','.do-action')->hide();
 ```
 
-and if your lister contains multiple elements with class=do-action, you should be able to interract with them individually. The functionality of this method goes much further and allow you even to define a PHP callback and interact with bundeld data:
+and if your lister contains multiple elements with class=do-action, you should be able to interact with them individually. The functionality of this method goes much further and even allows you to define a PHP callback and interact with bundled data:
 
 ```
-$lister->on('click','.do-action', function($j, $data){
+$lister->on('click','.do-action', function($j, $data) {
     return $j->data('cnt', $data['cnt']+1)
        ->univ()
        ->alert('Count was '.$data['cnt'])
     ); 
 });
 ```
-The code above not only will receive data-cnt of the element but will increase and set it back through a targetted chain.
+The code above not only will receive data-cnt of the element, but will increase and set it back through a targeted chain.
 
-Implemented Verical and Horizontal Menus
+Implemented Vertical and Horizontal Menus
 -----------------------------------------
 New CSS framework enables all sort of new Views. Agile Toolkit bundles new implementation for Vertical / Horizontal menus. When you download and use ATK you get one menu right out of the box in your "Admin" section.
 
@@ -225,25 +225,25 @@ Other changes in 4.2.4 to 4.3.0
 
 Core:
  
- - ApiWEB, ApiFrontend, etc are now renamed into App/Web, App/Frontend etc respectivevly.
+ - ApiWEB, ApiFrontend, etc are now renamed into App/Web, App/Frontend etc respectively.
  - A standard property of all objects $this->api renamed into $this->app. $api remains for compatibility.
- - univ.js is split up into 2 libraries univ_basic.js and univ_jui_js. All jQuery UI related functionality is moved to second file.
- - Changed the way how unique names are generated for objectss ($this->short_name)
- - CRUD will alwasy initialize $form / $grid properties to Dummy object instead of leaving them null, so don't write `if($crud->form)` anymore, it will always be true. Use `$crud->isEditing()`
+ - univ.js is split up into 2 libraries univ_basic.js and univ_jui.js. All jQuery UI related functionality is moved to second file.
+ - Changed the way how unique names are generated for objects ($this->short_name)
+ - CRUD will always initialize $form / $grid properties to Dummy object instead of leaving them null, so don't write `if($crud->form)` anymore, it will always be true. Use `$crud->isEditing()` !!
  - updated jQuery and jQuery UI versions
 
-Experemental featuers:
+Experimental features:
 
- - implemented Controller_Data_SQL - future repalcement for SQL_Model. Lacks in functionality but works with "Model" class. 
+ - implemented Controller_Data_SQL - future replacement for SQL_Model. Lacks in functionality, but works with "Model" class. 
  - added runTests() method for built-in object tests
 
 Misc:
  
- - learn($key, $default) uses one default parameter instead of accepting 3 possible values.
- - exception($message) requries you to use a message always
+ - learn($key, $default) uses one default parameter instead of accepting 3 possible values
+ - exception($message) requires you to always use a message
  - allow exception chaining exception::by(other exception)
- - exception now suppots ->setCode(123).
- - standard exception to contain HTTP-compatible codes, such as may $model->load() throw exception with 404 code.
+ - exception now supports ->setCode(123)
+ - standard exception to contain HTTP-compatible codes, such as may $model->load() throw exception with 404 code
  - App/Installer - now has $show_intro support
 
 
@@ -251,10 +251,10 @@ Grid and CRUD:
 
  - Grid - rename format_real into format_float (because PHP uses floats)
  - Grid - added format_object
- - Grid - add support for editing modes other than "add" or "edit"
  - Grid - added support for GrandTotals
- - Grid - cleanup on allow_add, allow_del, allow_edit
- - CRUD - now has $grid_options and $form_optoins
+ - CRUD - cleanup on allow_add, allow_del, allow_edit
+ - CRUD - add support for editing modes other than "add" or "edit"
+ - CRUD - now has $grid_options and $form_options
 
 Models:
 
@@ -276,7 +276,7 @@ Fixes:
  - Controller_Data_REST: allow to define how PUT/POST are used
  - Exception::addAction(['foo'=>'bar'], $recommendation) allows to specify recommendation and multiple actions
  - model beforeInsert() receives reference to insert data, not a copy, so you can change
- - DSQL: Allo sub-selects used instead of table
+ - DSQL: Allow sub-selects used instead of table
  - improve Controller_Data_Array
  - Grid::addPaginator 3rd argument can specify class of paginator to use
  - Sticky argument handling in Virtual Pages
@@ -285,7 +285,7 @@ Fixes:
  - Improving localization, _() in more objects
  - Model_Table renamed to SQL_Model
  - Form implements ArrayAccess. Use $f['name'] in onSubmit callback.
- - Order added middleof functionailty
+ - Order added middleof functionality
  - Added Auth password encryption support for password_hash
 
 Agile CSS
