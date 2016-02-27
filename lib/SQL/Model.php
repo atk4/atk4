@@ -46,7 +46,7 @@ class SQL_Model extends Model implements Serializable
      * @var string
      */
     public $table_alias = null;
-    
+
     /**
      * @deprecated 4.3.0 Use $table instead
      */
@@ -79,6 +79,13 @@ class SQL_Model extends Model implements Serializable
      * @var bool
      */
     public $fast = null;
+
+    /**
+     * False: finished iterating. True, reset not yet fetched. Object=DSQL
+     *
+     * @var bool|DB_dsql
+     */
+    protected $_iterating = false;
 
 
 
@@ -596,9 +603,6 @@ class SQL_Model extends Model implements Serializable
     // }}}
 
     // {{{ Iterator support
-
-    /* False: finished iterating. True, reset not yet fetched. Object=DSQL */
-    protected $_iterating = false;
     public function rewind()
     {
         $this->_iterating = true;
