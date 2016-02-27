@@ -229,8 +229,8 @@ abstract class AbstractObject
      *
      * @param string $short_name short name
      *
-     * @return \AbstractObject
-     * @private
+     * @return $this
+     * @access private
      */
     public function _removeElement($short_name)
     {
@@ -247,7 +247,7 @@ abstract class AbstractObject
      *
      * @param array $properties Set initial properties for new object
      *
-     * @return \AbstractObject
+     * @return AbstractObject
      */
     public function newInstance($properties = null)
     {
@@ -258,18 +258,16 @@ abstract class AbstractObject
      * Creates new object and adds it as a child of current object.
      * Returns new object.
      *
-     * @param array|string $class           Name of the new class. Can also be
-     *                                      array with 0=>name and rest of array
-     *                                      will be considered as $options
+     * @param array|string|object $class    Name of the new class. Can also be array with 0=>name and
+     *                                      rest of array will be considered as $options or object.
      * @param array|string $options         Short name or array of properties.
-     *                                      0=>name will be used as a short-name
-     *                                      of your object.
+     *                                      0=>name will be used as a short-name or your object.
      * @param string       $template_spot   Tag where output will appear
      * @param array|string $template_branch Redefine template
      *
      * @link http://agiletoolkit.org/learn/understand/base/adding
      *
-     * @return \AbstractObject
+     * @return AbstractObject
      */
     public function add(
         $class,
@@ -444,7 +442,7 @@ abstract class AbstractObject
      *
      * @param string $short_name Short name of the child element
      *
-     * @return AbstractObject
+     * @return AbstractObject|bool
      */
     public function hasElement($short_name)
     {
@@ -458,7 +456,7 @@ abstract class AbstractObject
      *
      * @param string $short_name Short name of the child element
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function rename($short_name)
     {
@@ -579,7 +577,7 @@ abstract class AbstractObject
      *
      * @param string $key Optional key of data to forget
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function forget($key = null)
     {
@@ -803,12 +801,12 @@ abstract class AbstractObject
     /**
      * If priority is negative, then hooks will be executed in reverse order.
      *
-     * @param string   $hook_spot Hook identifier to bind on
-     * @param callable $callable  Will be called on hook()
-     * @param array    $arguments Arguments are passed to $callable
-     * @param int      $priority  Lower priority is called sooner
+     * @param string                  $hook_spot Hook identifier to bind on
+     * @param callable|AbstractObject $callable  Will be called on hook()
+     * @param array                   $arguments Arguments are passed to $callable
+     * @param int                     $priority  Lower priority is called sooner
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function addHook($hook_spot, $callable, $arguments = array(), $priority = 5)
     {
@@ -846,7 +844,7 @@ abstract class AbstractObject
      *
      * @param string $hook_spot Hook identifier to bind on
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function removeHook($hook_spot)
     {
@@ -994,7 +992,7 @@ abstract class AbstractObject
      * @param string|array $name     Name of new method of $this object
      * @param callable     $callable Callback
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function addMethod($name, $callable)
     {
@@ -1015,6 +1013,8 @@ abstract class AbstractObject
             throw $this->exception('Registering method twice');
         }
         $this->addHook('method-'.$name, $callable);
+
+        return $this;
     }
 
     /**
@@ -1036,11 +1036,13 @@ abstract class AbstractObject
      *
      * @param string $name Name of the method
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function removeMethod($name)
     {
         $this->removeHook('method-'.$name);
+
+        return $this;
     }
     // }}}
 
@@ -1095,7 +1097,7 @@ abstract class AbstractObject
      *
      * @param string|callable $callable will be executed for each member
      *
-     * @return AbstractObject $this
+     * @return $this
      */
     public function each($callable)
     {

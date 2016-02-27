@@ -35,6 +35,9 @@ class Field_Base extends AbstractObject
     // Callbacks
     public $onField = null;
 
+    /** @var Model */
+    public $owner;
+
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"
      * constant. This method is used by all other sette-getters.
@@ -42,7 +45,7 @@ class Field_Base extends AbstractObject
      * @param string $type  Corresponds to the name of property of a field
      * @param mixed  $value New value for a property.
      *
-     * @return mixed new or current pperty (if value is undefined)
+     * @return mixed|$this new or current pperty (if value is undefined)
      */
     public function setterGetter($type, $value = UNDEFINED)
     {
@@ -103,7 +106,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function type($t = UNDEFINED)
     {
@@ -116,7 +119,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function caption($t = UNDEFINED)
     {
@@ -135,7 +138,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function hint($t = UNDEFINED)
     {
@@ -146,7 +149,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function placeholder($t = UNDEFINED)
     {
@@ -161,7 +164,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function group($t = UNDEFINED)
     {
@@ -175,7 +178,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function readonly($t = UNDEFINED)
     {
@@ -190,23 +193,11 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function mandatory($t = UNDEFINED)
     {
         return $this->setterGetter('mandatory', $t);
-    }
-
-    /**
-     * obsolete.
-     *
-     * @param bool $t new value
-     *
-     * @return bool current value if $t=UNDEFINED
-     */
-    public function required($t = UNDEFINED)
-    {
-        return $this->mandatory($t);
     }
 
     /**
@@ -216,7 +207,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function editable($t = UNDEFINED)
     {
@@ -230,7 +221,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function allowHTML($t = UNDEFINED)
     {
@@ -243,7 +234,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function searchable($t = UNDEFINED)
     {
@@ -256,7 +247,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function sortable($t = UNDEFINED)
     {
@@ -275,7 +266,7 @@ class Field_Base extends AbstractObject
      *
      * @param mixed $t new value
      *
-     * @return mixed current value if $t=UNDEFINED
+     * @return mixed|$this current value if $t=UNDEFINED
      */
     public function display($t = UNDEFINED)
     {
@@ -304,7 +295,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function actual($t = UNDEFINED)
     {
@@ -319,7 +310,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function system($t = UNDEFINED)
     {
@@ -335,7 +326,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function hidden($t = UNDEFINED)
     {
@@ -348,7 +339,7 @@ class Field_Base extends AbstractObject
      *
      * @param int $t new value
      *
-     * @return int current value if $t=UNDEFINED
+     * @return int|$this current value if $t=UNDEFINED
      */
     public function length($t = UNDEFINED)
     {
@@ -362,7 +353,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function defaultValue($t = UNDEFINED)
     {
@@ -378,7 +369,7 @@ class Field_Base extends AbstractObject
      *
      * @param bool $t new value
      *
-     * @return bool current value if $t=UNDEFINED
+     * @return bool|$this current value if $t=UNDEFINED
      */
     public function visible($t = UNDEFINED)
     {
@@ -394,7 +385,7 @@ class Field_Base extends AbstractObject
      *
      * @param array $t Array( id => val )
      *
-     * @return array current value if $t=UNDEFINED
+     * @return array|$this current value if $t=UNDEFINED
      */
     public function listData($t = UNDEFINED)
     {
@@ -429,7 +420,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function emptyText($t = UNDEFINED)
     {
@@ -442,7 +433,7 @@ class Field_Base extends AbstractObject
      *
      * @param callback $c new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function onField($c = UNDEFINED)
     {
@@ -458,7 +449,7 @@ class Field_Base extends AbstractObject
      *
      * @param string $t new value
      *
-     * @return string current value if $t=UNDEFINED
+     * @return string|$this current value if $t=UNDEFINED
      */
     public function setModel($t = UNDEFINED)
     {
@@ -506,22 +497,39 @@ class Field_Base extends AbstractObject
         return $this->listData(array_combine($t, $t));
     }
 
-    /* If is set, It containes the correct table that stores this field. Used in join environment */
+    /**
+     * If is set, it contains the correct table that stores this field.
+     * Used in join environment.
+     *
+     * @param string $t
+     *
+     * @return string|$this
+     */
     public function table($t = UNDEFINED)
     {
         return $this->setterGetter('table', $t);
     }
 
     /**
-     * TODO: sanitize the value.
      * This is used in Controller_Data_SQL to sanitize the value forwarded to dsql.
+     * @todo sanitize the value.
+     *
+     * @param mixed $value
+     *
+     * @return mixed
      */
     public function sanitize($value)
     {
         return $value;
     }
 
-    /** Converts true/false into boolean representation according to the "enum" */
+    /**
+     * Converts true/false into boolean representation according to the "enum"
+     *
+     * @param mixed $value
+     *
+     * @return int
+     */
     public function getBooleanValue($value)
     {
         if ($value === null) {
@@ -529,8 +537,8 @@ class Field_Base extends AbstractObject
         }
         if ($this->listData) {
             reset($this->listData);
-            list($junk, $yes_value) = each($this->listData);
-            @list($junk, $no_value) = each($this->listData);
+            list(, $yes_value) = each($this->listData);
+            @list(, $no_value) = each($this->listData);
             if ($no_value === null) {
                 $no_value = '';
             }
@@ -548,4 +556,22 @@ class Field_Base extends AbstractObject
 
         return $value ? $yes_value : $no_value;
     }
+
+
+
+    // {{{ Deprecated methods
+
+    /**
+     * @deprecated 4.3.0 use mandatory() instead
+     *
+     * @param bool $t new value
+     *
+     * @return bool|$this current value if $t=UNDEFINED
+     */
+    public function required($t = UNDEFINED)
+    {
+        return $this->mandatory($t);
+    }
+
+    // }}}
 }

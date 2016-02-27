@@ -4,12 +4,21 @@
  */
 class Field_SQL_HasOne extends Field_SQL_Expression
 {
+    /** @var string */
+    private $foreignName;
+
+    /**
+     * @param SQL_Model $model
+     * @return DB_dsql
+     */
     public function getExpression($model)
     {
         $refModel = $this->getModel();
+
         if (is_string($refModel)) {
             $refModel = $this->app->normalizeClassName($refModel, 'Model');
         }
+        /** @var SQL_Model */
         $refModel = $this->add($refModel);
 
         $other = $model->dsql()->getField($this->getForeignFieldName());
@@ -22,16 +31,30 @@ class Field_SQL_HasOne extends Field_SQL_Expression
             ->where($refModel->id_field, $other);
     }
 
+    /**
+     * @todo Unused method parameter $data
+     *
+     * @param SQL_Model $model
+     * @return mixed
+     *
+     */
     public function getValue($model, $data)
     {
         return $model->data[$this->short_name];
     }
 
+    /**
+     * @return string
+     */
     public function getForeignFieldName()
     {
         return $this->foreignName;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setForeignFieldName($name)
     {
         $this->foreignName = $name;

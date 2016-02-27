@@ -45,12 +45,15 @@ class Form_Basic extends View implements ArrayAccess
 
     /**
      * Normally form fields are inserted using a form template. If you.
-     *
-     * @var [type]
      */
     public $search_for_field_spots;
 
     public $dq = null;
+
+    /** @var App_Web */
+    public $owner;
+
+
     public function init()
     {
         /*
@@ -151,7 +154,9 @@ class Form_Basic extends View implements ArrayAccess
     }
     public function error($field, $text = null)
     {
-        $this->getElement($field)->displayFieldError($text);
+        /** @var Form_Field */
+        $form_field = $this->getElement($field);
+        $form_field->displayFieldError($text);
     }
     public function addField($type, $options = null, $caption = null, $attr = null)
     {
@@ -210,7 +215,7 @@ class Form_Basic extends View implements ArrayAccess
             $field = $this->add($class, $options, null, $template);
         } else {
             if ($insert_into->template->hasTag($name)) {
-                $template = $this->template->cloneRegion('field_input');
+                $this->template->cloneRegion('field_input');
                 $options['show_input_only'] = true;
                 $field = $insert_into->add($class, $options, $name);
             } else {
@@ -264,7 +269,8 @@ class Form_Basic extends View implements ArrayAccess
     // {{{ ArrayAccess support
     public function offsetExists($name)
     {
-        return $f = $this->hasElement($name) && $f instanceof Form_Field;
+        $f = $this->hasElement($name);
+        return  $f && $f instanceof Form_Field;
     }
     public function offsetGet($name)
     {
@@ -557,11 +563,7 @@ class Form_Basic extends View implements ArrayAccess
         return parent::render();
     }
     /**
-     * OBSOLETE: use getElement().
-     *
-     * @param [type] $name [description]
-     *
-     * @return bool [description]
+     * @deprecated 4.3.2 use getElement() instead
      */
     public function hasField($name)
     {
@@ -598,9 +600,7 @@ class Form_Basic extends View implements ArrayAccess
     }
 
     /**
-     * Compatibility. TODO remove in 4.4.
-     *
-     * @param [type] $class [description]
+     * @deprecated 4.3.2 Will be removed in 4.4
      */
     public function addClass($class)
     {

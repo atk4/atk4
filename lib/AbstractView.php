@@ -501,9 +501,9 @@ abstract class AbstractView extends AbstractObject
      * This approach is compatible with jQuery UI Widget factory and will keep
      * your code clean
      *
-     * @param string|true|null   $when     Event when chain will be executed
-     * @param array|chain|string $code     JavaScript chain(s) or code
-     * @param string             $instance Obsolete
+     * @param string|bool|null          $when     Event when chain will be executed
+     * @param array|jQuery_Chain|string $code     JavaScript chain(s) or code
+     * @param string                    $instance Obsolete
      *
      * @link http://agiletoolkit.org/doc/js
      *
