@@ -40,6 +40,14 @@ class App_Web extends App_CLI
      */
     public $auth;
 
+    /**
+     * jQuery object. Initializes only if you add jQuery in your app.
+     *
+     * @see jQuery::init()
+     * @var jQuery
+     */
+    public $jquery;
+
     /** @var App_Web */
     public $app;
     /** @var array For internal use */
@@ -149,7 +157,6 @@ class App_Web extends App_CLI
      */
     public function showExecutionTime()
     {
-        $self = $this;
         $this->addHook('post-render-output', array($this, '_showExecutionTime'));
         $this->addHook('post-js-execute', array($this, '_showExecutionTimeJS'));
     }

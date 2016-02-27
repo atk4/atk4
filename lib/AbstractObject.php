@@ -668,8 +668,8 @@ abstract class AbstractObject
             throw $e;
         }
         $e->owner = $this;
-        $e->api = // compatibility with ATK 4.2 and lower
-            $e->app = $this->app;
+        $e->app = $this->app;
+        $e->api = $e->app; // compatibility with ATK 4.2 and lower
         $e->init();
 
         return $e;

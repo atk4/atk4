@@ -14,13 +14,20 @@
  */
 class App_Admin extends App_Frontend
 {
+    /** @var string */
     public $title = 'Agile Toolkit™ Admin';
 
+    /** @var sandbox\\Controller_InstallAddon */
     private $controller_install_addon;
 
+    /** @var string */
     public $layout_class = 'Layout_Fluid';
 
+    /** @var array */
     public $auth_config = array('admin' => 'admin');
+
+    /** @var Menu_Advanced */
+    public $menu;
 
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons = array();
@@ -160,11 +167,11 @@ class App_Admin extends App_Frontend
      *
      * @param string $addon_api_name
      *
-     * @return AbstractObject Addon object
+     * @return AbstractObject|array Addon object or array of objects
      */
     public function getInitiatedAddons($addon_api_name = null)
     {
-        if ($addon_api_name) {
+        if ($addon_api_name !== null) {
             return $this->addons[$addon_api_name];
         }
 
@@ -194,6 +201,8 @@ class App_Admin extends App_Frontend
         if (file_exists($init_class_path)) {
             include $init_class_path;
             $class_name = str_replace('/', '\\', $addon->get('name').'\\Initiator');
+            
+            /** @var Controller_Addon */
             $init = $this->add($class_name, array(
                     'addon_obj' => $addon,
                     'base_path' => $base_path,
