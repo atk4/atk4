@@ -67,6 +67,13 @@ abstract class AbstractView extends AbstractObject
      */
     public $auto_track_element = true;
 
+    /**
+     * Using dq property looks obsolete, but left for compatibility
+     *
+     * @see self::setModel()
+     * @var DB_dsql
+     */
+    public $dq;
 
 
     // {{{ Basic Operations

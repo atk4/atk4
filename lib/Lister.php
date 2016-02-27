@@ -13,7 +13,14 @@
  */
 class Lister extends View implements ArrayAccess
 {
-    /** If lister data is retrieved from the SQL database, this will contain dynamic query. */
+    /**
+     * If lister data is retrieved from the SQL database, this will contain dynamic query.
+     *
+     * @todo It's also defined in AbstractView class, but looks like deprecated, so we better use
+     * some other name of this property here.
+     *
+     * @var DB_dsql
+     */
     public $dq = null;
 
     /** For other iterators, this variable will be used */

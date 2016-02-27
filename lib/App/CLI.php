@@ -746,6 +746,8 @@ class App_CLI extends AbstractView
      * class name if it's passed and not already added.
      * Class name can have namespaces and they are treated prefectly.
      *
+     * If object is passed as $name parameter, then same object is returned.
+     *
      * Example: normalizeClassName('User','Model') == 'Model_User';
      *
      * @param string|object $name   Name of class or object

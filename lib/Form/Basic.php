@@ -48,8 +48,6 @@ class Form_Basic extends View implements ArrayAccess
      */
     public $search_for_field_spots;
 
-    public $dq = null;
-
     /** @var App_Web */
     public $owner;
 
@@ -605,7 +603,7 @@ class Form_Basic extends View implements ArrayAccess
     public function addClass($class)
     {
         if ($class == 'stacked' || $class == 'atk-form-stacked') {
-            // there are no longer stacked forms, instead a separat etemplate must be used
+            // there are no longer stacked forms, instead a separate template must be used
             $this->template->loadTemplate('form/stacked');
             $this->getChunks();
             $this->template->trySet('_name', $this->getJSID());

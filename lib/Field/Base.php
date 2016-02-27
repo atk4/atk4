@@ -17,7 +17,10 @@ class Field_Base extends AbstractObject
     public $has_default_value = false;
     public $defaultValue = null;
     public $allowHTML = false;
+    
+    /** @var array */
     public $listData = null;
+
     public $theModel = null;
     public $description = null;
     public $sortable = false;
@@ -528,17 +531,18 @@ class Field_Base extends AbstractObject
      *
      * @param mixed $value
      *
-     * @return int
+     * @return int|null
      */
     public function getBooleanValue($value)
     {
         if ($value === null) {
             return;
         }
+        
         if ($this->listData) {
             reset($this->listData);
             list(, $yes_value) = each($this->listData);
-            @list(, $no_value) = each($this->listData);
+            list(, $no_value) = each($this->listData);
             if ($no_value === null) {
                 $no_value = '';
             }

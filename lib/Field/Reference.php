@@ -31,10 +31,10 @@ class Field_Reference extends Field
         }
 
         $this->model_name = is_string($model) ? $model : get_class($model);
-        $this->model_name = $this->app->normalizeClassName($this->model_name, 'Model');
+        $this->model_name = (string) $this->app->normalizeClassName($this->model_name, 'Model');
 
         if ($display_field) {
-            $this->display_field = $display_field;
+            $this->display_field = (string) $display_field;
         }
 
         if ($display_field !== false) {
@@ -101,7 +101,7 @@ class Field_Reference extends Field
      * 'link' - if record fails to load, will return new record, with appropriate afterSave hander, which will
      *          update current model also and save it too.
      *
-     * @param string|bool|null
+     * @param string|bool|null $mode
      *
      * @return Model
      */
@@ -133,7 +133,7 @@ class Field_Reference extends Field
             if (!$this->model->loaded()) {
                 $this->model->save();
                 $this->set($this->model->id);
-                $this->owner->update();
+                $this->owner->save();
 
                 return $this->model;
             }

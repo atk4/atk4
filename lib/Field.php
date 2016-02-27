@@ -537,7 +537,7 @@ class Field extends AbstractModel
     public function updateSelectQuery($select)
     {
         $p = null;
-        if ($this->owner->relations) {
+        if (!empty($this->owner->relations)) {
             $p = $this->owner->table_alias ?: $this->owner->table;
         }
 

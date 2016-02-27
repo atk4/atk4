@@ -27,23 +27,60 @@ class SQL_Model extends Model implements Serializable
     /**
     * Master DSQL record which will be cloned by other operations.
     * For low level use only. Use $this->dsql() when in doubt.
+    *
+    * @var DB_dsql
     */
     protected $dsql;
+
+    /**
+     * Default Field class name
+     *
+     * @var string
+     */
     public $field_class = 'Field';
 
-    /** If you wish that alias is used for the table when selected, you can define it here.
-     * This will help to keep SQL syntax shorter, but will not impact functionality */
-    public $table_alias = null;   // Defines alias for the table, can improve readability of queries
-    public $entity_code = null;   // @osolete. Use $table
+    /**
+     * If you wish that alias is used for the table when selected, you can define it here.
+     * This will help to keep SQL syntax shorter, but will not impact functionality.
+     *
+     * @var string
+     */
+    public $table_alias = null;
+    
+    /**
+     * @deprecated 4.3.0 Use $table instead
+     */
+    public $entity_code = null;
 
-    public $relations = array();  // Joins
+    /**
+     * Joins
+     *
+     * @var array
+     */
+    public $relations = array();
 
-    // Call $model->debug(true|false) to turn on|off debug mode
+    /**
+     * Call $model->debug(true|false) to turn on|off debug mode
+     *
+     * @var bool
+     */
     public $debug = false;
 
-    public $db = null;            // Set to use different database connection
+    /**
+     * Set to use different database connection
+     *
+     * @var DB
+     */
+    public $db = null;
 
-    public $fast = null;          // set this to true to speed up model, but sacrifice some of the consistency
+    /**
+     * Set this to true to speed up model, but sacrifice some of the consistency
+     *
+     * @var bool
+     */
+    public $fast = null;
+
+
 
     // {{{ Basic Functionality, query initialization and actual field handling
 
@@ -67,7 +104,7 @@ class SQL_Model extends Model implements Serializable
             $this->db = $this->app->db;
         }
 
-        if ($this->owner instanceof Field_Reference && $this->owner->owner->relations) {
+        if ($this->owner instanceof Field_Reference && !empty($this->owner->owner->relations)) {
             $this->relations = &$this->owner->owner->relations;
         }
     }
@@ -119,7 +156,13 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** Use this instead of accessing dsql directly. This will initialize $dsql property if it does not exist yet */
+
+    /**
+     * Use this instead of accessing dsql directly.
+     * This will initialize $dsql property if it does not exist yet.
+     *
+     * @return DB_dsql
+     */
     public function _dsql()
     {
         if (!$this->dsql) {
@@ -128,19 +171,35 @@ class SQL_Model extends Model implements Serializable
 
         return $this->dsql;
     }
+
+    /**
+     * Clone DSQL
+     */
     public function __clone()
     {
         if (is_object($this->dsql)) {
             $this->dsql = clone $this->dsql;
         }
     }
-    /** Produces a close of Dynamic SQL object configured with table, conditions and joins of this model.
-     * Use for statements you are going to execute manually. */
+
+    /**
+     * Produces a clone of Dynamic SQL object configured with table, conditions and joins of this model.
+     * Use for statements you are going to execute manually.
+     *
+     * @return DB_dsql
+     */
     public function dsql()
     {
         return clone $this->_dsql();
     }
-    /** Turns debugging mode on|off for this model. All database operations will be outputed */
+
+    /**
+     * Turns debugging mode on|off for this model. All database operations will be outputed.
+     *
+     * @param bool $enabled
+     *
+     * @return $this
+     */
     public function debug($enabled = true)
     {
         if ($enabled === true) {
@@ -154,7 +213,14 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** Completes initialization of dsql() by adding fields and expressions. */
+
+    /**
+     * Completes initialization of dsql() by adding fields and expressions.
+     *
+     * @param array $fields
+     *
+     * @return DB_dsql
+     */
     public function selectQuery($fields = null)
     {
         /**/$this->app->pr->start('selectQuery/getActualF');
@@ -185,6 +251,7 @@ class SQL_Model extends Model implements Serializable
                 continue;
             }
 
+            /** @var Field */
             $field->updateSelectQuery($select);
         }
         /**/$this->app->pr->stop();
@@ -957,8 +1024,7 @@ class SQL_Model extends Model implements Serializable
         return $o->load($id);
     }
     /**
-     * @obsolete. Use set() then save().
-     * @deprecated
+     * @deprecated 4.3.1 Use set() then save().
      */
     public function update($data = array())
     {
@@ -1186,7 +1252,7 @@ class SQL_Model extends Model implements Serializable
 
     public function offsetExists($name)
     {
-        return $this->hasElement($name);
+        return (bool) $this->hasElement($name);
     }
     public function offsetGet($name)
     {
