@@ -212,10 +212,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             return $this;
         }
 
-        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
-        // @codingStandardsIgnoreEnd
-
         if (!$ref) {
             $ref = 1;
         }
@@ -266,10 +263,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             return false;
         }
 
-        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
-        // @codingStandardsIgnoreEnd
-
         if (!$ref) {
             if (!isset($this->tags[$tag])) {
                 throw $this->exception('Tag not found in Template')
@@ -297,9 +291,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             return true;
         }
 
-        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
-        // @codingStandardsIgnoreEnd
 
         return isset($this->tags[$tag]) || $this->isTopTag($tag);
     }
@@ -690,9 +682,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
                 continue;
             }
 
-            // @codingStandardsIgnoreStart
             @list($key, $ref) = explode('#', $tag);
-            // @codingStandardsIgnoreEnd
 
             $this->tags[$key][$ref] = &$val;
             if (is_array($val)) {

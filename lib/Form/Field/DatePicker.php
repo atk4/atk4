@@ -7,7 +7,7 @@
 class Form_Field_DatePicker extends Form_Field_Line
 {
     public $options = array();
-    
+
     public function init()
     {
         parent::init();
@@ -87,10 +87,10 @@ class Form_Field_DatePicker extends Form_Field_Line
             return null;
         }
         if ($from === null) {
-            $from = $this->api->getConfig('locale/date', 'Y-m-d');
+            $from = $this->app->getConfig('locale/date', 'Y-m-d');
         }
         if ($to === null) {
-            $to = $this->api->getConfig('locale/date', 'Y-m-d');
+            $to = $this->app->getConfig('locale/date', 'Y-m-d');
         }
 
         return date_format(date_create_from_format($from, (string) $date), $to);
