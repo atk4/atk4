@@ -8,21 +8,29 @@ class App_Frontend extends App_Web
 {
     /**
      * When page is determined, it's class instance is created and stored in here.
+     *
+     * @var Page
      */
     public $page_object = null;
 
     /**
      * Class which is used for static pages.
+     *
+     * @var string
      */
     public $page_class = 'Page';
 
     /**
      * List of pages which are routed into namespace.
+     *
+     * @var array
      */
     public $namespace_routes = array();
 
     /**
      * Object for a custom layout, introduced in 4.3.
+     *
+     * @var AbstractView
      */
     public $layout = null;
 
@@ -41,7 +49,7 @@ class App_Frontend extends App_Web
      * Pages with a specified prefix will loaded from a specified namespace.
      *
      * @param string $prefix
-     * @param [type] $ns
+     * @param string $ns
      */
     public function routePages($prefix, $ns = null)
     {
@@ -173,7 +181,7 @@ class App_Frontend extends App_Web
     /**
      * Attempts to load static page. Raises exception if not found.
      *
-     * @param [type] $page [description]
+     * @param string $page
      *
      * @return Page
      */

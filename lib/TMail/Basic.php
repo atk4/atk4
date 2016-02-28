@@ -28,29 +28,56 @@ class TMail_Basic extends AbstractModel
             $this->addTransport($t);
         }
     }
+    
+    /**
+     * @param string $fuzzy_email
+     * @return array
+     */
     public function extractEmail($fuzzy_email)
     {
         preg_match('/^(?:"?([^@"]+)"?\s)?<?([^>]+@[^>]+)>?$/', $fuzzy_email, $m);
 
         return $m;
     }
+
+    /**
+     * @return array
+     */
     public function defaultTemplate()
     {
         return array('shared');
     }
+
+    /**
+     * @param string $t
+     * @return TMail_Transport
+     */
     public function addTransport($t)
     {
         return $this->add($this->app->normalizeClassName($t, 'TMail_Transport'));
     }
+
+    /**
+     * @param string $p
+     * @return TMail_Part
+     */
     public function addPart($p)
     {
         return $this->add('TMail_Part_'.$p);
     }
-    /* Setting Content Separatelly */
+
+    /**
+     * Setting Content Separatelly
+     *
+     * @param string $text
+     */
     public function setText($text)
     {
         $this->addPart('Text')->set($text);
     }
+    /**
+     * @param string $html
+     */
     public function setHTML($html)
     {
         $this->addPart('HTML')->set($html);
