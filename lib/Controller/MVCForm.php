@@ -175,7 +175,7 @@ class Controller_MVCForm extends AbstractController
         if (isset($this->type_associations[$field->type()])) {
             $type = $this->type_associations[$field->type()];
         }
-        if ($field instanceof Model_Field_Reference) {
+        if ($field instanceof Field_Reference) {
             $type = 'DropDown';
         }
 
