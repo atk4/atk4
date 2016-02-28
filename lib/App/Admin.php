@@ -130,7 +130,7 @@ class App_Admin extends App_Frontend
                 if (file_put_contents($path_d, file_get_contents($url)) == false) {
                     return 'update error';
                 } else {
-                    if (rename($path_d, $path) == false) {
+                    if (rename($path_d, $path) === false) {
                         // get version of a phar
 
                         return 'update error';

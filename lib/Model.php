@@ -580,6 +580,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->load($id);
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;
@@ -612,6 +613,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->loadAny();
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;
@@ -663,6 +665,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->loadBy($field, $cond, $value);
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;

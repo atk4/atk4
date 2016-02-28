@@ -336,7 +336,7 @@ class Auth_Basic extends AbstractController
      * @param string $password
      * @param string $salt
      *
-     * @return string
+     * @return string|bool Returns false on failure, encrypted string otherwise
      */
     public function encryptPassword($password, $salt = null)
     {
@@ -352,6 +352,7 @@ class Auth_Basic extends AbstractController
             case null:
                 return $password;
             case 'php':
+                // returns false on failure
                 return password_hash($password, $this->hash_algo, $this->hash_options);
             case 'sha256/salt':
                 if ($salt === null) {

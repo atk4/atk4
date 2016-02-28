@@ -181,6 +181,10 @@ class GiTemplate extends AbstractModel implements ArrayAccess
      * Returns true if specified tag is a top-tag of the template.
      *
      * Since Agile Toolkit 4.3 this tag is always called _top
+     *
+     * @param string $tag
+     *
+     * @return bool
      */
     public function isTopTag($tag)
     {
@@ -207,7 +211,11 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
             return $this;
         }
+
+        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
+        // @codingStandardsIgnoreEnd
+
         if (!$ref) {
             $ref = 1;
         }
@@ -257,7 +265,11 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
             return false;
         }
+
+        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
+        // @codingStandardsIgnoreEnd
+
         if (!$ref) {
             if (!isset($this->tags[$tag])) {
                 throw $this->exception('Tag not found in Template')
@@ -285,7 +297,9 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             return true;
         }
 
+        // @codingStandardsIgnoreStart
         @list($tag, $ref) = explode('#', $tag);
+        // @codingStandardsIgnoreEnd
 
         return isset($this->tags[$tag]) || $this->isTopTag($tag);
     }
@@ -671,12 +685,14 @@ class GiTemplate extends AbstractModel implements ArrayAccess
     }
     public function rebuildTagsRegion(&$template)
     {
-        //var_dump($old,$new);
         foreach ($template as $tag => &$val) {
             if (is_numeric($tag)) {
                 continue;
             }
+
+            // @codingStandardsIgnoreStart
             @list($key, $ref) = explode('#', $tag);
+            // @codingStandardsIgnoreEnd
 
             $this->tags[$key][$ref] = &$val;
             if (is_array($val)) {

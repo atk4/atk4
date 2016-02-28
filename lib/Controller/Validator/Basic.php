@@ -43,6 +43,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
      */
     public function rule_regex($a)
     {
+        $opt = array();
         $rule = $this->pullRule();
         if ($rule[0] != '/') {
             $rule = '/^'.$rule.'*$/';
