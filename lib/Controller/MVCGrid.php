@@ -79,7 +79,7 @@ class Controller_MVCGrid extends AbstractController
 
         $field_name = $field->short_name;
 
-        if ($field instanceof Model_Field_Reference) {
+        if ($field instanceof Field_Reference) {
             $field_name = $field->getDereferenced();
         }
 
