@@ -15,6 +15,8 @@ class Controller_MVCGrid extends AbstractController
     public $model = null;
     public $grid = null;
 
+    public $field_associations = array();
+
     public $type_associations = array(
         'string' => 'text',
         'int' => 'number',

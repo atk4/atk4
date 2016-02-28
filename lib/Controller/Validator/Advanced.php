@@ -57,7 +57,7 @@ class Controller_Validator_Advanced extends Controller_Validator_Basic
         $password = str_replace("\r", '', $password);
         $password = str_replace("\n", '', $password);
 
-        if ($cl && file_exists($cl) && is_executable($cl)) {
+        if (is_string($cl) && file_exists($cl) && is_executable($cl)) {
             $cl = $this->add('System_ProcessIO')
                 ->exec($cl)
                 ->write_all($password)

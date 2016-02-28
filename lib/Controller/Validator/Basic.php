@@ -1028,7 +1028,7 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
 
         $new_name[] = implode('-', $parts);
 
-        if ($name_suffix) {
+        if ($name_suffix !== false) {
             $new_name[] = $name_suffix;
         }
 
