@@ -185,7 +185,9 @@ class Controller_MVCForm extends AbstractController
             $form_field->setModel($field->theModel);
         }
         if ($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
-            $form_field->setEmptyText($field->emptyText());
+            /** @var string $text */
+            $text = $field->emptyText();
+            $form_field->setEmptyText($text);
         }
 
         if ($field->onField()) {

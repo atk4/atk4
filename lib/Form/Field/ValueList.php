@@ -59,11 +59,11 @@ abstract class Form_Field_ValueList extends Form_Field
      *
      * Set to "Select.." or "Pick one.."
      *
-     * @param string $text Pass UNDEFINED to use default text, empty string - disable
+     * @param string $text Pass null to use default text, empty string - disable
      *
      * @return $this
      */
-    public function setEmptyText($text = UNDEFINED)
+    public function setEmptyText($text =  null)
     {
         $this->empty_text = $text === null ? $this->default_empty_text : $text;
 
