@@ -802,7 +802,7 @@ abstract class AbstractObject
      * If priority is negative, then hooks will be executed in reverse order.
      *
      * @param string                  $hook_spot Hook identifier to bind on
-     * @param callable|AbstractObject $callable  Will be called on hook()
+     * @param AbstractObject|callable $callable  Will be called on hook()
      * @param array                   $arguments Arguments are passed to $callable
      * @param int                     $priority  Lower priority is called sooner
      *
