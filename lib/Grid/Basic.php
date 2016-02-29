@@ -86,7 +86,7 @@ class Grid_Basic extends CompleteLister
      * @param string $name
      * @param string $descr
      *
-     * @return $this || Controller_Grid_Format
+     * @return $this|Controller_Grid_Format
      */
     public function addColumn($formatters, $name = null, $descr = null)
     {

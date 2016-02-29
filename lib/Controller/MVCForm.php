@@ -21,11 +21,24 @@
  */
 class Controller_MVCForm extends AbstractController
 {
+    /** @var Model */
     public $model = null;
+
+    /** @var Form */
     public $form = null;
 
+    /**
+     * Field associations form_field => model_field
+     *
+     * @var array
+     */
     public $field_associations = array();
 
+    /**
+     * Field type associations model_field_type => form_field_type
+     *
+     * @var array
+     */
     public $type_associations = array(
         'string' => 'Line',
         'text' => 'Text',
@@ -46,20 +59,39 @@ class Controller_MVCForm extends AbstractController
         'image' => 'Image',
         'file' => 'Upload',
     );
+
+    /**
+     * Is update hook already set?
+     *
+     * @var bool
+     */
+    private $_hook_set = false;
+
+    /** @var Form */
+    public $owner;
+
+
+
+    /**
+     * Import model fields in form.
+     *
+     * @param array|string|bool $fields
+     */
     public function setActualFields($fields)
     {
         $this->importFields($this->owner->model, $fields);
     }
 
-    private $_hook_set = false;
 
     /**
-     * importFields description blah.
+     * Import model fields in form.
      *
-     * @param [type] $model  [description]
-     * @param [type] $fields [description]
+     * Use $fields === false if you want to associate form with model, but don't create form fields.
      *
-     * @return [type] [description]
+     * @param Model $model
+     * @param array|string|bool $fields
+     *
+     * @return void|$this
      */
     public function importFields($model, $fields = undefined)
     {
@@ -76,10 +108,13 @@ class Controller_MVCForm extends AbstractController
         if (!is_array($fields)) {
             $fields = $model->getActualFields($fields);
         }
+
+        // import fields one by one
         foreach ($fields as $field) {
             $this->importField($field);
         }
 
+        // set update hook
         if (!$this->_hook_set) {
             $this->owner->addHook('update', array($this, 'update'));
             $model->addHook('afterLoad', array($this, 'setFields'));
@@ -88,6 +123,15 @@ class Controller_MVCForm extends AbstractController
 
         return $this;
     }
+
+    /**
+     * Import one field from model into form.
+     *
+     * @param Field $field
+     * @param string $field_name
+     *
+     * @return void|Form_Field
+     */
     public function importField($field, $field_name = null)
     {
         $field = $this->model->hasElement($field);
@@ -148,18 +192,34 @@ class Controller_MVCForm extends AbstractController
 
         return $form_field;
     }
-    /** Copies model field values into form */
+
+
+    /**
+     * Copies model field values into form.
+     */
     public function setFields()
     {
         foreach ($this->field_associations as $form_field => $model_field) {
             $this->form->set($form_field, $model_field->get());
         }
     }
+
+    /**
+     * Returns array of models model_name => Model used in this form.
+     *
+     * @return array
+     */
     public function getFields()
     {
         $models = array();
+
+        /**
+         * @var Form_Field $form_field
+         * @var Field $model_field
+         */
         foreach ($this->field_associations as $form_field => $model_field) {
-            $model_field->set($v = $this->form->get($form_field));
+            $v = $this->form->get($form_field);
+            $model_field->set($v);
             if (!isset($models[$model_field->owner->name])) {
                 $models[$model_field->owner->name] = $model_field->owner;
             }
@@ -167,11 +227,22 @@ class Controller_MVCForm extends AbstractController
 
         return $models;
     }
-    /** Redefine this to add special handling of your own fields */
+
+    /**
+     * Returns form field type associated with model field.
+     *
+     * Redefine this method to add special handling of your own fields.
+     *
+     * @param Field $field
+     *
+     * @return string
+     */
     public function getFieldType($field)
     {
+        // default form field type
         $type = 'Line';
 
+        // try to find associated form field type
         if (isset($this->type_associations[$field->type()])) {
             $type = $this->type_associations[$field->type()];
         }
@@ -179,6 +250,7 @@ class Controller_MVCForm extends AbstractController
             $type = 'DropDown';
         }
 
+        // if form field type explicitly set in model
         if ($field->display()) {
             $tmp = $field->display();
             if (is_array($tmp)) {
@@ -191,6 +263,12 @@ class Controller_MVCForm extends AbstractController
 
         return $type;
     }
+
+    /**
+     * Update form model
+     *
+     * @param Form $form
+     */
     public function update($form)
     {
         $models = $this->getFields();

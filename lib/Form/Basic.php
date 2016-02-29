@@ -155,12 +155,30 @@ class Form_Basic extends View implements ArrayAccess
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError', $field->short_name, $msg)->execute();
     }
+
+    /**
+     * Adds error message to form field.
+     *
+     * @param string $field
+     * @param string $text
+     */
     public function error($field, $text = null)
     {
         /** @var Form_Field $form_field */
         $form_field = $this->getElement($field);
         $form_field->displayFieldError($text);
     }
+
+    /**
+     * Adds field in form.
+     *
+     * @param AbstractView|array|string $type
+     * @param AbstractView|array|string $options
+     * @param string $caption
+     * @param string $attr Deprecated argument
+     *
+     * @return Form_Field
+     */
     public function addField($type, $options = null, $caption = null, $attr = null)
     {
         $insert_into = $this->layout ?: $this;
@@ -244,12 +262,20 @@ class Form_Basic extends View implements ArrayAccess
 
         return $field;
     }
+
+    /**
+     * Imports model fields in form by using form controller.
+     *
+     * @param Model $model
+     * @param array|string|bool $fields
+     */
     public function importFields($model, $fields = undefined)
     {
-        /** @var Controller_MVCForm */
+        /** @var Controller_MVCForm $c */
         $c = $this->add($this->default_controller);
         $c->importFields($model, $fields);
     }
+
     public function addSeparator($class = '', $attr = array())
     {
         if (!isset($this->template_chunks['form_separator'])) {

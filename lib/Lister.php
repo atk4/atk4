@@ -23,26 +23,53 @@ class Lister extends View implements ArrayAccess
      */
     public $dq = null;
 
-    /** For other iterators, this variable will be used */
+    /**
+     * For other iterators, this variable will be used.
+     *
+     * @var mixed
+     */
     public $iter = null;
 
-    /** Points to the current record returned by iterator. Can be array or object. */
+    /**
+     * Points to the current record returned by iterator. Can be array or object.
+     *
+     * @var array|object
+     */
     public $current = null;
 
-    /** Points to hash for current row before it's being outputted. Used in formatRow() */
+    /**
+     * Points to hash for current row before it's being outputted. Used in formatRow().
+     *
+     * @var array
+     */
     public $current_row = array();
 
-    /** Similar to $current_row, but will be used for direct HTML output, no escaping. Use with care. */
+    /**
+     * Similar to $current_row, but will be used for direct HTML output, no escaping. Use with care.
+     *
+     * @var array
+     */
     public $current_row_html = array();
 
-    /** Contains ID of current record */
+    /**
+     * Contains ID of current record.
+     *
+     * @var mixed
+     */
     public $current_id = null;
+
+    
 
     /**
      * Similar to setModel, however you specify array of data here. setSource is
      * actually implemented around :php:class:`Controller_Data_Array`. actually
      * you can pass anything iterateable to setSource() as long as elements of
      * iterating produce either a string or array.
+     *
+     * @param mixed $source
+     * @param array|string|null $fields
+     *
+     * @return $this
      */
     public function setSource($source, $fields = null)
     {
@@ -113,7 +140,7 @@ class Lister extends View implements ArrayAccess
             if ($this->current_row instanceof Model) {
                 $this->current_row = $this->current_row->get();
             } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
-                // Looks like we won't be abel to access current_row as array, so we will
+                // Looks like we won't be able to access current_row as array, so we will
                 // copy it's value inside $this->current instead and produce an empty array
                 // to be filled out by a custom iterators
                 $this->current = $this->current_row;

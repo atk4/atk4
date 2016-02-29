@@ -94,8 +94,8 @@ abstract class AbstractView extends AbstractObject
      * Associate view with a model. Additionally may initialize a controller
      * which would copy fields from the model into the View.
      *
-     * @param object|string $model         Class without "Model_" prefix or object
-     * @param array|string|null  $actual_fields List of fields in order to populate
+     * @param object|string $model Class without "Model_" prefix or object
+     * @param array|string|null $actual_fields List of fields in order to populate
      *
      * @return AbstractModel object
      */
