@@ -128,18 +128,18 @@ class Controller_MVCForm extends AbstractController
     /**
      * Import one field from model into form.
      *
-     * @param Field $field
+     * @param string $field
      * @param string $field_name
      *
      * @return void|Form_Field
      */
     public function importField($field, $field_name = null)
     {
-        /** @var Field|boolean $field */
         $field = $this->model->hasElement($field);
         if (!$field) {
             return;
         }
+        /** @var Field $field */
         if (!$field->editable()) {
             return;
         }

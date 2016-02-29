@@ -113,17 +113,17 @@ class Controller_MVCGrid extends AbstractController
     /**
      * Import one field from model into grid.
      *
-     * @param Field $field
+     * @param string $field
      *
      * @return void|Grid|Controller_Grid_Format
      */
     public function importField($field)
     {
-        /** @var Field|boolean $field */
         $field = $this->model->hasElement($field);
         if (!$field) {
             return;
         }
+        /** @var Field $field */
 
         $field_name = $field->short_name;
 
