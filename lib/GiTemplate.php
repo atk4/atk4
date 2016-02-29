@@ -163,6 +163,15 @@ class GiTemplate extends AbstractModel implements ArrayAccess
         unset($this->tags);
         $this->rebuildTags();
     }
+    /**
+     * Returns relevant exception class. Use this method with "throw".
+     *
+     * @param string $message Static text of exception.
+     * @param string $type    Exception class or class postfix
+     * @param string $code    Optional error code
+     *
+     * @return Exception_Template
+     */
     public function exception($message = 'Undefined Exception', $type = null, $code = null)
     {
         $o = $this->owner ? $this->owner->__toString() : 'none';

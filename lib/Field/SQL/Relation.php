@@ -44,11 +44,13 @@ class Field_SQL_Relation extends Field_Base
 
     public function hasOne($model, $our_field = UNDEFINED, $field_class = UNDEFINED)
     {
+        // @todo Should check field types. There is some kind of mix of SQL fields and base fields
+
         /** @var Field_Reference */
         $field = $this->model->hasOne($model, $our_field, $field_class);
         $field->table($this->joinAlias);
 
-        /** @var Field */
+        /** @var Field_SQL_HasOne */
         $foreign_field = $this->model->getElement($field->getForeignFieldName());
         $foreign_field->table($this->joinAlias);
 

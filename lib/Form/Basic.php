@@ -432,13 +432,9 @@ class Form_Basic extends View implements ArrayAccess
         } catch (BaseException $e) {
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
-                if ($f && is_string($f)) {
-                    /** @var Form_Field */
-                    $fld = $this->hasElement($f);
-                    if ($fld) {
-                        $fld->displayFieldError($e->getMessage());
-                    } else {
-                        $this->js()->univ()->alert($e->getMessage())->execute();
+                /** @var Form_Field $fld */
+                if ($f && is_string($f) && $fld = $this->hasElement($f)) {
+                    $fld->displayFieldError($e->getMessage());
                 } else {
                     $this->js()->univ()->alert($e->getMessage())->execute();
                 }
