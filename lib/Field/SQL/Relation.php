@@ -44,10 +44,13 @@ class Field_SQL_Relation extends Field_Base
 
     public function hasOne($model, $our_field = UNDEFINED, $field_class = UNDEFINED)
     {
+        /** @var Field_Reference */
         $field = $this->model->hasOne($model, $our_field, $field_class);
         $field->table($this->joinAlias);
 
-        $this->model->getElement($field->getForeignFieldName())->table($this->joinAlias);
+        /** @var Field */
+        $foreign_field = $this->model->getElement($field->getForeignFieldName());
+        $foreign_field->table($this->joinAlias);
 
         return $field;
     }

@@ -13,6 +13,7 @@ class Field_SQL_HasOne extends Field_SQL_Expression
      */
     public function getExpression($model)
     {
+        /** @var SQL_Model */
         $refModel = $this->getModel();
 
         if (is_string($refModel)) {

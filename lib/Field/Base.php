@@ -17,8 +17,8 @@ class Field_Base extends AbstractObject
     public $has_default_value = false;
     public $defaultValue = null;
     public $allowHTML = false;
-    
-    /** @var array */
+
+    /** @var array|null */
     public $listData = null;
 
     public $theModel = null;
@@ -538,7 +538,7 @@ class Field_Base extends AbstractObject
         if ($value === null) {
             return;
         }
-        
+
         if ($this->listData) {
             reset($this->listData);
             list(, $yes_value) = each($this->listData);

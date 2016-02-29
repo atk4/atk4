@@ -1527,7 +1527,6 @@ class DB_dsql extends AbstractModel implements Iterator
             foreach ($s as $ss) {
                 $out[] = $this->bt($ss);
             }
-
             return $out;
         }
 

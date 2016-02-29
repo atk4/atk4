@@ -4,6 +4,10 @@
  */
 class Exception_Template extends BaseException
 {
+    /** @var GiTemplate */
+    public $owner;
+
+
     public function init()
     {
         parent::init();
@@ -16,7 +20,7 @@ class Exception_Template extends BaseException
             $this->addMoreInfo('keys', implode(', ', $keys));
         }
 
-        if (@$this->owner->source) {
+        if (isset(@$this->owner->source)) {
             $this->addMoreInfo('source', $this->owner->source);
         }
     }

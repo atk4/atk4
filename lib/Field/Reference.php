@@ -6,15 +6,20 @@ class Field_Reference extends Field
 {
     /** @var string */
     public $model_name = null;
-    
+
     /** @var string */
     public $display_field = null;
-    
+
     /** @var string */
     public $dereferenced_field = null;
-    
+
     /** @var string */
     public $table_alias = null;
+
+    /** @var Model */
+    public $model;
+
+
 
     /**
      * Set model
@@ -71,6 +76,7 @@ class Field_Reference extends Field
 
     public function sortable($x = undefined)
     {
+        /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->sortable($x);
@@ -81,6 +87,7 @@ class Field_Reference extends Field
 
     public function caption($x = undefined)
     {
+        /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->caption($x);
@@ -139,6 +146,7 @@ class Field_Reference extends Field
             }
         }
         if ($mode == 'link') {
+            /** @var Model */
             $m = $this->add($this->model_name);
             if ($this->get()) {
                 $m->tryLoad($this->get());
@@ -156,6 +164,8 @@ class Field_Reference extends Field
     }
 
     /**
+     * Return DSQL for field
+     *
      * @return SQL_Model
      */
     public function refSQL()
@@ -168,6 +178,8 @@ class Field_Reference extends Field
     }
 
     /**
+     * Return name of dereferenced field
+     *
      * @return string
      */
     public function getDereferenced()
@@ -215,9 +227,11 @@ class Field_Reference extends Field
         }
 
         if ($this->display_field) {
+            /** @var SQL_Model $this->model */
             $title = $this->model->dsql()->del('fields');
             $this->model->getElement($this->display_field)->updateSelectQuery($title);
         } elseif ($this->model->hasMethod('titleQuery')) {
+            /** @var SQL_Model $this->model */
             $title = $this->model->titleQuery();
         } else {
             // possibly references non-sql model, so just display field value
