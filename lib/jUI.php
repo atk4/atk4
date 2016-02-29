@@ -26,7 +26,7 @@ class jUI extends jQuery
         if ($v = $this->app->getConfig('js/versions/jqueryui', null)) {
             $v = 'jquery-ui-'.$v;
         } else {
-            $v = $this->app->getConfig('js/jqueryui', 'jquery-ui-1.11.beta2.min');  // bundled jQueryUI version
+            $v = $this->app->getConfig('js/jqueryui', 'jquery-ui-1.11.4.min');  // bundled jQueryUI version
         }
 
         $this->addInclude($v);

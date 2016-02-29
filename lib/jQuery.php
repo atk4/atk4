@@ -35,7 +35,7 @@ class jQuery extends AbstractController
         if ($v = $this->app->getConfig('js/versions/jquery', null)) {
             $v = 'jquery-'.$v;
         } else {
-            $v = $this->app->getConfig('js/jquery', 'jquery-2.0.3.min');   // bundled jQuery version
+            $v = $this->app->getConfig('js/jquery', 'jquery-2.2.1.min');   // bundled jQuery version
         }
 
         $this->addInclude($v);
