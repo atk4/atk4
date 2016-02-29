@@ -106,6 +106,7 @@ class Controller_MVCForm extends AbstractController
             $fields = 'editable';
         }
         if (!is_array($fields)) {
+            // note: $fields parameter is only useful if model is SQL_Model
             $fields = $model->getActualFields($fields);
         }
 
@@ -134,6 +135,7 @@ class Controller_MVCForm extends AbstractController
      */
     public function importField($field, $field_name = null)
     {
+        /** @var Field|boolean $field */
         $field = $this->model->hasElement($field);
         if (!$field) {
             return;
@@ -142,7 +144,7 @@ class Controller_MVCForm extends AbstractController
             return;
         }
 
-        if (!$field_name) {
+        if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
         }
         $field_type = $this->getFieldType($field);

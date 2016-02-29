@@ -48,6 +48,11 @@ class Controller_MVCGrid extends AbstractController
         'password' => 'password',
     );
 
+    /** @var Grid */
+    public $owner;
+
+
+
     /**
      * Adds additional type association.
      *
@@ -92,6 +97,7 @@ class Controller_MVCGrid extends AbstractController
             $fields = 'visible';
         }
         if (!is_array($fields)) {
+            // note: $fields parameter only useful if model is SQL_Model
             $fields = $model->getActualFields($fields);
         }
 
@@ -113,6 +119,7 @@ class Controller_MVCGrid extends AbstractController
      */
     public function importField($field)
     {
+        /** @var Field|boolean $field */
         $field = $this->model->hasElement($field);
         if (!$field) {
             return;
