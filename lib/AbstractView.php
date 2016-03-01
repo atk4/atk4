@@ -67,6 +67,18 @@ abstract class AbstractView extends AbstractObject
      */
     public $auto_track_element = true;
 
+    /**
+     * @var array of jQuery_Chains
+     */
+    public $js = array();
+
+    /**
+     * Using dq property looks obsolete, but left for compatibility
+     *
+     * @see self::setModel()
+     * @var DB_dsql
+     */
+    public $dq;
 
 
     // {{{ Basic Operations
@@ -82,8 +94,8 @@ abstract class AbstractView extends AbstractObject
      * Associate view with a model. Additionally may initialize a controller
      * which would copy fields from the model into the View.
      *
-     * @param object|string $model         Class without "Model_" prefix or object
-     * @param array|string|null  $actual_fields List of fields in order to populate
+     * @param object|string $model Class without "Model_" prefix or object
+     * @param array|string|null $actual_fields List of fields in order to populate
      *
      * @return AbstractModel object
      */
@@ -144,7 +156,7 @@ abstract class AbstractView extends AbstractObject
         $this->removeHook('output', array($this, '_tsBuffer'));
         $ret = $this->_tsBuffer;
         $this->_tsBuffer = '';
-        if ($execute_js && @$this->app->jquery) {
+        if ($execute_js && isset($this->app->jquery)) {
             $this->app->jquery->getJS($this);
         }
         if ($destroy) {
@@ -169,7 +181,7 @@ abstract class AbstractView extends AbstractObject
      */
     public function initializeTemplate($template_spot = null, $template_branch = null)
     {
-        if (!$template_spot) {
+        if ($template_spot === null) {
             $template_spot = $this->defaultSpot();
         }
         $this->spot = $template_spot;
@@ -340,7 +352,7 @@ abstract class AbstractView extends AbstractObject
 
         if ($cutting_here) {
             //$result=$this->owner->template->cloneRegion($this->spot)->render();
-            if ($this->app->jquery) {
+            if (isset($this->app->jquery)) {
                 $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender($cutting_output);
@@ -358,6 +370,7 @@ abstract class AbstractView extends AbstractObject
     {
         $this->template->set($this->model->get());
     }
+
     /**
      * Append our chains to owner's chains. JS chains bubble up to
      * app, which plugs them into template. If the object is being
@@ -365,6 +378,7 @@ abstract class AbstractView extends AbstractObject
      */
     public function moveJStoParent()
     {
+        /** @var AbstractView $this->owner */
         $this->owner->js = array_merge_recursive($this->owner->js, $this->js);
     }
 
@@ -417,12 +431,13 @@ abstract class AbstractView extends AbstractObject
      * tag. This method of cutting is mostly un-used now, and should be
      * considered obsolete.
      *
-     * @obsolete
+     * @deprecated 4.3.1
      */
     public function region_render()
     {
         throw $this->exception('cut_region is now obsolete');
 
+        /*
         if ($this->template_flush) {
             if ($this->app->jquery) {
                 $this->app->jquery->getJS($this);
@@ -435,11 +450,12 @@ abstract class AbstractView extends AbstractObject
         if ($this->spot == $_GET['cut_region']) {
             $this->owner->template_flush = $_GET['cut_region'];
         }
+        */
     }
+
     // }}}
 
     // {{{ Object JavaScript Interface
-    public $js = array();
     /**
      * Views in Agile Toolkit can assign javascript actions to themselves. This
      * is done by calling $view->js() method.
@@ -501,9 +517,9 @@ abstract class AbstractView extends AbstractObject
      * This approach is compatible with jQuery UI Widget factory and will keep
      * your code clean
      *
-     * @param string|true|null   $when     Event when chain will be executed
-     * @param array|chain|string $code     JavaScript chain(s) or code
-     * @param string             $instance Obsolete
+     * @param string|bool|null          $when     Event when chain will be executed
+     * @param array|jQuery_Chain|string $code     JavaScript chain(s) or code
+     * @param string                    $instance Obsolete
      *
      * @link http://agiletoolkit.org/doc/js
      *
@@ -524,7 +540,7 @@ abstract class AbstractView extends AbstractObject
             $when = 'never';
         }
 
-        if ($instance && isset($this->js[$when][$instance])) {
+        if ($instance !== null && isset($this->js[$when][$instance])) {
             $js = $this->js[$when][$instance];
         } else {
             $js = $this->app->jquery->chain($this);
@@ -534,7 +550,7 @@ abstract class AbstractView extends AbstractObject
             $js->_prepend($code);
         }
 
-        if ($instance) {
+        if ($instance !== null) {
             $this->js[$when][$instance] = $js;
         } else {
             $this->js[$when][] = $js;
@@ -543,10 +559,14 @@ abstract class AbstractView extends AbstractObject
         return $js;
     }
 
+    /**
+     * @return string
+     */
     public function getJSID()
     {
         return str_replace('/', '_', $this->name);
     }
+
     /**
      * Views in Agile Toolkit can assign javascript actions to themselves. This
      * is done by calling $view->js() or $view->on().

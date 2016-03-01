@@ -11,6 +11,9 @@ class View_Popover extends View
 
     public $url = null;
 
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();

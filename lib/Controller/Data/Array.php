@@ -135,7 +135,7 @@ class Controller_Data_Array extends Controller_Data
             }
             if ($valid === true) {
                 $ids[] = $id;
-                if ($withLimit && (count($ids) > $max)) {
+                if ($withLimit && isset($max) && count($ids) > $max) {
                     break;
                 }
             }

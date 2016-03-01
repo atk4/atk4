@@ -2,7 +2,7 @@
 /**
  * Undocumented.
  */
-class Field_Callback extends Field_Calculated
+class Field_SQL_Callback extends Field_Calculated
 {
     public function getValue($model, $data)
     {

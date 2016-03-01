@@ -34,7 +34,15 @@ class Field extends AbstractModel
 
     public $onField = null;
 
-    public $relations = array();  // Joins, @see from()
+    /**
+     * Joins
+     * @see from()
+     * @var array
+     */
+    public $relations = array();
+
+    /** @var SQL_Model */
+    public $owner;
 
     /**
      * Implementation of generic setter-getter method which supports "UNDEFINED"
@@ -131,6 +139,7 @@ class Field extends AbstractModel
 
         return $this->setterGetter('caption', $t);
     }
+
     /**
      * Sets field hint which will be used by forms.
      *
@@ -142,6 +151,7 @@ class Field extends AbstractModel
     {
         return $this->setterGetter('hint', $t);
     }
+
     /**
      * Sets field placeholder (gray text inside input when it's empty).
      *
@@ -198,18 +208,6 @@ class Field extends AbstractModel
     public function mandatory($t = UNDEFINED)
     {
         return $this->setterGetter('mandatory', $t);
-    }
-
-    /**
-     * obsolete.
-     *
-     * @param bool $t new value
-     *
-     * @return bool current value if $t=UNDEFINED
-     */
-    public function required($t = UNDEFINED)
-    {
-        return $this->mandatory($t);
     }
 
     /**
@@ -529,11 +527,17 @@ class Field extends AbstractModel
         return $this;
     }
 
-    /** Modifies specified query to include this particular field */
+    /**
+     * Modifies specified query to include this particular field.
+     *
+     * @param DB_dsql $select
+     *
+     * @return $this
+     */
     public function updateSelectQuery($select)
     {
         $p = null;
-        if ($this->owner->relations) {
+        if (!empty($this->owner->relations)) {
             $p = $this->owner->table_alias ?: $this->owner->table;
         }
 
@@ -550,7 +554,13 @@ class Field extends AbstractModel
         return $this;
     }
 
-    /** Modify insert query to set value of this field */
+    /**
+     * Modify insert query to set value of this field.
+     *
+     * @param DB_dsql $insert
+     *
+     * @return $this
+     */
     public function updateInsertQuery($insert)
     {
         if ($this->relation) {
@@ -564,7 +574,14 @@ class Field extends AbstractModel
 
         return $this;
     }
-    /** Modify update query to set value of this field */
+
+    /**
+     * Modify update query to set value of this field.
+     *
+     * @param DB_dsql $modify
+     *
+     * @return $this
+     */
     public function updateModifyQuery($modify)
     {
         if ($this->relation) {
@@ -578,7 +595,14 @@ class Field extends AbstractModel
 
         return $this;
     }
-    /** Converts true/false into boolean representation according to the "enum" */
+
+    /**
+     * Converts true/false into boolean representation according to the "enum".
+     *
+     * @param mixed $value
+     *
+     * @return int
+     */
     public function getBooleanValue($value)
     {
         if ($value === null) {
@@ -587,7 +611,7 @@ class Field extends AbstractModel
         if ($this->listData) {
             reset($this->listData);
             list(, $yes_value) = each($this->listData);
-            @list(, $no_value) = each($this->listData);
+            list(, $no_value) = each($this->listData);
             if ($no_value === null) {
                 $no_value = '';
             }
@@ -605,7 +629,12 @@ class Field extends AbstractModel
 
         return $value ? $yes_value : $no_value;
     }
-    /** Get value of this field formatted for SQL. Redefine if you need to convert */
+
+    /**
+     * Get value of this field formatted for SQL. Redefine if you need to convert.
+     *
+     * @return mixed
+     */
     public function getSQL()
     {
         $val = $this->owner->get($this->short_name);
@@ -622,7 +651,12 @@ class Field extends AbstractModel
 
         return $val;
     }
-    /** Returns field of this model */
+
+    /**
+     * Returns field of this model.
+     *
+     * @return string
+     */
     public function getExpr()
     {
         $q = $this->owner->_dsql();
@@ -631,7 +665,23 @@ class Field extends AbstractModel
             $q->bt($this->actual_field ?: $this->short_name);
     }
 
-    /** @obsolete use hasOne instead */
+
+
+    // {{{ Deprecated methods
+
+    /**
+     * @deprecated 4.3.0 use mandatory() instead
+     *
+     * @param bool $t new value
+     *
+     * @return bool|$this current value if $t=UNDEFINED
+     */
+    public function required($t = UNDEFINED)
+    {
+        return $this->mandatory($t);
+    }
+
+    /** @deprecated 4.3.0 use hasOne instead */
     public function refModel($m)
     {
         if ($m == 'Model_Filestore_File') {
@@ -646,12 +696,18 @@ class Field extends AbstractModel
 
         return $this->owner->add($fld)->setModel(str_replace('Model_', '', $m));
     }
+
+    /** @deprecated 4.3.0 use type($v) instead */
     public function datatype($v = undefined)
     {
         return $this->type($v);
     }
+
+    /** @deprecated 4.3.0 use addExpression() instead */
     public function calculated($v = undefined)
     {
-        throw $this->exception('calculated() field proyerty is obsolete. Use addExpression() instead');
+        throw $this->exception('calculated() field property is obsolete. Use addExpression() instead');
     }
+
+    // }}}
 }

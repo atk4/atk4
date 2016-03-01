@@ -17,6 +17,8 @@ class App_REST extends App_CLI
 
     public $endpoint;
 
+    public $version;
+
     /**
      * Initialization.
      */
@@ -28,9 +30,10 @@ class App_REST extends App_CLI
             // Extra 24-hour protection
             parent::init();
 
-            $this->logger = $this->add('Logger');
-            $this->add('Controller_PageManager')
-                ->parseRequestedURL();
+            $this->getLogger();
+
+            $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
+            $this->pm->parseRequestedURL();
 
             // It's recommended that you use versioning inside your API,
             // for example http://api.example.com/v1/user

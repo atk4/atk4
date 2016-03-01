@@ -37,19 +37,19 @@ class MB extends Controller_Validator_Advanced
     public function mb_str_to_upper_words($a)
     {
         if ($this->is_mb) {
-            return mb_convert_case($value, MB_CASE_TITLE, $this->encoding);
+            return mb_convert_case($a, MB_CASE_TITLE, $this->encoding);
         }
 
-        return ucwords(strtolower($value));
+        return ucwords(strtolower($a));
     }
 
     public function mb_truncate($a, $len, $append = '...')
     {
         if ($this->is_mb) {
-            return mb_substr($value, 0, $len, $this->encoding).$append;
+            return mb_substr($a, 0, $len, $this->encoding).$append;
         }
 
-        substr($value, 0, $limit).$end;
+        return substr($a, 0, $len).$append;
     }
 
     public function rule_len($a)

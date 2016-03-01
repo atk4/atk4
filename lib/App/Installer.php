@@ -26,6 +26,32 @@ class App_Installer extends App_Web
     protected $show_intro = false;
 
     /**
+     * Saved PageManager base_path
+     *
+     * @var string
+     */
+    public $saved_base_path;
+
+    /** @var App_Web */
+    public $app;
+
+    /** @var string For internal use */
+    protected $s_first;
+    /** @var string For internal use */
+    protected $s_last;
+    /** @var string For internal use */
+    protected $s_current;
+    /** @var string For internal use */
+    protected $s_prev;
+    /** @var string For internal use */
+    protected $s_next;
+    /** @var int For internal use */
+    protected $s_cnt = 0;
+    /** @var string For internal use */
+    protected $s_title;
+
+
+    /**
      * Initialization.
      */
     public function init()
@@ -121,7 +147,7 @@ class App_Installer extends App_Web
         if (!$this->hasMethod($step_method)) {
             return $this->add('H1')->set('No such step');
         }
-        $this->header = $this->add('H1')->set('Step '.$this->s_cnt.': '.$this->s_title);
+        $this->add('H1')->set('Step '.$this->s_cnt.': '.$this->s_title);
         $page = $this->makePage($step);
 
         return $this->$step_method($page);
