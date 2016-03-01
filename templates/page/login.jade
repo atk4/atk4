@@ -6,7 +6,7 @@ div
 
   {LoginForm}
   .atk-form(style="{$style}" class="{$class}" id="{$_name}")
-    <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+    <form action="{$form_action}" method="{form_method}post{/}" name="{$_name}" {$enctype} {$attributes}>
 
     {Layout}
     div.atk-cells-group.atk-cells-gutter-large.atk-newform.atk-valign-top
