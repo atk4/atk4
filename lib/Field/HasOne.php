@@ -20,7 +20,7 @@ class Field_HasOne extends Field_Calculated
             $titleField = $model->getTitleField();
 
             return $model->get($titleField) ?: 'Ref#'.$id;
-        }catch(BaseException $e){
+        } catch (BaseException $e) {
             // record is no longer there it seems
             return null;
         }

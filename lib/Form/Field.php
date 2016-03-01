@@ -288,14 +288,14 @@ abstract class Form_Field extends AbstractView
             throw $this->exception('Incorrect usage of field validation');
         }
 
-        if(is_string($rule)){
+        if (is_string($rule)) {
             // If string is passed, prefix with the field name
             $rule = $this->short_name.'|'.$rule;
-        }elseif(is_array($rule)){
+        } elseif (is_array($rule)) {
             // if array is passed, prepend with the rule
-            array_unshift($rule,$this->short_name);
+            array_unshift($rule, $this->short_name);
             $rule = array($rule);
-        }elseif(is_callable($rule)){
+        } elseif (is_callable($rule)) {
             // callable or something else is passed. Wrap into array.
             $rule = array(array($this->short_name, $rule));
         }
