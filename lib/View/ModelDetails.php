@@ -13,6 +13,9 @@ class View_ModelDetails extends Grid_Basic
      */
     public $include_id_column = false;
 
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();

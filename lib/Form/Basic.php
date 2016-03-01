@@ -43,14 +43,20 @@ class Form_Basic extends View implements ArrayAccess
 
     public $validator = null;
 
+    /** @var App_Web */
+    public $app;
+
+
+
     /**
      * Normally form fields are inserted using a form template. If you.
-     *
-     * @var [type]
      */
     public $search_for_field_spots;
 
-    public $dq = null;
+    /** @var App_Web */
+    public $owner;
+
+
     public function init()
     {
         /*
@@ -149,10 +155,30 @@ class Form_Basic extends View implements ArrayAccess
         $fn = $this->js_widget ? str_replace('ui.', '', $this->js_widget) : 'atk4_form';
         $this->js()->$fn('fieldError', $field->short_name, $msg)->execute();
     }
+
+    /**
+     * Adds error message to form field.
+     *
+     * @param string $field
+     * @param string $text
+     */
     public function error($field, $text = null)
     {
-        $this->getElement($field)->displayFieldError($text);
+        /** @var Form_Field $form_field */
+        $form_field = $this->getElement($field);
+        $form_field->displayFieldError($text);
     }
+
+    /**
+     * Adds field in form.
+     *
+     * @param AbstractView|array|string $type
+     * @param AbstractView|array|string $options
+     * @param string $caption
+     * @param string $attr Deprecated argument
+     *
+     * @return Form_Field
+     */
     public function addField($type, $options = null, $caption = null, $attr = null)
     {
         $insert_into = $this->layout ?: $this;
@@ -210,7 +236,7 @@ class Form_Basic extends View implements ArrayAccess
             $field = $this->add($class, $options, null, $template);
         } else {
             if ($insert_into->template->hasTag($name)) {
-                $template = $this->template->cloneRegion('field_input');
+                $this->template->cloneRegion('field_input');
                 $options['show_input_only'] = true;
                 $field = $insert_into->add($class, $options, $name);
             } else {
@@ -227,7 +253,7 @@ class Form_Basic extends View implements ArrayAccess
         $field->template->trySet('field_type', strtolower($type));
 
         if ($attr) {
-            if ($this->app->compat) {
+            if ($this->app->compat_42) {
                 $field->setAttr($attr);
             } else {
                 throw $this->exception('4th argument to addField is obsolete');
@@ -236,14 +262,26 @@ class Form_Basic extends View implements ArrayAccess
 
         return $field;
     }
+
+    /**
+     * Imports model fields in form by using form controller.
+     *
+     * @param Model $model
+     * @param array|string|bool $fields
+     */
     public function importFields($model, $fields = undefined)
     {
-        $this->add($this->default_controller)->importFields($model, $fields);
+        /** @var Controller_MVCForm $c */
+        $c = $this->add($this->default_controller);
+        $c->importFields($model, $fields);
     }
+
     public function addSeparator($class = '', $attr = array())
     {
         if (!isset($this->template_chunks['form_separator'])) {
-            return $this->add('View')->addClass($class);
+            /** @var View */
+            $v = $this->add('View');
+            return $v->addClass($class);
         }
         $c = clone $this->template_chunks['form_separator'];
         $c->trySet('fieldset_class', 'atk-cell '.$class);
@@ -256,7 +294,9 @@ class Form_Basic extends View implements ArrayAccess
             }
         }
 
-        return $this->add('Html')->set($c->render());
+        /** @var Html */
+        $h = $this->add('Html');
+        return $h->set($c->render());
     }
 
     // Operating with field values
@@ -264,7 +304,8 @@ class Form_Basic extends View implements ArrayAccess
     // {{{ ArrayAccess support
     public function offsetExists($name)
     {
-        return $f = $this->hasElement($name) && $f instanceof Form_Field;
+        $f = $this->hasElement($name);
+        return  $f && $f instanceof Form_Field;
     }
     public function offsetGet($name)
     {
@@ -417,6 +458,7 @@ class Form_Basic extends View implements ArrayAccess
         } catch (BaseException $e) {
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
+                /** @var Form_Field $fld */
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
                     $fld->displayFieldError($e->getMessage());
                 } else {
@@ -454,6 +496,7 @@ class Form_Basic extends View implements ArrayAccess
             }
 
             if (($output = $this->hook('submit', array($this)))) {
+                $has_output = false; // @todo all this [if] block logic should be re-checked, looks suspicious
                 /* checking if anything usefull in output */
                 if (is_array($output)) {
                     $has_output = false;
@@ -482,6 +525,7 @@ class Form_Basic extends View implements ArrayAccess
         } catch (BaseException $e) {
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
+                /** @var Form_Field $fld */
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
                     $fld->displayFieldError($e->getMessage());
                 } else {
@@ -557,15 +601,11 @@ class Form_Basic extends View implements ArrayAccess
         return parent::render();
     }
     /**
-     * OBSOLETE: use getElement().
-     *
-     * @param [type] $name [description]
-     *
-     * @return bool [description]
+     * @deprecated 4.3.2 use getElement() instead
      */
     public function hasField($name)
     {
-        if (!@$this->app->compat) {
+        if (!@$this->app->compat_42) {
             throw $this->exception('Use $form->hasElement instead', '_Obsolete');
         }
 
@@ -582,7 +622,7 @@ class Form_Basic extends View implements ArrayAccess
     /* external error management */
     public function setFieldError($field, $name)
     {
-        if (!$this->app->compat) {
+        if (!$this->app->compat_42) {
             throw $this->exception('4.3', '_Obsolete');
         }
         $this->errors[$field] = (isset($this->errors[$field]) ? $this->errors[$field] : '').$name;
@@ -591,6 +631,7 @@ class Form_Basic extends View implements ArrayAccess
     public function validate($rule)
     {
         if (!$this->validator) {
+            /** @var Controller_Validator */
             $this->validator = $this->add('Controller_Validator');
             $this->validator->on('post-validate');
         }
@@ -598,14 +639,12 @@ class Form_Basic extends View implements ArrayAccess
     }
 
     /**
-     * Compatibility. TODO remove in 4.4.
-     *
-     * @param [type] $class [description]
+     * @deprecated 4.3.2 Will be removed in 4.4
      */
     public function addClass($class)
     {
         if ($class == 'stacked' || $class == 'atk-form-stacked') {
-            // there are no longer stacked forms, instead a separat etemplate must be used
+            // there are no longer stacked forms, instead a separate template must be used
             $this->template->loadTemplate('form/stacked');
             $this->getChunks();
             $this->template->trySet('_name', $this->getJSID());

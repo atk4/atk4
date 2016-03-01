@@ -4,6 +4,9 @@
  */
 class View_Success extends View_Box
 {
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();

@@ -224,6 +224,7 @@ class Controller_Validator_Abstract extends \AbstractController
      * the default hook. This is done to avoid double-validation
      */
     public $custom_hook = false;
+    public $has_hook;
     public function on($hook, $object = null, $default_hook = false)
     {
         if (!$object) {
@@ -460,6 +461,7 @@ class Controller_Validator_Abstract extends \AbstractController
     public $current_ruleset = null;
     public $custom_error = null;
     public $bail_out = false;
+    public $cast;
 
     /**
      * This is the main body for rule processing.

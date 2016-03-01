@@ -107,6 +107,7 @@ class PathFinder extends AbstractController
                     $self->info('Loaded class %s from file %s', $class, $path);
                 }
             } catch (Exception $e) {
+                // ignore exceptions
             }
         }, true, true);
 

@@ -102,6 +102,14 @@ class App_CLI extends AbstractView
     protected $pathfinder_class = 'PathFinder';
 
     /**
+     * PageManager object
+     *
+     * @see Controller_PageManager::init()
+     * @var Controller_PageManager
+     */
+    public $pm;
+
+    /**
      * Change a different Page Manager class.
      *
      * @var string
@@ -211,7 +219,7 @@ class App_CLI extends AbstractView
     public function __construct($realm = null, $options = array())
     {
         parent::__construct($options);
-        if (!$realm) {
+        if ($realm === null) {
             $realm = get_class($this);
         }
         $this->owner = $this;
@@ -450,7 +458,7 @@ class App_CLI extends AbstractView
      *
      * @param string $class_name
      *
-     * @return AbstractObject
+     * @return Logger
      */
     public function getLogger($class_name = undefined)
     {
@@ -665,7 +673,7 @@ class App_CLI extends AbstractView
             }
             $e->addMoreInfo('required', $v)
                 ->addMoreInfo('you have', $cv);
-            if ($location) {
+            if ($location !== null) {
                 $e->addMoreInfo('download_location', $location);
             }
             throw $e;
@@ -738,6 +746,8 @@ class App_CLI extends AbstractView
      * class name if it's passed and not already added.
      * Class name can have namespaces and they are treated prefectly.
      *
+     * If object is passed as $name parameter, then same object is returned.
+     *
      * Example: normalizeClassName('User','Model') == 'Model_User';
      *
      * @param string|object $name   Name of class or object
@@ -752,7 +762,7 @@ class App_CLI extends AbstractView
         }
 
         $name = str_replace('/', '\\', $name);
-        if ($prefix) {
+        if ($prefix !== null) {
             $class = ltrim(strrchr($name, '\\'), '\\') ?: $name;
             $prefix = ucfirst($prefix);
             if (strpos($class, $prefix) !== 0) {
@@ -764,7 +774,8 @@ class App_CLI extends AbstractView
     }
 
     /**
-     * Encodes HTML special chars, but not already encoded ones by default.
+     * Encodes HTML special chars.
+     * By default does not encode already encoded ones.
      *
      * @param string $s
      * @param int    $flags
@@ -773,12 +784,12 @@ class App_CLI extends AbstractView
      *
      * @return string
      */
-    public function encodeHtmlChars($s, $flags = undefined, $encode = undefined, $double_encode = false)
+    public function encodeHtmlChars($s, $flags = null, $encode = null, $double_encode = false)
     {
-        if ($flags === undefined) {
+        if ($flags === null) {
             $flags = ENT_COMPAT;
         }
-        if ($encode === undefined) {
+        if ($encode === null) {
             $encode = ini_get('default_charset') ?: 'UTF-8';
         }
 

@@ -7,6 +7,9 @@
  */
 class View_Error extends View_Box
 {
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();

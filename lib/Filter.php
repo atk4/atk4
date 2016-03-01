@@ -4,7 +4,15 @@
  */
 class Filter extends Form
 {
+    /** @var View Use with this view */
     public $view;
+
+    /** @var Form_Submit Save button object */
+    protected $save;
+
+    /** @var Form_Submit Reset button object */
+    protected $reset;
+
 
     public function init()
     {
@@ -17,9 +25,9 @@ class Filter extends Form
     /**
      * Set view on which conditions will be applied.
      *
-     * @param object $view
+     * @param View $view
      *
-     * @return Filter $this
+     * @return $this
      */
     public function useWith($view)
     {
@@ -73,7 +81,7 @@ class Filter extends Form
     /**
      * Add Save and Reset buttons.
      *
-     * @return Filter $this
+     * @return $this
      */
     public function addButtons()
     {

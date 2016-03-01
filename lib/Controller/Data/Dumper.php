@@ -95,6 +95,8 @@ class Controller_Data_Dumper extends Controller_Data
         if ($this->watchedController) {
             $ret = call_user_func_array(array($this->watchedController, $method), $args);
             $this->log($method, array($ret), false);
+        } else {
+            $ret = null;
         }
 
         return $ret;

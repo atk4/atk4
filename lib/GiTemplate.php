@@ -163,6 +163,15 @@ class GiTemplate extends AbstractModel implements ArrayAccess
         unset($this->tags);
         $this->rebuildTags();
     }
+    /**
+     * Returns relevant exception class. Use this method with "throw".
+     *
+     * @param string $message Static text of exception.
+     * @param string $type    Exception class or class postfix
+     * @param string $code    Optional error code
+     *
+     * @return Exception_Template
+     */
     public function exception($message = 'Undefined Exception', $type = null, $code = null)
     {
         $o = $this->owner ? $this->owner->__toString() : 'none';
@@ -181,6 +190,10 @@ class GiTemplate extends AbstractModel implements ArrayAccess
      * Returns true if specified tag is a top-tag of the template.
      *
      * Since Agile Toolkit 4.3 this tag is always called _top
+     *
+     * @param string $tag
+     *
+     * @return bool
      */
     public function isTopTag($tag)
     {
@@ -207,6 +220,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
             return $this;
         }
+
         @list($tag, $ref) = explode('#', $tag);
         if (!$ref) {
             $ref = 1;
@@ -257,6 +271,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
             return false;
         }
+
         @list($tag, $ref) = explode('#', $tag);
         if (!$ref) {
             if (!isset($this->tags[$tag])) {
@@ -671,11 +686,11 @@ class GiTemplate extends AbstractModel implements ArrayAccess
     }
     public function rebuildTagsRegion(&$template)
     {
-        //var_dump($old,$new);
         foreach ($template as $tag => &$val) {
             if (is_numeric($tag)) {
                 continue;
             }
+
             @list($key, $ref) = explode('#', $tag);
 
             $this->tags[$key][$ref] = &$val;

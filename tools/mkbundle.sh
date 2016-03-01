@@ -10,7 +10,7 @@ echo "set_include_path('.'.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEP
 
  while read cl; do
     echo "?><?php // File: $cl"
-    cat lib/$cl | sed 1d 
+    cat lib/$cl | sed 1d
 done >> atk4-bundle.php <<EOF
 static.php
 AbstractObject.php
@@ -98,7 +98,6 @@ PathFinder.php
 QuickSearch.php
 SMlite.php
 SQLAuth.php
-SQLException.php
 static.php
 System/HTMLSanitizer.php
 System/ProcessIO.php

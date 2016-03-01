@@ -1,20 +1,32 @@
 <?php
 /**
- * Undocumented.
+ * Connects regular grid with a model and imports fields as columns.
+ *
+ * In most cases the following use is sufficient
+ * $grid->setModel('SomeModel');
+ *
+ * You can use Grid only with a single Model to simplify select.
  */
 class Controller_MVCGrid extends AbstractController
 {
-    /**
-     * Connects regular grid with a model and imports fields as columns.
-     *
-     * In most cases the following use is sufficient
-     * $grid->setModel('SomeModel');
-     *
-     * You can use Grid only with a single Model to simplify select.
-     */
+    /** @var Model */
     public $model = null;
+
+    /** @var Grid */
     public $grid = null;
 
+    /**
+     * Field associations grid_column => model_field
+     *
+     * @var array
+     */
+    public $field_associations = array();
+
+    /**
+     * Field type associations model_field_type => grid_column_type/formatter
+     *
+     * @var array
+     */
     public $type_associations = array(
         'string' => 'text',
         'int' => 'number',
@@ -36,11 +48,27 @@ class Controller_MVCGrid extends AbstractController
         'password' => 'password',
     );
 
+    /** @var Grid */
+    public $owner;
+
+
+
+    /**
+     * Adds additional type association.
+     *
+     * @param string $k model field type
+     * @param string $v grid columnt type
+     */
     public function addTypeAssociation($k, $v)
     {
         $this->type_associations[$k] = $v;
     }
 
+    /**
+     * Import model fields in grid.
+     *
+     * @param array|string|bool $fields
+     */
     public function setActualFields($fields)
     {
         if ($this->owner->model->hasMethod('getActualFields')) {
@@ -48,6 +76,14 @@ class Controller_MVCGrid extends AbstractController
         }
     }
 
+    /**
+     * Import model fields in form.
+     *
+     * @param Model $model
+     * @param array|string|bool $fields
+     *
+     * @return void|$this
+     */
     public function importFields($model, $fields = undefined)
     {
         $this->model = $model;
@@ -61,8 +97,11 @@ class Controller_MVCGrid extends AbstractController
             $fields = 'visible';
         }
         if (!is_array($fields)) {
+            // note: $fields parameter only useful if model is SQL_Model
             $fields = $model->getActualFields($fields);
         }
+
+        // import fields one by one
         foreach ($fields as $field) {
             $this->importField($field);
         }
@@ -70,20 +109,31 @@ class Controller_MVCGrid extends AbstractController
 
         return $this;
     }
+
+    /**
+     * Import one field from model into grid.
+     *
+     * @param string $field
+     *
+     * @return void|Grid|Controller_Grid_Format
+     */
     public function importField($field)
     {
         $field = $this->model->hasElement($field);
         if (!$field) {
             return;
         }
+        /** @var Field $field */
 
         $field_name = $field->short_name;
 
-        if ($field instanceof Model_Field_Reference) {
+        if ($field instanceof Field_Reference) {
             $field_name = $field->getDereferenced();
         }
 
         $field_type = $this->getFieldType($field);
+        
+        /** @var string */
         $field_caption = $field->caption();
 
         $this->field_associations[$field_name] = $field;
@@ -96,11 +146,22 @@ class Controller_MVCGrid extends AbstractController
 
         return $column;
     }
-    /** Redefine this to add special handling of your own fields */
+
+    /**
+     * Returns grid column type associated with model field.
+     *
+     * Redefine this method to add special handling of your own fields.
+     *
+     * @param Field $field
+     *
+     * @return string
+     */
     public function getFieldType($field)
     {
+        // default column type
         $type = $field->type();
 
+        // try to find associated form field type
         if (isset($this->type_associations[$type])) {
             $type = $this->type_associations[$type];
         }
@@ -109,8 +170,9 @@ class Controller_MVCGrid extends AbstractController
             $type = 'html';
         }
 
+        // if grid column type/formatter explicitly set in model
         if ($field->display()) {
-            // this is wrong and obsolete, as hasOne uses display for way different purpose
+            // @todo this is wrong and obsolete, as hasOne uses display for way different purpose
 
             $tmp = $field->display();
             if (is_array($tmp)) {

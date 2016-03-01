@@ -4,22 +4,42 @@
  */
 class Field_Reference extends Field
 {
+    /** @var string */
     public $model_name = null;
+
+    /** @var string */
     public $display_field = null;
+
+    /** @var string */
     public $dereferenced_field = null;
+
+    /** @var string */
     public $table_alias = null;
 
+    /** @var Model */
+    public $model;
+
+
+
+    /**
+     * Set model
+     *
+     * @param Model|string $model
+     * @param string|bool $display_field
+     *
+     * @return Model|$this
+     */
     public function setModel($model, $display_field = null)
     {
-        if (is_object($model)) {
-            return abstractObject::setModel($model);
+        if ($model instanceof Model) {
+            return AbstractObject::setModel($model);
         }
 
         $this->model_name = is_string($model) ? $model : get_class($model);
-        $this->model_name = $this->app->normalizeClassName($this->model_name, 'Model');
+        $this->model_name = (string) $this->app->normalizeClassName($this->model_name, 'Model');
 
         if ($display_field) {
-            $this->display_field = $display_field;
+            $this->display_field = (string) $display_field;
         }
 
         if ($display_field !== false) {
@@ -33,6 +53,12 @@ class Field_Reference extends Field
 
         return $this;
     }
+
+    /**
+     * Return model of field
+     *
+     * @return Model
+     */
     public function getModel()
     {
         if (!$this->model) {
@@ -47,8 +73,10 @@ class Field_Reference extends Field
 
         return $this->model;
     }
+
     public function sortable($x = undefined)
     {
+        /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->sortable($x);
@@ -56,8 +84,10 @@ class Field_Reference extends Field
 
         return parent::sortable($x);
     }
+
     public function caption($x = undefined)
     {
+        /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->caption($x);
@@ -65,6 +95,7 @@ class Field_Reference extends Field
 
         return parent::caption($x);
     }
+
     /**
      * ref() will traverse reference and will attempt to load related model's entry. If the entry will fail to load
      * it will return model which would not be loaded. This can be changed by specifying an argument:.
@@ -76,6 +107,10 @@ class Field_Reference extends Field
      * 'create' - if record fails to load, will create new record, save, get ID and insert into $this
      * 'link' - if record fails to load, will return new record, with appropriate afterSave hander, which will
      *          update current model also and save it too.
+     *
+     * @param string|bool|null $mode
+     *
+     * @return Model
      */
     public function ref($mode = null)
     {
@@ -105,12 +140,13 @@ class Field_Reference extends Field
             if (!$this->model->loaded()) {
                 $this->model->save();
                 $this->set($this->model->id);
-                $this->owner->update();
+                $this->owner->save();
 
                 return $this->model;
             }
         }
         if ($mode == 'link') {
+            /** @var Model */
             $m = $this->add($this->model_name);
             if ($this->get()) {
                 $m->tryLoad($this->get());
@@ -126,13 +162,26 @@ class Field_Reference extends Field
             return $m;
         }
     }
+
+    /**
+     * Return DSQL for field
+     *
+     * @return SQL_Model
+     */
     public function refSQL()
     {
+        /** @var SQL_Model $q */
         $q = $this->ref('model');
         $q->addCondition($q->id_field, $this);
 
         return $q;
     }
+
+    /**
+     * Return name of dereferenced field
+     *
+     * @return string
+     */
     public function getDereferenced()
     {
         if ($this->dereferenced_field) {
@@ -153,6 +202,12 @@ class Field_Reference extends Field
 
         return $f;
     }
+
+    /**
+     * Destroy this field and dereferenced field.
+     *
+     * @return $this
+     */
     public function destroy()
     {
         if ($e = $this->owner->hasElement($this->getDereferenced())) {
@@ -161,16 +216,22 @@ class Field_Reference extends Field
 
         return parent::destroy();
     }
-    public function calculateSubQuery($model, $select)
+
+    /**
+     * @return string
+     */
+    public function calculateSubQuery()
     {
         if (!$this->model) {
-            $this->getModel();
-        } //$this->model=$this->add($this->model_name);
+            $this->getModel(); //$this->model=$this->add($this->model_name);
+        }
 
         if ($this->display_field) {
+            /** @var SQL_Model $this->model */
             $title = $this->model->dsql()->del('fields');
             $this->model->getElement($this->display_field)->updateSelectQuery($title);
         } elseif ($this->model->hasMethod('titleQuery')) {
+            /** @var SQL_Model $this->model */
             $title = $this->model->titleQuery();
         } else {
             // possibly references non-sql model, so just display field value

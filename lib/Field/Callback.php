@@ -6,6 +6,7 @@ class Field_Callback extends Field
 {
     public $callback = null;
     public $initialized = false;
+    
     public function init()
     {
         parent::init();
