@@ -1,23 +1,72 @@
 <?php
 /**
- * Paginator needs to have source set (which can be either Model,
- * DSQL or Array). It will render itself into parent and will
- * limit the source to display limited number of records per page
- * with ability to travel back and forth.
+ * Paginator needs to have source set (which can be either Model, DSQL or Array).
+ * It will render itself into parent and will limit the source to display limited
+ * number of records per page with ability to travel back and forth.
  */
 class Paginator_Basic extends CompleteLister
 {
-    public $ipp = 30;         // By default, show 30 records per page
-    public $skip = 0;         // By default, do not skip anything
-    public $range = 4;        // Display 4 adjacent pages from current one
+    /**
+     * How many records should we show per page.
+     *
+     * @var int
+     */
+    public $ipp = 30;
 
-    public $ajax_reload = true;   // Reload parent with AJAX
-    public $memorize = true;      // Remember page, when user comes back
-    public $skip_var = null;      // Argument to use to specify page
+    /**
+     * How many records should we skip. By default don't skip anything.
+     *
+     * @var int
+     */
+    public $skip = 0;
 
-    public $source = null;        // Set with setSource()
-    public $base_page = null;     // let's redefine page nicely
+    /**
+     * How many adjacent pages from current page should we show.
+     *
+     * @var int
+     */
+    public $range = 4;
 
+    /**
+     * Should we reload parent with AJAX ?
+     *
+     * @var bool
+     */
+    public $ajax_reload = true;
+
+    /**
+     * Should we remember page when user comes back ?
+     *
+     * @var bool
+     */
+    public $memorize = true;
+
+    /**
+     * GET argument to use to specify page
+     *
+     * @var string
+     */
+    public $skip_var = null;
+
+    /**
+     * Data source. Set with setSource().
+     *
+     * @var SQL_Model|Model|DB_dsql|mixed
+     */
+    public $source = null;
+
+    /**
+     * lSet this to nicely redefine base page
+     *
+     * @var string
+     */
+    public $base_page = null;
+
+
+
+    /**
+     * Initialization.
+     */
     public function init()
     {
         parent::init();
@@ -28,19 +77,33 @@ class Paginator_Basic extends CompleteLister
         $this->skip_var = $this->_shorten($this->skip_var);
     }
 
-    /** Set number of items displayed per page */
+    /**
+     * Set number of items displayed per page.
+     *
+     * @param int $rows
+     *
+     * @return $this
+     */
     public function setRowsPerPage($rows)
     {
         $this->ipp = $rows;
 
         return $this;
     }
-    // obsolete, should be removed in 4.4
+
+    /**
+     * @deprecated 4.3.2 use setRowsPerPage instead.
+     */
     public function ipp($rows)
     {
         return $this->setRowsPerPage($rows);
     }
-    /** Set a custom source. Must be an object with foundRows() method */
+
+    /**
+     * Set a custom source. Must be an object with foundRows() method.
+     *
+     * @param SQL_Model|Model|DB_dsql|mixed $source
+     */
     public function setSource($source)
     {
         if ($this->memorize) {
@@ -69,9 +132,12 @@ class Paginator_Basic extends CompleteLister
             $this->source = &$source;
         }
     }
+
+    /**
+     * Recursively render this view.
+     */
     public function recursiveRender()
     {
-
         // get data source
         if (!$this->source) {
 
@@ -224,10 +290,22 @@ class Paginator_Basic extends CompleteLister
 
         return parent::recursiveRender();
     }
+
+    /**
+     * Set default template.
+     *
+     * @return array|string
+     */
     public function defaultTemplate()
     {
         return array('paginator42', 'paginator');
     }
+
+    /**
+     * Set default spot.
+     *
+     * @return string
+     */
     public function defaultSpot()
     {
         return 'Paginator';
