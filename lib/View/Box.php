@@ -57,7 +57,7 @@ class View_Box extends View
      */
     public function link($page)
     {
-        $this->addButton(false)->link($page);
+        $this->addButton('')->link($page);
     }
 
     /**
