@@ -470,7 +470,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $table Specify table to use
      * @param string $alias Specify alias for the table
      *
-     * @return DB_dsql $this
+     * @return $this|string
      **/
     public function table($table = UNDEFINED, $alias = UNDEFINED)
     {
@@ -1527,7 +1527,6 @@ class DB_dsql extends AbstractModel implements Iterator
             foreach ($s as $ss) {
                 $out[] = $this->bt($ss);
             }
-
             return $out;
         }
 

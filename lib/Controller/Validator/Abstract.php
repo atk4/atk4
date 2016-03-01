@@ -224,6 +224,7 @@ class Controller_Validator_Abstract extends \AbstractController
      * the default hook. This is done to avoid double-validation
      */
     public $custom_hook = false;
+    public $has_hook;
     public function on($hook, $object = null, $default_hook = false)
     {
         if (!$object) {
@@ -281,7 +282,6 @@ class Controller_Validator_Abstract extends \AbstractController
             $this->prefix = '';
             $this->caption = '';
             foreach ($rulesets as $rules) {
-
                 $this->applyRules($field, $rules);
             }
         }
@@ -370,7 +370,7 @@ class Controller_Validator_Abstract extends \AbstractController
 
             // Trim off any leading quote from from
             // the error message
-            if(!$error){
+            if (!$error) {
                 $error = $this->pullRule();
             }
             $this->custom_error = preg_replace('/^\'/', '', $error);
@@ -463,6 +463,7 @@ class Controller_Validator_Abstract extends \AbstractController
     public $current_ruleset = null;
     public $custom_error = null;
     public $bail_out = false;
+    public $cast;
 
     /**
      * This is the main body for rule processing.
@@ -549,6 +550,7 @@ class Controller_Validator_Abstract extends \AbstractController
     public function rule_caption($a)
     {
         $this->caption = $this->pullRule();
+
         return $a;
     }
 

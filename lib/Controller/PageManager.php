@@ -35,6 +35,8 @@ class Controller_PageManager extends AbstractController
      *  going to use URLs in emails, you should use this.
      *
      *  See also: URL::useAbsoluteURL();
+     *
+     * @var string
      */
     public $base_url;           // http://yoursite.com:81
 
@@ -53,6 +55,8 @@ class Controller_PageManager extends AbstractController
      *  If project is installed in web-root, then $base_path will be "/"
      *
      *  path always starts and ends with slash
+     *
+     * @var string
      */
     public $base_path;          // /admin/
 
@@ -64,10 +68,17 @@ class Controller_PageManager extends AbstractController
      *
      *  Page must never start with slash. Also if path is empty, then
      *  the "index" is used automatically.
+     *
+     * @var string
      */
     public $page;               // user/add
 
+    /**
+     * @var string
+     */
     public $template_filename;
+
+
 
     public function init()
     {

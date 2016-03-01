@@ -43,7 +43,7 @@ class CompleteLister extends Lister
     /**
      * @var array Separator
      */
-    public $sep_html = null;
+    public $sep_html;
 
     /**
      * Will contain accumulated totals for all fields
@@ -255,7 +255,7 @@ class CompleteLister extends Lister
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id => $this->current_row) {
             if ($this->current_row instanceof Model) {
-                $this->current_row = $this->current_row->get();
+                $this->current_row = (array) $this->current_row->get();
             } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
                 // Looks like we won't be abel to access current_row as array, so we will
                 // copy it's value inside $this->current instead and produce an empty array
@@ -266,7 +266,7 @@ class CompleteLister extends Lister
 
             $this->current_row_html = array();
 
-            if ($this->sep_html && $this->total_rows) {
+            if (!empty($this->sep_html) && $this->total_rows) {
                 $this->renderSeparator();
             }
 
@@ -321,7 +321,7 @@ class CompleteLister extends Lister
     public function renderTotalsRow()
     {
         $this->current_row = $this->current_row_html = array();
-        if ($this->totals !== false && $this->totals_t) {
+        if ($this->totals !== false && is_array($this->totals) && $this->totals_t) {
             $this->current_row = $this->totals;
 
             $this->formatTotalsRow();
@@ -388,11 +388,13 @@ class CompleteLister extends Lister
      */
     public function updateTotals()
     {
-        foreach ($this->totals as $key => $val) {
-            if (is_object($this->current_row[$key])) {
-                continue;
+        if (is_array($this->totals)) {
+            foreach ($this->totals as $key => $val) {
+                if (is_object($this->current_row[$key])) {
+                    continue;
+                }
+                $this->totals[$key] = $val + $this->current_row[$key];
             }
-            $this->totals[$key] = $val + $this->current_row[$key];
         }
     }
 

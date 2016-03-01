@@ -6,19 +6,31 @@
  **/
 class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 {
+    /**
+     * @var string
+     */
     const DOC = 'model/core';
 
+    /**
+     * Default exception class
+     *
+     * @var string
+     */
     public $default_exception = 'BaseException';
 
     /**
      * The class prefix used by addField.
      *
      * For some models you might want to use a more powerful field class
+     *
+     * @var string
      */
     public $field_class = 'Field_Base';
 
     /**
      * If true, model will now allow to set values for non-existant fields.
+     *
+     * @var bool
      */
     public $strict_fields = false;
 
@@ -26,18 +38,24 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Caption is used on buttons of CRUD and other views which operate with this model.
      * If not defined, will use class name. Use singular such as "Purchase".
      * This label is localized.
+     *
+     * @var string
      */
     public $caption = null;
 
     /**
      * Contains name of table, session key, collection or file, depending on
      * data controller you are using.
+     *
+     * @var string
      */
     public $table = null;
 
     /**
      * Defines aleas for the table, for drivers such as SQL to make your
      * queries prettier. Not really required.
+     *
+     * @var string
      */
     public $table_alias = null;
 
@@ -45,17 +63,23 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Controllers store some custom information in here under key equal to
      * their name. This allows us to use single controller object with
      * multiple objects.
+     *
+     * @var array
      */
     public $_table = array();
 
     /**
      * Contains identifier of currently loaded record or null. Changed by load() and reset().
+     *
+     * @var string
      */
     public $id = null;
 
     /**
      * The actual ID field of the table might not always be "id". For Mongo this is equal
      * to "_id".
+     *
+     * @var string
      */
     public $id_field = 'id';
 
@@ -63,19 +87,25 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Name of descriptive field. If not defined, will use table+'#'+id. This
      * field will be used to refer to field where possible. This can
      * be a calculated field or a callback.
+     *
+     * @var string
      */
     public $title_field = 'name';
 
     /**
      * Contains connections with other models which are related to this one
      * through hasOne / hasMany.
+     *
+     * @var array
      */
     public $_references = array();
 
     /**
      * Expression.
      *
-     * TODO: not sure we need to distinguish expressions at this level
+     * @todo not sure we need to distinguish expressions at this level
+     *
+     * @var array
      */
     public $_expressions = array();
 
@@ -86,36 +116,48 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Please resist the urge to remove conditions from the model - as this
      * is a very dangerous concept. Refer to documentation on conditions
      * for more information.
+     *
+     * @var array
      */
     public $conditions = array();
 
     /**
      * Applied limit on the model, first entry is count, second is offset.
+     *
+     * @var array
      */
     public $limit = array(null, null);
 
     /**
      * Contains requested order definition.
      *
-     * TODO: must support multiple touples for multiple field sorting
+     * @todo must support multiple touples for multiple field sorting
+     *
+     * @var array
      */
     public $order = array();
 
     /**
      * More internal classes which are used by hasOne, and addExpression.
      */
+    /** @var string */
     protected $defaultHasOneFieldClass = 'Field_HasOne';
+    /** @var string */
     protected $defaultExpressionFieldClass = 'Field_Callback';
 
     /**
      * Curretly loaded record data. This information is embedded in the
      * model, so you can re-use same model for loading multiple records.
+     *
+     * @var array
      */
     public $data = array();
 
     /**
      * Associative list of fields which have been changed since loading.
      * Model will only save fields which have changed.
+     *
+     * @var array
      */
     public $dirty = array();
 
@@ -123,6 +165,8 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Some data controllers make it possible to query selective set of
      * fields. This way the query could be faster and only relevant data
      * is loaded.
+     *
+     * @var array
      */
     public $actual_fields = false;
 
@@ -131,6 +175,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      */
     protected $_save_as = null;
     protected $_save_later = false;
+
+    /** @var Controller_Data */
+    public $controller;
+
 
     // {{{ Basic functionality, field definitions, set(), get() and related methods
     public function __clone()
@@ -158,6 +206,11 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Creates field definition object containing field meta-information such as caption, type
      * validation rules, default value etc.
+     *
+     * @param string $name
+     * @param string $alias
+     *
+     * @return Field_Base
      */
     public function addField($name, $alias = null)
     {
@@ -167,6 +220,12 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 
     /**
      * Add expression: the value of those field will calculate when you use get method.
+     *
+     * @param string $name
+     * @param mixed $expression
+     * @param string $field_class
+     *
+     * @return Field_Base
      */
     public function addExpression($name, $expression, $field_class = UNDEFINED)
     {
@@ -188,7 +247,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * @param $name array or string
      * @param $value null or value
      *
-     * @return mix
+     * @return $this
      */
     public function set($name, $value = UNDEFINED)
     {
@@ -222,6 +281,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Get the value of a model field. If field $name is not specified, then
      * returns associative hash containing all field data.
+     *
+     * @param string $name
+     *
+     * @return mixed
      */
     public function get($name = null)
     {
@@ -273,7 +336,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Return all fields that belongs to the specified group.
      * You can use the subtractions group also ("all,-group1,-group2").
      *
-     * @param string
+     * @param string $group
      *
      * @return array
      */
@@ -317,9 +380,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * You can use an array to set the list of fields or a string to
      * use the grouping.
      *
-     * @param $group string or array
+     * @param array|string $group string or array
      *
-     * @return array the actual fields
+     * @return $this
      */
     public function setActualFields($group = UNDEFINED)
     {
@@ -364,7 +427,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Set a field as dirty. This is used to force insert/update a field.
      *
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -377,7 +440,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Return true if the field is set.
      *
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -412,9 +475,9 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Set the controller data of this model.
      *
-     * @param $controller
+     * @param string|Controller_Data $controller
      *
-     * @return $this
+     * @return Controller_Data
      */
     public function setControllerData($controller)
     {
@@ -432,9 +495,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      * Set the source to the controller data.
      * The $table argument depends on the controller data implementation.
      *
-     * @param $table
-     *
-     * @return $this
+     * @param mixed $table
      */
     public function setControllerSource($table = null)
     {
@@ -519,6 +580,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->load($id);
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;
@@ -551,6 +613,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->loadAny();
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;
@@ -602,6 +665,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         try {
             $this->loadBy($field, $cond, $value);
         } catch (Exception_NotFound $e) {
+            // ignore not-found exception
         }
 
         return $this;

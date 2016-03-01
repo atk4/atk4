@@ -90,11 +90,13 @@ class QuickSearch extends Filter
         if ($this->view->model->hasMethod('addConditionLike')) {
             return $this->view->model->addConditionLike($v, $this->fields);
         }
-        if ($this->view->model) {
+        
+        if ($this->view->model && $this->view->model instanceof SQL_Model) {
             $q = $this->view->model->_dsql();
         } else {
             $q = $this->view->dq;
         }
+
         $or = $q->orExpr();
         foreach ($this->fields as $field) {
             $or->where($field, 'like', '%'.$v.'%');

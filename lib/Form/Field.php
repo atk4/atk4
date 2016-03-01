@@ -54,7 +54,7 @@ abstract class Form_Field extends AbstractView
     public function setForm($form)
     {
         $form->addHook('loadPOST', $this);
-        $form->addHook('validate', $this);
+        $form->addHook('validate', [$this,'performValidation']);
         $this->form = $form;
         $this->form->data[$this->short_name] = ($this->value !== null ? $this->value : $this->default_value);
         $this->value = &$this->form->data[$this->short_name];
@@ -304,6 +304,15 @@ abstract class Form_Field extends AbstractView
 
         return $this;
     }
+
+    /**
+     * Used to be called validate(), this method is called when
+     * field should do some of it's basic validation done.
+     */
+    public function performValidation()
+    {
+    }
+
     /** @private - handles field validation callback output */
     public function _validateField($caller, $condition, $msg)
     {

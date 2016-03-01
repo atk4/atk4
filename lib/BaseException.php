@@ -11,26 +11,42 @@ class BaseException extends Exception
     // it's class and re-define the methods so I could extend my own methods
     // in my classes.
 
-    // Backtrace array
+    /** @var array Backtrace array */
     public $my_backtrace;
 
-    // Backtrace shift
+    /** @var int Backtrace shift */
     public $shift = 0;
 
-    // Classname of exception
+    /** @var string Classname of exception */
     public $name;
 
-    // Array with more info
+    /** @var string|int error code */
+    public $code;
+
+    /** @var array Array with more info */
     public $more_info = array();
 
-    // Plain text recommendation on how the poblem can be solved
+    /** @var string Plain text recommendation on how the poblem can be solved */
     public $recommendation;
 
-    // Array of available actions
+    /** @var array Array of available actions */
     public $actions = array();
 
-    // Link to another exception which caused this one
+    /** @var Exception Link to another exception which caused this one */
     public $by_exception = null;
+
+    /** @var AbstractObject Link to object into which we added this object */
+    public $owner;
+
+    /** @var App_CLI Always points to current Application */
+    public $app;
+
+    /**
+     * @deprecated 4.3.0 Left for compatibility with ATK 4.2 and lower, use ->app instead
+     */
+    public $api;
+
+
 
     /**
      * Initialization.
@@ -43,7 +59,7 @@ class BaseException extends Exception
      * On class construct.
      *
      * @param string $msg  Error message
-     * @param string $code Error code
+     * @param string|int $code Error code
      */
     public function __construct($msg, $code = 0)
     {
@@ -54,7 +70,7 @@ class BaseException extends Exception
     /**
      * Collect basic data of exception.
      *
-     * @param string $code Error code
+     * @param string|int $code Error code
      */
     public function collectBasicData($code)
     {
@@ -84,13 +100,18 @@ class BaseException extends Exception
      * Add reference to the object.
      * Do not call this directly, exception() method takes care of that.
      *
-     * @param string $t
+     * @param AbstractObject $obj
      */
-    public function addThis($t)
+    public function addThis($obj)
     {
-        return $this->addMoreInfo('Raised by object', $t);
+        return $this->addMoreInfo('Raised by object', $obj);
     }
 
+    /**
+     * Set error code
+     *
+     * @param int $code
+     */
     public function setCode(int $code)
     {
         $this->code = $code;
@@ -100,6 +121,10 @@ class BaseException extends Exception
      * Records another exception as a cause of your current exception.
      * Wrapping one exception inside another helps you to track problems
      * better.
+     *
+     * @param Exception $e
+     *
+     * @return $this
      */
     public function by(Exception $e)
     {
@@ -179,7 +204,7 @@ class BaseException extends Exception
         //$o.=$this->getHTMLBody();
 
         $o .= '<div class="atk-layout-row"><div class="atk-wrapper atk-section-small">';
-        if (@$e->more_info) {
+        if (isset($e->more_info)) {
             $o .= '<h3>Additional information:</h3>';
             $o .= $this->print_r($e->more_info, '<ul>', '</ul>', '<li>', '</li>', ' ');
         }
@@ -193,7 +218,7 @@ class BaseException extends Exception
             $o .= $this->backtrace(@$e->shift, $e->getTrace());
         }
 
-        if (@$e->by_exception) {
+        if (isset($e->by_exception)) {
             $o .= '<h3>This error was triggered by the following error:</h3>';
             if ($e->by_exception instanceof self) {
                 $o .= $e->by_exception->getHTML();
@@ -206,30 +231,42 @@ class BaseException extends Exception
         return $o;
     }
 
+    /**
+     * @return string
+     */
     public function getHeader()
     {
         return get_class($this).': '.htmlspecialchars($this->getMessage()).
             ($this->getCode() ? ' [code: '.$this->getCode().']' : '');
     }
+
+    /**
+     * @return string
+     */
     public function getHTMLHeader()
     {
         return
-        "<div class='atk-layout-row atk-effect-danger atk-swatch-red'>".
-        "<div class='atk-wrapper atk-section-small atk-align-center'><h2>".
-        $this->getHeader().
-        "</h2>\n".
-        '</div></div>';
+            "<div class='atk-layout-row atk-effect-danger atk-swatch-red'>".
+            "<div class='atk-wrapper atk-section-small atk-align-center'><h2>".
+            $this->getHeader().
+            "</h2>\n".
+            '</div></div>';
     }
 
+    /**
+     * @return array
+     */
     public function getSolution()
     {
         return $this->actions;
     }
 
+    /**
+     * @return string
+     */
     public function getHTMLSolution()
     {
         $solution = $this->getSolution();
-        $recommendation = '<h3>'.$this->recommendation.'</h3>';
         if (empty($solution)) {
             return '';
         }
@@ -237,19 +274,19 @@ class BaseException extends Exception
         return
             "<div class='atk-layout-row atk-effect-info'>".
             "<div class='atk-wrapper atk-section-small atk-swatch-white atk-align-center'>".
-            $recommendation.
+            "<h3>".$this->recommendation."</h3>".
             $this->getHTMLActions().
             '</div></div>';
     }
 
+    /**
+     * @return string
+     */
     public function getHTMLActions()
     {
         $o = '';
         foreach ($this->actions as $label => $url) {
-            $o .= "<a href='".$url.
-            "'class='atk-button atk-swatch-yellow'>".
-            $label.
-            "</a>\n";
+            $o .= "<a href='".$url."' class='atk-button atk-swatch-yellow'>".$label."</a>\n";
         }
 
         return $o;
@@ -259,13 +296,13 @@ class BaseException extends Exception
      * Utility.
      *
      * @param array|object|string $key
-     * @param [type] $gs
-     * @param [type] $ge
-     * @param [type] $ls
-     * @param [type] $le
+     * @param string $gs
+     * @param string $ge
+     * @param string $ls
+     * @param string $le
      * @param string $ind
      *
-     * @return string
+     * @return null|string
      */
     public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ')
     {
@@ -293,7 +330,9 @@ class BaseException extends Exception
      * containing documentation for given class. This method will
      * return full URL for the specified object.
      *
-     * @return [type] [description]
+     * @param AbstractObject $o
+     *
+     * @return bool|string
      */
     public function getDocURL($o)
     {
@@ -325,6 +364,12 @@ class BaseException extends Exception
         return $url;
     }
 
+    /**
+     * @param int $sh
+     * @param array $backtrace
+     *
+     * @return string
+     */
     public function backtrace($sh = null, $backtrace = null)
     {
         $output = '<div class="atk-box-small atk-table atk-table-zebra">';
@@ -439,9 +484,9 @@ class BaseException extends Exception
     /**
      * Undocumented.
      *
-     * @return string
-     *
      * @todo Check this method, looks something useless. Optionally used only in Logger class.
+     *
+     * @return string
      */
     public function getAdditionalMessage()
     {

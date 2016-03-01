@@ -4,9 +4,9 @@
  */
 class Form_Field_Number extends Form_Field_Line
 {
-    public function setForm($form)
+    public function performValidation()
     {
-        parent::setForm($form);
+        parent::performValidation();
         $this->validate('number');
     }
 }

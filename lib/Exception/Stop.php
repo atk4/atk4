@@ -6,6 +6,8 @@
  */
 class Exception_Stop extends BaseException
 {
+    public $result;
+
     public function __construct($msg = null)
     {
         parent::__construct($msg ?: 'This exception must be ignored in APP');

@@ -10,6 +10,9 @@ class View_ButtonSet extends HtmlElement
     // buttonset direction (false = horizontal, true = vertical)
     public $vertical = false;
 
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();

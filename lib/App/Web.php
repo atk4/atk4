@@ -32,6 +32,31 @@ class App_Web extends App_CLI
      */
     public $title;
 
+    /**
+     * Authentication object
+     *
+     * @see Auth_Basic::init()
+     * @var Auth_Basic
+     */
+    public $auth;
+
+    /**
+     * jQuery object. Initializes only if you add jQuery in your app.
+     *
+     * @see jQuery::init()
+     * @var jQuery
+     */
+    public $jquery;
+
+    /** @var App_Web */
+    public $app;
+    /** @var array For internal use */
+    protected $included;
+    /** @var array For internal use */
+    protected $rendered;
+
+
+
     // {{{ Start-up
     public function __construct($realm = null, $skin = 'default', $options = array())
     {
@@ -132,7 +157,6 @@ class App_Web extends App_CLI
      */
     public function showExecutionTime()
     {
-        $self = $this;
         $this->addHook('post-render-output', array($this, '_showExecutionTime'));
         $this->addHook('post-js-execute', array($this, '_showExecutionTimeJS'));
     }
@@ -384,6 +408,7 @@ class App_Web extends App_CLI
                     "It wasn't initialized");
             }
             if (isset($_GET['cut_region'])) {
+                // @todo Imants: This looks something obsolete. At least property cut_region_result is never defined.
                 if (!$this->cut_region_result) {
                     throw new BaseException("Unable to cut region with name='".$_GET['cut_region']."'");
                 }
@@ -394,7 +419,9 @@ class App_Web extends App_CLI
         } catch (Exception $e) {
             if ($e instanceof Exception_Stop) {
                 $this->hook('cut-output');
-                echo @$e->result;
+                if (isset($e->result)) {
+                    echo $e->result;
+                }
                 $this->hook('post-render-output');
 
                 return;
@@ -606,7 +633,7 @@ class App_Web extends App_CLI
     /**
      * Default template for the application. Redefine to add your own rules.
      *
-     * @return array
+     * @return array|string
      */
     public function defaultTemplate()
     {

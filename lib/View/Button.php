@@ -19,6 +19,8 @@ class View_Button extends View
 
     /**
      * Set template of button element.
+     *
+     * @var array|string
      */
     public function defaultTemplate()
     {

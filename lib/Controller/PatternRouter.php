@@ -66,7 +66,7 @@ class Controller_PatternRouter extends AbstractController
     {
         if ($this->links[$page]) {
             throw $this->exception('This page is already linked')
-                ->addMoreInfo($page);
+                ->addMoreInfo('page', $page);
         }
 
         $this->links[$page] = $args;
@@ -96,12 +96,14 @@ class Controller_PatternRouter extends AbstractController
      */
     public function setModel($model)
     {
+        /** @var Model */
         $model = parent::setModel($model);
 
         foreach ($model as $rule) {
             $this->addRule($rule['rule'], $rule['target'], explode(',', $rule['params']));
         }
 
+        // @todo Consider to return $model instead of $this like we do in setModel method of all other classes
         return $this;
     }
     /**
