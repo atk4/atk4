@@ -431,7 +431,7 @@ class Auth_Basic extends AbstractController
      * @param string|array $key
      * @param mixed $val
      *
-     * @return $this;
+     * @return $this
      */
     public function addInfo($key, $val = null)
     {
@@ -784,11 +784,14 @@ class Auth_Basic extends AbstractController
      */
     public function createForm($page)
     {
+        /** @var Form */
         $form = $page->add('Form', null, null, array('form/minimal'));
 
+        /** @var Field */
         $email = $this->model->hasField($this->login_field);
         $email = $email ? $email->caption() : 'E-mail';
 
+        /** @var Field */
         $password = $this->model->hasField($this->password_field);
         $password = $password ? $password->caption() : 'Password';
 
@@ -796,8 +799,7 @@ class Auth_Basic extends AbstractController
         $form->addField('Password', 'password', $password);
         $form->addSubmit('Login')->addClass('atk-jackscrew')->addClass('atk-swatch-green');
 
-        //$form->add('View',null,'button_row_left')
-            //->addClass('atk-jackscrew');
+        //$form->add('View',null,'button_row_left')->addClass('atk-jackscrew');
 
         return $form;
     }

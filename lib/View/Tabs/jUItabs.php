@@ -19,6 +19,9 @@ class View_Tabs_jUItabs extends View_Tabs
     // should we show loader indicator while loading tabs
     public $show_loader = true;
 
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();
