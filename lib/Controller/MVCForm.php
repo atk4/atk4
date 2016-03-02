@@ -93,7 +93,7 @@ class Controller_MVCForm extends AbstractController
      *
      * @return void|$this
      */
-    public function importFields($model, $fields = undefined)
+    public function importFields($model, $fields = UNDEFINED)
     {
         $this->model = $model;
         $this->form = $this->owner;
@@ -102,7 +102,7 @@ class Controller_MVCForm extends AbstractController
             return;
         }
 
-        if (!$fields || $fields === undefined) {
+        if (!$fields || $fields === UNDEFINED) {
             $fields = 'editable';
         }
         if (!is_array($fields)) {

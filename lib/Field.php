@@ -51,7 +51,7 @@ class Field extends AbstractModel
      * @param string $type  Corresponds to the name of property of a field
      * @param mixed  $value New value for a property.
      *
-     * @return mixed|$this new or current property (if value is undefined)
+     * @return mixed|$this new or current property (if value is UNDEFINED)
      */
     public function setterGetter($type, $value = UNDEFINED)
     {
@@ -512,11 +512,11 @@ class Field extends AbstractModel
      *
      * @param mixed $m the result of join() function
      *
-     * @return $this|object or the relation if $m is undefined
+     * @return $this|object or the relation if $m is UNDEFINED
      */
-    public function from($m = undefined)
+    public function from($m = UNDEFINED)
     {
-        if ($m === undefined) {
+        if ($m === UNDEFINED) {
             return $this->relation;
         } elseif (is_object($m)) {
             $this->relation = $m;
@@ -698,13 +698,13 @@ class Field extends AbstractModel
     }
 
     /** @deprecated 4.3.0 use type($v) instead */
-    public function datatype($v = undefined)
+    public function datatype($v = UNDEFINED)
     {
         return $this->type($v);
     }
 
     /** @deprecated 4.3.0 use addExpression() instead */
-    public function calculated($v = undefined)
+    public function calculated($v = UNDEFINED)
     {
         throw $this->exception('calculated() field property is obsolete. Use addExpression() instead');
     }

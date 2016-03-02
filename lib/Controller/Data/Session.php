@@ -7,7 +7,7 @@ class Controller_Data_Session extends Controller_Data_Array
     public function setSource($model, $data)
     {
         $this->app->initializeSession();
-        if ($data === undefined || $data === null) {
+        if ($data === UNDEFINED || $data === null) {
             $data = '-';
         }
 

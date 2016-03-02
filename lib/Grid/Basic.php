@@ -231,7 +231,7 @@ class Grid_Basic extends CompleteLister
      * @param Model $model
      * @param array $fields
      */
-    public function importFields($model, $fields = undefined)
+    public function importFields($model, $fields = UNDEFINED)
     {
         $this->add($this->default_controller)
             ->importFields($model, $fields);

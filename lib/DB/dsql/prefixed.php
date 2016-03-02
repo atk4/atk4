@@ -13,9 +13,9 @@ class DB_dsql_prefixed extends DB_dsql
 
         return $this;
     }
-    public function table($table = undefined, $alias = undefined)
+    public function table($table = UNDEFINED, $alias = UNDEFINED)
     {
-        if ($this->prefix && $alias == undefined) {
+        if ($this->prefix && $alias == UNDEFINED) {
             $alias = $table;
         }
 
