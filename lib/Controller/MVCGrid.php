@@ -84,7 +84,7 @@ class Controller_MVCGrid extends AbstractController
      *
      * @return void|$this
      */
-    public function importFields($model, $fields = undefined)
+    public function importFields($model, $fields = UNDEFINED)
     {
         $this->model = $model;
         $this->grid = $this->owner;
@@ -93,7 +93,7 @@ class Controller_MVCGrid extends AbstractController
             return;
         }
 
-        if (!$fields || $fields === undefined) {
+        if (!$fields || $fields === UNDEFINED) {
             $fields = 'visible';
         }
         if (!is_array($fields)) {
@@ -132,7 +132,7 @@ class Controller_MVCGrid extends AbstractController
         }
 
         $field_type = $this->getFieldType($field);
-        
+
         /** @var string */
         $field_caption = $field->caption();
 

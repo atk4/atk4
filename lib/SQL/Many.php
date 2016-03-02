@@ -33,7 +33,7 @@ class SQL_Many extends AbstractModel
     }
     public function from($m)
     {
-        if ($m === undefined) {
+        if ($m === UNDEFINED) {
             return $this->relation;
         }
         $this->relation = $m;

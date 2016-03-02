@@ -31,16 +31,16 @@ class Field_Expression extends Field
 {
     public $expr = null;
 
-    public function editable($x = undefined)
+    public function editable($x = UNDEFINED)
     {
-        return $x === undefined ? false : $this;
+        return $x === UNDEFINED ? false : $this;
     }
-    
-    public function calculated($x = undefined)
+
+    public function calculated($x = UNDEFINED)
     {
-        return $x === undefined ? true : $this;
+        return $x === UNDEFINED ? true : $this;
     }
-    
+
     /** specify DSQL, String or function($model, $dsql, $this_field) */
     public function set($expr = null)
     {
@@ -48,7 +48,7 @@ class Field_Expression extends Field
 
         return $this;
     }
-    
+
     public function getExpr()
     {
         if (!is_string($this->expr) && is_callable($this->expr)) {
@@ -66,7 +66,7 @@ class Field_Expression extends Field
 
         return $this->owner->dsql()->expr($this->expr);
     }
-    
+
     public function updateSelectQuery($select)
     {
         $expr = $this->expr;
@@ -84,7 +84,7 @@ class Field_Expression extends Field
     {
         return $this;
     }
-    
+
     public function updateModifyQuery($insert)
     {
         return $this;

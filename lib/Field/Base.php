@@ -48,7 +48,7 @@ class Field_Base extends AbstractObject
      * @param string $type  Corresponds to the name of property of a field
      * @param mixed  $value New value for a property.
      *
-     * @return mixed|$this new or current pperty (if value is undefined)
+     * @return mixed|$this new or current pperty (if value is UNDEFINED)
      */
     public function setterGetter($type, $value = UNDEFINED)
     {
