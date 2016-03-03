@@ -46,7 +46,7 @@ class Page_EntityManager extends Page
 
     public function initMainPage()
     {
-        $this->grid = $g = $this->add('MVCGrid', 'grid');
+        $this->grid = $g = $this->add('Grid', 'grid');
         $g->js(true)->atk4_loader(array('url' => $this->app->url(null, array('cut_object' => $g->name))));
 
         if ($this->grid_actual_fields) {
@@ -75,7 +75,7 @@ class Page_EntityManager extends Page
         if (!$this->allow_edit) {
             exit;
         }
-        $this->form = $f = $this->add('MVCForm', 'form');
+        $this->form = $f = $this->add('Form', 'form');
         $c = $this->c;
 
         if ($_GET['id']) {
