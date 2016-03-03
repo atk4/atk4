@@ -269,7 +269,7 @@ class Form_Basic extends View implements ArrayAccess
      * @param Model $model
      * @param array|string|bool $fields
      */
-    public function importFields($model, $fields = undefined)
+    public function importFields($model, $fields = UNDEFINED)
     {
         /** @var Controller_MVCForm $c */
         $c = $this->add($this->default_controller);
@@ -347,9 +347,9 @@ class Form_Basic extends View implements ArrayAccess
         return $this;
     }
      */
-    public function set($field_or_array, $value = undefined)
+    public function set($field_or_array, $value = UNDEFINED)
     {
-        // We use undefined, because 2nd argument of "null" is meaningfull
+        // We use UNDEFINED, because 2nd argument of "null" is meaningfull
         if (is_array($field_or_array)) {
             foreach ($field_or_array as $key => $val) {
                 if (isset($this->elements[$key]) && ($this->elements[$key] instanceof Form_Field)) {

@@ -18,7 +18,7 @@
  */
 class Controller_Data_Memcached extends Controller_Data
 {
-    public function setSource($model, $data = undefined)
+    public function setSource($model, $data = UNDEFINED)
     {
         parent::setSource($model, array(
             'db' => new Memcached($x = $data.'_'.$model->table),

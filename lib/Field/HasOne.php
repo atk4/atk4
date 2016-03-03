@@ -6,7 +6,7 @@
 class Field_HasOne extends Field_Calculated
 {
     /** @var string */
-    private $foreignName;
+    protected $foreignName;
 
     /**
      * @todo Useless method parameter $model
@@ -21,12 +21,18 @@ class Field_HasOne extends Field_Calculated
         $model = $this->add($this->getModel());
         $id = $data[$this->foreignName];
 
-        $this->hook('beforeForeignLoad', array($model, $id));
+        try {
 
-        $model->load($id);
-        $titleField = $model->getTitleField();
+            $this->hook('beforeForeignLoad', array($model, $id));
 
-        return $model->get($titleField) ?: 'Ref#'.$id;
+            $model->load($id);
+            $titleField = $model->getTitleField();
+
+            return $model->get($titleField) ?: 'Ref#'.$id;
+        } catch (BaseException $e) {
+            // record is no longer there it seems
+            return null;
+        }
     }
 
     /**

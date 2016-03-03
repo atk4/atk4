@@ -74,7 +74,7 @@ class Field_Reference extends Field
         return $this->model;
     }
 
-    public function sortable($x = undefined)
+    public function sortable($x = UNDEFINED)
     {
         /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());
@@ -85,7 +85,7 @@ class Field_Reference extends Field
         return parent::sortable($x);
     }
 
-    public function caption($x = undefined)
+    public function caption($x = UNDEFINED)
     {
         /** @var Field|bool */
         $f = $this->owner->hasElement($this->getDereferenced());

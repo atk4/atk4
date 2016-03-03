@@ -144,7 +144,7 @@ class Controller_Data_Mongo extends Controller_Data
             ->addMoreInfo('id', $id);
         }
     }
-    public function getBy($model, $field, $cond = undefined, $value = undefined)
+    public function getBy($model, $field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $condition_freeze = $model->_table[$this->short_name]['conditions'];
         $data_freeze = $model->data;
@@ -162,7 +162,7 @@ class Controller_Data_Mongo extends Controller_Data
 
         return $result;
     }
-    public function tryLoadBy($model, $field, $cond = undefined, $value = undefined)
+    public function tryLoadBy($model, $field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $condition_freeze = $model->_table[$this->short_name]['conditions'];
 
@@ -196,7 +196,7 @@ class Controller_Data_Mongo extends Controller_Data
 
         return $model->id;
     }
-    public function loadBy($model, $field, $cond = undefined, $value = undefined)
+    public function loadBy($model, $field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $this->tryLoadBy($model, $field, $cond, $value);
         if (!$model->loaded()) {

@@ -475,7 +475,7 @@ class SQL_Model extends Model implements Serializable
      *
      * @return this
      */
-    public function addCondition($field, $cond = undefined, $value = undefined, $dsql = null)
+    public function addCondition($field, $cond = UNDEFINED, $value = UNDEFINED, $dsql = null)
     {
         // by default add condition to models DSQL
         if (!$dsql) {
@@ -492,8 +492,8 @@ class SQL_Model extends Model implements Serializable
                 }
                 // add each condition to OR expression (not models DSQL)
                 $f = $row[0];
-                $c = array_key_exists(1, $row) ? $row[1] : undefined;
-                $v = array_key_exists(2, $row) ? $row[2] : undefined;
+                $c = array_key_exists(1, $row) ? $row[1] : UNDEFINED;
+                $v = array_key_exists(2, $row) ? $row[2] : UNDEFINED;
 
                 // recursively calls addCondition method, but adds conditions
                 // to OR expression not models DSQL object
@@ -502,7 +502,7 @@ class SQL_Model extends Model implements Serializable
 
             // pass generated DSQL expression as "field"
             $field = $or;
-            $cond = $value = undefined;
+            $cond = $value = UNDEFINED;
         }
 
         // You may pass DSQL expression as a first argument
@@ -513,7 +513,7 @@ class SQL_Model extends Model implements Serializable
         }
 
         // value should be specified
-        if ($cond === undefined && $value === undefined) {
+        if ($cond === UNDEFINED && $value === UNDEFINED) {
             throw $this->exception('Incorrect condition. Please specify value');
         }
 
@@ -522,7 +522,7 @@ class SQL_Model extends Model implements Serializable
             $field = $this->getElement($field);
         }
 
-        if ($cond !== undefined && $value === undefined) {
+        if ($cond !== UNDEFINED && $value === UNDEFINED) {
             $value = $cond;
             $cond = '=';
         }
@@ -779,7 +779,7 @@ class SQL_Model extends Model implements Serializable
      * Similar to loadAny() but will apply condition before loading.
      * Condition is temporary. Fails if record is not loaded.
      */
-    public function loadBy($field, $cond = undefined, $value = undefined)
+    public function loadBy($field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $q = $this->dsql;
         $this->dsql = $this->dsql();
@@ -790,7 +790,7 @@ class SQL_Model extends Model implements Serializable
         return $this;
     }
     /** Attempt to load using a specified condition, but will not fail if such record is not found */
-    public function tryLoadBy($field, $cond = undefined, $value = undefined)
+    public function tryLoadBy($field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $q = $this->dsql;
         $this->dsql = $this->dsql();
@@ -801,7 +801,7 @@ class SQL_Model extends Model implements Serializable
         return $this;
     }
     /** Loads data record and return array of that data. Will not affect currently loaded record. */
-    public function getBy($field, $cond = undefined, $value = undefined)
+    public function getBy($field, $cond = UNDEFINED, $value = UNDEFINED)
     {
         $data = $this->data;
         $id = $this->id;
@@ -1125,7 +1125,7 @@ class SQL_Model extends Model implements Serializable
     // }}}
 
     // Override all methods to keep back-compatible
-    public function set($name, $value = undefined)
+    public function set($name, $value = UNDEFINED)
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
@@ -1144,7 +1144,7 @@ class SQL_Model extends Model implements Serializable
             ->addMoreInfo('name', $name);
         }
 
-        if ($value !== undefined
+        if ($value !== UNDEFINED
             && (
                 is_object($value)
                 || is_object($this->data[$name])
@@ -1194,9 +1194,9 @@ class SQL_Model extends Model implements Serializable
         return $this->data[$name];
     }
 
-    public function getActualFields($group = undefined)
+    public function getActualFields($group = UNDEFINED)
     {
-        if ($group === undefined && $this->actual_fields) {
+        if ($group === UNDEFINED && $this->actual_fields) {
             return $this->actual_fields;
         }
 
@@ -1218,7 +1218,7 @@ class SQL_Model extends Model implements Serializable
 
         foreach ($this->elements as $el) {
             if ($el instanceof Field && !$el->hidden()) {
-                if ($group === undefined ||
+                if ($group === UNDEFINED ||
                     $el->group() == $group ||
                     (strtolower($group == 'visible') && $el->visible()) ||
                     (strtolower($group == 'editable') && $el->editable())
