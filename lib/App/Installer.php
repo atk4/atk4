@@ -82,7 +82,7 @@ class App_Installer extends App_Web
         //$m = $this->layout->add('Menu');
 
         foreach (get_class_methods($this) as $method) {
-            list($a, $method) = explode('step_', $method);
+            list(, $method) = explode('step_', $method);
             if (!$method) {
                 continue;
             }
@@ -92,9 +92,9 @@ class App_Installer extends App_Web
             }
             $this->s_last = $method;
 
-            $u = $this->url(null, array('step' => $method));
+            /*$u = */$this->url(null, array('step' => $method));
             $this->page = $this->pm->base_path.'?step='.$_GET['step'];
-           // $m->addMenuItem($u, ucwords(strtr($method, '_', ' ')));
+            // $m->addMenuItem($u, ucwords(strtr($method, '_', ' ')));
             $this->page = null;
 
             if (is_null($this->s_current)) {
@@ -144,7 +144,7 @@ class App_Installer extends App_Web
     public function initStep($step)
     {
         $step_method = 'step_'.$step;
-        /** @var H1 */
+        /** @var H1 $h */
         $h = $this->add('H1');
         if (!$this->hasMethod($step_method)) {
             return $h->set('No such step');
@@ -162,16 +162,16 @@ class App_Installer extends App_Web
      */
     public function showIntro($v)
     {
-        /** @var H1 */
+        /** @var H1 $h */
         $h = $v->add('H1');
         $h->set('Welcome to Web Software');
 
-        /** @var P */
+        /** @var P $p */
         $p = $v->add('P');
         $p->set('Thank you for downloading this software. '.
             'This wizard will guide you through the installation procedure.');
 
-        /** @var View_Warning */
+        /** @var View_Warning $w */
         $w = $v->add('View_Warning');
         if (!is_writable('.')) {
             $w->setHTML('This installation does not have permissions to create your '.
@@ -182,7 +182,7 @@ class App_Installer extends App_Web
                 '<b>overwrite</b> it with the new settings.');
         }
 
-        /** @var Button */
+        /** @var Button $b */
         $b = $v->add('Button');
         $b->set('Start')->js('click')->univ()->location($this->stepURL('first'));
     }

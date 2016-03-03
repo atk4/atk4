@@ -575,7 +575,7 @@ class App_Web extends App_CLI
     // }}}
 
     // {{{ Layout implementation
-    private $layout_initialized = false;
+    protected $layout_initialized = false;
     /**
      * Implements Layouts.
      * Layout is region in shared template which may be replaced by object.
