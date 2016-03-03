@@ -32,6 +32,7 @@ class App_REST extends App_CLI
 
             $this->getLogger();
 
+            /* @var Controller_PageManager */
             $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
             $this->pm->parseRequestedURL();
 

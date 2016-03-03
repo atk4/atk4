@@ -91,7 +91,7 @@ class App_Frontend extends App_Web
                 $ns = $this->namespace_routes[$page].'\\';
                 $class = 'page_index';
             } else {
-                while ($class_parts) {
+                while (! empty($class_parts)) {
                     array_unshift($funct_parts, array_pop($class_parts));
                     if ($ns1 = $this->namespace_routes[implode('_', $class_parts)]) {
                         $ns = $ns1.'\\';
@@ -115,10 +115,10 @@ class App_Frontend extends App_Web
                 } catch (Exception_PathFinder $e2) {
                     $class_parts = explode('_', $page);
                     $funct_parts = array();
-                    while ($class_parts) {
+                    while (! empty($class_parts)) {
                         array_unshift($funct_parts, array_pop($class_parts));
                         $fn = 'page_'.implode('_', $funct_parts);
-                        if ($class_parts) {
+                        if (! empty($class_parts)) {
                             $in = $ns.'page_'.implode('_', $class_parts);
                         } else {
                             $in = $ns.'page_index';
@@ -138,6 +138,7 @@ class App_Frontend extends App_Web
                             continue;
                         }
 
+                        /** @var Page */
                         $this->page_object = $layout->add($in, $page);
                         if (method_exists($tmp, $fn)) {
                             $this->page_object->$fn();
@@ -160,6 +161,7 @@ class App_Frontend extends App_Web
             }
 
             // i wish they implemented "finally"
+            /** @var Page */
             $this->page_object = $layout->add($ns.$class, $page, 'Content');
             if (method_exists($this->page_object, 'initMainPage')) {
                 $this->page_object->initMainPage();
@@ -236,6 +238,7 @@ class App_Frontend extends App_Web
                 if ($this->app->template && $this->app->template->hasTag('Layout')) {
                     $t = $this->app->template;
                 } else {
+                    /** @var GiTemplate */
                     $t = $this->add('GiTemplate');
                     $t->loadTemplate('html');
                 }

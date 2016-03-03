@@ -201,26 +201,32 @@ abstract class AbstractView extends AbstractObject
 
             if (is_object($template_branch)) {
                 // it might be already template instance (object)
+                /** @var Template */
                 $this->template = $template_branch;
             } elseif (is_array($template_branch)) {
                 // it might be array with [0]=template, [1]=tag
                 if (is_object($template_branch[0])) {
                     // if [0] is object, we'll use that
+                    /** @var Template */
                     $this->template = $template_branch[0];
                 } else {
+                    /** @var Template */
                     $this->template = $this->app->add('Template');
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
+                /** @var Template */
                 $this->template = $this->template->cloneRegion(
                     isset($template_branch[1]) ? $template_branch[1] : '_top'
                 );
             } else {
                 // brach could be just a string - a region to clone off parent
                 if (isset($this->owner->template)) {
+                    /** @var Template */
                     $this->template
                         = $this->owner->template->cloneRegion($template_branch);
                 } else {
+                    /** @var Template */
                     $this->template = $this->add('Template');
                 }
             }
@@ -262,7 +268,7 @@ abstract class AbstractView extends AbstractObject
      *
      * This is overriden by 4th argument in add() method
      *
-     * @return array|string Template definition
+     * @return string Template definition
      */
     public function defaultTemplate()
     {
@@ -613,6 +619,7 @@ abstract class AbstractView extends AbstractObject
         }
 
         if (is_callable($js)) {
+            /** @var VirtualPage */
             $p = $this->add('VirtualPage');
 
             $p->set(function ($p) use ($js) {

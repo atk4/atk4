@@ -430,6 +430,7 @@ class App_CLI extends AbstractView
             $arguments = $page;
             $page = $p;
         }
+        /** @var URL */
         $url = $this->add('URL');
         unset($this->elements[$url->short_name]); // garbage collect URLs
         if (strpos($page, 'http://') === 0 || strpos($page, 'https://') === 0) {
@@ -708,7 +709,10 @@ class App_CLI extends AbstractView
      */
     public function dbConnect($dsn = null)
     {
-        return $this->db = $this->add('DB')->connect($dsn);
+        /** @var DB */
+        $this->db = $this->add('DB');
+
+        return $this->db->connect($dsn);
     }
     // }}}
 

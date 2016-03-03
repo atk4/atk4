@@ -144,10 +144,12 @@ class App_Installer extends App_Web
     public function initStep($step)
     {
         $step_method = 'step_'.$step;
+        /* @var H1 */
+        $h = $this->add('H1');
         if (!$this->hasMethod($step_method)) {
-            return $this->add('H1')->set('No such step');
+            return $h->set('No such step');
         }
-        $this->add('H1')->set('Step '.$this->s_cnt.': '.$this->s_title);
+        $h->set('Step '.$this->s_cnt.': '.$this->s_title);
         $page = $this->makePage($step);
 
         return $this->$step_method($page);
@@ -158,26 +160,35 @@ class App_Installer extends App_Web
      *
      * @param View $p
      */
-    public function showIntro($p)
+    public function showIntro($v)
     {
-        $p->add('H1')->set('Welcome to Web Software');
-        $p->add('P')->set('Thank you for downloading this software. '.
+        /* @var H1 */
+        $h = $v->add('H1');
+        $h->set('Welcome to Web Software');
+        
+        /* @var P */
+        $p = $v->add('P');
+        $p->set('Thank you for downloading this software. '.
             'This wizard will guide you through the installation procedure.');
 
+        /* @var View_Warning */
+        $w = $v->add('View_Warning');
         if (!is_writable('.')) {
-            $p->add('View_Warning')->setHTML('This installation does not have permissions to create your '.
+            $w->setHTML('This installation does not have permissions to create your '.
                 '<b>config.php</b> file for you. You will need to manually create this file');
         } elseif (file_exists('config.php')) {
-            $p->add('View_Warning')->setHTML('It appears that you already have <b>config.php</b> file in your '.
+            $w->setHTML('It appears that you already have <b>config.php</b> file in your '.
                 'application folder. This installation will read defaults from config.php, but it will ultimatelly '.
                 '<b>overwrite</b> it with the new settings.');
         }
 
-        $p->add('Button')->set('Start')->js('click')->univ()->location($this->stepURL('first'));
+        /* @var Button */
+        $b = $v->add('Button');
+        $b->set('Start')->js('click')->univ()->location($this->stepURL('first'));
     }
 
     /**
-     * @todo Description
+     * @todo Description.
      *
      * @param string $position
      *

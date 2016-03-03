@@ -1150,6 +1150,7 @@ abstract class AbstractObject
             }
 
             if ($tester) {
+                /** @var Model */
                 $r = $tester->results;
                 $r->unload();
                 $r->set($test);
