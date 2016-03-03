@@ -158,14 +158,14 @@ class App_Installer extends App_Web
     /**
      * @todo Description
      *
-     * @param View $p
+     * @param View $v
      */
     public function showIntro($v)
     {
         /* @var H1 */
         $h = $v->add('H1');
         $h->set('Welcome to Web Software');
-        
+
         /* @var P */
         $p = $v->add('P');
         $p->set('Thank you for downloading this software. '.

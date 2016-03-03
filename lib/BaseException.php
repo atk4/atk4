@@ -146,7 +146,7 @@ class BaseException extends Exception
     public function addAction($key, $descr)
     {
         if (is_array($key)) {
-            $this->recommendation = $descr;
+            $this->recommendation = (string) $descr;
             $this->actions = array_merge($this->actions, $key);
 
             return $this;
