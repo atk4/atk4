@@ -230,9 +230,9 @@ abstract class Form_Field extends AbstractView
 
         return $this;
     }
-    public function setAttr($attr, $value = undefined)
+    public function setAttr($attr, $value = UNDEFINED)
     {
-        if (is_array($attr) && $value === undefined) {
+        if (is_array($attr) && $value === UNDEFINED) {
             foreach ($attr as $k => $v) {
                 $this->setAttr($k, $v);
             }
@@ -240,7 +240,7 @@ abstract class Form_Field extends AbstractView
             return $this;
         }
         if ($attr) {
-            $this->attr[$attr] = $value === undefined ? 'true' : $value;
+            $this->attr[$attr] = $value === UNDEFINED ? 'true' : $value;
         }
 
         return $this;

@@ -428,13 +428,13 @@ class Controller_Validator_Abstract extends \AbstractController
     public function fail()
     {
         $args = func_get_args();
-        $str = ucfirst($this->prefix.(
-            $this->caption?:str_replace('_', ' ', $this->active_field))
-                .' '.lcfirst(array_shift($args)
-        ));
+        $str = ucfirst(
+            $this->prefix.
+            ($this->caption ?: str_replace('_', ' ', $this->active_field)).' '.
+            lcfirst(array_shift($args))
+        );
 
         // Insert any args into placeholders
-
         if (count($args) > 0) {
             $n = 1;
 

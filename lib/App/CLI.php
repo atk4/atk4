@@ -388,9 +388,9 @@ class App_CLI extends AbstractView
      *
      * @return [type]
      */
-    public function addLocation($contents, $obsolete = undefined)
+    public function addLocation($contents, $obsolete = UNDEFINED)
     {
-        if ($obsolete !== undefined) {
+        if ($obsolete !== UNDEFINED) {
             throw $this->exception('Use a single argument for addLocation');
         }
 
@@ -460,10 +460,10 @@ class App_CLI extends AbstractView
      *
      * @return Logger
      */
-    public function getLogger($class_name = undefined)
+    public function getLogger($class_name = UNDEFINED)
     {
         if (is_null($this->logger)) {
-            $this->logger = $this->add($class_name === undefined
+            $this->logger = $this->add($class_name === UNDEFINED
                                             ? $this->logger_class
                                             : $class_name);
         }
@@ -597,7 +597,7 @@ class App_CLI extends AbstractView
      *
      * @return string
      */
-    public function getConfig($path, $default_value = undefined)
+    public function getConfig($path, $default_value = UNDEFINED)
     {
         /*
          * For given path such as 'dsn' or 'logger/log_dir' returns
@@ -612,7 +612,7 @@ class App_CLI extends AbstractView
         $current_position = $this->config;
         foreach ($parts as $part) {
             if (!array_key_exists($part, $current_position)) {
-                if ($default_value !== undefined) {
+                if ($default_value !== UNDEFINED) {
                     return $default_value;
                 }
                 throw $this->exception('Configuration parameter is missing in config.php', 'NotConfigured')

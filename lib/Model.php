@@ -775,7 +775,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Save model and don't try to load it back.
      */
-    public function saveAndUnload($id = undefined)
+    public function saveAndUnload($id = UNDEFINED)
     {
         // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
         // revert and make sure save() is not re-loading the record.

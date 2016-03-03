@@ -63,7 +63,7 @@ abstract class Form_Field_ValueList extends Form_Field
      *
      * @return $this
      */
-    public function setEmptyText($text =  null)
+    public function setEmptyText($text = null)
     {
         $this->empty_text = $text === null ? $this->default_empty_text : $text;
 
