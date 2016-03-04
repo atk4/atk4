@@ -17,6 +17,15 @@ class jQuery_Chain extends AbstractModel
     public $base = '';
     public $debug = false;
     public $univ_called = false;
+
+    /**
+     * Call any jQuery library method
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function __call($name, $arguments)
     {
         if ($arguments) {
@@ -28,37 +37,67 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
+    /**
+     * This enables you  to have syntax like this:
+     *
+     * $this->js()->offset()->top <-- access object items, if object is
+     * returned by chained method call.
+     *
+     * @param string $property
+     *
+     * @return $this
+     */
     public function __get($property)
     {
-        /* this enables you  to have syntax like this:
-         *
-         * $this->js()->offset()->top <-- access object items, if object is
-         * returned by chained method call */
         if (!property_exists($this, $property)) {
             $this->str .= ".$property";
         }
 
         return $this;
     }
-    /* convert reserved words or used methods into js calls, such as "execute" */
+
+    /**
+     * Convert reserved words or used methods into js calls, such as "execute"
+     *
+     * @param string $name
+     * @param array $argments
+     *
+     * @return $this
+     */
     public function _fn($name, $arguments = array())
     {
         // Wrapper for functons which use reserved words
         return $this->__call($name, $arguments);
     }
-    /* converting this object into string will produce JavaScript code */
+
+    /**
+     * Converting this object into string will produce JavaScript code
+     *
+     * @return string
+     */
     public function __toString()
     {
         return $this->_render();
     }
 
-    /* Some methods shouldn't be special! */
+    /**
+     * Some methods shouldn't be special!
+     *
+     * @return $this
+     */
     public function each()
     {
         return $this->__call('each', func_get_args());
     }
 
-    /* Chain binds to parent object by default. Use this to use other selector $('selector') */
+    /**
+     * Chain binds to parent object by default. Use this to use other selector $('selector')
+     *
+     * @param mixed $selector
+     *
+     * @return $this
+     */
     public function _selector($selector = null)
     {
         if ($selector === false) {
@@ -93,6 +132,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
     /**
      * Use this to bind chain to document $(document)...
      *
@@ -102,6 +142,7 @@ class jQuery_Chain extends AbstractModel
     {
         return $this->_library('$(document)');
     }
+
     /**
      * Use this to bind chain to window $(window)...
      *
@@ -111,6 +152,7 @@ class jQuery_Chain extends AbstractModel
     {
         return $this->_library('$(window)');
     }
+
     /**
      * Use this to bind chain to "this" $(this)...
      */
@@ -118,6 +160,7 @@ class jQuery_Chain extends AbstractModel
     {
         return $this->_library('$(this)');
     }
+
     /**
      * Use this to bind chain to "region" $(region). Region is defined by ATK when reloading.
      */
@@ -125,6 +168,7 @@ class jQuery_Chain extends AbstractModel
     {
         return $this->_library('$(region)');
     }
+
     /**
      * Execute more JavaScript code before chain. Avoid using.
      *
@@ -141,12 +185,14 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
     public function debug()
     {
         $this->debug = true;
 
         return $this;
     }
+
     /**
      * Send chain in response to form submit, button click or ajaxec() function for AJAX control output.
      *
@@ -174,6 +220,7 @@ class jQuery_Chain extends AbstractModel
                 ->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
         }
     }
+
     /* [private] used by custom json_encoding */
     public function _safe_js_string($str)
     {
@@ -203,6 +250,7 @@ class jQuery_Chain extends AbstractModel
 
         return $ret;
     }
+
     /* [private] custom json_encoding. called on function arguments. */
     protected function _flattern_objects($arg, $return_comma_list = false)
     {
@@ -261,6 +309,7 @@ class jQuery_Chain extends AbstractModel
 
         return $s;
     }
+
     /**
      * Prevents calling univ() multiple times.
      *
@@ -277,6 +326,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this->_fn('univ');
     }
+
     /**
      * Calls real redirect (from univ), but accepts page name.
      *
@@ -293,6 +343,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this->univ()->_fn('redirect', array($url));
     }
+
     /**
      * Reload object.
      *
@@ -319,6 +370,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this->univ()->_fn('reload', array($url, $arg, $fn, $interval));
     }
+
     /* Chain will not be called but will return callable function instead. */
     public function _enclose($fn = null, $preventDefault = false)
     {
@@ -331,6 +383,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
     public function _render()
     {
         $ret = $this->prepend;
@@ -361,15 +414,18 @@ class jQuery_Chain extends AbstractModel
 
         return $ret;
     }
+
     /* Returns HTML for a link with text $text. When clicked will execute this chain. */
     public function getLink($text)
     {
         return '<a href="javascript:void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
+
     public function getString()
     {
         return $this->_render();
     }
+
     /* Specify requirement for stylesheet. Will load dynamically. */
     public function _css($file)
     {
@@ -377,6 +433,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+    
     /* Specify requirement for extra javascript include. Will load dynamically. */
     public function _load($file)
     {
