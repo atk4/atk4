@@ -511,7 +511,7 @@ class SQL_Model extends Model implements Serializable
      * @param mixed   $value Value for comparing
      * @param DB_dsql $dsql  DSQL object to which conditions will be added
      *
-     * @return this
+     * @return $this
      */
     public function addCondition($field, $cond = UNDEFINED, $value = UNDEFINED, $dsql = null)
     {
@@ -1325,7 +1325,7 @@ class SQL_Model extends Model implements Serializable
         } elseif (!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
-        
+
         /** @var Controller */
         $this->controller = $this->setController($controller);
 

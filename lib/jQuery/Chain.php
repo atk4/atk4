@@ -9,20 +9,35 @@
  */
 class jQuery_Chain extends AbstractModel
 {
+    /** @var string */
     public $str = '';
+
+    /** @var string */
     public $prepend = '';
+
+    /** @var string */
     public $library = null;
+
+    /** @var jQuery_Chain */
     public $enclose = false;
+
+    /** @var bool */
     public $preventDefault = false;
+
+    /** @var string It looks that this property is not used */
     public $base = '';
+
+    /** @var string */
     public $debug = false;
+
+    /** @var string */
     public $univ_called = false;
 
     /**
      * Call any jQuery library method
      *
      * @param string $name
-     * @param array $arguments
+     * @param mixed $arguments
      *
      * @return $this
      */
@@ -67,7 +82,7 @@ class jQuery_Chain extends AbstractModel
      */
     public function _fn($name, $arguments = array())
     {
-        // Wrapper for functons which use reserved words
+        // Wrapper for functions which use reserved words
         return $this->__call($name, $arguments);
     }
 
@@ -125,6 +140,8 @@ class jQuery_Chain extends AbstractModel
      * window.player.play();
      *
      * You must be sure to properly escape the string!
+     *
+     * @return $this
      */
     public function _library($library)
     {
@@ -136,7 +153,7 @@ class jQuery_Chain extends AbstractModel
     /**
      * Use this to bind chain to document $(document)...
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _selectorDocument()
     {
@@ -146,7 +163,7 @@ class jQuery_Chain extends AbstractModel
     /**
      * Use this to bind chain to window $(window)...
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _selectorWindow()
     {
@@ -155,6 +172,8 @@ class jQuery_Chain extends AbstractModel
 
     /**
      * Use this to bind chain to "this" $(this)...
+     *
+     * @return $this
      */
     public function _selectorThis()
     {
@@ -163,6 +182,8 @@ class jQuery_Chain extends AbstractModel
 
     /**
      * Use this to bind chain to "region" $(region). Region is defined by ATK when reloading.
+     *
+     * @return $this
      */
     public function _selectorRegion()
     {
@@ -172,9 +193,9 @@ class jQuery_Chain extends AbstractModel
     /**
      * Execute more JavaScript code before chain. Avoid using.
      *
-     * @param [type] $code [description]
+     * @param array|string $code
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _prepend($code)
     {
@@ -186,6 +207,11 @@ class jQuery_Chain extends AbstractModel
         return $this;
     }
 
+    /**
+     * Enable debug mode
+     *
+     * @return $this
+     */
     public function debug()
     {
         $this->debug = true;
@@ -195,8 +221,6 @@ class jQuery_Chain extends AbstractModel
 
     /**
      * Send chain in response to form submit, button click or ajaxec() function for AJAX control output.
-     *
-     * @return [type] [description]
      */
     public function execute()
     {
@@ -221,7 +245,13 @@ class jQuery_Chain extends AbstractModel
         }
     }
 
-    /* [private] used by custom json_encoding */
+    /**
+     * [private] used by custom json_encoding
+     *
+     * @param string $str
+     *
+     * @return string
+     */
     public function _safe_js_string($str)
     {
         $l = strlen($str);
@@ -251,7 +281,14 @@ class jQuery_Chain extends AbstractModel
         return $ret;
     }
 
-    /* [private] custom json_encoding. called on function arguments. */
+    /**
+     * [private] custom json_encoding. called on function arguments.
+     *
+     * @param mixed $arg
+     * @param bool $return_comma_list
+     *
+     * @return mixed
+     */
     protected function _flattern_objects($arg, $return_comma_list = false)
     {
         /*
@@ -315,7 +352,7 @@ class jQuery_Chain extends AbstractModel
      *
      * Useful for backwards compatibility and in case of human mistake
      *
-     * @return this
+     * @return $this
      */
     public function univ()
     {
@@ -335,7 +372,7 @@ class jQuery_Chain extends AbstractModel
      * @param string $page Page name
      * @param array  $arg  Arguments
      *
-     * @return this
+     * @return $this
      */
     public function redirect($page = null, $arg = null)
     {
@@ -356,7 +393,7 @@ class jQuery_Chain extends AbstractModel
      * @param string       $url
      * @param int          $interval Interval in milisec. how often to reload object
      *
-     * @return this
+     * @return $this
      */
     public function reload($arg = array(), $fn = null, $url = null, $interval = null)
     {
@@ -371,7 +408,14 @@ class jQuery_Chain extends AbstractModel
         return $this->univ()->_fn('reload', array($url, $arg, $fn, $interval));
     }
 
-    /* Chain will not be called but will return callable function instead. */
+    /**
+     * Chain will not be called but will return callable function instead.
+     *
+     * @param jQuery_Chain $fn
+     * @param bool $preventDefault
+     *
+     * @return $this
+     */
     public function _enclose($fn = null, $preventDefault = false)
     {
         // builds structure $('obj').$fn(function(){ $('obj').XX; });
@@ -384,6 +428,11 @@ class jQuery_Chain extends AbstractModel
         return $this;
     }
 
+    /**
+     * Render and return js chain as string
+     *
+     * @return string
+     */
     public function _render()
     {
         $ret = $this->prepend;
@@ -415,26 +464,49 @@ class jQuery_Chain extends AbstractModel
         return $ret;
     }
 
-    /* Returns HTML for a link with text $text. When clicked will execute this chain. */
+    /**
+     * Returns HTML for a link with text $text. When clicked will execute this chain.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     public function getLink($text)
     {
         return '<a href="javascript:void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
 
+    /**
+     * Returns js chain as string
+     *
+     * @return string
+     */
     public function getString()
     {
         return $this->_render();
     }
 
-    /* Specify requirement for stylesheet. Will load dynamically. */
+    /**
+     * Specify requirement for stylesheet. Will load dynamically.
+     *
+     * @param string $file
+     *
+     * @return $this
+     */
     public function _css($file)
     {
         $this->app->jquery->addStylesheet($file);
 
         return $this;
     }
-    
-    /* Specify requirement for extra javascript include. Will load dynamically. */
+
+    /**
+     * Specify requirement for extra javascript include. Will load dynamically.
+     *
+     * @param string $file
+     *
+     * @return $this
+     */
     public function _load($file)
     {
         $this->app->jquery->addInclude($file);
