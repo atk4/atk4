@@ -70,7 +70,7 @@ class VirtualPage extends AbstractController
     /** @var View */
     public $owner;
     
-    /** @var App_Web */
+    /** @var App_Frontend */
     public $app;
     // }}
 
@@ -179,12 +179,11 @@ class VirtualPage extends AbstractController
      */
     public function getPage()
     {
-        // Remove original page
-
         if ($this->page) {
             return $this->page;
         }
 
+        // Remove original page
         $this->app->page_object->destroy(false);
 
         $this->app->page_object = $this->page = $this->app->add(
@@ -204,7 +203,7 @@ class VirtualPage extends AbstractController
      * @param string $name             Field Name (must not contain spaces)
      * @param string $title            Header for the column
      * @param array|string $buttontext Text to put on the button
-     * @param string $grid             Specify grid to use, other than $owner
+     * @param Grid $grid             Specify grid to use, other than $owner
      *
      * @return $this
      */

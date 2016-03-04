@@ -29,7 +29,7 @@ class View_ButtonSet extends HtmlElement
      */
     public function addButton($label = null, $options = array())
     {
-        /** @var Button */
+        /** @var Button $but */
         $but = $this->add('Button', $options);
         $but->set($label);
         if ($this->vertical) {

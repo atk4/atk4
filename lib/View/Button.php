@@ -89,10 +89,11 @@ class View_Button extends View
     {
         if (is_array($label) && $label['icon']) {
             $this->setIcon($label['icon']);
-            return $this;
+        } elseif (is_string($label)) {
+            return $this->setText($label);
         }
 
-        return $this->setText($label);
+        return $this;
     }
 
     /**

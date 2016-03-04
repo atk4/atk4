@@ -593,7 +593,7 @@ class View_CRUD extends View
     /**
      * Transparent method for adding buttons to a crud.
      *
-     * @param string $label
+     * @param string|array $label
      * @param string $class
      *
      * @return Dummy|Button
