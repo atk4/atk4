@@ -133,7 +133,7 @@ class Controller_MVCGrid extends AbstractController
 
         $field_type = $this->getFieldType($field);
 
-        /** @var string */
+        /** @var string $field_caption */
         $field_caption = $field->caption();
 
         $this->field_associations[$field_name] = $field;
