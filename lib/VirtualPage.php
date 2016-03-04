@@ -67,7 +67,7 @@ class VirtualPage extends AbstractController
     protected $page;
 
     // {{ type-hint inherited properties
-    /** @var View */
+    /** @var View|Grid */
     public $owner;
     
     /** @var App_Frontend */
@@ -186,6 +186,7 @@ class VirtualPage extends AbstractController
         // Remove original page
         $this->app->page_object->destroy(false);
 
+        /** @var Page $this->page */
         $this->app->page_object = $this->page = $this->app->add(
             $this->page_class,
             $this->name,
@@ -210,9 +211,10 @@ class VirtualPage extends AbstractController
     public function addColumn($name, $title = null, $buttontext = null, $grid = null)
     {
         if ($grid === null) {
-            /** @var Grid */
             $grid = $this->owner;
         }
+        /** @var Grid $this->owner */
+        /** @var Grid $grid */
 
         if (!is_array($buttontext)) {
             $buttontext = array();

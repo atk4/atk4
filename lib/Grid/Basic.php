@@ -12,33 +12,34 @@
  */
 class Grid_Basic extends CompleteLister
 {
-    /** Grid columns */
+    /** @var array Grid columns */
     public $columns = array();
 
-    /** Pointer to last added grid column */
+    /** @var string Pointer to last added grid column */
     public $last_column;
 
-    /** Default grid controller */
+    /** @var string Default grid controller */
     public $default_controller = 'Controller_MVCGrid';
 
-    /** jQuery-UI icons to show as sort icons in header */
+    /** @var array jQuery-UI icons to show as sort icons in header */
     public $sort_icons = array(
         'icon-sort',
         'icon-up-dir',
         'icon-down-dir',
     );
 
-    /** Should we show header line */
+    /** @var bool Should we show header line */
     public $show_header = true;
 
     /**
      * Grid buttons.
      *
      * @see addButton()
+     * @var ButtonSet
      */
     public $buttonset = null;
 
-    /** No records message. See setNoRecords() */
+    /** @var string No records message. See setNoRecords() */
     protected $no_records_message = 'No matching records found';
 
     /**
