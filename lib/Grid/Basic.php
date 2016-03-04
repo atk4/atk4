@@ -85,7 +85,7 @@ class Grid_Basic extends CompleteLister
      *
      * @param mixed  $formatters
      * @param string $name
-     * @param string $descr
+     * @param string|array $descr
      *
      * @return $this|Controller_Grid_Format
      */

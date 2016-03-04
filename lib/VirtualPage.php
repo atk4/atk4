@@ -204,7 +204,7 @@ class VirtualPage extends AbstractController
      * @param string $name             Field Name (must not contain spaces)
      * @param string $title            Header for the column
      * @param array|string $buttontext Text to put on the button
-     * @param Grid $grid             Specify grid to use, other than $owner
+     * @param Grid $grid               Specify grid to use, other than $owner
      *
      * @return $this
      */
@@ -226,20 +226,19 @@ class VirtualPage extends AbstractController
         $icon = '';
         if ($buttontext['icon']) {
             if ($buttontext['icon'][0] != '<') {
-                $icon .= '<i class="icon-'.
-                    $buttontext['icon'].'"></i>';
+                $icon .= '<i class="icon-'.$buttontext['icon'].'"></i>';
             } else {
                 $icon .= $buttontext['icon'];
             }
             $icon .= '&nbsp;';
         }
 
-        $grid->addColumn('template', $name, $buttontext ?: $title)
-            ->setTemplate(
-                '<button type="button" class="atk-button-small pb_'.$name.'">'.
-                    $icon.$this->app->encodeHtmlChars($buttontext['descr']).
-                '</button>'
-            );
+        $grid->addColumn('template', $name, $buttontext ?: $title);
+        $grid->setTemplate(
+            '<button type="button" class="atk-button-small pb_'.$name.'">'.
+                $icon.$this->app->encodeHtmlChars($buttontext['descr']).
+            '</button>'
+        );
 
         $grid->columns[$name]['thparam'] .= ' style="width: 40px; text-align: center"';
 
