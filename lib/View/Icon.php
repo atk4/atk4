@@ -4,9 +4,8 @@
  */
 class View_Icon extends View
 {
-    public $shappe = null;
-
-
+    /** @var string */
+    public $shape = null;
 
     /**
      * Initialization
@@ -17,7 +16,13 @@ class View_Icon extends View
         $this->setElement('span');
     }
 
-    /** Sets icon by its shape. http://agiletoolkit.org/ref/icon */
+    /**
+     * Sets icon by its shape.
+     *
+     * @param string $shape
+     *
+     * @return $this
+     */
     public function setText($shape)
     {
         $this->shape = $shape;
@@ -25,6 +30,9 @@ class View_Icon extends View
         return $this;
     }
 
+    /**
+     * Render
+     */
     public function render()
     {
         $this->addClass('icon-'.$this->shape);

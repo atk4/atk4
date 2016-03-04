@@ -17,12 +17,20 @@
  */
 class View_Console extends \View
 {
+    /** @var System_ProcessIO */
     public $process = null;     // ProcessIO, if set
-    public $streams = [];     // PHP stream if set.
+    
+    /** @var array */
+    public $streams = [];       // PHP stream if set.
 
+    /** @var array */
     public $prefix = [];
 
+    /** @var callable */
     public $callback = null;
+
+    /** @var array */
+    public $color;
 
     public function afterAdd($me, $o)
     {
@@ -73,7 +81,7 @@ class View_Console extends \View
     /**
      * Evaluates piece of code.
      *
-     * @param [type] $callback function($console)
+     * @param callable $callback function($console)
      */
     public function set($callback)
     {
@@ -158,7 +166,7 @@ class View_Console extends \View
                 $this->addStream($this->process->pipes['err'], 'ERR', '#f88');
             }
 
-            while ($this->streams) {
+            while (!empty($this->streams)) {
                 $read = $this->streams; // copy
                 $write = $except = [];
 
@@ -181,7 +189,7 @@ class View_Console extends \View
                             $data['style'] = 'color: '.$this->color[$s];
                         }
 
-                        if ($data) {
+                        if (!empty($data)) {
                             $this->sseMessageJSON($data);
                         }
                     }

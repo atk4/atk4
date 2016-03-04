@@ -2,17 +2,21 @@
 /**
  * Popover is a handy view which can be used to display content in
  * frames.The popover will automatically hide itself and position itself
- * relative to your element
+ * relative to your element.
  */
 class View_Popover extends View
 {
-    // can be top, bottom, left or right
+    /** @var string Popover position can be top, bottom, left or right */
     public $position = 'top';
 
+    /** @var string */
     public $url = null;
 
+    /** @var string */
+    public $pop_class = '';
+
     /**
-     * Initialization
+     * Initialization.
      */
     public function init()
     {
@@ -23,6 +27,10 @@ class View_Popover extends View
     /**
      * If callable is passed, it will be executed when the dialog is popped
      * through the use of VirtualPage.
+     *
+     * @param callable $fx
+     *
+     * @return $this
      */
     public function set($fx)
     {
@@ -36,6 +44,10 @@ class View_Popover extends View
     /**
      * Specify URL here and it will be automatically loaded in the popover
      * every time it's shown.
+     *
+     * @param string $url
+     *
+     * @return $this
      */
     public function setURL($url)
     {
@@ -44,7 +56,11 @@ class View_Popover extends View
         return $this;
     }
 
-    public $pop_class = '';
+    /**
+     * @param string $class
+     *
+     * @return $this
+     */
     public function addClass($class)
     {
         $this->pop_class .= ' '.$class;
@@ -52,10 +68,17 @@ class View_Popover extends View
         return $this;
     }
 
-    /* Returns JS which will position this element and show it */
+    /**
+     * Returns JS which will position this element and show it.
+     *
+     * @param array $options
+     * @param array $options_compat Deprecated options
+     *
+     * @return jQuery_Chain
+     */
     public function showJS($options = null, $options_compat = array())
     {
-        if ($options_compat) {
+        if (!empty($options_compat)) {
             $options = $options_compat;
         }
 
@@ -65,7 +88,7 @@ class View_Popover extends View
         $this->js(true)->dialog(array_extend(array(
             'modal' => true,
             'dialogClass' => ($options['class'] ?: 'atk-popover').$this->pop_class.
-            ' atk-popover-'.($options['tip'] ?: 'top-center'),
+                            ' atk-popover-'.($options['tip'] ?: 'top-center'),
             'dragable' => false,
             'resizable' => false,
             'minHeight' => 'auto',
@@ -97,20 +120,24 @@ class View_Popover extends View
     }
 }
 
-// Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
-// TODO: merge JS chains by putting them into combined chain.
-function array_extend($a, $b)
+/**
+ * Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
+ *
+ * @todo: merge JS chains by putting them into combined chain.
+ *
+ * @param array $a
+ * @param array $b
+ *
+ * @return array
+ */
+function array_extend($a, $b = array())
 {
-    if (!$b) {
+    if (empty($b)) {
         return $a;
     }
     foreach ($b as $k => $v) {
         if (is_array($v)) {
-            if (!isset($a[$k])) {
-                $a[$k] = $v;
-            } else {
-                $a[$k] = array_extend($a[$k], $v);
-            }
+            $a[$k] = isset($a[$k]) ? array_extend($a[$k], $v) : $v;
         // } else if $v or $a[$k] instanceof jQuery_Chain, merge them!
         } else {
             $a[$k] = $v;

@@ -156,6 +156,14 @@ class View_CRUD extends View
      */
     public $js_reload = null;
 
+    // {{ type-hint inherited properties
+    /** @var View */
+    public $owner;
+    
+    /** @var App_Web */
+    public $app;
+    // }}
+
     /**
      * {@inheritdoc}
      *
@@ -190,6 +198,7 @@ class View_CRUD extends View
         }
 
         if ($this->isEditing()) {
+            /** @var Form */
             $this->form = $this
                 ->virtual_page
                 ->getPage()
@@ -202,6 +211,7 @@ class View_CRUD extends View
             return;
         }
 
+        /** @var Grid */
         $this->grid = $this->add($this->grid_class, $this->grid_options);
         $this->form = new Dummy();
 
@@ -448,6 +458,9 @@ class View_CRUD extends View
      * you to create a frame which will pop you a new frame with
      * a form representing model method arguments. Once the form
      * is submitted, the action will be evaluated.
+     *
+     * @param string $method_name
+     * @param array $options
      */
     public function addAction($method_name, $options = array())
     {
@@ -468,6 +481,7 @@ class View_CRUD extends View
         $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
+            /** @var View_Console $c */
             $c = $this->virtual_page->getPage()->add('View_Console');
             $self = $this;
 
@@ -578,6 +592,11 @@ class View_CRUD extends View
 
     /**
      * Transparent method for adding buttons to a crud.
+     *
+     * @param string $label
+     * @param string $class
+     *
+     * @return Dummy|Button
      */
     public function addButton($label, $class = 'Button')
     {

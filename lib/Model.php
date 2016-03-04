@@ -3,7 +3,7 @@
  * Model class improves how you interact with the structured data. Extend
  * this class (or :php:class:`Model_SQL`) to define the structure of your
  * own models, then use object instances to interact with individual records.
- **/
+ */
 class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
 {
     /**

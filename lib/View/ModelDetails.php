@@ -10,8 +10,12 @@ class View_ModelDetails extends Grid_Basic
      * The view will have 3 columns instead of just 2 by also showing the
      * ID of each field. Uneful for debug purposes but unnecessary for
      * general use.
+     * @var bool
      */
     public $include_id_column = false;
+
+    /** @var bool */
+    public $source_set = false;
 
     /**
      * Initialization
@@ -25,7 +29,7 @@ class View_ModelDetails extends Grid_Basic
         $this->addColumn('text', 'name');
         $this->addColumn('text', 'value');
     }
-    public $source_set = false;
+
     public function setSource($data)
     {
         if (!isset($data[0]) && !is_array($data[0])) {
@@ -43,6 +47,7 @@ class View_ModelDetails extends Grid_Basic
 
         return parent::setSource($data);
     }
+
     public function setModel($model, $actual_fields = UNDEFINED)
     {
         $m = parent::setModel($model);
@@ -52,11 +57,13 @@ class View_ModelDetails extends Grid_Basic
 
         return $m;
     }
+
     public function precacheTemplate()
     {
         parent::precacheTemplate();
         $this->row_t->set('tdparam_value', '');
     }
+    
     public function render()
     {
         if (!$this->source_set) {

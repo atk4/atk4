@@ -19,9 +19,7 @@
  *         $this->addField('email');
  *     }
  * }
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- **/
+ */
 class SQL_Model extends Model implements Serializable
 {
     /**
@@ -867,7 +865,9 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** @obsolete Backward-compatible. Will attempt to load but will not fail */
+    /**
+     * @deprecated 4.3.3 Backward-compatible. Will attempt to load but will not fail
+     */
     public function loadData($id = null)
     {
         if ($id) {

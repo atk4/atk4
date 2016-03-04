@@ -519,7 +519,7 @@ class PathFinder_Location extends AbstractModel
      * use setCDN() method;
      */
 
-    /** OBSOLETE **/
+    /** OBSOLETE */
     private $_relative_path = null;
 
     /**

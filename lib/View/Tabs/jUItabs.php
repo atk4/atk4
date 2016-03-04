@@ -7,17 +7,25 @@
  *  $tabs->addTab('Tab1')->add('LoremIpsum');
  *
  *  $tabs->addTabURL('./details','Details');    // AJAX tab
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- **/
+ */
 class View_Tabs_jUItabs extends View_Tabs
 {
+    /** @var Template */
     public $tab_template = null;
+
+    /** @var array */
     public $options = array();
+
+    /** @var string */
     public $position = 'top'; // can be 'top','left','right','bottom'
 
-    // should we show loader indicator while loading tabs
+    /**
+     * Should we show loader indicator while loading tabs
+     * @var bool
+     */
     public $show_loader = true;
+
+
 
     /**
      * Initialization
