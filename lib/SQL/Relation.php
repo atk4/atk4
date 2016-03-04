@@ -14,11 +14,24 @@ class SQL_Relation extends AbstractModel
     public $f2 = null;            // Foreign field
     public $m2 = null;            // Master field
 
+    public $fa = null;            // short name / field alias ?
+
     public $m1 = null;            // Master table (defaults to owner->table / owner->table_alias)
     // $m1 == $relation->f1
     public $relation = null;
 
     public $delete_behaviour = 'cascade';          // cascade, setnull, ignore
+
+    public $table_alias;
+    public $dsql;
+    public $id;
+
+    // {{{ type-hint inherited properties
+
+    /** @var SQL_Model */
+    public $owner;
+    
+    // }}}
 
     public function init()
     {
@@ -70,6 +83,7 @@ class SQL_Relation extends AbstractModel
         // Split and deduce fields
         list($f1, $f2) = explode('.', $foreign_table, 2);
 
+        $m1 = $m2 = null;
         if (is_object($master_field)) {
             $this->expr = $master_field;
         } else {

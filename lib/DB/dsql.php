@@ -58,7 +58,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * If no fields are defined, this field is used.
      *
-     * @var string
+     * @var string|DB_dsql
      */
     public $default_field = '*';
 
@@ -1111,10 +1111,10 @@ class DB_dsql extends AbstractModel implements Iterator
      * $q->order('name desc, id asc')
      * $q->order('name',true);
      *
-     * @param string $order Order by
+     * @param mixed $order Order by
      * @param string $desc  true to sort descending
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function order($order, $desc = null)
     {

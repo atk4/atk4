@@ -52,7 +52,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public $table = null;
 
     /**
-     * Defines aleas for the table, for drivers such as SQL to make your
+     * Defines alias for the table, for drivers such as SQL to make your
      * queries prettier. Not really required.
      *
      * @var string
