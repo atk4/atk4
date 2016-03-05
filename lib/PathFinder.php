@@ -314,7 +314,7 @@ class PathFinder extends AbstractController
      * @param string $filename Name of the file to search for
      * @param string $return   'relative','url','path' or 'location'
      *
-     * @return string|object as specified by $return
+     * @return string|object|array
      */
     public function locate($type, $filename = '', $return = 'relative', $throws_exception = true)
     {

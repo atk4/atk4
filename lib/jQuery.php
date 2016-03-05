@@ -136,7 +136,7 @@ class jQuery extends AbstractController
     /**
      * Add custom code into onReady section. Will be executed under $(function(){ .. })
      *
-     * @param jQuery_Chain $js
+     * @param jQuery_Chain|string $js
      *
      * @return $this
      */
@@ -194,7 +194,7 @@ class jQuery extends AbstractController
     /**
      * [private] Collect JavaScript chains from specified object and add them into onReady section.
      *
-     * @param AbstractObject $obj
+     * @param AbstractView $obj
      *
      * @return string
      */

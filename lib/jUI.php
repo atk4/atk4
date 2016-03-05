@@ -95,7 +95,7 @@ class jUI extends jQuery
     /**
      * Adds JS chain to DOM onReady event
      *
-     * @param jQuery_Chain $js
+     * @param jQuery_Chain|string $js
      *
      * @return $this
      */

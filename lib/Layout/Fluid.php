@@ -36,6 +36,27 @@ class Layout_Fluid extends Layout_Basic
      */
     public $top_menu;
 
+    /**
+     * Undocumented.
+     *
+     * @var [type]
+     */
+    public $header;
+
+    /**
+     * Undocumented.
+     *
+     * @var [type]
+     */
+    public $header_wrap;
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     public function defaultTemplate()
     {
         return array('layout/fluid');
@@ -46,8 +67,9 @@ class Layout_Fluid extends Layout_Basic
         parent::init();
         if ($this->template->hasTag('UserMenu')) {
             if (isset($this->app->auth)) {
-                $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu')
-                    ->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
+                /** @var Menu_Horizontal */
+                $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu');
+                $this->user_menu->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
                 $this->user_menu->addItem('Logout', 'logout');
             } else {
                 $this->template->tryDel('UserMenu');
@@ -58,6 +80,7 @@ class Layout_Fluid extends Layout_Basic
 
     public function addHeader($class = 'Menu_Objective')
     {
+        /** @var View */
         $this->header_wrap = $this->add('View', null, 'Header', array('layout/fluid', 'Header'));
 
         $this->header = $this->header_wrap->add($class, null, 'Header_Content');

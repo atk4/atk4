@@ -4,6 +4,13 @@
  */
 class Menu_Advanced_Item extends View
 {
+    // {{{ Inherited properties
+
+    /** @var Menu_Advanced */
+    public $owner;
+
+    /// }}}
+
     public function init()
     {
         parent::init();
@@ -17,7 +24,9 @@ class Menu_Advanced_Item extends View
     {
         if (is_array($data)) {
             if ($data['icon2']) {
-                $this->add('Icon', null, 'Badge')->set($data['icon2']);
+                /** @var Icon $i */
+                $i = $this->add('Icon', null, 'Badge');
+                $i->set($data['icon2']);
             }
             unset($data['icon2']);
         }

@@ -247,7 +247,7 @@ abstract class AbstractObject
      *
      * @param array $properties Set initial properties for new object
      *
-     * @return AbstractObject
+     * @return self
      */
     public function newInstance($properties = null)
     {

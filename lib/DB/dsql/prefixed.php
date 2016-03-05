@@ -21,7 +21,7 @@ class DB_dsql_prefixed extends DB_dsql
 
         return parent::table($this->prefix.$table, $alias);
     }
-    public function join($table, $on, $type = 'inner')
+    public function join($table, $on, $type = 'inner', $alias = UNDEFINED)
     {
         return parent::join($this->prefix.$table, $alias);
     }
