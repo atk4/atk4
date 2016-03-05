@@ -6,12 +6,15 @@
  */
 class jQuery extends AbstractController
 {
-    private $chains = 0;
-
+    /** @var array */
     public $included = array();
 
+    /** @var string Name of jQuery_Chain class*/
     public $chain_class = 'jQuery_Chain';
 
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();
@@ -44,15 +47,32 @@ class jQuery extends AbstractController
         $this->app->addHook('pre-render-output', array($this, 'postRender'));
         $this->app->addHook('cut-output', array($this, 'cutRender'));
     }
-    /* Locate javascript file and add it to HTML's head section */
+
+    /**
+     * Locate javascript file and add it to HTML's head section.
+     *
+     * @param string $file
+     * @param string $ext
+     *
+     * @return $this
+     */
     public function addInclude($file, $ext = '.js')
     {
         return $this->addStaticInclude($file, $ext);
     }
+    
+    /**
+     * Adds static includes
+     *
+     * @param string $file
+     * @param string $ext
+     *
+     * @return $this
+     */
     public function addStaticInclude($file, $ext = '.js')
     {
         if (@$this->included['js-'.$file.$ext]++) {
-            return;
+            return $this;
         }
 
         if (strpos($file, 'http') !== 0 && $file[0] != '/') {
@@ -68,11 +88,30 @@ class jQuery extends AbstractController
 
         return $this;
     }
-    /* Locate stylesheet file and add it to HTML's head section */
+
+    /**
+     * Locate stylesheet file and add it to HTML's head section.
+     *
+     * @param string $file
+     * @param string $ext
+     * @param string $locate
+     *
+     * @return $this
+     */
     public function addStylesheet($file, $ext = '.css', $locate = 'css')
     {
         return $this->addStaticStylesheet($file, $ext, $locate);
     }
+
+    /**
+     * Adds static stylesheet
+     *
+     * @param string $file
+     * @param string $ext
+     * @param string $locate
+     *
+     * @return $this
+     */
     public function addStaticStylesheet($file, $ext = '.css', $locate = 'css')
     {
         //$file=$this->app->locateURL('css',$file.$ext);
@@ -93,7 +132,14 @@ class jQuery extends AbstractController
 
         return $this;
     }
-    /* Add custom code into onReady section. Will be executed under $(function(){ .. }) */
+
+    /**
+     * Add custom code into onReady section. Will be executed under $(function(){ .. })
+     *
+     * @param jQuery_Chain $js
+     *
+     * @return $this
+     */
     public function addOnReady($js)
     {
         if (is_object($js)) {
@@ -103,7 +149,14 @@ class jQuery extends AbstractController
 
         return $this;
     }
-    /* [private] use $object->js() instead */
+
+    /**
+     * [private] use $object->js() instead.
+     *
+     * @param AbstractObject $object
+     *
+     * @return jQuery_Chain
+     */
     public function chain($object)
     {
         if (!is_object($object)) {
@@ -112,7 +165,10 @@ class jQuery extends AbstractController
 
         return $object->add($this->chain_class);
     }
-    /* [private] When partial render is done, this function includes JS for rendered region */
+
+    /**
+     * [private] When partial render is done, this function includes JS for rendered region.
+     */
     public function cutRender()
     {
         $x = $this->app->template->get('document_ready');
@@ -125,13 +181,23 @@ class jQuery extends AbstractController
 
         return;
     }
-    /* [private] .. ? */
+
+    /**
+     * [private] .. ?
+     */
     public function postRender()
     {
         //echo nl2br(htmlspecialchars(
         //    "Dump: \n".$this->app->template->renderRegion($this->app->template->tags['js_include'])));
     }
-    /* [private] Collect JavaScript chains from specified object and add them into onReady section */
+
+    /**
+     * [private] Collect JavaScript chains from specified object and add them into onReady section.
+     *
+     * @param AbstractObject $obj
+     *
+     * @return string
+     */
     public function getJS($obj)
     {
         $this->hook('pre-getJS');

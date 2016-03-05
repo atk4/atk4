@@ -18,7 +18,7 @@ class jQuery_Chain extends AbstractModel
     /** @var string */
     public $library = null;
 
-    /** @var jQuery_Chain */
+    /** @var bool|jQuery_Chain */
     public $enclose = false;
 
     /** @var bool */
@@ -27,10 +27,10 @@ class jQuery_Chain extends AbstractModel
     /** @var string It looks that this property is not used */
     public $base = '';
 
-    /** @var string */
+    /** @var bool */
     public $debug = false;
 
-    /** @var string */
+    /** @var bool */
     public $univ_called = false;
 
     /**
@@ -76,7 +76,7 @@ class jQuery_Chain extends AbstractModel
      * Convert reserved words or used methods into js calls, such as "execute"
      *
      * @param string $name
-     * @param array $argments
+     * @param array $arguments
      *
      * @return $this
      */
@@ -140,6 +140,8 @@ class jQuery_Chain extends AbstractModel
      * window.player.play();
      *
      * You must be sure to properly escape the string!
+     *
+     * @param string $library
      *
      * @return $this
      */
@@ -287,7 +289,7 @@ class jQuery_Chain extends AbstractModel
      * @param mixed $arg
      * @param bool $return_comma_list
      *
-     * @return mixed
+     * @return string
      */
     protected function _flattern_objects($arg, $return_comma_list = false)
     {
@@ -341,7 +343,7 @@ class jQuery_Chain extends AbstractModel
             $s = json_encode($arg);
         } else {
             throw $this->exception('Unable to encode value for jQuery Chain - unknown type')
-                ->addMoreInfo('arg', $arg);
+                ->addMoreInfo('arg', var_export($arg, true));
         }
 
         return $s;
