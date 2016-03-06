@@ -28,6 +28,8 @@ class Controller_Addon extends AbstractController
 
     public $location;
 
+    public $base_path; // ???
+
     public function init()
     {
         parent::init();
@@ -52,9 +54,10 @@ class Controller_Addon extends AbstractController
      */
     public function routePages($page_prefix)
     {
-        //if ($this->app instanceof App_Frontend) {
+        if ($this->app instanceof App_Frontend) {
+            /** @var App_Frontend $this->app */
             $this->app->routePages($page_prefix, $this->namespace);
-       // }
+        }
     }
 
     public function addAddonLocations($base_path)

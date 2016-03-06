@@ -226,16 +226,22 @@ class App_Frontend extends App_Web
                 /** @var View $i */
                 $i = $l->add('View');
                 $i->addClass('atk-align-center');
-                $i->add('H1')->set($e->getMessage());
+                /** @var H1 $h */
+                $h = $i->add('H1');
+                $h->set($e->getMessage());
 
                 if ($e instanceof Exception_Migration) {
-                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. '.
+                    /** @var P $p */
+                    $p = $i->add('P');
+                    $p->set('Hello and welcome to Agile Toolkit 4.3. '.
                         'Your project may require some minor tweaks before you can use 4.3.');
                 }
 
-                $b = $i->add('Button')->addClass('atk-swatch-green');
-                $b->set(array('Migration Guide', 'icon' => 'book'));
-                $b->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
+                /** @var Button $b */
+                $b = $i->add('Button');
+                $b->addClass('atk-swatch-green')
+                    ->set(array('Migration Guide', 'icon' => 'book'))
+                    ->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
 
                 if ($this->app->template && $this->app->template->hasTag('Layout')) {
                     $t = $this->app->template;

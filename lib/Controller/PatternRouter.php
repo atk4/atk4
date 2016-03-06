@@ -96,7 +96,7 @@ class Controller_PatternRouter extends AbstractController
      */
     public function setModel($model)
     {
-        /** @var Model */
+        /** @var Model $model */
         $model = parent::setModel($model);
 
         foreach ($model as $rule) {

@@ -102,7 +102,7 @@ class Controller_Data_Mongo extends Controller_Data
         }
 
         if ($model->loaded()) {
-            if (!$data) {
+            if (empty($data)) {
                 if ($model->debug) {
                     echo '<font style="color: blue">db.'.$model->table.' is not dirty</font>';
                 }
@@ -187,6 +187,9 @@ class Controller_Data_Mongo extends Controller_Data
 
         return $model->id;
     }
+    public function loadById($model, $id)
+    {
+    }
     public function loadAny($model)
     {
         $this->tryLoadAny($model);
@@ -233,6 +236,9 @@ class Controller_Data_Mongo extends Controller_Data
         $model->unload();
 
         return $this;
+    }
+    public function prefetchAll($model)
+    {
     }
     public function getRows($model)
     {

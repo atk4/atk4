@@ -228,7 +228,7 @@ class Controller_PageManager extends AbstractController
     {
         $chunks = explode('/', $path);
         array_pop($chunks);
-        if (!$chunks) {
+        if (empty($chunks)) {
             return '/';
         }
 

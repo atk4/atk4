@@ -58,7 +58,7 @@ class Lister extends View implements ArrayAccess
      */
     public $current_id = null;
 
-    
+
 
     /**
      * Similar to setModel, however you specify array of data here. setSource is
@@ -158,7 +158,7 @@ class Lister extends View implements ArrayAccess
      * If you use for formatting then interact with template->set() directly
      * prior to calling parent
      *
-     * @param SQLite $template template to use for row rendering
+     * @param Template $template template to use for row rendering
      *
      * @return string HTML of rendered template
      */

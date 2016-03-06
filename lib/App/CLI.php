@@ -135,9 +135,9 @@ class App_CLI extends AbstractView
 
     /**
      * If you want Agile Toolkit to be compatible with 4.2 version, include
-     * compatibility controller. For more information see:.
+     * compatibility controller.
      *
-     * @var bool
+     * @var bool|Controller_Compat42
      */
     public $compat_42 = false;
 
