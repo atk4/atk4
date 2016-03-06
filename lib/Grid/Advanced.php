@@ -178,7 +178,7 @@ class Grid_Advanced extends Grid_Basic
             return $this->quick_search;
         }
 
-        /** @var QuickSearch $this->quick_search */
+        /** @var QuickSearch */
         $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search');
         $this->quick_search
             ->useWith($this)

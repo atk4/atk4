@@ -214,10 +214,12 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      */
     public function addField($name, $alias = null)
     {
-        /** @var Field_Base $field */
         $field = $this->add($this->field_class, $name);
+        /** @var Field_Base $field */
+        $field = $field->actual($alias);
 
-        return $field->actual($alias);
+        /** @var Field_Base $field */
+        return $field;
     }
 
     /**
