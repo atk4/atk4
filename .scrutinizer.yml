@@ -23,4 +23,8 @@ checks:
         no_commented_out_code: false
         avoid_superglobals: false
         no_eval: false
-        unused_parameters: true
+        # it looks that this parameter has no effect on scrutinizer :(
+        unused_variables: false
+        unused_properties: false
+        unused_parameters: false
+        unused_methods: false
