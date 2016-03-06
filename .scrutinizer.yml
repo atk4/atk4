@@ -13,6 +13,13 @@ filter:
         - 'templates/*'
         - 'tests/*'
         - 'tools/*'
+#build_failure_conditions:
+#  - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse
+#  - 'elements.rating(<= D).new.exists'           # No new classes/methods with a rating of D or worse
+#  - 'issues.label("coding-style").exists'        # No coding style issues allowed
+#  - 'issues.label("coding-style").new.exists'    # No new coding style issues allowed
+#  - 'issues.severity(>= MAJOR).new.exists'       # New issues of major or higher severity
+#  - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 6
 checks:
     php:
         # Use custom PHPCS ruleset
@@ -23,8 +30,9 @@ checks:
         no_commented_out_code: false
         avoid_superglobals: false
         no_eval: false
-        # it looks that this paarameter has no effect on scrutinizer :(
+        # php analyzer thinks that unused method parameter is unused_variable not unused_parameter
         unused_variables: false
         unused_parameters: false
+        unused_properties: false
         unused_methods: true
-        unused_properties: true
+        # to be continued ...
