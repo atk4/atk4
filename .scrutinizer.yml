@@ -3,11 +3,23 @@ tools:
     php_pdepend: true
     php_analyzer: true
 filter:
+    # Folders which we will not check
     excluded_paths:
+        - 'cert/*'
+        - 'compat/*'
+        - 'doc/*'
+        - 'mail/*'
+        - 'public/*'
+        - 'templates/*'
         - 'tests/*'
+        - 'tools/*'
 checks:
     php:
+        # Use custom PHPCS ruleset
         custom_coding_standard:
             ruleset_path: phpcs_ruleset.xml
+        # Disable some of default checks
         security_vulnerabilities: false
         unused_parameters: false
+        no_commented_out_code: false
+        avoid_superglobals: false
