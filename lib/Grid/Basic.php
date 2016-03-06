@@ -42,6 +42,13 @@ class Grid_Basic extends CompleteLister
     /** @var string No records message. See setNoRecords() */
     protected $no_records_message = 'No matching records found';
 
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     /**
      * Initialization.
      */

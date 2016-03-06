@@ -86,15 +86,21 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 {
     // {{{ Setting Variables
 
-    /*
+    /**
      * This array contains list of all tags found inside template implementing
      * faster access when manipulating the template.
+     *
+     * @var array
      */
     public $tags = array();
+
+    public $top_tags; // looks unused, see cloneRegion()
 
     /**
      * This is a parsed contents of the template organized inside an array. This
      * structure makes it very simple to modify any part of the array.
+     *
+     * @var array
      */
     public $template = array();
 
@@ -102,9 +108,12 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
     /**
      * Settings are populated from the configuration file, if found.
+     *
+     * @var array
      */
     public $settings = array();
 
+    /** @var string */
     public $default_exception = 'Exception_Template';
 
     /**

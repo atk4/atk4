@@ -35,7 +35,7 @@ class Layout_Basic extends View
 
     // {{{ Inherited properties
 
-    /** @var App_Web */
+    /** @var App_Frontend */
     public $app;
 
     // }}}

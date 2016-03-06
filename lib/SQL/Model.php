@@ -441,7 +441,7 @@ class SQL_Model extends Model implements Serializable
             return $this;
         }
 
-        /** @var Field */
+        /** @var Field $field */
         $field = $this->getElement($name);
 
         return $field->ref($load);

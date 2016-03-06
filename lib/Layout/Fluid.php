@@ -9,44 +9,44 @@
 class Layout_Fluid extends Layout_Basic
 {
     /**
-     * Pointns to a user_menu object.
+     * Points to a user_menu object.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $user_menu;
 
     /**
      * Points to a footer, if initialized.
      *
-     * @var [type]
+     * @var View
      */
     public $footer;
 
     /**
      * Points to menu left-menu if initialized.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $menu;
 
     /**
      * Points to top menu.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $top_menu;
 
     /**
      * Undocumented.
      *
-     * @var [type]
+     * @var View
      */
     public $header;
 
     /**
      * Undocumented.
      *
-     * @var [type]
+     * @var View
      */
     public $header_wrap;
 
@@ -57,17 +57,15 @@ class Layout_Fluid extends Layout_Basic
 
     // }}}
 
-    public function defaultTemplate()
-    {
-        return array('layout/fluid');
-    }
-
+    /**
+     * Initializaction.
+     */
     public function init()
     {
         parent::init();
         if ($this->template->hasTag('UserMenu')) {
             if (isset($this->app->auth)) {
-                /** @var Menu_Horizontal */
+                /** @var Menu_Horizontal $this->user_menu */
                 $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu');
                 $this->user_menu->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
                 $this->user_menu->addItem('Logout', 'logout');
@@ -78,6 +76,13 @@ class Layout_Fluid extends Layout_Basic
         }
     }
 
+    /**
+     * Adds header.
+     *
+     * @param string $class
+     *
+     * @return View
+     */
     public function addHeader($class = 'Menu_Objective')
     {
         /** @var View */
@@ -88,13 +93,38 @@ class Layout_Fluid extends Layout_Basic
         return $this->header;
     }
 
+    /**
+     * Adds menu.
+     *
+     * @param string $class
+     * @param array $options
+     *
+     * @return Menu_Advanced
+     */
     public function addMenu($class = 'Menu_Vertical', $options = null)
     {
         return $this->menu = $this->add($class, $options, 'Main_Menu');
     }
 
+    /**
+     * Adds footer.
+     *
+     * @param string $class
+     *
+     * @return View
+     */
     public function addFooter($class = 'View')
     {
-        return $this->footer = $this->footer = $this->add($class, null, 'Footer_Content');
+        return $this->footer = $this->add($class, null, 'Footer_Content');
+    }
+
+    /**
+     * Default template.
+     *
+     * @return array|string
+     */
+    public function defaultTemplate()
+    {
+        return array('layout/fluid');
     }
 }

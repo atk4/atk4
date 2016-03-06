@@ -214,8 +214,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      */
     public function addField($name, $alias = null)
     {
-        return $this->add($this->field_class, $name)
-            ->actual($alias);
+        /** @var Field_Base $field */
+        $field = $this->add($this->field_class, $name);
+
+        return $field->actual($alias);
     }
 
     /**
@@ -232,6 +234,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if ($field_class === UNDEFINED) {
             $field_class = $this->defaultExpressionFieldClass;
         }
+        /** @var Field_Base $field */
         $field = $this->add($field_class, $name)
             ->setExpression($expression);
         $this->_expressions[$name] = $field;
@@ -304,6 +307,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             return $data;
         }
 
+        /** @var Field_Base $f */
         $f = $this->hasElement($name);
         if ($this->strict_fields && !$f) {
             throw $this->exception('No such field', 'Logic')
@@ -446,8 +450,11 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      */
     public function isDirty($name)
     {
+        /** @var Field_Base $field */
+        $field = $this->getElement($name);
+
         return $this->dirty[$name] ||
-            (!$this->loaded() && $this->getElement($name)->has_default_value);
+            (!$this->loaded() && $field->has_default_value);
     }
     // }}}
 
@@ -726,8 +733,8 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * Saves record with current controller. Ues $this->id as primary key. If
-     * not set, new record iscreated.
+     * Saves record with current controller. Uses $this->id as primary key.
+     * If not set, new record is created.
      */
     public function save()
     {
@@ -741,7 +748,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             }
 
             // No save needed, nothing was changed
-            if (!$source) {
+            if (empty($source)) {
                 return $this;
             }
 
@@ -775,12 +782,12 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Save model and don't try to load it back.
      */
-    public function saveAndUnload($id = UNDEFINED)
+    public function saveAndUnload()
     {
         // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
         // revert and make sure save() is not re-loading the record.
         // (performance)
-        $this->save($id);
+        $this->save();
         $this->unload();
 
         return $this;
@@ -795,7 +802,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     public function saveDelayedModels()
     {
-        if ($this->_save_later && $this->dirty) {
+        if ($this->_save_later && !empty($this->dirty)) {
             $this->saveAndUnload();
             $this->_save_later = false;
         }
@@ -1071,15 +1078,16 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Traverses reference of relation.
      *
-     * @param [type] $ref1 [description]
+     * @param string $ref1
      *
-     * @return [type] [description]
+     * @return Model
      */
     public function ref($ref1)
     {
         list($ref, $rest) = explode('/', $ref1, 2);
 
         if (!isset($this->_references[$ref])) {
+            /** @var Field_Base $e */
             $e = $this->hasElement($ref);
             if ($e && $e->hasMethod('ref')) {
                 return $e->ref();
@@ -1102,6 +1110,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             );
         } else { // hasOne
             $id = $this->get($ref);
+            /** @var Model $m */
             $m = $this->_ref(
                 $class,
                 null,
@@ -1120,6 +1129,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     private function _ref($class, $field, $val)
     {
+        /** @var Model $m */
         $m = $this->add($this->app->normalizeClassName($class, 'Model'));
 
         if ($field) { // HasMany

@@ -18,13 +18,16 @@ class Grid_Advanced extends Grid_Basic
     private $totals_title_field = null;
     private $totals_title = '';
 
-    /** Static data source? */
+
+
+    /** @var array Static data source? */
     public $data = null;
 
     /**
      * Paginator object.
      *
      * @see addPaginator()
+     * @var Paginator
      */
     public $paginator = null;
 
@@ -32,6 +35,7 @@ class Grid_Advanced extends Grid_Basic
      * Paginator class name.
      *
      * @see enablePaginator()
+     * @var string
      * */
     public $paginator_class = 'Paginator';
 
@@ -39,6 +43,7 @@ class Grid_Advanced extends Grid_Basic
      * QuickSearch object.
      *
      * @see addQuickSearch()
+     * @var QuickSearch
      */
     public $quick_search = null;
 
@@ -46,6 +51,7 @@ class Grid_Advanced extends Grid_Basic
      * QuickSearch class name.
      *
      * @see enableQuickSearch()
+     * @var string
      * */
     public $quick_search_class = 'QuickSearch';
 
@@ -70,6 +76,8 @@ class Grid_Advanced extends Grid_Basic
      *          )
      *      )
      * )
+     *
+     * @var array
      */
     protected $tdparam = array();
 
@@ -130,6 +138,7 @@ class Grid_Advanced extends Grid_Basic
             return $this->paginator;
         }
 
+        /** @var Paginator $this->paginator */
         $this->paginator = $this->add($class ?: $this->paginator_class, $options);
         $this->paginator->setRowsPerPage($rows);
 
@@ -169,7 +178,9 @@ class Grid_Advanced extends Grid_Basic
             return $this->quick_search;
         }
 
-        $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search')
+        /** @var QuickSearch $this->quick_search */
+        $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search');
+        $this->quick_search
             ->useWith($this)
             ->useFields($fields);
 
@@ -185,9 +196,10 @@ class Grid_Advanced extends Grid_Basic
      */
     public function addOrder()
     {
-        return $this->add('Order', 'columns')
-            ->useArray($this->columns)
-            ;
+        /** @var Order $o */
+        $o = $this->add('Order', 'columns');
+
+        return $o->useArray($this->columns);
     }
 
     /**
@@ -310,9 +322,9 @@ class Grid_Advanced extends Grid_Basic
     /**
      * Apply sorting on particular field.
      *
-     * @param Iterator $i
-     * @param string   $field
-     * @param string   $desc
+     * @param Iterator    $i
+     * @param string      $field
+     * @param string|bool $desc
      */
     public function applySorting($i, $field, $desc)
     {
@@ -381,7 +393,7 @@ class Grid_Advanced extends Grid_Basic
                 $this->executeFormatters($field, $column, 'format_totals_', true);
             } else {
                 // show empty cell if totals are not calculated for this column
-                @$this->current_row_html[$field] = '';
+                $this->current_row_html[$field] = '';
             }
 
             // totals title displaying
@@ -470,7 +482,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         // setting cell parameters (tdparam)
-        $tdparam = @$this->tdparam[$this->getCurrentIndex()][$field];
+        $tdparam = $this->tdparam[$this->getCurrentIndex()][$field];
         $tdparam_str = '';
         if (is_array($tdparam)) {
             if (is_array($tdparam['style'])) {
@@ -569,7 +581,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_totals_expander($field, $column)
     {
-        @$this->current_row_html[$field] = '';
+        $this->current_row_html[$field] = '';
     }
 
     /**
@@ -582,7 +594,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_totals_template($field, $column)
     {
-        @$this->current_row_html[$field] = '';
+        $this->current_row_html[$field] = '';
     }
 
     /**
@@ -595,7 +607,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_totals_checkbox($field, $column)
     {
-        @$this->current_row_html[$field] = '';
+        $this->current_row_html[$field] = '';
     }
 
     /**
@@ -608,7 +620,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_totals_delete($field, $column)
     {
-        @$this->current_row_html[$field] = '';
+        $this->current_row_html[$field] = '';
     }
 
     // }}}
@@ -623,7 +635,7 @@ class Grid_Advanced extends Grid_Basic
     public function init_expander($field)
     {
         // set column style
-        @$this->columns[$field]['thparam'] .= ' style="width:40px; text-align:center"';
+        $this->columns[$field]['thparam'] .= ' style="width:40px; text-align:center"';
 
         // set column refid - referenced model table for example
         if (!isset($this->columns[$field]['refid'])) {
@@ -657,7 +669,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_expander($field, $column)
     {
-        if (!@$this->current_row[$field]) {
+        if (!$this->current_row[$field]) {
             $this->current_row[$field] = $column['descr'];
         }
 
@@ -669,7 +681,7 @@ class Grid_Advanced extends Grid_Basic
         $id = $key.$this->app->normalizeName($this->model->id);
         $class = $key.'expander';
 
-        @$this->current_row_html[$field] =
+        $this->current_row_html[$field] =
             '<input type="checkbox" '.
                 'class="'.$class.'" '.
                 'id="'.$id.'" '.
@@ -717,7 +729,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function init_float($field)
     {
-        @$this->columns[$field]['thparam'] .= ' style="text-align: right"';
+        $this->columns[$field]['thparam'] .= ' style="text-align: right"';
     }
 
     /**
@@ -754,7 +766,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function init_money($field)
     {
-        @$this->columns[$field]['thparam'] .= ' style="text-align: right"';
+        $this->columns[$field]['thparam'] .= ' style="text-align: right"';
     }
 
     /**
@@ -780,7 +792,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function init_boolean($field)
     {
-        @$this->columns[$field]['thparam'] .= ' style="text-align: center"';
+        $this->columns[$field]['thparam'] .= ' style="text-align: center"';
     }
 
     /**
@@ -892,7 +904,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function init_fullwidth($field)
     {
-        @$this->columns[$field]['thparam'] .= ' style="width: 100%"';
+        $this->columns[$field]['thparam'] .= ' style="width: 100%"';
     }
 
     /**
@@ -1013,7 +1025,7 @@ class Grid_Advanced extends Grid_Basic
             ));
 
         /*
-        @$this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
+        $this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
         $this->js(true)->find('.button_'.$field)->button();
         */
     }
@@ -1039,7 +1051,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function init_prompt($field)
     {
-        @$this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
+        $this->columns[$field]['thparam'] .= ' style="width: 40px; text-align: center"';
         //$this->js(true)->find('.button_'.$field)->button();
     }
 
@@ -1075,6 +1087,7 @@ class Grid_Advanced extends Grid_Basic
     {
         return $this->format_button($field);
 
+        /* unreachable code
         $url = clone $this->_url[$field];
         $class = $this->columns[$field]['button_class'].' button_'.$field;
         $icon = isset($this->columns[$field]['icon'])
@@ -1093,6 +1106,7 @@ class Grid_Advanced extends Grid_Basic
                 $icon.
                 $this->columns[$field]['descr'].
             '</button>';
+        */
     }
 
     /**
@@ -1134,7 +1148,7 @@ class Grid_Advanced extends Grid_Basic
         $this->columns[$field]['icon'] = 'trash';
 
         // if this was clicked, then delete record
-        if ($id = @$_GET[$this->name.'_'.$field]) {
+        if ($id = $_GET[$this->name.'_'.$field]) {
 
             // delete record
             $this->_performDelete($id);
@@ -1199,8 +1213,10 @@ class Grid_Advanced extends Grid_Basic
         if ($field === null) {
             $field = $this->last_column;
         }
-        $this->columns[$field]['template'] = $this->add('GiTemplate')
-            ->loadTemplateFromString($template);
+
+        /** @var GiTemplate $gi */
+        $gi = $this->add('GiTemplate');
+        $this->columns[$field]['template'] = $gi->loadTemplateFromString($template);
 
         return $this;
     }
