@@ -212,7 +212,7 @@ class View extends AbstractView
      * affect components of this widget and possibly assign
      * icon
      *
-     * @param string $text Text
+     * @param string|array $text Text
      *
      * @return $this
      */
