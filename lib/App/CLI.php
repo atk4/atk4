@@ -343,11 +343,11 @@ class App_CLI extends AbstractView
     /**
      * Find relative path to the resource respective to the current directory.
      *
-     * @param string $type     [description]
-     * @param string $filename [description]
-     * @param string $return   [description]
+     * @param string $type
+     * @param string $filename
+     * @param string $return
      *
-     * @return [type] [description]
+     * @return string|object|array
      */
     public function locate($type, $filename = '', $return = 'relative')
     {
@@ -357,10 +357,10 @@ class App_CLI extends AbstractView
     /**
      * Calculate URL pointing to specified resource.
      *
-     * @param string $type     [description]
-     * @param string $filename [description]
+     * @param string $type
+     * @param string $filename
      *
-     * @return [type] [description]
+     * @return string|object|array
      */
     public function locateURL($type, $filename = '')
     {
@@ -370,10 +370,10 @@ class App_CLI extends AbstractView
     /**
      * Return full system path to specified resource.
      *
-     * @param string $type     [description]
-     * @param string $filename [description]
+     * @param string $type
+     * @param string $filename
      *
-     * @return [type] [description]
+     * @return string|object|array
      */
     public function locatePath($type, $filename = '')
     {
@@ -383,10 +383,10 @@ class App_CLI extends AbstractView
     /**
      * Add new location with additional resources.
      *
-     * @param [type] $contents [description]
-     * @param [type] $obsolete [description]
+     * @param array $contents
+     * @param mixed $obsolete
      *
-     * @return [type]
+     * @return PathFinder_Location
      */
     public function addLocation($contents, $obsolete = UNDEFINED)
     {
@@ -403,7 +403,7 @@ class App_CLI extends AbstractView
      *
      * @see URL::useAbsoluteURL()
      *
-     * @return [type]
+     * @return string
      */
     public function getBaseURL()
     {
@@ -413,10 +413,10 @@ class App_CLI extends AbstractView
     /**
      * Generates URL for specified page. Useful for building links on pages or emails. Returns URL object.
      *
-     * @param [type] $page      [description]
-     * @param array  $arguments [description]
+     * @param mixed $page
+     * @param array $arguments
      *
-     * @return [type] [description]
+     * @return URL
      */
     public function url($page = null, $arguments = array())
     {
@@ -430,7 +430,7 @@ class App_CLI extends AbstractView
             $arguments = $page;
             $page = $p;
         }
-        /** @var URL */
+        /** @var URL $url */
         $url = $this->add('URL');
         unset($this->elements[$url->short_name]); // garbage collect URLs
         if (strpos($page, 'http://') === 0 || strpos($page, 'https://') === 0) {
@@ -583,8 +583,8 @@ class App_CLI extends AbstractView
     /**
      * Manually set configuration option.
      *
-     * @param array  $config [description]
-     * @param [type] $val    [description]
+     * @param array $config
+     * @param mixed $val
      */
     public function setConfig($config = array(), $val = UNDEFINED)
     {
@@ -713,7 +713,7 @@ class App_CLI extends AbstractView
      */
     public function dbConnect($dsn = null)
     {
-        /** @var DB */
+        /** @var DB $db */
         $this->db = $this->add('DB');
 
         return $this->db->connect($dsn);

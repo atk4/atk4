@@ -881,11 +881,12 @@ abstract class AbstractObject
             $arg = array();
         }
 
-        try {
-            if (isset($this->hooks[$hook_spot])) {
-                if (is_array($this->hooks[$hook_spot])) {
-                    krsort($this->hooks[$hook_spot]); // lower priority is called sooner
-                    $hook_backup = $this->hooks[$hook_spot];
+        if (isset($this->hooks[$hook_spot])) {
+            if (is_array($this->hooks[$hook_spot])) {
+                krsort($this->hooks[$hook_spot]); // lower priority is called sooner
+                $hook_backup = $this->hooks[$hook_spot];
+                    
+                try {
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
                         foreach ($_data as $prio => &$data) {
 
@@ -924,13 +925,15 @@ abstract class AbstractObject
                         }
                     }
 
+                } catch (Exception_Hook $e) {
+                    /** @var Exception_Hook $e */
                     $this->hooks[$hook_spot] = $hook_backup;
-                }
-            }
-        } catch (Exception_Hook $e) {
-            $this->hooks[$hook_spot] = $hook_backup;
 
-            return $e->return_value;
+                    return $e->return_value;
+                }
+                
+                $this->hooks[$hook_spot] = $hook_backup;
+            }
         }
 
         return $return;
@@ -1141,6 +1144,8 @@ abstract class AbstractObject
      *
      * $test will be an array containing keys for 'name', 'object' and
      * 'class'
+     *
+     * @param Tester $tester
      */
     public function runTests(Tester $tester = null)
     {
@@ -1157,7 +1162,7 @@ abstract class AbstractObject
                 continue;
             }
 
-            if ($tester) {
+            if ($tester !== null) {
                 /** @var Model $r */
                 $r = $tester->results;
                 $r->unload();
@@ -1181,7 +1186,7 @@ abstract class AbstractObject
                 $ticks = $this->_ticks;
 
                 if ($e instanceof Exception_SkipTests) {
-                    if ($tester) {
+                    if ($tester !== null) {
                         $r['exception'] = 'SKIPPED';
                         $r->saveAndUnload();
                     }
@@ -1191,7 +1196,7 @@ abstract class AbstractObject
                         );
                 }
 
-                if ($tester) {
+                if ($tester !== null) {
                     $r['time'] = $time;
                     $r['memory'] = $memory;
                     $r['ticks'] = $ticks;
@@ -1208,7 +1213,7 @@ abstract class AbstractObject
             $memory = (memory_get_peak_usage()) - $me;
             $ticks = $this->_ticks - 3;     // there are always minimum of 3 ticks
 
-            if ($tester) {
+            if ($tester !== null) {
                 $r['time'] = $time;
                 $r['memory'] = $memory;
                 $r['ticks'] = $ticks;
@@ -1218,6 +1223,7 @@ abstract class AbstractObject
             }
         }
     }
+
     private $_ticks;
     public function _ticker()
     {

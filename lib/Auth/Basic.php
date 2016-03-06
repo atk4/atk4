@@ -118,6 +118,7 @@ class Auth_Basic extends AbstractController
 
             return $this;
         }
+        /** @var Model $m */
         $m = $this->add('Model')
             ->setSource('Array', array(
                 is_array($user)
@@ -784,14 +785,14 @@ class Auth_Basic extends AbstractController
      */
     public function createForm($page)
     {
-        /** @var Form */
+        /** @var Form $form */
         $form = $page->add('Form', null, null, array('form/minimal'));
 
-        /** @var Field */
+        /** @var Field $email */
         $email = $this->model->hasField($this->login_field);
         $email = $email ? $email->caption() : 'E-mail';
 
-        /** @var Field */
+        /** @var Field $password */
         $password = $this->model->hasField($this->password_field);
         $password = $password ? $password->caption() : 'Password';
 

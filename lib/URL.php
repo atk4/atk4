@@ -168,7 +168,13 @@ http://mysite:123/install/dir/my/page.html
         return $this->arguments[$argument];
     }
 
-    /** Set arguments to specified array */
+    /**
+     * Set arguments to specified array.
+     *
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function setArguments($arguments = array())
     {
         // add additional arguments

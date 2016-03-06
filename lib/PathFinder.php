@@ -286,6 +286,11 @@ class PathFinder extends AbstractController
      * Cretes new PathFinder_Location object and specifies it's contents.
      * You can subsequentially add more contents by calling:
      * :php:meth:`PathFinder_Location::defineContents`.
+     *
+     * @param array $contents
+     * @param mixed $old_contents
+     *
+     * @return PathFinder_Location
      */
     public function addLocation($contents = array(), $old_contents = null)
     {
@@ -588,6 +593,11 @@ class PathFinder_Location extends AbstractModel
         return $this;
     }
 
+    /**
+     * @param array $contents
+     *
+     * @return $this
+     */
     public function defineContents($contents)
     {
         $this->contents = @array_merge_recursive($this->contents, $contents);

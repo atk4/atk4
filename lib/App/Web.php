@@ -82,7 +82,7 @@ class App_Web extends App_CLI
      */
     public function _beforeInit()
     {
-        /** @var Controller_PageManager */
+        /** @var Controller_PageManager $this->pm */
         $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
         $this->pm->parseRequestedURL();
         parent::_beforeInit();
@@ -185,9 +185,11 @@ class App_Web extends App_CLI
     {
         $this->hook('caught-exception', array($e));
         throw $e;
+        /* unreachable code
         echo '<span style="color:red">Problem with your request.</span>';
         echo "<p>Please use 'Logger' class for more sophisticated output<br>\$app-&gt;add('Logger');</p>";
         exit;
+        */
     }
 
     /**

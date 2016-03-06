@@ -203,7 +203,7 @@ class App_Admin extends App_Frontend
             include $init_class_path;
             $class_name = str_replace('/', '\\', $addon->get('name').'\\Initiator');
             
-            /** @var Controller_Addon */
+            /** @var Controller_Addon $init */
             $init = $this->add($class_name, array(
                     'addon_obj' => $addon,
                     'base_path' => $base_path,

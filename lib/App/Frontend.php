@@ -138,7 +138,7 @@ class App_Frontend extends App_Web
                             continue;
                         }
 
-                        /** @var Page */
+                        /** @var Page $this->page_object */
                         $this->page_object = $layout->add($in, $page);
                         if (method_exists($tmp, $fn)) {
                             $this->page_object->$fn();
@@ -161,7 +161,7 @@ class App_Frontend extends App_Web
             }
 
             // i wish they implemented "finally"
-            /** @var Page */
+            /** @var Page $this->page_object */
             $this->page_object = $layout->add($ns.$class, $page, 'Content');
             if (method_exists($this->page_object, 'initMainPage')) {
                 $this->page_object->initMainPage();
@@ -223,7 +223,9 @@ class App_Frontend extends App_Web
                    ->setCDN('http://www.agiletoolkit.org/');
 
                 $l = $this->app->add('Layout_Basic', null, null, array('layout/installer'));
-                $i = $l->add('View')->addClass('atk-align-center');
+                /** @var View $i */
+                $i = $l->add('View');
+                $i->addClass('atk-align-center');
                 $i->add('H1')->set($e->getMessage());
 
                 if ($e instanceof Exception_Migration) {
@@ -238,7 +240,7 @@ class App_Frontend extends App_Web
                 if ($this->app->template && $this->app->template->hasTag('Layout')) {
                     $t = $this->app->template;
                 } else {
-                    /** @var GiTemplate */
+                    /** @var GiTemplate $t */
                     $t = $this->add('GiTemplate');
                     $t->loadTemplate('html');
                 }

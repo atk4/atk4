@@ -30,6 +30,7 @@ checks:
         no_commented_out_code: false
         avoid_superglobals: false
         no_eval: false
+        no_exit: false
         # too_many_arguments: false
         # php analyzer thinks that unused method parameter is unused_variable and unused_method not unused_parameter
         unused_variables: false
