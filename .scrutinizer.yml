@@ -23,8 +23,8 @@ checks:
         no_commented_out_code: false
         avoid_superglobals: false
         no_eval: false
-        # it looks that this parameter has no effect on scrutinizer :(
-        unused_variables: false
+        # it looks that this paarameter has no effect on scrutinizer :(
+        unused_variables: true
+        unused_methods: true
         unused_properties: false
         unused_parameters: false
-        unused_methods: false
