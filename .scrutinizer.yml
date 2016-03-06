@@ -25,14 +25,15 @@ checks:
         # Use custom PHPCS ruleset
         custom_coding_standard:
             ruleset_path: phpcs_ruleset.xml
-        # Disable some of default checks
+        # Disable some checks which we allow in our project
         security_vulnerabilities: false
         no_commented_out_code: false
         avoid_superglobals: false
         no_eval: false
-        # php analyzer thinks that unused method parameter is unused_variable not unused_parameter
+        # too_many_arguments: false
+        # php analyzer thinks that unused method parameter is unused_variable and unused_method not unused_parameter
         unused_variables: false
         unused_parameters: false
         unused_properties: false
-        unused_methods: true
+        unused_methods: false
         # to be continued ...
