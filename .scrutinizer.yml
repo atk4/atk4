@@ -3,7 +3,7 @@ tools:
     php_pdepend: true
     php_analyzer: true
 filter:
-    # Folders which we will not check
+    # Folders which we should not check
     excluded_paths:
         - 'cert/*'
         - 'compat/*'
@@ -23,3 +23,4 @@ checks:
         unused_parameters: false
         no_commented_out_code: false
         avoid_superglobals: false
+        no_eval: false

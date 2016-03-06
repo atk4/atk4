@@ -485,7 +485,9 @@ class App_CLI extends AbstractView
         exit;
     }
 
-    /** @obsolete */
+    /**
+     * @deprecated 4.3.2
+     */
     public function outputWarning($msg, $shift = 0)
     {
         if ($this->hook('output-warning', array($msg, $shift))) {
@@ -494,7 +496,9 @@ class App_CLI extends AbstractView
         echo "warning: $msg\n";
     }
 
-    /** @obsolete */
+    /**
+     * @deprecated 4.3.2
+     */
     public function outputDebug($object, $msg, $shift = 0)
     {
         if ($this->hook('output-debug', array($object, $msg, $shift))) {

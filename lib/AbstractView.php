@@ -201,7 +201,7 @@ abstract class AbstractView extends AbstractObject
 
             if (is_object($template_branch)) {
                 // it might be already template instance (object)
-                /** @var Template */
+                /** @var Template $this->template */
                 $this->template = $template_branch;
             } elseif (is_array($template_branch)) {
                 // it might be array with [0]=template, [1]=tag
@@ -210,23 +210,23 @@ abstract class AbstractView extends AbstractObject
                     /** @var Template */
                     $this->template = $template_branch[0];
                 } else {
-                    /** @var Template */
+                    /** @var Template $this->template */
                     $this->template = $this->app->add('Template');
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
-                /** @var Template */
+                /** @var Template $this->template */
                 $this->template = $this->template->cloneRegion(
                     isset($template_branch[1]) ? $template_branch[1] : '_top'
                 );
             } else {
                 // brach could be just a string - a region to clone off parent
                 if (isset($this->owner->template)) {
-                    /** @var Template */
+                /** @var Template $this->template */
                     $this->template
                         = $this->owner->template->cloneRegion($template_branch);
                 } else {
-                    /** @var Template */
+                /** @var Template $this->template */
                     $this->template = $this->add('Template');
                 }
             }
@@ -619,10 +619,11 @@ abstract class AbstractView extends AbstractObject
         }
 
         if (is_callable($js)) {
-            /** @var VirtualPage */
+            /** @var VirtualPage $p */
             $p = $this->add('VirtualPage');
 
             $p->set(function ($p) use ($js) {
+                /** @var VirtualPage $p */
                 // $js is an actual callable
                 $js2 = $p->js()->_selectorRegion();
 

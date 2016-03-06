@@ -527,6 +527,8 @@ abstract class AbstractObject
      */
     public function memorize($key, $value)
     {
+        /** @var App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession();
         }
@@ -554,6 +556,8 @@ abstract class AbstractObject
      */
     public function learn($key, $default = null)
     {
+        /** @var App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -581,6 +585,8 @@ abstract class AbstractObject
      */
     public function forget($key = null)
     {
+        /** @var App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -612,6 +618,8 @@ abstract class AbstractObject
      */
     public function recall($key, $default = null)
     {
+        /** @var App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -717,8 +725,8 @@ abstract class AbstractObject
     }
 
     /**
-     * Turns on debug mode for this object. Using first argument as string
-     * is obsolete.
+     * Turns on debug mode for this object.
+     * Using first argument as string is obsolete.
      *
      * @param bool|string $msg  "true" to start debugging
      * @param string      $file obsolete
@@ -740,7 +748,7 @@ abstract class AbstractObject
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
         ) {
-            $this->app->outputDebug($this, $msg, $file, $line);
+            $this->app->outputDebug($this, $msg, $file/*, $line*/);
         }
     }
 
@@ -1150,7 +1158,7 @@ abstract class AbstractObject
             }
 
             if ($tester) {
-                /** @var Model */
+                /** @var Model $r */
                 $r = $tester->results;
                 $r->unload();
                 $r->set($test);
