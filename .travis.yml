@@ -9,7 +9,7 @@ before_script:
 
 script:
   # Code sniffer
-  - phpcs --extensions=php --standard=phpcs.xml ./lib
+  - phpcs --extensions=php --standard=phpcs_ruleset.xml ./lib
   - echo "Framework Tested."
 
 
