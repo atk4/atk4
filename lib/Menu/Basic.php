@@ -74,10 +74,16 @@ class Menu_Basic extends CompleteLister
 
         return $this;
     }
+    /**
+     * @param string $label
+     *
+     * @return Menu_jUI
+     */
     public function addSubMenu($label)
     {
         // we use MenuSeparator tag here just to put View_Popover outside of UL list.
         // Otherwise it breaks correct HTML and CSS.
+        /** @var View_Popover $f */
         $f = $this->add('View_Popover');
         $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($this->items)), $label);
 

@@ -335,7 +335,7 @@ if (!defined('PASSWORD_BCRYPT')) {
         }
 
         $status = 0;
-        for ($i = 0; $i < strlen($ret); ++$i) {
+        for ($i = 0, $len = strlen($ret); $i < $len; ++$i) {
             $status |= (ord($ret[$i]) ^ ord($hash[$i]));
         }
 

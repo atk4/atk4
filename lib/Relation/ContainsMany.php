@@ -33,9 +33,9 @@ class Relation_ContainsMany extends Field
             call_user_func($model, $model = $this->add('Model'));
         } elseif (is_string($model)) {
             $model = $this->app->normalizeClassName($model, 'Model');
-
             $model = $this->add($model);
         }
+        /** @var Model $model */
 
         $data = $this->owner[$this->short_name] ?: [];
 

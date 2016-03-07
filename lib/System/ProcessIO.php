@@ -255,7 +255,7 @@ class System_ProcessIO extends AbstractModel
     /**
      * Set "nice" value for the process.
      *
-     * @param [type] $nice Nice level 0 .. 20
+     * @param int $nice Nice level 0 .. 20
      */
     public function nice($nice)
     {

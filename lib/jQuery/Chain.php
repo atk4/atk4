@@ -1,20 +1,15 @@
 <?php
 /**
- * This class represents sequentall calls to one jQuery object.
+ * This class represents sequential calls to one jQuery object.
  *
- * jQuery chain proxy. Returned by view->js(). Calls to this
- * class will be converted into jQuery calls.
+ * jQuery chain proxy. Returned by view->js().
+ * Calls to this class will be converted into jQuery calls.
  *
  * Feel free to call _XX functions in this class.
  *
- * There are some of JS functions which you can call directly from this class:
+ * There are some of JS functions which you can call directly from this class.
+ * You can call any jQuery function. We name them here just to pass PHP Analyzer checks.
  * @method jQuery_Chain alert()
- * @method jQuery_Chain successMessage()
- * @method jQuery_Chain errorMessage()
- * @method jQuery_Chain frameURL()
- * @method jQuery_Chain consoleError()
- * @method jQuery_Chain dialogError()
- * @method jQuery_Chain ajaxec()
  * @method jQuery_Chain on()
  * @method jQuery_Chain val()
  * @method jQuery_Chain attr()
@@ -24,13 +19,23 @@
  * @method jQuery_Chain find()
  * @method jQuery_Chain select()
  * @method jQuery_Chain focus()
+ * @method jQuery_Chain css()
+ * @method jQuery_Chain change()
  * @method jQuery_Chain trigger()
+ * @method jQuery_Chain location()
  *
+ * @method jQuery_Chain ajaxec()
+ * @method jQuery_Chain successMessage()
+ * @method jQuery_Chain errorMessage()
+ * @method jQuery_Chain consoleError()
+ * @method jQuery_Chain dialogError()
+ * @method jQuery_Chain frameURL()
  * @method jQuery_Chain atk4_checkboxes()
  * @method jQuery_Chain atk4_expander()
  * @method jQuery_Chain atk4_uploader()
  * @method jQuery_Chain selectmenu()
  * @method jQuery_Chain datepicker()
+ * @method jQuery_Chain button()
  * @method jQuery_Chain slider()
  * @method jQuery_Chain spinner()
  */

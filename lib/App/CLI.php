@@ -713,8 +713,8 @@ class App_CLI extends AbstractView
      */
     public function dbConnect($dsn = null)
     {
-        /** @var DB $db */
         $this->db = $this->add('DB');
+        /** @var DB $this->db */
 
         return $this->db->connect($dsn);
     }

@@ -15,7 +15,7 @@ class View_Button extends View
 
     /** @var string jQuery-UI class for active (selected) button */
     public $js_active_class = 'ui-state-highlight';
-    
+
     /** @var string jQuery-UI class for triangle, down arrow button */
     public $js_triangle_class = 'ui-icon-triangle-1-s';
 
@@ -163,7 +163,7 @@ class View_Button extends View
     public function addPopover($js_options = null, $class_options = null)
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
-        
+
         /** @var View_Popover */
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
 
@@ -193,7 +193,7 @@ class View_Button extends View
 
         /** @var Button */
         $but = $this->owner->add('Button', array('options' => $options), $this->spot);
-        
+
         /** @var Order */
         $order = $this->owner->add('Order');
         $order->move($but, 'after', $this)->now();

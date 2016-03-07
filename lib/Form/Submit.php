@@ -9,6 +9,7 @@
  */
 class Form_Submit extends Button
 {
+    /** @var null|bool */
     public $no_save = null;
 
     public $form;

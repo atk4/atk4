@@ -53,13 +53,20 @@ class Menu_Objective extends View
         return $li;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
     public function addSubMenu($name)
     {
         /** @var View $li */
         $li = $this->add('View');
         $li->setElement('li');
         
-        $li->add('Text')->set($name);
+        /** @var Text $t */
+        $t = $li->add('Text');
+        $t->set($name);
 
         return $li
             ->add(get_class($this));
