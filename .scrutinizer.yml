@@ -29,6 +29,7 @@ checks:
         security_vulnerabilities: false
         no_commented_out_code: false
         avoid_superglobals: false
+        too_many_arguments: false
         no_eval: false
         no_exit: false
         # too_many_arguments: false
