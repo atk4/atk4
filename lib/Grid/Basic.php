@@ -69,7 +69,7 @@ class Grid_Basic extends CompleteLister
     /**
      * Adds button.
      *
-     * @param string $label label of button
+     * @param string|array $label label of button
      * @param string $class optional name of button class
      *
      * @return Button

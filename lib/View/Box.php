@@ -28,7 +28,10 @@ class View_Box extends View
      */
     public function addIcon($i)
     {
-        return $this->add('Icon', null, 'Icon')->set($i)->addClass('atk-size-mega');
+        /** @var Icon $icon */
+        $icon = $this->add('Icon', null, 'Icon');
+
+        return $icon->set($i)->addClass('atk-size-mega');
     }
 
     /**
@@ -44,8 +47,10 @@ class View_Box extends View
             $label = array($label, 'icon-r' => 'right-big');
         }
 
-        return $this->add('Button', null, 'Button')
-            ->set($label);
+        /** @var Button $button */
+        $button = $this->add('Button', null, 'Button');
+
+        return $button->set($label);
     }
 
     /**
@@ -72,7 +77,9 @@ class View_Box extends View
         }
 
         $self = $this;
-        $this->add('Icon', null, 'Button')
+        /** @var Icon $icon */
+        $icon = $this->add('Icon', null, 'Button');
+        $icon
             ->addComponents(array('size' => 'mega'))
             ->set('cancel-1')
             ->addStyle(array('cursor' => 'pointer'))

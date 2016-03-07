@@ -286,6 +286,7 @@ class App_Web extends App_CLI
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
     public $sticky_get_arguments = array();
+
     /**
      * Make current get argument with specified name automatically appended to all generated URLs.
      *

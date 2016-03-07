@@ -34,7 +34,9 @@ class View_Popover extends View
      */
     public function set($fx)
     {
-        $p = $this->add('VirtualPage')->set($fx);
+        /** @var VirtualPage $p */
+        $p = $this->add('VirtualPage');
+        $p->set($fx);
 
         $this->setURL($p->getURL());
 
@@ -121,7 +123,7 @@ class View_Popover extends View
 }
 
 /**
- * Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array
+ * Deep array extend: http://stackoverflow.com/questions/12725113/php-deep-extend-array.
  *
  * @todo: merge JS chains by putting them into combined chain.
  *

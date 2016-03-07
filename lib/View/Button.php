@@ -164,7 +164,7 @@ class View_Button extends View
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
 
-        /** @var View_Popover */
+        /** @var View_Popover $popover */
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
 
         $this->js('click', $popover->showJS($this, $js_options));
@@ -191,10 +191,10 @@ class View_Button extends View
             $options ?: array()
         );
 
-        /** @var Button */
+        /** @var Button $but */
         $but = $this->owner->add('Button', array('options' => $options), $this->spot);
 
-        /** @var Order */
+        /** @var Order $order */
         $order = $this->owner->add('Order');
         $order->move($but, 'after', $this)->now();
 
@@ -227,8 +227,8 @@ class View_Button extends View
         $this->options['icons']['secondary'] = $this->js_triangle_class;
 
         // add menu
-        /** @var Menu_jUI */
         $this->menu = $this->owner->add($this->menu_class, $options, $this->spot);
+        /** @var Menu_jUI $this->menu */
         $this->menu->addStyle('display', 'none');
 
         // show/hide menu on button click
@@ -337,13 +337,15 @@ class View_Button extends View
             $title = $this->template->get('Content');
         }
 
-        /** @var VirtualPage */
-        $this->virtual_page = $this->add('VirtualPage', ['type' => 'frameURL'])->bindEvent($title);
-        $this->virtual_page->set(function ($p) use ($callback) {
-            /** @var View_Console */
-            $console = $p->add('View_Console');
-            $console->set($callback);
-        });
+        $this->virtual_page = $this->add('VirtualPage', ['type' => 'frameURL']);
+        /** @var VirtualPage $this->virtual_page */
+        $this->virtual_page
+            ->bindEvent($title)
+            ->set(function ($p) use ($callback) {
+                /** @var View_Console $console */
+                $console = $p->add('View_Console');
+                $console->set($callback);
+            });
     }
     // }}}
 }

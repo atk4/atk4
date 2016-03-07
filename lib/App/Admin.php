@@ -98,7 +98,7 @@ class App_Admin extends App_Frontend
      */
     public function initTopMenu()
     {
-        /** @var Menu_Horizontal */
+        /** @var Menu_Horizontal $m */
         $m = $this->layout->add('Menu_Horizontal', null, 'Top_Menu');
         //$m->addClass('atk-size-kilo');
         $m->addItem('Admin', '/');

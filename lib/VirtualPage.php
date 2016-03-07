@@ -186,13 +186,14 @@ class VirtualPage extends AbstractController
         // Remove original page
         $this->app->page_object->destroy(false);
 
-        /** @var Page $this->page */
-        $this->app->page_object = $this->page = $this->app->add(
+        $this->page = $this->app->add(
             $this->page_class,
             $this->name,
             null,
             $this->page_template
         );
+        /** @var Page $this->page */
+        $this->app->page_object = $this->page;
         $this->app->stickyGET($this->name);
 
         return $this->page;

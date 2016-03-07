@@ -304,8 +304,8 @@ abstract class AbstractObject
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
             if (!$class->app) {
-                $class->api = // compatibility with ATK 4.2 and lower
-                    $class->app = $this->app;
+                $class->app = $this->app;
+                $class->api = $this->app; // compatibility with ATK 4.2 and lower
             }
             $class->short_name = $this->_unique_element($class->short_name);
             $class->name = $this->_shorten($this->name.'_'.$class->short_name);
@@ -379,8 +379,8 @@ abstract class AbstractObject
         }
 
         $element->owner = $this;
-        $element->api = // compatibility with ATK 4.2 and lower
-            $element->app = $this->app;
+        $element->app = $this->app;
+        $element->api = $this->app; // compatibility with ATK 4.2 and lower
         $element->name = $this->_shorten($this->name.'_'.$short_name);
         $element->short_name = $short_name;
 
@@ -677,7 +677,7 @@ abstract class AbstractObject
         }
         $e->owner = $this;
         $e->app = $this->app;
-        $e->api = $e->app; // compatibility with ATK 4.2 and lower
+        $e->api = $this->app; // compatibility with ATK 4.2 and lower
         $e->init();
 
         return $e;
@@ -948,6 +948,7 @@ abstract class AbstractObject
      */
     public function breakHook($return)
     {
+        /** @var Exception_Hook $e */
         $e = $this->exception(null, 'Hook');
         $e->return_value = $return;
         throw $e;

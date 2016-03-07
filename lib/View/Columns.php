@@ -25,6 +25,7 @@
 class View_Columns extends View
 {
     public $mode = 'auto';      // 'auto', 'grid' or 'pct'
+    
     /**
      * Adds new column to the set.
      * Argument can be numeric for 12GS, percent for flexi design or omitted for equal columns.
@@ -35,7 +36,7 @@ class View_Columns extends View
      */
     public function addColumn($width = 'auto')
     {
-        /** @var View */
+        /** @var View $c */
         $c = $this->add('View');
         if (is_numeric($width)) {
             $this->mode = 'grid';

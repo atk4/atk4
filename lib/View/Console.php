@@ -201,7 +201,7 @@ class View_Console extends \View
                     $c = $this;
                     ob_start([$this, '_out'], 1);
 
-                    $this->addHook('afterAdd', $this);
+                    $this->addHook('afterAdd', array($this, 'afterAdd'));
 
                     call_user_func($this->callback, $this);
                     ob_end_flush();
