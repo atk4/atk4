@@ -26,6 +26,7 @@ class Page_Tester extends Page
             return;    // used for multi-page testing
         }
         $this->grid = $this->add('Grid');
+        /** @var Grid $this->grid */
         $this->grid->addColumn('template', 'name')
             ->setTemplate('<a href="'.$this->app->url(null, array('testonly' => '')).'<?$name?>"><?$name?></a>');
 

@@ -184,22 +184,38 @@ abstract class Form_Field extends AbstractView
 
     /** Will enable field wrappin inside a atk-cells/atk-cell block */
     public $_use_cells = false;
+    /**
+     * @return View
+     */
     public function beforeField()
     {
         $this->_use_cells = true;
+        /** @var View $v */
+        $v = $this->add('View', null, 'before_field');
 
-        return $this->add('View', null, 'before_field')->addClass('atk-cell');
+        return $v->addClass('atk-cell');
     }
+    /**
+     * @return View
+     */
     public function afterField()
     {
         $this->_use_cells = true;
+        /** @var View $v */
+        $v = $this->add('View', null, 'after_field');
 
-        return $this->add('View', null, 'after_field')->addClass('atk-cell');
+        return $v->addClass('atk-cell');
     }
+    /**
+     * @return View
+     */
     public function aboveField()
     {
         return $this->add('View', null, 'above_field');
     }
+    /**
+     * @return View
+     */
     public function belowField()
     {
         return $this->add('View', null, 'below_field');

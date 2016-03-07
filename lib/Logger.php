@@ -243,6 +243,7 @@ class Logger extends AbstractController
             //$this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"])
             //    ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"]))
             //    : $_SERVER["REMOTE_ADDR"]);
+            null;
         }
 
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -852,7 +853,7 @@ class Logger extends AbstractController
         $new_file = (file_exists($this->filename)) ? false : true;
         $fh = @fopen($this->filename, 'a');
 
-        if (($fh !== false) and (is_resource($fh))) {
+        if (($fh !== false) && (is_resource($fh))) {
             @flock($fh, LOCK_EX);
 
             if (!@fwrite($fh, $message)) {

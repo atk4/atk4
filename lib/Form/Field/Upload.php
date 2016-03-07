@@ -142,6 +142,8 @@ class Form_Field_Upload extends Form_Field
 
                 $this->uploadComplete($model->get());
             } else {
+                // else do nothing
+                null;
             }
         }
         if ($_POST[$this->name.'_token']) {

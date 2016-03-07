@@ -798,7 +798,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function saveLater()
     {
         $this->_save_later = true;
-        $this->app->addHook('saveDelayedModels', $this);
+        $this->app->addHook('saveDelayedModels', array($this, 'saveDelayedModels'));
 
         return $this;
     }
@@ -1048,8 +1048,6 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             $reference_name = $model;
         }
         $this->_references[$reference_name] = array($class, $their_field, $our_field);
-
-        return;
     }
     /** Defines contained model for field */
     public function containsOne($field, $model)

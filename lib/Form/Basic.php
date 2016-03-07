@@ -13,7 +13,7 @@ class Form_Basic extends View implements ArrayAccess
     /**
      * Template of layout if form has one.
      *
-     * @var Template
+     * @var View
      */
     public $layout = null;
 
@@ -459,6 +459,7 @@ class Form_Basic extends View implements ArrayAccess
         } else {
             $button = $this->add('Button', $name, 'form_buttons');
         }
+        /** @var Button $button */
         $button->setLabel($label);
 
         return $button;
@@ -683,8 +684,8 @@ class Form_Basic extends View implements ArrayAccess
     public function validate($rule)
     {
         if (!$this->validator) {
-            /** @var Controller_Validator $this->validator */
             $this->validator = $this->add('Controller_Validator');
+            /** @var Controller_Validator $this->validator */
             $this->validator->on('post-validate');
         }
         $this->validator->is($rule);

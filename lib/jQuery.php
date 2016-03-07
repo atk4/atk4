@@ -12,6 +12,13 @@ class jQuery extends AbstractController
     /** @var string Name of jQuery_Chain class*/
     public $chain_class = 'jQuery_Chain';
 
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     /**
      * Initialization
      */
@@ -178,8 +185,6 @@ class jQuery extends AbstractController
         if (!empty($x)) {
             echo '<script type="text/javascript">'.$x.'</script>';
         }
-
-        return;
     }
 
     /**

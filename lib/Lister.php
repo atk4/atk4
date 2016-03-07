@@ -86,7 +86,7 @@ class Lister extends View implements ArrayAccess
                 throw $this->exception('Use setModel() for Models');
             } elseif ($source instanceof Controller) {
                 throw $this->exception('Use setController() for Controllers');
-            } elseif ($source instanceof Iterator or $source instanceof Closure) {
+            } elseif ($source instanceof Iterator || $source instanceof Closure) {
                 $this->iter = $source;
 
                 return $this;

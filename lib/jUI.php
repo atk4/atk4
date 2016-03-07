@@ -9,6 +9,13 @@ class jUI extends jQuery
      */
     private $atk4_initialised = false;
 
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     /**
      * Initialization
      */

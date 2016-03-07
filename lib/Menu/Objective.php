@@ -31,8 +31,12 @@ class Menu_Objective extends View
             $label = ucwords(str_replace('_', ' ', $page));
         }
 
-        $li = $this->add('View')->setElement('li');
-        $a = $li->add('View')->setElement('a')->set($label);
+        /** @var View $li */
+        $li = $this->add('View');
+        $li->setElement('li');
+        /** @var View $a */
+        $a = $li->add('View');
+        $a->setElement('a')->set($label);
 
         if ($page instanceof jQuery_Chain) {
             $li->js('click', $page);
@@ -51,8 +55,10 @@ class Menu_Objective extends View
 
     public function addSubMenu($name)
     {
-        $li = $this->add('View')
-            ->setElement('li');
+        /** @var View $li */
+        $li = $this->add('View');
+        $li->setElement('li');
+        
         $li->add('Text')->set($name);
 
         return $li

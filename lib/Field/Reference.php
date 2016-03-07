@@ -76,7 +76,7 @@ class Field_Reference extends Field
 
     public function sortable($x = UNDEFINED)
     {
-        /** @var Field|bool */
+        /** @var Field|bool $f */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->sortable($x);
@@ -87,7 +87,7 @@ class Field_Reference extends Field
 
     public function caption($x = UNDEFINED)
     {
-        /** @var Field|bool */
+        /** @var Field|bool $f */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->caption($x);
@@ -146,7 +146,7 @@ class Field_Reference extends Field
             }
         }
         if ($mode == 'link') {
-            /** @var Model */
+            /** @var Model $m */
             $m = $this->add($this->model_name);
             if ($this->get()) {
                 $m->tryLoad($this->get());

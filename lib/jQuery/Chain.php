@@ -5,7 +5,34 @@
  * jQuery chain proxy. Returned by view->js(). Calls to this
  * class will be converted into jQuery calls.
  *
- * Feel free to call _XX functions in this class
+ * Feel free to call _XX functions in this class.
+ *
+ * There are some of JS functions which you can call directly from this class:
+ * @method jQuery_Chain alert()
+ * @method jQuery_Chain successMessage()
+ * @method jQuery_Chain errorMessage()
+ * @method jQuery_Chain frameURL()
+ * @method jQuery_Chain consoleError()
+ * @method jQuery_Chain dialogError()
+ * @method jQuery_Chain ajaxec()
+ * @method jQuery_Chain on()
+ * @method jQuery_Chain val()
+ * @method jQuery_Chain attr()
+ * @method jQuery_Chain prop()
+ * @method jQuery_Chain data()
+ * @method jQuery_Chain confirm()
+ * @method jQuery_Chain find()
+ * @method jQuery_Chain select()
+ * @method jQuery_Chain focus()
+ * @method jQuery_Chain trigger()
+ *
+ * @method jQuery_Chain atk4_checkboxes()
+ * @method jQuery_Chain atk4_expander()
+ * @method jQuery_Chain atk4_uploader()
+ * @method jQuery_Chain selectmenu()
+ * @method jQuery_Chain datepicker()
+ * @method jQuery_Chain slider()
+ * @method jQuery_Chain spinner()
  */
 class jQuery_Chain extends AbstractModel
 {
@@ -32,6 +59,13 @@ class jQuery_Chain extends AbstractModel
 
     /** @var bool */
     public $univ_called = false;
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
 
     /**
      * Call any jQuery library method

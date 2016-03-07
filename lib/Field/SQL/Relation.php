@@ -46,11 +46,11 @@ class Field_SQL_Relation extends Field_Base
     {
         // @todo Should check field types. There is some kind of mix of SQL fields and base fields
 
-        /** @var Field_Reference */
+        /** @var Field_Reference $field */
         $field = $this->model->hasOne($model, $our_field, $field_class);
         $field->table($this->joinAlias);
 
-        /** @var Field_SQL_HasOne */
+        /** @var Field_SQL_HasOne $foreign_field */
         $foreign_field = $this->model->getElement($field->getForeignFieldName());
         $foreign_field->table($this->joinAlias);
 
