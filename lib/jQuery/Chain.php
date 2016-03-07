@@ -10,6 +10,8 @@
  * There are some of JS functions which you can call directly from this class.
  * You can call any jQuery function. We name them here just to pass PHP Analyzer checks.
  * @method jQuery_Chain alert()
+ * @method jQuery_Chain append()
+ * @method jQuery_Chain appendTo()
  * @method jQuery_Chain bind()
  * @method jQuery_Chain click()
  * @method jQuery_Chain on()
@@ -29,6 +31,7 @@
  * @method jQuery_Chain show()
  * @method jQuery_Chain hide()
  * @method jQuery_Chain toggle()
+ * @method jQuery_Chain parent()
  * @method jQuery_Chain addClass()
  * @method jQuery_Chain removeClass()
  * @method jQuery_Chain toggleClass()

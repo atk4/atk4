@@ -160,14 +160,14 @@ class View_Button extends View
      *
      * @return View_Popover
      */
-    public function addPopover($js_options = null, $class_options = null)
+    public function addPopover($js_options = array(), $class_options = null)
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
 
         /** @var View_Popover $popover */
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
 
-        $this->js('click', $popover->showJS($this, $js_options));
+        $this->js('click', $popover->showJS($js_options));
 
         return $popover;
     }
