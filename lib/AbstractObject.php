@@ -527,7 +527,7 @@ abstract class AbstractObject
      */
     public function memorize($key, $value)
     {
-        /** @var App_Web $this->app */
+        /** @type App_Web $this->app */
 
         if (!session_id()) {
             $this->app->initializeSession();
@@ -556,7 +556,7 @@ abstract class AbstractObject
      */
     public function learn($key, $default = null)
     {
-        /** @var App_Web $this->app */
+        /** @type App_Web $this->app */
 
         if (!session_id()) {
             $this->app->initializeSession(false);
@@ -585,7 +585,7 @@ abstract class AbstractObject
      */
     public function forget($key = null)
     {
-        /** @var App_Web $this->app */
+        /** @type App_Web $this->app */
 
         if (!session_id()) {
             $this->app->initializeSession(false);
@@ -618,7 +618,7 @@ abstract class AbstractObject
      */
     public function recall($key, $default = null)
     {
-        /** @var App_Web $this->app */
+        /** @type App_Web $this->app */
 
         if (!session_id()) {
             $this->app->initializeSession(false);
@@ -885,7 +885,7 @@ abstract class AbstractObject
             if (is_array($this->hooks[$hook_spot])) {
                 krsort($this->hooks[$hook_spot]); // lower priority is called sooner
                 $hook_backup = $this->hooks[$hook_spot];
-                    
+
                 try {
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
                         foreach ($_data as $prio => &$data) {
@@ -926,12 +926,12 @@ abstract class AbstractObject
                     }
 
                 } catch (Exception_Hook $e) {
-                    /** @var Exception_Hook $e */
+                    /** @type Exception_Hook $e */
                     $this->hooks[$hook_spot] = $hook_backup;
 
                     return $e->return_value;
                 }
-                
+
                 $this->hooks[$hook_spot] = $hook_backup;
             }
         }
@@ -948,7 +948,7 @@ abstract class AbstractObject
      */
     public function breakHook($return)
     {
-        /** @var Exception_Hook $e */
+        /** @type Exception_Hook $e */
         $e = $this->exception(null, 'Hook');
         $e->return_value = $return;
         throw $e;
@@ -1164,7 +1164,7 @@ abstract class AbstractObject
             }
 
             if ($tester !== null) {
-                /** @var Model $r */
+                /** @type Model $r */
                 $r = $tester->results;
                 $r->unload();
                 $r->set($test);

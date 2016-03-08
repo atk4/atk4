@@ -190,7 +190,7 @@ abstract class Form_Field extends AbstractView
     public function beforeField()
     {
         $this->_use_cells = true;
-        /** @var View $v */
+        /** @type View $v */
         $v = $this->add('View', null, 'before_field');
 
         return $v->addClass('atk-cell');
@@ -201,7 +201,7 @@ abstract class Form_Field extends AbstractView
     public function afterField()
     {
         $this->_use_cells = true;
-        /** @var View $v */
+        /** @type View $v */
         $v = $this->add('View', null, 'after_field');
 
         return $v->addClass('atk-cell');

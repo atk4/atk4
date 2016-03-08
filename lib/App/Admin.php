@@ -98,7 +98,7 @@ class App_Admin extends App_Frontend
      */
     public function initTopMenu()
     {
-        /** @var Menu_Horizontal $m */
+        /** @type Menu_Horizontal $m */
         $m = $this->layout->add('Menu_Horizontal', null, 'Top_Menu');
         //$m->addClass('atk-size-kilo');
         $m->addItem('Admin', '/');
@@ -202,8 +202,8 @@ class App_Admin extends App_Frontend
         if (file_exists($init_class_path)) {
             include $init_class_path;
             $class_name = str_replace('/', '\\', $addon->get('name').'\\Initiator');
-            
-            /** @var Controller_Addon $init */
+
+            /** @type Controller_Addon $init */
             $init = $this->add($class_name, array(
                     'addon_obj' => $addon,
                     'base_path' => $base_path,

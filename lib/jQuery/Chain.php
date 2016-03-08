@@ -20,6 +20,7 @@
  * @method jQuery_Chain prop()
  * @method jQuery_Chain data()
  * @method jQuery_Chain confirm()
+ * @method jQuery_Chain submit()
  * @method jQuery_Chain find()
  * @method jQuery_Chain select()
  * @method jQuery_Chain focus()

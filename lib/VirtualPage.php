@@ -53,10 +53,10 @@ class VirtualPage extends AbstractController
 {
     /** @var string */
     public $type = 'frameURL';
-    
+
     /** @var array|string */
     public $page_template = null;
-    
+
     /** @var string */
     public $page_class = 'Page';
 
@@ -69,7 +69,7 @@ class VirtualPage extends AbstractController
     // {{ type-hint inherited properties
     /** @var View|Grid */
     public $owner;
-    
+
     /** @var App_Frontend */
     public $app;
     // }}
@@ -192,7 +192,7 @@ class VirtualPage extends AbstractController
             null,
             $this->page_template
         );
-        /** @var Page $this->page */
+        /** @type Page $this->page */
         $this->app->page_object = $this->page;
         $this->app->stickyGET($this->name);
 
@@ -214,8 +214,8 @@ class VirtualPage extends AbstractController
         if ($grid === null) {
             $grid = $this->owner;
         }
-        /** @var Grid $this->owner */
-        /** @var Grid $grid */
+        /** @type Grid $this->owner */
+        /** @type Grid $grid */
 
         if (!is_array($buttontext)) {
             $buttontext = array();

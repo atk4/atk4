@@ -144,7 +144,7 @@ class App_Installer extends App_Web
     public function initStep($step)
     {
         $step_method = 'step_'.$step;
-        /** @var H1 $h */
+        /** @type H1 $h */
         $h = $this->add('H1');
         if (!$this->hasMethod($step_method)) {
             return $h->set('No such step');
@@ -162,16 +162,16 @@ class App_Installer extends App_Web
      */
     public function showIntro($v)
     {
-        /** @var H1 $h */
+        /** @type H1 $h */
         $h = $v->add('H1');
         $h->set('Welcome to Web Software');
 
-        /** @var P $p */
+        /** @type P $p */
         $p = $v->add('P');
         $p->set('Thank you for downloading this software. '.
             'This wizard will guide you through the installation procedure.');
 
-        /** @var View_Warning $w */
+        /** @type View_Warning $w */
         $w = $v->add('View_Warning');
         if (!is_writable('.')) {
             $w->setHTML('This installation does not have permissions to create your '.
@@ -182,7 +182,7 @@ class App_Installer extends App_Web
                 '<b>overwrite</b> it with the new settings.');
         }
 
-        /** @var Button $b */
+        /** @type Button $b */
         $b = $v->add('Button');
         $b->set('Start')->js('click')->univ()->location($this->stepURL('first'));
     }

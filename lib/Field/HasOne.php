@@ -17,7 +17,7 @@ class Field_HasOne extends Field_Calculated
      */
     public function getValue($model, $data)
     {
-        /** @var Model $model */
+        /** @type Model $model */
         $model = $this->add($this->getModel());
         $id = $data[$this->foreignName];
 

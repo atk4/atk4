@@ -24,7 +24,7 @@ class Menu_Advanced_Item extends View
     {
         if (is_array($data)) {
             if ($data['icon2']) {
-                /** @var Icon $i */
+                /** @type Icon $i */
                 $i = $this->add('Icon', null, 'Badge');
                 $i->set($data['icon2']);
             }

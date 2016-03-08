@@ -35,7 +35,7 @@ class Relation_ContainsMany extends Field
             $model = $this->app->normalizeClassName($model, 'Model');
             $model = $this->add($model);
         }
-        /** @var Model $model */
+        /** @type Model $model */
 
         $data = $this->owner[$this->short_name] ?: [];
 

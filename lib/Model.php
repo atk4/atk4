@@ -215,10 +215,10 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     public function addField($name, $alias = null)
     {
         $field = $this->add($this->field_class, $name);
-        /** @var Field_Base $field */
+        /** @type Field_Base $field */
         $field = $field->actual($alias);
 
-        /** @var Field_Base $field */
+        /** @type Field_Base $field */
         return $field;
     }
 
@@ -236,7 +236,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if ($field_class === UNDEFINED) {
             $field_class = $this->defaultExpressionFieldClass;
         }
-        /** @var Field_Base $field */
+        /** @type Field_Base $field */
         $field = $this->add($field_class, $name)
             ->setExpression($expression);
         $this->_expressions[$name] = $field;
@@ -309,7 +309,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             return $data;
         }
 
-        /** @var Field_Base $f */
+        /** @type Field_Base $f */
         $f = $this->hasElement($name);
         if ($this->strict_fields && !$f) {
             throw $this->exception('No such field', 'Logic')
@@ -452,7 +452,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
      */
     public function isDirty($name)
     {
-        /** @var Field_Base $field */
+        /** @type Field_Base $field */
         $field = $this->getElement($name);
 
         return $this->dirty[$name] ||
@@ -1087,7 +1087,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         list($ref, $rest) = explode('/', $ref1, 2);
 
         if (!isset($this->_references[$ref])) {
-            /** @var Field_Base $e */
+            /** @type Field_Base $e */
             $e = $this->hasElement($ref);
             if ($e && $e->hasMethod('ref')) {
                 return $e->ref();
@@ -1110,7 +1110,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             );
         } else { // hasOne
             $id = $this->get($ref);
-            /** @var Model $m */
+            /** @type Model $m */
             $m = $this->_ref(
                 $class,
                 null,
@@ -1129,7 +1129,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     }
     private function _ref($class, $field, $val)
     {
-        /** @var Model $m */
+        /** @type Model $m */
         $m = $this->add($this->app->normalizeClassName($class, 'Model'));
 
         if ($field) { // HasMany

@@ -34,7 +34,7 @@ class View_Popover extends View
      */
     public function set($fx)
     {
-        /** @var VirtualPage $p */
+        /** @type VirtualPage $p */
         $p = $this->add('VirtualPage');
         $p->set($fx);
 

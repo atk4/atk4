@@ -164,7 +164,7 @@ class View_Button extends View
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
 
-        /** @var View_Popover $popover */
+        /** @type View_Popover $popover */
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
 
         $this->js('click', $popover->showJS($js_options));
@@ -191,10 +191,10 @@ class View_Button extends View
             $options ?: array()
         );
 
-        /** @var Button $but */
+        /** @type Button $but */
         $but = $this->owner->add('Button', array('options' => $options), $this->spot);
 
-        /** @var Order $order */
+        /** @type Order $order */
         $order = $this->owner->add('Order');
         $order->move($but, 'after', $this)->now();
 
@@ -228,7 +228,7 @@ class View_Button extends View
 
         // add menu
         $this->menu = $this->owner->add($this->menu_class, $options, $this->spot);
-        /** @var Menu_jUI $this->menu */
+        /** @type Menu_jUI $this->menu */
         $this->menu->addStyle('display', 'none');
 
         // show/hide menu on button click
@@ -338,11 +338,11 @@ class View_Button extends View
         }
 
         $this->virtual_page = $this->add('VirtualPage', ['type' => 'frameURL']);
-        /** @var VirtualPage $this->virtual_page */
+        /** @type VirtualPage $this->virtual_page */
         $this->virtual_page
             ->bindEvent($title)
             ->set(function ($p) use ($callback) {
-                /** @var View_Console $console */
+                /** @type View_Console $console */
                 $console = $p->add('View_Console');
                 $console->set($callback);
             });

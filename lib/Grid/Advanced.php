@@ -139,7 +139,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         $this->paginator = $this->add($class ?: $this->paginator_class, $options);
-        /** @var Paginator $this->paginator */
+        /** @type Paginator $this->paginator */
         $this->paginator->setRowsPerPage($rows);
 
         return $this->paginator;
@@ -179,7 +179,7 @@ class Grid_Advanced extends Grid_Basic
         }
 
         $this->quick_search = $this->add($class ?: $this->quick_search_class, $options, $spot ?: 'quick_search');
-        /** @var QuickSearch $this->quick_search */
+        /** @type QuickSearch $this->quick_search */
         $this->quick_search
             ->useWith($this)
             ->useFields($fields);
@@ -196,7 +196,7 @@ class Grid_Advanced extends Grid_Basic
      */
     public function addOrder()
     {
-        /** @var Order $o */
+        /** @type Order $o */
         $o = $this->add('Order', 'columns');
 
         return $o->useArray($this->columns);
@@ -1214,7 +1214,7 @@ class Grid_Advanced extends Grid_Basic
             $field = $this->last_column;
         }
 
-        /** @var GiTemplate $gi */
+        /** @type GiTemplate $gi */
         $gi = $this->add('GiTemplate');
         $this->columns[$field]['template'] = $gi->loadTemplateFromString($template);
 

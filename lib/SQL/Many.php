@@ -67,6 +67,7 @@ class SQL_Many extends AbstractModel
             }
             $this->saveConditions();
         }
+        /** @type SQL_Model $this->model */
         $this->model->_dsql()->args['where'] = $this->orig_conditions;
 
         return $this;

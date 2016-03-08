@@ -26,7 +26,7 @@ class Page_Tester extends Page
             return;    // used for multi-page testing
         }
         $this->grid = $this->add('Grid');
-        /** @var Grid $this->grid */
+        /** @type Grid $this->grid */
         $this->grid->addColumn('template', 'name')
             ->setTemplate('<a href="'.$this->app->url(null, array('testonly' => '')).'<?$name?>"><?$name?></a>');
 
@@ -37,7 +37,7 @@ class Page_Tester extends Page
         $this->runTests();
 
         if (!$_GET['testonly']) {
-            /** @var Form $f */
+            /** @type Form $f */
             $f = $this->add('Form');
             $ff = $f->addField('Text', 'responses');
             $this->responses =
@@ -235,7 +235,7 @@ class Page_Tester extends Page
                 } catch (Exception $e) {
                     if ($e instanceof Exception_SkipTests) {
                         $this->grid->destroy();
-                        /** @var View_Error $v_error */
+                        /** @type View_Error $v_error */
                         $v_error = $this->add('View_Error');
                         $v_error->set('Skipping all tests: '.$e->getMessage());
 
@@ -260,7 +260,7 @@ class Page_Tester extends Page
                 } catch (Exception $e) {
                     if ($e instanceof Exception_SkipTests) {
                         $this->grid->destroy();
-                        /** @var View_Error $v_error */
+                        /** @type View_Error $v_error */
                         $v_error = $this->add('View_Error');
                         $v_error->set('Skipping all tests: '.$e->getMessage());
                     }
@@ -271,9 +271,9 @@ class Page_Tester extends Page
 
                     $result = 'Exception: '.($e instanceof BaseException ? $e->getText() : $e->getMessage());
 
-                    /** @var P $ll */
+                    /** @type P $ll */
                     $ll = $this->add('P', $row['name']);
-                    /** @var View $v */
+                    /** @type View $v */
                     $v = $ll->add('View');
                     $v->setElement('a')
                         ->setAttr('href', '#')

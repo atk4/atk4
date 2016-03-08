@@ -62,7 +62,12 @@ class Paginator_Basic extends CompleteLister
      */
     public $base_page = null;
 
+    // {{{ Inherited properties
 
+    /** @var View */
+    public $owner;
+
+    // }}}
 
     /**
      * Initialization.

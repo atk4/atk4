@@ -43,10 +43,10 @@ class HX extends HtmlElement
     public function recursiveRender()
     {
         if (!is_null($this->sub)) {
-            /** @var Text $t */
+            /** @type Text $t */
             $t = $this->add('Text');
             $t->set($this->text);
-            /** @var HtmlElement $e */
+            /** @type HtmlElement $e */
             $e = $this->add('HtmlElement');
             $e->setElement('small')->set($this->sub);
         }

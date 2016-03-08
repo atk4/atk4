@@ -55,7 +55,7 @@ class Controller_Addon extends AbstractController
     public function routePages($page_prefix)
     {
         if ($this->app instanceof App_Frontend) {
-            /** @var App_Frontend $this->app */
+            /** @type App_Frontend $this->app */
             $this->app->routePages($page_prefix, $this->namespace);
         }
     }

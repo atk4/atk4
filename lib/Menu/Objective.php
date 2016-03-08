@@ -6,6 +6,16 @@ class Menu_Objective extends View
 {
     public $current_menu_class = 'atk-state-current';
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     public function init()
     {
         parent::init();
@@ -31,10 +41,10 @@ class Menu_Objective extends View
             $label = ucwords(str_replace('_', ' ', $page));
         }
 
-        /** @var View $li */
+        /** @type View $li */
         $li = $this->add('View');
         $li->setElement('li');
-        /** @var View $a */
+        /** @type View $a */
         $a = $li->add('View');
         $a->setElement('a')->set($label);
 
@@ -60,11 +70,11 @@ class Menu_Objective extends View
      */
     public function addSubMenu($name)
     {
-        /** @var View $li */
+        /** @type View $li */
         $li = $this->add('View');
         $li->setElement('li');
-        
-        /** @var Text $t */
+
+        /** @type Text $t */
         $t = $li->add('Text');
         $t->set($name);
 

@@ -8,6 +8,16 @@ abstract class Menu_Advanced extends View
     public $hover_swatch = null;
     public $highlight_subpages = false;
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     /**
      * Adds a title to your menu.
      */
@@ -19,7 +29,7 @@ abstract class Menu_Advanced extends View
             null,
             array_merge($this->defaultTemplate(), array('Title'))
         );
-        /** @var Menu_Advanced_Title $i */
+        /** @type Menu_Advanced_Title $i */
 
         $i->set($title);
 
@@ -34,7 +44,7 @@ abstract class Menu_Advanced extends View
             null,
             array_merge($this->defaultTemplate(), array('Item'))
         );
-        /** @var Menu_Advanced_Item $i */
+        /** @type Menu_Advanced_Item $i */
 
         if (is_array($title)) {
             if ($title['badge']) {
@@ -77,7 +87,7 @@ abstract class Menu_Advanced extends View
             null,
             array_merge($this->defaultTemplate(), array('Menu'))
         );
-        /** @var Menu_Advanced_Item $i */
+        /** @type Menu_Advanced_Item $i */
         if ($this->hover_swatch) {
             $i->template->set('li-class', 'atk-swatch-'.$this->hover_swatch);
         }

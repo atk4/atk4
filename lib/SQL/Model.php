@@ -134,13 +134,13 @@ class SQL_Model extends Model implements Serializable
             ->addMoreInfo('field', $name);
         }
         if ($name == 'deleted' && isset($this->app->compat)) {
-            /** @var Field_Deleted $f */
+            /** @type Field_Deleted $f */
             $f = $this->add('Field_Deleted', $name);
             return $f->enum(array('Y', 'N'));
         }
 
         // $f=parent::addField($name);
-        /** @var Field $f */
+        /** @type Field $f */
         $f = $this->add($this->field_class, $name);
         //
 
@@ -266,7 +266,7 @@ class SQL_Model extends Model implements Serializable
 
         // add actual fields
         foreach ($actual_fields as $field) {
-            /** @var Field $field */
+            /** @type Field $field */
             $field = $this->hasElement($field);
             if (!$field) {
                 continue;
@@ -293,7 +293,7 @@ class SQL_Model extends Model implements Serializable
     public function titleQuery()
     {
         $query = $this->dsql()->del('fields');
-        /** @var Field $el */
+        /** @type Field $el */
         $el = $this->hasElement($this->title_field);
         if ($this->title_field && $el) {
             $el->updateSelectQuery($query);
@@ -319,7 +319,7 @@ class SQL_Model extends Model implements Serializable
      */
     public function addExpression($name, $expression = null)
     {
-        /** @var Field_Expression $f */
+        /** @type Field_Expression $f */
         $f = $this->add('Field_Expression', $name);
 
         return $f->set($expression);
@@ -341,7 +341,7 @@ class SQL_Model extends Model implements Serializable
         }
         $_foreign_alias = $this->_unique($this->relations, $_foreign_alias);
 
-        /** @var SQL_Relation $rel */
+        /** @type SQL_Relation $rel */
         $rel = $this->add('SQL_Relation', $_foreign_alias);
 
         return $this->relations[$_foreign_alias] = $rel
@@ -386,7 +386,7 @@ class SQL_Model extends Model implements Serializable
             $our_field = ($tmp->table).'_id';
         }
 
-        /** @var Field_Reference $r */
+        /** @type Field_Reference $r */
         $r = $this->add('Field_Reference', array('name' => $our_field, 'dereferenced_field' => $as_field));
         $r->setModel($model, $display_field);
         $r->system(true)->editable(true);
@@ -402,7 +402,7 @@ class SQL_Model extends Model implements Serializable
         if (!$their_field) {
             $their_field = ($this->table).'_id';
         }
-        /** @var SQL_Many $rel */
+        /** @type SQL_Many $rel */
         $rel = $this->add('SQL_Many', $as_field ?: $model);
         $rel->set($model, $their_field, $our_field);
 
@@ -441,7 +441,7 @@ class SQL_Model extends Model implements Serializable
             return $this;
         }
 
-        /** @var Field $field */
+        /** @type Field $field */
         $field = $this->getElement($name);
 
         return $field->ref($load);
@@ -449,7 +449,7 @@ class SQL_Model extends Model implements Serializable
     /** Returns Model with SQL join usable for subqueries. */
     public function refSQL($name, $load = null)
     {
-        /** @var Field_Reference $ref */
+        /** @type Field_Reference $ref */
         $ref = $this->getElement($name);
 
         return $ref->refSQL($load);
@@ -560,7 +560,7 @@ class SQL_Model extends Model implements Serializable
             $field = $this->getElement($field);
         }
 
-        /** @var Field $field */
+        /** @type Field $field */
 
         if ($cond !== UNDEFINED && $value === UNDEFINED) {
             $value = $cond;
@@ -628,7 +628,7 @@ class SQL_Model extends Model implements Serializable
                 list($field, $desc) = array_map('trim', explode(' ', trim($field), 2));
             }
 
-            /** @var Field $field */
+            /** @type Field $field */
             $field = $this->getElement($field);
         }
 
@@ -1212,7 +1212,7 @@ class SQL_Model extends Model implements Serializable
             return $this->data;
         }
 
-        /** @var Field $f */
+        /** @type Field $f */
         $f = $this->hasElement($name);
 
         if ($this->strict_fields && !$f) {
@@ -1290,7 +1290,7 @@ class SQL_Model extends Model implements Serializable
     }
     public function isDirty($name)
     {
-        /** @var Field $f */
+        /** @type Field $f */
         $f = $this->getElement($name);
 
         return $this->dirty[$name] ||
@@ -1386,7 +1386,7 @@ class SQL_Model extends Model implements Serializable
     }
     public function _ref($ref, $class, $field, $val)
     {
-        /** @var Model $m */
+        /** @type Model $m */
         $m = $this->add($this->app->normalizeClassName($class, 'Model'));
         $m = $m->ref($ref);
 
@@ -1398,7 +1398,7 @@ class SQL_Model extends Model implements Serializable
 
         return $m;
     }
-    
+
     /**
      * Strange method. Uses undefined $field variable, undefined refBind() method etc.
      * https://github.com/atk4/atk4/issues/711

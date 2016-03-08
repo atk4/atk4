@@ -49,7 +49,7 @@ class Layout_Basic extends View
 
     public function addRow($spot)
     {
-        /** @var View $v */
+        /** @type View $v */
         $v = $this->add('View', null, $spot);
 
         return $v->addClass('atk-layout-row');
@@ -70,7 +70,7 @@ class Layout_Basic extends View
 
     public function addLeftBar($options = array())
     {
-        /** @var View $v */
+        /** @type View $v */
         $v = $this->add('View', null, 'LeftBar');
 
         return $v->setElement('nav')
@@ -81,7 +81,7 @@ class Layout_Basic extends View
     {
         return 'Layout';
     }
-    
+
     public function defaultTemplate()
     {
         return array('layout/fluid');

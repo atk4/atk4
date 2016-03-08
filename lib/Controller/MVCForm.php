@@ -139,7 +139,7 @@ class Controller_MVCForm extends AbstractController
         if (!$field) {
             return;
         }
-        /** @var Field $field */
+        /** @type Field $field */
         if (!$field->editable()) {
             return;
         }
@@ -185,7 +185,7 @@ class Controller_MVCForm extends AbstractController
             $form_field->setModel($field->theModel);
         }
         if ($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
-            /** @var string $text */
+            /** @type string $text */
             $text = $field->emptyText();
             $form_field->setEmptyText($text);
         }

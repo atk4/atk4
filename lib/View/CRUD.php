@@ -159,7 +159,7 @@ class View_CRUD extends View
     // {{ type-hint inherited properties
     /** @var View */
     public $owner;
-    
+
     /** @var App_Web */
     public $app;
     // }}
@@ -215,7 +215,7 @@ class View_CRUD extends View
 
         $this->grid = $this->add($this->grid_class, $this->grid_options);
         /** @type Grid $this->grid */
-        
+
         $this->form = new Dummy();
         /** @type Form $this->form */
 
@@ -485,7 +485,7 @@ class View_CRUD extends View
         $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
-            /** @var View_Console $c */
+            /** @type View_Console $c */
             $c = $this->virtual_page->getPage()->add('View_Console');
             $self = $this;
 

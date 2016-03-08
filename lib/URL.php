@@ -104,7 +104,7 @@ class URL extends AbstractModel
         // 'index' = properly points to the index page defined in APP
         // '/admin/' = will not be converted
 
-        /** @var $this->app App_Web */
+        /** @type $this->app App_Web */
 
         $destination = '';
 

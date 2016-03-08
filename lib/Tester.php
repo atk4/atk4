@@ -24,7 +24,7 @@ class Tester extends AbstractObject
     {
         parent::init();
 
-        /** @var Model $m */
+        /** @type Model $m */
         $m = $this->results = $this->add('Model');
 
         $m->addField('name');

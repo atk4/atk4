@@ -52,14 +52,14 @@ class Form_Basic extends View implements ArrayAccess
      * @var null|bool
      */
     public $bail_out = null;
-    
+
     /**
      * true - update() will try updating existing row. false - it would insert new.
      *
      * @var bool
      */
     protected $loaded_from_db = false;
-    
+
     /**
      * Contains AJAX instances assigned to buttons.
      *
@@ -73,7 +73,7 @@ class Form_Basic extends View implements ArrayAccess
      * @var null|string
      */
     protected $get_field = null;
-    
+
     /** @var array */
     protected $conditions = array();
 
@@ -85,7 +85,7 @@ class Form_Basic extends View implements ArrayAccess
 
     /** @var string Class name of default exception */
     public $default_exception = 'Exception_ValidityCheck';
-    
+
     /** @var string Class name of default controller */
     public $default_controller = 'Controller_MVCForm';
 
@@ -215,7 +215,7 @@ class Form_Basic extends View implements ArrayAccess
      */
     public function error($field, $text = null)
     {
-        /** @var Form_Field $form_field */
+        /** @type Form_Field $form_field */
         $form_field = $this->getElement($field);
         $form_field->displayFieldError($text);
     }
@@ -322,7 +322,7 @@ class Form_Basic extends View implements ArrayAccess
      */
     public function importFields($model, $fields = UNDEFINED)
     {
-        /** @var Controller_MVCForm $c */
+        /** @type Controller_MVCForm $c */
         $c = $this->add($this->default_controller);
         $c->importFields($model, $fields);
     }
@@ -330,7 +330,7 @@ class Form_Basic extends View implements ArrayAccess
     public function addSeparator($class = '', $attr = array())
     {
         if (!isset($this->template_chunks['form_separator'])) {
-            /** @var View $v */
+            /** @type View $v */
             $v = $this->add('View');
             return $v->addClass($class);
         }
@@ -345,7 +345,7 @@ class Form_Basic extends View implements ArrayAccess
             }
         }
 
-        /** @var Html $h */
+        /** @type Html $h */
         $h = $this->add('Html');
         return $h->set($c->render());
     }
@@ -459,7 +459,7 @@ class Form_Basic extends View implements ArrayAccess
         } else {
             $button = $this->add('Button', $name, 'form_buttons');
         }
-        /** @var Button $button */
+        /** @type Button $button */
         $button->setLabel($label);
 
         return $button;
@@ -512,7 +512,7 @@ class Form_Basic extends View implements ArrayAccess
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
-                    /** @var Form_Field $fld */
+                    /** @type Form_Field $fld */
                     $fld->displayFieldError($e->getMessage());
                 } else {
                     $this->js()->univ()->alert($e->getMessage())->execute();
@@ -579,7 +579,7 @@ class Form_Basic extends View implements ArrayAccess
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
-                    /** @var Form_Field $fld */
+                    /** @type Form_Field $fld */
                     $fld->displayFieldError($e->getMessage());
                 } else {
                     $this->js()->univ()->alert($e->getMessage())->execute();
@@ -685,7 +685,7 @@ class Form_Basic extends View implements ArrayAccess
     {
         if (!$this->validator) {
             $this->validator = $this->add('Controller_Validator');
-            /** @var Controller_Validator $this->validator */
+            /** @type Controller_Validator $this->validator */
             $this->validator->on('post-validate');
         }
         $this->validator->is($rule);

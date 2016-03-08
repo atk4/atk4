@@ -234,18 +234,18 @@ class View extends AbstractView
         // a designated spot or will combine it with text
         if ($text['icon']) {
             if ($this->template->hasTag('icon')) {
-                /** @var Icon $_icon */
+                /** @type Icon $_icon */
                 $_icon = $this->add('Icon', null, 'icon');
                 $_icon->set($text['icon']);
             } else {
-                /** @var Icon $_icon */
+                /** @type Icon $_icon */
                 $_icon = $this->add('Icon');
                 $_icon->set($text['icon']);
                 if ($text[0]) {
-                    /** @var Html $_html */
+                    /** @type Html $_html */
                     $_html = $this->add('Html');
                     $_html->set('&nbsp;');
-                    /** @var Text $_text */
+                    /** @type Text $_text */
                     $_text = $this->add('Text');
                     $_text->set($text[0]);
                 }
@@ -255,19 +255,19 @@ class View extends AbstractView
         }
         if ($text['icon-r']) {
             if ($this->template->hasTag('icon-r')) {
-                /** @var Icon $_icon */
+                /** @type Icon $_icon */
                 $_icon = $this->add('Icon', null, 'icon');
                 $_icon->set($text['icon']);
             } else {
                 if ($text[0]) {
-                    /** @var Text $_text */
+                    /** @type Text $_text */
                     $_text = $this->add('Text');
                     $_text->set($text[0]);
-                    /** @var Html $_html */
+                    /** @type Html $_html */
                     $_html = $this->add('Html');
                     $_html->set('&nbsp;');
                 }
-                /** @var Icon $_icon */
+                /** @type Icon $_icon */
                 $_icon = $this->add('Icon');
                 $_icon->set($text['icon-r']);
             }

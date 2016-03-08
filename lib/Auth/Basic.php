@@ -118,7 +118,7 @@ class Auth_Basic extends AbstractController
 
             return $this;
         }
-        /** @var Model $m */
+        /** @type Model $m */
         $m = $this->add('Model')
             ->setSource('Array', array(
                 is_array($user)
@@ -496,7 +496,7 @@ class Auth_Basic extends AbstractController
         }
 
         // Attempt to load user data by username. If not found, return false
-        /** @var Model $data User model */
+        /** @type Model $data User model */
         $data = $this->model->newInstance();
 
         $data->tryLoadBy($this->login_field, $user);
@@ -785,14 +785,14 @@ class Auth_Basic extends AbstractController
      */
     public function createForm($page)
     {
-        /** @var Form $form */
+        /** @type Form $form */
         $form = $page->add('Form', null, null, array('form/minimal'));
 
-        /** @var Field $email */
+        /** @type Field $email */
         $email = $this->model->hasField($this->login_field);
         $email = $email ? $email->caption() : 'E-mail';
 
-        /** @var Field $password */
+        /** @type Field $password */
         $password = $this->model->hasField($this->password_field);
         $password = $password ? $password->caption() : 'Password';
 
@@ -816,10 +816,10 @@ class Auth_Basic extends AbstractController
         if ($this->app->layout && $this->login_layout_class) {
             $this->app->layout->destroy();
             $this->app->add($this->login_layout_class);
-            /** @var Page $p */
+            /** @type Page $p */
             $p = $this->app->layout->add('Page', null, null, array('page/login'));
         } else {
-            /** @var Page $p */
+            /** @type Page $p */
             $p = $this->app->add('Page', null, null, array('page/login'));
         }
         $this->app->page_object = $p;

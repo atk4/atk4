@@ -60,7 +60,7 @@ class QuickSearch extends Filter
                 ));
         }
 
-        /** @var HtmlElement $b Search button */
+        /** @type HtmlElement $b Search button */
         $b = $this->add('HtmlElement', null, 'form_buttons');
         $b->setElement('A')
             ->setAttr('href', 'javascript:void(0)')
@@ -101,7 +101,7 @@ class QuickSearch extends Filter
         if ($this->view->model->hasMethod('addConditionLike')) {
             return $this->view->model->addConditionLike($v, $this->fields);
         }
-        
+
         if ($this->view->model && $this->view->model instanceof SQL_Model) {
             $q = $this->view->model->_dsql();
         } else {
