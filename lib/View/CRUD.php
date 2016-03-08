@@ -183,7 +183,7 @@ class View_CRUD extends View
         $this->virtual_page = $this->add('VirtualPage', array(
             'frame_options' => $this->frame_options,
         ));
-        /** @var VirtualPage $this->virtual_page */
+        /** @type VirtualPage $this->virtual_page */
 
         $name_id = $this->virtual_page->name.'_id';
 
@@ -205,21 +205,19 @@ class View_CRUD extends View
                 ->add($this->form_class, $this->form_options)
                 //->addClass('atk-form-stacked')
                 ;
-            /** @var Form $this->form */
+            /** @type Form $this->form */
 
-            // @codingStandardsIgnoreStart
             $this->grid = new Dummy();
-            // @codingStandardsIgnoreEnd
+            /** @type Grid $this->grid */
 
             return;
         }
 
         $this->grid = $this->add($this->grid_class, $this->grid_options);
-        /** @var Grid $this->grid */
+        /** @type Grid $this->grid */
         
-        // @codingStandardsIgnoreStart
         $this->form = new Dummy();
-        // @codingStandardsIgnoreEnd
+        /** @type Form $this->form */
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());

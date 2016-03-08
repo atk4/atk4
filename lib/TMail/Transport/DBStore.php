@@ -4,8 +4,14 @@
  */
 class TMail_Transport_DBStore extends TMail_Transport
 {
+    /** @var Model */
     public $model = null;
 
+    /**
+     * @param string $m
+     *
+     * @return Model
+     */
     public function setModel($m)
     {
         if (is_string($m)) {
@@ -15,6 +21,7 @@ class TMail_Transport_DBStore extends TMail_Transport
 
         return $this->model;
     }
+    
     public function send($tm, $to, $from, $subject, $body, $headers)
     {
         if (!$this->model) {
