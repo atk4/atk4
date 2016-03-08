@@ -35,7 +35,7 @@ class TMail_Transport_DBStore extends TMail_Transport
                 'headers' => $headers,
                 );
 
-        $this->model->unloadData()->set($data)->update();
+        $this->model->unload()->set($data)->save();
 
         return $this;
     }

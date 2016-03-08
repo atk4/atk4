@@ -584,7 +584,7 @@ class SQL_Model extends Model implements Serializable
             //$field->updateSelectQuery($this->dsql);
         } elseif ($field->relation) {
             $dsql->where($field->relation->short_name.'.'.$f, $cond, $value);
-        } elseif ($this->relations) {
+        } elseif (!empty($this->relations)) {
             $dsql->where(($this->table_alias ?: $this->table).'.'.$f, $cond, $value);
         } else {
             $dsql->where(($this->table_alias ?: $this->table).'.'.$f, $cond, $value);
@@ -1326,8 +1326,8 @@ class SQL_Model extends Model implements Serializable
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
 
-        /** @var Controller */
         $this->controller = $this->setController($controller);
+        /** @type Controller @this->controller */
 
         $this->controller->setSource($this, $table);
 
@@ -1398,6 +1398,11 @@ class SQL_Model extends Model implements Serializable
 
         return $m;
     }
+    
+    /**
+     * Strange method. Uses undefined $field variable, undefined refBind() method etc.
+     * https://github.com/atk4/atk4/issues/711
+     */
     public function _refBind($field_in, $expression, $field_out = null)
     {
         if ($this->controller) {

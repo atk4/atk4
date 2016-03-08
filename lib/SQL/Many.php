@@ -12,6 +12,16 @@ class SQL_Many extends AbstractModel
     public $relation = null;
     public $table_alias = null;
 
+    // {{{ Inherited properties
+
+    /** @var SQL_Model */
+    public $owner;
+
+    /** @var SQL_Model */
+    public $model;
+
+    // }}}
+
     public function set($model, $their_field = null, $our_field = null, $relation = null)
     {
         $this->model_name = is_string($model) ? $model : get_class($model);
@@ -64,6 +74,7 @@ class SQL_Many extends AbstractModel
     public function refSQL($mode = null)
     {
         if ($mode == 'model') {
+            /** @type SQL_Model $m */
             $m = $this->add($this->model_name);
 
             return $m->addCondition($this->their_field, $this->owner->getElement($this->our_field));
@@ -80,6 +91,7 @@ class SQL_Many extends AbstractModel
         }
 
         if ($mode == 'model') {
+            /** @type SQL_Model $m */
             $m = $this->add($this->model_name);
 
             return $m->addCondition($this->their_field, $this->owner->get($this->our_field));

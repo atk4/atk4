@@ -47,6 +47,7 @@ class TMail_Compat extends AbstractController
     protected $body_type = 'text';
     protected $sign;
     protected $is_html;
+    protected $body;
 
     public $version = '1.0';
 

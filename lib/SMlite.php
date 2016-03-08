@@ -186,6 +186,7 @@ class SMlite extends AbstractModel
          * new class for you.
          */
         if ($this->isTopTag($tag)) {
+            /** @type self $new */
             $new = $this->newInstance();
             $new->template = unserialize(serialize($this->template));
             $new->top_tag = $tag;
@@ -202,6 +203,7 @@ class SMlite extends AbstractModel
                 implode(', ', array_keys($this->tags)));
         }
         $class_name = get_class($this);
+        /** @type self $new */
         $new = $this->add($class_name);
         try {
             $new->template = unserialize(serialize($this->tags[$tag][0]));
