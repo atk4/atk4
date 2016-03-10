@@ -183,8 +183,9 @@ class Page extends AbstractView
             $last_title = end($t);
             $last_title = $last_title['name'];
 
-            $this->app->layout->add('View_Breadcrumb', null, 'page_title')
-                    ->setSource($this->title);
+            /** @type View_Breadcrumb $b */
+            $b = $this->app->layout->add('View_Breadcrumb', null, 'page_title');
+            $b->setSource($this->title);
         }
 
         $tmp = array();

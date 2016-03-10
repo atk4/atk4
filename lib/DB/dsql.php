@@ -1949,7 +1949,7 @@ class DB_dsql extends AbstractModel implements Iterator
     public function foundRows()
     {
         if ($this->hasOption('SQL_CALC_FOUND_ROWS')) {
-            return $this->owner->getOne('select found_rows()');
+            return (int) $this->owner->getOne('select found_rows()');
         }
         /* db-compatible way: */
         $c = clone $this;

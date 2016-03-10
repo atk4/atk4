@@ -40,7 +40,7 @@ class System_ProcessIO extends AbstractModel
      * Execute the process and associate with this object.
      *
      * @param string $cmd  Command to be executed
-     * @param array  $args Arguments (strings)
+     * @param array|string  $args Arguments (strings)
      *
      * @return self
      */
