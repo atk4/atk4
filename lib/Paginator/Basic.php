@@ -173,14 +173,14 @@ class Paginator_Basic extends CompleteLister
             $this->source->preexec();
             $this->found_rows = $this->source->foundRows();
         } elseif ($this->source instanceof Model) {
-            $this->found_rows = (string) $this->source->count();
+            $this->found_rows = (int) $this->source->count();
         } else {
             $this->found_rows = count($this->source);
         }
 
         // calculate current page and total pages
-        $this->cur_page = floor($this->skip / $this->ipp) + 1;
-        $this->total_pages = ceil($this->found_rows / $this->ipp);
+        $this->cur_page = (int) floor($this->skip / $this->ipp) + 1;
+        $this->total_pages = (int) ceil($this->found_rows / $this->ipp);
 
         if ($this->cur_page > $this->total_pages || ($this->cur_page == 1 && $this->skip != 0)) {
             $this->cur_page = 1;

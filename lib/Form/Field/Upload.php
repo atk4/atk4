@@ -73,7 +73,7 @@ class Form_Field_Upload extends Form_Field
         $max_post = $this->convertToBytes(ini_get('post_max_size')) / 2;
         $max_upload = $this->convertToBytes(ini_get('upload_max_filesize'));
 
-        $this->max_file_size = min($max_upload, $max_post);
+        $this->max_file_size = (int) min($max_upload, $max_post);
 
         /*
            if($_POST[$this->name.'_token']){
@@ -327,7 +327,7 @@ class Form_Field_Upload extends Form_Field
                 break;
 
         }
-        if ($this->multiple) {
+        if (is_numeric($this->multiple)) {
             $options['multiple'] = $this->multiple;
         }
         if ($this->mode != 'simple') {

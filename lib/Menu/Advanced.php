@@ -128,8 +128,8 @@ abstract class Menu_Advanced extends View
 
     public function setModel($m, $options = array())
     {
-        /** @type Model $m */
         $m = parent::setModel($m);
+        /** @type Model $m */
         foreach ($m as $model) {
 
             // check subitems

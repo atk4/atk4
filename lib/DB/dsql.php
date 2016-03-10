@@ -1926,7 +1926,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * Sets flag to hint SQL (if supported) to prepare total number of columns.
      * Use foundRows() to read this afterwards.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function calcFoundRows()
     {
@@ -1934,7 +1934,7 @@ class DB_dsql extends AbstractModel implements Iterator
     }
 
     /**
-     * Obsolete - naming bug.
+     * @deprecated 4.3.2. Naming bug. Use foundRows() instead.
      */
     public function calc_found_rows()
     {
@@ -1944,7 +1944,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * After fetching data, call this to find out how many rows there were in
      * total. Call calcFoundRows() for better performance.
      *
-     * @return string number of results
+     * @return int number of results
      */
     public function foundRows()
     {
@@ -1955,7 +1955,7 @@ class DB_dsql extends AbstractModel implements Iterator
         $c = clone $this;
         $c->del('limit');
 
-        return $c->fieldQuery('count(*)')->getOne();
+        return (int) $c->fieldQuery('count(*)')->getOne();
     }
     // }}}
 
@@ -1967,7 +1967,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * Execute query faster, but don't fetch data until iterating started. This
      * can be done if you need to know foundRows() before fetching data.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function preexec()
     {

@@ -71,7 +71,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /**
      * Contains identifier of currently loaded record or null. Changed by load() and reset().
      *
-     * @var string
+     * @var string|int
      */
     public $id = null;
 
@@ -143,7 +143,7 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
     /** @var string */
     protected $defaultHasOneFieldClass = 'Field_HasOne';
     /** @var string */
-    protected $defaultExpressionFieldClass = 'Field_Callback';
+    protected $defaultExpressionFieldClass = 'Field_Callback'; // or Field_Calculated ???
 
     /**
      * Curretly loaded record data. This information is embedded in the
@@ -236,8 +236,8 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
         if ($field_class === UNDEFINED) {
             $field_class = $this->defaultExpressionFieldClass;
         }
-        /** @type Field_Base $field */
         $field = $this->add($field_class, $name);
+        /** @type Field_Callback $field */
         $field->setExpression($expression);
         $this->_expressions[$name] = $field;
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * This is the description for the Class.
+ * Page class.
  *
- * @author      Romans <romans@adevel.com>
- * @copyright   See file COPYING
- *
- * @version     $Id$
+ * Few optional methods Page class can have:
+ * @method bool subPageHandler()
+ * @method $this initMainPage()
+ * @method $this page_index()
  */
 class Page extends AbstractView
 {
@@ -38,7 +38,7 @@ class Page extends AbstractView
 
     // {{{ Inherited properties
 
-    /** @var App_Web */
+    /** @var App_Frontend */
     public $app;
     
     // }}}

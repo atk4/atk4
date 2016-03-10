@@ -6,27 +6,37 @@
  */
 class Controller_Addon extends AbstractController
 {
+    /** @var string */
     public $atk_version = '4.3';
 
+    /** @var string */
     public $namespace = __NAMESPACE__;
 
-    public $addon_base_path = null;
+    /** @var string|object|array */
+    public $addon_base_path = null; // should be only string, but $app->locate can return object and array too
 
+    /** @var bool */
     public $has_assets = false;
 
+    /** @var string */
     public $addon_name;
-
-    public $api_var;
 
     // object with information from json file
     public $addon_obj;
 
+    /** @var array */
     public $addon_private_locations = array();
+
+    /** @var array */
     public $addon_public_locations = array();
 
+    /** @var bool */
     public $with_pages = false;
 
+    /** @var PathFinder_Location */
     public $location;
+
+    public $api_var; // ???
 
     public $base_path; // ???
 

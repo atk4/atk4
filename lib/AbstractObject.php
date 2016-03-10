@@ -318,7 +318,7 @@ abstract class AbstractObject
             $class->owner = $this;
             if ($class instanceof AbstractView) {
                 /** @type AbstractView $class */
-                /** @type AbstractView $this */
+                // Scrutinizer complains that $this->template is not defined and it really is not :)
                 if (!isset($this->template) || !$this->template) {
                     $class->initializeTemplate($template_spot, $template_branch);
                 }

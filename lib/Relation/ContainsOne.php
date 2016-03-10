@@ -43,14 +43,14 @@ class Relation_ContainsOne extends Field
         $model->data = $this->owner[$this->short_name];
         $model->id = $model->data ? 1 : null;
         if ($this->decode) {
-            $model->data = call_user_func($this->decode, $model->data);
+            $model->data = (array) call_user_func($this->decode, $model->data);
         }
 
         $self = $this;
         $model->addHook('beforeSave', function ($m) use ($self) {
             $e = $m->data;
             if ($this->encode) {
-                $e = call_user_func($this->encode, $e);
+                $e = (string) call_user_func($this->encode, $e);
             }
             $self->owner[$self->short_name] = $e;
             $self->owner->saveLater();
