@@ -171,6 +171,7 @@ class Controller_MVCForm extends AbstractController
         }
 
         if ($field->listData()) {
+            /** @type Form_Field_ValueList $form_field */
             $a = $field->listData();
             $form_field->setValueList($a);
         }

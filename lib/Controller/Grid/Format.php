@@ -10,7 +10,7 @@ abstract class Controller_Grid_Format extends AbstractController
      * Note: $this->owner is Grid object
      *
      * @param string $name  Field name
-     * @param string $descr Field title
+     * @param string|array $descr Field title
      */
     public function initField($name, $descr)
     {

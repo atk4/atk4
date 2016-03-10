@@ -138,8 +138,8 @@ class App_Frontend extends App_Web
                             continue;
                         }
 
-                        /** @type Page $this->page_object */
                         $this->page_object = $layout->add($in, $page);
+                        /** @type Page $this->page_object */
                         if (method_exists($tmp, $fn)) {
                             $this->page_object->$fn();
                         } elseif (method_exists($tmp, 'subPageHandler')) {
@@ -161,8 +161,8 @@ class App_Frontend extends App_Web
             }
 
             // i wish they implemented "finally"
-            /** @type Page $this->page_object */
             $this->page_object = $layout->add($ns.$class, $page, 'Content');
+            /** @type Page $this->page_object */
             if (method_exists($this->page_object, 'initMainPage')) {
                 $this->page_object->initMainPage();
             }
@@ -222,7 +222,9 @@ class App_Frontend extends App_Web
                 $this->app->pathfinder->addLocation(array('public' => '.'))
                    ->setCDN('http://www.agiletoolkit.org/');
 
+                /** @type Layout_Basic $l */
                 $l = $this->app->add('Layout_Basic', null, null, array('layout/installer'));
+                
                 /** @type View $i */
                 $i = $l->add('View');
                 $i->addClass('atk-align-center');

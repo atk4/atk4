@@ -11,6 +11,7 @@ class Model_Relation extends Model
 
     public function dsql()
     {
+        /** @type Controller_Data_SQL $this->controller */
         return $this->controller->dsql($this);
     }
 
@@ -36,6 +37,7 @@ class Model_Relation extends Model
         $leftTable = $this->table;
 
         $joinAlias = $this->_unique($this->relations, $joinAlias);
+        /** @type Field_SQL_Relation $field */
         $field = $this->add($this->defaultSQLRelationFieldClass);
         $field->setLeftTable($relation ?: $leftTable)
             ->setLeftField($leftField)

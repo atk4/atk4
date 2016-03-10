@@ -9,6 +9,8 @@
 class DB_dsql_firebird extends DB_dsql
 {
     public $bt = '';
+    public $id_field;
+
     public function init()
     {
         parent::init();

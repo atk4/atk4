@@ -78,7 +78,12 @@ class Controller_PageManager extends AbstractController
      */
     public $template_filename;
 
+    // {{{ Inherited properties
 
+    /** @var App_Web */
+    public $app;
+
+    // }}}
 
     public function init()
     {

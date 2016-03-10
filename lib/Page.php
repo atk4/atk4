@@ -36,6 +36,13 @@ class Page extends AbstractView
      */
     public $default_exception = 'Exception_ForUser';
 
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+    
+    // }}}
+
     public function init()
     {
         $this->app->page_object = $this;

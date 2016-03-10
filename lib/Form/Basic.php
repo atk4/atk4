@@ -298,6 +298,7 @@ class Form_Basic extends View implements ArrayAccess
             // Keep Reference, for $form->getElement().
             $this->elements[$options['name']] = $field;
         }
+        /** @type Form_Field $field */
 
         $field->setCaption($caption);
         $field->setForm($this);

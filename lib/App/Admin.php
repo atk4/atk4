@@ -32,6 +32,13 @@ class App_Admin extends App_Frontend
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons = array();
 
+    // {{{ Inherited properties
+
+    /** @var Layout_Fluid */
+    public $layout;
+
+    // }}}
+
     /**
      * Initialization.
      */
@@ -128,7 +135,7 @@ class App_Admin extends App_Frontend
                 $path_d = $install_dir.'/agiletoolkit-sandbox-d.phar';
                 $path = $install_dir.'/agiletoolkit-sandbox.phar';
                 $url = 'http://www4.agiletoolkit.org/dist/agiletoolkit-sandbox.phar';
-                if (file_put_contents($path_d, file_get_contents($url)) == false) {
+                if (file_put_contents($path_d, file_get_contents($url)) === false) {
                     return 'update error';
                 } else {
                     if (rename($path_d, $path) === false) {
@@ -148,7 +155,7 @@ class App_Admin extends App_Frontend
      * Return all registered in sandbox_addons.json addons
      * sandbox/Controller_AddonsConfig_Reflection.
      *
-     * @return array()
+     * @return array
      */
     public function getInstalledAddons()
     {

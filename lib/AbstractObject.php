@@ -312,11 +312,15 @@ abstract class AbstractObject
 
             $this->elements[$class->short_name] = $class;
             if ($class instanceof AbstractView) {
+                /** @type AbstractView $class */
                 $class->owner->elements[$class->short_name] = true;
             }
             $class->owner = $this;
-            if ($class instanceof AbstractView && !$this->template) {
-                $class->initializeTemplate($template_spot, $template_branch);
+            if ($class instanceof AbstractView) {
+                /** @type AbstractView $class */
+                if (!isset($this->template) || !$this->template) {
+                    $class->initializeTemplate($template_spot, $template_branch);
+                }
             }
 
             return $class;

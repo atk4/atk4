@@ -23,6 +23,7 @@ abstract class Form_Field extends AbstractView
     public $comment = '&nbsp;';
     protected $disabled = false;
     protected $mandatory = false;
+    public $readonly = false;
     public $default_value = null;
 
     // Field customization
@@ -32,6 +33,13 @@ abstract class Form_Field extends AbstractView
 
     public $button_prepend = null;
     public $button_append = null;
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    /// }}}
 
     public function init()
     {
@@ -153,9 +161,13 @@ abstract class Form_Field extends AbstractView
             }
         }
         if ($position == 'after') {
-            $button = $this->afterField()->add('Button', $options)->set($label);
+            /** @type Button $button */
+            $button = $this->afterField()->add('Button', $options);
+            $button->set($label);
         } else {
-            $button = $this->beforeField()->add('Button', $options)->set($label);
+            /** @type Button $button */
+            $button = $this->beforeField()->add('Button', $options);
+            $button->set($label);
         }
         $this->js('change', $button->js()->data('val', $this->js()->val()));
 

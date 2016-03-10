@@ -125,7 +125,10 @@ class PathFinder extends AbstractController
                 // add PHP verion check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
                 throw $e;
+                
+                /* unreachable code
                 $self->app->caughtException($e);
+                */
             }
         });
     }
@@ -298,10 +301,10 @@ class PathFinder extends AbstractController
             return $this->base_location->addRelativeLocation($contents, $old_contents);
         }
 
-        return $this
-            ->add('PathFinder_Location')
-            ->defineContents($contents)
-            ;
+        /** @type PathFinder_Location $loc */
+        $loc = $this->add('PathFinder_Location');
+
+        return $loc->defineContents($contents);
     }
 
     /**
@@ -608,8 +611,8 @@ class PathFinder_Location extends AbstractModel
     /**
      * Adds a new location object which is relative to $this location.
      *
-     * @param [type] $relative_path [description]
-     * @param array  $contents      [description]
+     * @param string $relative_path
+     * @param array  $contents
      */
     public function addRelativeLocation($relative_path, array $contents = array())
     {

@@ -38,6 +38,7 @@ class Relation_ContainsOne extends Field
 
             $model = $this->add($model);
         }
+        /** @type Model $model */
 
         $model->data = $this->owner[$this->short_name];
         $model->id = $model->data ? 1 : null;

@@ -44,7 +44,8 @@ class Field_Reference extends Field
 
         if ($display_field !== false) {
             $this->owner->addExpression($this->getDereferenced())
-                ->set(array($this, 'calculateSubQuery'))->caption($this->caption());
+                ->set(array($this, 'calculateSubQuery'))
+                ->caption((string) $this->caption());
         }
 
         $this->system(true);
@@ -64,6 +65,7 @@ class Field_Reference extends Field
         if (!$this->model) {
             $this->model = $this->add($this->model_name);
         }
+        /** @type Model $this->model */
         if ($this->display_field) {
             $this->model->title_field = $this->display_field;
         }
@@ -225,13 +227,12 @@ class Field_Reference extends Field
         if (!$this->model) {
             $this->getModel(); //$this->model=$this->add($this->model_name);
         }
+        /** @type SQL_Model $this->model */
 
         if ($this->display_field) {
-            /** @type SQL_Model $this->model */
             $title = $this->model->dsql()->del('fields');
             $this->model->getElement($this->display_field)->updateSelectQuery($title);
         } elseif ($this->model->hasMethod('titleQuery')) {
-            /** @type SQL_Model $this->model */
             $title = $this->model->titleQuery();
         } else {
             // possibly references non-sql model, so just display field value

@@ -48,6 +48,14 @@ class App_Web extends App_CLI
      */
     public $jquery;
 
+    /**
+     * jQuery UI object. Initializes only if you add jQuery UI in your app.
+     *
+     * @see jUI::init()
+     * @var jUI
+     */
+    public $jui;
+
     /** @var App_Web */
     public $app;
     /** @var array For internal use */
@@ -82,8 +90,8 @@ class App_Web extends App_CLI
      */
     public function _beforeInit()
     {
-        /** @type Controller_PageManager $this->pm */
         $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
+        /** @type Controller_PageManager $this->pm */
         $this->pm->parseRequestedURL();
         parent::_beforeInit();
     }

@@ -29,6 +29,13 @@ class Form_Field_DateSelector extends Form_Field
     protected $c_day;
     protected $date_order = array('d', 'm', 'y');
 
+    // {{{ Inherited properties
+
+    /** @var Form_Basic */
+    public $owner;
+
+    /// }}}
+
     public function init()
     {
         parent::init();
@@ -195,7 +202,7 @@ class Form_Field_DateSelector extends Form_Field
         // zak, did you forget that onChange() event might ALREADY be defined?
         //$this->onChange()->ajaxFunc("refreshDateSelector('{$this->name}')");
 
-        $onChange = ($this->onchange) ? $this->onchange->getString() : '';
+        $onChange = $this->onchange ? $this->onchange->getString() : '';
 
         if ($this->required) {
             $output .= $this->getTag(

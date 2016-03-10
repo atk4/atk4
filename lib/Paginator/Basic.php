@@ -62,6 +62,13 @@ class Paginator_Basic extends CompleteLister
      */
     public $base_page = null;
 
+    /** @var int */
+    public $found_rows;
+    /** @var int */
+    public $cur_page;
+    /** @var int */
+    public $total_pages;
+
     // {{{ Inherited properties
 
     /** @var View */
@@ -197,8 +204,9 @@ class Paginator_Basic extends CompleteLister
         }
 
         if ($this->cur_page > 1) {
-            $this->add('View', null, 'prev')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'prev');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, $this->skip - $this->ipp))
@@ -211,8 +219,9 @@ class Paginator_Basic extends CompleteLister
         }
 
         if ($this->cur_page < $this->total_pages) {
-            $this->add('View', null, 'next')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'next');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = $this->skip + $this->ipp)
@@ -226,8 +235,9 @@ class Paginator_Basic extends CompleteLister
 
         // First page
         if ($this->cur_page > $this->range + 1) {
-            $this->add('View', null, 'first')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'first');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, 0))
@@ -236,8 +246,9 @@ class Paginator_Basic extends CompleteLister
                 ->set('1')
                 ;
             if ($this->cur_page > $this->range + 2) {
-                $this->add('View', null, 'points_left')
-                    ->setElement('span')
+                /** @type View $v */
+                $v = $this->add('View', null, 'points_left');
+                $v->setElement('span')
                     ->set('...')
                     ;
             }
@@ -245,8 +256,9 @@ class Paginator_Basic extends CompleteLister
 
         // Last page
         if ($this->cur_page < $this->total_pages - $this->range) {
-            $this->add('View', null, 'last')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'last');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, ($this->total_pages - 1) * $this->ipp))
@@ -255,8 +267,9 @@ class Paginator_Basic extends CompleteLister
                 ->set($this->total_pages)
                 ;
             if ($this->cur_page < $this->total_pages - $this->range - 1) {
-                $this->add('View', null, 'points_right')
-                    ->setElement('span')
+                /** @type View $v */
+                $v = $this->add('View', null, 'points_right');
+                $v->setElement('span')
                     ->set('...')
                     ;
             }

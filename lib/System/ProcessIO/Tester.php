@@ -2,7 +2,7 @@
 /**
  * Undocumented
  */
-class System_ProcessIO_Tester
+class System_ProcessIO_Tester extends AbstractController
 {
     public $scripts = array(
             'basic' => array('exec', 'close'),

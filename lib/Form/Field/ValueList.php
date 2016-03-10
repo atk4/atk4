@@ -94,7 +94,7 @@ abstract class Form_Field_ValueList extends Form_Field
             if (!isset($this->value_list[$v])) {
                 $this->displayFieldError("Value $v is not one of the offered values");
 
-                return parent::validate();
+                return $this->validate();
             }
         }
     }

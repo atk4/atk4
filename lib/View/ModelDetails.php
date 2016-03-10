@@ -85,9 +85,7 @@ class View_ModelDetails extends Grid_Basic
                 }
             }
 
-            // @codingStandardsIgnoreStart
             parent::setSource($data);
-            // @codingStandardsIgnoreEnd
         }
 
         return parent::render();

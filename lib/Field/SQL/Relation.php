@@ -28,6 +28,7 @@ class Field_SQL_Relation extends Field_Base
     public function addField($name, $alias = null)
     {
         $field = $this->model->addField($name, $alias);
+        /** @type Field_Base $field */
         $field->table($this->joinAlias);
 
         return $field;
@@ -46,7 +47,7 @@ class Field_SQL_Relation extends Field_Base
     {
         // @todo Should check field types. There is some kind of mix of SQL fields and base fields
 
-        /** @type Field_Reference $field */
+        /** @type Field_Base $field */
         $field = $this->model->hasOne($model, $our_field, $field_class);
         $field->table($this->joinAlias);
 

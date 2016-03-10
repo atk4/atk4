@@ -180,7 +180,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string $template New template to use by render
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function template($template)
     {
@@ -194,7 +194,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string $param_base prefix to use for param names
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function paramBase($param_base)
     {
@@ -280,10 +280,10 @@ class DB_dsql extends AbstractModel implements Iterator
      * Defines a custom tag variable. WARNING: always backtick / escaped
      * argument if it's unsafe.
      *
-     * @param string        $tag   Corresponds to [tag] inside template
+     * @param string|array  $tag   Corresponds to [tag] inside template
      * @param string|object $value Value for the template tag
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function setCustom($tag, $value = null)
     {
@@ -331,7 +331,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string $args Could be 'field', 'where', 'order', 'limit', etc
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function del($args)
     {
@@ -343,7 +343,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Removes all definitions. Start from scratch.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function reset()
     {
@@ -376,7 +376,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $expr SQL Expression. Don't pass unverified input
      * @param array  $tags Obsolete, use templates / setCustom()
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function useExpr($expr, $tags = array())
     {
@@ -593,7 +593,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string       $table Specify if not using primary table
      * @param string       $alias Specify alias for this field
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function field($field, $table = null, $alias = null)
     {
@@ -707,7 +707,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $value Value. Will be quoted unless you pass expression
      * @param string $kind  Do not use directly. Use having()
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function where($field, $cond = UNDEFINED, $value = UNDEFINED, $kind = 'where')
     {
@@ -763,7 +763,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $cond  Condition such as '=', '>' or 'is not'
      * @param string $value Value. Will be quoted unless you pass expression
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function having($field, $cond = UNDEFINED, $value = UNDEFINED)
     {
@@ -953,7 +953,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $join_kind      'left' or 'inner', etc
      * @param string $_foreign_alias Internal, don't use
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function join(
         $foreign_table,
@@ -1076,7 +1076,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string|object $group Group by this
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function group($group)
     {
@@ -1112,7 +1112,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * $q->order('name',true);
      *
      * @param mixed $order Order by
-     * @param string $desc  true to sort descending
+     * @param string|bool $desc  true to sort descending
      *
      * @return $this
      */
@@ -1190,7 +1190,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string|expresion $option Option to put after SELECT
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function option($option)
     {
@@ -1212,7 +1212,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string|expresion $option Option to put after INSERT
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function option_insert($option)
     {
@@ -1224,7 +1224,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string|expresion $option Option to put after REPLACE
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function option_replace($option)
     {
@@ -1266,7 +1266,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $fx   Name of the user defined method
      * @param array  $args Arguments in mixed form
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function call($fx, $args = null)
     {
@@ -1288,7 +1288,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $fx   Name of the built-in method
      * @param array  $args Arguments
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function fx($fx, $args = null)
     {
@@ -1308,7 +1308,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param array $args Array with mixed arguments
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function args($args)
     {
@@ -1335,7 +1335,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Sets IGNORE option.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function ignore()
     {
@@ -1375,7 +1375,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param int $cnt   Number of rows to return
      * @param int $shift Offset, how many rows to skip
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function limit($cnt, $shift = 0)
     {
@@ -1409,7 +1409,7 @@ class DB_dsql extends AbstractModel implements Iterator
      * @param string $field Name of the field
      * @param mixed  $value Value of the field
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function set($field, $value = UNDEFINED)
     {
@@ -1552,7 +1552,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @private
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function _setArray($values, $name, $parse_commas = true)
     {
@@ -1583,7 +1583,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *
      * @param string $mode A key for $this->sql_templates
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function SQLTemplate($mode)
     {
@@ -1679,7 +1679,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes current query.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function execute()
     {
@@ -1706,7 +1706,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes select query.
      *
-     * @return DB_dsql() $this
+     * @return $this
      */
     public function select()
     {
@@ -1748,7 +1748,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes update query.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function update()
     {
@@ -1758,7 +1758,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes replace query.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function replace()
     {
@@ -1768,7 +1768,7 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes delete query.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function delete()
     {
@@ -1778,29 +1778,37 @@ class DB_dsql extends AbstractModel implements Iterator
     /**
      * Executes truncate query.
      *
-     * @return DB_dsql $this
+     * @return $this
      */
     public function truncate()
     {
         return $this->SQLTemplate('truncate')->execute();
     }
 
-    /** @obsolete, use select() */
+    /**
+     * @deprecated 4.3.0 use select()
+     */
     public function do_select()
     {
         return $this->select();
     }
-    /** @obsolete, use insert() */
+    /**
+     * @deprecated 4.3.0 use insert()
+     */
     public function do_insert()
     {
         return $this->insert();
     }
-    /** @obsolete, use update() */
+    /**
+     * @deprecated 4.3.0  use update()
+     */
     public function do_update()
     {
         return $this->update();
     }
-    /** @obsolete, use replace() */
+    /**
+     * @deprecated 4.3.0 use replace()
+     */
     public function do_replace()
     {
         return $this->replace();

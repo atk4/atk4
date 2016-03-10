@@ -32,8 +32,8 @@ class App_REST extends App_CLI
 
             $this->getLogger();
 
-            /** @type Controller_PageManager $this->pm */
             $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
+            /** @type Controller_PageManager $this->pm */
             $this->pm->parseRequestedURL();
 
             // It's recommended that you use versioning inside your API,

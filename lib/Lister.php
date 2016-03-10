@@ -138,6 +138,7 @@ class Lister extends View implements ArrayAccess
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id => $this->current_row) {
             if ($this->current_row instanceof Model) {
+                /** @type Model $this->current_row */
                 $this->current_row = $this->current_row->get();
             } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
                 // Looks like we won't be able to access current_row as array, so we will

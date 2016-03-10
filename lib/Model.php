@@ -237,8 +237,8 @@ class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
             $field_class = $this->defaultExpressionFieldClass;
         }
         /** @type Field_Base $field */
-        $field = $this->add($field_class, $name)
-            ->setExpression($expression);
+        $field = $this->add($field_class, $name);
+        $field->setExpression($expression);
         $this->_expressions[$name] = $field;
 
         return $field;

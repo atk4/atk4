@@ -48,8 +48,9 @@ abstract class Menu_Advanced extends View
 
         if (is_array($title)) {
             if ($title['badge']) {
-                $i->add('View', null, 'Badge')
-                    ->setElement('span')
+                /** @type View $v */
+                $v = $i->add('View', null, 'Badge');
+                $v->setElement('span')
                     ->addClass('atk-label')
                     ->set($title['badge']);
                 unset($title['badge']);
@@ -127,12 +128,16 @@ abstract class Menu_Advanced extends View
 
     public function setModel($m, $options = array())
     {
+        /** @type Model $m */
         $m = parent::setModel($m);
         foreach ($m as $model) {
 
             // check subitems
-            if (@$model->hierarchy_controller && $model[strtolower($model->hierarchy_controller->child_ref).'_cnt']) {
+            if (@$model->hierarchy_controller
+                && $model[strtolower($model->hierarchy_controller->child_ref).'_cnt']
+            ) {
                 $m = $this->addMenu($model[$options['title_field'] ?: $m->title_field]);
+                /** @type Menu_Advanced $m */
                 foreach ($model->ref($model->hierarchy_controller->child_ref) as $child) {
                     $m->addItem(
                         $options['title_field'] ?: $child[$options['title_field'] ?: $model->title_field],

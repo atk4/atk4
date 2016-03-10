@@ -87,6 +87,9 @@ class jQuery_Chain extends AbstractModel
     /** @var App_Web */
     public $app;
 
+    /** @var View */
+    public $owner;
+
     // }}}
 
     /**
@@ -432,7 +435,7 @@ class jQuery_Chain extends AbstractModel
      *
      * @return $this
      */
-    public function redirect($page = null, $arg = null)
+    public function redirect($page = null, $arg = array())
     {
         $url = $this->app->url($page, $arg);
 
@@ -459,7 +462,7 @@ class jQuery_Chain extends AbstractModel
             $fn->_enclose();
         }
         $obj = $this->owner;
-        if (!$url) {
+        if ($url === null) {
             $url = $this->app->url(null, array('cut_object' => $obj->name));
         }
 

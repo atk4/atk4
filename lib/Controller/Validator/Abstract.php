@@ -69,7 +69,7 @@ class Controller_Validator_Abstract extends \AbstractController
         $that = $this;
 
         if ($this->owner instanceof Controller_Validator) {
-            $this->owner->addHook('extraRules', $this);
+            $this->owner->addHook('extraRules', array($this, 'extraRules'));
 
             return;  // no source, simply extend rules.
         }
@@ -445,8 +445,9 @@ class Controller_Validator_Abstract extends \AbstractController
             }
         }
 
-        throw $this->exception($this->custom_error ?: $str)
-            ->setField($this->active_field);
+        /** @type Exception_ValidityCheck $e */
+        $e = $this->exception((string) ($this->custom_error ?: $str));
+        throw $e->setField($this->active_field);
     }
 
     public function stop()

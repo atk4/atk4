@@ -157,6 +157,7 @@ abstract class AbstractView extends AbstractObject
         $ret = $this->_tsBuffer;
         $this->_tsBuffer = '';
         if ($execute_js && isset($this->app->jquery)) {
+            /** @type App_Web $this->app */
             $this->app->jquery->getJS($this);
         }
         if ($destroy) {
@@ -201,35 +202,32 @@ abstract class AbstractView extends AbstractObject
 
             if (is_object($template_branch)) {
                 // it might be already template instance (object)
-                /** @type Template $this->template */
                 $this->template = $template_branch;
             } elseif (is_array($template_branch)) {
                 // it might be array with [0]=template, [1]=tag
                 if (is_object($template_branch[0])) {
                     // if [0] is object, we'll use that
-                    /** @type Template */
                     $this->template = $template_branch[0];
                 } else {
-                    /** @type Template $this->template */
                     $this->template = $this->app->add('Template');
+                    /** @type Template $this->template */
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
-                /** @type Template $this->template */
                 $this->template = $this->template->cloneRegion(
                     isset($template_branch[1]) ? $template_branch[1] : '_top'
                 );
             } else {
                 // brach could be just a string - a region to clone off parent
                 if (isset($this->owner->template)) {
-                /** @type Template $this->template */
                     $this->template
                         = $this->owner->template->cloneRegion($template_branch);
                 } else {
-                /** @type Template $this->template */
                     $this->template = $this->add('Template');
                 }
             }
+
+            /** @type Template $this->template */
             $this->template->owner = $this;
         }
 
@@ -257,6 +255,7 @@ abstract class AbstractView extends AbstractObject
         if ($this->template
             && $this->app->hasMethod('setTags')
         ) {
+            /** @type App_Web $this->app */
             $this->app->setTags($this->template);
         }
     }
@@ -359,6 +358,7 @@ abstract class AbstractView extends AbstractObject
         if ($cutting_here) {
             //$result=$this->owner->template->cloneRegion($this->spot)->render();
             if (isset($this->app->jquery)) {
+                /** @type App_Web $this->app */
                 $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender($cutting_output);
@@ -538,6 +538,8 @@ abstract class AbstractView extends AbstractObject
             throw new BaseException('requires jQuery or jUI support');
         }
 
+        /** @type App_Web $this->app */
+
         // Substitute $when to make it better work as a array key
         if ($when === true) {
             $when = 'always';
@@ -613,6 +615,8 @@ abstract class AbstractView extends AbstractObject
      */
     public function on($event, $selector = null, $js = null)
     {
+        /** @type App_Web $this->app */
+
         if (!is_string($selector) && is_null($js)) {
             $js = $selector;
             $selector = null;

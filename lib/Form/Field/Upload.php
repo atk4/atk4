@@ -49,10 +49,19 @@
  */
 class Form_Field_Upload extends Form_Field
 {
+    /** @var int|null */
     public $max_file_size = null;
+    
+    /** @var string */
     public $mode = 'iframe';
+    
+    /** @var int|false */
     public $multiple = false;
+    
+    /** @var bool */
     public $debug = false;
+
+    /** @var string */
     public $format_files_template = 'view/uploaded_files';
 
     public function init()
@@ -236,7 +245,9 @@ class Form_Field_Upload extends Form_Field
     public function formatFiles($data)
     {
         $this->js(true)->atk4_uploader('addFiles', $data);
-        $o = $this->add('GiTemplate')->loadTemplate($this->format_files_template)->render();
+        /** @type GiTemplate $t */
+        $t = $this->add('GiTemplate');
+        $o = $t->loadTemplate($this->format_files_template)->render();
 
         return $o;
     }
@@ -284,7 +295,10 @@ class Form_Field_Upload extends Form_Field
                 }
                 exit;
 
+                /* unreachable code
                 $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles', array($id))->execute();
+                */
+                
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))
                 //    ->_selectorRegion()->closest('tr')->remove()->execute();
             }
