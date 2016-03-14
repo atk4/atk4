@@ -92,7 +92,12 @@ class Form_Field_DatePicker extends Form_Field_Line
         if ($to === null) {
             $to = $this->app->getConfig('locale/date', 'Y-m-d');
         }
+        
+        $date = date_create_from_format($from, (string) $date);
+        if ($date === false) {
+            throw $this->exception('Date format is not correct');
+        }
 
-        return date_format(date_create_from_format($from, (string) $date), $to);
+        return date_format($date, $to);
     }
 }
