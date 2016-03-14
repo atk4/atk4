@@ -8,7 +8,7 @@
  *
  *  $tabs->addTabURL('./details','Details');    // AJAX tab
  */
-class View_Tabs_jUItabs extends View_Tabs
+class View_Tabs_jUItabs extends View
 {
     /** @var Template */
     public $tab_template = null;
