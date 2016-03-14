@@ -49,12 +49,14 @@
  * @method jQuery_Chain atk4_checkboxes()
  * @method jQuery_Chain atk4_expander()
  * @method jQuery_Chain atk4_uploader()
+ * @method jQuery_Chain atk4_loader()
  * @method jQuery_Chain atk4_load()
  * @method jQuery_Chain selectmenu()
  * @method jQuery_Chain datepicker()
  * @method jQuery_Chain button()
  * @method jQuery_Chain slider()
  * @method jQuery_Chain spinner()
+ * @method jQuery_Chain tabs()
  */
 class jQuery_Chain extends AbstractModel
 {
