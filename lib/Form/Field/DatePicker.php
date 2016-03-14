@@ -81,19 +81,24 @@ class Form_Field_DatePicker extends Form_Field_Line
      *
      * @return string|null
      */
-    public function convertDate($date, $from = 'd.m.Y', $to = 'Y-m-d')
+    public function convertDate($date, $from = null, $to = 'Y-m-d')
     {
         if (!$date) {
             return null;
         }
         if ($from === null) {
-            $from = $this->app->getConfig('locale/date', 'Y-m-d');
+            $from = $this->app->gcetConfig('locale/date', null);
+        }
+        if ($from === null) {
+            // no format configured, so use our best guess. Will work with Y-m-d
+            $date = new DateTime($date);
+        }else{
+            $date = date_create_from_format($from, (string) $date);
         }
         if ($to === null) {
             $to = $this->app->getConfig('locale/date', 'Y-m-d');
         }
         
-        $date = date_create_from_format($from, (string) $date);
         if ($date === false) {
             throw $this->exception('Date format is not correct');
         }
