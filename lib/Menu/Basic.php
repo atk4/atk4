@@ -16,6 +16,16 @@ class Menu_Basic extends CompleteLister
 
     public $inactive_menu_class = '';
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     /**
      * if set, then instead of setting a destination page for the URLs
      * the links will return to the same page, however new argument
@@ -74,10 +84,16 @@ class Menu_Basic extends CompleteLister
 
         return $this;
     }
+    /**
+     * @param string $label
+     *
+     * @return Menu_jUI
+     */
     public function addSubMenu($label)
     {
         // we use MenuSeparator tag here just to put View_Popover outside of UL list.
         // Otherwise it breaks correct HTML and CSS.
+        /** @type View_Popover $f */
         $f = $this->add('View_Popover');
         $this->addMenuItem($f->showJS('#'.$this->name.'_i'.count($this->items)), $label);
 

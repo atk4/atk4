@@ -14,11 +14,24 @@ class SQL_Relation extends AbstractModel
     public $f2 = null;            // Foreign field
     public $m2 = null;            // Master field
 
+    public $fa = null;            // short name / field alias ?
+
     public $m1 = null;            // Master table (defaults to owner->table / owner->table_alias)
     // $m1 == $relation->f1
     public $relation = null;
 
     public $delete_behaviour = 'cascade';          // cascade, setnull, ignore
+
+    public $table_alias;
+    public $dsql;
+    public $id;
+
+    // {{{ type-hint inherited properties
+
+    /** @var SQL_Model */
+    public $owner;
+    
+    // }}}
 
     public function init()
     {
@@ -70,6 +83,7 @@ class SQL_Relation extends AbstractModel
         // Split and deduce fields
         list($f1, $f2) = explode('.', $foreign_table, 2);
 
+        $m1 = $m2 = null;
         if (is_object($master_field)) {
             $this->expr = $master_field;
         } else {
@@ -104,19 +118,19 @@ class SQL_Relation extends AbstractModel
         // If our ID field is NOT used, must insert record in OTHER table first and use their primary value in OUR field
         if ($this->m2 && $this->m2 != $this->owner->id_field) {
             // user.contactinfo_id = contactinfo.id
-            $this->owner->addHook('beforeInsert', $this, array(), -5);
-            $this->owner->addHook('beforeModify', $this, array(), -5);
-            $this->owner->addHook('afterDelete', $this, array(), -5);
+            $this->owner->addHook('beforeInsert', array($this, 'beforeInsert'), array(), -5);
+            $this->owner->addHook('beforeModify', array($this, 'beforeModify'), array(), -5);
+            $this->owner->addHook('afterDelete', array($this, 'afterDelete'), array(), -5);
         } elseif ($this->m2) {
             // author.id = book.author_id
-            $this->owner->addHook('afterInsert', $this);
-            $this->owner->addHook('beforeModify', $this);
-            $this->owner->addHook('beforeDelete', $this);
+            $this->owner->addHook('afterInsert', array($this, 'afterInsert'));
+            $this->owner->addHook('beforeModify', array($this, 'beforeModify'));
+            $this->owner->addHook('beforeDelete', array($this, 'beforeDelete'));
         }// else $m2 is not set, expression is used, so don't try to do anything unnecessary
 
-        $this->owner->addHook('beforeSave', $this);
-        $this->owner->addHook('beforeLoad', $this);
-        $this->owner->addHook('afterLoad', $this);
+        $this->owner->addHook('beforeSave', array($this, 'beforeSave'));
+        $this->owner->addHook('beforeLoad', array($this, 'beforeLoad'));
+        $this->owner->addHook('afterLoad', array($this, 'afterLoad'));
 
         return $this;
     }
@@ -174,6 +188,7 @@ class SQL_Relation extends AbstractModel
             $this->dsql->del('field')->where($this->f2, $this->id)->delete();
         } elseif ($this->delete_behaviour == 'ignore') {
             // $this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->debug()->update();
+            null;
         }
     }
     public function afterDelete($m)
@@ -191,6 +206,7 @@ class SQL_Relation extends AbstractModel
             }
         } elseif ($this->delete_behaviour == 'ignore') {
             //$this->dsql->del('field')->set($this->f2,null)->where($this->f2,$this->id)->update();
+            null;
         }
     }
 

@@ -19,9 +19,7 @@
  *         $this->addField('email');
  *     }
  * }
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- **/
+ */
 class SQL_Model extends Model implements Serializable
 {
     /**
@@ -94,10 +92,12 @@ class SQL_Model extends Model implements Serializable
     /** Initialization of ID field, which must always be defined */
     public function __construct($options = array())
     {
+        // for compatibility
         if ($this->entity_code) {
             $this->table = $this->entity_code;
             unset($this->entity_code);
         }
+
         parent::__construct($options);
     }
     /**
@@ -115,6 +115,15 @@ class SQL_Model extends Model implements Serializable
             $this->relations = &$this->owner->owner->relations;
         }
     }
+
+    /**
+     * Adds field to model
+     *
+     * @param string $name
+     * @param string $actual_field
+     *
+     * @return Field
+     */
     public function addField($name, $actual_field = null)
     {
         if ($this->hasElement($name)) {
@@ -125,10 +134,13 @@ class SQL_Model extends Model implements Serializable
             ->addMoreInfo('field', $name);
         }
         if ($name == 'deleted' && isset($this->app->compat)) {
-            return $this->add('Field_Deleted', $name)->enum(array('Y', 'N'));
+            /** @type Field_Deleted $f */
+            $f = $this->add('Field_Deleted', $name);
+            return $f->enum(array('Y', 'N'));
         }
 
         // $f=parent::addField($name);
+        /** @type Field $f */
         $f = $this->add($this->field_class, $name);
         //
 
@@ -138,6 +150,7 @@ class SQL_Model extends Model implements Serializable
 
         return $f;
     }
+
     /** exception() will automatically add information about current model and will allow to turn on "debug" mode */
     public function exception()
     {
@@ -253,12 +266,12 @@ class SQL_Model extends Model implements Serializable
 
         // add actual fields
         foreach ($actual_fields as $field) {
+            /** @type Field $field */
             $field = $this->hasElement($field);
             if (!$field) {
                 continue;
             }
 
-            /** @var Field */
             $field->updateSelectQuery($select);
         }
         /**/$this->app->pr->stop();
@@ -280,7 +293,9 @@ class SQL_Model extends Model implements Serializable
     public function titleQuery()
     {
         $query = $this->dsql()->del('fields');
-        if ($this->title_field && $el = $this->hasElement($this->title_field)) {
+        /** @type Field $el */
+        $el = $this->hasElement($this->title_field);
+        if ($this->title_field && $el) {
             $el->updateSelectQuery($query);
 
             return $query;
@@ -292,13 +307,24 @@ class SQL_Model extends Model implements Serializable
 
     // {{{ SQL_Model supports more than just fields. Expressions, References and Joins can be added
 
-    /** Adds and returns SQL-calculated expression as a read-only field. See Field_Expression class. */
+    /**
+     * Adds and returns SQL-calculated expression as a read-only field.
+     *
+     * See Field_Expression class.
+     *
+     * @param string $name
+     * @param mixed $expression
+     *
+     * @return DB_dsql
+     */
     public function addExpression($name, $expression = null)
     {
-        return $expr = $this
-            ->add('Field_Expression', $name)
-            ->set($expression);
+        /** @type Field_Expression $f */
+        $f = $this->add('Field_Expression', $name);
+
+        return $f->set($expression);
     }
+
     /**
      * Constructs model from multiple tables.
      * Queries will join tables, inserts, updates and deletes will be applied on both tables
@@ -315,9 +341,13 @@ class SQL_Model extends Model implements Serializable
         }
         $_foreign_alias = $this->_unique($this->relations, $_foreign_alias);
 
-        return $this->relations[$_foreign_alias] = $this->add('SQL_Relation', $_foreign_alias)
+        /** @type SQL_Relation $rel */
+        $rel = $this->add('SQL_Relation', $_foreign_alias);
+
+        return $this->relations[$_foreign_alias] = $rel
             ->set($foreign_table, $master_field, $join_kind, $relation);
     }
+
     /**
      * Creates weak join between tables.
      * The foreign table may be absent and will not be automatically deleted.
@@ -356,6 +386,7 @@ class SQL_Model extends Model implements Serializable
             $our_field = ($tmp->table).'_id';
         }
 
+        /** @type Field_Reference $r */
         $r = $this->add('Field_Reference', array('name' => $our_field, 'dereferenced_field' => $as_field));
         $r->setModel($model, $display_field);
         $r->system(true)->editable(true);
@@ -371,8 +402,9 @@ class SQL_Model extends Model implements Serializable
         if (!$their_field) {
             $their_field = ($this->table).'_id';
         }
-        $rel = $this->add('SQL_Many', $as_field ?: $model)
-            ->set($model, $their_field, $our_field);
+        /** @type SQL_Many $rel */
+        $rel = $this->add('SQL_Many', $as_field ?: $model);
+        $rel->set($model, $their_field, $our_field);
 
         return $rel;
     }
@@ -409,12 +441,18 @@ class SQL_Model extends Model implements Serializable
             return $this;
         }
 
-        return $this->getElement($name)->ref($load);
+        /** @type Field $field */
+        $field = $this->getElement($name);
+
+        return $field->ref($load);
     }
     /** Returns Model with SQL join usable for subqueries. */
     public function refSQL($name, $load = null)
     {
-        return $this->getElement($name)->refSQL($load);
+        /** @type Field_Reference $ref */
+        $ref = $this->getElement($name);
+
+        return $ref->refSQL($load);
     }
     /** @obsolete - return model referenced by a field. Use model name for one-to-many relations */
     public function getRef($name, $load = null)
@@ -468,12 +506,12 @@ class SQL_Model extends Model implements Serializable
      *
      * @todo Romans: refactor using parent::conditions (through array)
      *
-     * @param mixed $field Field for comparing or array of conditions
-     * @param mixed $cond  Condition
-     * @param mixed $value Value for comparing
-     * @param DSQL  $dsql  DSQL object to which conditions will be added
+     * @param mixed   $field Field for comparing or array of conditions
+     * @param mixed   $cond  Condition
+     * @param mixed   $value Value for comparing
+     * @param DB_dsql $dsql  DSQL object to which conditions will be added
      *
-     * @return this
+     * @return $this
      */
     public function addCondition($field, $cond = UNDEFINED, $value = UNDEFINED, $dsql = null)
     {
@@ -522,6 +560,8 @@ class SQL_Model extends Model implements Serializable
             $field = $this->getElement($field);
         }
 
+        /** @type Field $field */
+
         if ($cond !== UNDEFINED && $value === UNDEFINED) {
             $value = $cond;
             $cond = '=';
@@ -544,7 +584,7 @@ class SQL_Model extends Model implements Serializable
             //$field->updateSelectQuery($this->dsql);
         } elseif ($field->relation) {
             $dsql->where($field->relation->short_name.'.'.$f, $cond, $value);
-        } elseif ($this->relations) {
+        } elseif (!empty($this->relations)) {
             $dsql->where(($this->table_alias ?: $this->table).'.'.$f, $cond, $value);
         } else {
             $dsql->where(($this->table_alias ?: $this->table).'.'.$f, $cond, $value);
@@ -588,6 +628,7 @@ class SQL_Model extends Model implements Serializable
                 list($field, $desc) = array_map('trim', explode(' ', trim($field), 2));
             }
 
+            /** @type Field $field */
             $field = $this->getElement($field);
         }
 
@@ -680,7 +721,7 @@ class SQL_Model extends Model implements Serializable
      *
      * @param string $alias Optional alias of count expression
      *
-     * @return DSQL
+     * @return DB_dsql
      */
     public function count($alias = null)
     {
@@ -695,7 +736,7 @@ class SQL_Model extends Model implements Serializable
      *
      * @param string|array|Field $field
      *
-     * @return DSQL
+     * @return DB_dsql
      */
     public function sum($field)
     {
@@ -822,7 +863,7 @@ class SQL_Model extends Model implements Serializable
         $load = $this->selectQuery();
         /**/$this->app->pr->next('load/clone');
         $p = '';
-        if ($this->relations) {
+        if (!empty($this->relations)) {
             $p = ($this->table_alias ?: $this->table).'.';
         }
         /**/$this->app->pr->next('load/where');
@@ -867,7 +908,9 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
-    /** @obsolete Backward-compatible. Will attempt to load but will not fail */
+    /**
+     * @deprecated 4.3.3 Backward-compatible. Will attempt to load but will not fail
+     */
     public function loadData($id = null)
     {
         if ($id) {
@@ -992,7 +1035,7 @@ class SQL_Model extends Model implements Serializable
         $modify = $this->dsql()->del('where');
         $modify->where($this->getElement($this->id_field), $this->id);
 
-        if (!$this->dirty) {
+        if (empty($this->dirty)) {
             return $this;
         }
 
@@ -1032,7 +1075,7 @@ class SQL_Model extends Model implements Serializable
      */
     public function update($data = array())
     {
-        if ($data) {
+        if (!empty($data)) {
             $this->set($data);
         }
 
@@ -1169,6 +1212,7 @@ class SQL_Model extends Model implements Serializable
             return $this->data;
         }
 
+        /** @type Field $f */
         $f = $this->hasElement($name);
 
         if ($this->strict_fields && !$f) {
@@ -1196,7 +1240,7 @@ class SQL_Model extends Model implements Serializable
 
     public function getActualFields($group = UNDEFINED)
     {
-        if ($group === UNDEFINED && $this->actual_fields) {
+        if ($group === UNDEFINED && !empty($this->actual_fields)) {
             return $this->actual_fields;
         }
 
@@ -1246,8 +1290,11 @@ class SQL_Model extends Model implements Serializable
     }
     public function isDirty($name)
     {
+        /** @type Field $f */
+        $f = $this->getElement($name);
+
         return $this->dirty[$name] ||
-            (!$this->loaded() && $this->getElement($name)->has_default_value);
+            (!$this->loaded() && $f->has_default_value);
     }
     public function reset()
     {
@@ -1278,7 +1325,9 @@ class SQL_Model extends Model implements Serializable
         } elseif (!$controller instanceof Controller_Data) {
             throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
         }
+
         $this->controller = $this->setController($controller);
+        /** @type Controller @this->controller */
 
         $this->controller->setSource($this, $table);
 
@@ -1288,6 +1337,9 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
+    /**
+     * @todo This is something wierd. Method addHooks is not defined anywhere in ATK source
+     */
     public function addCache($controller, $table = null, $priority = 5)
     {
         $controller = $this->app->normalizeClassName($controller, 'Data');
@@ -1334,9 +1386,9 @@ class SQL_Model extends Model implements Serializable
     }
     public function _ref($ref, $class, $field, $val)
     {
-        $m = $this
-            ->add($this->app->normalizeClassName($class, 'Model'))
-            ->ref($ref);
+        /** @type Model $m */
+        $m = $this->add($this->app->normalizeClassName($class, 'Model'));
+        $m = $m->ref($ref);
 
         // For one to many relation, create condition, otherwise do nothing,
         // as load will follow
@@ -1346,6 +1398,11 @@ class SQL_Model extends Model implements Serializable
 
         return $m;
     }
+
+    /**
+     * Strange method. Uses undefined $field variable, undefined refBind() method etc.
+     * https://github.com/atk4/atk4/issues/711
+     */
     public function _refBind($field_in, $expression, $field_out = null)
     {
         if ($this->controller) {

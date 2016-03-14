@@ -1,22 +1,107 @@
 <?php
 /**
- * This class represents sequentall calls to one jQuery object.
+ * This class represents sequential calls to one jQuery object.
  *
- * jQuery chain proxy. Returned by view->js(). Calls to this
- * class will be converted into jQuery calls.
+ * jQuery chain proxy. Returned by view->js().
+ * Calls to this class will be converted into jQuery calls.
  *
- * Feel free to call _XX functions in this class
+ * Feel free to call _XX functions in this class.
+ *
+ * There are some of JS functions which you can call directly from this class.
+ * You can call any jQuery function. We name them here just to pass PHP Analyzer checks.
+ * @method jQuery_Chain alert()
+ * @method jQuery_Chain append()
+ * @method jQuery_Chain appendTo()
+ * @method jQuery_Chain bind()
+ * @method jQuery_Chain click()
+ * @method jQuery_Chain on()
+ * @method jQuery_Chain attr()
+ * @method jQuery_Chain val()
+ * @method jQuery_Chain prop()
+ * @method jQuery_Chain data()
+ * @method jQuery_Chain confirm()
+ * @method jQuery_Chain submit()
+ * @method jQuery_Chain find()
+ * @method jQuery_Chain select()
+ * @method jQuery_Chain focus()
+ * @method jQuery_Chain css()
+ * @method jQuery_Chain change()
+ * @method jQuery_Chain trigger()
+ * @method jQuery_Chain location()
+ * @method jQuery_Chain closest()
+ * @method jQuery_Chain show()
+ * @method jQuery_Chain hide()
+ * @method jQuery_Chain toggle()
+ * @method jQuery_Chain parent()
+ * @method jQuery_Chain addClass()
+ * @method jQuery_Chain removeClass()
+ * @method jQuery_Chain toggleClass()
+ * @method jQuery_Chain position()
+ *
+ * @method jQuery_Chain ajaxec()
+ * @method jQuery_Chain successMessage()
+ * @method jQuery_Chain errorMessage()
+ * @method jQuery_Chain consoleError()
+ * @method jQuery_Chain dialog()
+ * @method jQuery_Chain dialogError()
+ * @method jQuery_Chain closeDialog()
+ * @method jQuery_Chain frameURL()
+ * @method jQuery_Chain atk4_checkboxes()
+ * @method jQuery_Chain atk4_expander()
+ * @method jQuery_Chain atk4_uploader()
+ * @method jQuery_Chain atk4_loader()
+ * @method jQuery_Chain atk4_load()
+ * @method jQuery_Chain selectmenu()
+ * @method jQuery_Chain datepicker()
+ * @method jQuery_Chain button()
+ * @method jQuery_Chain slider()
+ * @method jQuery_Chain spinner()
+ * @method jQuery_Chain tabs()
  */
 class jQuery_Chain extends AbstractModel
 {
+    /** @var string */
     public $str = '';
+
+    /** @var string */
     public $prepend = '';
+
+    /** @var string */
     public $library = null;
+
+    /** @var bool|jQuery_Chain */
     public $enclose = false;
+
+    /** @var bool */
     public $preventDefault = false;
+
+    /** @var string It looks that this property is not used */
     public $base = '';
+
+    /** @var bool */
     public $debug = false;
+
+    /** @var bool */
     public $univ_called = false;
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    /** @var View */
+    public $owner;
+
+    // }}}
+
+    /**
+     * Call any jQuery library method
+     *
+     * @param string $name
+     * @param mixed $arguments
+     *
+     * @return $this
+     */
     public function __call($name, $arguments)
     {
         if ($arguments) {
@@ -28,37 +113,67 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
+    /**
+     * This enables you  to have syntax like this:
+     *
+     * $this->js()->offset()->top <-- access object items, if object is
+     * returned by chained method call.
+     *
+     * @param string $property
+     *
+     * @return $this
+     */
     public function __get($property)
     {
-        /* this enables you  to have syntax like this:
-         *
-         * $this->js()->offset()->top <-- access object items, if object is
-         * returned by chained method call */
         if (!property_exists($this, $property)) {
             $this->str .= ".$property";
         }
 
         return $this;
     }
-    /* convert reserved words or used methods into js calls, such as "execute" */
+
+    /**
+     * Convert reserved words or used methods into js calls, such as "execute"
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function _fn($name, $arguments = array())
     {
-        // Wrapper for functons which use reserved words
+        // Wrapper for functions which use reserved words
         return $this->__call($name, $arguments);
     }
-    /* converting this object into string will produce JavaScript code */
+
+    /**
+     * Converting this object into string will produce JavaScript code
+     *
+     * @return string
+     */
     public function __toString()
     {
         return $this->_render();
     }
 
-    /* Some methods shouldn't be special! */
+    /**
+     * Some methods shouldn't be special!
+     *
+     * @return $this
+     */
     public function each()
     {
         return $this->__call('each', func_get_args());
     }
 
-    /* Chain binds to parent object by default. Use this to use other selector $('selector') */
+    /**
+     * Chain binds to parent object by default. Use this to use other selector $('selector')
+     *
+     * @param mixed $selector
+     *
+     * @return $this
+     */
     public function _selector($selector = null)
     {
         if ($selector === false) {
@@ -86,6 +201,10 @@ class jQuery_Chain extends AbstractModel
      * window.player.play();
      *
      * You must be sure to properly escape the string!
+     *
+     * @param string $library
+     *
+     * @return $this
      */
     public function _library($library)
     {
@@ -93,44 +212,53 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
     /**
      * Use this to bind chain to document $(document)...
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _selectorDocument()
     {
         return $this->_library('$(document)');
     }
+
     /**
      * Use this to bind chain to window $(window)...
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _selectorWindow()
     {
         return $this->_library('$(window)');
     }
+
     /**
      * Use this to bind chain to "this" $(this)...
+     *
+     * @return $this
      */
     public function _selectorThis()
     {
         return $this->_library('$(this)');
     }
+
     /**
      * Use this to bind chain to "region" $(region). Region is defined by ATK when reloading.
+     *
+     * @return $this
      */
     public function _selectorRegion()
     {
         return $this->_library('$(region)');
     }
+
     /**
      * Execute more JavaScript code before chain. Avoid using.
      *
-     * @param [type] $code [description]
+     * @param array|string $code
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function _prepend($code)
     {
@@ -141,16 +269,21 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
+    /**
+     * Enable debug mode
+     *
+     * @return $this
+     */
     public function debug()
     {
         $this->debug = true;
 
         return $this;
     }
+
     /**
      * Send chain in response to form submit, button click or ajaxec() function for AJAX control output.
-     *
-     * @return [type] [description]
      */
     public function execute()
     {
@@ -174,7 +307,14 @@ class jQuery_Chain extends AbstractModel
                 ->exception('js()->..->execute() must be used in response to form submission or AJAX operation only');
         }
     }
-    /* [private] used by custom json_encoding */
+
+    /**
+     * [private] used by custom json_encoding
+     *
+     * @param string $str
+     *
+     * @return string
+     */
     public function _safe_js_string($str)
     {
         $l = strlen($str);
@@ -203,7 +343,15 @@ class jQuery_Chain extends AbstractModel
 
         return $ret;
     }
-    /* [private] custom json_encoding. called on function arguments. */
+
+    /**
+     * [private] custom json_encoding. called on function arguments.
+     *
+     * @param mixed $arg
+     * @param bool $return_comma_list
+     *
+     * @return string
+     */
     protected function _flattern_objects($arg, $return_comma_list = false)
     {
         /*
@@ -256,17 +404,18 @@ class jQuery_Chain extends AbstractModel
             $s = json_encode($arg);
         } else {
             throw $this->exception('Unable to encode value for jQuery Chain - unknown type')
-                ->addMoreInfo('arg', $arg);
+                ->addMoreInfo('arg', var_export($arg, true));
         }
 
         return $s;
     }
+
     /**
      * Prevents calling univ() multiple times.
      *
      * Useful for backwards compatibility and in case of human mistake
      *
-     * @return this
+     * @return $this
      */
     public function univ()
     {
@@ -277,6 +426,7 @@ class jQuery_Chain extends AbstractModel
 
         return $this->_fn('univ');
     }
+
     /**
      * Calls real redirect (from univ), but accepts page name.
      *
@@ -285,14 +435,15 @@ class jQuery_Chain extends AbstractModel
      * @param string $page Page name
      * @param array  $arg  Arguments
      *
-     * @return this
+     * @return $this
      */
-    public function redirect($page = null, $arg = null)
+    public function redirect($page = null, $arg = array())
     {
         $url = $this->app->url($page, $arg);
 
         return $this->univ()->_fn('redirect', array($url));
     }
+
     /**
      * Reload object.
      *
@@ -305,7 +456,7 @@ class jQuery_Chain extends AbstractModel
      * @param string       $url
      * @param int          $interval Interval in milisec. how often to reload object
      *
-     * @return this
+     * @return $this
      */
     public function reload($arg = array(), $fn = null, $url = null, $interval = null)
     {
@@ -313,13 +464,21 @@ class jQuery_Chain extends AbstractModel
             $fn->_enclose();
         }
         $obj = $this->owner;
-        if (!$url) {
+        if ($url === null) {
             $url = $this->app->url(null, array('cut_object' => $obj->name));
         }
 
         return $this->univ()->_fn('reload', array($url, $arg, $fn, $interval));
     }
-    /* Chain will not be called but will return callable function instead. */
+
+    /**
+     * Chain will not be called but will return callable function instead.
+     *
+     * @param jQuery_Chain $fn
+     * @param bool $preventDefault
+     *
+     * @return $this
+     */
     public function _enclose($fn = null, $preventDefault = false)
     {
         // builds structure $('obj').$fn(function(){ $('obj').XX; });
@@ -331,6 +490,12 @@ class jQuery_Chain extends AbstractModel
 
         return $this;
     }
+
+    /**
+     * Render and return js chain as string
+     *
+     * @return string
+     */
     public function _render()
     {
         $ret = $this->prepend;
@@ -361,23 +526,50 @@ class jQuery_Chain extends AbstractModel
 
         return $ret;
     }
-    /* Returns HTML for a link with text $text. When clicked will execute this chain. */
+
+    /**
+     * Returns HTML for a link with text $text. When clicked will execute this chain.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     public function getLink($text)
     {
         return '<a href="javascript:void(0)" onclick="'.$this->getString().'">'.$text.'</a>';
     }
+
+    /**
+     * Returns js chain as string
+     *
+     * @return string
+     */
     public function getString()
     {
         return $this->_render();
     }
-    /* Specify requirement for stylesheet. Will load dynamically. */
+
+    /**
+     * Specify requirement for stylesheet. Will load dynamically.
+     *
+     * @param string $file
+     *
+     * @return $this
+     */
     public function _css($file)
     {
         $this->app->jquery->addStylesheet($file);
 
         return $this;
     }
-    /* Specify requirement for extra javascript include. Will load dynamically. */
+
+    /**
+     * Specify requirement for extra javascript include. Will load dynamically.
+     *
+     * @param string $file
+     *
+     * @return $this
+     */
     public function _load($file)
     {
         $this->app->jquery->addInclude($file);

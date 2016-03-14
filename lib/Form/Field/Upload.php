@@ -49,10 +49,19 @@
  */
 class Form_Field_Upload extends Form_Field
 {
+    /** @var int|null */
     public $max_file_size = null;
+    
+    /** @var string */
     public $mode = 'iframe';
+    
+    /** @var int|false */
     public $multiple = false;
+    
+    /** @var bool */
     public $debug = false;
+
+    /** @var string */
     public $format_files_template = 'view/uploaded_files';
 
     public function init()
@@ -64,7 +73,7 @@ class Form_Field_Upload extends Form_Field
         $max_post = $this->convertToBytes(ini_get('post_max_size')) / 2;
         $max_upload = $this->convertToBytes(ini_get('upload_max_filesize'));
 
-        $this->max_file_size = min($max_upload, $max_post);
+        $this->max_file_size = (int) min($max_upload, $max_post);
 
         /*
            if($_POST[$this->name.'_token']){
@@ -142,6 +151,8 @@ class Form_Field_Upload extends Form_Field
 
                 $this->uploadComplete($model->get());
             } else {
+                // else do nothing
+                null;
             }
         }
         if ($_POST[$this->name.'_token']) {
@@ -234,7 +245,9 @@ class Form_Field_Upload extends Form_Field
     public function formatFiles($data)
     {
         $this->js(true)->atk4_uploader('addFiles', $data);
-        $o = $this->add('GiTemplate')->loadTemplate($this->format_files_template)->render();
+        /** @type GiTemplate $t */
+        $t = $this->add('GiTemplate');
+        $o = $t->loadTemplate($this->format_files_template)->render();
 
         return $o;
     }
@@ -282,7 +295,10 @@ class Form_Field_Upload extends Form_Field
                 }
                 exit;
 
+                /* unreachable code
                 $this->js()->_selector('[name='.$this->name.']')->atk4_uploader('removeFiles', array($id))->execute();
+                */
+                
                 //$this->js(true,$this->js()->_selector('#'.$this->name.'_token')->val(''))
                 //    ->_selectorRegion()->closest('tr')->remove()->execute();
             }
@@ -311,7 +327,7 @@ class Form_Field_Upload extends Form_Field
                 break;
 
         }
-        if ($this->multiple) {
+        if (is_numeric($this->multiple)) {
             $options['multiple'] = $this->multiple;
         }
         if ($this->mode != 'simple') {

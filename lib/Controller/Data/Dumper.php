@@ -4,7 +4,10 @@
  */
 class Controller_Data_Dumper extends Controller_Data
 {
+    /** @var array */
     protected $log = array();
+
+    /** @var Controller */
     protected $watchedController = null;
 
     public function setWatchedControllerData($model, $controller)
@@ -32,7 +35,7 @@ class Controller_Data_Dumper extends Controller_Data
     }
     public function __destruct()
     {
-        if (!$this->log) {
+        if (empty($this->log)) {
             return;
         }
         $this->printLog();

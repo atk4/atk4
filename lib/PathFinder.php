@@ -125,7 +125,10 @@ class PathFinder extends AbstractController
                 // add PHP verion check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
                 throw $e;
+                
+                /* unreachable code
                 $self->app->caughtException($e);
+                */
             }
         });
     }
@@ -286,6 +289,11 @@ class PathFinder extends AbstractController
      * Cretes new PathFinder_Location object and specifies it's contents.
      * You can subsequentially add more contents by calling:
      * :php:meth:`PathFinder_Location::defineContents`.
+     *
+     * @param array $contents
+     * @param mixed $old_contents
+     *
+     * @return PathFinder_Location
      */
     public function addLocation($contents = array(), $old_contents = null)
     {
@@ -293,10 +301,10 @@ class PathFinder extends AbstractController
             return $this->base_location->addRelativeLocation($contents, $old_contents);
         }
 
-        return $this
-            ->add('PathFinder_Location')
-            ->defineContents($contents)
-            ;
+        /** @type PathFinder_Location $loc */
+        $loc = $this->add('PathFinder_Location');
+
+        return $loc->defineContents($contents);
     }
 
     /**
@@ -314,7 +322,7 @@ class PathFinder extends AbstractController
      * @param string $filename Name of the file to search for
      * @param string $return   'relative','url','path' or 'location'
      *
-     * @return string|object as specified by $return
+     * @return string|object|array
      */
     public function locate($type, $filename = '', $return = 'relative', $throws_exception = true)
     {
@@ -519,7 +527,7 @@ class PathFinder_Location extends AbstractModel
      * use setCDN() method;
      */
 
-    /** OBSOLETE **/
+    /** OBSOLETE */
     private $_relative_path = null;
 
     /**
@@ -588,6 +596,11 @@ class PathFinder_Location extends AbstractModel
         return $this;
     }
 
+    /**
+     * @param array $contents
+     *
+     * @return $this
+     */
     public function defineContents($contents)
     {
         $this->contents = @array_merge_recursive($this->contents, $contents);
@@ -598,8 +611,8 @@ class PathFinder_Location extends AbstractModel
     /**
      * Adds a new location object which is relative to $this location.
      *
-     * @param [type] $relative_path [description]
-     * @param array  $contents      [description]
+     * @param string $relative_path
+     * @param array  $contents
      */
     public function addRelativeLocation($relative_path, array $contents = array())
     {

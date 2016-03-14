@@ -9,6 +9,8 @@ class Tester extends AbstractObject
 {
     /**
      * Contains model with test results.
+     *
+     * @var Model
      */
     public $results = null;
 
@@ -22,6 +24,7 @@ class Tester extends AbstractObject
     {
         parent::init();
 
+        /** @type Model $m */
         $m = $this->results = $this->add('Model');
 
         $m->addField('name');
@@ -37,9 +40,9 @@ class Tester extends AbstractObject
         $m->setSource('Array', $a);
     }
 
-    public function prepareForTest()
+    public function prepareForTest($test)
     {
-        // nothnig
+        // nothing
     }
 
     public function skip()

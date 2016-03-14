@@ -10,52 +10,103 @@
  */
 class Form_Basic extends View implements ArrayAccess
 {
-    public $layout = null; // template of layout if form has one
+    /**
+     * Template of layout if form has one.
+     *
+     * @var View
+     */
+    public $layout = null;
 
-    // Here we will have a list of errors occured in the form, when we tried to
-    // submit it. field_name => error
+    /**
+     * Here we will have a list of errors occured in the form, when we tried to
+     * submit it. field_name => error
+     *
+     * @var array
+     */
     public $errors = array();
 
-    // Those templates will be used when rendering form and fields
+    /**
+     * Those templates will be used when rendering form and fields.
+     *
+     * @var array
+     */
     public $template_chunks = array();
 
-    // This array holds list of values prepared for fields before their
-    // initialization. When fields are initialized they will look into this
-    // array to see if there are default value for them.
-    // Afterwards fields will link to $this->data, so changing
-    // $this->data['fld_name'] would actually affect field's value.
-    // You should use $this->set() and $this->get() to read/write individual
-    // field values. You should use $this->setStaticSource() to load values from
-    // hash, BUT - AAAAAAAAAA: this array is no more!!!
+    /**
+     * This array holds list of values prepared for fields before their
+     * initialization. When fields are initialized they will look into this
+     * array to see if there are default value for them.
+     * Afterwards fields will link to $this->data, so changing
+     * $this->data['fld_name'] would actually affect field's value.
+     * You should use $this->set() and $this->get() to read/write individual
+     * field values. You should use $this->setStaticSource() to load values from
+     * hash, BUT - AAAAAAAAAA: this array is no more!!!
+     *
+     * @var array
+     */
     public $data = array();
 
-    public $bail_out = null;   // if this is true, we won't load data or submit or validate anything.
-    protected $loaded_from_db = false;  // true - update() will try updating existing row. false - it would insert new
-    protected $ajax_submits = array();    // contains AJAX instances assigned to buttons
-    protected $get_field = null;          // if condition was passed to a form through GET, contains a GET field name
+    /**
+     * If this is true, we won't load data or submit or validate anything.
+     *
+     * @var null|bool
+     */
+    public $bail_out = null;
+
+    /**
+     * true - update() will try updating existing row. false - it would insert new.
+     *
+     * @var bool
+     */
+    protected $loaded_from_db = false;
+
+    /**
+     * Contains AJAX instances assigned to buttons.
+     *
+     * @var array
+     */
+    protected $ajax_submits = array();
+
+    /**
+     * If condition was passed to a form through GET, contains a GET field name.
+     *
+     * @var null|string
+     */
+    protected $get_field = null;
+
+    /** @var array */
     protected $conditions = array();
 
+    /** @var string JS widget name */
     public $js_widget = 'ui.atk4_form';
+
+    /** @var array JS widget options */
     public $js_widget_arguments = array();
 
+    /** @var string Class name of default exception */
     public $default_exception = 'Exception_ValidityCheck';
+
+    /** @var string Class name of default controller */
     public $default_controller = 'Controller_MVCForm';
 
+    /** @var Controller_Validator Validator object */
     public $validator = null;
+
+    /**
+     * Normally form fields are inserted using a form template. If you.
+     * @todo check this - looks unused
+     */
+    public $search_for_field_spots;
+
+    // {{{ Inherited properties
 
     /** @var App_Web */
     public $app;
 
-
-
-    /**
-     * Normally form fields are inserted using a form template. If you.
-     */
-    public $search_for_field_spots;
-
-    /** @var App_Web */
+    /** @var View */
     public $owner;
 
+    // }}}
 
     public function init()
     {
@@ -77,16 +128,16 @@ class Form_Basic extends View implements ArrayAccess
         // values of those fields.
         $this->app->addHook('pre-exec', array($this, 'loadData'));
         $this->app->addHook('pre-render-output', array($this, 'lateSubmit'));
-        $this->app->addHook('submitted', $this);
+        $this->app->addHook('submitted', array($this, 'submitted'));
 
-        $this->addHook('afterAdd', $this);
+        $this->addHook('afterAdd', array($this, 'afterAdd'));
     }
     public function afterAdd($p, $c)
     {
         if ($c instanceof AbstractView) {
-            $c->addHook('afterAdd', $this);
-            $c->addMethod('addField', $this);
-            $c->addMethod('addSubmit', $this);
+            $c->addHook('afterAdd', array($this, 'afterAdd'));
+            $c->addMethod('addField', array($this, 'addField'));
+            $c->addMethod('addSubmit', array($this, 'addSubmit'));
         }
     }
 
@@ -164,7 +215,7 @@ class Form_Basic extends View implements ArrayAccess
      */
     public function error($field, $text = null)
     {
-        /** @var Form_Field $form_field */
+        /** @type Form_Field $form_field */
         $form_field = $this->getElement($field);
         $form_field->displayFieldError($text);
     }
@@ -247,6 +298,7 @@ class Form_Basic extends View implements ArrayAccess
             // Keep Reference, for $form->getElement().
             $this->elements[$options['name']] = $field;
         }
+        /** @type Form_Field $field */
 
         $field->setCaption($caption);
         $field->setForm($this);
@@ -271,7 +323,7 @@ class Form_Basic extends View implements ArrayAccess
      */
     public function importFields($model, $fields = UNDEFINED)
     {
-        /** @var Controller_MVCForm $c */
+        /** @type Controller_MVCForm $c */
         $c = $this->add($this->default_controller);
         $c->importFields($model, $fields);
     }
@@ -279,7 +331,7 @@ class Form_Basic extends View implements ArrayAccess
     public function addSeparator($class = '', $attr = array())
     {
         if (!isset($this->template_chunks['form_separator'])) {
-            /** @var View */
+            /** @type View $v */
             $v = $this->add('View');
             return $v->addClass($class);
         }
@@ -294,7 +346,7 @@ class Form_Basic extends View implements ArrayAccess
             }
         }
 
-        /** @var Html */
+        /** @type Html $h */
         $h = $this->add('Html');
         return $h->set($c->render());
     }
@@ -370,6 +422,7 @@ class Form_Basic extends View implements ArrayAccess
             $this->elements[$field_or_array]->set($value);
         } else {
             //throw new BaseException("Form fields must inherit from Form_Field ($field_or_array)");
+            null;
         }
 
         return $this;
@@ -407,6 +460,7 @@ class Form_Basic extends View implements ArrayAccess
         } else {
             $button = $this->add('Button', $name, 'form_buttons');
         }
+        /** @type Button $button */
         $button->setLabel($label);
 
         return $button;
@@ -458,8 +512,8 @@ class Form_Basic extends View implements ArrayAccess
         } catch (BaseException $e) {
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
-                /** @var Form_Field $fld */
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
+                    /** @type Form_Field $fld */
                     $fld->displayFieldError($e->getMessage());
                 } else {
                     $this->js()->univ()->alert($e->getMessage())->execute();
@@ -525,8 +579,8 @@ class Form_Basic extends View implements ArrayAccess
         } catch (BaseException $e) {
             if ($e instanceof Exception_ValidityCheck) {
                 $f = $e->getField();
-                /** @var Form_Field $fld */
                 if ($f && is_string($f) && $fld = $this->hasElement($f)) {
+                    /** @type Form_Field $fld */
                     $fld->displayFieldError($e->getMessage());
                 } else {
                     $this->js()->univ()->alert($e->getMessage())->execute();
@@ -631,8 +685,8 @@ class Form_Basic extends View implements ArrayAccess
     public function validate($rule)
     {
         if (!$this->validator) {
-            /** @var Controller_Validator */
             $this->validator = $this->add('Controller_Validator');
+            /** @type Controller_Validator $this->validator */
             $this->validator->on('post-validate');
         }
         $this->validator->is($rule);

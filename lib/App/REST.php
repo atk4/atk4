@@ -33,13 +33,14 @@ class App_REST extends App_CLI
             $this->getLogger();
 
             $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
+            /** @type Controller_PageManager $this->pm */
             $this->pm->parseRequestedURL();
 
             // It's recommended that you use versioning inside your API,
             // for example http://api.example.com/v1/user
             //
             // This way version is accessible anywhere from $this->app->version
-            list($this->version, $junk) = explode('_', $this->page, 2);
+            list($this->version,) = explode('_', $this->page, 2);
 
             // Add-ons may define additional endpoints for your API, but
             // you must activate them explicitly.

@@ -9,6 +9,9 @@
  */
 class Form_Button extends Button
 {
+    /** @var null|bool */
+    public $no_save = null;
+
     public $label;
 
     public function setLabel($_label)

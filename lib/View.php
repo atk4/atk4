@@ -24,7 +24,7 @@ class View extends AbstractView
      * @param string $element Any HTML element
      *
      * @return $this
-     * @TODO: Imants: I believe we should use set() here not trySet()
+     * @todo Imants: I believe we should use set() here not trySet()
      */
     public function setElement($element)
     {
@@ -32,6 +32,7 @@ class View extends AbstractView
 
         return $this;
     }
+
     /**
      * Add attribute to element. Previously added attributes are not affected.
      *
@@ -70,6 +71,7 @@ class View extends AbstractView
 
         return $this;
     }
+
     /**
      * Add CSS class to element. Previously added classes are not affected.
      * Multiple CSS classes can also be added if passed as space separated
@@ -92,6 +94,7 @@ class View extends AbstractView
 
         return $this;
     }
+
     /**
      * Agile Toolkit CSS now supports concept of Components. Using this method
      * you can define various components for this element:.
@@ -170,6 +173,7 @@ class View extends AbstractView
 
         return $this;
     }
+
     /**
      * Remove inline CSS style from element, if it was added with setStyle
      * or addStyle.
@@ -212,7 +216,7 @@ class View extends AbstractView
      * affect components of this widget and possibly assign
      * icon
      *
-     * @param string $text Text
+     * @param string|array $text Text
      *
      * @return $this
      */
@@ -230,13 +234,20 @@ class View extends AbstractView
         // a designated spot or will combine it with text
         if ($text['icon']) {
             if ($this->template->hasTag('icon')) {
-                $this->add('Icon', null, 'icon')
-                    ->set($text['icon']);
+                /** @type Icon $_icon */
+                $_icon = $this->add('Icon', null, 'icon');
+                $_icon->set($text['icon']);
             } else {
-                $this->add('Icon')->set($text['icon']);
+                /** @type Icon $_icon */
+                $_icon = $this->add('Icon');
+                $_icon->set($text['icon']);
                 if ($text[0]) {
-                    $this->add('Html')->set('&nbsp;');
-                    $this->add('Text')->set($text[0]);
+                    /** @type Html $_html */
+                    $_html = $this->add('Html');
+                    $_html->set('&nbsp;');
+                    /** @type Text $_text */
+                    $_text = $this->add('Text');
+                    $_text->set($text[0]);
                 }
             }
 
@@ -244,14 +255,21 @@ class View extends AbstractView
         }
         if ($text['icon-r']) {
             if ($this->template->hasTag('icon-r')) {
-                $this->add('Icon', null, 'icon')
-                    ->set($text['icon']);
+                /** @type Icon $_icon */
+                $_icon = $this->add('Icon', null, 'icon');
+                $_icon->set($text['icon']);
             } else {
                 if ($text[0]) {
-                    $this->add('Text')->set($text[0]);
-                    $this->add('Html')->set('&nbsp;');
+                    /** @type Text $_text */
+                    $_text = $this->add('Text');
+                    $_text->set($text[0]);
+                    /** @type Html $_html */
+                    $_html = $this->add('Html');
+                    $_html->set('&nbsp;');
                 }
-                $this->add('Icon')->set($text['icon-r']);
+                /** @type Icon $_icon */
+                $_icon = $this->add('Icon');
+                $_icon->set($text['icon-r']);
             }
 
             unset($text['icon']);
@@ -261,12 +279,13 @@ class View extends AbstractView
         }
 
         // for remaining items - apply them as components
-        if ($text) {
+        if (!empty($text)) {
             $this->addComponents($text);
         }
 
         return $this;
     }
+
     /**
      * Sets text to appear inside element. Automatically escapes
      * HTML characters. See also setHTML().
@@ -282,6 +301,7 @@ class View extends AbstractView
 
         return $this;
     }
+
     /**
      * Sets HTML to appear inside element. Don't escape HTML characters.
      *

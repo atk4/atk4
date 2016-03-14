@@ -247,7 +247,7 @@ abstract class AbstractObject
      *
      * @param array $properties Set initial properties for new object
      *
-     * @return AbstractObject
+     * @return self
      */
     public function newInstance($properties = null)
     {
@@ -304,19 +304,24 @@ abstract class AbstractObject
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
             if (!$class->app) {
-                $class->api = // compatibility with ATK 4.2 and lower
-                    $class->app = $this->app;
+                $class->app = $this->app;
+                $class->api = $this->app; // compatibility with ATK 4.2 and lower
             }
             $class->short_name = $this->_unique_element($class->short_name);
             $class->name = $this->_shorten($this->name.'_'.$class->short_name);
 
             $this->elements[$class->short_name] = $class;
             if ($class instanceof AbstractView) {
+                /** @type AbstractView $class */
                 $class->owner->elements[$class->short_name] = true;
             }
             $class->owner = $this;
-            if ($class instanceof AbstractView && !$this->template) {
-                $class->initializeTemplate($template_spot, $template_branch);
+            if ($class instanceof AbstractView) {
+                /** @type AbstractView $class */
+                // Scrutinizer complains that $this->template is not defined and it really is not :)
+                if (!isset($this->template) || !$this->template) {
+                    $class->initializeTemplate($template_spot, $template_branch);
+                }
             }
 
             return $class;
@@ -379,8 +384,8 @@ abstract class AbstractObject
         }
 
         $element->owner = $this;
-        $element->api = // compatibility with ATK 4.2 and lower
-            $element->app = $this->app;
+        $element->app = $this->app;
+        $element->api = $this->app; // compatibility with ATK 4.2 and lower
         $element->name = $this->_shorten($this->name.'_'.$short_name);
         $element->short_name = $short_name;
 
@@ -527,6 +532,8 @@ abstract class AbstractObject
      */
     public function memorize($key, $value)
     {
+        /** @type App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession();
         }
@@ -554,6 +561,8 @@ abstract class AbstractObject
      */
     public function learn($key, $default = null)
     {
+        /** @type App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -581,6 +590,8 @@ abstract class AbstractObject
      */
     public function forget($key = null)
     {
+        /** @type App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -612,6 +623,8 @@ abstract class AbstractObject
      */
     public function recall($key, $default = null)
     {
+        /** @type App_Web $this->app */
+
         if (!session_id()) {
             $this->app->initializeSession(false);
         }
@@ -669,7 +682,7 @@ abstract class AbstractObject
         }
         $e->owner = $this;
         $e->app = $this->app;
-        $e->api = $e->app; // compatibility with ATK 4.2 and lower
+        $e->api = $this->app; // compatibility with ATK 4.2 and lower
         $e->init();
 
         return $e;
@@ -717,8 +730,8 @@ abstract class AbstractObject
     }
 
     /**
-     * Turns on debug mode for this object. Using first argument as string
-     * is obsolete.
+     * Turns on debug mode for this object.
+     * Using first argument as string is obsolete.
      *
      * @param bool|string $msg  "true" to start debugging
      * @param string      $file obsolete
@@ -740,7 +753,7 @@ abstract class AbstractObject
         if ((isset($this->debug) && $this->debug)
             || (isset($this->app->debug) && $this->app->debug)
         ) {
-            $this->app->outputDebug($this, $msg, $file, $line);
+            $this->app->outputDebug($this, $msg, $file/*, $line*/);
         }
     }
 
@@ -873,11 +886,12 @@ abstract class AbstractObject
             $arg = array();
         }
 
-        try {
-            if (isset($this->hooks[$hook_spot])) {
-                if (is_array($this->hooks[$hook_spot])) {
-                    krsort($this->hooks[$hook_spot]); // lower priority is called sooner
-                    $hook_backup = $this->hooks[$hook_spot];
+        if (isset($this->hooks[$hook_spot])) {
+            if (is_array($this->hooks[$hook_spot])) {
+                krsort($this->hooks[$hook_spot]); // lower priority is called sooner
+                $hook_backup = $this->hooks[$hook_spot];
+
+                try {
                     while ($_data = array_pop($this->hooks[$hook_spot])) {
                         foreach ($_data as $prio => &$data) {
 
@@ -916,13 +930,15 @@ abstract class AbstractObject
                         }
                     }
 
+                } catch (Exception_Hook $e) {
+                    /** @type Exception_Hook $e */
                     $this->hooks[$hook_spot] = $hook_backup;
-                }
-            }
-        } catch (Exception_Hook $e) {
-            $this->hooks[$hook_spot] = $hook_backup;
 
-            return $e->return_value;
+                    return $e->return_value;
+                }
+
+                $this->hooks[$hook_spot] = $hook_backup;
+            }
         }
 
         return $return;
@@ -937,6 +953,7 @@ abstract class AbstractObject
      */
     public function breakHook($return)
     {
+        /** @type Exception_Hook $e */
         $e = $this->exception(null, 'Hook');
         $e->return_value = $return;
         throw $e;
@@ -1133,6 +1150,8 @@ abstract class AbstractObject
      *
      * $test will be an array containing keys for 'name', 'object' and
      * 'class'
+     *
+     * @param Tester $tester
      */
     public function runTests(Tester $tester = null)
     {
@@ -1149,7 +1168,8 @@ abstract class AbstractObject
                 continue;
             }
 
-            if ($tester) {
+            if ($tester !== null) {
+                /** @type Model $r */
                 $r = $tester->results;
                 $r->unload();
                 $r->set($test);
@@ -1172,7 +1192,7 @@ abstract class AbstractObject
                 $ticks = $this->_ticks;
 
                 if ($e instanceof Exception_SkipTests) {
-                    if ($tester) {
+                    if ($tester !== null) {
                         $r['exception'] = 'SKIPPED';
                         $r->saveAndUnload();
                     }
@@ -1182,7 +1202,7 @@ abstract class AbstractObject
                         );
                 }
 
-                if ($tester) {
+                if ($tester !== null) {
                     $r['time'] = $time;
                     $r['memory'] = $memory;
                     $r['ticks'] = $ticks;
@@ -1199,7 +1219,7 @@ abstract class AbstractObject
             $memory = (memory_get_peak_usage()) - $me;
             $ticks = $this->_ticks - 3;     // there are always minimum of 3 ticks
 
-            if ($tester) {
+            if ($tester !== null) {
                 $r['time'] = $time;
                 $r['memory'] = $memory;
                 $r['ticks'] = $ticks;
@@ -1209,6 +1229,7 @@ abstract class AbstractObject
             }
         }
     }
+
     private $_ticks;
     public function _ticker()
     {

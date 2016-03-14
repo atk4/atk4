@@ -16,7 +16,7 @@ class Form_Field_Readonly extends Form_Field_ValueList
         $v = $this->value;
 
         // this works nicely for Form_Field_ValueList based fields like DropDown
-        if ($v || is_scalar($v)) {
+        if (is_scalar($v)) {
             // get value from model if form field is based on model
             if ($this->model) {
                 // ignore errors, because this is just a readonly field after all :)

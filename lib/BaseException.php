@@ -26,7 +26,7 @@ class BaseException extends Exception
     /** @var array Array with more info */
     public $more_info = array();
 
-    /** @var string Plain text recommendation on how the poblem can be solved */
+    /** @var string Plain text recommendation on how the problem can be solved */
     public $recommendation;
 
     /** @var array Array of available actions */
@@ -85,7 +85,7 @@ class BaseException extends Exception
      * to throw.
      *
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      *
      * @return $this
      */
@@ -138,15 +138,15 @@ class BaseException extends Exception
      * to perform additional debug functions.
      * addAction('show info',array('info'=>true)) will result in link to &info=1.
      *
-     * @param string $key
-     * @param array  $descr
+     * @param string|array $key
+     * @param string|array $descr
      *
      * @return $this
      */
     public function addAction($key, $descr)
     {
         if (is_array($key)) {
-            $this->recommendation = $descr;
+            $this->recommendation = (string) $descr;
             $this->actions = array_merge($this->actions, $key);
 
             return $this;

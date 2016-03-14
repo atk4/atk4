@@ -40,7 +40,7 @@ class System_ProcessIO extends AbstractModel
      * Execute the process and associate with this object.
      *
      * @param string $cmd  Command to be executed
-     * @param array  $args Arguments (strings)
+     * @param array|string  $args Arguments (strings)
      *
      * @return self
      */
@@ -255,7 +255,7 @@ class System_ProcessIO extends AbstractModel
     /**
      * Set "nice" value for the process.
      *
-     * @param [type] $nice Nice level 0 .. 20
+     * @param int $nice Nice level 0 .. 20
      */
     public function nice($nice)
     {

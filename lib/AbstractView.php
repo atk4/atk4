@@ -157,6 +157,7 @@ abstract class AbstractView extends AbstractObject
         $ret = $this->_tsBuffer;
         $this->_tsBuffer = '';
         if ($execute_js && isset($this->app->jquery)) {
+            /** @type App_Web $this->app */
             $this->app->jquery->getJS($this);
         }
         if ($destroy) {
@@ -209,6 +210,7 @@ abstract class AbstractView extends AbstractObject
                     $this->template = $template_branch[0];
                 } else {
                     $this->template = $this->app->add('Template');
+                    /** @type Template $this->template */
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
@@ -224,6 +226,8 @@ abstract class AbstractView extends AbstractObject
                     $this->template = $this->add('Template');
                 }
             }
+
+            /** @type Template $this->template */
             $this->template->owner = $this;
         }
 
@@ -251,6 +255,7 @@ abstract class AbstractView extends AbstractObject
         if ($this->template
             && $this->app->hasMethod('setTags')
         ) {
+            /** @type App_Web $this->app */
             $this->app->setTags($this->template);
         }
     }
@@ -262,7 +267,7 @@ abstract class AbstractView extends AbstractObject
      *
      * This is overriden by 4th argument in add() method
      *
-     * @return array|string Template definition
+     * @return string Template definition
      */
     public function defaultTemplate()
     {
@@ -353,6 +358,7 @@ abstract class AbstractView extends AbstractObject
         if ($cutting_here) {
             //$result=$this->owner->template->cloneRegion($this->spot)->render();
             if (isset($this->app->jquery)) {
+                /** @type App_Web $this->app */
                 $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender($cutting_output);
@@ -378,7 +384,7 @@ abstract class AbstractView extends AbstractObject
      */
     public function moveJStoParent()
     {
-        /** @var AbstractView $this->owner */
+        /** @type AbstractView $this->owner */
         $this->owner->js = array_merge_recursive($this->owner->js, $this->js);
     }
 
@@ -532,6 +538,8 @@ abstract class AbstractView extends AbstractObject
             throw new BaseException('requires jQuery or jUI support');
         }
 
+        /** @type App_Web $this->app */
+
         // Substitute $when to make it better work as a array key
         if ($when === true) {
             $when = 'always';
@@ -607,15 +615,19 @@ abstract class AbstractView extends AbstractObject
      */
     public function on($event, $selector = null, $js = null)
     {
+        /** @type App_Web $this->app */
+
         if (!is_string($selector) && is_null($js)) {
             $js = $selector;
             $selector = null;
         }
 
         if (is_callable($js)) {
+            /** @type VirtualPage $p */
             $p = $this->add('VirtualPage');
 
             $p->set(function ($p) use ($js) {
+                /** @type VirtualPage $p */
                 // $js is an actual callable
                 $js2 = $p->js()->_selectorRegion();
 

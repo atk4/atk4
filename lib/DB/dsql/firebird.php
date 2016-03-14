@@ -9,6 +9,8 @@
 class DB_dsql_firebird extends DB_dsql
 {
     public $bt = '';
+    public $id_field;
+
     public function init()
     {
         parent::init();
@@ -66,6 +68,9 @@ class DB_dsql_firebird extends DB_dsql
         return $this->foundRows();
     }
 
+    /**
+     * @return int
+     */
     public function foundRows()
     {
         $c = clone $this;
@@ -73,7 +78,7 @@ class DB_dsql_firebird extends DB_dsql
         $c->del('order');
         $c->del('group');
 
-        return $c->fieldQuery('count(*)')->getOne();
+        return (int) $c->fieldQuery('count(*)')->getOne();
     }
 
     public function render_limit()

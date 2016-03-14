@@ -102,6 +102,7 @@ class Controller_Migrator_MySQL extends AbstractController
      */
     public function getStatusModel()
     {
+        /** @type SQL_Model $m */
         $m = $this->add('SQL_Model', ['table' => '_db_update']);
         $m->addField('name');
         $m->addField('status')->enum(['ok', 'fail']);

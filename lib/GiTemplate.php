@@ -86,15 +86,21 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 {
     // {{{ Setting Variables
 
-    /*
+    /**
      * This array contains list of all tags found inside template implementing
      * faster access when manipulating the template.
+     *
+     * @var array
      */
     public $tags = array();
+
+    public $top_tags; // looks unused, see cloneRegion()
 
     /**
      * This is a parsed contents of the template organized inside an array. This
      * structure makes it very simple to modify any part of the array.
+     *
+     * @var array
      */
     public $template = array();
 
@@ -102,9 +108,12 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
     /**
      * Settings are populated from the configuration file, if found.
+     *
+     * @var array
      */
     public $settings = array();
 
+    /** @var string */
     public $default_exception = 'Exception_Template';
 
     /**
@@ -348,9 +357,11 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
         if (is_array($value)) {
             return $this;
+            /* unreachable code
             throw $this->exception('Second argument must not be array')
                 ->addMoreInfo('arg1', $tag)
                 ->addMoreInfo('arg2', $value);
+            */
         }
 
         if ($encode) {
@@ -655,9 +666,9 @@ class GiTemplate extends AbstractModel implements ArrayAccess
     /**
      * Initialize current template from the supplied string.
      *
-     * @param [type] $str [description]
+     * @param string $str
      *
-     * @return [type] [description]
+     * @return $this
      */
     public function loadTemplateFromString($str)
     {
@@ -672,7 +683,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
         /* First expand self-closing tags {$tag} -> {tag}{/tag} */
         $str = preg_replace('/{\$([\w]+)}/', '{\1}{/\1}', $str);
 
-        $notags = $this->parseTemplate($str);
+        $this->parseTemplate($str);
 
         return $this;
     }

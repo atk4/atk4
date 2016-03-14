@@ -1102,8 +1102,6 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
             $msg = "Bad date type '$type' in card-date validation";
             throw new Error($msg);
         }
-
-        return $true;
     }
 
     /**

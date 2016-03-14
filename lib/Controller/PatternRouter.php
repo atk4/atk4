@@ -18,15 +18,24 @@
  */
 class Controller_PatternRouter extends AbstractController
 {
+    /** @var array */
     protected $links = array();
 
+    /** @var array */
     protected $rules = array();
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
 
     public function init()
     {
         parent::init();
         $this->app->router = $this;
-        $this->app->addHook('buildURL', $this);
+        $this->app->addHook('buildURL', array($this, 'buildURL'));
     }
 
     public function buildURL($junk, $url)
@@ -96,7 +105,7 @@ class Controller_PatternRouter extends AbstractController
      */
     public function setModel($model)
     {
-        /** @var Model */
+        /** @type Model $model */
         $model = parent::setModel($model);
 
         foreach ($model as $rule) {

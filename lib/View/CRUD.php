@@ -156,6 +156,14 @@ class View_CRUD extends View
      */
     public $js_reload = null;
 
+    // {{ type-hint inherited properties
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+    // }}
+
     /**
      * {@inheritdoc}
      *
@@ -175,6 +183,7 @@ class View_CRUD extends View
         $this->virtual_page = $this->add('VirtualPage', array(
             'frame_options' => $this->frame_options,
         ));
+        /** @type VirtualPage $this->virtual_page */
 
         $name_id = $this->virtual_page->name.'_id';
 
@@ -196,14 +205,19 @@ class View_CRUD extends View
                 ->add($this->form_class, $this->form_options)
                 //->addClass('atk-form-stacked')
                 ;
+            /** @type Form $this->form */
 
             $this->grid = new Dummy();
+            /** @type Grid $this->grid */
 
             return;
         }
 
         $this->grid = $this->add($this->grid_class, $this->grid_options);
+        /** @type Grid $this->grid */
+
         $this->form = new Dummy();
+        /** @type Form $this->form */
 
         // Left for compatibility
         $this->js('reload', $this->grid->js()->reload());
@@ -448,6 +462,9 @@ class View_CRUD extends View
      * you to create a frame which will pop you a new frame with
      * a form representing model method arguments. Once the form
      * is submitted, the action will be evaluated.
+     *
+     * @param string $method_name
+     * @param array $options
      */
     public function addAction($method_name, $options = array())
     {
@@ -468,6 +485,7 @@ class View_CRUD extends View
         $show_column = isset($options['column']) ? $options['column'] : true;
 
         if ($this->isEditing($method_name)) {
+            /** @type View_Console $c */
             $c = $this->virtual_page->getPage()->add('View_Console');
             $self = $this;
 
@@ -578,6 +596,11 @@ class View_CRUD extends View
 
     /**
      * Transparent method for adding buttons to a crud.
+     *
+     * @param string|array $label
+     * @param string $class
+     *
+     * @return Button
      */
     public function addButton($label, $class = 'Button')
     {

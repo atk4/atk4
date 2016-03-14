@@ -9,6 +9,11 @@ class TMail_Basic extends AbstractModel
     public $template_class = 'TMail_Template';
     public $master_template = 'shared';
 
+    /** @var TMail_Template */
+    public $template;
+    /** @var TMail_Template */
+    public $headers;
+    
     public $boundary;
 
     public $args = array();
@@ -18,7 +23,11 @@ class TMail_Basic extends AbstractModel
     public function init()
     {
         parent::init();
-        $master_template = $this->add($this->template_class)->loadTemplate('shared', '.mail');
+
+        /** @type TMail_Template $master_template */
+        $master_template = $this->add($this->template_class);
+        $master_template->loadTemplate('shared', '.mail');
+
         $this->template = $master_template->cloneRegion('body');
         $this->headers = $master_template->cloneRegion('headers');
 
@@ -88,7 +97,9 @@ class TMail_Basic extends AbstractModel
     }
     public function setTemplate($template)
     {
-        $t = $this->add($this->template_class)->loadTemplate($template, '.mail');
+        /** @type TMail_Template $t */
+        $t = $this->add($this->template_class);
+        $t->loadTemplate($template, '.mail');
 
         if ($t->is_set('subject')) {
             $s = trim($t->cloneRegion('subject')->render());

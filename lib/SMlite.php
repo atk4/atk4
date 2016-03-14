@@ -119,6 +119,8 @@ class SMlite extends AbstractModel
      */
     public $origin_filename = null;
 
+    protected $tmp_template;
+
     public function getTagVal($tag)
     {
         return (isset($this->updated_tag_list[$tag])) ? $this->updated_tag_list[$tag] : null;
@@ -150,7 +152,6 @@ class SMlite extends AbstractModel
     public function init()
     {
         parent::init();
-        $path = array();
         $this->cache = &$this->app->smlite_cache;
 
         $this->settings = $this->getDefaultSettings();
@@ -185,6 +186,7 @@ class SMlite extends AbstractModel
          * new class for you.
          */
         if ($this->isTopTag($tag)) {
+            /** @type self $new */
             $new = $this->newInstance();
             $new->template = unserialize(serialize($this->template));
             $new->top_tag = $tag;
@@ -201,6 +203,7 @@ class SMlite extends AbstractModel
                 implode(', ', array_keys($this->tags)));
         }
         $class_name = get_class($this);
+        /** @type self $new */
         $new = $this->add($class_name);
         try {
             $new->template = unserialize(serialize($this->tags[$tag][0]));
@@ -461,7 +464,7 @@ class SMlite extends AbstractModel
             //return $this->fatal("SMlite::del() is trying to delete top tag: $tag");
         }
         if (empty($this->tags[$tag])) {
-            $o = $this->owner ? ' for '.$this->owner->__toString() : '';
+            //$o = $this->owner ? ' for '.$this->owner->__toString() : '';
             $e = $this->exception('No such tag in template')
                 ->addMoreInfo('tag', $tag);
             if ($this->owner) {
@@ -517,7 +520,7 @@ class SMlite extends AbstractModel
             if ($ret instanceof URL) {
                 $ret = $ret->__toString();
             }
-            $x = $this->tags[$tagx][0][0] = $ret;
+            $this->tags[$tagx][0][0] = $ret;
         }
     }
 
@@ -570,10 +573,11 @@ class SMlite extends AbstractModel
             return $this;
         }
 
-        if ($ext) {
+        $tempext = null;
+        if ($ext !== null) {
             $tempext = $this->settings['extension'];
             $this->settings['extension'] = $ext;
-        };
+        }
         $this->tmp_template = $this->findTemplate($template_name);
 
         $this->template = array();
@@ -581,7 +585,7 @@ class SMlite extends AbstractModel
         $this->updated_tag_list = array();
 
         $this->parseTemplate($this->template);
-        if ($ext) {
+        if ($ext !== null) {
             $this->settings['extension'] = $tempext;
         }
 
@@ -694,7 +698,7 @@ class SMlite extends AbstractModel
             if (is_int($key)) {
                 continue;
             }
-            list($real_key, $junk) = explode('#', $key);
+            list($real_key,) = explode('#', $key);
             $this->registerTag($real_key, null, $branch[$key]);
             $this->registerTag($key, null, $branch[$key]);
             if (is_array($branch[$key])) {

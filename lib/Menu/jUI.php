@@ -9,6 +9,7 @@ class Menu_jUI extends Menu_Objective
     public $current_menu_class = 'current';
     public $inactive_menu_class = '';
 
+    /** @var string|false */
     public $js_widget = 'menu';
     public $options = array();
 

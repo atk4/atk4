@@ -83,6 +83,8 @@ class Controller_Data_Memcached extends Controller_Data
     public function getRows($model)
     {
         return $model->_table;
+        /* unreachable code
         $t = &$model->_table[$this->short_name];
+        */
     }
 }

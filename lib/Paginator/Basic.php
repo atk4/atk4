@@ -62,7 +62,19 @@ class Paginator_Basic extends CompleteLister
      */
     public $base_page = null;
 
+    /** @var int */
+    public $found_rows;
+    /** @var int */
+    public $cur_page;
+    /** @var int */
+    public $total_pages;
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    // }}}
 
     /**
      * Initialization.
@@ -161,14 +173,14 @@ class Paginator_Basic extends CompleteLister
             $this->source->preexec();
             $this->found_rows = $this->source->foundRows();
         } elseif ($this->source instanceof Model) {
-            $this->found_rows = (string) $this->source->count();
+            $this->found_rows = (int) $this->source->count();
         } else {
             $this->found_rows = count($this->source);
         }
 
         // calculate current page and total pages
-        $this->cur_page = floor($this->skip / $this->ipp) + 1;
-        $this->total_pages = ceil($this->found_rows / $this->ipp);
+        $this->cur_page = (int) floor($this->skip / $this->ipp) + 1;
+        $this->total_pages = (int) ceil($this->found_rows / $this->ipp);
 
         if ($this->cur_page > $this->total_pages || ($this->cur_page == 1 && $this->skip != 0)) {
             $this->cur_page = 1;
@@ -192,8 +204,9 @@ class Paginator_Basic extends CompleteLister
         }
 
         if ($this->cur_page > 1) {
-            $this->add('View', null, 'prev')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'prev');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, $this->skip - $this->ipp))
@@ -206,8 +219,9 @@ class Paginator_Basic extends CompleteLister
         }
 
         if ($this->cur_page < $this->total_pages) {
-            $this->add('View', null, 'next')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'next');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = $this->skip + $this->ipp)
@@ -221,8 +235,9 @@ class Paginator_Basic extends CompleteLister
 
         // First page
         if ($this->cur_page > $this->range + 1) {
-            $this->add('View', null, 'first')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'first');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, 0))
@@ -231,8 +246,9 @@ class Paginator_Basic extends CompleteLister
                 ->set('1')
                 ;
             if ($this->cur_page > $this->range + 2) {
-                $this->add('View', null, 'points_left')
-                    ->setElement('span')
+                /** @type View $v */
+                $v = $this->add('View', null, 'points_left');
+                $v->setElement('span')
                     ->set('...')
                     ;
             }
@@ -240,8 +256,9 @@ class Paginator_Basic extends CompleteLister
 
         // Last page
         if ($this->cur_page < $this->total_pages - $this->range) {
-            $this->add('View', null, 'last')
-                ->setElement('a')
+            /** @type View $v */
+            $v = $this->add('View', null, 'last');
+            $v->setElement('a')
                 ->setAttr('href', $this->app->url(
                     $this->base_page,
                     $u = array($this->skip_var => $pn = max(0, ($this->total_pages - 1) * $this->ipp))
@@ -250,8 +267,9 @@ class Paginator_Basic extends CompleteLister
                 ->set($this->total_pages)
                 ;
             if ($this->cur_page < $this->total_pages - $this->range - 1) {
-                $this->add('View', null, 'points_right')
-                    ->setElement('span')
+                /** @type View $v */
+                $v = $this->add('View', null, 'points_right');
+                $v->setElement('span')
                     ->set('...')
                     ;
             }

@@ -16,6 +16,9 @@ class URL extends AbstractModel
 
     public $base_url = null;
 
+    private $_current = false;
+    private $_current_sub = false;
+
     public function init()
     {
         parent::init();
@@ -32,13 +35,14 @@ class URL extends AbstractModel
         $this->addStickyArguments();
         $this->extension = $this->app->getConfig('url_postfix', $this->extension);
     }
+
     /** [private] add arguments set as sticky through APP */
     public function addStickyArguments()
     {
         $sticky = $this->app->getStickyArguments();
         $args = array();
 
-        if ($sticky && is_array($sticky)) {
+        if (is_array($sticky) && !empty($sticky)) {
             foreach ($sticky as $key => $val) {
                 if ($val === true) {
                     if (isset($_GET[$key])) {
@@ -54,24 +58,23 @@ class URL extends AbstractModel
         }
         $this->setArguments($args);
     }
+
     /** Call this if you want full URL, not relative */
     public function useAbsoluteURL()
     {
         /*
            Produced URL will contain absolute, rather than relative address:
-http://mysite:123/install/dir/my/page.html
+            http://mysite:123/install/dir/my/page.html
          */
         return $this->absolute();
     }
+
     public function absolute()
     {
         $this->absolute = true;
 
         return $this;
     }
-
-    private $_current = false;
-    private $_current_sub = false;
 
     /**
      * Detects if the URL matches current page. If
@@ -100,6 +103,8 @@ http://mysite:123/install/dir/my/page.html
         // '../page' = page besides our own (foo/bar -> foo/page)
         // 'index' = properly points to the index page defined in APP
         // '/admin/' = will not be converted
+
+        /** @type $this->app App_Web */
 
         $destination = '';
 
@@ -153,6 +158,7 @@ http://mysite:123/install/dir/my/page.html
 
         return $this;
     }
+
     /** Set additional arguments */
     public function set($argument, $value = null)
     {
@@ -162,13 +168,20 @@ http://mysite:123/install/dir/my/page.html
 
         return $this->setArguments($argument);
     }
+
     /** Get value of an argument */
     public function get($argument)
     {
         return $this->arguments[$argument];
     }
 
-    /** Set arguments to specified array */
+    /**
+     * Set arguments to specified array.
+     *
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function setArguments($arguments = array())
     {
         // add additional arguments
@@ -187,14 +200,17 @@ http://mysite:123/install/dir/my/page.html
 
         return $this;
     }
+
     public function __toString()
     {
         return $this->getURL();
     }
+
     public function setURL($url)
     {
         return $this->setBaseURL($url);
     }
+
     /** By default uses detected base_url, but you can use this to redefine */
     public function setBaseURL($base)
     {
@@ -202,6 +218,7 @@ http://mysite:123/install/dir/my/page.html
 
         return $this;
     }
+
     public function getBaseURL()
     {
         // Oherwise - calculate from detected values
@@ -217,10 +234,12 @@ http://mysite:123/install/dir/my/page.html
 
         return $url;
     }
+
     public function getExtension()
     {
         return $this->extension;
     }
+
     public function getArguments($url = null)
     {
         $tmp = array();
@@ -232,12 +251,13 @@ http://mysite:123/install/dir/my/page.html
         }
 
         $arguments = '';
-        if ($tmp) {
+        if (!empty($tmp)) {
             $arguments = (strpos($url, '?') !== false ? '&' : '?').implode('&', $tmp);
         }
 
         return $arguments;
     }
+
     public function getURL()
     {
         if ($this->base_url) {
@@ -264,6 +284,7 @@ http://mysite:123/install/dir/my/page.html
 
         return $url;
     }
+
     /** Returns html-encoded URL */
     public function getHTMLURL()
     {

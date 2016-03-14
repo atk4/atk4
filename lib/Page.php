@@ -1,11 +1,11 @@
 <?php
 /**
- * This is the description for the Class.
+ * Page class.
  *
- * @author      Romans <romans@adevel.com>
- * @copyright   See file COPYING
- *
- * @version     $Id$
+ * Few optional methods Page class can have:
+ * @method bool subPageHandler()
+ * @method $this initMainPage()
+ * @method $this page_index()
  */
 class Page extends AbstractView
 {
@@ -35,6 +35,13 @@ class Page extends AbstractView
      * either.
      */
     public $default_exception = 'Exception_ForUser';
+
+    // {{{ Inherited properties
+
+    /** @var App_Frontend */
+    public $app;
+    
+    // }}}
 
     public function init()
     {
@@ -176,8 +183,9 @@ class Page extends AbstractView
             $last_title = end($t);
             $last_title = $last_title['name'];
 
-            $this->app->layout->add('View_Breadcrumb', null, 'page_title')
-                    ->setSource($this->title);
+            /** @type View_Breadcrumb $b */
+            $b = $this->app->layout->add('View_Breadcrumb', null, 'page_title');
+            $b->setSource($this->title);
         }
 
         $tmp = array();

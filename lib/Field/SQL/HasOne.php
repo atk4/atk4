@@ -13,14 +13,13 @@ class Field_SQL_HasOne extends Field_SQL_Expression
      */
     public function getExpression($model)
     {
-        /** @var SQL_Model */
         $refModel = $this->getModel();
 
         if (is_string($refModel)) {
             $refModel = $this->app->normalizeClassName($refModel, 'Model');
         }
-        /** @var SQL_Model */
         $refModel = $this->add($refModel);
+        /** @type SQL_Model $refModel */
 
         $other = $model->dsql()->getField($this->getForeignFieldName());
         if ($this->table()) {

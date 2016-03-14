@@ -4,20 +4,29 @@
  */
 class QuickSearch extends Filter
 {
-    // icons
+    /** @var string Submit button icon */
     public $submit_icon = 'ui-icon-search';
+
+    /** @var string Cancel button icon */
     public $cancel_icon = 'ui-icon-cancel';
 
-    // field
+    /** @var Form_Field */
     public $search_field;
 
-    // buttonset
+    /** @var array */
+    public $fields;
+
+    /** @var string Button set class name */
     public $bset_class = 'ButtonSet';
+
+    /** @var string Button set positioning */
     public $bset_position = 'after'; // after|before
+
+    /** @var ButtonSet object iteself */
     protected $bset;
 
-    // cancel button
-    public $show_cancel = true; // show cancel button? (true|false)
+    /** @var bool Shoud we add Cancel button or not */
+    public $show_cancel = true;
 
     /**
      * Initialization.
@@ -51,9 +60,9 @@ class QuickSearch extends Filter
                 ));
         }
 
-        // search button
-        $this->add('HtmlElement', null, 'form_buttons')
-            ->setElement('A')
+        /** @type HtmlElement $b Search button */
+        $b = $this->add('HtmlElement', null, 'form_buttons');
+        $b->setElement('A')
             ->setAttr('href', 'javascript:void(0)')
             ->setClass('atk-button')
             ->setHtml('<span class="icon-search"></span>')
@@ -79,6 +88,8 @@ class QuickSearch extends Filter
 
     /**
      * Process received filtering parameters after init phase.
+     *
+     * @return Model|void
      */
     public function postInit()
     {
@@ -90,7 +101,7 @@ class QuickSearch extends Filter
         if ($this->view->model->hasMethod('addConditionLike')) {
             return $this->view->model->addConditionLike($v, $this->fields);
         }
-        
+
         if ($this->view->model && $this->view->model instanceof SQL_Model) {
             $q = $this->view->model->_dsql();
         } else {
@@ -103,6 +114,12 @@ class QuickSearch extends Filter
         }
         $q->having($or);
     }
+
+    /**
+     * Default template
+     *
+     * @return array|string
+     */
     public function defaultTemplate()
     {
         return array('form/quicksearch');

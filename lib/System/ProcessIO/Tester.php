@@ -2,7 +2,7 @@
 /**
  * Undocumented
  */
-class System_ProcessIO_Tester
+class System_ProcessIO_Tester extends AbstractController
 {
     public $scripts = array(
             'basic' => array('exec', 'close'),
@@ -12,8 +12,9 @@ class System_ProcessIO_Tester
             );
     public function test_basic()
     {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/perl', array('-e', 'Hello|world\n'));
+        /** @type System_ProcessIO $p */
+        $p = $this->add('System_ProcessIO');
+        $p->exec('/usr/bin/perl', array('-e', 'Hello|world\n'));
 
         $out = $p->close();
 
@@ -23,8 +24,9 @@ class System_ProcessIO_Tester
     }
     public function test_readwrite()
     {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/sed', 's/l/r/g')
+        /** @type System_ProcessIO $p */
+        $p = $this->add('System_ProcessIO');
+        $p->exec('/usr/bin/sed', 's/l/r/g')
             ->write_all('Hello world');
         $out = $p->read_all();
 
@@ -36,8 +38,9 @@ class System_ProcessIO_Tester
     {
         $error = '';
         try {
-            $p = $this->add('System_ProcessIO')
-                ->exec('/usr/non/existant/path', 'hello world')
+            /** @type System_ProcessIO $p */
+            $p = $this->add('System_ProcessIO');
+            $p->exec('/usr/non/existant/path', 'hello world')
                 ->write_all('Hello world');
             $out = $p->close();
         } catch (Exception_SystemProcessIO $e) {
@@ -51,8 +54,9 @@ class System_ProcessIO_Tester
     }
     public function test_advanced()
     {
-        $p = $this->add('System_ProcessIO')
-            ->exec('/usr/bin/sed', 's/l/r/g');
+        /** @type System_ProcessIO $p */
+        $p = $this->add('System_ProcessIO');
+        $p->exec('/usr/bin/sed', 's/l/r/g');
 
         $p->write('coca cola');
         $out = $p->read_line();

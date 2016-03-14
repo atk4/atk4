@@ -21,7 +21,7 @@ class Field_Callback extends Field
     public function updateSelectQuery($select)
     {
         $this->initialized = true;
-        $this->owner->addHook('afterLoad', $this);
+        $this->owner->addHook('afterLoad', array($this, 'afterLoad'));
     }
     public function afterLoad($m)
     {

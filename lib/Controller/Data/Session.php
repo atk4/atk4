@@ -4,6 +4,13 @@
  */
 class Controller_Data_Session extends Controller_Data_Array
 {
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     public function setSource($model, $data)
     {
         $this->app->initializeSession();

@@ -83,7 +83,7 @@ class Order extends AbstractController
                     break;
 
                 case 'middleof':  // in the middle of objects of specified class
-                    $cnt = $cnt2 = $mid = 0;
+                    $cnt = $mid = 0;
                     foreach ($this->array as $el) {
                         if ($el instanceof $relative) {
                             ++$cnt;

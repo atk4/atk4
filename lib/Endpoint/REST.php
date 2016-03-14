@@ -74,6 +74,7 @@ class Endpoint_REST extends AbstractModel
             return false;
         }
 
+        /** @type Model $m */
         //$m=$this->app->add('Model_'.$this->model_class);
         $m = $this->setModel($this->model_class);
         if ($this->user_id_field

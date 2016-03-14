@@ -44,7 +44,8 @@ class Field_Reference extends Field
 
         if ($display_field !== false) {
             $this->owner->addExpression($this->getDereferenced())
-                ->set(array($this, 'calculateSubQuery'))->caption($this->caption());
+                ->set(array($this, 'calculateSubQuery'))
+                ->caption((string) $this->caption());
         }
 
         $this->system(true);
@@ -64,6 +65,7 @@ class Field_Reference extends Field
         if (!$this->model) {
             $this->model = $this->add($this->model_name);
         }
+        /** @type Model $this->model */
         if ($this->display_field) {
             $this->model->title_field = $this->display_field;
         }
@@ -76,7 +78,7 @@ class Field_Reference extends Field
 
     public function sortable($x = UNDEFINED)
     {
-        /** @var Field|bool */
+        /** @type Field|bool $f */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->sortable($x);
@@ -87,7 +89,7 @@ class Field_Reference extends Field
 
     public function caption($x = UNDEFINED)
     {
-        /** @var Field|bool */
+        /** @type Field|bool $f */
         $f = $this->owner->hasElement($this->getDereferenced());
         if ($f) {
             $f->caption($x);
@@ -146,7 +148,7 @@ class Field_Reference extends Field
             }
         }
         if ($mode == 'link') {
-            /** @var Model */
+            /** @type Model $m */
             $m = $this->add($this->model_name);
             if ($this->get()) {
                 $m->tryLoad($this->get());
@@ -170,7 +172,7 @@ class Field_Reference extends Field
      */
     public function refSQL()
     {
-        /** @var SQL_Model $q */
+        /** @type SQL_Model $q */
         $q = $this->ref('model');
         $q->addCondition($q->id_field, $this);
 
@@ -225,13 +227,12 @@ class Field_Reference extends Field
         if (!$this->model) {
             $this->getModel(); //$this->model=$this->add($this->model_name);
         }
+        /** @type SQL_Model $this->model */
 
         if ($this->display_field) {
-            /** @var SQL_Model $this->model */
             $title = $this->model->dsql()->del('fields');
             $this->model->getElement($this->display_field)->updateSelectQuery($title);
         } elseif ($this->model->hasMethod('titleQuery')) {
-            /** @var SQL_Model $this->model */
             $title = $this->model->titleQuery();
         } else {
             // possibly references non-sql model, so just display field value

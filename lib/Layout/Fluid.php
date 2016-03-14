@@ -9,45 +9,65 @@
 class Layout_Fluid extends Layout_Basic
 {
     /**
-     * Pointns to a user_menu object.
+     * Points to a user_menu object.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $user_menu;
 
     /**
      * Points to a footer, if initialized.
      *
-     * @var [type]
+     * @var View
      */
     public $footer;
 
     /**
      * Points to menu left-menu if initialized.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $menu;
 
     /**
      * Points to top menu.
      *
-     * @var [type]
+     * @var Menu_Advanced
      */
     public $top_menu;
 
-    public function defaultTemplate()
-    {
-        return array('layout/fluid');
-    }
+    /**
+     * Undocumented.
+     *
+     * @var View
+     */
+    public $header;
 
+    /**
+     * Undocumented.
+     *
+     * @var View
+     */
+    public $header_wrap;
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
+    /**
+     * Initializaction.
+     */
     public function init()
     {
         parent::init();
         if ($this->template->hasTag('UserMenu')) {
             if (isset($this->app->auth)) {
-                $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu')
-                    ->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
+                $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu');
+                /** @type Menu_Horizontal $this->user_menu */
+                $this->user_menu->addMenu($this->app->auth->model[$this->app->auth->model->title_field]);
                 $this->user_menu->addItem('Logout', 'logout');
             } else {
                 $this->template->tryDel('UserMenu');
@@ -56,22 +76,55 @@ class Layout_Fluid extends Layout_Basic
         }
     }
 
+    /**
+     * Adds header.
+     *
+     * @param string $class
+     *
+     * @return View
+     */
     public function addHeader($class = 'Menu_Objective')
     {
         $this->header_wrap = $this->add('View', null, 'Header', array('layout/fluid', 'Header'));
+        /** @type View $this->header_wrap */
 
         $this->header = $this->header_wrap->add($class, null, 'Header_Content');
 
         return $this->header;
     }
 
+    /**
+     * Adds menu.
+     *
+     * @param string $class
+     * @param array $options
+     *
+     * @return Menu_Advanced
+     */
     public function addMenu($class = 'Menu_Vertical', $options = null)
     {
         return $this->menu = $this->add($class, $options, 'Main_Menu');
     }
 
+    /**
+     * Adds footer.
+     *
+     * @param string $class
+     *
+     * @return View
+     */
     public function addFooter($class = 'View')
     {
-        return $this->footer = $this->footer = $this->add($class, null, 'Footer_Content');
+        return $this->footer = $this->add($class, null, 'Footer_Content');
+    }
+
+    /**
+     * Default template.
+     *
+     * @return array|string
+     */
+    public function defaultTemplate()
+    {
+        return array('layout/fluid');
     }
 }

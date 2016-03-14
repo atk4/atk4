@@ -497,10 +497,9 @@ class Field extends AbstractModel
      *
      * The value will be stored in database and also displayed to user.
      *
-     *
      * @param array $t Array( id => val )
      *
-     * @return array current value if $t=UNDEFINED
+     * @return $this
      */
     public function enum($t)
     {

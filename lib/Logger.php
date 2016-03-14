@@ -243,6 +243,7 @@ class Logger extends AbstractController
             //$this->details['IP Address']=(isset($_SERVER["HTTP_X_FORWARDED_FOR"])
             //    ? array_shift(explode(',', $_SERVER["HTTP_X_FORWARDED_FOR"]))
             //    : $_SERVER["REMOTE_ADDR"]);
+            null;
         }
 
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -517,7 +518,7 @@ class Logger extends AbstractController
         }
         exit;
     }
-    public function htmlLine($msg, $frame = array(), $prefix = null)
+    public function htmlLine($msg, $frame = null, $prefix = null)
     {
         if (!$frame) {
             return "<font style='font-family: verdana;  font-size:10px'><font color=blue>warning: </font> ".
@@ -529,7 +530,7 @@ class Logger extends AbstractController
                 '</font> <font color=red>'.($prefix ? "$prefix: " : '')."<b>$msg</b></font></font><br>";
         }
     }
-    public function txtLine($msg, $frame = array(), $prefix = null)
+    public function txtLine($msg, $frame = null, $prefix = null)
     {
         if (!$frame) {
             return "$prefix: $msg\n";
@@ -780,10 +781,12 @@ class Logger extends AbstractController
         $this->filename = $filename;
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $this->_current_ip =
-                isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-                ? array_shift(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']))
-                : $_SERVER['REMOTE_ADDR'];
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $a = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $this->_current_ip = array_shift($a);
+            } else {
+                $this->_current_ip = $_SERVER['REMOTE_ADDR'];
+            }
         }
     }
 
@@ -800,6 +803,8 @@ class Logger extends AbstractController
 
             $msec = '.'.str_pad($msec, 3, '0', STR_PAD_LEFT);
             $sec = floor($sec);
+        } else {
+            $msec = '';
         }
 
         $hours = floor($sec / 3600);
@@ -810,7 +815,7 @@ class Logger extends AbstractController
             $res .= str_pad($hours, 2, '0', STR_PAD_LEFT).':';
         }
 
-        if (($hours > 0) or ($min > 0)) {
+        if (($hours > 0) || ($min > 0)) {
             $res .= str_pad($min, 2, '0', STR_PAD_LEFT).':';
         }
 
@@ -852,7 +857,7 @@ class Logger extends AbstractController
         $new_file = (file_exists($this->filename)) ? false : true;
         $fh = @fopen($this->filename, 'a');
 
-        if (($fh !== false) and (is_resource($fh))) {
+        if (($fh !== false) && (is_resource($fh))) {
             @flock($fh, LOCK_EX);
 
             if (!@fwrite($fh, $message)) {

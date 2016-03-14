@@ -15,6 +15,16 @@ class Menu_Compat extends AbstractView
     public $current_menu_class = 'ui-state-active';
     public $inactive_menu_class = 'ui-state-default';
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     public function init()
     {
         parent::init();

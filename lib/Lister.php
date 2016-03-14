@@ -58,7 +58,7 @@ class Lister extends View implements ArrayAccess
      */
     public $current_id = null;
 
-    
+
 
     /**
      * Similar to setModel, however you specify array of data here. setSource is
@@ -86,7 +86,7 @@ class Lister extends View implements ArrayAccess
                 throw $this->exception('Use setModel() for Models');
             } elseif ($source instanceof Controller) {
                 throw $this->exception('Use setController() for Controllers');
-            } elseif ($source instanceof Iterator or $source instanceof Closure) {
+            } elseif ($source instanceof Iterator || $source instanceof Closure) {
                 $this->iter = $source;
 
                 return $this;
@@ -138,6 +138,7 @@ class Lister extends View implements ArrayAccess
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id => $this->current_row) {
             if ($this->current_row instanceof Model) {
+                /** @type Model $this->current_row */
                 $this->current_row = $this->current_row->get();
             } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
                 // Looks like we won't be able to access current_row as array, so we will
@@ -158,7 +159,7 @@ class Lister extends View implements ArrayAccess
      * If you use for formatting then interact with template->set() directly
      * prior to calling parent
      *
-     * @param SQLite $template template to use for row rendering
+     * @param Template $template template to use for row rendering
      *
      * @return string HTML of rendered template
      */

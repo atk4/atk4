@@ -4,18 +4,32 @@
  */
 class View_Button extends View
 {
-    // Menu class
+    /** @var string Menu class */
     public $menu_class = 'Menu_jUI';
 
-    // Popover class
+    /** @var string Popover class */
     public $popover_class = 'View_Popover';
 
-    // Options to pass to JS button widget
+    /** @var array Options to pass to JS button widget */
     public $options = array();
 
-    // used jQuery-UI classes
-    public $js_active_class = 'ui-state-highlight';     // active (selected) button
-    public $js_triangle_class = 'ui-icon-triangle-1-s'; // triangle, down arrow icon
+    /** @var string jQuery-UI class for active (selected) button */
+    public $js_active_class = 'ui-state-highlight';
+
+    /** @var string jQuery-UI class for triangle, down arrow button */
+    public $js_triangle_class = 'ui-icon-triangle-1-s';
+
+    /** @var Menu_jUI */
+    public $menu;
+
+    /** @var string This property looks quite obsolete */
+    public $icon;
+
+    /** @var VirtualPage */
+    public $virtual_page;
+
+    /** @var bool */
+    protected $js_button_called = false;
 
     /**
      * Set template of button element.
@@ -38,7 +52,7 @@ class View_Button extends View
     public function setNoText($icon = null)
     {
         $this->options['text'] = false;
-        if ($icon) {
+        if ($icon !== null) {
             $this->setIcon($icon);
         }
 
@@ -67,7 +81,7 @@ class View_Button extends View
     /**
      * Sets label of button.
      *
-     * @param string $label
+     * @param string|array $label
      *
      * @return $this
      */
@@ -75,12 +89,16 @@ class View_Button extends View
     {
         if (is_array($label) && $label['icon']) {
             $this->setIcon($label['icon']);
+        } elseif (is_string($label)) {
+            return $this->setText($label);
         }
 
-        return $this->setText($label);
+        return $this;
     }
 
-    private $js_button_called = false;
+    /**
+     * @return $this
+     */
     public function jsButton()
     {
         if ($this->js_button_called) {
@@ -142,11 +160,14 @@ class View_Button extends View
      *
      * @return View_Popover
      */
-    public function addPopover($js_options = null, $class_options = null)
+    public function addPopover($js_options = array(), $class_options = null)
     {
         $this->options['icons']['secondary'] = $this->js_triangle_class;
+
+        /** @type View_Popover $popover */
         $popover = $this->owner->add($this->popover_class, $class_options, $this->spot);
-        $this->js('click', $popover->showJS($this, $js_options));
+
+        $this->js('click', $popover->showJS($js_options));
 
         return $popover;
     }
@@ -170,8 +191,12 @@ class View_Button extends View
             $options ?: array()
         );
 
+        /** @type Button $but */
         $but = $this->owner->add('Button', array('options' => $options), $this->spot);
-        $this->owner->add('Order')->move($but, 'after', $this)->now();
+
+        /** @type Order $order */
+        $order = $this->owner->add('Order');
+        $order->move($but, 'after', $this)->now();
 
         // Not very pretty, but works well
         $but
@@ -203,6 +228,7 @@ class View_Button extends View
 
         // add menu
         $this->menu = $this->owner->add($this->menu_class, $options, $this->spot);
+        /** @type Menu_jUI $this->menu */
         $this->menu->addStyle('display', 'none');
 
         // show/hide menu on button click
@@ -261,7 +287,7 @@ class View_Button extends View
     public function isClicked($message = null)
     {
         $cl = $this->js('click')->univ();
-        if ($message) {
+        if ($message !== null) {
             $cl->confirm($message);
         }
 
@@ -275,6 +301,8 @@ class View_Button extends View
      *
      * @param callback $callback    Callback function to execute
      * @param string   $confirm_msg Confirmation question to ask
+     *
+     * @return $this
      */
     public function onClick($callback, $confirm_msg = null)
     {
@@ -300,21 +328,24 @@ class View_Button extends View
      * onClick, however output from callback execution will appear in a
      * dialog window with a console.
      *
-     * @param [type] $callabck    [description]
-     * @param [type] $confirm_msg [description]
-     *
-     * @return [type] [description]
+     * @param callable $callback
+     * @param string $title
      */
-    public function onClickConsole($callback, $title = null, $confirm_msg = null)
+    public function onClickConsole($callback, $title = null)
     {
         if (is_null($title)) {
             $title = $this->template->get('Content');
         }
 
-        $this->virtual_page = $this->add('VirtualPage', ['type' => 'frameURL'])->bindEvent($title);
-        $this->virtual_page->set(function ($p) use ($callback) {
-            $p->add('View_Console')->set($callback);
-        });
+        $this->virtual_page = $this->add('VirtualPage', ['type' => 'frameURL']);
+        /** @type VirtualPage $this->virtual_page */
+        $this->virtual_page
+            ->bindEvent($title)
+            ->set(function ($p) use ($callback) {
+                /** @type View_Console $console */
+                $console = $p->add('View_Console');
+                $console->set($callback);
+            });
     }
     // }}}
 }

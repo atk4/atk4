@@ -91,7 +91,7 @@ class App_Frontend extends App_Web
                 $ns = $this->namespace_routes[$page].'\\';
                 $class = 'page_index';
             } else {
-                while ($class_parts) {
+                while (! empty($class_parts)) {
                     array_unshift($funct_parts, array_pop($class_parts));
                     if ($ns1 = $this->namespace_routes[implode('_', $class_parts)]) {
                         $ns = $ns1.'\\';
@@ -115,10 +115,10 @@ class App_Frontend extends App_Web
                 } catch (Exception_PathFinder $e2) {
                     $class_parts = explode('_', $page);
                     $funct_parts = array();
-                    while ($class_parts) {
+                    while (! empty($class_parts)) {
                         array_unshift($funct_parts, array_pop($class_parts));
                         $fn = 'page_'.implode('_', $funct_parts);
-                        if ($class_parts) {
+                        if (! empty($class_parts)) {
                             $in = $ns.'page_'.implode('_', $class_parts);
                         } else {
                             $in = $ns.'page_index';
@@ -139,6 +139,7 @@ class App_Frontend extends App_Web
                         }
 
                         $this->page_object = $layout->add($in, $page);
+                        /** @type Page $this->page_object */
                         if (method_exists($tmp, $fn)) {
                             $this->page_object->$fn();
                         } elseif (method_exists($tmp, 'subPageHandler')) {
@@ -161,6 +162,7 @@ class App_Frontend extends App_Web
 
             // i wish they implemented "finally"
             $this->page_object = $layout->add($ns.$class, $page, 'Content');
+            /** @type Page $this->page_object */
             if (method_exists($this->page_object, 'initMainPage')) {
                 $this->page_object->initMainPage();
             }
@@ -220,22 +222,33 @@ class App_Frontend extends App_Web
                 $this->app->pathfinder->addLocation(array('public' => '.'))
                    ->setCDN('http://www.agiletoolkit.org/');
 
+                /** @type Layout_Basic $l */
                 $l = $this->app->add('Layout_Basic', null, null, array('layout/installer'));
-                $i = $l->add('View')->addClass('atk-align-center');
-                $i->add('H1')->set($e->getMessage());
+                
+                /** @type View $i */
+                $i = $l->add('View');
+                $i->addClass('atk-align-center');
+                /** @type H1 $h */
+                $h = $i->add('H1');
+                $h->set($e->getMessage());
 
                 if ($e instanceof Exception_Migration) {
-                    $i->add('P')->set('Hello and welcome to Agile Toolkit 4.3. '.
+                    /** @type P $p */
+                    $p = $i->add('P');
+                    $p->set('Hello and welcome to Agile Toolkit 4.3. '.
                         'Your project may require some minor tweaks before you can use 4.3.');
                 }
 
-                $b = $i->add('Button')->addClass('atk-swatch-green');
-                $b->set(array('Migration Guide', 'icon' => 'book'));
-                $b->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
+                /** @type Button $b */
+                $b = $i->add('Button');
+                $b->addClass('atk-swatch-green')
+                    ->set(array('Migration Guide', 'icon' => 'book'))
+                    ->link('https://github.com/atk4/docs/blob/master/articles/migration42/index.md');
 
                 if ($this->app->template && $this->app->template->hasTag('Layout')) {
                     $t = $this->app->template;
                 } else {
+                    /** @type GiTemplate $t */
                     $t = $this->add('GiTemplate');
                     $t->loadTemplate('html');
                 }

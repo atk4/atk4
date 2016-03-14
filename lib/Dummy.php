@@ -4,6 +4,7 @@
  * substitute some other classes when their functionality
  * is not needed.
  */
+// @codingStandardsIgnoreStart
 class Dummy
 {
     public function __call($foo, $bar)
@@ -23,3 +24,4 @@ class Dummy
         return;
     }
 }
+// @codingStandardsIgnoreEnd

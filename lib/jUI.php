@@ -4,8 +4,21 @@
  */
 class jUI extends jQuery
 {
+    /**
+     * @var bool
+     */
     private $atk4_initialised = false;
 
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
+    /**
+     * Initialization
+     */
     public function init()
     {
         parent::init();
@@ -18,6 +31,10 @@ class jUI extends jQuery
 
         $this->atk4_initialised = true;
     }
+
+    /**
+     * Adds default includes
+     */
     public function addDefaultIncludes()
     {
         $this->addInclude('start-atk4');
@@ -36,6 +53,15 @@ class jUI extends jQuery
         $this->addInclude('atk4_univ_basic');
         $this->addInclude('atk4_univ_jui');
     }
+
+    /**
+     * Adds includes
+     *
+     * @param string $file
+     * @param string $ext
+     *
+     * @return $this
+     */
     public function addInclude($file, $ext = '.js')
     {
         if (strpos($file, 'http') === 0) {
@@ -53,6 +79,16 @@ class jUI extends jQuery
 
         return $this;
     }
+
+    /**
+     * Adds stylesheet
+     *
+     * @param string $file
+     * @param string $ext
+     * @param bool $template
+     *
+     * @return $this
+     */
     public function addStylesheet($file, $ext = '.css', $template = false)
     {
         $url = $this->app->locateURL('css', $file.$ext);
@@ -62,9 +98,17 @@ class jUI extends jQuery
 
         parent::addOnReady('$.atk4.includeCSS("'.$url.'")');
     }
+
+    /**
+     * Adds JS chain to DOM onReady event
+     *
+     * @param jQuery_Chain|string $js
+     *
+     * @return $this
+     */
     public function addOnReady($js)
     {
-        if (is_object($js)) {
+        if ($js instanceof jQuery_Chain) {
             $js = $js->getString();
         }
         if (!$this->atk4_initialised) {

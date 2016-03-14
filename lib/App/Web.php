@@ -48,6 +48,14 @@ class App_Web extends App_CLI
      */
     public $jquery;
 
+    /**
+     * jQuery UI object. Initializes only if you add jQuery UI in your app.
+     *
+     * @see jUI::init()
+     * @var jUI
+     */
+    public $jui;
+
     /** @var App_Web */
     public $app;
     /** @var array For internal use */
@@ -83,6 +91,7 @@ class App_Web extends App_CLI
     public function _beforeInit()
     {
         $this->pm = $this->add($this->pagemanager_class, $this->pagemanager_options);
+        /** @type Controller_PageManager $this->pm */
         $this->pm->parseRequestedURL();
         parent::_beforeInit();
     }
@@ -184,9 +193,11 @@ class App_Web extends App_CLI
     {
         $this->hook('caught-exception', array($e));
         throw $e;
+        /* unreachable code
         echo '<span style="color:red">Problem with your request.</span>';
         echo "<p>Please use 'Logger' class for more sophisticated output<br>\$app-&gt;add('Logger');</p>";
         exit;
+        */
     }
 
     /**
@@ -283,6 +294,7 @@ class App_Web extends App_CLI
 
     // {{{ Sticky GET Argument implementation. Register stickyGET to have it appended to all generated URLs
     public $sticky_get_arguments = array();
+
     /**
      * Make current get argument with specified name automatically appended to all generated URLs.
      *
@@ -574,7 +586,7 @@ class App_Web extends App_CLI
     // }}}
 
     // {{{ Layout implementation
-    private $layout_initialized = false;
+    protected $layout_initialized = false;
     /**
      * Implements Layouts.
      * Layout is region in shared template which may be replaced by object.

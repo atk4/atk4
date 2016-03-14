@@ -32,6 +32,13 @@ class App_Admin extends App_Frontend
     /** Array with all addon initiators, introduced in 4.3 */
     private $addons = array();
 
+    // {{{ Inherited properties
+
+    /** @var Layout_Fluid */
+    public $layout;
+
+    // }}}
+
     /**
      * Initialization.
      */
@@ -98,6 +105,7 @@ class App_Admin extends App_Frontend
      */
     public function initTopMenu()
     {
+        /** @type Menu_Horizontal $m */
         $m = $this->layout->add('Menu_Horizontal', null, 'Top_Menu');
         //$m->addClass('atk-size-kilo');
         $m->addItem('Admin', '/');
@@ -127,7 +135,7 @@ class App_Admin extends App_Frontend
                 $path_d = $install_dir.'/agiletoolkit-sandbox-d.phar';
                 $path = $install_dir.'/agiletoolkit-sandbox.phar';
                 $url = 'http://www4.agiletoolkit.org/dist/agiletoolkit-sandbox.phar';
-                if (file_put_contents($path_d, file_get_contents($url)) == false) {
+                if (file_put_contents($path_d, file_get_contents($url)) === false) {
                     return 'update error';
                 } else {
                     if (rename($path_d, $path) === false) {
@@ -147,7 +155,7 @@ class App_Admin extends App_Frontend
      * Return all registered in sandbox_addons.json addons
      * sandbox/Controller_AddonsConfig_Reflection.
      *
-     * @return array()
+     * @return array
      */
     public function getInstalledAddons()
     {
@@ -192,7 +200,7 @@ class App_Admin extends App_Frontend
     /**
      * @todo Description
      *
-     * @param AbstractObject $addon
+     * @param Controller_Addon $addon
      */
     private function initAddon($addon)
     {
@@ -201,8 +209,8 @@ class App_Admin extends App_Frontend
         if (file_exists($init_class_path)) {
             include $init_class_path;
             $class_name = str_replace('/', '\\', $addon->get('name').'\\Initiator');
-            
-            /** @var Controller_Addon */
+
+            /** @type Controller_Addon $init */
             $init = $this->add($class_name, array(
                     'addon_obj' => $addon,
                     'base_path' => $base_path,

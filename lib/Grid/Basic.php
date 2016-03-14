@@ -12,34 +12,42 @@
  */
 class Grid_Basic extends CompleteLister
 {
-    /** Grid columns */
+    /** @var array Grid columns */
     public $columns = array();
 
-    /** Pointer to last added grid column */
+    /** @var string Pointer to last added grid column */
     public $last_column;
 
-    /** Default grid controller */
+    /** @var string Default grid controller */
     public $default_controller = 'Controller_MVCGrid';
 
-    /** jQuery-UI icons to show as sort icons in header */
+    /** @var array jQuery-UI icons to show as sort icons in header */
     public $sort_icons = array(
         'icon-sort',
         'icon-up-dir',
         'icon-down-dir',
     );
 
-    /** Should we show header line */
+    /** @var bool Should we show header line */
     public $show_header = true;
 
     /**
      * Grid buttons.
      *
      * @see addButton()
+     * @var ButtonSet
      */
     public $buttonset = null;
 
-    /** No records message. See setNoRecords() */
+    /** @var string No records message. See setNoRecords() */
     protected $no_records_message = 'No matching records found';
+
+    // {{{ Inherited properties
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
 
     /**
      * Initialization.
@@ -61,7 +69,7 @@ class Grid_Basic extends CompleteLister
     /**
      * Adds button.
      *
-     * @param string $label label of button
+     * @param string|array $label label of button
      * @param string $class optional name of button class
      *
      * @return Button
@@ -84,7 +92,7 @@ class Grid_Basic extends CompleteLister
      *
      * @param mixed  $formatters
      * @param string $name
-     * @param string $descr
+     * @param string|array $descr
      *
      * @return $this|Controller_Grid_Format
      */
@@ -233,8 +241,9 @@ class Grid_Basic extends CompleteLister
      */
     public function importFields($model, $fields = UNDEFINED)
     {
-        $this->add($this->default_controller)
-            ->importFields($model, $fields);
+        /** @type Controller_MVCGrid $c */
+        $c = $this->add($this->default_controller);
+        $c->importFields($model, $fields);
     }
 
     /**
@@ -445,15 +454,15 @@ class Grid_Basic extends CompleteLister
         $this->template->setHTML('header', $this->show_header ? $header->render() : '');
 
         // data row
-        $this->row_t = $this->app
-            ->add('GiTemplate')
-            ->loadTemplateFromString($row->render());
+        $this->row_t = $this->app->add('GiTemplate');
+        /** @type GiTemplate $this->row_t */
+        $this->row_t->loadTemplateFromString($row->render());
 
         // totals row
         if (isset($t_row) && $this->totals_t) {
-            $this->totals_t = $this->app
-                ->add('GiTemplate')
-                ->loadTemplateFromString($t_row->render());
+            $this->totals_t = $this->app->add('GiTemplate');
+            /** @type GiTemplate $this->totals_t */
+            $this->totals_t->loadTemplateFromString($t_row->render());
         }
     }
 
@@ -481,7 +490,7 @@ class Grid_Basic extends CompleteLister
         // execute CompleteLister row formating
         parent::formatRow();
 
-        if (!$this->columns) {
+        if (empty($this->columns)) {
             throw $this->exception('No columns defined for grid');
         }
 
@@ -491,6 +500,7 @@ class Grid_Basic extends CompleteLister
             }
 
             // if model field has listData structure, then get value instead of key
+            /** @type Field $f */
             if ($this->model && $f = $this->model->hasElement($field)) {
                 if ($f->type() !== 'boolean' && $values = $f->listData()) {
                     $this->current_row[$field] = $values[$this->current_row[$field]];
@@ -530,8 +540,9 @@ class Grid_Basic extends CompleteLister
             } elseif (strpos($formatter, '\\') || strpos($formatter, '/')) {
                 // add-on support:
                 // http://agiletoolkit.org/codepad/gui/grid#codepad_gui_grid_view_example_7_ex
-                $this->getElement($formatter.'_'.$field)
-                    ->formatField($field, $column);
+                /** @type Controller_Grid_Format $c */
+                $c = $this->getElement($formatter.'_'.$field);
+                $c->formatField($field, $column);
             } else {
                 if (!$silent) {
                     throw new BaseException('Grid does not know how to format type: '.$formatter);

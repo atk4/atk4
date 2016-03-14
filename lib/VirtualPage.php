@@ -51,13 +51,28 @@
  */
 class VirtualPage extends AbstractController
 {
+    /** @var string */
     public $type = 'frameURL';
+
+    /** @var array|string */
     public $page_template = null;
+
+    /** @var string */
     public $page_class = 'Page';
 
+    /** @var array */
     public $frame_options = null;
 
+    /** @var Page */
     protected $page;
+
+    // {{ type-hint inherited properties
+    /** @var View|Grid */
+    public $owner;
+
+    /** @var App_Frontend */
+    public $app;
+    // }}
 
     /**
      * Return the URL which would trigger execution of the associated
@@ -65,7 +80,7 @@ class VirtualPage extends AbstractController
      *
      * @param string $arg Argument to pass to the page
      *
-     * @return URL object
+     * @return URL
      */
     public function getURL($arg = 'true')
     {
@@ -73,17 +88,17 @@ class VirtualPage extends AbstractController
     }
 
     /**
-     * Returns if the URL is requesting the page to be shown.
+     * Returns true if the URL is requesting the page to be shown.
      * If no parameter is passed, then return active page mode.
      *
-     * @param string $arg Optionally ask for specific argument
+     * @param string $mode Optionally ask for specific mode
      *
      * @return bool|string
      */
-    public function isActive($arg = null)
+    public function isActive($mode = null)
     {
-        if ($arg && isset($_GET[$this->name])) {
-            return $_GET[$this->name] == $arg;
+        if ($mode !== null && isset($_GET[$this->name])) {
+            return $_GET[$this->name] == $mode;
         }
 
         return isset($_GET[$this->name]) ? $_GET[$this->name] : false;
@@ -98,7 +113,7 @@ class VirtualPage extends AbstractController
      * @param string $event    JavaScript event
      * @param string $selector Not all parent will respond to click but only a selector
      *
-     * @return VirtualPage $this
+     * @return $this
      */
     public function bindEvent($title = '', $event = 'click', $selector = null)
     {
@@ -118,7 +133,7 @@ class VirtualPage extends AbstractController
      * @param callable $method_or_arg Optional argument
      * @param callable $method        function($page){ .. }
      *
-     * @return VirtualPage $this
+     * @return $this
      */
     public function set($method_or_arg, $method = null)
     {
@@ -164,20 +179,21 @@ class VirtualPage extends AbstractController
      */
     public function getPage()
     {
-        // Remove original page
-
         if ($this->page) {
             return $this->page;
         }
 
+        // Remove original page
         $this->app->page_object->destroy(false);
 
-        $this->app->page_object = $this->page = $this->app->add(
+        $this->page = $this->app->add(
             $this->page_class,
             $this->name,
             null,
             $this->page_template
         );
+        /** @type Page $this->page */
+        $this->app->page_object = $this->page;
         $this->app->stickyGET($this->name);
 
         return $this->page;
@@ -189,15 +205,17 @@ class VirtualPage extends AbstractController
      * @param string $name             Field Name (must not contain spaces)
      * @param string $title            Header for the column
      * @param array|string $buttontext Text to put on the button
-     * @param string $grid             Specify grid to use, other than $owner
+     * @param Grid $grid               Specify grid to use, other than $owner
      *
-     * @return VirtualPage $this
+     * @return $this
      */
     public function addColumn($name, $title = null, $buttontext = null, $grid = null)
     {
-        if (!$grid) {
+        if ($grid === null) {
             $grid = $this->owner;
         }
+        /** @type Grid $this->owner */
+        /** @type Grid $grid */
 
         if (!is_array($buttontext)) {
             $buttontext = array();
@@ -209,20 +227,19 @@ class VirtualPage extends AbstractController
         $icon = '';
         if ($buttontext['icon']) {
             if ($buttontext['icon'][0] != '<') {
-                $icon .= '<i class="icon-'.
-                    $buttontext['icon'].'"></i>';
+                $icon .= '<i class="icon-'.$buttontext['icon'].'"></i>';
             } else {
                 $icon .= $buttontext['icon'];
             }
             $icon .= '&nbsp;';
         }
 
-        $grid->addColumn('template', $name, $buttontext ?: $title)
-            ->setTemplate(
-                '<button type="button" class="atk-button-small pb_'.$name.'">'.
-                    $icon.$this->app->encodeHtmlChars($buttontext['descr']).
-                '</button>'
-            );
+        $grid->addColumn('template', $name, $buttontext ?: $title);
+        $grid->setTemplate(
+            '<button type="button" class="atk-button-small pb_'.$name.'">'.
+                $icon.$this->app->encodeHtmlChars($buttontext['descr']).
+            '</button>'
+        );
 
         $grid->columns[$name]['thparam'] .= ' style="width: 40px; text-align: center"';
 

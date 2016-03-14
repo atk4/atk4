@@ -32,15 +32,27 @@ class Layout_Basic extends View
      * jackscrew - this property means that the element will expand horizontally
      *      the maximum width.
      */
+
+    // {{{ Inherited properties
+
+    /** @var App_Frontend */
+    public $app;
+
+    // }}}
+
     public function init()
     {
         parent::init();
 
         $this->app->layout = $this;
     }
+
     public function addRow($spot)
     {
-        return $this->add('View', null, $spot)->addClass('atk-layout-row');
+        /** @type View $v */
+        $v = $this->add('View', null, $spot);
+
+        return $v->addClass('atk-layout-row');
     }
 
     /**
@@ -56,10 +68,12 @@ class Layout_Basic extends View
             ;
     }
 
-    public function addLeftBar($optons = array())
+    public function addLeftBar($options = array())
     {
-        return $this->add('View', null, 'LeftBar')
-            ->setElement('nav')
+        /** @type View $v */
+        $v = $this->add('View', null, 'LeftBar');
+
+        return $v->setElement('nav')
             ->addClass('atk-layout-column span_2 hecto');
     }
 
@@ -67,6 +81,7 @@ class Layout_Basic extends View
     {
         return 'Layout';
     }
+
     public function defaultTemplate()
     {
         return array('layout/fluid');

@@ -11,7 +11,10 @@ abstract class Page_DefaultAbout extends Page
     }
     public function aboutframework()
     {
-        $msg = $this->add('Frame')->setTitle('About Agile Toolkit');
+        /** @type Frame $msg */
+        $msg = $this->add('Frame');
+        $msg->setTitle('About Agile Toolkit');
+        /** @type Html $t */
         $t = $msg->add('Html');
         $text = '<p>This web application was developed using <a href="http://agiletoolkit.org/">Agile Toolkit
             framework</a>. Agile Toolkit is licensed under Affero Gnu Public License. You may use it for free, but you

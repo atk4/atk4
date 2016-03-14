@@ -6,6 +6,16 @@ class Menu_Objective extends View
 {
     public $current_menu_class = 'atk-state-current';
 
+    // {{{ Inherited properties
+
+    /** @var View */
+    public $owner;
+
+    /** @var App_Web */
+    public $app;
+
+    // }}}
+
     public function init()
     {
         parent::init();
@@ -31,8 +41,12 @@ class Menu_Objective extends View
             $label = ucwords(str_replace('_', ' ', $page));
         }
 
-        $li = $this->add('View')->setElement('li');
-        $a = $li->add('View')->setElement('a')->set($label);
+        /** @type View $li */
+        $li = $this->add('View');
+        $li->setElement('li');
+        /** @type View $a */
+        $a = $li->add('View');
+        $a->setElement('a')->set($label);
 
         if ($page instanceof jQuery_Chain) {
             $li->js('click', $page);
@@ -49,11 +63,20 @@ class Menu_Objective extends View
         return $li;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
     public function addSubMenu($name)
     {
-        $li = $this->add('View')
-            ->setElement('li');
-        $li->add('Text')->set($name);
+        /** @type View $li */
+        $li = $this->add('View');
+        $li->setElement('li');
+
+        /** @type Text $t */
+        $t = $li->add('Text');
+        $t->set($name);
 
         return $li
             ->add(get_class($this));

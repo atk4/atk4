@@ -4,10 +4,10 @@
  */
 class View_ButtonSet extends HtmlElement
 {
-    // options to pass to buttonset JS widget
+    /** @var array Options to pass to buttonset JS widget */
     public $options = array();
 
-    // buttonset direction (false = horizontal, true = vertical)
+    /** @var bool Buttonset direction (false = horizontal, true = vertical) */
     public $vertical = false;
 
     /**
@@ -29,7 +29,9 @@ class View_ButtonSet extends HtmlElement
      */
     public function addButton($label = null, $options = array())
     {
-        $but = $this->add('Button', $options)->set($label);
+        /** @type Button $but */
+        $but = $this->add('Button', $options);
+        $but->set($label);
         if ($this->vertical) {
             $but->js(true)->css('margin-top', '-3px');
         }
@@ -40,11 +42,13 @@ class View_ButtonSet extends HtmlElement
     public function jsButtonSet()
     {
         return;
+        /*
         if ($this->vertical) {
             $this->js(true)->_load('jquery-ui.buttonset-vertical');
             $this->js(true)->buttonsetv($this->options);
         } else {
             $this->js(true)->buttonset($this->options);
         }
+        */
     }
 }

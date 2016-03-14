@@ -250,7 +250,10 @@ class Controller_Tester extends Page
                 } catch (Exception $e) {
                     if ($e instanceof Exception_SkipTests) {
                         $this->grid->destroy();
-                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+                        
+                        /** @type View_Error $v */
+                        $v = $this->add('View_Error');
+                        $v->set('Skipping all tests: '.$e->getMessage());
 
                         return;
                     }
@@ -274,7 +277,10 @@ class Controller_Tester extends Page
                 } catch (Exception $e) {
                     if ($e instanceof Exception_SkipTests) {
                         $this->grid->destroy();
-                        $this->add('View_Error')->set('Skipping all tests: '.$e->getMessage());
+
+                        /** @type View_Error $v */
+                        $v = $this->add('View_Error');
+                        $v->set('Skipping all tests: '.$e->getMessage());
                     }
 
                     if ($_GET['tester_details'] == $row['name'] && $_GET['vari'] == $vari) {
@@ -283,9 +289,12 @@ class Controller_Tester extends Page
 
                     $result = 'Exception: '.($e instanceof BaseException ? $e->getText() : $e->getMessage());
 
+                    /** @type P $ll */
                     $ll = $this->add('P', $row['name']);
-                    $v = $ll->add('View')
-                        ->setElement('a')
+                    
+                    /** @type View $v */
+                    $v = $ll->add('View');
+                    $v->setElement('a')
                         ->setAttr('href', '#')
                         ->set('More details')
                         ->js('click')->univ()->frameURL(

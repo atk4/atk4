@@ -45,6 +45,9 @@ class TMail_Compat extends AbstractController
     protected $template = null;
     protected $attrs = array();
     protected $body_type = 'text';
+    protected $sign;
+    protected $is_html;
+    protected $body;
 
     public $version = '1.0';
 
@@ -176,6 +179,9 @@ class TMail_Compat extends AbstractController
 
         return $this;
     }
+    /**
+     * @return SMlite
+     */
     public function getTemplateEngine()
     {
         return $this->add('SMlite');

@@ -4,17 +4,24 @@
  */
 class TMail_Part extends AbstractModel
 {
+    /** @var TMail_Template */
     public $template = null;
+
     public $content;
     public $auto_track_element = true;
+
+    /** @var TMail_Basic */
+    public $owner;
+
     public function init()
     {
         parent::init();
 
         // Initialize template of this part
         $t = $this->defaultTemplate();
-        $this->template = $this->add($this->owner->template_class)
-            ->loadTemplate($t[0], '.mail');
+        $this->template = $this->add($this->owner->template_class);
+        /** @type TMail_Template $this->template */
+        $this->template->loadTemplate($t[0], '.mail');
 
         if ($t[1]) {
             $this->template = $this->template->cloneRegion($t[1]);

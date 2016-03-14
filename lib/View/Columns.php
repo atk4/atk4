@@ -21,18 +21,22 @@
  *  $cols->addColumn()->add('LoremIpsum');
  *
  *  $cols->addClass('atk-cells-gutter-large')
- *
- * @license See https://github.com/atk4/atk4/blob/master/LICENSE
- **/
+ */
 class View_Columns extends View
 {
     public $mode = 'auto';      // 'auto', 'grid' or 'pct'
+
     /**
      * Adds new column to the set.
      * Argument can be numeric for 12GS, percent for flexi design or omitted for equal columns.
+     *
+     * @param int|string $width
+     *
+     * @return View
      */
     public function addColumn($width = 'auto')
     {
+        /** @type View $c */
         $c = $this->add('View');
         if (is_numeric($width)) {
             $this->mode = 'grid';
@@ -48,6 +52,12 @@ class View_Columns extends View
 
         return $c;
     }
+
+    /**
+     * @param string $size
+     *
+     * @return $this
+     */
     public function setGutter($size = '')
     {
         if ($size) {
@@ -57,6 +67,10 @@ class View_Columns extends View
 
         return $this;
     }
+
+    /**
+     * @return array|string
+     */
     public function defaultTemplate()
     {
         return array('view/columns');

@@ -12,8 +12,6 @@ class View_Breadcrumb extends CompleteLister
      */
     public $max_depth;
 
-
-
     /**
      * Format row (overwrite)
      */
@@ -48,7 +46,7 @@ class View_Breadcrumb extends CompleteLister
      */
     public function render()
     {
-        $this->max_depth = count(parent::setModel($this->model)) - 1;
+        $this->max_depth = count($this->setModel($this->model)) - 1;
 
         return parent::render();
     }
