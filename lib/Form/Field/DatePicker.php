@@ -92,7 +92,7 @@ class Form_Field_DatePicker extends Form_Field_Line
         if ($from === null) {
             // no format configured, so use our best guess. Will work with Y-m-d
             $date = new DateTime($date);
-        }else{
+        } else {
             $date = date_create_from_format($from, (string) $date);
         }
         if ($to === null) {
