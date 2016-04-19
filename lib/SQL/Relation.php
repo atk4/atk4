@@ -46,6 +46,12 @@ class SQL_Relation extends AbstractModel
 
         return $f;
     }
+    public function addExpression($n, $expression = null)
+    {
+        $f = $this->owner->addExpression($n, $expression)->from($this);
+
+        return $f;
+    }
     public function join($foreign_table, $master_field = null, $join_kind = null, $_foreign_alias = null)
     {
         return $this->owner->join($foreign_table, $master_field, $join_kind, $_foreign_alias, $this);
