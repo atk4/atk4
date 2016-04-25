@@ -687,7 +687,7 @@ class Form_Basic extends View implements ArrayAccess
         if (!$this->validator) {
             $this->validator = $this->add('Controller_Validator');
             /** @type Controller_Validator $this->validator */
-            $this->validator->on('post-validate');
+            $this->validator->on('validate');
         }
         $this->validator->is($rule);
     }
