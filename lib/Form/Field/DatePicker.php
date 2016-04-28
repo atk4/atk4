@@ -87,7 +87,7 @@ class Form_Field_DatePicker extends Form_Field_Line
             return null;
         }
         if ($from === null) {
-            $from = $this->app->gcetConfig('locale/date', null);
+            $from = $this->app->getConfig('locale/date', null);
         }
         if ($from === null) {
             // no format configured, so use our best guess. Will work with Y-m-d
