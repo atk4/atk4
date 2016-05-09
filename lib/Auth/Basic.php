@@ -825,7 +825,7 @@ class Auth_Basic extends AbstractController
         $this->app->page_object = $p;
 
         // hook: createForm use this to build basic login form
-        $this->form = $this->hook('createForm', array($p));
+        $this->form = $this->hook('createForm', array($p))[0];
 
         // If no hook, build standard form
         if (!is_object($this->form)) {
