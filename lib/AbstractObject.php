@@ -989,7 +989,9 @@ abstract class AbstractObject
 
         if (is_string($callable)) {
             foreach ($this as $obj) {
-                $obj->$callable();
+                if ($obj->$callable() === false) {
+                    break;
+                }
             }
             return $this;
         }
