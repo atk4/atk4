@@ -92,7 +92,7 @@ class App_Admin extends App_Frontend
         $this->initTopMenu();
 
         if (!$this->pathfinder->sandbox && !$this->app->getConfig('production', false)) {
-            $this->menu->addItem(array('Install Developer Toools', 'icon' => 'tools'), 'sandbox');
+            $this->menu->addItem(array('Install Developer Tools', 'icon' => 'tools'), 'sandbox');
         }
 
         if (@$this->sandbox) {
