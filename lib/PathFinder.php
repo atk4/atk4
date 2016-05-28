@@ -205,13 +205,13 @@ class PathFinder extends AbstractController
         }
 
         // Add shared locations
-        if (is_dir(dirname($base_directory).'/shared')) {
-            $this->shared_location=$this->addLocation(array(
-                'php'=>'lib',
-                'addons'=>'addons',
-                'template'=>$templates_folder,
-            ))->setBasePath(dirname($base_directory).'/shared');
-        }
+        // if (is_dir(dirname($base_directory).'/shared')) {
+        //     $this->shared_location=$this->addLocation(array(
+        //         'php'=>'lib',
+        //         'addons'=>'addons',
+        //         'template'=>$templates_folder,
+        //     ))->setBasePath(dirname($base_directory).'/shared');
+        // }
 
         $atk_base_path=dirname(dirname(__FILE__));
 
@@ -246,7 +246,7 @@ class PathFinder extends AbstractController
         }
 
         // Add sandbox if it is found
-        $this->addSandbox();
+        // $this->addSandbox();
     }
 
     public function addSandbox()
