@@ -1204,8 +1204,9 @@ class DB_dsql extends AbstractModel implements Iterator
      */
     public function render_options()
     {
-        if(!isset($this->args['options']))
+        if (!isset($this->args['options'])) {
             return "";
+        }
         return @implode(' ', $this->args['options']);
     }
 
