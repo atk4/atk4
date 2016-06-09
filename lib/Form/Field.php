@@ -280,13 +280,13 @@ abstract class Form_Field extends AbstractView
     }
     public function setFieldHint($var_args = null)
     {
-        /* Adds a hint after this field. Thes will call Field_Hint->set()
-           with same arguments you called this funciton.
+        /* Adds a hint after this field. This will call Field_Hint->set()
+           with same arguments you called this function.
          */
         if (!$this->template->hasTag('after_field')) {
             return $this;
         }
-        $hint = $this->add('Form_Hint', null, 'after_field');
+        $hint = $this->add('Form_Hint', null, 'below_field');
         call_user_func_array(array($hint, 'set'), func_get_args());
 
         return $this;
