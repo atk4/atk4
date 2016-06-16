@@ -143,11 +143,17 @@ class Auth_Basic extends AbstractController
      *
      * @return Model
      */
-    public function setModel($model, $login_field = 'email', $password_field = 'password')
+    public function setModel($model, $login_field = null, $password_field = null)
     {
         parent::setModel($model);
-        $this->login_field = $login_field;
-        $this->password_field = $password_field;
+
+        // Set login field and password field or use default ones
+        if ($login_field !== null) {
+            $this->login_field = $login_field;
+        }
+        if ($password_field !== null) {
+            $this->password_field = $password_field;
+        }
 
         // Load model from session
         if ($this->info && $this->recall('id')) {
