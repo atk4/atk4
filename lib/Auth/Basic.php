@@ -4,12 +4,14 @@
  * on a page. You may have multiple Auth instances. Supports
  * 3rd party plugins.
  *
- * Use:
+ * Use like this in your App class:
  *
  * $auth=$this->add('Auth');
  * $auth->usePasswordEncryption();
  * $auth->setModel('User');
  * $auth->check();
+ * 
+ * and add $this->app->auth->addEncryptionHook($this); in init method of your User model.
  *
  * Auth accessible from anywhere through $this->app->auth;
  *
