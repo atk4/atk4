@@ -10,7 +10,7 @@
  * $auth->usePasswordEncryption();
  * $auth->setModel('User');
  * $auth->check();
- * 
+ *
  * and add $this->app->auth->addEncryptionHook($this); in init method of your User model.
  *
  * Auth accessible from anywhere through $this->app->auth;
