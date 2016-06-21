@@ -62,16 +62,26 @@ class App_REST extends App_CLI
 
         if ($_GET['format'] == 'xml') {
             throw $this->exception('only JSON format is supported', null, 406);
-        } elseif ($_GET['format'] == 'json_pretty') {
+        }
+
+        if ($_GET['format'] == 'json_pretty') {
             header('Content-type: application/json');
             echo json_encode($data, JSON_PRETTY_PRINT);
-        } elseif ($_GET['format'] == 'html') {
+            return;
+        }
+
+        if ($_GET['format'] == 'html') {
             echo '<pre>';
             echo json_encode($data, JSON_PRETTY_PRINT);
-        } elseif ($data === null) {
-            header('Content-type: application/json');
-            echo json_encode(array());
+            return;
         }
+
+        header('Content-type: application/json');
+
+        if ($data === null) {
+            $data = array();
+        }
+        echo json_encode($data);
     }
 
     /**
