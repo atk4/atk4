@@ -455,6 +455,7 @@ class DB_dsql extends AbstractModel implements Iterator
      *  $q->table(array('user','salary'));
      *  $q->table(array('user','salary'),'user');
      *  $q->table(array('u'=>'user','s'=>'salary'));
+     *  $q->table($q2->table('user')->where('active',1), 'active_users');
      *
      * If you specify multiple tables, you still need to make sure to add
      * proper "where" conditions. All the above examples return $q (for chaining)
@@ -467,8 +468,8 @@ class DB_dsql extends AbstractModel implements Iterator
      * Please avoid using table() without arguments as more tables may be
      * dynamically added later.
      *
-     * @param string $table Specify table to use
-     * @param string $alias Specify alias for the table
+     * @param string|DB_dsql $table Specify table to use or DSQL to use as derived table
+     * @param string $alias Specify alias for the table, if $table is DSQL, then alias is mandatory
      *
      * @return $this|string
      */
@@ -496,6 +497,11 @@ class DB_dsql extends AbstractModel implements Iterator
             $this->main_table = false;   // query from multiple tables
         }
 
+        // if $table is DSQL, then alias is mandatory
+        if ($table instanceof DB_dsql && ($alias === UNDEFINED || !$alias)) {
+            throw $this->exception('If table is passed as DSQL, then table alias is mandatory!');
+        }
+        
         $this->args['table'][] = array($table, $alias);
 
         return $this;
@@ -516,7 +522,22 @@ class DB_dsql extends AbstractModel implements Iterator
         foreach ($this->args['table'] as $row) {
             list($table, $alias) = $row;
 
-            $table = $this->bt($table);
+            if (is_string($table)) {
+                // table name passed as string
+                $table = $this->bt($table);
+
+            } elseif ($table instanceof DB_dsql) {
+                // table passed as DSQL expression
+
+                // remove SQL_CALC_FOUND_ROWS from subquery
+                $i = @array_search('SQL_CALC_FOUND_ROWS', $table->args['options']);
+                if ($i !== false) {
+                    unset($table->args['options'][$i]);
+                }
+
+                // consume subquery
+                $table = $this->consume($table);
+            }
 
             if ($alias !== UNDEFINED && $alias) {
                 $table .= ' '.$this->bt($alias);
