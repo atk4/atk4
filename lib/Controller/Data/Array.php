@@ -7,7 +7,15 @@ class Controller_Data_Array extends Controller_Data
     public $supportConditions = true;
     public $supportLimit = true;
     public $supportOrder = false;
-    public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
+    public $supportOperators = array(
+        '=' => true,
+        '>' => true,
+        '>=' => true,
+        '<=' => true,
+        '<' => true,
+        '!=' => true,
+        'like' => true
+    );
 
     public function setSource($model, $table)
     {
