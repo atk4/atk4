@@ -7,7 +7,7 @@ class Controller_Data_Array extends Controller_Data
     public $supportConditions = true;
     public $supportLimit = true;
     public $supportOrder = false;
-    public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true);
+    public $supportOperators = array('=' => true, '>' => true, '>=' => true, '<=' => true, '<' => true, '!=' => true, 'like' => true);
 
     public function setSource($model, $table)
     {
@@ -29,7 +29,6 @@ class Controller_Data_Array extends Controller_Data
             foreach ($table as $key => &$name) {
                 $name = array($model->id_field => $key, $model->title_field => $name);
             }
-
             return parent::setSource($model, $table);
         }
 
@@ -141,7 +140,11 @@ class Controller_Data_Array extends Controller_Data
             }
         }
         if ($withLimit) {
-            $ids = array_slice($ids, $limit[0], $limit[1]);
+            if ($limit[1] === null) {
+                $ids = array_slice($ids, 0, $limit[0]);
+            } else {
+                $ids = array_slice($ids, $limit[0], $limit[1]);
+            }
         }
 
         return $ids;
@@ -166,6 +169,9 @@ class Controller_Data_Array extends Controller_Data
                 return $value < $expected;
             case '!=':
                 return $value != $expected;
+            case 'like':
+                $pattern = '/^' . str_replace('%', '.*', preg_quote($expected, '/')) . '$/i';
+                return (bool) preg_match($pattern, $value);
             default:
                 throw $this->exception('Unknown operator')
                     ->addMoreInfo('operator', $op);
