@@ -237,8 +237,8 @@ class Auth_Basic extends AbstractController
 
     /**
      * Auth memorizes data about a logged-in user in session. You can either use this function to access
-     * that data or $auth->model (preferred) $auth->get('username') will always point to the login field
-     * value ofthe user regardless of how your field is named.
+     * that data or $auth->model (preferred). $auth->get('username') will always point to the login field
+     * value of the user regardless of how your field is named.
      *
      * @param string $property
      * @param mixed  $default
@@ -419,13 +419,6 @@ class Auth_Basic extends AbstractController
                 return true;
             }
 
-            /*
-            $this->debug('User is not authenticated yet');
-
-            // No information is present. Let's see if cookie is set
-                }
-            }else $this->debug("No permanent cookie");
-             */
             $this->processLogin();
 
             return true;
@@ -601,12 +594,6 @@ class Auth_Basic extends AbstractController
         $data->dirty[$this->password_field] = false;
 
         return $data[$this->model->id_field];
-
-        /*
-        if (!$password_existed) {
-            $data->getElement($this->password_field)->destroy();
-        }
-        */
     }
 
     /**
@@ -644,15 +631,6 @@ class Auth_Basic extends AbstractController
     }
 
     /**
-     * Rederect to page user tried to access before authentication was requested.
-     */
-    public function loginRedirect()
-    {
-        $this->debug('to Index');
-        $this->app->redirect($this->getURL());
-    }
-
-    /**
      * This function is always executed after successfull login through a normal means (login form or plugin).
      *
      * It will create cache model data.
@@ -662,7 +640,6 @@ class Auth_Basic extends AbstractController
      */
     public function loggedIn($user = null, $pass = null)
     {
-        //$username,$password,$memorize=false){
         $this->hook('loggedIn', array($user, $pass));
         $this->app->redirect($this->getURL());
     }
@@ -807,8 +784,6 @@ class Auth_Basic extends AbstractController
         $form->addField('Line', 'username', $email);
         $form->addField('Password', 'password', $password);
         $form->addSubmit('Login')->addClass('atk-jackscrew')->addClass('atk-swatch-green');
-
-        //$form->add('View',null,'button_row_left')->addClass('atk-jackscrew');
 
         return $form;
     }
