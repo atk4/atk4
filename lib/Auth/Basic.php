@@ -640,7 +640,7 @@ class Auth_Basic extends AbstractController
      */
     public function loggedIn($user = null, $pass = null)
     {
-        if ($this->hook('loggedIn', array($user, $pass) !== false)) {
+        if ($this->hook('loggedIn', array($user, $pass)) !== false) {
             $this->app->redirect($this->getURL());
         }
     }
