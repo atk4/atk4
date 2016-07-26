@@ -640,8 +640,9 @@ class Auth_Basic extends AbstractController
      */
     public function loggedIn($user = null, $pass = null)
     {
-        $this->hook('loggedIn', array($user, $pass));
-        $this->app->redirect($this->getURL());
+        if ($this->hook('loggedIn', array($user, $pass) !== false)) {
+            $this->app->redirect($this->getURL());
+        }
     }
 
     /**
@@ -718,8 +719,8 @@ class Auth_Basic extends AbstractController
 
             if (!$user instanceof $c) {
                 throw $this->exception('Specified model with incompatible class')
-                ->addMoreInfo('required', $c)
-                ->addMoreInfo('supplied', get_class($user));
+                    ->addMoreInfo('required', $c)
+                    ->addMoreInfo('supplied', get_class($user));
             }
 
             $this->model = $user;
@@ -728,10 +729,7 @@ class Auth_Basic extends AbstractController
             return $this;
         }
 
-        $this->model->tryLoadBy($this->login_field, $user);
-        $this->memorizeModel();
-
-        return $this;
+        return $this->loginBy($this->login_field, $user);
     }
 
     /**
