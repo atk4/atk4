@@ -40,7 +40,6 @@ class View_Console extends \View
             }
             $this->out(get_class($o).': '.$msg);
             $this->breakHook(true);
-
         }, [], 1);
     }
 
