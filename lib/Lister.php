@@ -137,7 +137,7 @@ class Lister extends View implements ArrayAccess
     {
         $iter = $this->getIterator();
         foreach ($iter as $this->current_id => $this->current_row) {
-            if ($this->current_row instanceof Model) {
+            if ($this->current_row instanceof Model || $this->current_row instanceof \atk4\data\Model) {
                 /** @type Model $this->current_row */
                 $this->current_row = $this->current_row->get();
             } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {

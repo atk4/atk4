@@ -273,8 +273,8 @@ class View_CRUD extends View
     {
         $model = parent::setModel($model);
 
-        if ($this->entity_name === null) {
-            if ($model->caption === null) {
+        if (!isset($this->entity_name)) {
+            if (!isset($model->caption)) {
 
                 // Calculates entity name
                 $class = get_class($this->model);

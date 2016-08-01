@@ -104,7 +104,7 @@ abstract class AbstractView extends AbstractObject
         parent::setModel($model);
 
         // Some models will want default controller to be associated
-        if ($this->model->default_controller) {
+        if (isset($this->model->default_controller)) {
             $this->controller
                 = $this->model->setController($this->model->default_controller);
         }
