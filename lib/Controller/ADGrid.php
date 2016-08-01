@@ -65,7 +65,6 @@ class Controller_ADGrid extends AbstractController
             throw $this->exception('Controller_ADGrid can only be used with Agile Data \atk4\data\Model models');
         }
     }
-    
 
     /**
      * Adds additional type association.
@@ -91,7 +90,7 @@ class Controller_ADGrid extends AbstractController
     /**
      * Import model fields in grid.
      *
-     * @param Model $model
+     * @param \atk4\data\Model $model
      * @param array|string|bool $fields
      *
      * @return void|$this
@@ -148,15 +147,14 @@ class Controller_ADGrid extends AbstractController
 
         $field_name = $field->short_name;
 
-        if ($field instanceof Field_Reference) {
-            $field_name = $field->getDereferenced();
-        }
+        //if ($field instanceof Field_Reference) {
+        //    $field_name = $field->getDereferenced();
+        //}
         //if ($field instanceof \atk4\data\Field_One) {
         //    $field_name = $field->their_field; // not sure what's correct
         //}
 
         $field_type = $this->getFieldType($field);
-
         $field_caption = isset($field->caption) ? $field->caption : null;
 
         $this->field_associations[$field_name] = $field;
@@ -175,7 +173,7 @@ class Controller_ADGrid extends AbstractController
      *
      * Redefine this method to add special handling of your own fields.
      *
-     * @param Field $field
+     * @param \atk\data\Field $field
      *
      * @return string
      */
