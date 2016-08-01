@@ -295,11 +295,13 @@ abstract class AbstractObject
 
         if (is_object($class)) {
             // Object specified, just add the object, do not create anything
+            /*xxx
             if (!($class instanceof self)) {
                 throw $this->exception(
                     'You may only add objects based on AbstractObject'
                 );
             }
+            */
             if (!$class->short_name) {
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
@@ -377,11 +379,13 @@ abstract class AbstractObject
         }*/
         $element = new $class_name_nodash($options);
 
+        /*xxx
         if (!($element instanceof self)) {
             throw $this->exception(
                 'You can add only classes based on AbstractObject'
             );
         }
+        */
 
         $element->owner = $this;
         $element->app = $this->app;
