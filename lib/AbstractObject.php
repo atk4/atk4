@@ -302,10 +302,10 @@ abstract class AbstractObject
                 );
             }
             */
-            if (!$class->short_name) {
+            if (!isset($class->short_name)) {
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
-            if (!$class->app) {
+            if (!isset($class->app)) {
                 $class->app = $this->app;
                 $class->api = $this->app; // compatibility with ATK 4.2 and lower
             }
