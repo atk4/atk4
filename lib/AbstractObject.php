@@ -295,7 +295,7 @@ abstract class AbstractObject
 
         if (is_object($class)) {
             // Object specified, just add the object, do not create anything
-            /*xxx
+            /* disabling this because of implementation of agile/data
             if (!($class instanceof self)) {
                 throw $this->exception(
                     'You may only add objects based on AbstractObject'
@@ -379,7 +379,7 @@ abstract class AbstractObject
         }*/
         $element = new $class_name_nodash($options);
 
-        /*xxx
+        /* disabling this because of implementation of agile/data
         if (!($element instanceof self)) {
             throw $this->exception(
                 'You can add only classes based on AbstractObject'
