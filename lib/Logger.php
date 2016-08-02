@@ -331,6 +331,11 @@ class Logger extends AbstractController
     }
     public function caughtException($caller, $e)
     {
+        // compatibility with \atk4\core\Exception
+        if ($e instanceof \atk4\core\Exception) {
+            $e->more_info = $e->getParams();
+        }
+
         $this->logCaughtException($e);
         if (!$this->web_output) {
             echo $this->public_error_message;
@@ -384,7 +389,7 @@ class Logger extends AbstractController
         $o = '';
         $o .= '<h2>Application Error: '.htmlspecialchars($e->getMessage())."</h2>\n";
         $o .= '<p><font color=red>'.get_class($e).', code: '.$e->getCode().'</font></p>';
-        if (@$e->more_info) {
+        if (isset($e->more_info)) {
             $o .= '<p>Additional information:';
             $o .= $this->print_r($e->more_info, '<ul>', '</ul>', '<li>', '</li>', ' ');
             $o .= '</p>';
@@ -424,10 +429,22 @@ class Logger extends AbstractController
     {
         $this->app->js()->univ()->dialogError($o, array('width' => 900, 'height' => 500))->execute();
     }
-    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ')
+    /**
+     * Returns HTML formatted $key array.
+     *
+     * @param mixed $key
+     * @param string $gs List start tag
+     * @param string $ge List end tag
+     * @param string $ls Item start tag
+     * @param string $le Item end tag
+     * @param string $ind Identation
+     *
+     * @return string
+     */
+    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $depth = 4)
     {
         $o = '';
-        if (strlen($ind) > 3) {
+        if (strlen($ind) > $depth) {
             return;
         }
         if (is_array($key)) {
@@ -438,6 +455,11 @@ class Logger extends AbstractController
             $o .= $ge;
         } elseif ($key instanceof Closure) {
             $o .= '[closure]';
+        } elseif (is_object($key)) {
+            $o .= 'object('.get_class($key).'): ';
+            if (method_exists($key, '__debugInfo')) {
+                $o .= $this->print_r($key->__debugInfo(), $gs, $ge, $ls, $le, $ind.' ').$le;
+            }
         } else {
             $o .= $gs ? htmlspecialchars($key) : $key;
         }
