@@ -125,6 +125,10 @@ class PathFinder extends AbstractController
                 // add PHP verion check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
                 throw $e;
+                
+                /* unreachable code
+                $self->app->caughtException($e);
+                */
             }
         });
     }
@@ -352,7 +356,6 @@ class PathFinder extends AbstractController
                 ;
         }
     }
-
     /**
      * Search is similar to locate, but will return array of all matching
      * files.
@@ -415,14 +418,15 @@ class PathFinder extends AbstractController
      * Provided with a class name, this will attempt to
      * find and load it.
      *
-     * @param string $className
-     *
      * @return string path from where the class was loaded
      */
     public function loadClass($className)
     {
         $origClassName = str_replace('-', '', $className);
 
+        /**/$this->app->pr->start('pathfinder/loadClass ');
+
+        /**/$this->app->pr->next('pathfinder/loadClass/convertpath ');
         $className = ltrim($className, '\\');
         $nsPath = '';
         $namespace = '';
@@ -431,91 +435,63 @@ class PathFinder extends AbstractController
             $className = substr($className, $lastNsPos + 1);
             $nsPath = str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
         }
+        $classPath = str_replace('_', DIRECTORY_SEPARATOR, $className).'.php';
 
-        // explode class name by underscore and try to locate file
-        // first look complete classname and if not found, then search deeper in folder structure
-        $parts = explode('_', $className);
-
-        $files_searched = []; // files which we tried to find - only need for debugging
-        for ($i = 0, $cnt = count($parts)-1; $i <= $cnt; $i++) {
-            $cPath = $i ? implode(DIRECTORY_SEPARATOR, array_slice($parts, 0, $i)) . DIRECTORY_SEPARATOR : '';
-            $cName = implode('_', array_slice($parts, $i));
-
-            // try to find, if $last_chance is true, only then throw Exception
-            $last_chance = ($i == $cnt);
-
-            try {
-                if ($namespace) {
-                    if (strpos($cName, 'page_') === 0) {
-                        $file = $files_searched[] = $nsPath.DIRECTORY_SEPARATOR.$cPath.$cName.'.php';
-                        $path = $this->locate('addons', $file, 'path', $last_chance);
-                    } else {
-                        $file = $files_searched[] = $nsPath.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$cPath.$cName.'.php';
-                        $path = $this->locate('addons', $file, 'path', $last_chance);
-                    }
+        /**/$this->app->pr->next('pathfinder/loadClass/locate ');
+        try {
+            if ($namespace) {
+                if (strpos($className, 'page_') === 0) {
+                    $path = $this->app->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR.$classPath
+                    );
                 } else {
-                    if (strpos($cName, 'page_') === 0) {
-                        $file = $files_searched[] = $cPath.substr($cName, 5).'.php';
-                        $path = $this->locate('page', $file, 'path', $last_chance);
-                    } else {
-                        $file = $files_searched[] = $cPath.$cName.'.php';
-                        $path = $this->locate('php', $file, 'path', $last_chance);
-                    }
+                    $path = $this->app->locatePath(
+                        'addons',
+                        $nsPath.DIRECTORY_SEPARATOR
+                        .'lib'.DIRECTORY_SEPARATOR.$classPath
+                    );
                 }
-
-            } catch (\Exception_PathFinder $e) {
-                $e
-                    ->addMoreInfo('cPath', $cPath)
-                    ->addMoreInfo('cName', $cName)
-                    ->addMoreInfo('className', $className)
-                    ->addMoreInfo('namespace', $namespace)
-                    ->addMoreInfo('orig_class', $origClassName)
-                    ->addMoreInfo('file', isset($file) ? $file : null)
-                    ->addMoreInfo('files_searched', $files_searched)
-                    ;
-                throw $e;
-            }
-
-            // if not found
-            if (!$path) {
-                continue;
-            }
-
-            // check if such file exists and is readable
-            if (is_readable($path)) {
-
-                // file exists - include it and check if class is now defined
-                include_once $path;
-
-                if (!class_exists($origClassName, false) && !interface_exists($origClassName, false)) {
-                    throw $this->exception('Class is not defined in file or extended class can not be found')
-                        ->addMoreInfo('path', $path)
-                        ->addMoreInfo('cPath', $cPath)
-                        ->addMoreInfo('cName', $cName)
-                        ->addMoreInfo('className', $className)
-                        ->addMoreInfo('namespace', $namespace)
-                        ->addMoreInfo('orig_class', $origClassName)
-                        ->addMoreInfo('files_searched', $files_searched)
-                        ;
+            } else {
+                if (strpos($className, 'page_') === 0) {
+                    $path = $this->app->locatePath(
+                        'page',
+                        substr($classPath, 5)
+                    );
+                } else {
+                    $path = $this->app->locatePath(
+                        'php',
+                        $classPath
+                    );
                 }
-
-                // all is fine, return
-                return $path;
             }
-
-            // file found but is not readable
-            throw $this->exception('File found but it is not readable')
-                ->addMoreInfo('path', $path)
+        } catch (Exception_PathFinder $e) {
+            $e
+                ->addMoreInfo('class', $className)
+                ->addMoreInfo('namespace', $namespace)
+                ->addMoreInfo('orig_class', $origClassName)
                 ;
+            throw $e;
         }
 
-        // can not find class file
-        throw $this->exception('Class file is not found')
-            ->addMoreInfo('className', $className)
-            ->addMoreInfo('namespace', $namespace)
-            ->addMoreInfo('orig_class', $origClassName)
-            ->addMoreInfo('files_searched', $files_searched)
-            ;
+        if (!is_readable($path)) {
+            throw new Exception_PathFinder('addon', $path, $prefix);
+        }
+
+        /**/$this->app->pr->next('pathfinder/loadClass/include ');
+        /**/$this->app->pr->start('php parsing');
+        include_once $path;
+        /**/$this->app->pr->stop();
+        if (!class_exists($origClassName, false) && !interface_exists($origClassName, false)) {
+            throw $this->exception('Class is not defined in file')
+                ->addMoreInfo('file', $path)
+                ->addMoreInfo('namespace', $namespace)
+                ->addMoreInfo('class', $className)
+                ;
+        }
+        /**/$this->app->pr->stop();
+
+        return $path;
     }
 }
 
@@ -668,6 +644,7 @@ class PathFinder_Location extends AbstractModel
 
         // Imants: dirty fix for finding files with complex namespaces like
         // Vendor\MyAddon otherwise these are not found on *Nix systems
+
         $filename = str_replace('\\', '/', $filename);
 
         $attempted_locations = array();
