@@ -146,7 +146,7 @@ class Controller_ADGrid extends AbstractController
         if (!$field) {
             return;
         }
-        /** @type \atk4\data\Model $field */
+        /** @type \atk4\data\Field $field */
 
         $field_name = $field->short_name;
 

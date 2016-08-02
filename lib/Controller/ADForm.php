@@ -160,7 +160,7 @@ class Controller_ADForm extends AbstractController
         if (!$field || !$field->editable) {
             return;
         }
-        /** @type \atk4\data\Model $field */
+        /** @type \atk4\data\Field $field */
 
         if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
