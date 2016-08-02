@@ -176,7 +176,7 @@ class Controller_ADGrid extends AbstractController
      *
      * Redefine this method to add special handling of your own fields.
      *
-     * @param \atk\data\Field $field
+     * @param \atk4\data\Field $field
      *
      * @return string
      */
