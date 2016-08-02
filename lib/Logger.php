@@ -329,8 +329,9 @@ class Logger extends AbstractController
             $this->print_r($e->more_info, '', '', '* ', "\n", ' '), 2, 'error');
         }
     }
-    public function caughtException($caller, $e)
+    public function caughtException($caller, $e, $last_exception = true)
     {
+
         // compatibility with \atk4\core\Exception
         if ($e instanceof \atk4\core\Exception) {
             $e->more_info = $e->getParams();
@@ -381,27 +382,47 @@ class Logger extends AbstractController
                 $this->showRenderTree($e, $this->app);
             } catch (Exception $e) {
                 echo '<h1>Exception while trying to render tree:</h1>';
-                //unset($_GET[$htis->name.'_debug']);
+                //unset($_GET[$this->name.'_debug']);
                 //$this->app->caughtException($e);
             }
         }
 
         $o = '';
         $o .= '<h2>Application Error: '.htmlspecialchars($e->getMessage())."</h2>\n";
-        $o .= '<p><font color=red>'.get_class($e).', code: '.$e->getCode().'</font></p>';
+        $o .= "<div style='color:red;font-weight:bold'>".get_class($e).', code: '.$e->getCode().'</div>';
         if (isset($e->more_info)) {
-            $o .= '<p>Additional information:';
+            $o .= '<b>Additional information:</b><br />';
+            $o .= "<div style='border: 1px solid black; padding: 3px; text-align: left; ".
+                "font-family: verdana; font-size: 10px;'>\n";
             $o .= $this->print_r($e->more_info, '<ul>', '</ul>', '<li>', '</li>', ' ');
-            $o .= '</p>';
+            $o .= '</div>';
         }
         if (method_exists($e, 'getMyFile')) {
-            $o .= '<p><font color=blue>'.$e->getMyFile().':'.$e->getMyLine().'</font></p>';
+            $o .= "<div style='color:blue'".$e->getMyFile().':'.$e->getMyLine().'</div>';
         }
 
-        if (method_exists($e, 'getMyTrace')) {
-            $o .= $this->backtrace(3, $e->getMyTrace());
-        } else {
-            $o .= $this->backtrace(@$e->shift, $e->getTrace());
+        $previous = isset($e->by_exception) ? $e->by_exception : ($e->getPrevious() ?: null);
+
+        // add stacktrace only for initial / first exception
+        if (!$previous) {
+            if (method_exists($e, 'getMyTrace')) {
+                $o .= $this->backtrace(3, $e->getMyTrace());
+            } else {
+                $o .= $this->backtrace(@$e->shift, $e->getTrace());
+            }
+        }
+
+        // recursively shows all previous exceptions
+        if ($previous) {
+            //$o .= '<h3>This error was triggered by the following error:</h3>';
+            ob_start();
+            $this->caughtException($caller, $previous, false);
+            $o .= ob_get_clean();
+        }
+
+        if ($last_exception) {
+            $o .= "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false ".
+                "to your config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
         }
 
         if ((isset($_POST['ajax_submit'])
@@ -409,22 +430,18 @@ class Logger extends AbstractController
             && !$_GET['cut_page']
             && !$_GET['cut_object']
             && !$_GET['cut_region']
+            && $last_exception
         ) {
             $this->displayError($o);
         } else {
             echo $o;
         }
 
-        if (@$e->by_exception) {
-            echo '<h3>This error was triggered by the following error:</h3>';
-            $this->caughtException($caller, $e->by_exception);
+        if ($last_exception) {
+            exit;
         }
-
-        echo "<p>Note: To hide this information from your users, add \$config['logger']['web_output']=false to your ".
-            "config.php file. Refer to documentation on 'Logger' for alternative logging options</p>";
-
-        exit;
     }
+
     public function displayError($o)
     {
         $this->app->js()->univ()->dialogError($o, array('width' => 900, 'height' => 500))->execute();
@@ -441,10 +458,10 @@ class Logger extends AbstractController
      *
      * @return string
      */
-    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $depth = 4)
+    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $max_depth = 4)
     {
-        $o = '';
-        if (strlen($ind) > $depth) {
+        $o = '';        
+        if (strlen($ind) > $max_depth) {
             return;
         }
         if (is_array($key)) {
