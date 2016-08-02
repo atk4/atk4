@@ -8,5 +8,8 @@
     "autoload": {
         "psr-0": {"": "lib/"},
         "files": ["/lib/static.php"]
+    },
+    "require": {
+        "atk4/data": "*"
     }
 }
