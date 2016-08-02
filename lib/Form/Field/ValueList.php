@@ -109,7 +109,7 @@ abstract class Form_Field_ValueList extends Form_Field
         // add model data rows in value list
         if ($this->model) {
             $id = $this->model->id_field;
-            $title = $this->model->getTitleField();
+            $title = $this->model->getElement($this->model->title_field);
 
             $this->value_list = array();
             foreach ($this->model as $row) {

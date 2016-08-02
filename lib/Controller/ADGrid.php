@@ -91,8 +91,7 @@ class Controller_ADGrid extends AbstractController
     /**
      * Import model fields in grid.
      *
-     * @
- \atk4\data\Model $model
+     * @param \atk4\data\Model $model
      * @param array|string|bool $fields
      *
      * @return void|$this
@@ -149,14 +148,6 @@ class Controller_ADGrid extends AbstractController
         /** @type \atk4\data\Field $field */
 
         $field_name = $field->short_name;
-
-        //if ($field instanceof Field_Reference) {
-        //    $field_name = $field->getDereferenced();
-        //}
-        //if ($field instanceof \atk4\data\Field_One) {
-        //    $field_name = $field->their_field; // not sure what's correct
-        //}
-
         $field_type = $this->getFieldType($field);
         $field_caption = isset($field->caption) ? $field->caption : null;
 

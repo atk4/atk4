@@ -157,11 +157,11 @@ class Controller_ADForm extends AbstractController
     public function importField($field, $field_name = null)
     {
         $field = $this->model->hasElement($field);
-        if (!$field || !$field->editable || $field->system) {
+        if (!$field || !$field->editable /*|| $field->system*/) {
             return;
         }
-        /** @type \atk4\data\Field $field */
 
+        /** @type \atk4\data\Field $field */
         if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
         }
@@ -170,11 +170,10 @@ class Controller_ADForm extends AbstractController
 
         $this->field_associations[$field_name] = $field;
 
-        //if ($field->listData() || $field instanceof Field_Reference) {
-        //    if ($field_type == 'Line') {
-        //        $field_type = 'DropDown';
-        //    }
-        //}
+        // associate hasOne fields with DropDown form field
+        if ($ref_field = $this->model->hasElement('#ref_'.$field->short_name)) {
+            $field_type = 'DropDown';
+        }
 
         $form_field = $this->owner->addField($field_type, $field_name, $field_caption);
         $form_field->set($field->get());
@@ -193,6 +192,10 @@ class Controller_ADForm extends AbstractController
         //    $a = $field->listData();
         //    $form_field->setValueList($a);
         //}
+        if (isset($ref_field) && $ref_field) {
+            $form_field->setModel($ref_field->getModel());
+        }
+
         //if ($msg = $field->mandatory()) {
         //    $form_field->validateNotNULL($msg);
         //}
@@ -200,9 +203,11 @@ class Controller_ADForm extends AbstractController
         //if ($field instanceof Field_Reference || $field_type == 'reference') {
         //    $form_field->setModel($field->getModel());
         //}
+
         //if ($field->theModel) {
         //    $form_field->setModel($field->theModel);
         //}
+
         //if ($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
         //    /** @type string $text */
         //    $text = $field->emptyText();
