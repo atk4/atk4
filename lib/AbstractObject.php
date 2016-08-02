@@ -295,13 +295,11 @@ abstract class AbstractObject
 
         if (is_object($class)) {
             // Object specified, just add the object, do not create anything
-            /* disabling this because of implementation of agile/data
             if (!($class instanceof self)) {
                 throw $this->exception(
                     'You may only add objects based on AbstractObject'
                 );
             }
-            */
             if (!isset($class->short_name)) {
                 $class->short_name = str_replace('\\', '_', strtolower(get_class($class)));
             }
@@ -379,13 +377,11 @@ abstract class AbstractObject
         }*/
         $element = new $class_name_nodash($options);
 
-        /* disabling this because of implementation of agile/data
         if (!($element instanceof self)) {
             throw $this->exception(
                 'You can add only classes based on AbstractObject'
             );
         }
-        */
 
         $element->owner = $this;
         $element->app = $this->app;
@@ -508,6 +504,12 @@ abstract class AbstractObject
      */
     public function setModel($model)
     {
+        // in case of Agile Data model - don't add it to object.
+        // Agile Data Model owner is Agile Data Persistance and so be it.
+        if ($model instanceof \atk4\data\Model) {
+            return $this->model = $model;
+        }
+
         $model = $this->app->normalizeClassName($model, 'Model');
         $this->model = $this->add($model);
 

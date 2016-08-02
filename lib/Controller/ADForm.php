@@ -157,7 +157,7 @@ class Controller_ADForm extends AbstractController
     public function importField($field, $field_name = null)
     {
         $field = $this->model->hasElement($field);
-        if (!$field || !$field->editable) {
+        if (!$field || !$field->editable || $field->system) {
             return;
         }
         /** @type \atk4\data\Field $field */
