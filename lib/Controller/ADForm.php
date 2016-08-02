@@ -89,6 +89,7 @@ class Controller_ADForm extends AbstractController
      */
     public function setActualFields($fields)
     {
+        /** @type \atk4\data\Model $this->owner->model */
         $this->importFields($this->owner->model, $fields);
     }
 
@@ -159,6 +160,7 @@ class Controller_ADForm extends AbstractController
         if (!$field || !$field->editable) {
             return;
         }
+        /** @type \atk4\data\Model $field */
 
         if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
