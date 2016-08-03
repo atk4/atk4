@@ -170,53 +170,55 @@ class Controller_ADForm extends AbstractController
 
         $this->field_associations[$field_name] = $field;
 
-        // associate hasOne fields with DropDown form field
+        // associate hasOne (Relation_One) fields with DropDown form field
         if ($ref_field = $this->model->hasElement('#ref_'.$field->short_name)) {
             $field_type = 'DropDown';
         }
 
+        // associate enum fields with DropDown formfield
+        if (isset($field->enum)) {
+            $field_type = 'DropDown';
+        }
+
+        // add form field
         $form_field = $this->owner->addField($field_type, $field_name, $field_caption);
         $form_field->set($field->get());
 
-        //$field_placeholder = $field->placeholder() ?: $field->emptyText() ?: null;
-        //if ($field_placeholder) {
-        //    $form_field->setAttr('placeholder', $field_placeholder);
-        //}
-
-        //if ($field->hint()) {
-        //    $form_field->setFieldHint($field->hint());
-        //}
-
-        //if ($field->listData()) {
-        //    /** @type Form_Field_ValueList $form_field */
-        //    $a = $field->listData();
-        //    $form_field->setValueList($a);
-        //}
+        // set model for hasOne field
         if (isset($ref_field) && $ref_field) {
             $form_field->setModel($ref_field->getModel());
         }
 
-        //if ($msg = $field->mandatory()) {
-        //    $form_field->validateNotNULL($msg);
-        //}
+        // set model for enum field
+        if (isset($field->enum)) {
+            $form_field->setValueList($field->enum);
+        }
 
-        //if ($field instanceof Field_Reference || $field_type == 'reference') {
-        //    $form_field->setModel($field->getModel());
-        //}
+        // field value is mandatory
+        if ($msg = $field->mandatory) {
+            $form_field->validateNotNULL($msg);
+        }
 
-        //if ($field->theModel) {
-        //    $form_field->setModel($field->theModel);
-        //}
+        // form field placeholder
+        // not defined in Agile Data, but you can define this as custom model property
+        $field_placeholder = isset($field->placeholder) ? $field->placeholder : /*$field->emptyText() ?:*/ null;
+        if ($field_placeholder) {
+            $form_field->setAttr('placeholder', $field_placeholder);
+        }
 
-        //if ($form_field instanceof Form_Field_ValueList && !$field->mandatory()) {
-        //    /** @type string $text */
-        //    $text = $field->emptyText();
-        //    $form_field->setEmptyText($text);
-        //}
+        // form field hint
+        // not defined in Agile Data, but you can define this as custom model property
+        if (isset($field->hint) && $field->hint) {
+            $form_field->setFieldHint($field->hint);
+        }
 
-        //if ($field->onField()) {
-        //    call_user_func($field->onField(), $form_field);
-        //}
+        // set empty text option for dropdown type form fields if model field is not mandatory
+        if ($form_field instanceof Form_Field_ValueList && !$field->mandatory) {
+            /** @type string $text */
+            //$text = $field->emptyText();
+            //$form_field->setEmptyText($text);
+            $form_field->setEmptyText('- no value -');
+        }
 
         return $form_field;
     }
@@ -274,9 +276,6 @@ class Controller_ADForm extends AbstractController
         // try to find associated form field type
         if (isset($this->type_associations[$field->type])) {
             $type = $this->type_associations[$field->type];
-        }
-        if ($field instanceof \atk4\data\Field_One) {
-            $type = 'DropDown';
         }
 
         // if form field type explicitly set in model
