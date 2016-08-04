@@ -460,7 +460,7 @@ class Logger extends AbstractController
      */
     public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $max_depth = 4)
     {
-        $o = '';        
+        $o = '';
         if (strlen($ind) > $max_depth) {
             return;
         }
