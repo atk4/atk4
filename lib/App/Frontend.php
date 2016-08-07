@@ -224,7 +224,7 @@ class App_Frontend extends App_Web
 
                 /** @type Layout_Basic $l */
                 $l = $this->app->add('Layout_Basic', null, null, array('layout/installer'));
-                
+
                 /** @type View $i */
                 $i = $l->add('View');
                 $i->addClass('atk-align-center');
