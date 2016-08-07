@@ -706,7 +706,7 @@ class View_CRUD extends View
     protected function formSubmit($form)
     {
         try {
-            $form->update();
+            $form->save();
             $self = $this;
             $this->app->addHook('pre-render', function () use ($self) {
                 $self->formSubmitSuccess()->execute();

@@ -772,12 +772,19 @@ class Auth_Basic extends AbstractController
         $form = $page->add('Form', null, null, array('form/minimal'));
 
         /** @type Field $email */
-        $email = $this->model->hasField($this->login_field);
-        $email = $email ? $email->caption() : 'E-mail';
+        $email = $this->model->hasElement($this->login_field);
 
         /** @type Field $password */
-        $password = $this->model->hasField($this->password_field);
-        $password = $password ? $password->caption() : 'Password';
+        $password = $this->model->hasElement($this->password_field);
+
+        // set captions
+        if ($this->model instanceof \atk4\data\Model) {
+            $email = $email && isset($email->caption) ? $email->caption : 'E-mail';
+            $password = $password && isset($password->caption) ? $password->caption : 'Password';
+        } else {
+            $email = $email ? $email->caption() : 'E-mail';
+            $password = $password ? $password->caption() : 'Password';
+        }
 
         $form->addField('Line', 'username', $email);
         $form->addField('Password', 'password', $password);

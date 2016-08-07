@@ -503,7 +503,6 @@ class Form_Basic extends View implements ArrayAccess
             foreach ($this->elements as $short_name => $element) {
                 if ($element instanceof Form_Field) {
                     if (!$element->no_save) {
-                        //if(is_null($element->get()))
                         $m->set($short_name, $element->get());
                     }
                 }
