@@ -122,13 +122,9 @@ class PathFinder extends AbstractController
             } catch (Exception $e) {
                 // If due to your PHP version, it says that
                 // autoloader may not throw exceptions, then you should
-                // add PHP verion check here and skip to next line.
+                // add PHP version check here and skip to next line.
                 // PHP 5.5 - throwing seems to work out OK
                 throw $e;
-                
-                /* unreachable code
-                $self->app->caughtException($e);
-                */
             }
         });
     }
@@ -481,9 +477,9 @@ class PathFinder extends AbstractController
         /**/$this->app->pr->next('pathfinder/loadClass/include ');
         /**/$this->app->pr->start('php parsing');
         include_once $path;
-        /**/$this->app->pr->stop();
+
         if (!class_exists($origClassName, false) && !interface_exists($origClassName, false)) {
-            throw $this->exception('Class is not defined in file')
+            throw $this->exception('Class is not defined in file or extended class can not be found')
                 ->addMoreInfo('file', $path)
                 ->addMoreInfo('namespace', $namespace)
                 ->addMoreInfo('class', $className)
