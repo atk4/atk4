@@ -36,6 +36,6 @@ class Menu_Advanced_Item extends View
 
     public function addItem()
     {
-        throw $this->exception('Do not chain addItem calls, the return individual objects');
+        throw $this->exception('Do not chain addItem calls, they return individual objects');
     }
 }
