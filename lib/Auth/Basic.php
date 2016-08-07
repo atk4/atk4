@@ -63,7 +63,7 @@ class Auth_Basic extends AbstractController
     public $password_field = 'password';
 
     /**
-     * @var int Encyption algorithm
+     * @var int Encryption algorithm
      */
     public $hash_algo = PASSWORD_DEFAULT;
 
@@ -403,7 +403,7 @@ class Auth_Basic extends AbstractController
             return;
         }      // no authentication is required
 
-        // Check if user's session contains autentication information
+        // Check if user's session contains authentication information
         if (!$this->isLoggedIn()) {
             $this->memorizeURL();
 
@@ -463,7 +463,7 @@ class Auth_Basic extends AbstractController
     }
 
     /**
-     * This function verifies credibility of supplied authenication data.
+     * This function verifies credibility of supplied authentication data.
      * It will search based on user and verify the password. It's also
      * possible that the function will re-hash user password with
      * updated hash.
@@ -610,7 +610,7 @@ class Auth_Basic extends AbstractController
     }
 
     /**
-     * Return originalally requested URL.
+     * Return originally requested URL.
      *
      * @return string
      */
@@ -631,7 +631,7 @@ class Auth_Basic extends AbstractController
     }
 
     /**
-     * This function is always executed after successfull login through a normal means (login form or plugin).
+     * This function is always executed after successful login through a normal means (login form or plugin).
      *
      * It will create cache model data.
      *
