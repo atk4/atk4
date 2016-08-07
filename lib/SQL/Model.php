@@ -1181,7 +1181,7 @@ class SQL_Model extends Model implements Serializable
             return $this->reset();
         }
 
-        // Verify if such a filed exists
+        // Verify if such a field exists
         if ($this->strict_fields && !$this->hasElement($name)) {
             throw $this->exception('No such field', 'Logic')
             ->addMoreInfo('name', $name);
