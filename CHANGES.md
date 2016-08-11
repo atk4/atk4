@@ -50,8 +50,8 @@ Misc:
  - Allow first argument of add method to contain array: add(['Menu', ['swatch'=>'ink']);
  - Allow styling of Tabs
  - Use GiTemplate in format_template and format_link
- 
-  
+
+
 
 Changes in 4.3.0 to 4.3.1
 ====
@@ -97,7 +97,7 @@ Additionally we rewrote all the templates into JADE, which are compiled and bund
 Rewrite of Template Engine
 ---------------------------
 
-GiTemplate class is here to replace SMLite. While it offers the same functionality and generally has a same implementation, it significantly improves parse speed by relying on recursive regular expressions. 
+GiTemplate class is here to replace SMLite. While it offers the same functionality and generally has a same implementation, it significantly improves parse speed by relying on recursive regular expressions.
 
 You can also use new template through array_access:
 
@@ -163,7 +163,7 @@ We have put a lot of time to clean up our source files and make them compatible 
 
 New pattern for substituting text with arrays
 ---------------------------------------------
-Many Views in 4.3 support a new way to pass arguments ot them. 
+Many Views in 4.3 support a new way to pass arguments ot them.
 
 ```
 $this->add('Button')->set(['Hello','icon'=>'check']);
@@ -172,7 +172,7 @@ The pattern is based around the new array style [''] and will treat first elemen
 
 PathFinder Changes
 -------------------
-Version of 4.2 in Agile Toolkit would normally be installed into "webroot". There was a "way" to create a "public" folder inside your project class to keep framework files outside of your webroot. In 4.3 the way to use "public" class like that has became the standard. The framework works well if you don't use "public" folder yet. 
+Version of 4.2 in Agile Toolkit would normally be installed into "webroot". There was a "way" to create a "public" folder inside your project class to keep framework files outside of your webroot. In 4.3 the way to use "public" class like that has became the standard. The framework works well if you don't use "public" folder yet.
 
 AJAX Callback enhancements
 --------------------------
@@ -199,7 +199,7 @@ $lister->on('click','.do-action', function($j, $data) {
     return $j->data('cnt', $data['cnt']+1)
        ->univ()
        ->alert('Count was '.$data['cnt'])
-    ); 
+    );
 });
 ```
 The code above not only will receive data-cnt of the element, but will increase and set it back through a targeted chain.
@@ -215,7 +215,7 @@ http://book.agiletoolkit.org/views/menu.html
 
 Added support for Layouts
 --------------------------
-Previously boilerplate HTML and application layout was stored in `shared.html` file. Now the boilerplate HTML is inside `html.html` and you can define and use one of several layouts using `add('Layout_X')` method inside your application. Layout is a view containing global items on your page such as menu, footer, header. 
+Previously boilerplate HTML and application layout was stored in `shared.html` file. Now the boilerplate HTML is inside `html.html` and you can define and use one of several layouts using `add('Layout_X')` method inside your application. Layout is a view containing global items on your page such as menu, footer, header.
 
 Admin comes with a default layout ('Fluid') and frontend is using Layout_Centered by default, but you can easily add your own layouts.
 
@@ -224,7 +224,7 @@ Other changes in 4.2.4 to 4.3.0
 -------------------------------
 
 Core:
- 
+
  - ApiWEB, ApiFrontend, etc are now renamed into App/Web, App/Frontend etc respectively.
  - A standard property of all objects $this->api renamed into $this->app. $api remains for compatibility.
  - univ.js is split up into 2 libraries univ_basic.js and univ_jui.js. All jQuery UI related functionality is moved to second file.
@@ -234,11 +234,11 @@ Core:
 
 Experimental features:
 
- - implemented Controller_Data_SQL - future replacement for SQL_Model. Lacks in functionality, but works with "Model" class. 
+ - implemented Controller_Data_SQL - future replacement for SQL_Model. Lacks in functionality, but works with "Model" class.
  - added runTests() method for built-in object tests
 
 Misc:
- 
+
  - learn($key, $default) uses one default parameter instead of accepting 3 possible values
  - exception($message) requires you to always use a message
  - allow exception chaining exception::by(other exception)
@@ -260,14 +260,14 @@ Models:
 
  - supply array to addCondition to implement OR
  - Page: implemented addBreadCrumb
- 
-  
+
+
 Fixes:
 
  - memorization of url during login
  - fixed problem new hook handler is added while hook is executed
  - fix Checkbox field compatibility with type('boolean')->enum(['Y','N']);
- - Fix #587 (paginator), 
+ - Fix #587 (paginator),
  - addCondition('foo', [1,2]) will not set a defaultValue for field 'foo'
  - When exception is caught in command-line will use exception's code as exit code
  - CLI improve error message output
@@ -299,7 +299,7 @@ Removed Obsolete:
  - Form_Field_Grouped
  - Paginator_Compat
  - Removed method RenderOnly
-  
+
 
 Cleanups:
 
@@ -351,7 +351,7 @@ NoSQL:
 
 - severely improved handling of NoSQL models
 - added MemCache support
-- added Session support 
+- added Session support
 - added loadBy and similar methods
 - several bug fixes
 - severily improved handling of NoSQL models
@@ -384,7 +384,7 @@ JS:
 CSS and LESS:
 
 - separated out mixing into atk4-mixins.less
-- removed prefix (used to be 'ui-icon') from Button->setIcon(). 
+- removed prefix (used to be 'ui-icon') from Button->setIcon().
 
 Form:
 
@@ -395,7 +395,7 @@ Views:
 
 - see HTML produced by any view by calling view->debug()
 - added Menu_jUI - jQuery-compatible menu
-- added View_DropButton 
+- added View_DropButton
 - added View_Flyout
 - menu URL can be jQuery_Chain now
 - Quicksearch and Grid cleaned up
@@ -462,7 +462,7 @@ Misc:
 - jQuery and jQuery UI versions are updated
 - Ability to override chain class name in jQuery
 - View_Warning uses jQuery UI styles now (and icon)
-- You can specify jUI_Tabs::options 
+- You can specify jUI_Tabs::options
 - specifying URL to url() works correctly
 - allow to use hasMany on joined table fields
 - pathfinder logic changed slightly
