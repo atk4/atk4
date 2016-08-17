@@ -112,8 +112,7 @@ class Controller_ADGrid extends AbstractController
                 $fields = [];
                 // get all field-elements
                 foreach ($model->elements as $field => $f_object) {
-                    if (
-                        $f_object instanceof \atk4\data\Field
+                    if ($f_object instanceof \atk4\data\Field
                         && $f_object->isVisible()
                         && !$f_object->isHidden()
                     ) {
