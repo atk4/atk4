@@ -57,7 +57,7 @@ class Controller_MVCGrid extends AbstractController
      * Adds additional type association.
      *
      * @param string $k model field type
-     * @param string $v grid columnt type
+     * @param string $v grid column type
      */
     public function addTypeAssociation($k, $v)
     {

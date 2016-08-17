@@ -81,7 +81,7 @@ class Controller_ADForm extends AbstractController
             throw $this->exception('Controller_ADForm can only be used with Agile Data \atk4\data\Model models');
         }
     }
-    
+
     /**
      * Import model fields in form.
      *
@@ -120,7 +120,11 @@ class Controller_ADForm extends AbstractController
                 $fields = [];
                 // get all field-elements
                 foreach ($model->elements as $field => $f_object) {
-                    if ($f_object instanceof \atk4\data\Field) {
+                    if (
+                        $f_object instanceof \atk4\data\Field
+                        && $f_object->isEditable()
+                        && !$f_object->isHidden()
+                    ) {
                         $fields[] = $field;
                     }
                 }
@@ -157,11 +161,12 @@ class Controller_ADForm extends AbstractController
     public function importField($field, $field_name = null)
     {
         $field = $this->model->hasElement($field);
-        if (!$field || !$field->editable /*|| $field->system*/) {
+        /** @type \atk4\data\Field $field */
+
+        if (!$field || !$field->isEditable() || $field->isHidden()) {
             return;
         }
 
-        /** @type \atk4\data\Field $field */
         if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
         }
@@ -175,7 +180,7 @@ class Controller_ADForm extends AbstractController
             $field_type = 'DropDown';
         }
 
-        // associate enum fields with DropDown formfield
+        // associate enum fields with DropDown form_field
         if (isset($field->enum)) {
             $field_type = 'DropDown';
         }
@@ -185,7 +190,7 @@ class Controller_ADForm extends AbstractController
         $form_field->set($field->get());
 
         // set model for hasOne field
-        if (isset($ref_field) && $ref_field) {
+        if ($ref_field) {
             $form_field->setModel($ref_field->getModel());
         }
 
@@ -195,8 +200,8 @@ class Controller_ADForm extends AbstractController
         }
 
         // field value is mandatory
-        if ($msg = $field->mandatory) {
-            $form_field->validateNotNULL($msg);
+        if ($field->mandatory) {
+            $form_field->validateNotNULL($field->mandatory);
         }
 
         // form field placeholder

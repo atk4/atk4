@@ -53,7 +53,7 @@ class Controller_ADGrid extends AbstractController
     public $owner;
 
 
-    
+
     /**
      * Initialization.
      */
@@ -70,7 +70,7 @@ class Controller_ADGrid extends AbstractController
      * Adds additional type association.
      *
      * @param string $k model field type
-     * @param string $v grid columnt type
+     * @param string $v grid column type
      */
     public function addTypeAssociation($k, $v)
     {
@@ -112,7 +112,11 @@ class Controller_ADGrid extends AbstractController
                 $fields = [];
                 // get all field-elements
                 foreach ($model->elements as $field => $f_object) {
-                    if ($f_object instanceof \atk4\data\Field) {
+                    if (
+                        $f_object instanceof \atk4\data\Field
+                        && $f_object->isVisible()
+                        && !$f_object->isHidden()
+                    ) {
                         $fields[] = $field;
                     }
                 }
@@ -132,7 +136,7 @@ class Controller_ADGrid extends AbstractController
         return $this;
     }
 
-    /**9
+    /**
      * Import one field from model into grid.
      *
      * @param string $field
@@ -142,10 +146,11 @@ class Controller_ADGrid extends AbstractController
     public function importField($field)
     {
         $field = $this->model->hasElement($field);
-        if (!$field) {
+        /** @type \atk4\data\Field $field */
+
+        if (!$field || !$field->isVisible() || $field->isHidden()) {
             return;
         }
-        /** @type \atk4\data\Field $field */
 
         $field_name = $field->short_name;
         $field_type = $this->getFieldType($field);
@@ -185,6 +190,7 @@ class Controller_ADGrid extends AbstractController
             $type = 'html';
         }
 
+        /*
         // if grid column type/formatter explicitly set in model
         if (isset($field->display)) {
             // @todo this is wrong and obsolete, as hasOne uses display for way different purpose
@@ -197,6 +203,7 @@ class Controller_ADGrid extends AbstractController
                 $type = $tmp;
             }
         }
+        */
 
         return $type;
     }
