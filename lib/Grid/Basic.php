@@ -500,8 +500,8 @@ class Grid_Basic extends CompleteLister
             }
 
             // if model field has listData structure, then get value instead of key
-            /** @type Field $f */
             if ($this->model && $f = $this->model->hasElement($field)) {
+                /** @type Field $f */
                 if ((!$this->model instanceof \atk4\data\Model && $f->type() !== 'boolean' && $values = $f->listData())
                     || ($this->model instanceof \atk4\data\Model && isset($f->enum) && $values = $f->enum)
                 ) {
