@@ -174,7 +174,7 @@ class Controller_ADForm extends AbstractController
 
         $this->field_associations[$field_name] = $field;
 
-        // associate hasOne (Relation_One) fields with DropDown form field
+        // associate hasOne (Reference_One) fields with DropDown form field
         if ($ref_field = $this->model->hasElement('#ref_'.$field->short_name)) {
             $field_type = 'DropDown';
         }
