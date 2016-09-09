@@ -207,16 +207,14 @@ class Controller_ADForm extends AbstractController
         }
 
         // form field placeholder
-        // not defined in Agile Data, but you can define this as custom model property
-        $field_placeholder = isset($field->placeholder) ? $field->placeholder : /*$field->emptyText() ?:*/ null;
-        if ($field_placeholder) {
-            $form_field->setAttr('placeholder', $field_placeholder);
+        $placeholder = isset($field->ui['placeholder']) ? $field->ui['placeholder'] : /*$field->emptyText() ?:*/ null;
+        if ($placeholder) {
+            $form_field->setAttr('placeholder', $placeholder);
         }
 
         // form field hint
-        // not defined in Agile Data, but you can define this as custom model property
-        if (isset($field->hint) && $field->hint) {
-            $form_field->setFieldHint($field->hint);
+        if (isset($field->ui['hint'])) {
+            $form_field->setFieldHint($field->ui['hint']);
         }
 
         // set empty text option for dropdown type form fields if model field is not mandatory
