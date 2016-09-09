@@ -31,8 +31,10 @@ class Controller_ADGrid extends AbstractController
     public $type_associations = array(
         'string' => 'text',
         'int' => 'number',
+        'integer' => 'number',
         'numeric' => 'number',
         'real' => 'real',
+        'float' => 'real',
         'money' => 'money',
         'text' => 'shorttext',
         'reference' => 'text',
@@ -40,6 +42,7 @@ class Controller_ADGrid extends AbstractController
         'datetime' => 'timestamp',
         'date' => 'date',
         'daytime' => 'time',
+        'time' => 'time',
         'boolean' => 'boolean',
         'list' => 'text',
         'radio' => 'text',
