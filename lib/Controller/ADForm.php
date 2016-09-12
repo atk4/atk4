@@ -284,12 +284,12 @@ class Controller_ADForm extends AbstractController
         }
 
         // if form field type explicitly set in model
-        if (isset($field->display)) {
-            $tmp = $field->display;
-            if (is_array($tmp)) {
+        if (isset($field->ui['display'])) {
+            $tmp = $field->ui['display'];
+            if (isset($tmp['form'])) {
                 $tmp = $tmp['form'];
             }
-            if ($tmp) {
+            if (is_string($tmp) && $tmp) {
                 $type = $tmp;
             }
         }

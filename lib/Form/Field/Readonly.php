@@ -41,6 +41,12 @@ class Form_Field_Readonly extends Form_Field_ValueList
             $attr,
             $this->attr
         ));
+
+        // fix for DateTime values for Agile Data
+        if ($v instanceof DateTime) {
+            $v = date($this->app->getConfig('locale/date', 'd/m/Y'), $v->format('U'));
+        }
+
         $output .= (strlen($v) > 0 ? nl2br($v) : '&nbsp;');
         $output .= $this->getTag('/div');
 

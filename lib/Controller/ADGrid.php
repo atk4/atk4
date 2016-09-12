@@ -162,11 +162,7 @@ class Controller_ADGrid extends AbstractController
 
         $column = $this->owner->addColumn($field_type, $field_name, $field_caption);
 
-        if (
-            (isset($field->sortable) && $field->sortable)
-            || (isset($field->ui['sortable']) && $field->ui['sortable'])
-            && $column->hasMethod('makeSortable')
-        ) {
+        if (isset($field->ui['sortable']) && $field->ui['sortable'] && $column->hasMethod('makeSortable')) {
             $column->makeSortable();
         }
 
@@ -196,20 +192,18 @@ class Controller_ADGrid extends AbstractController
             $type = 'html';
         }
 
-        /*
         // if grid column type/formatter explicitly set in model
-        if (isset($field->display)) {
+        if (isset($field->ui['display'])) {
             // @todo this is wrong and obsolete, as hasOne uses display for way different purpose
 
-            $tmp = $field->display;
-            if (is_array($tmp) && isset($tmp['grid'])) {
+            $tmp = $field->ui['display'];
+            if (isset($tmp['grid'])) {
                 $tmp = $tmp['grid'];
             }
-            if ($tmp) {
+            if (is_string($tmp) && $tmp) {
                 $type = $tmp;
             }
         }
-        */
 
         return $type;
     }
