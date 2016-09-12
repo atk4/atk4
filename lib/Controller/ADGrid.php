@@ -162,7 +162,11 @@ class Controller_ADGrid extends AbstractController
 
         $column = $this->owner->addColumn($field_type, $field_name, $field_caption);
 
-        if (isset($field->sortable) && $field->sortable && $column->hasMethod('makeSortable')) {
+        if (
+            (isset($field->sortable) && $field->sortable)
+            || (isset($field->ui['sortable']) && $field->ui['sortable'])
+            && $column->hasMethod('makeSortable')
+        ) {
             $column->makeSortable();
         }
 
