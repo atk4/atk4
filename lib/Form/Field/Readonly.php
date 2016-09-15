@@ -61,4 +61,9 @@ class Form_Field_Readonly extends Form_Field_ValueList
         // always valid because this is readonly field
         return true;
     }
+    public function validateValidItem()
+    {
+        // always valid because this is readonly field
+        return true;
+    }
 }
