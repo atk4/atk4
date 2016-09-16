@@ -645,7 +645,7 @@ class View_CRUD extends View
             );
 
         if ($this->entity_name !== false) {
-            $this->add_button->setHTML('<i class="icon-plus"></i> Add '.htmlspecialchars($this->entity_name));
+            $this->add_button->setIcon('plus')->setHTML('Add '.htmlspecialchars($this->entity_name));
         }
     }
 
