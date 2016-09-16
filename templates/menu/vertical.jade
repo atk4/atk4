@@ -6,7 +6,7 @@ ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
     {/Title}
 
     {Item}
-    li
+    li(class="{$li_class}")
         <a class="atk-padding-small atk-cells {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}>
         span.atk-cell.atk-jackscrew
             {$icon}&nbsp;
@@ -17,7 +17,7 @@ ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
     {/Item}
 
     {Menu}
-    li(id="{$_name}" class="{$li-class}")
+    li(id="{$_name}" class="{$li_class}")
         a.atk-padding-small.atk-cells(href="javascript:void(0)" class="{$class}")
             span.atk-cell.atk-jackscrew
                 {$icon}&nbsp;

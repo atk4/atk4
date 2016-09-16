@@ -6,7 +6,7 @@ ul.atk-menu.atk-menu-horizontal(class="{$class}" id="{$_name}" style="{$style}")
     {/Title}
 
     {Item}
-    li.class(id="{$_name}")
+    li(id="{$_name}" class="$li_class")
         <a class="{padding}atk-padding-small{/} {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}>
         {$icon}&nbsp;
         strong
@@ -16,7 +16,7 @@ ul.atk-menu.atk-menu-horizontal(class="{$class}" id="{$_name}" style="{$style}")
     {/Item}
 
     {Menu}
-    li(id="{$_name}" class="{$li-class}")
+    li(id="{$_name}" class="{$li_class}")
         a.atk-padding(href="#" class="{$class}")
             {$icon}&nbsp;
             strong

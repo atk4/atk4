@@ -61,6 +61,7 @@ abstract class Menu_Advanced extends View
             if (is_string($action) || is_array($action) || $action instanceof URL) {
                 $i->template->set('url', $url = $this->app->url($action));
                 if ($url->isCurrent($this->highlight_subpages)) {
+                    $i->template->set('li_class', 'atk-menu-active');
                     $i->addClass('active');
                 }
             } else {
