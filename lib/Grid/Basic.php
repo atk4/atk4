@@ -102,6 +102,9 @@ class Grid_Basic extends CompleteLister
             $name = $formatters;
             $formatters = 'text';
         }
+        if ($formatters === null) {
+            $formatters = 'text';
+        }
 
         if ($descr === null) {
             $descr = ucwords(str_replace('_', ' ', $name));

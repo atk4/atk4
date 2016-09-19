@@ -172,27 +172,17 @@ class Controller_ADForm extends AbstractController
         if ($field_name === null) {
             $field_name = $this->_unique($this->owner->elements, $field->short_name);
         }
-        $field_type = $this->getFieldType($field);
-        $field_caption = isset($field->caption) ? $field->caption : null;
-
         $this->field_associations[$field_name] = $field;
 
-        // associate hasOne (Reference_One) fields with DropDown form field
-        if (($ref_field = $this->model->hasElement('#ref_'.$field->short_name)) && $field_type != 'Readonly') {
-            $field_type = 'DropDown';
-        }
-
-        // associate enum fields with DropDown form_field
-        if (isset($field->enum) && $field_type != 'Readonly') {
-            $field_type = 'DropDown';
-        }
+        $field_type = $this->getFieldType($field);
+        $field_caption = isset($field->caption) ? $field->caption : null;
 
         // add form field
         $form_field = $this->owner->addField($field_type, $field_name, $field_caption);
         $form_field->set($field->get());
 
         // set model for hasOne field
-        if ($ref_field) {
+        if ($ref_field = $this->model->hasRef($field->short_name)) {
             $form_field->setModel($ref_field->getModel());
         }
 
@@ -275,26 +265,33 @@ class Controller_ADForm extends AbstractController
      */
     public function getFieldType($field)
     {
-        // default form field type
-        $type = 'Line';
-
-        // try to find associated form field type
-        if (isset($this->type_associations[$field->type])) {
-            $type = $this->type_associations[$field->type];
-        }
-
-        // if form field type explicitly set in model
+        // if form field type explicitly set in models UI properties
         if (isset($field->ui['display'])) {
             $tmp = $field->ui['display'];
             if (isset($tmp['form'])) {
                 $tmp = $tmp['form'];
             }
             if (is_string($tmp) && $tmp) {
-                $type = $tmp;
+                return $tmp;
             }
         }
 
-        return $type;
+        // associate hasOne (Reference_One) fields with DropDown form field
+        if ($this->model->hasRef($field->short_name)) {
+            return 'DropDown';
+        }
+
+        // associate enum fields with DropDown form_field
+        if (isset($field->enum)) {
+            return 'DropDown';
+        }
+
+        // try to find associated form field type
+        if (isset($this->type_associations[$field->type])) {
+            $type = $this->type_associations[$field->type];
+        }
+
+        return $type ?: 'Line';
     }
 
     /**
