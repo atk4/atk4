@@ -77,17 +77,25 @@ class URL extends AbstractModel
     }
 
     /**
-     * Detects if the URL matches current page. If
-     * $include_sub is set to true, then it will also
-     * detect to match sub-pages too.
+     * Detects if the URL matches current page.
+     *
+     * If $inc_parent is set to true, then it will also try to match sub-pages.
+     * If $inc_args is set to true then it will also try to match arguments.
+     *
+     * @param bool $inc_parent
+     * @param bool $inc_args
+     *
+     * @return bool
      */
-    public function isCurrent($include_sub = false)
+    public function isCurrent($inc_parent = false, $inc_args = false)
     {
-        if ($include_sub) {
-            return $this->_current_sub;
+        // strict match with arguments
+        if ($inc_args) {
+            return $this->app->url()->getURL() == $this->getURL();
         }
 
-        return $this->_current;
+        // match current page or parent page without arguments
+        return $this->_current || ($inc_parent && $this->_current_sub);
     }
 
     /** [private] automatically called with 1st argument of $app->url() */
@@ -108,15 +116,11 @@ class URL extends AbstractModel
 
         $destination = '';
 
-        //if(substr($page,-1)=='/'){
-            //return $this->setBaseURL(str_replace('//','/',$this->app->pm->base_path.$page));
-        //}
         if (is_null($page)) {
             $page = '.';
         }
-        $path = explode('/', $page);
 
-        foreach ($path as $component) {
+        foreach (explode('/', $page) as $component) {
             if ($component == '') {
                 continue;
             }
@@ -151,10 +155,10 @@ class URL extends AbstractModel
 
         $this->page = $destination;
 
+        // check if it's current page
         list($p, $ap) = str_replace('/', '_', array($this->page, $this->app->page));
-
-        $this->_current = $p == $ap;
-        $this->_current_sub = $p == substr($ap, 0, strlen($p));
+        $this->_current = ($p == $ap); // page exactly match
+        $this->_current_sub = ($p == substr($ap, 0, strlen($p)) && isset($ap[strlen($p)]) && $ap[strlen($p)] == '_'); // first part of page match followed by separator
 
         return $this;
     }
@@ -185,7 +189,7 @@ class URL extends AbstractModel
     public function setArguments($arguments = array())
     {
         // add additional arguments
-        if (is_null($arguments)) {
+        if (!$arguments) {
             $arguments = array();
         }
         if (!is_array($arguments)) {
@@ -244,18 +248,11 @@ class URL extends AbstractModel
     {
         $tmp = array();
         foreach ($this->arguments as $key => $value) {
-            if ($value === false) {
-                continue;
+            if ($value !== false) {
+                $tmp[$key] = $value;
             }
-            $tmp[] = $key.'='.urlencode($value);
         }
-
-        $arguments = '';
-        if (!empty($tmp)) {
-            $arguments = (strpos($url, '?') !== false ? '&' : '?').implode('&', $tmp);
-        }
-
-        return $arguments;
+        return $tmp ? (strpos($url, '?') !== false ? '&' : '?').http_build_query($tmp) : '';
     }
 
     public function getURL()
@@ -275,7 +272,6 @@ class URL extends AbstractModel
         if ($this->page && $this->page != 'index') {
             // add prefix if defined in config
             $url .= $this->app->getConfig('url_prefix', '');
-
             $url .= $this->page;
             $url .= $this->getExtension();
         }

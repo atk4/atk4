@@ -6,7 +6,8 @@ abstract class Menu_Advanced extends View
 {
     public $swatch = 'ink';
     public $hover_swatch = null;
-    public $highlight_subpages = false;
+    public $highlight_subpages = false; // appropriate name would be $highlight_parent_page
+    public $highlight_strict = false; // will try to match page arguments too to detect active menu item
 
     // {{{ Inherited properties
 
@@ -60,7 +61,7 @@ abstract class Menu_Advanced extends View
         if ($action) {
             if (is_string($action) || is_array($action) || $action instanceof URL) {
                 $i->template->set('url', $url = $this->app->url($action));
-                if ($url->isCurrent($this->highlight_subpages)) {
+                if ($url->isCurrent($this->highlight_subpages, $this->highlight_strict)) {
                     $i->template->set('li-class', 'atk-menu-active');
                     $i->addClass('active');
                 }
