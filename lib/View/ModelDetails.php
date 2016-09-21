@@ -76,7 +76,7 @@ class View_ModelDetails extends Grid_Basic
                 if (!$field) {
                     continue;
                 }
-                if ($field instanceof Field || $field instanceof Field_Base) {
+                if ($field instanceof Field || $field instanceof Field_Base || $field instanceof \atk4\data\Field) {
                     $data[] = array(
                         'id' => $key,
                         'name' => $field->caption(),
