@@ -58,11 +58,13 @@ class Layout_Fluid extends Layout_Basic
     // }}}
 
     /**
-     * Initializaction.
+     * Initialization.
      */
     public function init()
     {
         parent::init();
+
+        // setup user menu
         if ($this->template->hasTag('UserMenu')) {
             if (isset($this->app->auth)) {
                 $this->user_menu = $this->add('Menu_Horizontal', null, 'UserMenu');
