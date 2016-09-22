@@ -94,15 +94,28 @@ class QuickSearch extends Filter
     public function postInit()
     {
         parent::postInit();
+
         if (!($v = trim($this->get('q')))) {
             return;
         }
 
+        // if model has method addConditionLike
         if ($this->view->model->hasMethod('addConditionLike')) {
             return $this->view->model->addConditionLike($v, $this->fields);
         }
 
-        if ($this->view->model && $this->view->model instanceof SQL_Model) {
+        // if it is Agile Data model
+        if ($this->view->model instanceof \atk4\data\Model) {
+            /** @todo This is not working, because we need ability in AD to define OR conditions and HAVING */
+            foreach ($this->fields as $field) {
+                $this->view->model->addCondition($field, 'like', '%'.$v.'%');
+            }
+            /**/
+            return $this->view->model;
+        }
+
+        // if it is ATK 4.3 model or any other data source
+        if ($this->view->model instanceof SQL_Model) {
             $q = $this->view->model->_dsql();
         } else {
             $q = $this->view->dq;
