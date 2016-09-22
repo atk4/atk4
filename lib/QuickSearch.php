@@ -99,24 +99,33 @@ class QuickSearch extends Filter
             return;
         }
 
+        $m = $this->view->model;
+
         // if model has method addConditionLike
-        if ($this->view->model->hasMethod('addConditionLike')) {
-            return $this->view->model->addConditionLike($v, $this->fields);
+        if ($m->hasMethod('addConditionLike')) {
+            return $m->addConditionLike($v, $this->fields);
         }
 
         // if it is Agile Data model
-        if ($this->view->model instanceof \atk4\data\Model) {
-            /** @todo This is not working, because we need ability in AD to define OR conditions and HAVING */
-            foreach ($this->fields as $field) {
-                $this->view->model->addCondition($field, 'like', '%'.$v.'%');
+        if ($m instanceof \atk4\data\Model) {
+
+            if (!$m->hasMethod('expr')) {
+                return $m;
             }
-            /**/
-            return $this->view->model;
+
+            $expr = [];
+            foreach ($this->fields as $field) {
+                $expr[] = 'lower({' . $field . '}) like lower([])';
+            }
+            $expr = implode(' or ', $expr);
+            $expr = $m->expr($expr, array_fill(0, count($this->fields), '%'.$v.'%'));
+
+            return $m->addCondition($expr); // @todo should use having instead
         }
 
         // if it is ATK 4.3 model or any other data source
-        if ($this->view->model instanceof SQL_Model) {
-            $q = $this->view->model->_dsql();
+        if ($m instanceof SQL_Model) {
+            $q = $m->_dsql();
         } else {
             $q = $this->view->dq;
         }
