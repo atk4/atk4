@@ -175,7 +175,7 @@ class Controller_ADForm extends AbstractController
         $this->field_associations[$field_name] = $field;
 
         $field_type = $this->getFieldType($field);
-        $field_caption = isset($field->caption) ? $field->caption : null;
+        $field_caption = isset($field->ui['caption']) ? $field->ui['caption'] : null;
 
         // add form field
         $form_field = $this->owner->addField($field_type, $field_name, $field_caption);
@@ -188,7 +188,11 @@ class Controller_ADForm extends AbstractController
 
         // set model for enum field
         if (isset($field->enum)) {
-            $form_field->setValueList($field->enum);
+            $form_field->setValueList(
+                isset($field->ui['valueList'])
+                    ? $field->ui['valueList']
+                    : $field->enum
+            );
         }
 
         // field value is mandatory

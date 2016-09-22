@@ -498,21 +498,28 @@ class Grid_Basic extends CompleteLister
         }
 
         foreach ($this->columns as $field => $column) {
-            if (is_array($this->current_row) || $this->current_row instanceof ArrayAccess) {
-                $this->current_row[$field.'_original'] = @$this->current_row[$field];
+            if (
+                (is_array($this->current_row) || $this->current_row instanceof ArrayAccess)
+                && array_key_exists($field, $this->current_row)
+            ) {
+                $this->current_row[$field.'_original'] = $this->current_row[$field];
             }
 
             // if model field has listData structure, then get value instead of key
             if ($this->model && $f = $this->model->hasElement($field)) {
+                $v = $this->current_row[$field];
+
                 if ($this->model instanceof \atk4\data\Model) {
                     /** @type \atk4\data\Field $f */
                     if (isset($f->enum) && $values = $f->enum) {
-                        $this->current_row[$field] = $values[$this->current_row[$field]];
+                        $this->current_row[$field] = isset($f->ui['valueList'][$v])
+                            ? $f->ui['valueList'][$v]
+                            : $values[$v];
                     }
                 } else {
                     /** @type Field $f */
                     if ($f->type() !== 'boolean' && $values = $f->listData()) {
-                        $this->current_row[$field] = $values[$this->current_row[$field]];
+                        $this->current_row[$field] = $values[$v];
                     }
                 }
             }
