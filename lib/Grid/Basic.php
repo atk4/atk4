@@ -516,8 +516,7 @@ class Grid_Basic extends CompleteLister
         }
 
         foreach ($this->columns as $field => $column) {
-            if (
-                (is_array($this->current_row) || $this->current_row instanceof ArrayAccess)
+            if ((is_array($this->current_row) || $this->current_row instanceof ArrayAccess)
                 && array_key_exists($field, $this->current_row)
             ) {
                 $this->current_row[$field.'_original'] = $this->current_row[$field];
