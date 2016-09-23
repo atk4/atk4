@@ -270,13 +270,22 @@ class Grid_Basic extends CompleteLister
     /**
      * Replace current formatter for field.
      *
-     * @param string $field
-     * @param mixed  $formatter
+     * @param string|array $field
+     * @param mixed        $formatter
      *
      * @return $this
      */
     public function setFormatter($field, $formatter, $options = null)
     {
+        // support for field names as array
+        if (is_array($field)) {
+            foreach ($field as $f) {
+                $this->setFormatter($f, $formatter, $options);
+            }
+
+            return $this;
+        }
+
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
@@ -291,14 +300,23 @@ class Grid_Basic extends CompleteLister
     /**
      * Add extra formatter to existing field.
      *
-     * @param string $field
-     * @param mixed  $formatter
-     * @param array  $options
+     * @param string|array $field
+     * @param mixed        $formatter
+     * @param array        $options
      *
      * @return $this || Controller_Grid_Format
      */
     public function addFormatter($field, $formatter, $options = null)
     {
+        // support for field names as array
+        if (is_array($field)) {
+            foreach ($field as $f) {
+                $this->setFormatter($f, $formatter, $options);
+            }
+
+            return $this;
+        }
+
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
