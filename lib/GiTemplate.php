@@ -357,11 +357,6 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
         if (is_array($value)) {
             return $this;
-            /* unreachable code
-            throw $this->exception('Second argument must not be array')
-                ->addMoreInfo('arg1', $tag)
-                ->addMoreInfo('arg2', $value);
-            */
         }
 
         if ($encode) {

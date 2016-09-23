@@ -169,8 +169,14 @@ class Lister extends View implements ArrayAccess
             if (isset($this->current_row_html[$key])) {
                 continue;
             }
+
+            if ($val instanceof DateTime) {
+                $val = $val->format($this->app->getConfig('locale/datetime', 'Y-m-d H:i:s'));
+            }
+
             $template->trySet($key, $val);
         }
+
         $template->setHTML($this->current_row_html);
         $template->trySet('id', $this->current_id);
         $o = $template->render();
