@@ -117,7 +117,7 @@ class QuickSearch extends Filter
             foreach ($this->fields as $field) {
                 $expr[] = 'lower({' . $field . '}) like lower([])';
             }
-            $expr = implode(' or ', $expr);
+            $expr = '('.implode(' or ', $expr).')';
             $expr = $m->expr($expr, array_fill(0, count($this->fields), '%'.$v.'%'));
 
             return $m->addCondition($expr); // @todo should use having instead
