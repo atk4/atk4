@@ -2,7 +2,7 @@
 /**
  * Shows contents of particular model records.
  */
-class View_ModelDetails extends Grid_Basic
+class View_ModelDetails extends Grid_Advanced
 {
     public $default_controller = null;
 
@@ -50,7 +50,9 @@ class View_ModelDetails extends Grid_Basic
 
     public function setModel($model, $actual_fields = UNDEFINED)
     {
-        $m = parent::setModel($model);
+        $m = AbstractView::setModel($model);
+        $this->model = $m;
+        $this->default_controller = 'Controller_MVCGrid';
         if ($actual_fields != UNDEFINED) {
             $m->setActualFields($actual_fields);
         }

@@ -770,22 +770,6 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
-     * Format field as money with 2 digit precision.
-     *
-     * @param string $field
-     */
-    public function format_money($field)
-    {
-        // use real number formatter
-        $this->format_real($field);
-
-        // negative values show in red color
-        if ($this->current_row[$field] < 0) {
-            $this->setTDParam($field, 'style/color', 'red');
-        }
-    }
-
-    /**
      * Initialize column as boolean.
      *
      * @param string $field
@@ -809,6 +793,24 @@ class Grid_Advanced extends Grid_Basic
                 '</div>';
         } else {
             $this->current_row_html[$field] = '';
+        }
+    }
+
+
+
+    /**
+     * Format field as money with 2 digit precision.
+     *
+     * @param string $field
+     */
+    public function format_money($field)
+    {
+        // use real number formatter
+        $this->format_real($field);
+
+        // negative values show in red color
+        if ($this->current_row[$field] < 0) {
+            $this->setTDParam($field, 'style/color', 'red');
         }
     }
 

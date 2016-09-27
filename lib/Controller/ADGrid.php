@@ -87,8 +87,8 @@ class Controller_ADGrid extends AbstractController
      */
     public function setActualFields($fields)
     {
-            /** @type \atk4\data\Model $this->owner->model */
-            $this->importFields($this->owner->model, $fields);
+        /** @type \atk4\data\Model $this->owner->model */
+        $this->importFields($this->owner->model, $fields);
     }
 
     /**

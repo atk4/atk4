@@ -59,6 +59,17 @@ class Grid_Basic extends CompleteLister
     }
 
     /**
+     * Compatibility with Agile Data
+     */
+    function setModel($m, $f = [])
+    {
+        if($m instanceof \atk4\data\Model) {
+            $this->default_controller = 'ADGrid';
+        }
+        return parent::setModel($m, $f);
+    }
+
+    /**
      * You might want Grid to be enchanced with a widget. Initialize it here
      * or define this as empty function to avoid.
      */
@@ -363,7 +374,6 @@ class Grid_Basic extends CompleteLister
     public function format_text($field)
     {
     }
-
     // }}}
 
     // {{{ Rendering
