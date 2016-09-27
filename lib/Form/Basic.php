@@ -74,9 +74,6 @@ class Form_Basic extends View implements ArrayAccess
      */
     protected $get_field = null;
 
-    /** @var array */
-    protected $conditions = array();
-
     /** @var string JS widget name */
     public $js_widget = 'ui.atk4_form';
 
