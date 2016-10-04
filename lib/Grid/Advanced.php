@@ -697,7 +697,8 @@ class Grid_Advanced extends Grid_Basic
                     )
                 ).'" '.
             '/>'.
-            '<label for="'.$id.'" style="cursor:pointer;"><a class="atk-button-small">'.$this->current_row[$field].'</a></label>';
+            '<label for="'.$id.'" style="cursor:pointer;"><a class="atk-button-small">'.
+            $this->current_row[$field].'</a></label>';
     }
     // }}}
 
