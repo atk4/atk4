@@ -50,6 +50,7 @@ class Controller_ADGrid extends AbstractController
         'image' => 'text',
         'file' => 'reference',
         'password' => 'password',
+        'struct' => 'json',
     );
 
     /** @var Grid */

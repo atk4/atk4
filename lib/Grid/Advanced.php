@@ -825,6 +825,18 @@ class Grid_Advanced extends Grid_Basic
     }
 
     /**
+     * Format field by json encoding it.
+     *
+     * @param string $field
+     */
+    public function format_json($field)
+    {
+        $this->current_row[$field] = json_encode($this->current_row[$field]);
+
+        return $this->format_wrap($field);
+    }
+
+    /**
      * Format field as date.
      *
      * @param string $field
