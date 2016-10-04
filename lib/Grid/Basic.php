@@ -331,6 +331,13 @@ class Grid_Basic extends CompleteLister
         if (!isset($this->columns[$field])) {
             throw new BaseException('Cannot format nonexistant field '.$field);
         }
+
+        if ($formatter instanceof Closure) {
+            $m_name = uniqid();
+            $this->addMethod('format_'.$m_name, $formatter);
+            $formatter = $m_name;
+        }
+
         if ($this->columns[$field]['type']) {
             $this->columns[$field]['type'] .= ','.$formatter;
         } else {

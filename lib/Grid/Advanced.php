@@ -697,7 +697,8 @@ class Grid_Advanced extends Grid_Basic
                     )
                 ).'" '.
             '/>'.
-            '<label for="'.$id.'">'.$this->current_row[$field].'</label>';
+            '<label for="'.$id.'" style="cursor:pointer;"><a class="atk-button-small">'.
+            $this->current_row[$field].'</a></label>';
     }
     // }}}
 
@@ -824,6 +825,18 @@ class Grid_Advanced extends Grid_Basic
         $this->current_row[$field] = (string) $this->current_row[$field];
 
         return $this->format_shorttext($field);
+    }
+
+    /**
+     * Format field by json encoding it.
+     *
+     * @param string $field
+     */
+    public function format_json($field)
+    {
+        $this->current_row[$field] = json_encode($this->current_row[$field]);
+
+        return $this->format_wrap($field);
     }
 
     /**
