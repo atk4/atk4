@@ -20,9 +20,6 @@
         "atk4/data": "^1.1",
         "atk4/ui": "*"
     },
-    "autoload": {
-        "psr-4": {"atk4\\":"lib/"}
-    },
     "require-dev": {
         "phpunit/phpunit": "4.*",
         "codeclimate/php-test-reporter": "*"
