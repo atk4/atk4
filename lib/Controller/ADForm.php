@@ -46,8 +46,8 @@ class Controller_ADForm extends AbstractController
         'money' => 'Money',
         'real' => 'Number',
         'float' => 'Number',
-        'date' => 'DatePicker',
-        'datetime' => 'DatePicker',
+        'date' => 'ADDatePicker',
+        'datetime' => 'ADDateTimePicker',
         'daytime' => 'Time',
         'time' => 'Time',
         'boolean' => 'Checkbox',
@@ -108,7 +108,7 @@ class Controller_ADForm extends AbstractController
      *
      * @return void|$this
      */
-    public function importFields($model, $fields = UNDEFINED)
+    public function importFields($model, $fields = null)
     {
         $this->model = $model;
         $this->form = $this->owner;
@@ -117,7 +117,7 @@ class Controller_ADForm extends AbstractController
             return;
         }
 
-        if (!$fields || $fields === UNDEFINED) {
+        if (!$fields || $fields === null) {
             if ($model->only_fields) {
                 $fields = $model->only_fields;
             } else {
@@ -189,11 +189,17 @@ class Controller_ADForm extends AbstractController
 
         // set model for enum field
         if (isset($field->enum)) {
-            $form_field->setValueList(
-                isset($field->ui['valueList'])
-                    ? $field->ui['valueList']
-                    : $field->enum
-            );
+
+            $list = isset($field->ui['valueList'])
+                ? $field->ui['valueList']
+                : $field->enum;
+
+            if($form_field instanceof Form_Field_Checkbox) {
+                $list = array_reverse($list);
+            }
+
+
+            $form_field->setValueList($list);
         }
 
         // field value is mandatory
@@ -289,7 +295,7 @@ class Controller_ADForm extends AbstractController
         }
 
         // associate enum fields with DropDown form_field
-        if (isset($field->enum)) {
+        if (isset($field->enum) && !$field->type == 'boolean') {
             return 'DropDown';
         }
 

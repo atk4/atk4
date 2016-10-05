@@ -96,6 +96,18 @@ $.each({
         },options);
         return this.dialogURL(title,url,options,callback);
     },
+    dateTimePickerFix: function(sh) {
+        sh = $('#'+sh);
+        this.jquery.change(function() {
+            var p=$(this).val().split(" "); // new value
+            if(p.length<2) {
+                // time chopped off, get it back!
+                $(this).val(p[0]+" "+sh.val().split(" ")[1]);
+            }else{
+                sh.val($(this).val());
+            }
+        });
+    },
     dialogOK: function(title,text,fn,options){
         var dlg=this.dialogBox($.extend({
             title: title,

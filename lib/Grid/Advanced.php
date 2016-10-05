@@ -890,6 +890,8 @@ class Grid_Advanced extends Grid_Basic
                     $this->app->getConfig('locale/datetime', 'd/m/Y H:i:s'),
                     $d
                 );
+            } elseif ($d instanceof \DateTime) {
+                $this->current_row[$field] = $d->format($this->app->getConfig('locale/datetime', 'd/m/Y H:i:s'));
             } else {
                 $d = strtotime($d);
                 $this->current_row[$field] = $d
