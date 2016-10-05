@@ -103,6 +103,13 @@ abstract class AbstractView extends AbstractObject
     {
         parent::setModel($model);
 
+        if ($this->model instanceof \atk4\data\Model) {
+            // Switch to Agile Data implementation
+            if (isset($this->default_controller)) {
+                $this->default_controller = str_replace('MVC', 'AD', $this->default_controller);
+            }
+        }
+
         // Some models will want default controller to be associated
         if (isset($this->model->default_controller)) {
             $this->controller

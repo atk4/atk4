@@ -270,6 +270,8 @@ class Controller_ADForm extends AbstractController
      */
     public function getFieldType($field)
     {
+        $type = 'Line';
+
         // if form field type explicitly set in models UI properties
         if (isset($field->ui['display'])) {
             $tmp = $field->ui['display'];
@@ -296,7 +298,7 @@ class Controller_ADForm extends AbstractController
             $type = $this->type_associations[$field->type];
         }
 
-        return $type ?: 'Line';
+        return $type;
     }
 
     /**
