@@ -812,6 +812,8 @@ class Grid_Advanced extends Grid_Basic
         // negative values show in red color
         if ($this->current_row[$field] < 0) {
             $this->setTDParam($field, 'style/color', 'red');
+        } else {
+            $this->setTDParam($field, 'style/color', false);
         }
     }
 
