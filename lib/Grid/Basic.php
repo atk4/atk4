@@ -61,11 +61,12 @@ class Grid_Basic extends CompleteLister
     /**
      * Compatibility with Agile Data
      */
-    function setModel($m, $f = [])
+    public function setModel($m, $f = [])
     {
-        if($m instanceof \atk4\data\Model) {
+        if ($m instanceof \atk4\data\Model) {
             $this->default_controller = 'ADGrid';
         }
+
         return parent::setModel($m, $f);
     }
 
