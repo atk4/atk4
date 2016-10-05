@@ -100,7 +100,7 @@ $.each({
         sh = $('#'+sh);
         this.jquery.change(function() {
             var p=$(this).val().split(" "); // new value
-            if(p.length<2) {
+            if(p.length==1 && p[0]) {
                 // time chopped off, get it back!
                 $(this).val(p[0]+" "+sh.val().split(" ")[1]);
             }else{

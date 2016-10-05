@@ -62,7 +62,7 @@ class Form_Field_ADDatePicker extends Form_Field_Line
     {
         if (isset($_POST[$this->name])) {
             $f = \DateTime::createFromFormat($this->format, $_POST[$this->name]);
-            $this->set($f ?: null);
+            $this->set($f ?: "");
         }
     }
 }
