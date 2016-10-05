@@ -834,9 +834,9 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_json($field)
     {
-        $this->current_row[$field] = json_encode($this->current_row[$field]);
-
-        return $this->format_wrap($field);
+        if (!is_scalar($this->current_row[$field])) {
+            $this->current_row[$field] = json_encode($this->current_row[$field]);
+        }
     }
 
     /**
