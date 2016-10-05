@@ -218,7 +218,7 @@ class VirtualPage extends AbstractController
         /** @type Grid $grid */
 
         if (!is_array($buttontext)) {
-            $buttontext = array();
+            $buttontext = array('descr' => $buttontext);
         }
         if (!$buttontext['descr']) {
             $buttontext['descr'] = $title ?: ucwords(str_replace('_', ' ', $name));
