@@ -295,7 +295,7 @@ class Controller_ADForm extends AbstractController
         }
 
         // associate enum fields with DropDown form_field
-        if (isset($field->enum) && !$field->type == 'boolean') {
+        if (isset($field->enum) && $field->type != 'boolean') {
             return 'DropDown';
         }
 
