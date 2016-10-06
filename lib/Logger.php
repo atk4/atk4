@@ -672,8 +672,8 @@ class Logger extends AbstractController
         // TODO: allow extending backtrace option, so that
         $output .= "<b>Stack trace:</b><br />".
             "<table style='border: 1px solid black; padding: 3px; text-align: left; font-family: verdana; ".
-            "font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n";
-        $output .= "<tr><th align='right'>File</th><th>&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>";
+            "font-size: 10px' width=100% cellspacing=0 cellpadding=0 border=0>\n".
+            "<tr><th align='right'>File</th><th>&nbsp;#&nbsp;</th><th>Object Name</th><th>Stack Trace</th></tr>\n";
         if (!isset($backtrace)) {
             $backtrace = debug_backtrace();
         }
@@ -719,21 +719,22 @@ class Logger extends AbstractController
                 }
             }
 
-            if (($sh == null && strpos($bt['file'], '/atk4/lib/') === false)
+            if (($sh == null
+                && strpos($bt['file'], DIRECTORY_SEPARATOR.'atk4'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR) === false)
                 || (!is_int($sh) && $bt['function'] == $sh)
             ) {
                 $sh = $n;
             }
 
-            $output .= '<tr><td valign=top align=right><font color='.($sh == $n ? 'red' : 'blue').'>'.
-                htmlspecialchars(dirname($bt['file'])).'/'.
-                '<b>'.htmlspecialchars(basename($bt['file'])).'</b></font></td>';
-            $output .= '<td valign=top nowrap><font color='.
-                ($sh == $n ? 'red' : 'blue').">:{$bt['line']}</font>&nbsp;</td>";
             $name = (!isset($bt['object']->name)) ? get_class($bt['object']) : $bt['object']->name;
-            $output .= '<td>'.($bt['object'] ? $name : '').'</td>';
-            $output .= '<td valign=top><font color='.($sh == $n ? 'red' : 'green').'>'.get_class($bt['object']).
-                "{$bt['type']}<b>{$bt['function']}</b>($args)</font></td></tr>\n";
+            $output .= '<tr>'.
+                '<td valign="top" align="right"><font color="'.($sh == $n ? 'red' : 'blue').'">'.
+                    htmlspecialchars(dirname($bt['file'])).'/'.
+                    '<b>'.htmlspecialchars(basename($bt['file'])).'</b></font></td>'.
+                '<td valign="top" nowrap><font color="'.($sh == $n ? 'red' : 'blue').'">:'.$bt['line'].'</font>&nbsp;</td>'.
+                '<td>'.($bt['object'] ? $name : '').'</td>'.
+                '<td valign="top"><font color="'.($sh == $n ? 'red' : 'green').'">'.($bt['object'] ? get_class($bt['object']) : '').
+                    $bt['type'].'<b>'.$bt['function'].'</b>('.$args.')</font></td></tr>'."\n";
         }
         $output .= "</table></div>\n";
 
