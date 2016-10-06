@@ -59,7 +59,8 @@ class Controller_ADForm extends AbstractController
         'readonly' => 'Readonly',
         'image' => 'Image',
         'file' => 'Upload',
-        'struct' => 'JSON',
+        'array' => 'JSONArray',
+        'object' => 'JSON',
     );
 
     /**
