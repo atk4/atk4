@@ -65,7 +65,7 @@ class View_ModelDetails extends Grid_Advanced
         parent::precacheTemplate();
         $this->row_t->set('tdparam_value', '');
     }
-    
+
     public function render()
     {
         if (!$this->source_set) {

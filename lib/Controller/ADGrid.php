@@ -100,7 +100,7 @@ class Controller_ADGrid extends AbstractController
      *
      * @return void|$this
      */
-    public function importFields($model, $fields = UNDEFINED)
+    public function importFields($model, $fields = null)
     {
         $this->model = $model;
         $this->grid = $this->owner;
@@ -109,7 +109,7 @@ class Controller_ADGrid extends AbstractController
             return;
         }
 
-        if (!$fields || $fields === UNDEFINED) {
+        if (!$fields) {
             if ($model->only_fields) {
                 $fields = $model->only_fields;
             } else {

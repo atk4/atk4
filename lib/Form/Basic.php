@@ -318,7 +318,7 @@ class Form_Basic extends View implements ArrayAccess
      * @param Model $model
      * @param array|string|bool $fields
      */
-    public function importFields($model, $fields = UNDEFINED)
+    public function importFields($model, $fields = null)
     {
         /** @type Controller_MVCForm $c */
         $c = $this->add($this->default_controller);

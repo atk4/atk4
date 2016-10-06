@@ -117,7 +117,7 @@ class Controller_ADForm extends AbstractController
             return;
         }
 
-        if (!$fields || $fields === null) {
+        if (!$fields) {
             if ($model->only_fields) {
                 $fields = $model->only_fields;
             } else {

@@ -99,7 +99,7 @@ abstract class AbstractView extends AbstractObject
      *
      * @return AbstractModel object
      */
-    public function setModel($model, $actual_fields = UNDEFINED)
+    public function setModel($model, $actual_fields = null)
     {
         parent::setModel($model);
 
