@@ -851,10 +851,17 @@ class Grid_Advanced extends Grid_Basic
         if (!$this->current_row[$field]) {
             $this->current_row[$field] = '-';
         } else {
-            $this->current_row[$field] = date(
-                $this->app->getConfig('locale/date', 'd/m/Y'),
-                strtotime($this->current_row[$field])
-            );
+            if (is_object($this->current_row[$field])) {
+                $this->current_row[$field] = $this->current_row[$field]->format(
+                    $this->app->getConfig('locale/date', 'd/m/Y')
+                );
+
+            } else {
+                $this->current_row[$field] = date(
+                    $this->app->getConfig('locale/date', 'd/m/Y'),
+                    strtotime($this->current_row[$field])
+                );
+            }
         }
     }
 
