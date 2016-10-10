@@ -107,22 +107,28 @@ abstract class Form_Field_ValueList extends Form_Field
     public function getValueList()
     {
         // add model data rows in value list
-        if ($this->model) {
-            $id = $this->model->id_field;
-            $title = $this->model->getElement($this->model->title_field);
+        try {
+            if ($this->model) {
+                $id = $this->model->id_field;
+                $title = $this->model->getElement($this->model->title_field);
 
-            $this->value_list = array();
-            foreach ($this->model as $row) {
-                $this->value_list[(string) $row[$id]] = $row[$title];
+                $this->value_list = array();
+                foreach ($this->model as $row) {
+                    $this->value_list[(string) $row[$id]] = $row[$title];
+                }
             }
+
+            // prepend empty text message at the begining of value list if needed
+            if ($this->empty_text && !isset($this->value_list[$this->empty_value])) {
+                $this->value_list = array($this->empty_value => $this->empty_text) + $this->value_list;
+            }
+
+            return $this->value_list;
+        }catch(\atk4\core\Exception $e){
+            $e->addMoreInfo('values_for_field', $this->short_name);
+            throw $e;
         }
 
-        // prepend empty text message at the begining of value list if needed
-        if ($this->empty_text && !isset($this->value_list[$this->empty_value])) {
-            $this->value_list = array($this->empty_value => $this->empty_text) + $this->value_list;
-        }
-
-        return $this->value_list;
     }
 
     /**

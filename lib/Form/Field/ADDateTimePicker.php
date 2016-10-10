@@ -15,9 +15,17 @@ class Form_Field_ADDateTimePicker extends Form_Field_ADDatePicker
     }
 
     function getInput($attr = []) {
-        $value = $this->value
-            ? $this->value->format($this->format)
-            : 'd 00:00:00';
+        if ($this->value && !$this->value instanceof \DateTime) {
+            throw new \atk4\core\Exception([
+                "Value is not a DateTime. Use compatible format.",
+                'field'=>$this->short_name
+            ]);
+        }
+        if ($this->value) {
+            $value = $this->value->format($this->format);
+        } else {
+            $value = '';
+        }
 
         return parent::getInput($attr).$this->getTag('input',
             ['id'=>$this->name.'_t', 'value'=>$value, 'type'=>'hidden']
