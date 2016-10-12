@@ -193,7 +193,7 @@ class Controller_ADForm extends AbstractController
 
             $list = isset($field->ui['valueList'])
                 ? $field->ui['valueList']
-                : $field->enum;
+                : array_combine($field->enum, $field->enum);
 
             if($form_field instanceof Form_Field_Checkbox) {
                 $list = array_reverse($list);
