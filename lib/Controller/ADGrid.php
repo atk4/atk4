@@ -51,7 +51,7 @@ class Controller_ADGrid extends AbstractController
         'file' => 'reference',
         'password' => 'password',
         'array' => 'json',
-        'struct' => 'json',
+        'struct' => 'json', // deprecated, used in older versions of AD
         'object' => 'json',
     );
 
