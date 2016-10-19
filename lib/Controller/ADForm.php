@@ -60,6 +60,7 @@ class Controller_ADForm extends AbstractController
         'image' => 'Image',
         'file' => 'Upload',
         'array' => 'JSONArray',
+        'struct' => 'JSON',  // deprecated, used in older versions of AD
         'object' => 'JSON',
     );
 
