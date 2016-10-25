@@ -787,13 +787,22 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_boolean($field)
     {
-        if ($this->current_row[$field] && $this->current_row[$field] !== 'N') {
+        $key = $this->current_row[$field.'_original'];
+        $label = $this->current_row[$field];
+
+        if ($key === true || $key === 1 || $key === 'N') {
             $this->current_row_html[$field] =
                 '<div align=center>'.
-                    '<i class="icon-check">'.$this->app->_('yes').'</i>'.
+                    '<i class="icon-check">'.$this->app->_($label).'</i>'.
                 '</div>';
         } else {
             $this->current_row_html[$field] = '';
+            /*
+            $this->current_row_html[$field] =
+                '<div align=center>'.
+                    '<i class="icon-check-empty">'.$this->app->_($label).'</i>'.
+                '</div>';
+            */
         }
     }
 
