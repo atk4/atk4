@@ -787,20 +787,20 @@ class Grid_Advanced extends Grid_Basic
      */
     public function format_boolean($field)
     {
-        $key = $this->current_row[$field.'_original'];
+        $value = $this->current_row[$field.'_original'];
         $label = $this->current_row[$field];
 
-        if ($key === true || $key === 1 || $key === 'N') {
+        if ($value === true || $value === 1 || $value === 'Y') {
             $this->current_row_html[$field] =
                 '<div align=center>'.
-                    '<i class="icon-check">'.$this->app->_($label).'</i>'.
+                    '<i class="icon-check">'.($label!==$value ? $label : $this->app->_('yes')).'</i>'.
                 '</div>';
         } else {
             $this->current_row_html[$field] = '';
             /*
             $this->current_row_html[$field] =
                 '<div align=center>'.
-                    '<i class="icon-check-empty">'.$this->app->_($label).'</i>'.
+                    '<i class="icon-check-empty">'.($label!==$value ? $label : $this->app->_('no')).'</i>'.
                 '</div>';
             */
         }
