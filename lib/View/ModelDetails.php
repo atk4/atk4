@@ -48,12 +48,12 @@ class View_ModelDetails extends Grid_Advanced
         return parent::setSource($data);
     }
 
-    public function setModel($model, $actual_fields = UNDEFINED)
+    public function setModel($model, $actual_fields = null)
     {
         $m = AbstractView::setModel($model);
         $this->model = $m;
         $this->default_controller = 'Controller_MVCGrid';
-        if ($actual_fields != UNDEFINED) {
+        if ($actual_fields) {
             $m->setActualFields($actual_fields);
         }
 
