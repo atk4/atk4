@@ -383,7 +383,13 @@ abstract class AbstractView extends AbstractObject
      */
     public function modelRender()
     {
-        $this->template->set($this->model->get());
+        if ($this->model instanceof \atk4\data\Model) {
+            $data = $this->model->persistence->typecastSaveRow($this->model, $this->model->get());
+        } else {
+            $data = $this->model->get();
+        }
+
+        $this->template->set($data);
     }
 
     /**
