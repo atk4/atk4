@@ -134,6 +134,8 @@ abstract class AbstractView extends AbstractObject
             $this->dq = $this->model->_dsql();    // compatibility
         }
 
+        $this->hook('set-model', [$this->model, $actual_fields]);
+
         return $this->model;
     }
 
