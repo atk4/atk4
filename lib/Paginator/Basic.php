@@ -51,7 +51,7 @@ class Paginator_Basic extends CompleteLister
     /**
      * Data source. Set with setSource().
      *
-     * @var SQL_Model|Model|DB_dsql|mixed
+     * @var mixed
      */
     public $source = null;
 
@@ -114,7 +114,7 @@ class Paginator_Basic extends CompleteLister
     /**
      * Set a custom source. Must be an object with foundRows() method.
      *
-     * @param SQL_Model|Model|DB_dsql|mixed $source
+     * @param mixed $source
      */
     public function setSource($source)
     {
@@ -137,6 +137,8 @@ class Paginator_Basic extends CompleteLister
             $source->limit($this->ipp, $this->skip);
             $source->calcFoundRows();
             $this->source = $source;
+        } elseif ($source instanceof \atk4\data\Model) {
+            $this->source = $source->setLimit($this->ipp, $this->skip);
         } elseif ($source instanceof Model) {
             $this->source = $source->setLimit($this->ipp, $this->skip);
         } else {
@@ -172,6 +174,8 @@ class Paginator_Basic extends CompleteLister
         if ($this->source instanceof DB_dsql) {
             $this->source->preexec();
             $this->found_rows = $this->source->foundRows();
+        } elseif ($this->source instanceof \atk4\data\Model) {
+            $this->found_rows = (int) $this->source->action('count')->getOne();
         } elseif ($this->source instanceof Model) {
             $this->found_rows = (int) $this->source->count();
         } else {
@@ -190,6 +194,8 @@ class Paginator_Basic extends CompleteLister
             if ($this->source instanceof DB_dsql) {
                 $this->source->limit($this->ipp, $this->skip);
                 $this->source->rewind();                 // re-execute the query
+            } elseif ($this->source instanceof \atk4\data\Model) {
+                $this->source->setLimit($this->ipp, $this->skip);
             } elseif ($this->source instanceof Model) {
                 $this->source->setLimit($this->ipp, $this->skip);
             } else {
