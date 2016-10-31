@@ -333,6 +333,8 @@ class Grid_Advanced extends Grid_Basic
         }
         if ($i instanceof DB_dsql) {
             $i->order($field, $desc);
+        } elseif ($i instanceof \atk4\data\Model) {
+            $i->setOrder($field, $desc);
         } elseif ($i instanceof SQL_Model) {
             $i->setOrder($field, $desc);
         } elseif ($i instanceof Model) {
