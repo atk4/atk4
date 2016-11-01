@@ -406,7 +406,7 @@ class Logger extends AbstractController
         // add stacktrace only for initial / first exception
         if (!$previous) {
             if (method_exists($e, 'getMyTrace')) {
-                $o .= $this->backtrace(3, $e->getMyTrace());
+                $o .= $this->backtrace(null, $e->getMyTrace());
             } else {
                 $o .= $this->backtrace(@$e->shift, $e->getTrace());
             }
@@ -458,7 +458,7 @@ class Logger extends AbstractController
      *
      * @return string
      */
-    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $max_depth = 4)
+    public function print_r($key, $gs, $ge, $ls, $le, $ind = ' ', $max_depth = 6)
     {
         $o = '';
         if (strlen($ind) > $max_depth) {
@@ -677,7 +677,7 @@ class Logger extends AbstractController
         if (!isset($backtrace)) {
             $backtrace = debug_backtrace();
         }
-        $sh -= 2;
+        if($sh)$sh -= 2;
 
         $n = 0;
         foreach ($backtrace as $bt) {
@@ -720,7 +720,12 @@ class Logger extends AbstractController
             }
 
             if (($sh == null
-                && strpos($bt['file'], DIRECTORY_SEPARATOR.'atk4'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR) === false)
+                && (
+                    strpos($bt['file'], DIRECTORY_SEPARATOR.'atk4'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR) === false &&
+                    strpos($bt['file'], DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false &&
+                    strpos($bt['file'], DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false &&
+                    strpos($bt['file'], DIRECTORY_SEPARATOR.'dsql'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false && $bt['file'] != null
+                ))
                 || (!is_int($sh) && $bt['function'] == $sh)
             ) {
                 $sh = $n;
