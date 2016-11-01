@@ -141,6 +141,9 @@ abstract class Form_Field_ValueList extends Form_Field
             $data = implode($this->separator, $data);
         }
         $data = trim($data, $this->separator);
+        if (!$data) {
+            $data = null;
+        }
 
         if (get_magic_quotes_gpc()) {
             $this->set(stripslashes($data));
