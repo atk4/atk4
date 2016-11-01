@@ -1253,7 +1253,8 @@ abstract class AbstractObject
      */
     public function _shorten($desired)
     {
-        if (strlen($desired) > $this->app->max_name_length
+        if (isset($this->app->max_name_length)
+            && strlen($desired) > $this->app->max_name_length
             && $this->app->max_name_length !== false
         ) {
             $len = $this->app->max_name_length - 10;
@@ -1276,7 +1277,11 @@ abstract class AbstractObject
     private $_element_name_counts = array();
     public function _unique_element($desired = null)
     {
-        $postfix = @++$this->_element_name_counts[$desired];
+        if (!isset($this->_element_name_counts[$desired])) {
+            $postfix = $this->_element_name_counts[$desired] = 1;
+        } else {
+            $postfix = ++$this->_element_name_counts[$desired];
+        }
 
         return $desired.($postfix > 1 ? ('_'.$postfix) : '');
     }
