@@ -61,8 +61,16 @@ class Form_Field_ADDatePicker extends Form_Field_Line
     public function loadPOST()
     {
         if (isset($_POST[$this->name])) {
+            if($_POST[$this->name] === ""){
+                $this->set(null);
+                return;
+            }
             $f = \DateTime::createFromFormat('!'.$this->format, $_POST[$this->name]);
-            $this->set($f ?: "");
+            if($f === false) {
+                $this->displayFieldError("Invalid date format");
+            } else {
+                $this->set($f ?: "");
+            }
         }
     }
 }
