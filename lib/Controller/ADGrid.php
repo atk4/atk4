@@ -159,7 +159,7 @@ class Controller_ADGrid extends AbstractController
 
         $field_name = $field->short_name;
         $field_type = $this->getFieldType($field);
-        $field_caption = isset($field->caption) ? $field->caption : null;
+        $field_caption = isset($field->ui['caption']) ? $field->ui['caption'] : null;
 
         $this->field_associations[$field_name] = $field;
 
