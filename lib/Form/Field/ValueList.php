@@ -124,11 +124,10 @@ abstract class Form_Field_ValueList extends Form_Field
             }
 
             return $this->value_list;
-        }catch(\atk4\core\Exception $e){
+        } catch (\atk4\core\Exception $e) {
             $e->addMoreInfo('values_for_field', $this->short_name);
             throw $e;
         }
-
     }
 
     /**

@@ -17,11 +17,10 @@ class Form_Field_ADDatePicker extends Form_Field_Line
         parent::init();
 
         $this->addCalendarIcon();
-
         $this->getFormatFromConfig();
-
     }
-    function getFormatFromConfig()
+
+    public function getFormatFromConfig()
     {
         $this->format = $this->app->getConfig('locale/date', $this->format);
         $this->format_js = $this->app->getConfig('locale/date_js', $this->format_js);
@@ -61,12 +60,12 @@ class Form_Field_ADDatePicker extends Form_Field_Line
     public function loadPOST()
     {
         if (isset($_POST[$this->name])) {
-            if($_POST[$this->name] === ""){
+            if ($_POST[$this->name] === "") {
                 $this->set(null);
                 return;
             }
             $f = \DateTime::createFromFormat('!'.$this->format, $_POST[$this->name]);
-            if($f === false) {
+            if ($f === false) {
                 $this->displayFieldError("Invalid date format");
             } else {
                 $this->set($f ?: "");

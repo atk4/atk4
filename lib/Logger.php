@@ -677,7 +677,9 @@ class Logger extends AbstractController
         if (!isset($backtrace)) {
             $backtrace = debug_backtrace();
         }
-        if($sh)$sh -= 2;
+        if ($sh) {
+            $sh -= 2;
+        }
 
         $n = 0;
         foreach ($backtrace as $bt) {
@@ -719,12 +721,13 @@ class Logger extends AbstractController
                 }
             }
 
+            $ds = DIRECTORY_SEPARATOR;
             if (($sh == null
                 && (
-                    strpos($bt['file'], DIRECTORY_SEPARATOR.'atk4'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR) === false &&
-                    strpos($bt['file'], DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false &&
-                    strpos($bt['file'], DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false &&
-                    strpos($bt['file'], DIRECTORY_SEPARATOR.'dsql'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR) === false && $bt['file'] != null
+                    strpos($bt['file'], $ds.'atk4'.$ds.'lib'.$ds) === false &&
+                    strpos($bt['file'], $ds.'data'.$ds.'src'.$ds) === false &&
+                    strpos($bt['file'], $ds.'core'.$ds.'src'.$ds) === false &&
+                    strpos($bt['file'], $ds.'dsql'.$ds.'src'.$ds) === false && $bt['file'] != null
                 ))
                 || (!is_int($sh) && $bt['function'] == $sh)
             ) {
@@ -736,9 +739,11 @@ class Logger extends AbstractController
                 '<td valign="top" align="right"><font color="'.($sh == $n ? 'red' : 'blue').'">'.
                     htmlspecialchars(dirname($bt['file'])).'/'.
                     '<b>'.htmlspecialchars(basename($bt['file'])).'</b></font></td>'.
-                '<td valign="top" nowrap><font color="'.($sh == $n ? 'red' : 'blue').'">:'.$bt['line'].'</font>&nbsp;</td>'.
+                '<td valign="top" nowrap>'.
+                    '<font color="'.($sh == $n ? 'red' : 'blue').'">:'.$bt['line'].'</font>&nbsp;</td>'.
                 '<td>'.($bt['object'] ? $name : '').'</td>'.
-                '<td valign="top"><font color="'.($sh == $n ? 'red' : 'green').'">'.($bt['object'] ? get_class($bt['object']) : '').
+                '<td valign="top"><font color="'.($sh == $n ? 'red' : 'green').'">'.
+                    ($bt['object'] ? get_class($bt['object']) : '').
                     $bt['type'].'<b>'.$bt['function'].'</b>('.$args.')</font></td></tr>'."\n";
         }
         $output .= "</table></div>\n";
