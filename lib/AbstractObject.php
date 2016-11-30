@@ -295,7 +295,7 @@ abstract class AbstractObject
 
         if (is_object($class)) {
             // Object specified, just add the object, do not create anything
-            if (!($class instanceof self)) {
+            if (!($class instanceof self) && !(method_exists($class, 'init'))) {
                 throw $this->exception(
                     'You may only add objects based on AbstractObject'
                 );
@@ -322,6 +322,11 @@ abstract class AbstractObject
                 if (!isset($this->template) || !$this->template) {
                     $class->initializeTemplate($template_spot, $template_branch);
                 }
+            }
+
+            if (!$class->_initialized) {
+                $this->app->hook('beforeObjectInit', array(&$class));
+                $class->init();
             }
 
             return $class;
