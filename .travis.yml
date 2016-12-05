@@ -4,12 +4,12 @@ php:
   - 5.4
 
 before_script:
-  - pear install PHP_CodeSniffer
+  - pear -q install --onlyreqdeps pear/PHP_CodeSniffer
   - phpenv rehash
 
 script:
   # Code sniffer
-  - phpcs --extensions=php --standard=phpcs_ruleset.xml ./lib
+  - phpcs --encoding=utf-8 --tab-width=4 --extensions=php --standard=phpcs_ruleset.xml -np ./lib
   - echo "Framework Tested."
 
 
