@@ -9,7 +9,7 @@ before_script:
 
 script:
   # Code sniffer
-  - phpcs --encoding=utf-8 --tab-width=4 --extensions=php --standard=phpcs_ruleset.xml ./lib
+  - phpcs --encoding=utf-8 --tab-width=4 --extensions=php --standard=phpcs_ruleset.xml -np ./lib
   - echo "Framework Tested."
 
 
