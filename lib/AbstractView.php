@@ -345,7 +345,7 @@ abstract class AbstractView extends AbstractObject
         if ($this->model
             && is_object($this->model)
             && $this->model->loaded()
-            && (!$this->controller || !$this->controller->hasMethod('setActualFields'))
+            && (!$this->controller || !$this->controller instanceof Controller_ADView)
         ) {
             $this->modelRender();
         }
