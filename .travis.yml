@@ -4,7 +4,7 @@ php:
   - 5.4
 
 before_script:
-  - pear -q install --onlyreqdeps pera/PHP_CodeSniffer
+  - pear -q install --onlyreqdeps pear/PHP_CodeSniffer
   - phpenv rehash
 
 script:
