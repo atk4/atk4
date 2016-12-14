@@ -107,6 +107,8 @@ abstract class AbstractView extends AbstractObject
             // Switch to Agile Data implementation
             if (isset($this->default_controller)) {
                 $this->default_controller = str_replace('MVC', 'AD', $this->default_controller);
+            } else {
+                $this->default_controller = 'ADView';
             }
         }
 
@@ -345,7 +347,6 @@ abstract class AbstractView extends AbstractObject
         if ($this->model
             && is_object($this->model)
             && $this->model->loaded()
-            && (!$this->controller || !$this->controller instanceof Controller_ADView)
         ) {
             $this->modelRender();
         }
@@ -385,6 +386,9 @@ abstract class AbstractView extends AbstractObject
     public function modelRender()
     {
         if ($this->model instanceof \atk4\data\Model) {
+            if ($this->controller instanceof Controller_ADView) {
+                return;
+            }
             $data = $this->model->persistence->typecastSaveRow($this->model, $this->model->get());
         } else {
             $data = $this->model->get();
