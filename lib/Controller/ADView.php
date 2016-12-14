@@ -117,6 +117,12 @@ class Controller_ADView extends AbstractController
         // prepare value
         $value = $field->get();
 
+        // if value is null, then just set empty string as value in template and break out
+        if ($value === null) {
+            $this->owner->template->setHTML(array($name => '', $name.'-caption' => $caption));
+            return;
+        }
+
         // take care of some special data types
         switch ($field->type) {
             case 'boolean':
