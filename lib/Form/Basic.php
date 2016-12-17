@@ -430,33 +430,44 @@ class Form_Basic extends View implements ArrayAccess
     }
     public function addSubmit($label = 'Save', $name = null, $tag = null)
     {
+        $class = 'Form_Submit';
         if (is_object($label) && $label instanceof AbstractView && !($label instanceof Form_Field)) {
             // using callback on a sub-view
             $insert_into = $label;
             list(, $label, $name, $tag) = func_get_args();
-            $submit = $insert_into->add('Form_Submit', array('name' => $name, 'form' => $this), $tag);
+            $submit = $insert_into->add($class, array('name' => $name, 'form' => $this), $tag);
         } else {
             if ($this->layout && $this->layout->template->hasTag($tag ?: 'FormButtons')) {
-                $submit = $this->layout->add('Form_Submit', array('name' => $name, 'form' => $this), $tag ?: 'FormButtons');
+                $submit = $this->layout->add($class, array('name' => $name, 'form' => $this), $tag ?: 'FormButtons');
             } else {
-                $submit = $this->add('Form_Submit', array('name' => $name, 'form' => $this), $tag ?: 'form_buttons');
+                $submit = $this->add($class, array('name' => $name, 'form' => $this), $tag ?: 'form_buttons');
             }
         }
 
+        /** @type Form_Submit $submit */
         $submit
-            //->setIcon('ok') - removed as per dmity's request
+            //->setIcon('ok') - removed as per Dmitry's request
             ->set($label)
             ->setNoSave();
 
         return $submit;
     }
-    public function addButton($label = 'Button', $name = null)
+    public function addButton($label = 'Button', $name = null, $tag = null)
     {
-        if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
-            $button = $this->layout->add('Button', $name, 'FormButtons');
+        $class = 'Button';
+        if (is_object($label) && $label instanceof AbstractView && !($label instanceof Form_Field)) {
+            // using callback on a sub-view
+            $insert_into = $label;
+            list(, $label, $name, $tag) = func_get_args();
+            $button = $insert_into->add($class, $name, $tag);
         } else {
-            $button = $this->add('Button', $name, 'form_buttons');
+            if ($this->layout && $this->layout->template->hasTag($tag ?: 'FormButtons')) {
+                $button = $this->layout->add($class, $name, $tag ?: 'FormButtons');
+            } else {
+                $button = $this->add($class, $name, $tag ?: 'form_buttons');
+            }
         }
+
         /** @type Button $button */
         $button->setLabel($label);
 
