@@ -428,18 +428,18 @@ class Form_Basic extends View implements ArrayAccess
     {
         return $this->get();
     }
-    public function addSubmit($label = 'Save', $name = null)
+    public function addSubmit($label = 'Save', $name = null, $tag = null)
     {
         if (is_object($label) && $label instanceof AbstractView && !($label instanceof Form_Field)) {
             // using callback on a sub-view
             $insert_into = $label;
-            list(, $label, $name) = func_get_args();
-            $submit = $insert_into->add('Form_Submit', array('name' => $name, 'form' => $this));
+            list(, $label, $name, $tag) = func_get_args();
+            $submit = $insert_into->add('Form_Submit', array('name' => $name, 'form' => $this), $tag);
         } else {
-            if ($this->layout && $this->layout->template->hasTag('FormButtons')) {
-                $submit = $this->layout->add('Form_Submit', array('name' => $name, 'form' => $this), 'FormButtons');
+            if ($this->layout && $this->layout->template->hasTag($tag ?: 'FormButtons')) {
+                $submit = $this->layout->add('Form_Submit', array('name' => $name, 'form' => $this), $tag ?: 'FormButtons');
             } else {
-                $submit = $this->add('Form_Submit', array('name' => $name, 'form' => $this), 'form_buttons');
+                $submit = $this->add('Form_Submit', array('name' => $name, 'form' => $this), $tag ?: 'form_buttons');
             }
         }
 
