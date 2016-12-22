@@ -111,6 +111,8 @@ class Controller_ADGrid extends AbstractController
             return;
         }
 
+        $fields_supplied = (boolean)$fields;
+
         if (!$fields) {
             if ($model->only_fields) {
                 $fields = $model->only_fields;
@@ -136,7 +138,9 @@ class Controller_ADGrid extends AbstractController
         foreach ($fields as $field) {
             $this->importField($field);
         }
-        $model->onlyFields($fields);
+        if ($fields_supplied){
+            $model->onlyFields($fields);
+        }
 
         return $this;
     }
