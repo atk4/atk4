@@ -138,7 +138,7 @@ class Controller_ADGrid extends AbstractController
         foreach ($fields as $field) {
             $this->importField($field);
         }
-        if ($fields_supplied){
+        if ($fields_supplied) {
             $model->onlyFields($fields);
         }
 
