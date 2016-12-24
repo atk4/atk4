@@ -68,7 +68,8 @@ class App_Web extends App_CLI
     // {{{ Start-up
     public function __construct($realm = null, $skin = 'default', $options = array())
     {
-        $this->start_time = time() + microtime();
+        $m = explode(' ', microtime());
+        $this->start_time = time() + $m[0];
 
         $this->skin = $skin;
         try {
