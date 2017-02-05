@@ -91,7 +91,13 @@ class jUI extends jQuery
      */
     public function addStylesheet($file, $ext = '.css', $template = false)
     {
+        if (strpos($file, 'http') === 0) {
+            parent::addOnReady('$.atk4.includeCSS("'.$file.'")');
+
+            return $this;
+        }
         $url = $this->app->locateURL('css', $file.$ext);
+
         if (!$this->atk4_initialised || $template) {
             return parent::addStylesheet($file, $ext);
         }
