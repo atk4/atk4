@@ -444,7 +444,11 @@ class Logger extends AbstractController
 
     public function displayError($o)
     {
-        $this->app->js()->univ()->dialogError($o, array('width' => 900, 'height' => 500))->execute();
+        if (isset($this->app->jquery)) {
+            $this->app->js()->univ()->dialogError($o, array('width' => 900, 'height' => 500))->execute();
+        } else {
+            echo strip_tags($o);
+        }
     }
     /**
      * Returns HTML formatted $key array.
