@@ -592,6 +592,19 @@ class SQL_Model extends Model implements Serializable
 
         return $this;
     }
+    /** Removes "WHERE" condition, but tries to be smart about where and how the field is defined */
+    function removeCondition($field,$kind='where',$system=false,$editable=true){
+        // get model field object
+        if(!$field instanceof Field){
+            $field=$this->getElement($field);
+        }
+        foreach($this->_dsql()->args[$kind] as $k=>$v){
+            if ($v[0]==$this->table.'.'.$field->short_name){
+                unset($this->_dsql()->args[$kind][$k]);
+            }
+        }
+        $this->getElement($field->short_name)->system($system)->editable($editable);
+    }
     /** Sets limit on query */
     public function setLimit($count, $offset = null)
     {
