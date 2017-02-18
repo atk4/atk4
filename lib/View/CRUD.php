@@ -660,8 +660,7 @@ class View_CRUD extends View
     {
         // We are actually in the frame!
         if ($this->isEditing('edit')) {
-            $m = $this->form->setModel($this->model, $fields);
-            $m->load($this->id);
+            $m = $this->form->setModel($this->model->load($this->id), $fields);
             $this->form->addSubmit();
             $this->form->onSubmit(array($this, 'formSubmit'));
 
