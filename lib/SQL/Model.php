@@ -359,7 +359,7 @@ class SQL_Model extends Model {
             $value = $cond;
             $cond = '=';
         }
-        if ($field->type() == 'boolean') {
+        if ($field->type() == 'boolean' && strtolower($cond) !== 'like') {
             $value = $field->getBooleanValue($value);
         }
 
