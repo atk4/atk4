@@ -342,3 +342,30 @@ if (!defined('PASSWORD_BCRYPT')) {
         return $status === 0;
     }
 }
+
+if(!function_exists('framework_backtrace')){
+   function framework_backtrace($array=null) {
+        if (!is_array($array)) {
+            foreach (debug_backtrace() as $k=>$v) {
+                framework_backtrace($v);
+                echo '<hr>';
+            }
+        } else {
+            foreach ($array as $name => $value) {
+                if (!is_object($value)) {
+                    echo $name.': ';
+                    if (is_array($value)) {var_dump(
+                        $value['function']);
+                        if ($value['function'] !== null) {
+                            framework_backtrace($value);
+                        };
+                    } else {
+                        echo $value;
+                        echo '<br>';
+                    }
+                }
+            }
+    
+        }
+    };
+}
