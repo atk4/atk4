@@ -119,4 +119,77 @@ class jUI extends jQuery
 
         return $this;
     }
+    /**
+     * Matches each symbol of PHP date format standard with jQuery equivalent
+     * codeword
+     *
+     * This function handles all the common codewords between PHP and Datepicker
+     * date format standards. Plus, I added support for character escaping:
+     * d m \o\f Y becomes dd mm 'of' yy
+     * 
+     * You may still have problems with symbols like 'W', 'L' that have no
+     * equivalent handled by Datepicker.
+     *
+     * @author Tristan Jahier
+     * @author Imants Horsts
+     * @link http://stackoverflow.com/a/16725290/1466341
+     */
+    function dateformat_PHP_to_jQueryUI($php_format)
+    {
+        $MAP = array(
+            // Day
+            'd' => 'dd',
+            'D' => 'D',
+            'j' => 'd',
+            'l' => 'DD',
+            'N' => '',
+            'S' => '',
+            'w' => '',
+            'z' => 'o',
+            // Week
+            'W' => '',
+            // Month
+            'F' => 'MM',
+            'm' => 'mm',
+            'M' => 'M',
+            'n' => 'm',
+            't' => '',
+            // Year
+            'L' => '',
+            'o' => '',
+            'Y' => 'yy',
+            'y' => 'y',
+            // Time
+            'a' => '',
+            'A' => '',
+            'B' => '',
+            'g' => '',
+            'G' => '',
+            'h' => '',
+            'H' => '',
+            'i' => '',
+            's' => '',
+            'u' => ''
+        );
+        $jui_format = "";
+        $escaping = false;
+        for ($i = 0; $i < strlen($php_format); $i++) {
+            $char = $php_format[$i];
+            if($char === '\\') { // PHP date format escaping character
+                $i++;
+                if (!$escaping) {
+                    $jui_format .= '\'';
+                }
+                $jui_format .= $php_format[$i];
+                $escaping = true;
+            } else {
+                if ($escaping) {
+                    $jui_format .= '\'';
+                    $escaping = false;
+                }
+                $jui_format .= isset($MAP[$char]) ? $MAP[$char] : $char;
+            }
+        }
+        return $jui_format;
+    }
 }
