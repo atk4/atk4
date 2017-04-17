@@ -249,44 +249,44 @@ class Grid_Advanced extends Grid_Basic
     /**
      * Make sortable.
      *
-     * @param string $db_sort
+     * @param string $db_field
      *
      * @return $this
      */
-    public function makeSortable($db_sort = null)
+    public function makeSortable($db_field = null)
     {
         // reverse sorting
         $reverse = false;
-        if ($db_sort[0] == '-') {
+        if ($db_field[0] == '-') {
             $reverse = true;
-            $db_sort = substr($db_sort, 1);
+            $db_field = substr($db_field, 1);
         }
 
         // used db field
-        if (!$db_sort) {
-            $db_sort = $this->last_column;
+        if (!$db_field) {
+            $db_field = $this->last_column;
         }
 
         switch ((string) $this->sortby) {
 
             // we are already sorting by this column
-            case $this->last_column:
-                $info = array('1', $reverse ? 0 : ('-'.$this->last_column));
-                $this->sortby_db = $db_sort;
+            case $db_field:
+                $info = array('1', $reverse ? 0 : ('-'.$db_field));
+                $this->sortby_db = $db_field;
                 break;
 
             // We are sorted reverse by this column
-            case '-'.$this->last_column:
-                $info = array('2', $reverse ? $this->last_column : '0');
-                $this->sortby_db = '-'.$db_sort;
+            case '-'.$db_field:
+                $info = array('2', $reverse ? $db_field : '0');
+                $this->sortby_db = '-'.$db_field;
                 break;
 
             // we are not sorted by this column
             default:
-                $info = array('0', $reverse ? ('-'.$this->last_column) : $this->last_column);
+                $info = array('0', $reverse ? ('-'.$db_field) : $db_field);
         }
 
-        $this->columns[$this->last_column]['sortable'] = $info;
+        $this->columns[$db_field]['sortable'] = $info;
 
         return $this;
     }
