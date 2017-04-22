@@ -134,7 +134,10 @@ class Controller_PatternRouter extends AbstractController
             if (substr($this->app->page, 0, strlen($page)) == $page) {
                 $_ed =  str_replace('/', '_', $_SERVER['REQUEST_URI']);
                 $path = substr($_SERVER['REQUEST_URI'], strpos($_ed,$this->app->page));
-                $rest = explode('/',  substr($path, strlen($page)+1, strpos($path,'?')-strlen($path)));
+                $rest = (strpos($path,'?'))
+                    ? explode('/',  substr($path, strlen($page)+1, strpos($path,'?')-strlen($path)))
+                    : explode('/',  substr($path, strlen($page)+1))
+                ;
 
                 foreach ($args as $i=>$arg) {
                     $_GET[$arg] = $rest[$i];
