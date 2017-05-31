@@ -132,7 +132,7 @@ class Controller_PageManager extends AbstractController {
             if($https)$url.='s';
 
             // 2. Continue building. We are adding hostname next and port.
-            $url .= "://".$_SERVER["SERVER_NAME"];
+            $url .= "://".$_SERVER["HTTP_HOST"];
             //if($_SERVER["SERVER_PORT"]!="80")$url .= ":".$_SERVER['SERVER_PORT'];
             if(($_SERVER["SERVER_PORT"]=="80" && !$https ) || ($_SERVER["SERVER_PORT"]=="443" && $https)){
                 ;
