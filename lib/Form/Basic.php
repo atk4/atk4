@@ -214,9 +214,14 @@ class Form_Basic extends View implements ArrayAccess {
             $template=$this->template->cloneRegion('form_line');
             $field = $this->add($class, $options, null, $template);
         } else {
-            if ($insert_into->template->hasTag($name)) {
-                $template=$this->template->cloneRegion('field_input');
-                $options['show_input_only']=true;
+            if ($insert_into->template->hasTag($name)) {                
+                if($this->app->getConfig('form/layout/inputonly',true)){
+                    $template=$this->template->cloneRegion('field_input');
+                    $options['show_input_only']=true;
+                }else{
+                    $template=$this->template->cloneRegion('form_line');
+                }
+
                 $field = $insert_into->add($class, $options, $name);
             } else {
                 $template=$this->template->cloneRegion('form_line');

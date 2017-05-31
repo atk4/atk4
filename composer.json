@@ -1,6 +1,7 @@
 {
-    "name": "atk4/atk4",
+    "name": "xepan/atk4",
     "type": "library",
+    "description": "fork from atk4/atk4",
     "version": "4.3.0",
     "license": "MIT",
     "keywords": ["framework","atk4"],
