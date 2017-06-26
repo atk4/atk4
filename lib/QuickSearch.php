@@ -114,7 +114,14 @@ class QuickSearch extends Filter
             }
 
             $expr = [];
-            foreach ($this->fields as $field) {
+            foreach ($this->fields as $k=>$field) {
+                // get rid of never_persist fields
+                $f = $m->hasElement($field);
+                if (!$f || $f->never_persist) {
+                    unset($this->fields[$k]);
+                    continue;
+                }
+
                 $expr[] = 'lower({' . $field . '}) like lower([])';
             }
             $expr = '('.implode(' or ', $expr).')';
