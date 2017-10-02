@@ -478,8 +478,8 @@ class View_CRUD extends View
             $options = array('toolbar' => false);
         }
 
-        $descr = $options['descr'] ?: ucwords(str_replace('_', ' ', $method_name));
-        $icon = $options['icon'] ?: 'target';
+        $descr = isset($options['descr']) ? $options['descr'] : ucwords(str_replace('_', ' ', $method_name));
+        $icon = isset($options['icon']) ? $options['icon'] : 'target';
 
         $show_toolbar = isset($options['toolbar']) ? $options['toolbar'] : true;
         $show_column = isset($options['column']) ? $options['column'] : true;
