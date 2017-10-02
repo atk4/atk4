@@ -472,10 +472,10 @@ class View_CRUD extends View
             throw $this->exception('Must set CRUD model first');
         }
         if ($options == 'toolbar') {
-            $options = array('column' => false);
+            $options = array('column' => false, 'toolbar' => true);
         }
         if ($options == 'column') {
-            $options = array('toolbar' => false);
+            $options = array('toolbar' => false, 'column' => true);
         }
 
         $descr = isset($options['descr']) ? $options['descr'] : ucwords(str_replace('_', ' ', $method_name));
