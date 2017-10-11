@@ -194,6 +194,7 @@ class Form_Field_Upload extends Form_Field
     {
         $val = trim($val);
         $last = strtolower($val[strlen($val) - 1]);
+        $val = substr($val, 0, -1);
         switch ($last) {
             case 'g':
                 $size = $val * 1024 * 1024 * 1024;
