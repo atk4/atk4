@@ -17,8 +17,8 @@
         "files": ["/lib/static.php"]
     },
     "require": {
-        "atk4/data": "^1.1",
-        "atk4/ui": "*"
+        "atk4/data": "~1.1.0",
+        "atk4/ui": "~1.1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*",
