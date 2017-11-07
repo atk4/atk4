@@ -602,6 +602,10 @@ class GiTemplate extends AbstractModel implements ArrayAccess
     private $tag_cnt = array();
     public function regTag($tag)
     {
+        if (!isset($this->tag_cnt[$tag])) {
+            $this->tag_cnt[$tag] = 0;
+        }
+
         return $tag.'#'.(++$this->tag_cnt[$tag]);
     }
 
