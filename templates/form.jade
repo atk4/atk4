@@ -1,0 +1,45 @@
+.atk-form(style="{$style}" class="{$class}" id="{$_name}")
+    <form class="{$form_class}" action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+
+    {Layout}
+    div.atk-cells-group.atk-cells-gutter-large(class="{$fieldset_class}")
+        {Content}
+        {form_line}
+        div.atk-form-row.atk-cells.atk-push-small(class="atk-form-row-{$field_type} {$row_class}")
+            {label_div}
+            .atk-cell.atk-form-label.atk-text-nowrap
+                <label for="{$field_name}" {field_mandatory}class="mandatory"{/}>
+                span {$field_caption}
+                {$after_label}
+                </label>
+            {/}
+
+            .atk-cell.atk-form-field.atk-jackscrew(class="{$field_class}")
+                {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
+
+            {$field_hint}
+            {field_error}
+
+            p.atk-form-error
+                span.icon-attention
+                span.atk-size-micro.field-error-text {$field_error_str}
+            {/}
+
+        {/}
+
+        {form_separator}</div><div class="{$fieldset_class} atk-cells-group atk-cells-gutter-large">{/}
+
+        {/Content}
+        p.field-error-template.atk-form-error
+            span.field-error-text {$field_error_str}
+
+
+        {button_row}
+        .atk-cells.atk-cells-gutter-large
+            .atk-cell
+            .atk-cell.atk-actions(class="{$buttons_class}")
+                {$form_buttons}
+        {/}
+
+    {/Layout}
+    </form>

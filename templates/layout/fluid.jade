@@ -1,0 +1,51 @@
+.atk-layout
+  .atk-layout-row
+    {Header}
+    .atk-layout-cell(class="{$class}")
+        .atk-padding-small.atk-swatch-ink
+            {Header_Content}
+            .atk-bar.atk-cells.atk-cells-gutter-large
+                .atk-cell.atk-text-nowrap
+                  a(href='{page}/{/}')
+                    img(src='{public}images/logo-menu.png{/}' height="35px")
+                .atk-cell.atk-jackscrew
+                    {Top_Menu}
+                    | Top Menu
+                    {/}
+                .atk-cell.atk-text-nowrap
+                    {$Top_Actions}
+                .atk-cell.atk-text-nowrap
+                    .atk-cells.atk-cells-gutter-small
+                        .atk-cell.atk-text-reset
+                            img(src="{user_icon}//www.gravatar.com/avatar/none{/}" width="32").atk-shape-rounded
+                        .atk-cell
+                            {User_Menu}{UserMenu}
+                            | User Menu
+                            {/}{/}
+            {/}
+    {/Header}
+  .atk-layout-row.atk-layout-fluid
+    .atk-layout.atk-layout-cell
+      {$LeftSidebar}
+      {has_main_menu}
+      .atk-layout-column(class="{left-column-class}atk-swatch-ink{/}" style="{$left-column-style}")
+        {$Main_Menu}
+      {/has_main_menu}
+      .atk-layout-column.fluid.atk-padding.atk-jackscrew
+        {has_page_title}
+        h2.atk-push-small {page_title}Page Title{/}
+        {/}
+        {$Content}
+      {$RightSideBar}
+
+  .atk-layout-row
+    {Footer}
+    .atk-layout-cell(class="{$class}")
+        .atk-padding-small.atk-swatch-ink.atk-align-center.atk-size-milli
+            {Footer_Content}
+            | This system is implemented using&nbsp;
+            a(href="http://agiletoolkit.org/") Agile Toolkit
+            | . {License}
+            a(href="https://github.com/atk4/atk4/blob/master/LICENSE") See License
+            {/}{/}
+    {/}

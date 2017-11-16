@@ -1,0 +1,83 @@
+div
+  .atk-push.atk-align-center
+    a.atk-text-reset(href='javascript:void(0)')
+        img(src='{public}images/logo-login.png{/}', title='Agile Toolkit', height='48')
+  {Content}
+
+  {LoginForm}
+  .atk-form(style="{$style}" class="{$class}" id="{$_name}")
+    <form action="{$form_action}" method="{form_method}post{/}" {$enctype} {$attributes}>
+
+    {Layout}
+    div.atk-cells-group.atk-cells-gutter-large.atk-newform.atk-valign-top
+        {Content}
+        {form_line}
+        div.atk-cells.atk-push(class="atk-form-row-{$field_type} {$row_class}")
+            {label_div}
+            .atk-cell.atk-form-label.atk-text-nowrap
+                <label for="{$field_name}" {field_mandatory}class="mandatory"{/}>
+                span {$field_caption}
+                {$after_label}
+                </label>
+            {/}
+
+            .atk-cell.atk-form-field.atk-jackscrew(class="{$field_class}")
+                {$above_field}{$cells_start}{$before_field}{$input_cell_start}{$before_input}{$field_input}{$icon}{$after_input}{$input_cell_stop}{$after_field}{$cells_stop}{$below_field}
+
+            {$field_hint}
+            {field_error}
+
+            .atk-form-error
+                span.atk-size-micro.atk-effect-danger {$field_error_str}
+            {/}
+
+        {/}
+
+        {/Content}
+        .field-error-template.atk-form-error
+            span.atk-effect-danger.field-error-text {$field_error_str}
+
+
+    {button_row}
+    .atk-cells.atk-push
+        .atk-cell
+        .atk-cell.atk-actions(class="{$buttons_class}")
+            {$form_buttons}
+    {/}
+
+    {/Layout}
+    </form>
+  {/}
+  {/}
+
+
+
+  // .atk-form.atk-form-stacked.atk-form-compact
+    form
+      .atk-form-fieldset.atk-push-small
+        .atk-cells
+          .atk-cell
+          .atk-cell
+            input(type='text', placeholder='E-mail')
+        .atk-cells
+          .atk-cell
+          .atk-cell
+            span.atk-input-icon
+              input(type='password', placeholder='Password')
+              a.icon-help-circled-1(href='javascript:void(0)')
+      .atk-cells.atk-cells-gutter
+        .atk-cell
+          .atk-input-radio
+            span.atk-text-dimmed
+              input#remember(type='checkbox')
+              label(for='remember') Remember me
+        .atk-cell.atk-align-right
+          button.atk-button.atk-jackscrew.atk-swatch-green Sign In
+  // hr
+  // .atk-push-small
+    a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-facebook(href='#')
+      span.icon-facebook
+      | Sign in with Facebook
+  // a.atk-button.atk-jackscrew.atk-align-center.atk-swatch-twitter(href='#')
+    span.icon-twitter
+    | Sign in with Twitter

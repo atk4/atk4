@@ -11,10 +11,10 @@
  		$this->atk_location=$this->addLocation('atk4',array(
 @@ -10394,7 +10394,7 @@
  					'images'=>'img',
- 					'css'=>array('templates/js','templates/'.$this->api->skin.'/css','templates/shared/css'),
+ 					'css'=>array('templates/js','templates/'.$this->app->skin.'/css','templates/shared/css'),
  					))
 -			->setBasePath(dirname(dirname(__FILE__)))
 +			->setBasePath(dirname(__FILE__))
- 			->setBaseURL($this->api->getConfig('atk/base_path','/atk4/'))
+ 			->setBaseURL($this->app->getConfig('atk/base_path','/atk4/'))
  			;
  	}

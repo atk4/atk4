@@ -1,0 +1,46 @@
+.atk-table.atk-table-zebra.atk-table-bordered(id="{$_name}" class="{$class}")
+    {Pannel}
+    .atk-box-small(class="{$pannel_class}") {$quick_search}
+        .atk-actions {$grid_buttons}
+    {/Pannel}
+
+    table
+        {header}
+        thead
+            {cols}{col}
+            th(id="{$sortid}")
+                a(href="javascript:void(0)")
+                    {$descr}
+                    {sort}
+                    span(class="{$sorticon}")
+                    {/}
+            {/}{/}
+        {/}
+        {$subheader}
+
+        tbody
+            {rows}{row}
+            tr(class="{$odd_even}" data-id="{$row_id}")
+                {cols}{col}
+                <td {$tdparam}>
+                {$content}
+                </td>
+                {/}{/}
+            {/}{/}
+            {not_found}
+            tr
+                td.atk-padding-large.atk-align-center
+                    span.atk-label.atk-effect-warning
+                        span.icon-attention &nbsp;{$not_found_message}
+            {/}
+
+        {totals}
+        tfoot
+            tr(class="totals")
+                {cols}{col}
+                <td {$tdparam}>
+                {$content}
+                </td>
+                {/}{/}
+        {/}
+    {$Paginator}

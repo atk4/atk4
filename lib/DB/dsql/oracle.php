@@ -1,27 +1,19 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
+<?php
+/**
+ * Undocumented.
+ */
+class DB_dsql_oracle extends DB_dsql
+{
+    public function limit($cnt, $shift = 0)
+    {
+        $cnt += $shift;
+        $this->where('NUM_ROWS>=', $shift);
+        $this->where('NUM_ROWS<', $cnt);
 
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-class DB_dsql_oracle extends DB_dsql {
-    function limit($cnt,$shift=0){
-        $cnt+=$shift;
-        $this->where('NUM_ROWS>=',$shift);
-        $this->where('NUM_ROWS<',$cnt);
         return $this;
     }
-    function render_limit(){
+    public function render_limit()
+    {
         return '';
     }
 }

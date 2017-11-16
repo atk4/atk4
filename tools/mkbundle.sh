@@ -10,16 +10,16 @@ echo "set_include_path('.'.PATH_SEPARATOR.'.'.DIRECTORY_SEPARATOR.'lib'.PATH_SEP
 
  while read cl; do
     echo "?><?php // File: $cl"
-    cat lib/$cl | sed 1d 
+    cat lib/$cl | sed 1d
 done >> atk4-bundle.php <<EOF
 static.php
 AbstractObject.php
 AbstractController.php
 AbstractModel.php
 AbstractView.php
-ApiCLI.php
-ApiWeb.php
-ApiFrontend.php
+Api/CLI.php
+Api/Web.php
+Api/Frontend.php
 View.php
 BaseException.php
 BasicAuth.php
@@ -77,7 +77,6 @@ HR.php
 HtmlElement.php
 Icon.php
 InfoWindow.php
-IOException.php
 jQuery/Chain.php
 jQuery.php
 jUI.php
@@ -87,7 +86,6 @@ LoremIpsum.php
 Menu/Basic.php
 Menu/Light.php
 Menu.php
-ObsoleteException.php
 Order.php
 P.php
 Page/EntityManager.php
@@ -99,9 +97,7 @@ Paginator.php
 PathFinder.php
 QuickSearch.php
 SMlite.php
-SMliteException.php
 SQLAuth.php
-SQLException.php
 static.php
 System/HTMLSanitizer.php
 System/ProcessIO.php

@@ -1,20 +1,16 @@
 <?php
-/***********************************************************
-  Adds standard box with information
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
-class View_Info extends View_Box {
-    public $class="ui-state-highlight";
+/**
+ * Adds standard box with information
+ */
+class View_Info extends View_Box
+{
+    /**
+     * Initialization
+     */
+    public function init()
+    {
+        parent::init();
+        $this->addClass('atk-effect-info');
+        $this->addIcon('info-circled');
+    }
 }

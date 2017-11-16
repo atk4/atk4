@@ -3,13 +3,13 @@ CONCEPTUAL GUIDE
 
 1. Create a PHP file under your webroot.
 2. Include 'atk4/loader.php'
-3. Instanciate one of API classes.
+3. Instanciate one of APP classes.
 4. Extend classes and add new classes as necessary.
 
 
 Full installation and learning guide is available at:
- http://agiletoolkit.org/learn/install
+ http://book.agiletoolkit.org/
 
 For a professional documentation see
- http://agiletoolkit.org/doc
+ http://book.agiletoolkit.org/
 

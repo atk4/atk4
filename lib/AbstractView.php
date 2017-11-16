@@ -1,39 +1,28 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * A base class for all Visual objects in Agile Toolkit. The
  * important distinctive property of all Views is abiltiy
  * to render themselves (produce HTML) automatically and
  * recursively.
- *
- * @link http://agiletoolkit.org/learn/understand/view
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+ */
 abstract class AbstractView extends AbstractObject
 {
     /**
-     * $template is an SMLite object containing indexed HTML
-     * template. 
+     * $template is an object containing indexed HTML template.
      *
      * Example:
      *
      * $view->template->set('title', $my_title);
      *
-     * Assuming you have tag <?$template?> in template file associated
+     * Assuming you have tag <?$title?> in template file associated
      * with this view - will insert text into this tag.
      *
      * @see AbstractObject::add();
      * @see AbstractView::defaultTemplate();
+     *
+     * @var Template
      */
-    public $template=false;
+    public $template = false;
 
     /**
      * @internal
@@ -44,17 +33,21 @@ abstract class AbstractView extends AbstractObject
      * childs may want to put their data. This property will
      * be set to region's name my call_ajax_render and if it's
      * set, call_ajax_render will echo it and return false.
+     *
+     * @var string
      */
-    public $template_flush=false;
+    public $template_flush = false;
 
     /**
      * $spot defines a place on a parent's template where render() will
-     * output() resulting HTML
+     * output() resulting HTML.
      *
      * @see output()
      * @see render()
      * @see AbstractObject::add();
      * @see defaultSpot();
+     *
+     * @var string
      */
     public $spot;
 
@@ -62,37 +55,65 @@ abstract class AbstractView extends AbstractObject
      * When using setModel() with Views some views will want to populate
      * fields, columns etc corresponding to models meta-data. That is the
      * job of Controller. When you create a custom controller for your view
-     * set this property to point at your controller and it will be used
-     * automatically */
-    public $default_controller=null;
+     * set this property to point at your controller and it will be used.
+     * automatically.
+     *
+     * @var string
+     */
+    public $default_controller = null;
 
-    public $auto_track_element=true;
+    /**
+     * @var boolean
+     */
+    public $auto_track_element = true;
+
+    /**
+     * @var array of jQuery_Chains
+     */
+    public $js = array();
+
+    /**
+     * Using dq property looks obsolete, but left for compatibility
+     *
+     * @see self::setModel()
+     * @var DB_dsql
+     */
+    public $dq;
+
 
     // {{{ Basic Operations
+
     /**
-     * For safety, you can't clone views. Use $view->newInstance instead
-     *
-     * @return void
+     * For safety, you can't clone views. Use $view->newInstance instead.
      */
-    function __clone()
+    public function __clone()
     {
         throw $this->exception('Can\'t clone Views');
     }
     /**
      * Associate view with a model. Additionally may initialize a controller
-     * which would copy fields from the model into the View
+     * which would copy fields from the model into the View.
      *
-     * @param object|string $model         Class without "Model_" prefix or object
-     * @param array|string  $actual_fields List of fields in order to populate
+     * @param object|string $model Class without "Model_" prefix or object
+     * @param array|string|null $actual_fields List of fields in order to populate
      *
      * @return AbstractModel object
      */
-    function setModel($model, $actual_fields = UNDEFINED)
+    public function setModel($model, $actual_fields = null)
     {
         parent::setModel($model);
 
+        if ($this->model instanceof \atk4\data\Model) {
+            // Switch to Agile Data implementation
+            if (isset($this->default_controller)) {
+                $this->default_controller = str_replace('MVC', 'AD', $this->default_controller);
+            } else {
+                $this->default_controller = 'ADView';
+            }
+        }
+
         // Some models will want default controller to be associated
-        if ($this->model->default_controller) {
+        if (isset($this->model->default_controller)) {
             $this->controller
                 = $this->model->setController($this->model->default_controller);
         }
@@ -112,94 +133,100 @@ abstract class AbstractView extends AbstractObject
         }
 
         if ($this->model instanceof SQL_Model) {
-            $this->dq=$this->model->_dsql();    // compatibility
+            $this->dq = $this->model->_dsql();    // compatibility
         }
+
+        $this->hook('set-model', [$this->model, $actual_fields]);
 
         return $this->model;
     }
 
     /** @internal  used by getHTML */
-    public $_tsBuffer='';
+    public $_tsBuffer = '';
     /** @internal accumulates output for getHTML */
-    function _tsBuffer($t, $data)
+    public function _tsBuffer($t, $data)
     {
-        $this->_tsBuffer.=$data;
+        $this->_tsBuffer .= $data;
     }
 
     /**
      * Converting View into string will render recursively and produce HTML.
      * If argument is passed, JavaScript will be added into on_ready section
      * of your document like when rendered normally. Note that you might
-     * require to destroy object if you don't want it's HTML to appear normally 
+     * require to destroy object if you don't want it's HTML to appear normally.
      *
-     * @param boolean $destroy    Destroy object preventing it from rendering
-     * @param boolean $execute_js Also capture JavaScript chains of object
+     * @param bool $destroy    Destroy object preventing it from rendering
+     * @param bool $execute_js Also capture JavaScript chains of object
      *
      * @return string HTML
      */
-    function getHTML($destroy = true, $execute_js = true)
+    public function getHTML($destroy = true, $execute_js = true)
     {
         $this->addHook('output', array($this, '_tsBuffer'));
         $this->recursiveRender();
         $this->removeHook('output', array($this, '_tsBuffer'));
-        $ret=$this->_tsBuffer;
-        $this->_tsBuffer='';
-        if ($execute_js && @$this->api->jquery) {
-            $this->api->jquery->getJS($this);
+        $ret = $this->_tsBuffer;
+        $this->_tsBuffer = '';
+        if ($execute_js && isset($this->app->jquery)) {
+            /** @type App_Web $this->app */
+            $this->app->jquery->getJS($this);
         }
         if ($destroy) {
             $this->destroy();
         }
+
         return $ret;
     }
     // }}}
 
     // {{{ Template Setup
 
-    /** 
-     * Called automatically during init for template initalization
+    /**
+     * Called automatically during init for template initalization.
      *
      * @param string       $template_spot   Where object's output goes
      * @param string|array $template_branch Where objects gets it's template
      *
      * @return AbstractView $this
+     *
      * @internal
      */
-    function initializeTemplate($template_spot = null, $template_branch = null)
+    public function initializeTemplate($template_spot = null, $template_branch = null)
     {
-        if (!$template_spot) {
-            $template_spot=$this->defaultSpot();
+        if ($template_spot === null) {
+            $template_spot = $this->defaultSpot();
         }
-        $this->spot=$template_spot;
+        $this->spot = $template_spot;
         if (@$this->owner->template
             && !$this->owner->template->is_set($this->spot)
         ) {
-            throw $this->exception(
+            throw $this->owner->template->exception(
                 'Spot is not found in owner\'s template'
             )->addMoreInfo('spot', $this->spot);
         }
         if (!isset($template_branch)) {
-            $template_branch=$this->defaultTemplate();
+            $template_branch = $this->defaultTemplate();
         }
         if (isset($template_branch)) {
             // template branch would tell us what kind of template we have to
             // use. Let's look at several cases:
 
             if (is_object($template_branch)) {
-                // it might be already SMlite instance (object)
-                $this->template=$template_branch;
+                // it might be already template instance (object)
+                $this->template = $template_branch;
             } elseif (is_array($template_branch)) {
                 // it might be array with [0]=template, [1]=tag
                 if (is_object($template_branch[0])) {
                     // if [0] is object, we'll use that
-                    $this->template=$template_branch[0];
+                    $this->template = $template_branch[0];
                 } else {
-                    $this->template=$this->api->add('SMlite');
+                    $this->template = $this->app->add('Template');
+                    /** @type Template $this->template */
                     $this->template->loadTemplate($template_branch[0]);
                 }
                 // Now that we loaded it, let's see which tag we need to cut out
-                $this->template=$this->template->cloneRegion(
-                    isset($template_branch[1])?$template_branch[1]:'_top'
+                $this->template = $this->template->cloneRegion(
+                    isset($template_branch[1]) ? $template_branch[1] : '_top'
                 );
             } else {
                 // brach could be just a string - a region to clone off parent
@@ -207,10 +234,12 @@ abstract class AbstractView extends AbstractObject
                     $this->template
                         = $this->owner->template->cloneRegion($template_branch);
                 } else {
-                    $this->template=$this->add('SMlite');
+                    $this->template = $this->add('Template');
                 }
             }
-            $this->template->owner=$this;
+
+            /** @type Template $this->template */
+            $this->template->owner = $this;
         }
 
         // Now that the template is loaded, let's take care of parent's template
@@ -229,31 +258,29 @@ abstract class AbstractView extends AbstractObject
 
     /**
      * This method is called to automatically fill in some of the tags in this
-     * view. Normally the call is bassed to $api->setTags(), however you can
-     * extend and add more tags to fill
-     *
-     * @return void
+     * view. Normally the call is bassed to $app->setTags(), however you can
+     * extend and add more tags to fill.
      */
-    function initTemplateTags()
+    public function initTemplateTags()
     {
         if ($this->template
-            && $this->api->hasMethod('setTags')
+            && $this->app->hasMethod('setTags')
         ) {
-            $this->api->setTags($this->template);
+            /** @type App_Web $this->app */
+            $this->app->setTags($this->template);
         }
     }
 
     /**
      * This method is commonly redefined to set a default template for an object.
      * If you return string, object will try to clone specified region off the
-     * parent. If you specify array, it will load and parse a separate SMlite
-     * template.
+     * parent. If you specify array, it will load and parse a separate template.
      *
      * This is overriden by 4th argument in add() method
      *
-     * @return array|string Template definition
+     * @return string Template definition
      */
-    function defaultTemplate()
+    public function defaultTemplate()
     {
         return $this->spot;
     }
@@ -263,10 +290,10 @@ abstract class AbstractView extends AbstractObject
      * tag of its parent view. You can specify a different tag as 3rd argument
      * for the add() method. If you wish for object to use different tag by
      * default, you can override this method.
-     * 
+     *
      * @return string Tag / Spot in $this->owner->template
      */
-    function defaultSpot()
+    public function defaultSpot()
     {
         return 'Content';
     }
@@ -287,35 +314,45 @@ abstract class AbstractView extends AbstractObject
      * When cut_object is specified in the GET arguments, then output
      * of HTML would be limited to object with matching $name or $short_name.
      *
-     * This method will be called instead of default render() and it will 
+     * This method will be called instead of default render() and it will
      * stop rendering process and output object's HTML once it finds
      * a suitable object. Exception_StopRender is used to terminate
-     * rendering process and bubble up to the API. This exception is
+     * rendering process and bubble up to the APP. This exception is
      * not an error.
-     *
-     * @return void
      */
-    function recursiveRender()
+    public function recursiveRender()
     {
-
-        if($this->hook('pre-recursive-render')){
+        if ($this->hook('pre-recursive-render')) {
             return;
         }
 
-        $cutting_here=false;
+        $cutting_here = false;
+        $cutting_output = '';
+
         $this->initTemplateTags();
 
         if (isset($_GET['cut_object'])
-            && ($_GET['cut_object']==$this->name
-            || $_GET['cut_object']==$this->short_name)
+            && ($_GET['cut_object'] == $this->name
+            || $_GET['cut_object'] == $this->short_name)
         ) {
             // If we are cutting here, render childs and then we are done
             unset($_GET['cut_object']);
-            $cutting_here=true;
+            $cutting_here = true;
+
+            $this->addHook('output', function ($self, $output) use (&$cutting_output) {
+                $cutting_output .= $output;
+            });
+        }
+
+        if ($this->model
+            && is_object($this->model)
+            && $this->model->loaded()
+        ) {
+            $this->modelRender();
         }
 
         foreach ($this->elements as $key => $obj) {
-            if ($obj instanceof AbstractView) {
+            if ($obj instanceof self) {
                 $obj->recursiveRender();
                 $obj->moveJStoParent();
             }
@@ -330,29 +367,49 @@ abstract class AbstractView extends AbstractObject
         }
 
         if ($cutting_here) {
-            $result=$this->owner->template->cloneRegion($this->spot)->render();
-            if ($this->api->jquery) {
-                $this->api->jquery->getJS($this);
+            //$result=$this->owner->template->cloneRegion($this->spot)->render();
+            if (isset($this->app->jquery)) {
+                /** @type App_Web $this->app */
+                $this->app->jquery->getJS($this);
             }
-            throw new Exception_StopRender($result);
+            throw new Exception_StopRender($cutting_output);
         }
         // if template wasn't cut, we move all JS chains to parent
-
     }
+
+    /**
+     * When model is specified for a view, values of the model is
+     * inserted inside the template if corresponding tags exist.
+     * This is used as default values and filled out before
+     * the actual render kicks in.
+     */
+    public function modelRender()
+    {
+        if ($this->model instanceof \atk4\data\Model) {
+            if ($this->controller instanceof Controller_ADView) {
+                return;
+            }
+            $data = $this->model->persistence->typecastSaveRow($this->model, $this->model->get());
+        } else {
+            $data = $this->model->get();
+        }
+
+        $this->template->set($data);
+    }
+
     /**
      * Append our chains to owner's chains. JS chains bubble up to
-     * API, which plugs them into template. If the object is being
+     * app, which plugs them into template. If the object is being
      * "cut" then only relevant chains will be outputed.
-     *
-     * @return void
      */
-    function moveJStoParent()
+    public function moveJStoParent()
     {
-        $this->owner->js=array_merge_recursive($this->owner->js, $this->js);
+        /** @type AbstractView $this->owner */
+        $this->owner->js = array_merge_recursive($this->owner->js, $this->js);
     }
 
     /**
-     * Default rendering method. Generates HTML presentation of $this view. 
+     * Default rendering method. Generates HTML presentation of $this view.
      * For most views, rendering the $this->template would be sufficient.
      *
      * If your view requires to do some heavy-duty work, please be sure to do
@@ -361,20 +418,13 @@ abstract class AbstractView extends AbstractObject
      *
      * render method relies on method output(), which appeends HTML chunks
      * to the parent's template.
-     *
-     * @return void
      */
-    function render()
+    public function render()
     {
         if (!($this->template)) {
-            throw $this->exception("You should specify template for this object")
-                ->addMoreInfo('object', $this->name);
-        }
-        if ($this->model
-            && is_object($this->model)
-            && $this->model->loaded()
-        ) {
-            $this->template->set($this->model->get());
+            throw $this->exception('You should specify template for this object')
+                ->addMoreInfo('object', $this->name)
+                ->addMoreInfo('spot', $this->spot);
         }
         $this->output(($render = $this->template->render()));
         if (@$this->debug) {
@@ -385,19 +435,19 @@ abstract class AbstractView extends AbstractObject
     /**
      * Low level output function which append's to the parent object's
      * template. For normal objects, you simply need to specify a suitable
-     * template
+     * template.
      *
      * @param string $txt HTML chunk
-     *
-     * @return void
      */
-    function output($txt)
+    public function output($txt)
     {
-        if (!$this->hook('output', array($txt))) {
+        if (!is_null($this->hook('output', array($txt)))) {
             if (isset($this->owner->template)
                 && !empty($this->owner->template)
             ) {
                 $this->owner->template->append($this->spot, $txt, false);
+            } elseif ($this->owner instanceof App_CLI) {
+                echo $txt;
             }
         }
     }
@@ -407,28 +457,31 @@ abstract class AbstractView extends AbstractObject
      * tag. This method of cutting is mostly un-used now, and should be
      * considered obsolete.
      *
-     * @return void
-     * @obsolete
+     * @deprecated 4.3.1
      */
-    function region_render()
+    public function region_render()
     {
+        throw $this->exception('cut_region is now obsolete');
+
+        /*
         if ($this->template_flush) {
-            if ($this->api->jquery) {
-                $this->api->jquery->getJS($this);
+            if ($this->app->jquery) {
+                $this->app->jquery->getJS($this);
             }
             throw new Exception_StopRender(
                 $this->template->cloneRegion($this->template_flush)->render()
             );
         }
         $this->render();
-        if ($this->spot==$_GET['cut_region']) {
-            $this->owner->template_flush=$_GET['cut_region'];
+        if ($this->spot == $_GET['cut_region']) {
+            $this->owner->template_flush = $_GET['cut_region'];
         }
+        */
     }
+
     // }}}
 
     // {{{ Object JavaScript Interface
-    public $js=array();
     /**
      * Views in Agile Toolkit can assign javascript actions to themselves. This
      * is done by calling $view->js() method.
@@ -490,92 +543,147 @@ abstract class AbstractView extends AbstractObject
      * This approach is compatible with jQuery UI Widget factory and will keep
      * your code clean
      *
-     * @param string|true|null   $when     Event when chain will be executed
-     * @param array|chain|string $code     JavaScript chain(s) or code
-     * @param string             $instance Obsolete
+     * @param string|bool|null          $when     Event when chain will be executed
+     * @param array|jQuery_Chain|string $code     JavaScript chain(s) or code
+     * @param string                    $instance Obsolete
      *
      * @link http://agiletoolkit.org/doc/js
+     *
      * @return jQuery_Chain
      */
-    function js($when = null, $code = null, $instance = null)
+    public function js($when = null, $code = null, $instance = null)
     {
         // Create new jQuery_Chain object
-        if (!isset($this->api->jquery)) {
-            throw new BaseException("requires jQuery or jUI support");
+        if (!isset($this->app->jquery)) {
+            throw new BaseException('requires jQuery or jUI support');
         }
+
+        /** @type App_Web $this->app */
 
         // Substitute $when to make it better work as a array key
-        if ($when===true) {
-            $when='always';
+        if ($when === true) {
+            $when = 'always';
         }
-        if ($when===false || $when===null) {
-            $when='never';
+        if ($when === false || $when === null) {
+            $when = 'never';
         }
 
-
-        if ($instance && isset($this->js[$when][$instance])) {
-            $js=$this->js[$when][$instance];
+        if ($instance !== null && isset($this->js[$when][$instance])) {
+            $js = $this->js[$when][$instance];
         } else {
-            $js=$this->api->jquery->chain($this);
+            $js = $this->app->jquery->chain($this);
         }
 
         if ($code) {
             $js->_prepend($code);
         }
 
-        if ($instance) {
-            $this->js[$when][$instance]=$js;
+        if ($instance !== null) {
+            $this->js[$when][$instance] = $js;
         } else {
-            $this->js[$when][]=$js;
+            $this->js[$when][] = $js;
         }
+
         return $js;
     }
-    
-    function getJSID(){
+
+    /**
+     * @return string
+     */
+    public function getJSID()
+    {
         return str_replace('/', '_', $this->name);
     }
-    /** Experimental */
-    function on($event, $selector=null, $js=null){
 
-        if(is_callable($js)){
-            $p=$this->add('VirtualPage');
+    /**
+     * Views in Agile Toolkit can assign javascript actions to themselves. This
+     * is done by calling $view->js() or $view->on().
+     *
+     * on() method implements implementation of jQuery on() method.
+     *
+     * on(event, [selector], [other_chain])
+     *
+     * Returned is a javascript chain wich is executed when event is triggered
+     * on specified selector (or all of the view if selector is ommitted).
+     * Optional other_chain argument can contain one or more chains (in array)
+     * which will also be executed.
+     *
+     * The chain returned by on() will properly select affected element. For
+     * example if the following view would contain multiple <a> elements, then
+     * only the clicked-one will be hidden.
+     *
+     * on('click','a')->hide();
+     *
+     *
+     * Other_chain can also be specified as a Callable. In this case the
+     * executable code you have specified here will be called with several
+     * arguments:
+     *
+     * function($js, $data){
+     *   $js->hide();
+     * }
+     *
+     *
+     * In this case javascript method is executed on a clicked event but
+     * in a more AJAX-way
+     *
+     * If your method returns a javascript chain, it will be executed
+     * instead. You can execute both if you embed $js inside returned
+     * chain.
+     *
+     * The third argument passed to your method contains
+     */
+    public function on($event, $selector = null, $js = null)
+    {
+        /** @type App_Web $this->app */
 
-            $p->set(function($p)use($js){
+        if (!is_string($selector) && is_null($js)) {
+            $js = $selector;
+            $selector = null;
+        }
+
+        if (is_callable($js)) {
+            /** @type VirtualPage $p */
+            $p = $this->add('VirtualPage');
+
+            $p->set(function ($p) use ($js) {
+                /** @type VirtualPage $p */
                 // $js is an actual callable
-                $js2=$p->js()->_selectorRegion();
+                $js2 = $p->js()->_selectorRegion();
 
-                $js3=call_user_func($js,$js2,$_POST);
+                $js3 = call_user_func($js, $js2, $_POST);
 
                 // If method returns something, execute that instead
-                if($js3){
-                    $p->js(null,$js3)->execute();
-                }else{
+                if ($js3) {
+                    $p->js(null, $js3)->execute();
+                } else {
                     $js2->execute();
                 }
             });
 
-            $js=$this->js()->_selectorThis()->univ()->ajaxec($p->getURL(),true);
+            $js = $this->js()->_selectorThis()->univ()->ajaxec($p->getURL(), true);
         }
 
-        if($js){
-            $ret_js=$this->js(null,$js)->_selectorThis();
-        }else{
-            $ret_js=$this->js()->_selectorThis();
+        if ($js) {
+            $ret_js = $this->js(null, $js)->_selectorThis();
+        } else {
+            $ret_js = $this->js()->_selectorThis();
         }
 
-        $on_chain=$this->js(true);
-        $fired=false;
+        $on_chain = $this->js(true);
+        $fired = false;
 
-        $this->api->jui->addHook(
-            'pre-getJS', 
-            function($api) use($event,$selector,$ret_js,$on_chain,&$fired) {
-                if($fired)return;
-                $fired=true;
+        $this->app->jui->addHook(
+            'pre-getJS',
+            function ($app) use ($event, $selector, $ret_js, $on_chain, &$fired) {
+                if ($fired) {
+                    return;
+                }
+                $fired = true;
 
-                $on_chain->on($event,$selector,$ret_js->_enclose(null,true));
+                $on_chain->on($event, $selector, $ret_js->_enclose(null, true));
             }
         );
-
 
         return $ret_js;
     }

@@ -1,107 +1,107 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
+<?php
+/**
+ * This controller will simply output data as it's being passed through.
+ */
+class Controller_Data_Dumper extends Controller_Data
+{
+    /** @var array */
+    protected $log = array();
 
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
+    /** @var Controller */
+    protected $watchedController = null;
 
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/* This controller will simply output data as it's being passed through */
-class Controller_Data_Dumper extends Controller_Data {
-    public $log=array();
-    public $sh=null;
+    public function setWatchedControllerData($model, $controller)
+    {
+        $controller = $this->app->normalizeClassName($controller, 'Data');
+        $this->watchedController = $model->setController($controller);
+    }
+    public function getLog($toClean = true)
+    {
+        $log = $this->log;
+        if ($toClean) {
+            $this->log = array();
+        }
 
-    function log($model,$s){
-        if(!$model)throw $this->exception('model empty');
-        $this->log[]=$model->table.":".@$this->sh->short_name." :: ".$s;
+        return $log;
     }
-    function setPrimarySource($model,$controller,$data=undefined){
-        $controller=$this->api->normalizeClassName($controller,'Data');
-        $this->sh=$model->setController($controller);
-        if($data)$this->sh->setSource($model,$data);
+    public function printLog($toClean = true)
+    {
+        $log = $this->getLog($toClean);
+        echo '<pre>';
+        foreach ($log as $l) {
+            echo "$l\n";
+        }
+        echo '</pre>';
     }
-    function __destruct(){
-        if(!$this->log)return;
-        echo "<pre>";
-        foreach($this->log as $l)echo "$l\n";
+    public function __destruct()
+    {
+        if (empty($this->log)) {
+            return;
+        }
+        $this->printLog();
     }
-    function getLog(){
-        $l=$this->log;
-        $this->log=array();
-        return $l;
-    }
-    function setSource($model,$data=undefined){
-        $this->log($model,'setting source');
-        if($this->sh)return $this->sh->setSource($model,$data);
-        return $this;
-    }
-    function getBy($model,$field,$cond=undefined,$value=undefined){
-        $this->log($model,"getBy $field $cond $value");
-        if($this->sh)return $this->sh->getDy($model,$field,$cond,$value);
-    }
-    function tryLoadBy($model,$field,$cond=undefined,$value=undefined){
-        $this->log($model,"tryLoadBy $field $cond $value");
-        if($this->sh)return $this->sh->tryLoadBy($model,$field,$cond,$value);
-    }
-    function tryLoadAny($model){
-        $this->log($model,"tryLoadAny");
-        if($this->sh)return $this->sh->tryLoadAny($model);
-    }
-    function loadBy($model,$field,$cond=undefined,$value=undefined){
-        $this->log($model,"loadBy $field $cond $value");
-        if($this->sh)return $this->sh->loadBy($model,$filed,$cond,$value);
-    }
-    function tryLoad($model,$id){
-        $this->log($model,"tryLoad $id");
-        if($this->sh)return $this->sh->tryLoad($model,$id);
-    }
-    function load($model,$id=null){
-        $this->log($model,"load $id");
-        if($this->sh)return $this->sh->load($model,$id);
-    }
-    function save($model,$id=null){
-        $this->log($model,"save $id");
-        if($this->sh)return $this->sh->save($model,$id);
-    }
-    function delete($model,$id=null){
-        $this->log($model,"delete $id");
-        if($this->sh)return $this->sh->delete($model,$id);
-    }
-    function deleteAll($model){
-        $this->log($model,"deleteAll $id");
-        if($this->sh)return $this->sh->deleteAll($model,$id);
-    }
-    function getRows($model){
-        $this->log($model,"getRows");
-        if($this->sh)return $this->sh->getRows($model);
-    }
-    function setOrder($model,$field,$desc=false){
-        $this->log($model,"setOrder $field $desc");
-        if($this->sh)return $this->sh->getRows($model,$field,$desc);
-    }
-    function setLimit($model,$count,$offset=0){
-        $this->log($model,"setLimit $count $offset");
-        if($this->sh)return $this->sh->getRows($model,$count,$offset);
+    private function log($method, $args, $isCalling = true)
+    {
+        $s = '';
+        foreach ($args as $arg) {
+            if ($arg instanceof AbstractObject) {
+                $s .= ', '.get_class($arg).' '.$arg->short_name;
+            } else {
+                $s .= ', '.$arg;
+            }
+        }
+        $s = substr($s, 2);
+        if ($isCalling) {
+            $this->log[] = $this->watchedController->short_name.'::'.$method." with ($s)";
+        } else {
+            $this->log[] = $this->watchedController->short_name.'::'.$method." return $s";
+        }
     }
 
-    function rewind($model){
-        $this->log($model,"rewind");
-        if($this->sh)return $this->sh->rewind($model);
+    // {{{ Override all Controller_Data methods
+    public function setSource($model, $data)
+    {
+        return $this->__call('setSource', array($model, $data));
     }
-    function next($model){
-        $this->log($model,"next");
-        if($this->sh)return $this->sh->next($model);
+    public function save($model, $id, $data)
+    {
+        return $this->__call('save', array($model, $id, $data));
     }
-    function __call($method,$arg){
-        $this->log($arg[0],"$method");
-        if($this->sh)return call_user_func_array(array($this->sh,$method),$arg);
+    public function delete($model, $id)
+    {
+        return $this->__call('delete', array($model, $id));
+    }
+    public function loadById($model, $id)
+    {
+        return $this->__call('loadById', array($model, $id));
+    }
+    public function loadByConditions($model)
+    {
+        return $this->__call('loadByConditions', array($model));
+    }
+    public function deleteAll($model)
+    {
+        return $this->__call('deleteAll', array($model));
+    }
+    public function prefetchAll($model)
+    {
+        return $this->__call('prefetchAll', array($model));
+    }
+    public function loadCurrent($model)
+    {
+        return $this->__call('loadCurrent', array($model));
+    }
+    // }}}
+    public function __call($method, $args)
+    {
+        $this->log($method, $args, true);
+        if ($this->watchedController) {
+            $ret = call_user_func_array(array($this->watchedController, $method), $args);
+            $this->log($method, array($ret), false);
+        } else {
+            $ret = null;
+        }
+
+        return $ret;
     }
 }

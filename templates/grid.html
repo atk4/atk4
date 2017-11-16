@@ -1,0 +1,36 @@
+
+<div id="{$_name}" class="atk-table atk-table-zebra atk-table-bordered {$class}">{Pannel}
+  <div class="atk-box-small {$pannel_class}">{$quick_search}
+    <div class="atk-actions">{$grid_buttons}</div>
+  </div>{/Pannel}
+  <table>{header}
+    <thead>{cols}{col}
+      <th id="{$sortid}"><a href="javascript:void(0)">
+          {$descr}
+          {sort}<span class="{$sorticon}"></span>{/}</a></th>{/}{/}
+    </thead>{/}
+    {$subheader}
+    <tbody>{rows}{row}
+      <tr data-id="{$row_id}" class="{$odd_even}">
+        {cols}{col}
+        <td {$tdparam}>
+        {$content}
+        </td>
+        {/}{/}
+      </tr>{/}{/}
+      {not_found}
+      <tr>
+        <td class="atk-padding-large atk-align-center"><span class="atk-label atk-effect-warning"><span class="icon-attention">&nbsp;{$not_found_message}</span></span></td>
+      </tr>{/}
+    </tbody>{totals}
+    <tfoot>
+      <tr class="totals">
+        {cols}{col}
+        <td {$tdparam}>
+        {$content}
+        </td>
+        {/}{/}
+      </tr>
+    </tfoot>{/}
+  </table>{$Paginator}
+</div>

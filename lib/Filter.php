@@ -1,65 +1,58 @@
 <?php
-/***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
+/**
+ * Undocumented.
+ */
 class Filter extends Form
 {
+    /** @var View Use with this view */
     public $view;
-    
-    function init()
+
+    /** @var Form_Submit Save button object */
+    protected $save;
+
+    /** @var Form_Submit Reset button object */
+    protected $reset;
+
+
+    public function init()
     {
         parent::init();
 
         // set default values on non-yet initialized fields
-        $this->api->addHook('post-init', array($this, 'postInit'));
+        $this->app->addHook('post-init', array($this, 'postInit'));
     }
-    
+
     /**
-     * Set view on which conditions will be applied
-     * 
-     * @param object $view
-     * @return Filter $this
+     * Set view on which conditions will be applied.
+     *
+     * @param View $view
+     *
+     * @return $this
      */
-    function useWith($view)
+    public function useWith($view)
     {
         // Apply our condition on the view
         $this->view = $view;
+
         return $this;
     }
-    
-    /**
-     * Remembers values and uses them as condition
-     * 
-     * @return void
-     */
-    function postInit()
-    {
-        foreach ($this->elements as $x=>$field)
-        {
-            if($field instanceof Form_Field)
-            {
-                $field->set($val = $this->recall($x));
 
-                if($field->no_save || !$field->get()) {
+    /**
+     * Remembers values and uses them as condition.
+     */
+    public function postInit()
+    {
+        foreach ($this->elements as $x => $field) {
+            if ($field instanceof Form_Field) {
+                $field->set($this->recall($x));
+
+                if ($field->no_save || !$field->get()) {
                     continue;
                 }
 
                 // also apply the condition
-                if($this->view->model && $this->view->model->hasElement($x)) {
-                    
+                if ($this->view->model && $this->view->model->hasElement($x)) {
+
                     // take advantage of field normalization
                     $this->view->model->addCondition($x, $field->get());
                 }
@@ -67,47 +60,44 @@ class Filter extends Form
         }
 
         // call applyFilter hook if such exist, pass model of associated view as parameter
-        $this->hook('applyFilter',array($this->view->model));
+        $this->hook('applyFilter', array($this->view->model));
     }
-    
+
     /**
-     * Memorize filtering parameters
-     * 
-     * @return void
+     * Memorize filtering parameters.
      */
-    function memorizeAll()
+    public function memorizeAll()
     {
         // memorize() method doesn't memorize anything if value is null
-        foreach ($this->get() as $field=>$value) {
-            if ($this->isClicked('Clear') || is_null($value)) {
+        foreach ($this->get() as $field => $value) {
+            if ((isset($this->reset) && $this->isClicked($this->reset)) || is_null($value)) {
                 $this->forget($field);
             } else {
                 $this->memorize($field, $value);
             }
         }
     }
-    
+
     /**
-     * Add Save and Reset buttons
-     * 
-     * @return void
+     * Add Save and Reset buttons.
+     *
+     * @return $this
      */
-    function addButtons()
+    public function addButtons()
     {
         $this->save = $this->addSubmit('Save');
         $this->reset = $this->addSubmit('Reset');
+
+        return $this;
     }
-    
+
     /**
-     * On form submit memorize or forget filtering parameters
-     * 
-     * @return void
+     * On form submit memorize or forget filtering parameters.
      */
-    function submitted()
+    public function submitted()
     {
-        if(parent::submitted())
-        {
-            if(isset($this->reset) && $this->isClicked($this->reset)) {
+        if (parent::submitted()) {
+            if (isset($this->reset) && $this->isClicked($this->reset)) {
                 $this->forget();
                 $this->js(null, $this->view->js()->reload())->reload()->execute();
             } else {

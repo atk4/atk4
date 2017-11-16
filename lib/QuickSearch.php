@@ -1,120 +1,156 @@
 <?php
-/***********************************************************
-
-  Quicksearch represents one-field filter which works perfectly with a grid
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
+/**
+ * Quicksearch represents one-field filter which works perfectly with a grid
+ */
 class QuickSearch extends Filter
 {
-    
-    // icons
+    /** @var string Submit button icon */
     public $submit_icon = 'ui-icon-search';
+
+    /** @var string Cancel button icon */
     public $cancel_icon = 'ui-icon-cancel';
-    
-    // field
+
+    /** @var Form_Field */
     public $search_field;
-    
-    // buttonset
+
+    /** @var array */
+    public $fields;
+
+    /** @var string Button set class name */
     public $bset_class = 'ButtonSet';
+
+    /** @var string Button set positioning */
     public $bset_position = 'after'; // after|before
+
+    /** @var ButtonSet object iteself */
     protected $bset;
-    
-    // cancel button
-    public $show_cancel = true; // show cancel button? (true|false)
+
+    /** @var bool Shoud we add Cancel button or not */
+    public $show_cancel = true;
 
     /**
-     * Initialization
-     * 
-     * @return void
+     * Initialization.
      */
-    function init()
+    public function init()
     {
         parent::init();
 
         // template fixes
-        $this->addClass('float-right span4 atk-quicksearch');
+        $this->addClass('atk-form atk-form-stacked atk-form-compact atk-move-right');
         $this->template->trySet('fieldset', 'atk-row');
         $this->template->tryDel('button_row');
-        
+
+        $this->addClass('atk-col-3');
+
         // add field
-        $this->search_field = $this->addField('Line', 'q', '')->setNoSave();
-        
-        // add buttonset
-        $this->bset = $this->bset_position=='after'
-                    ? $this->search_field->afterField()
-                    : $this->search_field->beforeField();
-        $this->bset = $this->bset->add($this->bset_class);
+        $this->search_field = $this->addField('Line', 'q', '')->setAttr('placeholder', 'Search')->setNoSave();
 
         // cancel button
-        if($this->show_cancel && $this->recall($this->search_field->short_name)) {
-            $this->bset->addButton('', array('options'=>array('text'=>false)))
-                    ->setHtml('&nbsp;')
-                    ->setIcon($this->cancel_icon)
-                    ->js('click', array(
-                        $this->search_field->js()->val(null),
-                        $this->js()->submit()
-                    ));
+        if ($this->show_cancel && $this->recall($this->search_field->short_name)) {
+            $this->add('View', null, 'cancel_button')
+                ->setClass('atk-cell')
+                ->add('HtmlElement')
+                ->setElement('A')
+                ->setAttr('href', 'javascript:void(0)')
+                ->setClass('atk-button')
+                ->setHtml('<span class="icon-cancel atk-swatch-red"></span>')
+                ->js('click', array(
+                    $this->search_field->js()->val(null),
+                    $this->js()->submit(),
+                ));
         }
 
-        // search button
-        $this->bset->addButton('', array('options'=>array('text'=>false)))
-                ->setHtml('&nbsp;')
-                ->setIcon($this->submit_icon)
-                ->js('click', $this->js()->submit());
-        
+        /** @type HtmlElement $b Search button */
+        $b = $this->add('HtmlElement', null, 'form_buttons');
+        $b->setElement('A')
+            ->setAttr('href', 'javascript:void(0)')
+            ->setClass('atk-button')
+            ->setHtml('<span class="icon-search"></span>')
+            ->js('click', $this->js()->submit());
     }
-    
+
     /**
-     * Set fields on which filtering will be done
-     * 
+     * Set fields on which filtering will be done.
+     *
      * @param string|array $fields
+     *
      * @return QuickSearch $this
      */
-    function useFields($fields)
+    public function useFields($fields)
     {
-        if(is_string($fields)) {
+        if (is_string($fields)) {
             $fields = explode(',', $fields);
         }
         $this->fields = $fields;
+
         return $this;
     }
-    
+
     /**
-     * Process received filtering parameters after init phase
-     * 
-     * @return void
+     * Process received filtering parameters after init phase.
+     *
+     * @return Model|void
      */
-    function postInit()
+    public function postInit()
     {
         parent::postInit();
-        if(!($v = trim($this->get('q')))) {
+
+        if (!($v = trim($this->get('q')))) {
             return;
         }
 
-        if($this->view->model->hasMethod('addConditionLike')){
-            return $this->view->model->addConditionLike($v);
+        $m = $this->view->model;
+
+        // if model has method addConditionLike
+        if ($m->hasMethod('addConditionLike')) {
+            return $m->addConditionLike($v, $this->fields);
         }
-        if($this->view->model) {
-            $q = $this->view->model->_dsql();
+
+        // if it is Agile Data model
+        if ($m instanceof \atk4\data\Model) {
+
+            if (!$m->hasMethod('expr')) {
+                return $m;
+            }
+
+            $expr = [];
+            foreach ($this->fields as $k=>$field) {
+                // get rid of never_persist fields
+                $f = $m->hasElement($field);
+                if (!$f || $f->never_persist) {
+                    unset($this->fields[$k]);
+                    continue;
+                }
+
+                $expr[] = 'lower({' . $field . '}) like lower([])';
+            }
+            $expr = '('.implode(' or ', $expr).')';
+            $expr = $m->expr($expr, array_fill(0, count($this->fields), '%'.$v.'%'));
+
+            return $m->addCondition($expr); // @todo should use having instead
+        }
+
+        // if it is ATK 4.3 model or any other data source
+        if ($m instanceof SQL_Model) {
+            $q = $m->_dsql();
         } else {
             $q = $this->view->dq;
         }
+
         $or = $q->orExpr();
-        foreach($this->fields as $field) {
+        foreach ($this->fields as $field) {
             $or->where($field, 'like', '%'.$v.'%');
         }
         $q->having($or);
+    }
+
+    /**
+     * Default template
+     *
+     * @return array|string
+     */
+    public function defaultTemplate()
+    {
+        return array('form/quicksearch');
     }
 }

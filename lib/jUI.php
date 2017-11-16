@@ -1,41 +1,50 @@
 <?php
-/***********************************************************
-  jQuery UI support
+/**
+ * jQuery UI support
+ */
+class jUI extends jQuery
+{
+    /**
+     * @var bool
+     */
+    private $atk4_initialised = false;
 
-  Reference:
-  http://agiletoolkit.org/doc/ref
+    // {{{ Inherited properties
 
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
+    /** @var App_Web */
+    public $app;
 
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
+    // }}}
 
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
-class jUI extends jQuery {
-    private $atk4_initialised=false;
-
-    function init(){
-
+    /**
+     * Initialization
+     */
+    public function init()
+    {
         parent::init();
-        if (@$this->api->jui) {
+        if (@$this->app->jui) {
             throw $this->exception('Do not add jUI twice');
         }
-        $this->api->jui=$this;
+        $this->app->jui = $this;
 
         $this->addDefaultIncludes();
 
-        $this->atk4_initialised=true;
+        $this->atk4_initialised = true;
     }
-    function addDefaultIncludes(){
+
+    /**
+     * Adds default includes
+     */
+    public function addDefaultIncludes()
+    {
         $this->addInclude('start-atk4');
 
-        /* $config['js']['jquery']='http://code.jquery.com/jquery-1.8.2.min.js'; // to use CDN */
-        if($v=$this->api->getConfig('js/versions/jqueryui',null))$v='jquery-ui-'.$v;
-        else($v=$this->api->getConfig('js/jqueryui','jquery-ui-1.10.3.min'));  // bundled jQueryUI version
+        /* $config['js']['jqueryui']='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js'; // to use CDN */
+        if ($v = $this->app->getConfig('js/versions/jqueryui', null)) {
+            $v = 'jquery-ui-'.$v;
+        } else {
+            $v = $this->app->getConfig('js/jqueryui', 'jquery-ui-1.11.4.min');  // bundled jQueryUI version
+        }
 
         $this->addInclude($v);
 
@@ -44,35 +53,76 @@ class jUI extends jQuery {
         $this->addInclude('atk4_univ_basic');
         $this->addInclude('atk4_univ_jui');
     }
-    function addInclude($file,$ext='.js'){
-        if(strpos($file,'http')===0){
+
+    /**
+     * Adds includes
+     *
+     * @param string $file
+     * @param string $ext
+     *
+     * @return $this
+     */
+    public function addInclude($file, $ext = '.js')
+    {
+        if (strpos($file, 'http') === 0) {
             parent::addOnReady('$.atk4.includeJS("'.$file.'")');
+
             return $this;
         }
-        $url=$this->api->locateURL('js',$file.$ext);
+        $url = $this->app->locateURL('js', $file.$ext);
 
-        if(!$this->atk4_initialised){
-            return parent::addInclude($file,$ext);
+        if (!$this->atk4_initialised) {
+            return parent::addInclude($file, $ext);
         }
 
         parent::addOnReady('$.atk4.includeJS("'.$url.'")');
+
         return $this;
     }
-    function addStylesheet($file,$ext='.css',$template=false){
-        $url=$this->api->locateURL('css',$file.$ext);
-        if(!$this->atk4_initialised || $template){
-            return parent::addStylesheet($file,$ext);
+
+    /**
+     * Adds stylesheet
+     *
+     * @param string $file
+     * @param string $ext
+     * @param bool $template
+     *
+     * @return $this
+     */
+    public function addStylesheet($file, $ext = '.css', $template = false)
+    {
+        if (strpos($file, 'http') === 0) {
+            parent::addOnReady('$.atk4.includeCSS("'.$file.'")');
+
+            return $this;
+        }
+        $url = $this->app->locateURL('css', $file.$ext);
+
+        if (!$this->atk4_initialised || $template) {
+            return parent::addStylesheet($file, $ext);
         }
 
         parent::addOnReady('$.atk4.includeCSS("'.$url.'")');
     }
-    function addOnReady($js){
-        if(is_object($js))$js=$js->getString();
-        if(!$this->atk4_initialised){
+
+    /**
+     * Adds JS chain to DOM onReady event
+     *
+     * @param jQuery_Chain|string $js
+     *
+     * @return $this
+     */
+    public function addOnReady($js)
+    {
+        if ($js instanceof jQuery_Chain) {
+            $js = $js->getString();
+        }
+        if (!$this->atk4_initialised) {
             return parent::addOnReady($js);
         }
 
         $this->api->template->appendHTML('document_ready', "$.atk4(function(){ ".$js."; });\n");
+
         return $this;
     }
 }

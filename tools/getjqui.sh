@@ -4,15 +4,15 @@ export v=$1
 [ "$v" ] || { echo "Specify version" ; exit 1; }
 
 mkdir tmp
-trap "echo 'cleanup'; rm -rf tmp" EXIT
+#trap "echo 'cleanup'; rm -rf tmp" EXIT
 
 (
     cd tmp
-    wget http://jqueryui.com/resources/download/jquery-ui-$v.custom.zip
-    unzip jquery-ui-$v.custom.zip
+    wget http://jqueryui.com/resources/download/jquery-ui-$v.zip
+    unzip jquery-ui-$v.zip
     mv jquery-ui-$v.custom/js/jquery-ui-$v.custom.min.js ../jquery-ui-$v.min.js
 
-echo "        else(\$v=\$this->api->getConfig('js/jqueryui','jquery-ui-$v.min'));  // bundled jQueryUI version" > line
+echo "        else(\$v=\$this->app->getConfig('js/jqueryui','jquery-ui-$v.min'));  // bundled jQueryUI version" > line
 vim -e ../../../lib/jUI.php <<EOF
 /\/\/ bundled jQueryUI version/
 d

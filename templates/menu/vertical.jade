@@ -1,0 +1,36 @@
+ul.atk-menu.atk-menu-vertical(class="{$class}" id="{$_name}" style="{$style}")
+    {Content}
+
+    {Title}
+    li.atk-padding-small.atk-size-kilo(id="{$_name}" class="{$class}") {$Content}
+    {/Title}
+
+    {Item}
+    li(class="{$li-class}")
+        <a class="atk-padding-small atk-cells {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}>
+        span.atk-cell.atk-jackscrew
+            {$icon}&nbsp;
+            strong
+                {$Content}
+        span.atk-cell {$Badge}
+        </a>
+    {/Item}
+
+    {Menu}
+    li(id="{$_name}" class="{$li-class}")
+        a.atk-padding-small.atk-cells(href="javascript:void(0)" class="{$class}")
+            span.atk-cell.atk-jackscrew
+                {$icon}&nbsp;
+                strong
+                    {$Content}
+            span.atk-cell
+                span.icon-right-dir
+        {$SubMenu}
+    {/Menu}
+
+    {Separator}
+    hr(id="{$_name}" class="{$class}")
+      | /
+    {/Separator}
+
+    {/}

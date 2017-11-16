@@ -1,35 +1,30 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
+<?php
+/**
+ * Implements connectivity between Model and Session.
+ */
+class Controller_Data_Session extends Controller_Data_Array
+{
+    // {{{ Inherited properties
 
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
+    /** @var App_Web */
+    public $app;
 
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-/* 
-Implements connectivity between Model and Session 
-*/
-class Controller_Data_Session extends Controller_Data_Array {
+    // }}}
 
-    function setSource($model,$data=undefined){
-        $this->api->initializeSession();
-        if($data===undefined || $data === null)$data='-';
-
-        if(!$_SESSION['ctl_data'][$data]){
-            $_SESSION['ctl_data'][$data]=array();
-        }
-        if(!$_SESSION['ctl_data'][$data][$model->table]){
-            $_SESSION['ctl_data'][$data][$model->table]=array();
+    public function setSource($model, $data)
+    {
+        $this->app->initializeSession();
+        if ($data === UNDEFINED || $data === null) {
+            $data = '-';
         }
 
-        $model->_table[$this->short_name] =& $_SESSION['ctl_data'][$data][$model->table];
+        if (!$_SESSION['ctl_data'][$data]) {
+            $_SESSION['ctl_data'][$data] = array();
+        }
+        if (!$_SESSION['ctl_data'][$data][$model->table]) {
+            $_SESSION['ctl_data'][$data][$model->table] = array();
+        }
+
+        $model->_table[$this->short_name] = &$_SESSION['ctl_data'][$data][$model->table];
     }
 }

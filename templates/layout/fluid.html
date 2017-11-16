@@ -1,0 +1,47 @@
+
+<div class="atk-layout">
+  <div class="atk-layout-row">{Header}
+    <div class="atk-layout-cell {$class}">
+      <div class="atk-padding-small atk-swatch-ink">{Header_Content}
+        <div class="atk-bar atk-cells atk-cells-gutter-large">
+          <div class="atk-cell atk-text-nowrap"><a href="{page}/{/}"><img src="{public}images/logo-menu.png{/}" height="35px"/></a></div>
+          <div class="atk-cell atk-jackscrew">
+            {Top_Menu}
+            Top Menu
+            {/}
+          </div>
+          <div class="atk-cell atk-text-nowrap">{$Top_Actions}</div>
+          <div class="atk-cell atk-text-nowrap">
+            <div class="atk-cells atk-cells-gutter-small">
+              <div class="atk-cell atk-text-reset"><img src="{user_icon}//www.gravatar.com/avatar/none{/}" width="32" class="atk-shape-rounded"/></div>
+              <div class="atk-cell">
+                {User_Menu}{UserMenu}
+                User Menu
+                {/}{/}
+              </div>
+            </div>
+          </div>
+        </div>{/}
+      </div>
+    </div>{/Header}
+  </div>
+  <div class="atk-layout-row atk-layout-fluid">
+    <div class="atk-layout atk-layout-cell">
+      {$LeftSidebar}
+      {has_main_menu}
+      <div style="{$left-column-style}" class="atk-layout-column {left-column-class}atk-swatch-ink{/}">{$Main_Menu}</div>{/has_main_menu}
+      <div class="atk-layout-column fluid atk-padding atk-jackscrew">{has_page_title}
+        <h2 class="atk-push-small">{page_title}Page Title{/}</h2>{/}
+        {$Content}
+      </div>{$RightSideBar}
+    </div>
+  </div>
+  <div class="atk-layout-row">{Footer}
+    <div class="atk-layout-cell {$class}">
+      <div class="atk-padding-small atk-swatch-ink atk-align-center atk-size-milli">
+        {Footer_Content}
+        This system is implemented using&nbsp;<a href="http://agiletoolkit.org/">Agile Toolkit</a>. {License}<a href="https://github.com/atk4/atk4/blob/master/LICENSE">See License</a>{/}{/}
+      </div>
+    </div>{/}
+  </div>
+</div>

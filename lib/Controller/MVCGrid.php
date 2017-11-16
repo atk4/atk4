@@ -1,95 +1,144 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
+<?php
+/**
+ * Connects regular grid with a model and imports fields as columns.
  *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
+ * In most cases the following use is sufficient
+ * $grid->setModel('SomeModel');
+ *
+ * You can use Grid only with a single Model to simplify select.
+ */
+class Controller_MVCGrid extends AbstractController
+{
+    /** @var Model */
+    public $model = null;
 
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
+    /** @var Grid */
+    public $grid = null;
 
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-class Controller_MVCGrid extends AbstractController {
     /**
-     * Connects regular grid with a model and imports fields as columns.
+     * Field associations grid_column => model_field
      *
-     * In most cases the following use is sufficient
-     * $grid->setModel('SomeModel');
-     *
-     * You can use Grid only with a single Model to simplify select.
+     * @var array
      */
+    public $field_associations = array();
 
-    public $model=null;
-    public $grid=null;
-
-    public $type_associations=array(
-        'string'=>'text',
-        'int'=>'number',
-        'numeric'=>'number',
-        'real'=>'real',
-        'money'=>'money',
-        'text'=>'shorttext',
-        'reference'=>'text',
-        'reference_id'=>'text',
-        'datetime'=>'timestamp',
-        'date'=>'date',
-        'daytime'=>'time',
-        'boolean'=>'boolean',
-        'list'=>'text',
-        'radio'=>'text',
-        'readonly'=>'text',
-        'image'=>'text',
-        'file'=>'reference',
-        'password'=>'password',
+    /**
+     * Field type associations model_field_type => grid_column_type/formatter
+     *
+     * @var array
+     */
+    public $type_associations = array(
+        'string' => 'text',
+        'int' => 'number',
+        'numeric' => 'number',
+        'real' => 'real',
+        'money' => 'money',
+        'text' => 'shorttext',
+        'reference' => 'text',
+        'reference_id' => 'text',
+        'datetime' => 'timestamp',
+        'date' => 'date',
+        'daytime' => 'time',
+        'boolean' => 'boolean',
+        'list' => 'text',
+        'radio' => 'text',
+        'readonly' => 'text',
+        'image' => 'text',
+        'file' => 'reference',
+        'password' => 'password',
     );
 
-    function addTypeAssociation($k, $v){
+    /** @var Grid */
+    public $owner;
+
+
+
+    /**
+     * Adds additional type association.
+     *
+     * @param string $k model field type
+     * @param string $v grid column type
+     */
+    public function addTypeAssociation($k, $v)
+    {
         $this->type_associations[$k] = $v;
     }
 
-    function setActualFields($fields){
-        if($this->owner->model->hasMethod('getActualFields'))
-            $this->importFields($this->owner->model,$fields);
+    /**
+     * Import model fields in grid.
+     *
+     * @param array|string|bool $fields
+     */
+    public function setActualFields($fields)
+    {
+        if ($this->owner->model->hasMethod('getActualFields')) {
+            $this->importFields($this->owner->model, $fields);
+        }
     }
 
-    function importFields($model,$fields=undefined){
+    /**
+     * Import model fields in form.
+     *
+     * @param Model $model
+     * @param array|string|bool $fields
+     *
+     * @return void|$this
+     */
+    public function importFields($model, $fields = null)
+    {
+        $this->model = $model;
+        $this->grid = $this->owner;
 
-        $this->model=$model;
-        $this->grid=$this->owner;
+        if ($fields === false) {
+            return;
+        }
 
-        if($fields===false)return;
+        if (!$fields) {
+            $fields = 'visible';
+        }
+        if (!is_array($fields)) {
+            // note: $fields parameter only useful if model is SQL_Model
+            $fields = $model->getActualFields($fields);
+        }
 
-        if(!$fields || $fields===undefined)$fields='visible';
-        if(!is_array($fields))$fields=$model->getActualFields($fields);
-        foreach($fields as $field){
+        // import fields one by one
+        foreach ($fields as $field) {
             $this->importField($field);
         }
         $model->setActualFields($fields);
 
         return $this;
     }
-    function importField($field){
 
-        $field=$this->model->hasElement($field);
-        if(!$field)return;
+    /**
+     * Import one field from model into grid.
+     *
+     * @param string $field
+     *
+     * @return void|Grid|Controller_Grid_Format
+     */
+    public function importField($field)
+    {
+        $field = $this->model->hasElement($field);
+        if (!$field) {
+            return;
+        }
+        /** @type Field $field */
 
-        $field_name=$field->short_name;
+        $field_name = $field->short_name;
 
-        if($field instanceof Model_Field_Reference){
-            $field_name=$field->getDereferenced();
+        if ($field instanceof Field_Reference) {
+            $field_name = $field->getDereferenced();
         }
 
-        $field_type=$this->getFieldType($field);
-        $field_caption=$field->caption();
+        $field_type = $this->getFieldType($field);
 
-        $this->field_associations[$field_name]=$field;
+        /** @type string $field_caption */
+        $field_caption = $field->caption();
 
-        $column = $this->owner->addColumn($field_type,$field_name,$field_caption);
+        $this->field_associations[$field_name] = $field;
+
+        $column = $this->owner->addColumn($field_type, $field_name, $field_caption);
 
         if ($field->sortable() && $column->hasMethod('makeSortable')) {
             $column->makeSortable();
@@ -97,20 +146,41 @@ class Controller_MVCGrid extends AbstractController {
 
         return $column;
     }
-    /** Redefine this to add special handling of your own fields */
-    function getFieldType($field){
-        $type=$field->type();
 
-        if(isset($this->type_associations[$type]))$type=$this->type_associations[$type];
+    /**
+     * Returns grid column type associated with model field.
+     *
+     * Redefine this method to add special handling of your own fields.
+     *
+     * @param Field $field
+     *
+     * @return string
+     */
+    public function getFieldType($field)
+    {
+        // default column type
+        $type = $field->type();
 
-        if($type=='text' && $field->allowHtml())$type='html';
+        // try to find associated form field type
+        if (isset($this->type_associations[$type])) {
+            $type = $this->type_associations[$type];
+        }
 
-        if($field->display()){
-            // this is wrong and obsolete, as hasOne uses display for way different purpose
+        if ($type == 'text' && $field->allowHtml()) {
+            $type = 'html';
+        }
 
-            $tmp=$field->display();
-            if(is_array($tmp))$tmp=$tmp['grid'];
-            if($tmp)$type=$tmp;
+        // if grid column type/formatter explicitly set in model
+        if ($field->display()) {
+            // @todo this is wrong and obsolete, as hasOne uses display for way different purpose
+
+            $tmp = $field->display();
+            if (is_array($tmp)) {
+                $tmp = $tmp['grid'];
+            }
+            if ($tmp) {
+                $type = $tmp;
+            }
         }
 
         return $type;

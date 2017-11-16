@@ -1,23 +1,8 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+<?php
 /**
- * Implementation of columns
+ * Implementation of columns.
  *
- * Use: 
+ * Use:
  *
  * 12-GS:
  *  $cols=$this->add('Columns');
@@ -35,47 +20,59 @@
  *  $cols->addColumn()->add('LoremIpsum');
  *  $cols->addColumn()->add('LoremIpsum');
  *
- * @license See http://agiletoolkit.org/about/license
- * 
-**/
-class View_Columns extends View {
-    public $mode='auto';      // 'auto', 'grid' or 'pct'
+ *  $cols->addClass('atk-cells-gutter-large')
+ */
+class View_Columns extends View
+{
+    public $mode = 'auto';      // 'auto', 'grid' or 'pct'
+
     /**
      * Adds new column to the set.
-     * Argument can be numeric for 12GS, percent for flexi design or omitted for equal columns
+     * Argument can be numeric for 12GS, percent for flexi design or omitted for equal columns.
+     *
+     * @param int|string $width
+     *
+     * @return View
      */
-    function addColumn($width='auto'){
-        $c=$this->add('View_Columns_Column',null,'Columns');
-        if(is_numeric($width)){
-            $this->mode='grid';
-            $c->addClass('span'.$width);
-        }elseif(substr($width,-1)=='%'){
-            if($this->mode!='pct'){
-                $this->template->trySet('class','atk-flexy');
-            }
-            $this->mode='pct';
-            $c->addStyle('width',$width);
+    public function addColumn($width = 'auto')
+    {
+        /** @type View $c */
+        $c = $this->add('View');
+        if (is_numeric($width)) {
+            $this->mode = 'grid';
+            $c->addClass('atk-col-'.$width);
+
+            return $c;
+        } elseif (substr($width, -1) == '%') {
+            $this->mode = 'pct';
+            $c->addStyle('width', $width);
         }
+        $this->template->trySet('row_class', 'atk-cells');
+        $c->addClass('atk-cell');
+
         return $c;
     }
-    function recursiveRender(){
-        // if auto mode, then calculate equal widths for columns
-        if($this->mode=='auto'){
-            $cnt=0;
-            foreach($this->elements as $el)
-               if($el instanceof View_Columns_Column) $cnt++;
 
-            if($cnt)
-               foreach($this->elements as $el)
-                  if($el instanceof View_Columns_Column){
-                     $el->setStyle('width',round(100/$cnt,2).'%');
-                  }
-            $this->template->trySet('class','atk-flexy');
+    /**
+     * @param string $size
+     *
+     * @return $this
+     */
+    public function setGutter($size = '')
+    {
+        if ($size) {
+            $size = '-'.$size;
         }
-        return parent::recursiveRender();
+        $this->addClass('atk-cells-gutter'.$size);
+
+        return $this;
     }
-    function defaultTemplate(){
+
+    /**
+     * @return array|string
+     */
+    public function defaultTemplate()
+    {
         return array('view/columns');
     }
 }
-class View_Columns_Column extends HtmlElement {}

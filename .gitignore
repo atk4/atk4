@@ -1,3 +1,4 @@
+tests/log/
 *.swp
 .svn
 *.swo
@@ -9,3 +10,11 @@
 .buildpath
 .settings
 .DS_Store
+
+*-ck.js
+
+*.codekit
+
+*.sublime-workspace
+
+public/atk4/css/style.css

@@ -8,7 +8,7 @@ config='../config.php';
 [ -f $config ] || config='../../config-default.php';
 [ -f $config ] || config='../../../config.php';
 
-dsn=`cat $config | grep "config\['dsn'\]" | cut -d= -f2 | sed "s/'/\"/g" | cut -d\" -f2 | sed 's|mysql://||'`
+dsn=`cat $config | grep "config\['dsn'\]" | head -1 | cut -d= -f2 | sed "s/'/\"/g" | cut -d\" -f2 | sed 's|mysql://||'`
 u=`echo $dsn | cut -d: -f1`
 p=`echo $dsn | cut -d: -f2 | cut -d@ -f1`
 db=`echo $dsn | cut -d/ -f2`

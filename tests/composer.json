@@ -1,8 +1,0 @@
-{
-    "provide": {
-    	"atk4/atk4": "dev-master"
-    },
-    "require": {
-        "satooshi/php-coveralls": "dev-master"
-    }
-}

@@ -1,32 +1,20 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+<?php
 /**
- * Implementation of Error Message Box
+ * Implementation of Error Message Box.
  *
- * Use: 
+ * Use:
  *  $this->add('View_Error')->set('Error Text');
- *
- * @license See http://agiletoolkit.org/about/license
- * 
-**/
-class View_Error extends View_Box {
-    public $class="ui-state-error";
-    function init(){
+ */
+class View_Error extends View_Box
+{
+    /**
+     * Initialization
+     */
+    public function init()
+    {
         parent::init();
-        $this->template->trySetHTML('Icon','<i class="ui-icon ui-icon-alert"></i>');    // change default icon
+        $this->addClass('atk-effect-danger');
+        $this->template->set('label', $this->app->_('Error').': ');
+        $this->addIcon('attention');
     }
 }

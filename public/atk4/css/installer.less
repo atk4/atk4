@@ -1,0 +1,208 @@
+@import 'less/agiletoolkit.less';
+
+
+// ==========================================================
+// Layout
+// ==========================================================
+
+// Important: list .createViewport functions in the right order based on @min and @max values otherwise styles get overridden
+.createViewport(
+	@wrapperMargin: @margin,
+	@colsGutter: 1rem,
+	@cols: 6,
+	@viewportMinWidth: 0,
+	@wrapperMinWidth: 40rem,
+	@wrapperMaxWidth: 40rem
+);
+
+
+// ==========================================================
+// Typography
+// ==========================================================
+
+@bodyFamily:           "Helvetica Neue", "Helvetica", @jui-ffDefault;
+@bodyColor:            #555;
+@bodySize:             0.875rem; // 14px
+@bodyBaseline:         1.618; // Golden Section
+
+@headingCase:          none; // Options: none, capitalize, uppercase, lowercase
+@headingColor:         #000;
+@headingFamily:        "Helvetica Neue", "Helvetica", @jui-ffDefault;
+@headingWeight:		   400;
+@headingBaseline:	   1.2; // Minor Third
+
+@fontScatter:          0.5; // Multiplier that affects difference between heading sizes
+
+
+// ==========================================================
+// Styles & Colors
+// ==========================================================
+
+@bodyBackground:       #fff;
+
+@cornerRadius:         5px;
+
+@textSelect:           @atk-swatch-ink; // Text selection's color
+@textDimmed:           30%;
+
+@blur:                 5px; // Effect .atk-blur can be applied on any element.
+
+@borderStatic:         #e1e1e1;
+@borderClickable:      darken(@borderStatic, 10%);
+@borderOverlay:        darken(@borderStatic, 25%);
+
+@atk-swatch-white:	   #ffffff;		.createSwatch(atk-swatch-white);
+@atk-swatch-gray:	     #f5f6f7;		.createSwatch(atk-swatch-gray, @swatchLinkColor: @atk-swatch-blue);
+@atk-swatch-ink:       #1c2933;		.createSwatch(atk-swatch-ink);
+@atk-swatch-yellow:	   #ffcc00;		.createSwatch(atk-swatch-yellow);
+@atk-swatch-red:	     #f9451f;		.createSwatch(atk-swatch-red);
+@atk-swatch-green:     #00cc66;		.createSwatch(atk-swatch-green);
+@atk-swatch-blue:      #0095ff;		.createSwatch(atk-swatch-blue);
+@swatchText:           50%; // Text color sensitivity based on swatch
+
+@effectSuccess:        #25c425;
+@effectWarning:        #f7a600;
+@effectDanger:         #ff2d1a;
+@effectInfo:           #2bacd7;
+
+
+// ==========================================================
+// Components & Widgets
+// ==========================================================
+
+@linkColor:            darken(@atk-swatch-blue,10%);
+@linkColorHover:       darken(@linkColor,10%);
+
+@dialogOverlay:        fade(#000, 25%); // Color of modal dialog's overlay
+
+@tooltipColor:         fade(@atk-swatch-ink, 90%);
+
+@menuActive:           @atk-swatch-blue;
+
+@buttonDefault:        #fff;
+@buttonHover:          #f5f5f5;
+@buttonActive:         #eee;
+
+@textDimmed:           lighten(@bodyColor, 20%);
+
+
+@boxColor:             #fff;
+
+@formMandatory:        #ff0000;
+
+@inputFocus:           @atk-swatch-blue;
+
+@popoverArrow:        12px;
+
+
+// ==========================================================
+// Custom
+// ==========================================================
+
+@colorMain: desaturate(shade(@atk-swatch-gray, 10%), 10%);
+
+body {
+  .background-cover('../images/background.jpg');
+  background-color: @atk-swatch-green;
+  #atk-content {
+    padding: @margin*2 0;
+    #installer {
+      border: none;
+      padding: @margin*2.5;
+      position: relative;
+      .version {
+        .position(@b:10px, @r:10px);
+        line-height: 1;
+      }
+      .logo {
+        .box-sizing(content-box);
+        .clear-font;
+        background: @atk-swatch-green url(../images/logo.svg) no-repeat center center;
+        background-size: 64px;
+        border: 1px solid @atk-swatch-green;
+        display: inline-block;
+        height: 64px;
+        padding: @margin;
+        width: 64px;
+        &.error {
+          background: @atk-swatch-yellow;
+          border-color: @atk-swatch-yellow;
+          position: relative;
+          *[class*=icon] {
+            .atk-size-exa;
+            .position(@t:50%, @l:50%);
+            color: #fff;
+            margin: -0.5em 0 0 -0.5em;
+            &:before {
+              margin: 0;
+            }
+          }
+        }
+      }
+      // .atk-form .atk-form-row {
+      //   position: relative;
+      //   text-align: left;
+      //   .forgot {
+      //     .position(@t:50%, @r:0.4em);
+      //     color: @colorMain;
+      //     line-height: 1;
+      //     margin-top: -0.5em;
+      //     &:hover {
+      //       color: darken(@colorMain,5%);
+      //     }
+      //   }
+      //   .atk-form-error {
+      //     .atk-size-milli;
+      //     .position(@t:0.2em, @l:100%);
+      //     margin-left: 1em;
+      //     white-space: nowrap;
+      //   }
+      // }
+    }
+  }
+}
+
+// Widgets
+// .ui-selectmenu-button {
+//   float: left;
+//   span.ui-selectmenu-text {
+//     font-weight: normal;
+//     line-height: inherit;
+//     padding: 0.5em 2em 0.5em 0.7em !important;
+//   }
+//   .ui-icon.ui-icon-triangle-1-s {
+//     background: none;
+//     color: @colorMain;
+//     line-height: 1em;
+//     text-align: center;
+//     text-indent: 0;
+//     &:after {
+//       content: '\e870';
+//       font-size: 12px;
+//       font-family: 'fontello';
+//       text-align: center;
+//       width: 1em;
+//     }
+//   }
+// }
+// .ui-selectmenu-menu {
+//   .ui-menu {
+//     .ui-menu-item {
+//       border: none;
+//       padding-left: 0.5em;
+//     }
+//   }
+// }
+.atk-box.terms {
+  .atk-size-milli;
+  height: 350px;
+  overflow: auto;
+}
+
+
+h1 {
+	font-weight: 300;
+}
+h5 {
+	font-weight: bold;
+}

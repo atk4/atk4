@@ -1,72 +1,114 @@
 <?php
-/***********************************************************
-  ..
-
-  Reference:
-  http://agiletoolkit.org/doc/ref
-
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
-=====================================================ATK4=*/
 /**
  * Text input with Javascript Date picker
  * It draws date in locale format (taken from $config['locale']['date'] setting) and stores it in
- * MySQL acceptable date format (YYYY-MM-DD)
+ * MySQL acceptable date format (YYYY-MM-DD).
  */
-class Form_Field_DatePicker extends Form_Field_Line {
-    public $options=array();
-    function init(){
+class Form_Field_DatePicker extends Form_Field_Line
+{
+    public $options = array();
+
+    public function init()
+    {
         parent::init();
 
         $this->addCalendarIcon();
     }
-    function addCalendarIcon() {
-        $this->addButton('',array('options'=>array('text'=>false)))
-            ->setHtml('&nbsp;')
-            ->setIcon('ui-icon-calendar')
-            ->js('click',$this->js()->datepicker('show'));
+
+    public function addCalendarIcon()
+    {
+        $this->addButton('', array('options' => array('text' => false)))
+            ->setHtml('')
+            ->setIcon('calendar')
+            ->js('click', $this->js()->datepicker('show'));
         $this->js('focus', $this->js()->datepicker('show'));
     }
-    function getInput($attr=array()){
+
+    public function getInput($attr = array())
+    {
         // $this->value contains date in MySQL format
         // we need it in locale format
 
         $this->js(true)->datepicker(array_merge(array(
-                        'duration'=>0,
-                        'showOn'=>'none',
-            //          'buttonImage'=>$this->api->locateURL('images','calendar.gif'),
-                //      'buttonImageOnly'=> true,
-                        'changeMonth'=>true,
-                        'changeYear'=>true,
-                        'dateFormat'=>$this->api->getConfig('locale/date_js','dd/mm/yy')
-                        ),$this->options));
+                    'duration' => 0,
+                    'showOn' => 'none',
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'dateFormat' => $this->app->getConfig('locale/date_js', 'dd/mm/yy'),
+                    ), $this->options));
 
         return parent::getInput(array_merge(
-                    array(
-                        'value'=>$this->value?(date($this->api->getConfig('locale/date','d/m/Y'),strtotime($this->value))):'',
-                         ),$attr
-                    ));
+            array(
+                'value' => $this->value
+                    ? (date($this->app->getConfig('locale/date', 'd/m/Y'), strtotime($this->value)))
+                    : '',
+            ),
+            $attr
+        ));
     }
-    function set($value){
+
+    public function set($value)
+    {
         // value can be valid date format, as in config['locale']['date']
-        if(!$value)return parent::set(null);
-        @list($d,$m,$y)=explode('/',$value);
-        if($y)$value=join('/',array($m,$d,$y));
-        elseif($m)$value=join('/',array($m,$d));
-        $value=date('Y-m-d',strtotime($value));
-        return parent::set($value);
+        if (!$value) {
+            return parent::set(null);
+        }
+
+        if (is_int($value)) {
+            return parent::set(date('Y-m-d', $value));
+        }
+
+        if ($value instanceof \DateTime) {
+            $value->setTimezone(new \DateTimeZone($this->app->getConfig('timezone', 'UTC')));
+            return parent::set($value->format('Y-m-d'));
+        }
+
+        return parent::set($this->convertDate($value, null, 'Y-m-d'));
     }
-    function get(){
-        $value=parent::get();
+
+    public function get()
+    {
+        $value = parent::get();
+
         // date cannot be empty string
-        if($value=='')return null;
+        if ($value == '') {
+            return;
+        }
+
         return $value;
+    }
+
+    /**
+     * Convert date from one format to another.
+     *
+     * @param string $date Date in string format
+     * @param string $from Optional source format, or null to use locale/date from configuration
+     * @param string $to Optional target format, or null to use locale/date from configuration
+     *
+     * @return string|null
+     */
+    public function convertDate($date, $from = null, $to = 'Y-m-d')
+    {
+        if (!$date) {
+            return null;
+        }
+        if ($from === null) {
+            $from = $this->app->getConfig('locale/date', null);
+        }
+        if ($from === null) {
+            // no format configured, so use our best guess. Will work with Y-m-d
+            $date = new DateTime($date);
+        } else {
+            $date = date_create_from_format($from, (string) $date);
+        }
+        if ($to === null) {
+            $to = $this->app->getConfig('locale/date', 'Y-m-d');
+        }
+
+        if ($date === false) {
+            throw $this->exception('Date format is not correct');
+        }
+
+        return date_format($date, $to);
     }
 }

@@ -1,0 +1,13 @@
+// Implements a mechanism where we have icon on the left and box on the right
+<{element}div{/} id="{$_name}" class="atk-box-small atk-cells atk-cells-gutter {$class}" style="{$style}" {$attributes}>
+.atk-cell
+  {Icon}
+  span.icon-info.atk-size-mega.atk-shape-rounded.atk-swatch-gray
+  {/}
+.atk-cell.atk-valign-middle.atk-jackscrew
+  b
+    {$label}
+  {$Content}
+.atk-cell.atk-valign-middle
+  {$Button}
+</{element}div{/}>

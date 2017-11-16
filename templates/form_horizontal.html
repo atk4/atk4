@@ -1,0 +1,40 @@
+{form}
+
+<div id="{$_name}" class="atk-form {class}stacked{/}" style="{$style}">
+  {$hint}
+  <form class="{$form_internal_class}" id="{$form_name}" name="{$form_name}" action="{$form_action}" method="{form_method}POST{/}" {$enctype}>
+    <fieldset class="atk-row {$fieldset}">
+      {Content}
+      {form_line}
+      <div class="atk-form-row atk-form-row-{$field_type} {row_class}span3{/}">
+        <label for="{$field_name}" {field_mandatory}class="mandatory"{/}><span>{$field_caption}</span>{$after_label}&nbsp;</label>
+        <div class="atk-form-field">{$before_field}{$input_row_start}{$before_input}{field_input}<input/>
+          {/}{$after_input}{$input_row_stop}{$after_field}</div>
+        {$field_hint}
+        {field_error}
+        <div class="atk-form-error">
+        <span class="field-error-text">{$field_error_str}</span>
+        </div>
+        {/}
+      </div>
+      {/form_line}
+
+      {form_separator}
+    </fieldset>
+    <fieldset class="{$fieldset_class}">
+      {/form_separator}
+      {form_comment}{$comment}{/}
+      {/Content}
+      <div style="display: none" class="field-error-template atk-form-error">
+        <span class="field-error-text">{$field_error_str}</span>
+      </div>
+    </fieldset>
+    {button_row}
+    <div class="atk-buttons {$buttons_class}">
+      {$form_buttons}
+    </div>
+    {$after_buttons}
+    {/}
+  </form>
+</div>
+{/form}

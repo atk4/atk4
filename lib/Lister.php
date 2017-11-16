@@ -1,9 +1,7 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
+<?php
 /**
  * Lister implements a very simple and fast way to output series
- * of data by applying template formatting
- * 
- * @link http://agiletoolkit.org/doc/lister
+ * of data by applying template formatting.
  *
  * Use:
  *  $list=$this->add('Lister');
@@ -12,71 +10,73 @@
  * Template (view/users.html):
  *  <h4><?$name?></h4>
  *  <p><?$desc?></p>
- *
- * @license See http://agiletoolkit.org/about/license
- *//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
-class Lister extends View
+ */
+class Lister extends View implements ArrayAccess
 {
-    /** If lister data is retrieved from the SQL database, this will contain dynamic query. */
+    /**
+     * If lister data is retrieved from the SQL database, this will contain dynamic query.
+     *
+     * @todo It's also defined in AbstractView class, but looks like deprecated, so we better use
+     * some other name of this property here.
+     *
+     * @var DB_dsql
+     */
     public $dq = null;
 
-    /** For other iterators, this variable will be used */
+    /**
+     * For other iterators, this variable will be used.
+     *
+     * @var mixed
+     */
     public $iter = null;
 
-    /** Points to current row before it's being outputted. Used in formatRow() */
-    public $current_row = array();
-
-    /** Similar to $current_row, but will be used for direct HTML output, no escaping. Use with care. */
-    public $current_row_html = array();
-
-    /** Contains ID of current record */
-    public $current_id = null;
+    /**
+     * Points to the current record returned by iterator. Can be array or object.
+     *
+     * @var array|object
+     */
+    public $current = null;
 
     /**
-     * Sets source data for the lister. If source is a model, use setModel() instead.
+     * Points to hash for current row before it's being outputted. Used in formatRow().
      *
-     * @link http://agiletoolkit.org/doc/lister
+     * @var array
+     */
+    public $current_row = array();
+
+    /**
+     * Similar to $current_row, but will be used for direct HTML output, no escaping. Use with care.
      *
-     * Examples:
-     *  $l=$this->add('Lister');
-     *  $l->setSource( array('a','b','c') );        // associative array
+     * @var array
+     */
+    public $current_row_html = array();
+
+    /**
+     * Contains ID of current record.
      *
-     * or   // array of hashes
-     *  $l->setSource( array(
-     *      array('id'=>1,'name'=>'John','surname'=>'Smith'),
-     *      array('id'=>2,'name'=>'Joe','surname'=>'Blogs')
-     *      ));
+     * @var mixed
+     */
+    public $current_id = null;
+
+
+
+    /**
+     * Similar to setModel, however you specify array of data here. setSource is
+     * actually implemented around :php:class:`Controller_Data_Array`. actually
+     * you can pass anything iterateable to setSource() as long as elements of
+     * iterating produce either a string or array.
      *
-     * or   // dsql
-     *  $l->setSource( $this->api->db->dsql()
-     *      ->table('user')
-     *      ->where('age>',3)
-     *      ->field('*') 
-     *  );
-     *
-     * or   // sql table
-     *  $l->setSource( 'user', array('name','surname'));
-     *
-     * @param mixed $source data source
-     * @param array $fields array of fieldnames
+     * @param mixed $source
+     * @param array|string|null $fields
      *
      * @return $this
      */
-	function setSource($source, $fields = null)
+    public function setSource($source, $fields = null)
     {
         // Set DSQL
         if ($source instanceof DB_dsql) {
             $this->dq = $source;
+
             return $this;
         }
 
@@ -86,109 +86,150 @@ class Lister extends View
                 throw $this->exception('Use setModel() for Models');
             } elseif ($source instanceof Controller) {
                 throw $this->exception('Use setController() for Controllers');
-            } elseif ($source instanceof Iterator) {
-                $this->iter=$source;
+            } elseif ($source instanceof Iterator || $source instanceof Closure) {
+                $this->iter = $source;
+
                 return $this;
             }
 
             // Cast non-iterable objects into array
-            $source = (array)$source;
+            $source = (array) $source;
         }
 
         // Set Array as a data source
         if (is_array($source)) {
             $m = $this->setModel('Model', $fields);
-            if (is_array(reset($source))) {
-                $m->setSource('Array', $source);
-            } else {
-                $m->setSource('ArrayAssoc', $source);
-            }
+            $m->setSource('Array', $source);
 
             return $this;
         }
 
         // Set manually
-        $this->dq = $this->api->db->dsql();
+        $this->dq = $this->app->db->dsql();
         $this->dq
             ->table($source)
             ->field($fields ?: '*');
 
         return $this;
     }
- 
+
     /**
-     * Returns data source iterator
+     * Returns data source iterator.
      *
      * @return mixed
      */
-    function getIterator()
+    public function getIterator()
     {
         if (is_null($i = $this->model ?: $this->dq ?: $this->iter)) {
             throw $this->exception('Please specify data source with setSource or setModel');
         }
+        if ($i instanceof Closure) {
+            $i = call_user_func($i);
+        }
+
         return $i;
     }
 
     /**
-     * Renders everything
-     *
-     * @return void
+     * Renders everything.
      */
-    function render()
+    public function render()
     {
         $iter = $this->getIterator();
-        foreach ($iter as $this->current_id=>$this->current_row) {
+        foreach ($iter as $this->current_id => $this->current_row) {
+            if ($this->current_row instanceof Model || $this->current_row instanceof \atk4\data\Model) {
+                /** @type Model $this->current_row */
+                $this->current_row = $this->current_row->get();
+            } elseif (!is_array($this->current_row) && !($this->current_row instanceof ArrayAccess)) {
+                // Looks like we won't be able to access current_row as array, so we will
+                // copy it's value inside $this->current instead and produce an empty array
+                // to be filled out by a custom iterators
+                $this->current = $this->current_row;
+                $this->current_row = get_object_vars($this->current);
+            }
+
             $this->formatRow();
             $this->output($this->rowRender($this->template));
         }
     }
 
     /**
-     * Renders single row
+     * Renders single row.
      *
      * If you use for formatting then interact with template->set() directly
      * prior to calling parent
      *
-     * @param SQLite $template template to use for row rendering
+     * @param Template $template template to use for row rendering
      *
      * @return string HTML of rendered template
      */
-    function rowRender($template)
+    public function rowRender($template)
     {
-        foreach ($this->current_row as $key=>$val) {
+        foreach ($this->current_row as $key => $val) {
             if (isset($this->current_row_html[$key])) {
                 continue;
             }
+
+            if ($val instanceof DateTime) {
+                $val = $val->format($this->app->getConfig('locale/datetime', 'Y-m-d H:i:s'));
+            }
+
             $template->trySet($key, $val);
         }
+
         $template->setHTML($this->current_row_html);
         $template->trySet('id', $this->current_id);
-        return $template->render();
+        $o = $template->render();
+        foreach (array_keys($this->current_row) + array_keys($this->current_row_html) as $k) {
+            $template->tryDel($k);
+        }
+
+        return $o;
     }
 
     /**
-     * Redefine and change $this->current_row to format data before it appears
-     * 
-     * @return void
+     * Called after iterating and may be redefined to change contents of
+     * :php:attr:`Lister::current_row`. Redefine this method to change rendering
+     * logic.
      */
-    function formatRow()
+    public function formatRow()
     {
         $this->hook('formatRow');
     }
 
+    // {{{ ArrayAccess support
+    public function offsetExists($name)
+    {
+        return isset($this->current_row[$name]);
+    }
+    public function offsetGet($name)
+    {
+        return $this->current_row[$name];
+    }
+    public function offsetSet($name, $val)
+    {
+        $this->current_row[$name] = $val;
+        $this->set($name, $val);
+    }
+    public function offsetUnset($name)
+    {
+        unset($current_row[$name]);
+    }
+    // }}}
+    //
     /**
-     * Sets default template
+     * Sets default template.
      *
      * @return array
      */
-    function defaultTemplate()
+    public function defaultTemplate()
     {
         return array('view/lister');
     }
 
     // {{{ Obsolete methods
     /** @obsolete set array source */
-    function setStaticSource($data)
+    public function setStaticSource($data)
     {
         return $this->setSource($data);
     }

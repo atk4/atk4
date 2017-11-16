@@ -1,0 +1,22 @@
+span(id="{$_name}" style="{$style}" class="{$class} span_3")
+    form(name="{$form_name}" action="{$form_action}" method="POST")
+        .atk-cells.atk-input-combo
+            {$cancel_button}
+            .atk-cell.atk-jackscrew
+                {Content}
+                {form_line}
+                {$before_field}
+                {field_input}
+                input(type="text" name="loginemail" class="logintext" value="" placeholder="{field_caption}Search...{/}")
+                {/}
+                {$after_field}
+                {field_error}
+                span.form_error {field_error_str}Error{/}
+                {/}
+                {/form_line}
+                {form_separator}
+                {separator} Personal information{/}
+                {/form_separator}
+                {/Content}
+            .atk-cell
+                {$form_buttons}

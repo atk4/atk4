@@ -1,0 +1,1087 @@
+<style>
+	#demo-gs .atk-row>div {background:#ebf1f5;padding:5px 20px;font-size:11px;text-align:center;-moz-box-sizing:border-box;box-sizing:border-box;border-radius:20px;}
+	.demo-bg {background:#ebf1f5;}
+	.demo-bg fieldset,
+	.demo-bg .atk-buttons {border-color:#c3d0d9 !important;}
+	section, div.section {margin-bottom:6em;}
+	.section-heading {font-size:42px;color:#d5dde5;margin-bottom:0.7em;}
+	#jui-menu .ui-menu { width: 150px; }
+</style>
+
+<script>
+	$(function(){
+		$('.demo-button').button();
+		$( "#datepicker" ).datepicker({
+			showButtonPanel: true
+		});
+		
+		$( ".demo button:first" ).button({
+            icons: {
+                primary: "ui-icon-locked"
+            },
+            text: false
+        }).next().button({
+            icons: {
+                primary: "ui-icon-locked"
+            }
+        }).next().button({
+            icons: {
+                primary: "ui-icon-gear",
+                secondary: "ui-icon-triangle-1-s"
+            }
+        }).next().button({
+            icons: {
+                primary: "ui-icon-gear",
+                secondary: "ui-icon-triangle-1-s"
+            },
+            text: false
+        });
+        $('#demo-datepicker').button({
+            icons: {
+                primary: "ui-icon-calendar"
+            },
+            text: false
+        });
+        $('.demo-quicksearch').button({
+            icons: {
+                primary: "ui-icon-search"
+            },
+            text: false
+        });
+        $('#demo-buttonset').buttonset();
+        
+        $('.atk-dropmenu').click(function(ev){
+        	ev.stopPropagation();
+        	$('body').one("click",function(){
+        		$('.atk-dropmenu').removeClass("ui-state-active").find(".ui-widget-content").hide();
+        	});
+        	$(this).addClass('ui-state-active').find('.ui-widget-content').show().focus().find("span").hover(
+        	function() {
+        		$(this).addClass("ui-state-highlight");
+        	},
+        	function() {
+        		$(this).removeClass("ui-state-highlight");
+        	}); 
+        	
+        });
+	    
+	    $('.demo-gear').button({
+            icons: {
+                primary: "ui-icon-gear",
+                secondary: "ui-icon-triangle-1-s"
+            },
+            text: false
+        });
+        
+        $('#jui-menu').menu();
+        $('#jui-tooltip').tooltip();
+        $('#jui-tooltip-tracking').tooltip({track:true});
+        
+	});
+</script>
+
+<div class="section-heading">Grid System</div>
+<div id="demo-gs" class="section">
+	<div class="atk-row" title="12 column layout">
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+		<div class="span1">.span1</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="6 column layout">
+		<div class="span2">.span2</div>
+		<div class="span2">.span2</div>
+		<div class="span2">.span2</div>
+		<div class="span2">.span2</div>
+		<div class="span2">.span2</div>
+		<div class="span2">.span2</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="4 column layout">
+		<div class="span3">.span3</div>
+		<div class="span3">.span3</div>
+		<div class="span3">.span3</div>
+		<div class="span3">.span3</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="3 column layout">
+		<div class="span4">.span4</div>
+		<div class="span4">.span4</div>
+		<div class="span4">.span4</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="Half and half">
+		<div class="span6">.span6</div>
+		<div class="span6">.span6</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="Example uncommon two-column layout">
+		<div class="span5">.span5</div>
+		<div class="span7">.span7</div>
+	</div><!-- /row -->
+	<div class="atk-row" title="Unnecessary single column layout">
+		<div class="span12">.span12</div>
+	</div><!-- /row -->
+</div>
+
+<div class="section-heading">Typography</div>
+<section id="demo-typography">
+	<div class="atk-row">
+		<div class="span2">
+			<h1>h1 Heading</h1>
+			<h2>h2 Heading</h2>
+			<h3>h3 Heading</h3>
+			<h4>h4 Heading</h4>
+			<h5>h5 Heading</h5>
+		</div>
+		<div class="span5">
+			<h2>Paragraph<small>Each heading can have a subheading</small></h2>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
+		<div class="span5">
+			<div class="atk-row">
+				<div class="span4">
+					<h2>Basic List</h2>
+					<ul>
+						<li>Item 1
+							<ul>
+								<li>Sub item 1</li>
+								<li>Sub item 2</li>
+								<li>Sub item 3</li>
+								<li>Sub item 4</li>
+								<li>Sub item 5</li>
+							</ul>
+						</li>
+						<li>Item 2</li>
+					</ul>
+				</div>
+				<div class="span4">
+					<h2>.simple <em>List</em></h2>
+					<ul class="simple">
+						<li>Item 1</li>
+						<li>Item 2</li>
+						<li>Item 3</li>
+						<li>Item 4</li>
+						<li>Item 5</li>
+					</ul>
+				</div>
+				<div class="span4">
+					<h2>Ordered List</h2>
+					<ol>
+						<li>Item 1</li>
+						<li>Item 2</li>
+						<li>Item 3</li>
+						<li>Item 4</li>
+						<li>Item 5</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="hr"></div>
+	<h2>Definition Lists</h2>
+	<div class="atk-row">
+		<div class="span6">
+			<h3>Basic</h3>
+			<dl>
+				<dt>Biology</dt>
+				<dd>The science of life or living matter in all its forms and phenomena, especially with reference to origin, growth, reproduction, structure, and behavior.</dd>
+				<dt>Chemistry</dt>
+				<dd>The science that deals with the composition and properties of substances and various elementary forms of matter.</dd>
+				<dt>Geology</dt>
+				<dd>The science that deals with the dynamics and physical history of the earth, the rocks of which it is composed, and the physical, chemical, and biological changes that the earth has undergone or is undergoing.</dd>
+			</dl>
+		</div>
+		<div class="span6">
+			<h3>.stacked</h3>
+			<dl class="stacked">
+				<dt>Biology</dt>
+				<dd>The science of life or living matter in all its forms and phenomena, especially with reference to origin, growth, reproduction, structure, and behavior.</dd>
+				<dt>Chemistry</dt>
+				<dd>The science that deals with the composition and properties of substances and various elementary forms of matter.</dd>
+				<dt>Geology</dt>
+				<dd>The science that deals with the dynamics and physical history of the earth, the rocks of which it is composed, and the physical, chemical, and biological changes that the earth has undergone or is undergoing.</dd>
+			</dl>
+		</div>
+	</div>
+</section>
+
+<div class="section-heading">Forms</div>
+<section id="demo-forms">
+	<div class="atk-row">
+		<div class="span6">
+			<h2>Basic Form</h2>
+			<div class="atk-form wider-labels atk-box atk-block demo-bg">
+				<form>
+					<fieldset>
+						<div class="atk-form-row">
+							<label>Input:</label>
+							<div class="atk-form-field">
+								<input type="text" />
+							</div>
+						</div>
+						<div class="atk-form-row has-error">
+							<label>Input with Button:</label>
+							<div class="atk-form-field">
+								<div class="input-row">
+									<div class="input-cell expanded"><input type="text" /></div>
+									<div class="input-cell"><button class="demo-button">Button</button></div>
+								</div>
+								<ins>Field Comment</ins>
+								<div class="atk-form-error">Field Error</div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Password:</label>
+							<div class="atk-form-field">
+								<input type="password" />
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>File:</label>
+							<div class="atk-form-field">
+								<input type="file" />
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Textarea:</label>
+							<div class="atk-form-field">
+								<textarea height="96"></textarea>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Select:</label>
+							<div class="atk-form-field">
+								<select><option>Option #1</option><option>Option #2</option><option>Option #3</option></select>
+							</div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<div class="legend"><h3>This is Legend</h3></div>
+						<div class="atk-form-row">
+							<label>Checkboxes:</label>
+							<div class="atk-form-field atk-form-options">
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Checkboxes Stacked:</label>
+							<div class="atk-form-field atk-form-options stacked">
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Radio:</label>
+							<div class="atk-form-field atk-form-options">
+								<div><input type="radio" /><label>Blue</label></div>
+								<div><input type="radio" /><label>Red</label></div>
+								<div><input type="radio" /><label>Yellow</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Radio Stacked:</label>
+							<div class="atk-form-field atk-form-options stacked">
+								<div><input type="radio" /><label>Blue</label></div>
+								<div><input type="radio" /><label>Red</label></div>
+								<div><input type="radio" /><label>Yellow</label></div>
+							</div>
+						</div>
+					</fieldset>
+					<div class="atk-buttons">
+						<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="span6">
+			<h2><em>Form</em> .stacked</h2>
+			<div class="atk-form stacked atk-box atk-block demo-bg">
+				<form>
+					<fieldset>
+						<div class="atk-form-row">
+							<label>Input:</label>
+							<div class="atk-form-field">
+								<input type="text" />
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Input with Button:</label>
+							<div class="atk-form-field">
+								<div class="input-row">
+									<div class="input-cell expanded"><input type="text" /></div>
+									<div class="input-cell"><button class="demo-button">Button</button></div>
+								</div>
+								<ins>Field Comment</ins>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Password:</label>
+							<div class="atk-form-field">
+								<input type="password" />
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>File:</label>
+							<div class="atk-form-field">
+								<input type="file" />
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Textarea:</label>
+							<div class="atk-form-field">
+								<textarea height="96"></textarea>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Select:</label>
+							<div class="atk-form-field">
+								<select><option>Option #1</option><option>Option #2</option><option>Option #3</option></select>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Checkboxes:</label>
+							<div class="atk-form-field atk-form-options">
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+								<div><input type="checkbox" /><label>Cranberry</label></div>
+								<div><input type="checkbox" /><label>Blackberry</label></div>
+								<div><input type="checkbox" /><label>Blueberry</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Checkboxes Stacked:</label>
+							<div class="atk-form-field atk-form-options stacked">
+								<div><input type="checkbox" /><label>Chocolate</label></div>
+								<div><input type="checkbox" /><label>Strawberry</label></div>
+								<div><input type="checkbox" /><label>Vanilla</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Radio:</label>
+							<div class="atk-form-field atk-form-options">
+								<div><input type="radio" /><label>Blue</label></div>
+								<div><input type="radio" /><label>Red</label></div>
+								<div><input type="radio" /><label>Yellow</label></div>
+								<div><input type="radio" /><label>Violet</label></div>
+								<div><input type="radio" /><label>Cyan</label></div>
+								<div><input type="radio" /><label>Orange</label></div>
+								<div><input type="radio" /><label>Black</label></div>
+								<div><input type="radio" /><label>White</label></div>
+							</div>
+						</div>
+						<div class="atk-form-row">
+							<label>Radio Stacked:</label>
+							<div class="atk-form-field atk-form-options stacked">
+								<div><input type="radio" /><label>Blue</label></div>
+								<div><input type="radio" /><label>Red</label></div>
+								<div><input type="radio" /><label>Yellow</label></div>
+							</div>
+						</div>
+					</fieldset>
+					<div class="atk-buttons">
+						<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div><!-- Span6 ends -->
+	</div>
+	<h2>Inline Forms <em>based on Grid System</em></h2>
+	<div class="atk-form stacked atk-box atk-block demo-bg">
+		<form>
+			<fieldset class="atk-row">
+				<div class="atk-form-row span2">
+					<label>Input:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+					</div>
+				</div>
+				<div class="atk-form-row span6">
+					<label>Input with Button:</label>
+					<div class="atk-form-field">
+						<div class="input-row">
+							<div class="input-cell expanded"><input type="text" /></div>
+							<div class="input-cell"><button class="demo-button">Button</button></div>
+						</div>
+					</div>
+				</div>
+				<div class="atk-form-row span4">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="atk-row">
+				<div class="atk-form-row span2">
+					<label>Input:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+					</div>
+				</div>
+				<div class="atk-form-row span2">
+					<label>Input with Button:</label>
+					<div class="atk-form-field">
+						<div class="input-row">
+							<div class="input-cell expanded"><input type="text" /></div>
+							<div class="input-cell"><button class="demo-button">Button</button></div>
+						</div>
+					</div>
+				</div>
+				<div class="atk-form-row span2">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+				<div class="atk-form-row span2">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+				<div class="atk-form-row span2">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+				<div class="atk-form-row span2">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+			</fieldset>
+			<div class="atk-buttons">
+				<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+			</div>
+		</form>
+	</div>
+	<div class="atk-form stacked atk-row atk-box atk-block demo-bg">
+		<form>
+			<fieldset class="span9">
+				<div class="atk-form-row span2">
+					<label>Input:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+					</div>
+				</div>
+				<div class="atk-form-row span6">
+					<label>Input with Button:</label>
+					<div class="atk-form-field">
+						<div class="input-row">
+							<div class="input-cell expanded"><input type="text" /></div>
+							<div class="input-cell"><button class="demo-button">Button</button></div>
+						</div>
+					</div>
+				</div>
+				<div class="atk-form-row span4">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+			</fieldset>
+			<div class="atk-buttons span3">
+				<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+			</div>
+		</form>
+	</div>
+	<div class="atk-form atk-row labels-right atk-box atk-block demo-bg">
+		<form>
+			<fieldset class="span9">
+				<div class="atk-form-row span6">
+					<label>Username:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+					</div>
+				</div>
+				<div class="atk-form-row span6">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+			</fieldset>
+			<div class="atk-buttons span3">
+				<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+			</div>
+		</form>
+	</div>
+	<h2>Multi-Column Form <em>based on Grid System</em></h2>
+	<div class="atk-form stacked wider-labels atk-row atk-box atk-block demo-bg">
+		<form>
+			<fieldset class="span4">
+				<div class="atk-form-row">
+					<label>Input:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+						<ins>Field's Comment</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Input with Button:</label>
+					<div class="atk-form-field">
+						<div class="input-row">
+							<div class="input-cell expanded"><input type="text" /></div>
+							<div class="input-cell"><button class="demo-button">Button</button></div>
+						</div>
+						<ins>Field Comment</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Password:</label>
+					<div class="atk-form-field">
+						<input type="password" />
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>File:</label>
+					<div class="atk-form-field">
+						<input type="file" />
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Select:</label>
+					<div class="atk-form-field">
+						<select><option>Option #1</option><option>Option #2</option><option>Option #3</option></select>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Checkboxes:</label>
+					<div class="atk-form-field atk-form-options">
+						<div><input type="checkbox" /><label>Chocolate</label></div>
+						<div><input type="checkbox" /><label>Strawberry</label></div>
+						<div><input type="checkbox" /><label>Vanilla</label></div>
+						<div><input type="checkbox" /><label>Cranberry</label></div>
+						<div><input type="checkbox" /><label>Blackberry</label></div>
+						<div><input type="checkbox" /><label>Blueberry</label></div>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Checkboxes Stacked:</label>
+					<div class="atk-form-field atk-form-options stacked">
+						<div><input type="checkbox" /><label>Chocolate</label></div>
+						<div><input type="checkbox" /><label>Strawberry</label></div>
+						<div><input type="checkbox" /><label>Vanilla</label></div>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Radio:</label>
+					<div class="atk-form-field atk-form-options">
+						<div><input type="radio" /><label>Blue</label></div>
+						<div><input type="radio" /><label>Red</label></div>
+						<div><input type="radio" /><label>Yellow</label></div>
+						<div><input type="radio" /><label>Violet</label></div>
+						<div><input type="radio" /><label>Cyan</label></div>
+						<div><input type="radio" /><label>Orange</label></div>
+						<div><input type="radio" /><label>Black</label></div>
+						<div><input type="radio" /><label>White</label></div>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Radio Stacked:</label>
+					<div class="atk-form-field atk-form-options stacked">
+						<div><input type="radio" /><label>Blue</label></div>
+						<div><input type="radio" /><label>Red</label></div>
+						<div><input type="radio" /><label>Yellow</label></div>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="span4">
+				<div class="atk-form-row">
+					<label>Input:</label>
+					<div class="atk-form-field">
+						<input type="text" />
+						<ins>Field's Comment</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Input with Button:</label>
+					<div class="atk-form-field">
+						<div class="input-row span9">
+							<div class="input-cell expanded"><input type="text" /></div>
+							<div class="input-cell"><button class="demo-button" id="demo-datepicker">demo</button></div>
+						</div>
+						<ins>Class ".span9"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Price:</label>
+					<div class="atk-form-field">
+						<input type="text" class="span3" />
+						<ins>Class ".span3"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Textarea 1:</label>
+					<div class="atk-form-field span8">
+						<textarea height="96"></textarea>
+						<ins>Class ".span8"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Textarea 2:</label>
+					<div class="atk-form-field">
+						<textarea height="96" class="span6"></textarea><ins>Class ".span6"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Textarea 3:</label>
+					<div class="atk-form-field">
+						<textarea height="96" class="span4"></textarea><ins>Class ".span4"</ins>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="span4">
+				<div class="atk-form-row">
+					<label>Multiple Inputs:</label>
+					<div class="atk-form-field">
+						<input type="text" class="span3" /><input type="text" class="span3" /><input type="text" class="span3" />
+						<ins>Classes ".span3" + ".span3" + ".span3"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Input with the button on its left:</label>
+					<div class="atk-form-field">
+						<div class="input-row span8">
+							<div class="input-cell"><button class="demo-button">+</button></div>
+							<div class="input-cell expanded"><input type="text" /></div>
+						</div>
+						<ins>Class ".span8"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Price:</label>
+					<div class="atk-form-field">
+						<input type="text" class="span3" />
+						<ins>Class ".span3"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Textarea 1:</label>
+					<div class="atk-form-field">
+						<textarea height="96" class="span6" ></textarea><ins>Class ".span6"</ins>
+					</div>
+				</div>
+				<div class="atk-form-row">
+					<label>Textarea 2:</label>
+					<div class="atk-form-field">
+						<textarea height="96" class="span3"></textarea><ins>Class ".span3"</ins>
+					</div>
+				</div>
+			</fieldset>
+			<div class="atk-buttons">
+				<button class="demo-button">Submit</button><button class="demo-button">Cancel</button>
+			</div>
+		</form>
+	</div>
+</section>
+
+<div class="section-heading">Tables</div>
+<section id="demo-tables">
+	<h2>Basic Grid</h2>
+	<div class="atk-grid">
+		<div class="atk-grid-panel">
+			<div class="float-right span3">
+				<div class="input-row">
+					<div class="input-cell expanded"><input type="text" /></div>
+					<div class="input-cell"><button class="demo-button demo-quicksearch">Icon</button></div>
+				</div>
+			</div>
+			<div class="atk-buttons">
+				<button class="demo-button">Add</button><button class="demo-button">Edit</button>
+			</div>
+		</div>
+		<table>
+			<thead>
+				<tr class="ui-widget-header">
+					<th class="ui-widget-header">First Name</th>
+					<th class="ui-widget-header">Last Name</th>
+					<th class="ui-widget-header">City</th>
+					<th class="ui-widget-header">Country</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>John</td>
+					<td>Smith</td>
+					<td>Dublin</td>
+					<td>Ireland</td>
+				</tr>
+				<tr>
+					<td>Mark</td>
+					<td>Samson</td>
+					<td>London</td>
+					<td>United Kingdom</td>
+				</tr>
+				<tr>
+					<td>Julie</td>
+					<td>Thompson</td>
+					<td>Preston</td>
+					<td>United Kingdom</td>
+				</tr>
+				<tr>
+					<td>Tony</td>
+					<td>Ramirez</td>
+					<td>Barcelona</td>
+					<td>Spain</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="atk-paginator">
+			<a href="#" class="disabled">&larr; Prev</a><a href="#" class="ui-state-active ui-corner-all">1</a><a href="#">2</a><a href="#">3</a><a href="#" class="disabled">…</a><a href="#">19</a><a href="#">20</a><a href="#">21</a><a href="#">Next &rarr;</a>
+		</div>
+	</div>
+	<h2>.bordered <em>&</em> .zebra <em>Grid</em></h2>
+	<div class="atk-grid bordered zebra">
+		<div class="atk-grid-panel">
+			<div class="float-right span3">
+				<div class="input-row">
+					<div class="input-cell expanded"><input type="text" /></div>
+					<div class="input-cell"><button class="demo-button demo-quicksearch">Icon</button></div>
+				</div>
+			</div>
+			<div class="atk-buttons">
+				<button class="demo-button">Add</button><button class="demo-button">Edit</button>
+			</div>
+		</div>
+		<table>
+			<thead>
+				<tr class="ui-widget-header">
+					<th class="ui-widget-header">First Name</th>
+					<th class="ui-widget-header">Last Name</th>
+					<th class="ui-widget-header">City</th>
+					<th class="ui-widget-header">Country</th>
+					<th width="30"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>John</td>
+					<td>Smith</td>
+					<td>Dublin</td>
+					<td>Ireland</td>
+					<td>
+						<a href="javascript:void(0)" class="demo-gear atk-dropmenu">
+							Edit
+							<span class="ui-widget-content ui-corner-bottom">
+								<span><i class="ui-icon ui-icon-pencil"></i>Edit</span>
+								<span><i class="ui-icon ui-icon-trash"></i>Delete</span>
+							</span>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>Mark</td>
+					<td>Samson</td>
+					<td>London</td>
+					<td>United Kingdom</td>
+					<td>
+						<a href="javascript:void(0)" class="demo-gear atk-dropmenu">
+							Edit
+							<span class="ui-widget-content ui-corner-bottom">
+								<span><i class="ui-icon ui-icon-pencil"></i>Edit</span>
+								<span><i class="ui-icon ui-icon-trash"></i>Delete</span>
+							</span>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>Julie</td>
+					<td>Thompson</td>
+					<td>Preston</td>
+					<td>United Kingdom</td>
+					<td>
+						<a href="javascript:void(0)" class="demo-gear atk-dropmenu">
+							Edit
+							<span class="ui-widget-content ui-corner-bottom">
+								<span><i class="ui-icon ui-icon-pencil"></i>Edit</span>
+								<span><i class="ui-icon ui-icon-trash"></i>Delete</span>
+							</span>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>Tony</td>
+					<td>Ramirez</td>
+					<td>Barcelona</td>
+					<td>Spain</td>
+					<td>
+						<a href="javascript:void(0)" class="demo-gear atk-dropmenu">
+							Edit
+							<span class="ui-widget-content ui-corner-bottom">
+								<span><i class="ui-icon ui-icon-pencil"></i>Edit</span>
+								<span><i class="ui-icon ui-icon-trash"></i>Delete</span>
+							</span>
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="atk-paginator">
+			<a href="#" class="disabled ui-corner-left">&larr; Prev</a><a href="#" class="ui-state-active ui-corner-all">1</a><a href="#">2</a><a href="#">3</a><a href="#" class="disabled">…</a><a href="#">19</a><a href="#">20</a><a href="#">21</a><a href="#" class="ui-corner-right">Next &rarr;</a>
+		</div>
+	</div>
+</section>
+
+<div class="section-heading">Menus</div>
+<section id="demo-navs">
+	<div class="atk-row">
+		<div class="span6">
+			<h2>Horizontal Menu</h2>
+			<div class="atk-menu atk-menu-horizontal">
+				<ul>
+					<li class="ui-state-default"><a href="#">Menu Item #1</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #2</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #3</a></li>
+					<li class="ui-state-active"><a href="#">Menu Item #4</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #5</a></li>
+				</ul>
+			</div>
+			<h2>Basic Menu</h2>
+			<div class="atk-menu">
+				<a href="#">Menu Item #1</a><span class="atk-sep">|</span><a href="#">Menu Item #2</a><span class="atk-sep">|</span><a href="#">Menu Item #3</a><span class="atk-sep">|</span><a href="#">Menu Item #4</a><span class="atk-sep">|</span><a href="#">Menu Item #5</a>
+			</div>
+		</div>
+		<div class="span6">
+			<h2>Vertical Menu</h2>
+			<div class="atk-menu atk-menu-vertical">
+				<ul>
+					<li class="ui-state-default"><a href="#">Menu Item #1</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #2</a></li>
+					<li class="ui-state-active"><a href="#">Menu Item #3</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #4</a></li>
+					<li class="ui-state-default"><a href="#">Menu Item #5</a></li>
+				</ul>
+			</div>		
+		</div>
+	</div>
+</section>
+
+<div class="section-heading">jQuery UI</div>
+<section id="demo-jui">
+	<script>
+		$(document).ready(function(){
+			$('#dialog-modal').click(function(){
+				$('#dialog-modal-content').dialog({
+					modal:true,
+					title:"Dialog's Title"
+				
+				});
+			});
+			$('#demo-tabs').tabs();
+			$('#accordion').accordion();
+		});
+	</script>
+	<div class="atk-row">
+		<div class="span6">
+			<h2>Tabs</h2>
+			<div id="demo-tabs">
+				<ul>
+					<li><a href="#tabs-1">Tabs 1</a></li>
+					<li><a href="#tabs-2">Tabs 2</a></li>
+				</ul>
+				<div id="tabs-1">
+					<h4>Tabs #1</h4>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</div>
+				<div id="tabs-2">
+					<h4>Tabs #2</h4>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>				</div>
+			</div>
+		</div>
+		<div class="span6">
+			<h2>Accordion</h2>
+			<div id="accordion">
+				<h3><a href="#">Section 1</a></h3>
+				<div>
+					<p>
+					Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+					ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+					amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+					odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+					</p>
+				</div>
+				<h3><a href="#">Section 2</a></h3>
+				<div>
+					<p>
+					Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+					purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+					velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+					suscipit faucibus urna.
+					</p>
+				</div>
+				<h3><a href="#">Section 3</a></h3>
+				<div>
+					<p>
+					Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+					Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+					ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+					lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+					</p>
+					<ul>
+						<li>List item one</li>
+						<li>List item two</li>
+						<li>List item three</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="atk-row">
+		<div class="span6">
+			<h2>Notifications</h2>
+			<h3>Info</h3>
+			<div class="atk-notification ui-state-highlight ui-corner-all ">
+				<div class="atk-notification-text">
+					<i class="ui-icon ui-icon-info"></i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</div>
+				<a href="#" class="ui-icon ui-icon-closethick"></a>
+			</div>
+			<h3>Error</h3>
+			<div class="atk-notification ui-state-error ui-corner-all ">
+				<div class="atk-notification-text">
+					<i class="ui-icon ui-icon-alert"></i>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				</div>
+				<a href="#" class="ui-icon ui-icon-closethick"></a>
+			</div>
+		</div>
+		<div class="span3">
+			<h2>Date Picker</h2>
+			<div id="datepicker"></div>
+		</div>
+		<div class="span3">
+			<h2>Dialog</h2>
+			<button class="demo-button" id="dialog-modal">Modal Dialog</button>
+			<div id="dialog-modal-content" style="display:none">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+			<h2>Buttons</h2>
+			<div class="demo">
+				<button>Button with icon only</button>
+				<button>Button with icon on the left</button>
+				<button>Button with two icons</button>
+				<button>Button with two icons and no text</button>			
+			</div><!-- End demo -->
+		</div>
+	</div>
+	<div class="atk-row">
+		<div class="span4">
+            <h2>Menu</h2>
+            <ul id="jui-menu">
+				<li><a href="#">Item #1</a></li>
+				<li><a href="#">Item #2</a>
+                    <ul>
+                        <li class="ui-state-disabled"><a href="#">Item #2.1 (disabled)</a></li>
+                        <li><a href="#">Item #2.2</a></li>
+                        <li><a href="#">Item #2.3</a>
+                        <ul>
+                            <li><a href="#">Item #2.3.1</a></li>
+                            <li><a href="#">Item #2.3.2</a></li>
+                        </ul>
+                        </li>
+                    </ul>
+				</li>
+				<li><a href="#">Item #3</a></li>
+				<li class="ui-state-active"><a href="#">Item #4 (active)</a></li>
+				<li><a href="#">Item #5</a></li>
+				<li class="ui-state-disabled"><a href="#">Item #6 (disabled)</a></li>
+            </ul>
+		</div>
+		<div class="span8">
+            <h2>Tooltip</h2>
+            <div id="jui-tooltip">
+                <p><a href="#" title="That's what this widget is">Tooltips</a> can be attached to any element.
+                    When you hover the element with your mouse, the title attribute is displayed in a little box next to the
+                    element, just like a native tooltip. But as it's not a native tooltip, it can be styled. Any themes built with
+                    <a href="http://themeroller.com" title="ThemeRoller: jQuery UI's theme builder application">ThemeRoller</a>
+                    will also style tooltips accordingly.
+                </p>
+                <p>Tooltips are also useful for form elements, to show some additional information in the context of each field.
+                    <label for="age">Your age:</label><input id="age" title="We ask for your age only for statistical purposes." />
+                    (hover the field to see the tooltip)
+                </p>
+            </div>
+            <div id="jui-tooltip-tracking">
+                <p>Tooltip can track your mouse movements too. <a href="#" title="I'm tracking your mouse movement">Test here</a>.</p>
+                <p>And also have custom styling and other options.</p>
+            </div>
+        </div>
+	</div>
+</section>
+
+<div class="section-heading">Misc</div>
+<section id="demo-misc">
+	<div class="atk-row">
+		<div class="span4">
+			<h2>Buttons</h2>
+			<div class="atk-buttons">
+				<button class="demo-button big">Big</button><button class="demo-button">Regular</button><button class="demo-button small">Small</button>
+			</div>
+			<h2><em>Button with </em>Dropmenu</h2>
+			<a href="javascript:void(0)" class="demo-gear atk-dropmenu right">
+				Edit
+				<span class="ui-widget-content ui-corner-bottom">
+					<span><i class="ui-icon ui-icon-pencil"></i>Edit</span>
+					<span><i class="ui-icon ui-icon-trash"></i>Delete</span>
+				</span>
+			</a>
+			<h2>Growl</h2>
+			<button class="demo-button" id="show-growl">Show Growl</button>
+		</div>
+		<div class="span8">
+			<div class="atk-box demo-bg">
+				<h2>Flexy<small>Flexible Layouts</small></h2>
+				<div class="atk-flexy">
+					<div style="width:50%">
+						<div class="atk-box ui-widget-content ui-corner-all" style="padding-right:20px;">
+							<h3>Box</h3>
+							<p>I'm a regular box.</p>
+						</div>
+					</div>
+					<div style="width:50%;">
+						<p style="padding-left:20px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	$(function(){
+		$('.atk-growl').hide();
+		$('#show-growl').click(function(){
+			$('.atk-growl').fadeIn();
+		});;
+	});
+</script>
+
+<div id="atk-growl" class="atk-growl">
+	<div class="atk-notification ui-state-highlight ui-corner-all ">
+		<div class="atk-notification-text">
+			<i class="ui-icon ui-icon-info"></i>Updated
+		</div>
+		<a href="#" class="ui-icon ui-icon-closethick"></a>
+	</div>
+	<div class="atk-notification ui-state-error ui-corner-all ">
+		<div class="atk-notification-text">
+			<i class="ui-icon ui-icon-alert"></i>Error
+		</div>
+		<a href="#" class="ui-icon ui-icon-closethick"></a>
+	</div>
+</div>

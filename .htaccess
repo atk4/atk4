@@ -1,1 +1,3 @@
+<ifModule mod_rewrite.c>
 RewriteEngine Off
+</ifModule>

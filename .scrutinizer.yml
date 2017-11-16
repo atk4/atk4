@@ -1,0 +1,41 @@
+tools:
+    php_sim: true
+    php_pdepend: true
+    php_analyzer: true
+filter:
+    # Folders which we should not check
+    excluded_paths:
+        - 'cert/*'
+        - 'compat/*'
+        - 'doc/*'
+        - 'mail/*'
+        - 'public/*'
+        - 'templates/*'
+        - 'tests/*'
+        - 'tools/*'
+#build_failure_conditions:
+#  - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse
+#  - 'elements.rating(<= D).new.exists'           # No new classes/methods with a rating of D or worse
+#  - 'issues.label("coding-style").exists'        # No coding style issues allowed
+#  - 'issues.label("coding-style").new.exists'    # No new coding style issues allowed
+#  - 'issues.severity(>= MAJOR).new.exists'       # New issues of major or higher severity
+#  - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 6
+checks:
+    php:
+        # Use custom PHPCS ruleset
+        custom_coding_standard:
+            ruleset_path: phpcs_ruleset.xml
+        # Disable some checks which we allow in our project
+        security_vulnerabilities: false
+        no_commented_out_code: false
+        avoid_superglobals: false
+        too_many_arguments: false
+        no_eval: false
+        no_exit: false
+        # too_many_arguments: false
+        # php analyzer thinks that unused method parameter is unused_variable and unused_method not unused_parameter
+        unused_variables: false
+        unused_parameters: false
+        unused_properties: false
+        unused_methods: false
+        # to be continued ...

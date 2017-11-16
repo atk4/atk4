@@ -1,281 +1,712 @@
-<?php // vim:ts=4:sw=4:et:fdm=marker
-/*
- * Undocumented
- *
- * @link http://agiletoolkit.org/
-*//*
-==ATK4===================================================
-   This file is part of Agile Toolkit 4
-    http://agiletoolkit.org/
-
-   (c) 2008-2013 Agile Toolkit Limited <info@agiletoolkit.org>
-   Distributed under Affero General Public License v3 and
-   commercial license.
-
-   See LICENSE or LICENSE_COM for more information
- =====================================================ATK4=*/
+<?php
 /**
- * Implementation of a Generic Model. 
- * @link http://agiletoolkit.org/doc/model
- *
- * Model has fields which you add with addField() and access through get() and set()
- * You can also load and save model through different storage controllers.
- *
- * This model is designed to work with linear, non-SQL resources, if you are looking
- * to have support for joins, ordering, advanced SQL syntax, look into SQL_Model
- *
- * It's recommended that you create your own model class based on generic model where
- * you define fields, but you may also use instance of generic model.
- *
- * Use:
- * class Model_PageCache extends Model {
- *     function init(){
- *         parent::init();
- *         $this->addField('content')->allowHtml(true);
- *     }
- *     function generateContent(){
- *         //complex computation
- *         // ...
- *         $this->set('content',$content);
- *     }
- * }
- *
- *
- * $pc=$this->add('Model_PageCache')->addCache('Memcached');
- * $pc->load($this->api->page);
- *
- * if(!$pc->loaded()){
- *     $pc->set('page',$this->api->page');
- *     $pc->generateContent();
- *     $pc->save();
- * }
- *
- *
- * @license See http://agiletoolkit.org/about/license
- * 
- **/
-class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
+ * Model class improves how you interact with the structured data. Extend
+ * this class (or :php:class:`Model_SQL`) to define the structure of your
+ * own models, then use object instances to interact with individual records.
+ */
+class Model extends AbstractModel implements ArrayAccess, Iterator, Countable
+{
+    /**
+     * @var string
+     */
+    const DOC = 'model/core';
 
-    public $default_exception='BaseException';
+    /**
+     * Default exception class
+     *
+     * @var string
+     */
+    public $default_exception = 'BaseException';
 
-    /** The class prefix used by addField */
-    public $field_class='Field';
+    /**
+     * The class prefix used by addField.
+     *
+     * For some models you might want to use a more powerful field class
+     *
+     * @var string
+     */
+    public $field_class = 'Field_Base';
 
-    /** If true, model will now allow to set values for non-existant fields */
-    public $strict_fields=false;
+    /**
+     * If true, model will now allow to set values for non-existant fields.
+     *
+     * @var bool
+     */
+    public $strict_fields = false;
 
-    /** Caption is used on buttons of CRUD and other views which operate with this model.
-     * If not defined, will use class name. Use singular */
-    public $caption=null;
+    /**
+     * Caption is used on buttons of CRUD and other views which operate with this model.
+     * If not defined, will use class name. Use singular such as "Purchase".
+     * This label is localized.
+     *
+     * @var string
+     */
+    public $caption = null;
 
-    /** Contains name of table, session key, collection or file, depending on a driver */
-    public $table=null;
+    /**
+     * Contains name of table, session key, collection or file, depending on
+     * data controller you are using.
+     *
+     * @var string
+     */
+    public $table = null;
 
-    /** Controllers store some custom informatio in here under key equal to their name */
-    public $_table=array();
+    /**
+     * Defines alias for the table, for drivers such as SQL to make your
+     * queries prettier. Not really required.
+     *
+     * @var string
+     */
+    public $table_alias = null;
 
-    /** Contains identifier of currently loaded record or null. Use load() and reset() */
-    public $id=null;     // currently loaded record
+    /**
+     * Controllers store some custom information in here under key equal to
+     * their name. This allows us to use single controller object with
+     * multiple objects.
+     *
+     * @var array
+     */
+    public $_table = array();
 
-    /** The actual ID field of the table might not always be "id" */
-    public $id_field='id';   // name of ID field
+    /**
+     * Contains identifier of currently loaded record or null. Changed by load() and reset().
+     *
+     * @var string|int
+     */
+    public $id = null;
 
-    public $title_field='name';  // name of descriptive field. If not defined, will use table+'#'+id
+    /**
+     * The actual ID field of the table might not always be "id". For Mongo this is equal
+     * to "_id".
+     *
+     * @var string
+     */
+    public $id_field = 'id';
 
+    /**
+     * Name of descriptive field. If not defined, will use table+'#'+id. This
+     * field will be used to refer to field where possible. This can
+     * be a calculated field or a callback.
+     *
+     * @var string
+     */
+    public $title_field = 'name';
 
-    // Curretly loaded record
-    public $data=array();
-    public $dirty=array();
+    /**
+     * Contains connections with other models which are related to this one
+     * through hasOne / hasMany.
+     *
+     * @var array
+     */
+    public $_references = array();
 
-    public $actual_fields=false;// Array of fields which will be used in further select operations. If not defined, all fields will be used.
+    /**
+     * Expression.
+     *
+     * @todo not sure we need to distinguish expressions at this level
+     *
+     * @var array
+     */
+    public $_expressions = array();
 
-    protected $_save_as=null;
-    protected $_save_later=false;
+    /**
+     * Contains list of applied conditions. This is because controllers
+     * would not store applied conditions, so we need to keep track of them.
+     *
+     * Please resist the urge to remove conditions from the model - as this
+     * is a very dangerous concept. Refer to documentation on conditions
+     * for more information.
+     *
+     * @var array
+     */
+    public $conditions = array();
+
+    /**
+     * Applied limit on the model, first entry is count, second is offset.
+     *
+     * @var array
+     */
+    public $limit = array(null, null);
+
+    /**
+     * Contains requested order definition.
+     *
+     * @todo must support multiple touples for multiple field sorting
+     *
+     * @var array
+     */
+    public $order = array();
+
+    /**
+     * More internal classes which are used by hasOne, and addExpression.
+     */
+    /** @var string */
+    protected $defaultHasOneFieldClass = 'Field_HasOne';
+    /** @var string */
+    protected $defaultExpressionFieldClass = 'Field_Callback'; // or Field_Calculated ???
+
+    /**
+     * Curretly loaded record data. This information is embedded in the
+     * model, so you can re-use same model for loading multiple records.
+     *
+     * @var array
+     */
+    public $data = array();
+
+    /**
+     * Associative list of fields which have been changed since loading.
+     * Model will only save fields which have changed.
+     *
+     * @var array
+     */
+    public $dirty = array();
+
+    /**
+     * Some data controllers make it possible to query selective set of
+     * fields. This way the query could be faster and only relevant data
+     * is loaded.
+     *
+     * @var array
+     */
+    public $actual_fields = false;
+
+    /**
+     * Internal use. Used by save().
+     */
+    protected $_save_as = null;
+    protected $_save_later = false;
+
+    /** @var Controller_Data */
+    public $controller;
+
 
     // {{{ Basic functionality, field definitions, set(), get() and related methods
-    function init(){
+    public function __clone()
+    {
+        parent::__clone();
+        foreach ($this->elements as $key => $el) {
+            if (is_object($el)) {
+                $this->elements[$key] = clone $el;
+                $this->elements[$key]->owner = $this;
+            }
+        }
+        foreach ($this->_expressions as $key => $el) {
+            $this->_expressions[$key] = clone $el;
+            $this->_expressions[$key]->owner = $this;
+        }
+    }
+
+    public function init()
+    {
         parent::init();
 
-        if(method_exists($this,'defineFields'))
-            throw $this->exception('model->defineField() is obsolete. Change to init()','Obsolete')
-            ->addMoreInfo('class',get_class($this));
+        $this->addField($this->id_field)->system(true);
     }
-    function __clone(){
-        parent::__clone();
-        foreach($this->elements as $key=>$el)if(is_object($el)){
-            $this->elements[$key]=clone $el;
-            $this->elements[$key]->owner=$this;
+
+    /**
+     * Creates field definition object containing field meta-information such as caption, type
+     * validation rules, default value etc.
+     *
+     * @param string $name
+     * @param string $alias
+     *
+     * @return Field_Base
+     */
+    public function addField($name, $alias = null)
+    {
+        $field = $this->add($this->field_class, $name);
+        /** @type Field_Base $field */
+        $field = $field->actual($alias);
+
+        /** @type Field_Base $field */
+        return $field;
+    }
+
+    /**
+     * Add expression: the value of those field will calculate when you use get method.
+     *
+     * @param string $name
+     * @param mixed $expression
+     * @param string $field_class
+     *
+     * @return Field_Base
+     */
+    public function addExpression($name, $expression, $field_class = UNDEFINED)
+    {
+        if ($field_class === UNDEFINED) {
+            $field_class = $this->defaultExpressionFieldClass;
         }
+        $field = $this->add($field_class, $name);
+        /** @type Field_Callback $field */
+        $field->setExpression($expression);
+        $this->_expressions[$name] = $field;
+
+        return $field;
     }
-    /** Creates field definition object containing field meta-information such as caption, type
-     * validation rules, default value etc */
-    function addField($name){
-        return $this
-            ->add($this->field_class,$name);
-    }
-    /** Set value of the field. If $this->strict_fields, will throw exception for non-existant fields. Can also accept array */
-    function set($name,$value=undefined){
-        if(is_array($name)){
-            foreach($name as $key=>$val)$this->set($key,$val);
+
+    /**
+     * Set value of fields. If only a single argument is specified
+     * and it is a hash, will use keys as property names and set values
+     * accordingly.
+     *
+     * @param $name array or string
+     * @param $value null or value
+     *
+     * @return $this
+     */
+    public function set($name, $value = UNDEFINED)
+    {
+        if (is_array($name)) {
+            foreach ($name as $key => $val) {
+                $this->set($key, $val);
+            }
+
             return $this;
-        }
-        if($name===false || $name===null){
-            return $this->reset();
+        } elseif ($value === UNDEFINED) {
+            throw $this->exception('You must define the second argument');
         }
 
-        // Verify if such a filed exists
-        if($this->strict_fields && !$this->hasElement($name))throw $this->exception('No such field','Logic')
-            ->addMoreInfo('name',$name);
+        if ($this->strict_fields && !$this->hasElement($name)) {
+            throw $this->exception('No such field', 'Logic')
+                ->addMoreInfo('field', $name);
+        }
 
-        if ($value !== undefined 
-            && (
-                // if data[$name] is not initialized at all (for example, in model using array controller)
-                (is_array($this->data) && !array_key_exists($name, $this->data))
-                // value as object
-                || is_object($value)
-                || is_object($this->data[$name])
-                // value as array
-                || is_array($value)
-                || is_array($this->data[$name])
-                // if one and only one value is NULL
-                || (is_null($value) xor is_null($this->data[$name]))
-                // values converted to string loosly differ
-                // need special treatment of [false] value because (string)false === "" not "0"
-                || ($value===false ? '0' : (string)$value) // this is not nice
-                   !=
-                   ($this->data[$name]===false ? '0' : (string)$this->data[$name])
-            )
-        ) {
-            $this->data[$name]=$value;
+        if (($value !== $this->data[$name]) || (is_null($value) && !array_key_exists($name, $this->data))) {
+            $this->data[$name] = $value;
             $this->setDirty($name);
         }
+
+        if ($name === $this->id_field) {
+            $this->id = $value;
+        }
+
         return $this;
     }
-    /** Return value of the field. If unspecified will return array of all fields.  */
-    function get($name=null){
-        if($name===null)return $this->data;
 
-        $f=$this->hasElement($name);
+    /**
+     * Get the value of a model field. If field $name is not specified, then
+     * returns associative hash containing all field data.
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function get($name = null)
+    {
+        if ($name === null) {
+            $data = $this->data;
+            foreach ($this->_expressions as $key => $field) {
+                $data[$key] = $field->getValue($this, $this->data);
+            }
+            foreach ($this->elements as $key => $field) {
+                if ($field instanceof Field || $field instanceof Field_Base) {
+                    if ($field->defaultValue() !== null && !isset($data[$key])) {
+                        $data[$key] = $field->defaultValue();
+                    }
+                }
+            }
 
-        if($this->strict_fields && !$f)
-            throw $this->exception('No such field','Logic')->addMoreInfo('field',$name);
+            return $data;
+        }
+
+        /** @type Field_Base $f */
+        $f = $this->hasElement($name);
+        if ($this->strict_fields && !$f) {
+            throw $this->exception('No such field', 'Logic')
+                ->addMoreInfo('field', $name);
+        }
+
+        if ($f instanceof Field_Calculated) {
+            return $f->getValue($this, $this->data);
+        }
 
         // See if we have data for the field
-        if(!$this->loaded() && !isset($this->data[$name])){ // && !$this->hasElement($name))
+        if (!$this->loaded() && !@array_key_exists($name, $this->data)) {
+            if ($f && $f->has_default_value) {
+                return $f->defaultValue();
+            }
 
-            if($f && $f->has_default_value)return $f->defaultValue();
+            if ($this->strict_fields) {
+                throw $this->exception('Model field was not loaded')
+                    ->addMoreInfo('id', $this->id)
+                    ->addMoreInfo('field', $name);
+            }
 
-
-            if($this->strict_fields)throw $this->exception('Model field was not loaded')
-                ->addMoreInfo('id',$this->id)
-                ->addMoreInfo('field',$name);
-
-            return null;
+            return;
         }
+
         return $this->data[$name];
     }
+
     /**
-     * Returns list of fieldnames or field objects which belong to specific group
-     * 
-     * You can add fields into groups when you define them and it can be used by
-     * the front-end to determine which fields needs to be displayed.
-     * 
-     * If no group is specified, then all non-system fieldnames (or fields) are
-     * returned for backwards compatibility.
-     * 
-     * You can pass multiple groups as CSV and add "-" prefix to groupname to
-     * exclude all fields from this specific group in result set.
-     * 
-     * @param string $group      Name of field group or CSV of them
-     * @param bool   $as_objects If set true, then return array of field objects
+     * Return all fields that belongs to the specified group.
+     * You can use the subtractions group also ("all,-group1,-group2").
+     *
+     * @param string $group
+     *
      * @return array
      */
-    function getActualFields($group = undefined, $as_objects = false)
+    public function getGroupField($group = 'all')
     {
-        if($group===undefined && $this->actual_fields) {
-            return $this->actual_fields;
+        $toExclude = array();
+        $toAdd = array();
+        if (strpos($group, ',') !== false) {
+            foreach (explode(',', $group) as $g) {
+                if ($g[0] === '-') {
+                    $toExclude[] = substr($g, 1);
+                } else {
+                    $toAdd[] = $g;
+                }
+            }
+        } else {
+            $toAdd = array($group);
         }
 
         $fields = array();
-
-        if (strpos($group, ',')!==false) {
-            $groups = explode(',', $group);
-
-            foreach($groups as $group) {
-                if($group[0]=='-') {
-                    $el = $this->getActualFields(substr($group, 1));
-                    $fields = array_diff($fields, $el);
-                } else {
-                    $el = $this->getActualFields($group);
-                    $fields = array_merge($fields, $el);
-                }
+        foreach ($this->elements as $el) {
+            if (!($el instanceof $this->field_class)) {
+                continue;
             }
-        }
-
-        foreach($this->elements as $el) {
-            if($el instanceof Field && !$el->hidden()) {
-                if( $group===undefined ||
-                    $el->group()==$group ||
-                    (strtolower($group=='visible') && $el->visible()) ||
-                    (strtolower($group=='editable') && $el->editable())
-                ) {
-                    $fields[] = $as_objects ? $el : $el->short_name;
-                }
+            $elGroup = $el->group();
+            if (!in_array($elGroup, $toExclude)
+                && (
+                    in_array('all', $toAdd)
+                    || in_array($elGroup, $toAdd)
+                )
+            ) {
+                $fields[] = $el->short_name;
             }
         }
 
         return $fields;
     }
-    /** Returns field which should be used as a title */
-    function getTitleField(){
-        if($this->title_field && $this->hasElement($this->title_field))return $this->title_field;
+
+    /**
+     * Set the actual fields of this model.
+     * You can use an array to set the list of fields or a string to
+     * use the grouping.
+     *
+     * @param array|string $group string or array
+     *
+     * @return $this
+     */
+    public function setActualFields($group = UNDEFINED)
+    {
+        if (is_array($group)) {
+            $this->actual_fields = $group;
+
+            return $this;
+        }
+        if ($group === UNDEFINED) {
+            $group = 'all';
+        }
+        $this->actual_fields = $this->getGroupField($group);
+
+        return $this;
+    }
+    /**
+     * Get the actual fields.
+     *
+     * @return array the actual fields
+     */
+    public function getActualFields()
+    {
+        if ($this->actual_fields === false) {
+            $this->actual_fields = $this->getGroupField();
+        }
+
+        return $this->actual_fields;
+    }
+    /**
+     * Return the title field.
+     *
+     * @return string the title field
+     */
+    public function getTitleField()
+    {
+        if ($this->title_field && $this->hasElement($this->title_field)) {
+            return $this->title_field;
+        }
+
         return $this->id_field;
     }
     /**
-     * Default set of fields which will be included into further queries
-     * 
-     * @param array $fields Array of fieldnames
+     * Set a field as dirty. This is used to force insert/update a field.
+     *
+     * @param string $name
+     *
      * @return $this
      */
-    function setActualFields(array $fields)
-    {
-        $this->actual_fields = $fields;
-        return $this;
-    }
-    /**
-     * When fields are changed, they are marked dirty.
-     * Only dirty fields are saved when save() is called
-     * 
-     * @param string $name Name of field
-     * @return $this
-     */
-    function setDirty($name)
+    public function setDirty($name)
     {
         $this->dirty[$name] = true;
+
         return $this;
     }
-    function isDirty($name){
-        return $this->dirty[$name] || 
-            (!$this->loaded() && $this->getElement($name)->has_default_value);
+    /**
+     * Return true if the field is set.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function isDirty($name)
+    {
+        /** @type Field_Base $field */
+        $field = $this->getElement($name);
+
+        return $this->dirty[$name] ||
+            (!$this->loaded() && $field->has_default_value);
+    }
+    // }}}
+
+    // {{{ ArrayAccess support
+    public function offsetExists($name)
+    {
+        return $this->get($name);
+    }
+    public function offsetGet($name)
+    {
+        return $this->get($name);
+    }
+    public function offsetSet($name, $val)
+    {
+        $this->set($name, $val);
+    }
+    public function offsetUnset($name)
+    {
+        unset($this->dirty[$name]);
+        unset($this->data[$name]);
+    }
+    // }}}
+
+    /// {{{ Operation with external Data Controllers
+    /**
+     * Set the controller data of this model.
+     *
+     * @param string|Controller_Data $controller
+     *
+     * @return Controller_Data
+     */
+    public function setControllerData($controller)
+    {
+        if (is_string($controller)) {
+            $controller = $this->app->normalizeClassName($controller, 'Data');
+        } elseif (!$controller instanceof Controller_Data) {
+            throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
+        }
+        $this->controller = $this->setController($controller);
+
+        return $this->controller;
+    }
+
+    /**
+     * Set the source to the controller data.
+     * The $table argument depends on the controller data implementation.
+     *
+     * @param mixed $table
+     */
+    public function setControllerSource($table = null)
+    {
+        if (is_null($this->controller)) {
+            throw $this->exception('Call setControllerData before');
+        }
+        $this->controller->setSource($this, $table);
+    }
+
+    /**
+     * Associate model with a specified data source. The controller could be
+     * either a string (postfix for Controller_Data_..) or a class. One data
+     * controller may be used with multiple models.
+     * If the $table argument is not specified then :php:attr:`Model::table`
+     * will be used to find out name of the table / collection.
+     */
+    public function setSource($controller, $table = null)
+    {
+        $this->setControllerData($controller);
+        $this->setControllerSource($table);
+
+        return $this;
+    }
+
+    /** Cache controller is used to attempt and load data a little faster then the primary controller */
+    public function addCache($controller, $table = null, $priority = 5)
+    {
+        $controller = $this->app->normalizeClassName($controller, 'Data');
+
+        return $this->setController($controller)
+            ->addHooks($this, $priority)
+            ->setSource($this, $table);
+    }
+
+    /** Returns if certain feature is supported by model */
+    public function supports($feature)
+    {
+        if (!$this->controller) {
+            return false;
+        }
+
+        $s = 'support'.$feature;
+
+        return $this->controller->$s;
+    }
+    // }}}
+
+    // {{{ LOAD METHODS
+    /**
+     * Like tryLoad method but if the record not found, an exception is thrown.
+     *
+     * @param $id
+     *
+     * @return $this
+     */
+    public function load($id)
+    {
+        if (!$this->controller) {
+            throw $this->exception('Unable to load model, setSource() must be set');
+        }
+
+        if ($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoad', array('load', array($id)));
+
+        $this->controller->loadById($this, $id);
+
+        $this->endLoad();
+
+        return $this;
     }
     /**
-     * Returns true if the records has been loaded successfully
-     * 
-     * @return boolean
+     * Ask the controller data to load the model by a given $id.
+     *
+     * @param $id
+     *
+     * @return $this
      */
-    function loaded()
+    public function tryLoad($id)
+    {
+        try {
+            $this->load($id);
+        } catch (Exception_NotFound $e) {
+            // ignore not-found exception
+        }
+
+        return $this;
+    }
+    /**
+     * Like tryLoadAny method but if the record not found, an exception is thrown.
+     *
+     * @return $this
+     */
+    public function loadAny()
+    {
+        if ($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoad', array('loadAny', array()));
+
+        $this->controller->loadByConditions($this);
+
+        $this->endLoad();
+
+        return $this;
+    }
+    /**
+     * Retrive the first record that matching the conditions.
+     *
+     * @return $this
+     */
+    public function tryLoadAny()
+    {
+        try {
+            $this->loadAny();
+        } catch (Exception_NotFound $e) {
+            // ignore not-found exception
+        }
+
+        return $this;
+    }
+    /**
+     * Like tryLoadBy method but if the record not found, an exception is thrown.
+     *
+     * @param $field
+     * @param $cond
+     * @param $value
+     *
+     * @return $this
+     */
+    public function loadBy($field, $cond, $value = UNDEFINED)
+    {
+        if ($field == $this->id_field && $value === UNDEFINED) {
+            return $this->load($cond);
+        }
+        if ($field == $this->id_field && cond === '=') {
+            return $this->load($value);
+        }
+
+        if ($this->loaded()) {
+            $this->unload();
+        }
+        $this->hook('beforeLoad', array('loadBy', array($field, $cond, $value)));
+
+        $conditions = $this->conditions;
+        $this->addCondition($field, $cond, $value);
+        $this->controller->loadByConditions($this);
+        $this->conditions = $conditions;
+
+        $this->endLoad();
+
+        return $this;
+    }
+    /**
+     * Adding temporally condition to the model to retrive the first record
+     * The condition specified is removed after the controller data call.
+     *
+     * @param $field
+     * @param $cond
+     * @param $value
+     *
+     * @return $this
+     */
+    public function tryLoadBy($field, $cond = UNDEFINED, $value = UNDEFINED)
+    {
+        try {
+            $this->loadBy($field, $cond, $value);
+        } catch (Exception_NotFound $e) {
+            // ignore not-found exception
+        }
+
+        return $this;
+    }
+    private function endLoad()
+    {
+        if ($this->loaded()) {
+            $this->hook('afterLoad');
+            $this->dirty = array();
+        }
+    }
+    // END LOAD METHODS }}}
+
+    /**
+     * Returns true if the model is loaded.
+     *
+     * @return bool
+     */
+    public function loaded()
     {
         return !is_null($this->id);
     }
+
     /**
-     * Forget loaded data
-     * 
+     * Forget loaded data.
+     *
      * @return $this
      */
-    function unload()
+    public function unload()
     {
         if ($this->_save_later) {
-            $this->_save_later=false;
+            $this->_save_later = false;
             $this->saveAndUnload();
         }
         if ($this->loaded()) {
@@ -284,527 +715,438 @@ class Model extends AbstractModel implements ArrayAccess,Iterator,Serializable {
         $this->data = $this->dirty = array();
         $this->id = null;
         $this->hook('afterUnload');
+
         return $this;
     }
     /**
-     * Same as unload() method
-     * 
+     * Same as unload() method.
+     *
      * @return $this
      */
-    function reset()
+    public function reset()
     {
-        return $this->unload();
-    }
-    // }}}
+        $ret = $this->unload();
+        $this->_table = array();
+        $this->conditions = array();
+        $this->order = array();
+        $this->limit = array();
 
-    // {{{ ArrayAccess support 
-    function offsetExists($name){
-        return $this->hasElement($name);
+        return $ret;
     }
-    function offsetGet($name){
-        return $this->get($name);
-    }
-    function offsetSet($name,$val){
-        $this->set($name,$val);
-    }
-    function offsetUnset($name){
-        unset($this->dirty[$name]);
-    }
-    // }}}
 
-    /// {{{ Operation with external Data Controllers
+    /**
+     * Saves record with current controller. Uses $this->id as primary key.
+     * If not set, new record is created.
+     */
+    public function save()
+    {
+        $this->hook('beforeSave', array($this->id));
 
-    /** Associates appropriate controller and loads data such as 'Array' for Controller_Data_Array class */
-    function setSource($controller, $table=null, $id=null){
-        if(is_string($controller)){
-            $controller=$this->api->normalizeClassName($controller,'Data');
-        } elseif(!$controller instanceof Controller_Data){
-            throw $this->exception('Inappropriate Controller. Must extend Controller_Data');
-        }
-        $this->controller=$this->setController($controller);
+        $is_update = $this->loaded();
+        if ($is_update) {
+            $source = array();
+            foreach ($this->dirty as $name => $junk) {
+                $source[$name] = $this->get($name);
+            }
 
-        $this->controller->setSource($this,$table);
+            // No save needed, nothing was changed
+            if (empty($source)) {
+                return $this;
+            }
 
-        if($id)$this->load($id);
-        return $this;
-    }
-    /** Cache controller is used to attempt and load data a little faster then the primary controller */
-    function addCache($controller, $table=null, $priority=5){
-        $controller=$this->api->normalizeClassName($controller,'Data');
-        return $this->setController($controller)
-            ->addHooks($this,$priority)
-            ->setSource($this,$table);
-    }
-    /** Attempt to load record with specified ID. If this fails, exception is thrown */
-    function load($id){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoad',array($id));
-        if(!$this->loaded())$this->controller->load($this,$id);
-        if(!$this->loaded())throw $this->exception('Record with specified id was not found');
-        $this->hook('afterLoad');
-        return $this;
-    }
-    /** Saves record with current controller. If no argument is specified, uses $this->id. Specifying "false" will create 
-     * record with new ID. */
-    function save($id=undefined){
-        if($this->id_field && $id!==undefined && $id!==null){
-            $this->data[$this->id_field]=$id;
-        }
-        if($id!==undefined)$this->id=$id;
+            $this->hook('beforeUpdate', array(&$source));
+        } else {
 
+            // Collect all data of a new record
+            $source = $this->get();
 
-        $this->hook('beforeSave',array($this->id));
-
-        $is_update=$this->loaded();
-        if($is_update){
-            $this->hook('beforeUpdate');
-        }else{
-            $this->hook('beforeInsert');
+            $this->hook('beforeInsert', array(&$source));
         }
 
-        $this->id=$this->controller->save($this,$this->id);
+        if ($this->controller) {
+            $this->id = $this->controller->save($this, $this->id, $source);
+        }
 
-        if($is_update){
+        if ($is_update) {
             $this->hook('afterUpdate');
-        }else{
+        } else {
             $this->hook('afterInsert');
         }
 
-        if($this->loaded())$this->hook('afterSave',array($this->id));
+        if ($this->loaded()) {
+            $this->dirty = array();
+            $this->hook('afterSave', array($this->id));
+        }
+
         return $this;
     }
-    /** Save model and don't try to load it back */
-    function saveAndUnload($id=undefined){
-        // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to 
+
+    /**
+     * Save model and don't try to load it back.
+     */
+    public function saveAndUnload()
+    {
+        // TODO: See dc032a9ae75341fb7f4ed6c4de61ca224ec0e5e6. Need to
         // revert and make sure save() is not re-loading the record.
         // (performance)
-        $this->save($id);
+        $this->save();
         $this->unload();
+
         return $this;
     }
     /** Will save model later, when it's being destructed by Garbage Collector */
-    function saveLater(){
-        $this->_save_later=true;
-        $this->api->addHook('saveDelayedModels',$this);
+    public function saveLater()
+    {
+        $this->_save_later = true;
+        $this->app->addHook('saveDelayedModels', array($this, 'saveDelayedModels'));
+
         return $this;
     }
-    function saveDelayedModels(){
-        if($this->_save_later && $this->dirty){
+    public function saveDelayedModels()
+    {
+        if ($this->_save_later && !empty($this->dirty)) {
             $this->saveAndUnload();
-            $this->_save_later=false;
+            $this->_save_later = false;
         }
     }
-    function __destruct(){
+    public function __destruct()
+    {
         $this->saveDelayedModels();
     }
-    /** Deletes record associated with specified $id. If not specified, currently loaded record is deleted (and unloaded) */
-    function delete($id=null){
-        if($id===null)$id=$this->id;
-        if($this->loaded() && $this->id == $id)$this->unload();   // record we are about to delete is loaded, unload it.
-        $this->hook('beforeDelete',array($id));
-        $this->controller->delete($this,$id);
-        $this->hook('afterDelete',array($id));
+
+    /**
+     * Delete a record. If the model is loaded, delete the current id.
+     * If not loaded, load model through the $id parameter and delete.
+     */
+    public function delete($id = null)
+    {
+        if ($this->loaded() && !is_null($id) && ($id !== $this->id)) {
+            throw $this->exception('Unable to determine which record to delete');
+        }
+        if (!is_null($id) && (!$this->loaded() || ($this->loaded() && $id !== $this->id))) {
+            $this->load($id);
+        }
+        if (!$this->loaded()) {
+            throw $this->exception('Unable to determine which record to delete');
+        }
+        $id = $this->id;
+
+        $this->hook('beforeDelete', array($id));
+        $this->controller->delete($this, $id);
+        $this->hook('afterDelete', array($id));
+
+        $this->unload();
+
         return $this;
     }
-    /** Deletes all records associated with this model. */
-    function deleteAll(){
-        if($this->loaded())$this->unload();
+
+    /**
+     * Deletes all records associated with this model.
+     */
+    public function deleteAll()
+    {
+        if ($this->loaded()) {
+            $this->unload();
+        }
         $this->hook('beforeDeleteAll');
         $this->controller->deleteAll($this);
         $this->hook('afterDeleteAll');
-        return $this;
-    }
-    /** Adds a new condition for this model */
-    function addCondition($field,$operator=UNDEFINED,$value=UNDEFINED){
-        $this->controller->addCondition($this,$field,$operator,$value);
-        return $this;
-    }
-    // }}}
 
-    // {{{ Load Wrappers
+        return $this;
+    }
 
-    /* Attempt to load record with specified ID. If this fails, no error is produced */
-    function tryLoad($id=null){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoad',array($id));
-        if(!$this->loaded())$this->controller->tryLoad($this,$id);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function loadAny(){
-        if($this->loaded())$this->unload();
-        if(!$this->loaded())$this->controller->loadAny($this);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function tryLoadAny(){
-        if($this->loaded())$this->unload();
-        if(!$this->loaded())$this->controller->tryLoadAny($this);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function tryLoadBy($field,$cond=undefined,$value=undefined){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded())$this->controller->tryLoadBy($this,$field,$cond,$value);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    function loadBy($field,$cond=undefined,$value=undefined){
-        if($this->loaded())$this->unload();
-        $this->hook('beforeLoadBy',array($field,$cond,$value));
-        if(!$this->loaded())$this->controller->loadBy($this,$field,$cond,$value);
-        if(!$this->loaded())return $this;
-        $this->hook('afterLoad');
-        return $this;
-    }
-    /** Unloads then loads current record back. Use this if you have added new fields */
-    function reload(){
+    /**
+     * Unloads then loads current record back. Use this if you have added new fields.
+     */
+    public function reload()
+    {
         return $this->load($this->id);
     }
-    // }}}
 
     // {{{ Ordering and limiting support
-    function setLimit($count,$offset=null){
-        if($this->controller && $this->controller->hasMethod('setLimit'))
-            $this->controller->setLimit($this,$count,$offset);
-        return $this;
-    }
-    function setOrder($field,$desc=null){
-        if($this->controller && $this->controller->hasMethod('setOrder'))
-            $this->controller->setOrder($this,$field,$desc);
-        return $this;
-    }
-    /**
-     * Count records of model
-     * 
-     * @param string $alias Optional alias of count result
-     * 
-     * @return integer
-     */
-    function count($alias = null) {
-        if($this->controller && $this->controller->hasMethod('count')) {
-            return $this->controller->count($this, $alias);
-        } else {
-            throw $this->exception('Model do not have controller or count() method not implemented in controller')
-                ->addMoreInfo('controller',$this->controller?$this->controller->short_name:'none');
-        }
-    }
-    // }}}
-
-    // {{{ Iterator support 
-    function rewind(){
-        $this->reset();
-        $this->controller->rewind($this);
-        if($this->loaded())$this->hook('afterLoad');
-    }
-    function next(){
-        $this->controller->next($this);
-        if($this->loaded())$this->hook('afterLoad');
-        return $this;
-    }
-    function current(){
-        return $this->get();
-    }
-    function key(){
-        return (string)$this->id;
-    }
-    function valid(){
-        return $this->loaded();
-    }
-
-    function getRows($fields=null){
-        $result=array();
-        foreach($this as $row){
-            if (is_null($fields)) {
-                $result[]=$row;
-            } else {
-                $tmp=array();
-                foreach($fields as $field){
-                    $tmp[$field]=$row[$field];
-                }
-                $result[]=$tmp;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * A handy shortcut for foreach(){ .. } code. Make your callable return
-     * "false" if you would like to break the loop.
-     *
-     * @param callable $callable will be executed for each member
-     *
-     * @return AbstractObject $this
-     */
-    function each($callable)
+    /** Adds a new condition for this model */
+    public function addCondition($field, $operator = UNDEFINED, $value = UNDEFINED)
     {
-        if (!($this instanceof Iterator)) {
-            throw $this->exception('Calling each() on non-iterative model');
+        if (!$this->controller) {
+            throw $this->exception('Controller for this model is not set', 'NotImplemented');
+        }
+        if (!@$this->controller->supportConditions) {
+            throw $this->exception('The controller doesn\'t support conditions', 'NotImplemented')
+                ->addMoreInfo('controller', $this->controller);
+        }
+        if (is_array($field)) {
+            foreach ($field as $value) {
+                $this->addCondition($value[0], $value[1], count($value) === 2 ? UNDEFINED : $value[2]);
+            }
+
+            return $this;
+        } elseif (($operator === UNDEFINED) && (!is_object($field))) { // controller can handle objects
+            throw $this->exception('You must define the second argument');
+        }
+        if ($value === UNDEFINED) {
+            $value = $operator;
+            $operator = '=';
+        }
+        $supportOperators = $this->controller->supportOperators;
+        if ($supportOperators !== 'all' && (is_null($supportOperators) || (!isset($supportOperators[$operator])))) {
+            throw $this->exception('Unsupport operator', 'NotImplemented')
+                ->addMoreInfo('operator', $operator);
         }
 
-        if (is_string($callable)) {
-            foreach ($this as $value) {
-                $this->$callable();
+        $this->conditions[] = array($field, $operator, $value);
+
+        return $this;
+    }
+    public function setLimit($count, $offset = null)
+    {
+        if (!$this->controller->supportLimit) {
+            throw $this->exception('The controller doesn\'t support limit', 'NotImplemented');
+        }
+        $this->limit = array($count, $offset);
+
+        return $this;
+    }
+    public function setOrder($field, $desc = null)
+    {
+        if (!$this->controller->supportOrder) {
+            throw $this->exception('The controller doesn\'t support order', 'NotImplemented');
+        }
+
+        if (is_string($field) && strpos($field, ',') !== false) {
+            $field = explode(',', $field);
+        }
+        if (is_array($field)) {
+            if (!is_null($desc)) {
+                throw $this->exception('If first argument is array, second argument must not be used');
             }
+
+            foreach (array_reverse($field) as $o) {
+                $this->setOrder($o);
+            }
+
             return $this;
         }
 
-        foreach ($this as $value) {
-            if (call_user_func($callable, $this) === false) {
-                break;
-            }
+        if (is_null($desc) && is_string($field) && strpos($field, ' ') !== false) {
+            list($field, $desc) = array_map('trim', explode(' ', trim($field), 2));
         }
+
+        $this->order[] = array($field, $desc);
+
         return $this;
     }
-
+    /**
+     * Count records of model.
+     *
+     * @param string $alias Optional alias of count result
+     *
+     * @return int
+     */
+    public function count($alias = null)
+    {
+        if ($this->controller && $this->controller->hasMethod('count')) {
+            return $this->controller->count($this, $alias);
+        }
+        throw $this->exception('The controller doesn\'t support count', 'NotImplemented')
+            ->addMoreInfo('controller', $this->controller ? $this->controller->short_name : 'none');
+    }
     // }}}
 
-
-    // TODO: worry about cloning!
-    function newField($name){
-        return $this->addField($name); 
+    // {{{ Iterator support
+    public $_cursor = null;
+    public function rewind()
+    {
+        $this->unload();
+        $this->_cursor = $this->controller->prefetchAll($this);
+        $this->next();
     }
-    function hasField($name){
+    public function next()
+    {
+        $this->hook('beforeLoad', array('iterating'));
+        $this->controller->loadCurrent($this, $this->_cursor);
+        if ($this->loaded()) {
+            $this->hook('afterLoad');
+        }
+
+        return $this;
+    }
+    public function current()
+    {
+        return $this;
+    }
+    public function key()
+    {
+        return $this->id;
+    }
+    public function valid()
+    {
+        return $this->loaded();
+    }
+
+    public function getRows($fields = null)
+    {
+        $result = array();
+        foreach ($this as $row) {
+            if (is_null($fields)) {
+                $result[] = $row;
+            } else {
+                $tmp = array();
+                foreach ($fields as $field) {
+                    $tmp[$field] = $row[$field];
+                }
+                $result[] = $tmp;
+            }
+        }
+
+        return $result;
+    }
+    // }}}
+
+    public function hasField($name)
+    {
         return $this->hasElement($name);
     }
-    function getField($f){
+    public function getField($f)
+    {
         return $this->getElement($f);
     }
 
-    // Reference traversal for regular models
-    public $_references=array();
-
-    /* defines relation between models. You can traverse the reference using ref() */
-    function hasOne($model, $our_field = undefined, $field_class = undefined){
-        if ($field_class === undefined) {
-            $field_class = $this->field_class;
+    // {{{ Relational methods
+    public function hasOne($model, $our_field = UNDEFINED, $field_class = UNDEFINED)
+    {
+        if ($field_class === UNDEFINED) {
+            $field_class = $this->defaultHasOneFieldClass;
         }
 
-        // if our_field is not specified, let's try to guess it from other model's table
-        if($our_field===undefined){
-            // determine the actual class of the other model
-            if(!is_object($model)){
-                $tmp=$this->api->normalizeClassName($model,'Model');
-                $tmp=new $tmp; // avoid recursion
-            }else $tmp=$model;
-            $our_field=($tmp->table).'_id';
-        }
-
-        $this->_references[$our_field]=$model;
-
-        if($our_field !== null && $our_field!=='_id' && !$this->hasElement($our_field)){
-            $f=$this->add($field_class,$our_field);
-            $f->setModel($model);
-            return $f;
-        }
-
-        return null; // no field added
-    }
-    /* defines relation for non-sql model. You can traverse the reference using ref() */
-    function hasMany($model,$their_field=undefined,$our_field=undefined,$reference=null){
-        $class=$this->api->normalizeClassName($model,'Model');
-        if(is_null($reference))$reference=$model;
-        $this->_references[$reference]=array($class,$their_field,$our_field);
-        return null;
-    }
-    /*
-     * How references work:
-     *
-     * $this->hasMany('Chapter'); // hasMany('Section'), hasOne('Picture');
-     * $this->hasOne('Author');   // hasMany('Book'), hasOne('Person','father_id'), hasOne('Person','mother_id')
-     *
-     * $this->ref('Chapter');
-     *   1. Creates Model_Chapter
-     *   2. Model_Chapter -> addCondition() // meaning the traversed model must support them!
-     *   3. Returns
-     *
-     * $this->ref('Chapter/Section');
-     *   1. $b=Creates Model_Chapter
-     *   2. Calls $c=Model_Chapter->_ref('Section'); which only returns model, no binding
-     *   3. Decisions:
-     *   hasMany
-     *      a. $b is loaded(). $c->addCondition();
-     *      b. $b and $c are both SQL. $c->join($b);
-     *      c. load all id's from $b. $c->addCondition(field,ids);
-     *   hasOne()
-     *      a. $b is loaded(). $c->load($b[field]);
-     *      b. $b and $c are both SQL. $c->join($b);
-     *      c. load all [field] values, $c->addCondition('id',ids);
-     *
-     *  Book/Chapter/Section both SQL:
-     *    $book->load(5);
-     *    $book->ref('Chapter/Section');  // get all sections
-     *      $c=$b->_ref('Chapter/Section')
-     *      $s=$c->_ref('Section');
-     *      if($s and $c sql){
-     *        $s->addCondition('chapter_id',$c->getElement('id'))
-     *      }
-
-    /* For a current model, will resolve the reference, initialize the related model and call _refBind. If this
-     * is a deep traversing, then it will also specify a field_out to acquire expression, which will be passed
-     * into the further model and so on. 
-     *
-     * if the submodel's ref() will return 
-     */
-    function ref($ref){
-        if(!$ref)return $this;
-
-        list($ref,$rest)=explode('/',$ref,2);
-
-        if(!isset($this->_references[$ref])){
-            throw $this->exception('Reference is not defined')
-                ->addMoreInfo('model',$this)
-                ->addMoreInfo('ref',$ref);
-        }
-
-        $class=$this->_references[$ref];
-        if(is_array($class)){
-            return $this->_ref(
-                $rest,
-                $class[0],
-                $class[1] && $class[1]!=UNDEFINED ? $class[1] : $this->table.'_id',
-                $class[2] && $class[2]!=UNDEFINED ? $this[$class[2]] : $this->id 
-            );
+        if ($our_field === UNDEFINED) {
+            // guess our field
+            $tmp = $this->app->normalizeClassName($model, 'Model');
+            $tmp = new $tmp(); // avoid recursion
+            $refFieldName = ($tmp->table ?: strtolower(get_class($this))).'_id';
         } else {
-            $id=$this->get($ref);
-            $m=$this->_ref(
-                $rest,
+            $refFieldName = $our_field;
+        }
+        $displayFieldName = preg_replace('/_id$/', '', $our_field);
+
+        $field = $this->addField($refFieldName);
+
+        if (!@$this->controller->supportExpressions) {
+            $expr = $this->addExpression($displayFieldName, $model, $field_class)
+                ->setModel($model)
+                ->setForeignFieldName($refFieldName);
+            $this->_references[$refFieldName] = $model;
+
+            return $expr;
+        }
+
+        return $field;
+    }
+    public function hasMany($model, $their_field = UNDEFINED, $our_field = UNDEFINED, $reference_name = null)
+    {
+        $class = $this->app->normalizeClassName($model, 'Model');
+        if (is_null($reference_name)) {
+            $reference_name = $model;
+        }
+        $this->_references[$reference_name] = array($class, $their_field, $our_field);
+    }
+    /** Defines contained model for field */
+    public function containsOne($field, $model)
+    {
+        if (is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if ($e = $this->hasElement(is_string($field) ? $field : $field['name'])) {
+            $e->destroy();
+        }
+        $this->add('Relation_ContainsOne', $field)
+            ->setModel($model);
+    }
+    /** Defines multiple contained models for field */
+    public function containsMany($field, $model)
+    {
+        if (is_array($field) && $field[0]) {
+            $field['name'] = $field[0];
+            unset($field[0]);
+        }
+        if ($e = $this->hasElement(is_string($field) ? $field : $field['name'])) {
+            $e->destroy();
+        }
+        $this->add('Relation_ContainsMany', $field)
+            ->setModel($model);
+    }
+    /**
+     * Traverses reference of relation.
+     *
+     * @param string $ref1
+     *
+     * @return Model
+     */
+    public function ref($ref1)
+    {
+        list($ref, $rest) = explode('/', $ref1, 2);
+
+        if (!isset($this->_references[$ref])) {
+            /** @type Field_Base $e */
+            $e = $this->hasElement($ref);
+            if ($e && $e->hasMethod('ref')) {
+                return $e->ref();
+            } else {
+                throw $this->exception('Reference is not defined')
+                    ->addMoreInfo('model', $this)
+                    ->addMoreInfo('ref', $ref);
+            }
+        }
+
+        $class = $this->_references[$ref];
+        if (is_array($class)) { // hasMany
+            if ($rest) {
+                throw $this->exception('Cannot traverse multiple references');
+            }
+            $m = $this->_ref(
+                $class[0],
+                $class[1] && $class[1] != UNDEFINED ? $class[1] : $this->table.'_id',
+                $class[2] && $class[2] != UNDEFINED ? $this[$class[2]] : $this->id
+            );
+        } else { // hasOne
+            $id = $this->get($ref);
+            /** @type Model $m */
+            $m = $this->_ref(
                 $class,
                 null,
                 $id
             );
-            if($id){
+            if ($id) {
+                $this->hook('beforeRefLoad', array($m, $id));
                 $m->load($id);
-            }else{
-                $that=$this;
-                $m->addHook('afterSave',function($m,$id)use($that,$ref){
-                    $that[$ref]=$id;
-                    $that->save();
-                });
             }
-            return $m;
         }
-    }
-    function _ref($ref,$class,$field,$val){
-        $m=$this
-            ->add($this->api->normalizeClassName($class,'Model'))
-            ->ref($ref);
+        if ($rest) {
+            $m = $m->ref($rest);
+        }
 
-        // For one to many relation, create condition, otherwise do nothing,
-        // as load will follow
-        if($field){
-            $m->addCondition($field,$val);
-        }
         return $m;
     }
-    /* Join Binding
-     * ============
-     *
-     * SQL generally treat Joins better, because they can create an execution plan and they don't need to wait for the
-     * first subquery to complete before starting working on the next query. 
-     *
-     * Join binding exists as an extension in SQL_Model::_ref(). It will iterate through array of models and load
-     * them into array until it hits non-SQL model (then selects field_out) or reaches the end of chain. In either
-     * case it will then back-step to the start of the chain gradually joining each table and skipping tables which
-     * have field_in same as field_out.
-     *
+    private function _ref($class, $field, $val)
+    {
+        /** @type Model $m */
+        $m = $this->add($this->app->normalizeClassName($class, 'Model'));
 
-    /* Subselect Binding
-     * =================
-     *
-     * Binding conditions when traversing. The model must apply field=expression, however this might work differently
-     * depending on the type of, the second argument and the refBind implementation. 
-     *
-     * If the model cannot embed this type of expression into field condition, it must call $expression->get(), fetch
-     * all the IDs and then use them instead. This insures intercompatibility between different model implementation.
-     *
-     * If model is using controller, it will attempt to seek controller's help for applying a condition.
-     *
-     * If field_out is specified, then the output should be the expression for the next join containing a set of
-     * values from the field_out.
-     *
-     * SQL: select field_out from table where field_in in (expression)
-     * Generic: foreach(expression->get() as $item){ $res[]=$m->loadBy($field_in,$item[id_field)->get($field_out) };
-     *
-     * If field_out is not specified, then the condition must be applied on a current model and the current model
-     * must be returned with the condition applied. This model bubbles up and is returned through a top-most 
-     * ref / refSQL.
-     *
-     * Shortcuts
-     * ---------
-     * if field_in and field_out are the same, simply return expression
-     *
-     * Book -< Chapter -< Section
-     * select * from section where chapter_id in (select id from chapter where book_id=5)
-     *
-     */
-    function _refBind($field_in,$expression,$field_out=null){
-
-        if($this->controller)return $this->controller->refBind($this,$field,$expression);
-
-        list($myref,$rest)=explode('/',$ref,2);
-
-        if(!$this->_references[$myref])throw $this->exception('No such relation')
-            ->addMoreInfo('ref',$myref)
-            ->addMoreInfo('rest',$rest);
-        // Determine and populate related model
-
-        if(is_array($this->_references[$myref])){
-            $m=$this->_references[$myref][0];
-        }else{
-            $m=$this->_references[$myref];
-        }
-        $m=$this->add($m);
-        if($rest)$m=$m->_ref($rest);
-        $this->_refGlue();
-        
-
-        if(!isset($this->_references[$ref]))throw $this->exception('Unable to traverse, no reference defined by this name')
-            ->addMoreInfo('name',$ref);
-
-        $r=$this->_references[$ref];
-
-        if(is_array($r)){
-            list($m,$our_field,$their_field)=$r;
-
-            if(is_string($m)){
-                $m=$this->add($m);
-            }else{
-                $m=$m->newInstance();
+        if ($field) { // HasMany
+            if ($m->supportConditions) {
+                $m->addCondition($field, $val);
+            } else {
+                throw $this->exception('Related model does not supprot conditions');
             }
-
-            return $m->addCondition($their_field,$this[$our_field]);
         }
 
-
-        if(is_string($m)){
-            $m=$this->add($m);
-        }else{
-            $m=$m->newInstance();
-        }
-        return $m->load($this[$our_field]);
+        return $m;
     }
+    // }}}
 
-    function db(){
-        return $this->_table[$this->controller->short_name]['db'];
-    }
-
-
-    function serialize() {
-        return serialize(array(
-            'id'=>$this->id,
-            'data'=>$this->data
-        ));
-    }
-
-    function unserialize($data) {
-        $data=unserialize($data);
-        $this->id=$data['id'];
-        $this->data=$data['data'];
+    public function debug($debug = true)
+    {
+        //if($this->controller)$this->controller->debug($debug);
+        return parent::debug($debug);
     }
 }

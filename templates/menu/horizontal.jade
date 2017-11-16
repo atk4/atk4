@@ -1,0 +1,35 @@
+ul.atk-menu.atk-menu-horizontal(class="{$class}" id="{$_name}" style="{$style}")
+    {Content}
+
+    {Title}
+    li.atk-padding-small.atk-size-kilo(id="{$_name}" class="{$class}") {$Content}
+    {/Title}
+
+    {Item}
+    li(id="{$_name}" class="$li-class")
+        <a class="{padding}atk-padding-small{/} {$class}" id="{$_name}" href="{url}javascript:void(0){/}" {$attributes}>
+        {$icon}&nbsp;
+        strong
+            {$Content}
+        span.atk-cell {$Badge}
+        </a>
+    {/Item}
+
+    {Menu}
+    li(id="{$_name}" class="{$li-class}")
+        a.atk-padding(href="#" class="{$class}")
+            {$icon}&nbsp;
+            strong
+                {$Content}
+            | &nbsp;
+            span.icon-down-dir
+        {$SubMenu}
+    {/Menu}
+
+    {Separator}
+    li(id="{$_name}" class="{$class}")
+      | /
+    {/Separator}
+
+    {/}
+
