@@ -121,7 +121,7 @@ class jUI extends jQuery
             return parent::addOnReady($js);
         }
 
-        $this->api->template->appendHTML('document_ready', "$.atk4(function(){ ".$js."; });\n");
+        $this->app->template->appendHTML('document_ready', "$.atk4(function(){ ".$js."; });\n");
 
         return $this;
     }
