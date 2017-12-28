@@ -32,7 +32,7 @@ class ApiWeb extends ApiCLI {
 
     // {{{ Start-up 
     function __construct($realm=null,$skin='default'){
-        $this->start_time=time()+microtime();
+        $this->start_time=microtime(true);
 
         $this->skin=$skin;
         try {
@@ -108,11 +108,11 @@ class ApiWeb extends ApiCLI {
     }
     /** @ignore */
     function _showExecutionTime(){
-        echo 'Took '.(time()+microtime()-$this->start_time).'s';
+        echo 'Took '.(microtime(true)-$this->start_time).'s';
     }
     /** @ignore */
     function _showExecutionTimeJS(){
-        echo "\n\n/* Took ".number_format(time()+microtime()-$this->start_time,5).'s */';
+        echo "\n\n/* Took ".number_format(microtime(true)-$this->start_time,5).'s */';
     }
     // }}}
 
