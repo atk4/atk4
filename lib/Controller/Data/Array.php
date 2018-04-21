@@ -30,7 +30,7 @@ class Controller_Data_Array extends Controller_Data
 
         // convert single dimension arrays
         reset($table);
-        list(, $firstrow) = each($table);
+        list(, $firstrow) = @each($table);
 
         if (!is_array($firstrow)) {
             // assuming that this array needs to be converted
