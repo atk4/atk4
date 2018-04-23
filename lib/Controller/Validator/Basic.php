@@ -761,9 +761,8 @@ class Controller_Validator_Basic extends Controller_Validator_Abstract
         A name can have up to 5 components, space delimited:
 
         Worst case:
-
-            salutation  |  forenames 	| prefix(es)	|	main name 	|	suffix
-            Ms          |  Jo-Sue Ellen	| de la 		| 	Mer-Savarin | 	III
+            salutation | forenames    | prefix(es) | main name   | suffix
+            Ms         | Jo-Sue Ellen | de la      | Mer-Savarin | III
 
         Rules for forenames
 
