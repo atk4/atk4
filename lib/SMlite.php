@@ -373,8 +373,8 @@ class SMlite extends AbstractModel
                 // USE(2)
                 reset($tag);
                 reset($value);
-                while (list(, $s) = each($tag)) {
-                    list(, $v) = each($value);
+                while (list(, $s) = @each($tag)) {
+                    list(, $v) = @each($value);
                     $this->set($s, $v, $encode);
                 }
 

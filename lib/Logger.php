@@ -738,7 +738,7 @@ class Logger extends AbstractController
                 $sh = $n;
             }
 
-            $name = (!isset($bt['object']->name)) ? get_class($bt['object']) : $bt['object']->name;
+            $name = isset($bt['object']->name) ? $bt['object']->name : ($bt['object'] ? get_class($bt['object']) : '');
             $output .= '<tr>'.
                 '<td valign="top" align="right"><font color="'.($sh == $n ? 'red' : 'blue').'">'.
                     htmlspecialchars(dirname($bt['file'])).'/'.

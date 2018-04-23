@@ -541,8 +541,8 @@ class Field_Base extends AbstractObject
 
         if ($this->listData) {
             reset($this->listData);
-            list(, $yes_value) = each($this->listData);
-            list(, $no_value) = each($this->listData);
+            list(, $yes_value) = @each($this->listData);
+            list(, $no_value) = @each($this->listData);
             if ($no_value === null) {
                 $no_value = '';
             }

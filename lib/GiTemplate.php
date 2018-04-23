@@ -611,7 +611,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
     public function parseTemplateRecursive(&$input, &$template)
     {
-        while (list(, $tag) = each($input)) {
+        while (list(, $tag) = @each($input)) {
 
             // Closing tag
             if ($tag[0] == '/') {
@@ -625,7 +625,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
                 $this->tags[$tag][] = &$template[$full_tag];
 
                 // eat next chunk
-                $chunk = each($input);
+                $chunk = @each($input);
                 if ($chunk[1]) {
                     $template[] = $chunk[1];
                 }
@@ -636,14 +636,14 @@ class GiTemplate extends AbstractModel implements ArrayAccess
             $full_tag = $this->regTag($tag);
 
             // Next would be prefix
-            list(, $prefix) = each($input);
+            list(, $prefix) = @each($input);
             $template[$full_tag] = $prefix ? array($prefix) : array();
 
             $this->tags[$tag][] = &$template[$full_tag];
 
             $rtag = $this->parseTemplateRecursive($input, $template[$full_tag]);
 
-            $chunk = each($input);
+            $chunk = @each($input);
             if ($chunk[1]) {
                 $template[] = $chunk[1];
             }
@@ -656,7 +656,7 @@ class GiTemplate extends AbstractModel implements ArrayAccess
 
         $input = preg_split($tag, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        list(, $prefix) = each($input);
+        list(, $prefix) = @each($input);
         $this->template = array($prefix);
 
         $this->parseTemplateRecursive($input, $this->template);
