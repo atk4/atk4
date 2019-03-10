@@ -145,8 +145,10 @@ class View_Console extends \View
             header('Content-Type: text/event-stream');
             header('Cache-Control: no-cache');
             header('Cache-Control: private');
-            header('Content-Encoding: none;');
             header('Pragma: no-cache');
+            // Imants: browser/server should sort this out themselves.
+            // See: https://bugs.chromium.org/p/chromium/issues/detail?id=746421
+            //header('Content-Encoding: none;');
             $this->destruct_send = true;
 
             if (ob_get_level()) {
