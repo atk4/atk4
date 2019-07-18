@@ -77,10 +77,10 @@ class DB extends AbstractController
                 // Reconstruct PDO DSN out of old-style DSN
                 $dsn = array(
                     $matches[1].':host='.$matches[5].';dbname='.$matches[7].
-                    ';charset=utf8',
+                    ';charset=utf8mb4',
                     $matches[2],
                     $matches[4],
-                    array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'),
+                    array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'),
                 );
             }
         }
