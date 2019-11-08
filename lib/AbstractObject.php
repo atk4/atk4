@@ -647,7 +647,6 @@ abstract class AbstractObject
                 return $default;
             }
             $v = $this->add(unserialize($_SESSION['s'][$this->name][$key]));
-            $v->init();
 
             return $v;
         }

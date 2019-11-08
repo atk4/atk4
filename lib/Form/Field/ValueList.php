@@ -114,7 +114,7 @@ abstract class Form_Field_ValueList extends Form_Field
 
                 $this->value_list = array();
                 foreach ($this->model as $row) {
-                    $this->value_list[(string) $row[$id]] = $row[$title];
+                    $this->value_list[(string) $row[$id]] = $row[$this->model->title_field];
                 }
             }
 
