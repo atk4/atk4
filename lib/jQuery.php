@@ -119,7 +119,7 @@ class jQuery extends AbstractController {
                 case 'never':
                     // send into debug output
                     //if(strlen($o)>2)$this->addOnReady("if(console)console.log('Element','".$obj->name."','no action:','".str_replace("\n",'',addslashes($o))."')");
-                    continue;
+                    continue 2;
 
                 case 'always':
                     $r.=$o;
